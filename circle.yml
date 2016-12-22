@@ -1,0 +1,23 @@
+test:
+  override:
+    # start the emulator
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
+        parallel: true
+    # wait for emulator to boot
+    - circle-android wait-for-boot
+    # run tests against the emulator
+    - ./gradlew connectedAndroidTest
+
+dependencies:
+  # in order for Circle CI to run, we need to pre-fetch, accept and cache the android sdk license
+  # ref: https://discuss.circleci.com/t/android-7-1-25-build-problem/7546/8
+  pre:
+    # Android SDK Platform 25
+    - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-25" ]; then echo y | android update sdk --no-ui --all --filter "android-25"; fi
+    # Android SDK Build-tools, revision 25.0.2
+    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/25.0.2" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"; fi
+
+  cache_directories:
+    - /usr/local/android-sdk-linux/platforms/android-25
+    - /usr/local/android-sdk-linux/build-tools/25.0.2
