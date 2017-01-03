@@ -11,6 +11,9 @@
         <activity
             android:name=".ReceptionActivity"
             android:label="@string/receiption_activity_name" >
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
