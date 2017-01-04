@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ReceptionActivity"
+            android:name=".activities.ReceptionActivity"
             android:label="@string/receiption_activity_name" >
             <meta-data
                 android:name="android.app.searchable"

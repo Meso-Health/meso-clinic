@@ -1,7 +1,8 @@
-package org.watsi.uhp;
+package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,23 +11,27 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+
+import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.models.User;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FilterableAdapter extends BaseAdapter implements Filterable {
 
-    private List<String> list;
-    private List<String> filteredList;
+    private Dao<User,Integer> mUserDao;
     private Filter simpleFilter;
     private Activity activity;
+    private final List<String> filteredList = new ArrayList<String>();
 
-    public FilterableAdapter(Activity activity) {
-        list = new ArrayList<String>();
-        list.add("Foo");
-        list.add("Bar");
-        list.add("Baz");
-
-        filteredList = new ArrayList<String>();
+    public FilterableAdapter(Activity activity) throws SQLException {
+        DatabaseHelper helper = new DatabaseHelper(activity);
+        this.mUserDao = helper.getUserDao();
+        filteredList.addAll(getAllUserNames());
         this.activity = activity;
     }
 
@@ -65,6 +70,20 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
         return simpleFilter;
     }
 
+    private List<String> getAllUserNames() throws SQLException {
+        List<String> allUserNames = new ArrayList<String>();
+        List<User> users = mUserDao.queryForAll();
+        for (User user : users) {
+            if (user.getName() != null) {
+                filteredList.add(user.getName());
+            } else {
+                Log.d("UHP", "whoops");
+            }
+        }
+
+        return allUserNames;
+    }
+
     private class SimpleFilter extends Filter {
 
         @Override
@@ -72,26 +91,38 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
             FilterResults filterResults = new FilterResults();
 
             if (constraint != null && constraint.length() > 0) {
-                List<String> tempList = new ArrayList<String>();
+                List<User> matchingUsers = new ArrayList<User>();
 
-                for (String item : list) {
-                    if (item.toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        tempList.add(item);
-                    }
+                try {
+                    PreparedQuery<User> pq = mUserDao.queryBuilder().where().like(User.FIELD_NAME_NAME, "%" + constraint + "%").prepare();
+                    matchingUsers = mUserDao.query(pq);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
 
+                List<String> tempList = new ArrayList<String>();
+                for (User user : matchingUsers) {
+                    tempList.add(user.getName());
+                }
                 filterResults.count = tempList.size();
                 filterResults.values = tempList;
             } else {
-                filterResults.count = list.size();
-                filterResults.values = list;
+                List<String> allUserNames = new ArrayList<String>();
+                try {
+                    allUserNames = getAllUserNames();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                filterResults.count = allUserNames.size();
+                filterResults.values = allUserNames;
             }
             return filterResults;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredList = (ArrayList<String>) results.values;
+            filteredList.clear();
+            filteredList.addAll((ArrayList<String>) results.values);
             notifyDataSetChanged();
         }
     }
