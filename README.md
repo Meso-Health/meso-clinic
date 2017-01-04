@@ -10,6 +10,11 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
+## Conventions
+
+- http://source.android.com/source/code-style.html
+- http://blog.smartlogic.io/2013-07-09-organizing-your-android-development-code-structure/
+
 ## Testing
 
 Tests can be run directly through the Android Studio UI by right-clicking the test file and selecting the 'Run <test>' option (or run the entire test suite by right-clicking the entire test folder).

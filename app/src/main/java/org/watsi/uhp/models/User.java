@@ -1,8 +1,6 @@
 package org.watsi.uhp.models;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = User.TABLE_NAME_USERS)

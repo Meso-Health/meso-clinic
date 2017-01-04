@@ -42,9 +42,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    public void setUserDao(Dao userDao) {
+        this.mUserDao = userDao;
+    }
+
     public Dao<User, Integer> getUserDao() throws SQLException {
         if (mUserDao == null) {
-            mUserDao = getDao(User.class);
+            setUserDao(getDao(User.class));
         }
 
         return mUserDao;
