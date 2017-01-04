@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -69,6 +71,13 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
 
             ListView lv = (ListView) findViewById(R.id.list_view);
             lv.setAdapter(adapter);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String foo = (String) parent.getItemAtPosition(position);
+                    Log.d("UHP", "Just clicked: " + foo);
+                }
+            });
 
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchMenuItem = menu.findItem(R.id.search);
