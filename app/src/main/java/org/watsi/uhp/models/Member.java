@@ -43,10 +43,6 @@ public class Member {
         return this.mName;
     }
 
-    public void setId(int id) {
-        this.mId = id;
-    }
-
     public int getId() {
         return this.mId;
     }

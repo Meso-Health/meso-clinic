@@ -2,7 +2,6 @@ package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +25,12 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
     private Dao<Member,Integer> mMemberDao;
     private Filter mSimpleFilter;
     private Activity mActivity;
-    private final List<String> mFilteredList = new ArrayList<String>();
+    private final List<Member> mFilteredList = new ArrayList<Member>();
 
     public FilterableAdapter(Activity activity) throws SQLException {
         DatabaseHelper helper = new DatabaseHelper(activity);
         this.mMemberDao = helper.getMemberDao();
-        this.mFilteredList.addAll(getAllMemberNames());
+        this.mFilteredList.addAll(mMemberDao.queryForAll());
         this.mActivity = activity;
     }
 
@@ -54,12 +53,16 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
     public View getView(int position, View view, ViewGroup parent) {
         if (view == null) {
             LayoutInflater layoutInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            view = layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false);
         }
 
-        TextView textView = (TextView) view;
-        textView.setText((String) getItem(position));
-        return textView;
+        Member member = (Member) getItem(position);
+        TextView nameView = (TextView) view.findViewById(android.R.id.text1);
+        nameView.setText(member.getName());
+        TextView idView = (TextView) view.findViewById(android.R.id.text2);
+        idView.setText(String.valueOf(member.getId()));
+
+        return view;
     }
 
     @Override
@@ -68,20 +71,6 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
             mSimpleFilter = new SimpleFilter();
         }
         return mSimpleFilter;
-    }
-
-    private List<String> getAllMemberNames() throws SQLException {
-        List<String> allMemberNames = new ArrayList<String>();
-        List<Member> members = mMemberDao.queryForAll();
-        for (Member member : members) {
-            if (member.getName() != null) {
-                mFilteredList.add(member.getName());
-            } else {
-                Log.d("UHP", "whoops");
-            }
-        }
-
-        return allMemberNames;
     }
 
     private class SimpleFilter extends Filter {
@@ -107,14 +96,14 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
                 filterResults.count = tempList.size();
                 filterResults.values = tempList;
             } else {
-                List<String> allMemberNames = new ArrayList<String>();
+                List<Member> allMembers = new ArrayList<Member>();
                 try {
-                    allMemberNames = getAllMemberNames();
+                    allMembers = mMemberDao.queryForAll();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                filterResults.count = allMemberNames.size();
-                filterResults.values = allMemberNames;
+                filterResults.count = allMembers.size();
+                filterResults.values = allMembers;
             }
             return filterResults;
         }
@@ -122,7 +111,7 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mFilteredList.clear();
-            mFilteredList.addAll((ArrayList<String>) results.values);
+            mFilteredList.addAll((ArrayList<Member>) results.values);
             notifyDataSetChanged();
         }
     }

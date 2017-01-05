@@ -34,6 +34,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+        // TODO: figure out better way to handle upgrades than drop/re-create
         try {
             TableUtils.dropTable(connectionSource, Member.class, true);
             onCreate(database, connectionSource);

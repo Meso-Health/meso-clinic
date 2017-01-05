@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +21,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReceptionActivity extends Activity implements SearchView.OnQueryTextListener {
@@ -34,13 +34,6 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // initial DB code based on this guide: https://blog.jayway.com/2016/03/15/android-ormlite/
-//        try {
-//            seedDb();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
         setContentView(R.layout.activity_reception);
     }
 
@@ -49,16 +42,17 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
         Dao<Member, Integer> memberDao = null;
         memberDao = helper.getMemberDao();
 
-        Member sampleMember = new Member();
-        int randomNumber = (int)( Math.random() * 5000 + 1);
+        int numOfStoredMembers = memberDao.queryForAll().size();
 
-        sampleMember.setName("Member " + randomNumber);
-
-        memberDao.create(sampleMember);
-        Log.d("UHP", "Added member");
-
-        List<Member> members = memberDao.queryForAll();
-        Log.d("UHP", members.size() + " members in the DB");
+        if (numOfStoredMembers == 0) {
+            List<Member> newMembers = new ArrayList<Member>();
+            for (int i = 0; i < 10; i++) {
+                Member member = new Member();
+                member.setName("Member " + i);
+                newMembers.add(member);
+            }
+            memberDao.create(newMembers);
+        }
     }
 
     @Override
@@ -67,6 +61,13 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
         inflater.inflate(R.menu.search_menu, menu);
 
         try {
+            // initial DB code based on this guide: https://blog.jayway.com/2016/03/15/android-ormlite/
+            try {
+                seedDb();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             adapter = new FilterableAdapter(this);
 
             ListView lv = (ListView) findViewById(R.id.list_view);
@@ -74,8 +75,7 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String foo = (String) parent.getItemAtPosition(position);
-                    Log.d("UHP", "Just clicked: " + foo);
+                    Member member = (Member) parent.getItemAtPosition(position);
                 }
             });
 
