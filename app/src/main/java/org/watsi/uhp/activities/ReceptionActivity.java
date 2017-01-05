@@ -3,6 +3,7 @@ package org.watsi.uhp.activities;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,7 +59,7 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.member_search_menu, menu);
 
         try {
             // initial DB code based on this guide: https://blog.jayway.com/2016/03/15/android-ormlite/
@@ -76,6 +77,9 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
+                    Intent i = new Intent(parent.getContext(), MemberDetailActivity.class);
+                    i.putExtra("memberId", String.valueOf(member.getId()));
+                    startActivity(i);
                 }
             });
 
