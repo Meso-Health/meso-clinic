@@ -78,7 +78,7 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     Intent i = new Intent(parent.getContext(), MemberDetailActivity.class);
-                    i.putExtra("memberId", String.valueOf(member.getId()));
+                    i.putExtra("memberId", member.getId());
                     startActivity(i);
                 }
             });

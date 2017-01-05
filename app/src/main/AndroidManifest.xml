@@ -24,5 +24,4 @@
             android:label="Member Detail View" >
         </activity>
     </application>
-
 </manifest>

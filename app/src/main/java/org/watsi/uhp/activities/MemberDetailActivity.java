@@ -6,8 +6,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import com.j256.ormlite.dao.Dao;
+
 import org.watsi.uhp.R;
+import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.models.Member;
+
+import java.sql.SQLException;
 
 public class MemberDetailActivity extends Activity {
 
@@ -16,11 +21,23 @@ public class MemberDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_detail);
 
-        String memberId = (String) getIntent().getSerializableExtra("memberId");
-        View contentView = findViewById(android.R.id.content);
+        int memberId = (int) getIntent().getSerializableExtra("memberId");
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
 
-        TextView memberDetailNameView = (TextView) contentView.findViewById(R.id.member_detail_name_view);
-        memberDetailNameView.setText(memberId);
+        try {
+            Dao<Member, Integer> memberDao = dbHelper.getMemberDao();
+            Member member = memberDao.queryForId(memberId);
+
+            View contentView = findViewById(android.R.id.content);
+
+            TextView memberDetailNameView = (TextView) contentView.findViewById(R.id.member_detail_name_view);
+            memberDetailNameView.setText(member.getName());
+
+            TextView memberDetailIdView = (TextView) contentView.findViewById(R.id.member_detail_id_view);
+            memberDetailIdView.setText(String.valueOf(memberId));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
