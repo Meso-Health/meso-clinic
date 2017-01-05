@@ -15,7 +15,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.models.User;
+import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,15 +23,15 @@ import java.util.List;
 
 public class FilterableAdapter extends BaseAdapter implements Filterable {
 
-    private Dao<User,Integer> mUserDao;
+    private Dao<Member,Integer> mMemberDao;
     private Filter simpleFilter;
     private Activity activity;
     private final List<String> filteredList = new ArrayList<String>();
 
     public FilterableAdapter(Activity activity) throws SQLException {
         DatabaseHelper helper = new DatabaseHelper(activity);
-        this.mUserDao = helper.getUserDao();
-        filteredList.addAll(getAllUserNames());
+        this.mMemberDao = helper.getMemberDao();
+        filteredList.addAll(getAllMemberNames());
         this.activity = activity;
     }
 
@@ -70,18 +70,18 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
         return simpleFilter;
     }
 
-    private List<String> getAllUserNames() throws SQLException {
-        List<String> allUserNames = new ArrayList<String>();
-        List<User> users = mUserDao.queryForAll();
-        for (User user : users) {
-            if (user.getName() != null) {
-                filteredList.add(user.getName());
+    private List<String> getAllMemberNames() throws SQLException {
+        List<String> allMemberNames = new ArrayList<String>();
+        List<Member> members = mMemberDao.queryForAll();
+        for (Member member : members) {
+            if (member.getName() != null) {
+                filteredList.add(member.getName());
             } else {
                 Log.d("UHP", "whoops");
             }
         }
 
-        return allUserNames;
+        return allMemberNames;
     }
 
     private class SimpleFilter extends Filter {
@@ -91,30 +91,30 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
             FilterResults filterResults = new FilterResults();
 
             if (constraint != null && constraint.length() > 0) {
-                List<User> matchingUsers = new ArrayList<User>();
+                List<Member> matchingMembers = new ArrayList<Member>();
 
                 try {
-                    PreparedQuery<User> pq = mUserDao.queryBuilder().where().like(User.FIELD_NAME_NAME, "%" + constraint + "%").prepare();
-                    matchingUsers = mUserDao.query(pq);
+                    PreparedQuery<Member> pq = mMemberDao.queryBuilder().where().like(Member.FIELD_NAME_NAME, "%" + constraint + "%").prepare();
+                    matchingMembers = mMemberDao.query(pq);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
                 List<String> tempList = new ArrayList<String>();
-                for (User user : matchingUsers) {
-                    tempList.add(user.getName());
+                for (Member member : matchingMembers) {
+                    tempList.add(member.getName());
                 }
                 filterResults.count = tempList.size();
                 filterResults.values = tempList;
             } else {
-                List<String> allUserNames = new ArrayList<String>();
+                List<String> allMemberNames = new ArrayList<String>();
                 try {
-                    allUserNames = getAllUserNames();
+                    allMemberNames = getAllMemberNames();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                filterResults.count = allUserNames.size();
-                filterResults.values = allUserNames;
+                filterResults.count = allMemberNames.size();
+                filterResults.values = allMemberNames;
             }
             return filterResults;
         }

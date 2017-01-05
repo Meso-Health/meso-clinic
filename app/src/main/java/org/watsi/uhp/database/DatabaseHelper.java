@@ -8,7 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.watsi.uhp.models.User;
+import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
@@ -17,7 +17,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "org.watsi.db";
     private static final int DATABASE_VERSION = 1;
 
-    private Dao<User, Integer> mUserDao = null;
+    private Dao<Member, Integer> mMemberDao = null;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -26,7 +26,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
      public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
-            TableUtils.createTable(connectionSource, User.class);
+            TableUtils.createTable(connectionSource, Member.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -35,28 +35,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            TableUtils.dropTable(connectionSource, User.class, true);
+            TableUtils.dropTable(connectionSource, Member.class, true);
             onCreate(database, connectionSource);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void setUserDao(Dao userDao) {
-        this.mUserDao = userDao;
+    public void setMemberDao(Dao memberDao) {
+        this.mMemberDao = memberDao;
     }
 
-    public Dao<User, Integer> getUserDao() throws SQLException {
-        if (mUserDao == null) {
-            setUserDao(getDao(User.class));
+    public Dao<Member, Integer> getMemberDao() throws SQLException {
+        if (mMemberDao == null) {
+            setMemberDao(getDao(Member.class));
         }
 
-        return mUserDao;
+        return mMemberDao;
     }
 
     @Override
     public void close() {
-        mUserDao = null;
+        mMemberDao = null;
 
         super.close();
     }

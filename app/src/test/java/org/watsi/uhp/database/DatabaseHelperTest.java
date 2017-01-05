@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.watsi.uhp.models.User;
+import org.watsi.uhp.models.Member;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -29,18 +29,18 @@ public class DatabaseHelperTest {
     }
 
     @Test
-    public void getUserDao_mUserDaoIsNull_callsGetDao() throws Exception {
-        databaseHelper.setUserDao(null);
+    public void getMemberDao_mUserDaoIsNull_callsGetDao() throws Exception {
+        databaseHelper.setMemberDao(null);
         DatabaseHelper databaseHelperSpy = spy(databaseHelper);
-        databaseHelperSpy.getUserDao();
-        verify(databaseHelperSpy, times(1)).getDao(User.class);
+        databaseHelperSpy.getMemberDao();
+        verify(databaseHelperSpy, times(1)).getDao(Member.class);
     }
 
     @Test
     public void getUserDao_mUserDaoIsNotNull_doesNotCallGetDao() throws Exception {
-        databaseHelper.setUserDao(mock(Dao.class));
+        databaseHelper.setMemberDao(mock(Dao.class));
         DatabaseHelper databaseHelperSpy = spy(databaseHelper);
-        databaseHelperSpy.getUserDao();
-        verify(databaseHelperSpy, times(0)).getDao(User.class);
+        databaseHelperSpy.getMemberDao();
+        verify(databaseHelperSpy, times(0)).getDao(Member.class);
     }
 }

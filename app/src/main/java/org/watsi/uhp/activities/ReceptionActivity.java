@@ -19,7 +19,7 @@ import com.j256.ormlite.dao.Dao;
 import org.watsi.uhp.adapters.FilterableAdapter;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.models.User;
+import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -46,19 +46,19 @@ public class ReceptionActivity extends Activity implements SearchView.OnQueryTex
 
     private void seedDb() throws SQLException {
         DatabaseHelper helper = new DatabaseHelper(this);
-        Dao<User, Integer> userDao = null;
-        userDao = helper.getUserDao();
+        Dao<Member, Integer> memberDao = null;
+        memberDao = helper.getMemberDao();
 
-        User sampleUser = new User();
+        Member sampleMember = new Member();
         int randomNumber = (int)( Math.random() * 5000 + 1);
 
-        sampleUser.setName("User " + randomNumber);
+        sampleMember.setName("Member " + randomNumber);
 
-        userDao.create(sampleUser);
-        Log.d("UHP", "Added user");
+        memberDao.create(sampleMember);
+        Log.d("UHP", "Added member");
 
-        List<User> users = userDao.queryForAll();
-        Log.d("UHP", users.size() + " users in the DB");
+        List<Member> members = memberDao.queryForAll();
+        Log.d("UHP", members.size() + " members in the DB");
     }
 
     @Override
