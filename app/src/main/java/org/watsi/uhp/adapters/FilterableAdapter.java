@@ -24,25 +24,25 @@ import java.util.List;
 public class FilterableAdapter extends BaseAdapter implements Filterable {
 
     private Dao<Member,Integer> mMemberDao;
-    private Filter simpleFilter;
-    private Activity activity;
-    private final List<String> filteredList = new ArrayList<String>();
+    private Filter mSimpleFilter;
+    private Activity mActivity;
+    private final List<String> mFilteredList = new ArrayList<String>();
 
     public FilterableAdapter(Activity activity) throws SQLException {
         DatabaseHelper helper = new DatabaseHelper(activity);
         this.mMemberDao = helper.getMemberDao();
-        filteredList.addAll(getAllMemberNames());
-        this.activity = activity;
+        this.mFilteredList.addAll(getAllMemberNames());
+        this.mActivity = activity;
     }
 
     @Override
     public int getCount() {
-        return filteredList.size();
+        return mFilteredList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return filteredList.get(position);
+        return mFilteredList.get(position);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         if (view == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
         }
 
@@ -64,10 +64,10 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public Filter getFilter() {
-        if (simpleFilter == null) {
-            simpleFilter = new SimpleFilter();
+        if (mSimpleFilter == null) {
+            mSimpleFilter = new SimpleFilter();
         }
-        return simpleFilter;
+        return mSimpleFilter;
     }
 
     private List<String> getAllMemberNames() throws SQLException {
@@ -75,7 +75,7 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
         List<Member> members = mMemberDao.queryForAll();
         for (Member member : members) {
             if (member.getName() != null) {
-                filteredList.add(member.getName());
+                mFilteredList.add(member.getName());
             } else {
                 Log.d("UHP", "whoops");
             }
@@ -121,8 +121,8 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredList.clear();
-            filteredList.addAll((ArrayList<String>) results.values);
+            mFilteredList.clear();
+            mFilteredList.addAll((ArrayList<String>) results.values);
             notifyDataSetChanged();
         }
     }
