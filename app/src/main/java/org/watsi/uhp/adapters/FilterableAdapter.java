@@ -2,6 +2,7 @@ package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,12 +90,8 @@ public class FilterableAdapter extends BaseAdapter implements Filterable {
                     e.printStackTrace();
                 }
 
-                List<String> tempList = new ArrayList<String>();
-                for (Member member : matchingMembers) {
-                    tempList.add(member.getName());
-                }
-                filterResults.count = tempList.size();
-                filterResults.values = tempList;
+                filterResults.count = matchingMembers.size();
+                filterResults.values = matchingMembers;
             } else {
                 List<Member> allMembers = new ArrayList<Member>();
                 try {
