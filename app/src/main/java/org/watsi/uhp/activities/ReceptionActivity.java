@@ -8,14 +8,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 import com.rollbar.android.Rollbar;
 
-import org.watsi.uhp.adapters.FilterableAdapter;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.models.Member;
@@ -24,13 +23,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-//public class ReceptionActivity extends Activity implements SearchView.OnQueryTextListener {
 public class ReceptionActivity extends Activity {
 
-    private SearchView searchView;
-    private MenuItem searchMenuItem;
-    private ArrayAdapter<String> listAdapter;
-    private FilterableAdapter adapter;
+    private Dao<Member, Integer> mMemberDao;
+    private MenuItem mMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,26 +36,18 @@ public class ReceptionActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reception);
 
-        // Get the intent, verify the action and get the query
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-        }
-
         // initial DB code based on this guide: https://blog.jayway.com/2016/03/15/android-ormlite/
         try {
-            seedDb();
+            DatabaseHelper helper = new DatabaseHelper(this);
+            mMemberDao = helper.getMemberDao();
+            seedDb(helper);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void seedDb() throws SQLException {
-        DatabaseHelper helper = new DatabaseHelper(this);
+    private void seedDb(DatabaseHelper helper) throws SQLException {
         TableUtils.clearTable(helper.getConnectionSource(), Member.class);
-
-        Dao<Member, Integer> memberDao = null;
-        memberDao = helper.getMemberDao();
 
         List<Member> newMembers = new ArrayList<Member>();
         for (int i = 0; i < 10; i++) {
@@ -67,7 +55,7 @@ public class ReceptionActivity extends Activity {
             member.setName("Member " + i);
             newMembers.add(member);
         }
-        memberDao.create(newMembers);
+        mMemberDao.create(newMembers);
     }
 
     @Override
@@ -76,13 +64,28 @@ public class ReceptionActivity extends Activity {
         inflater.inflate(R.menu.member_search_menu, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchMenuItem = menu.findItem(R.id.search);
-        searchView = (SearchView) searchMenuItem.getActionView();
-
+        mMenuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) mMenuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//            searchView.setSubmitButtonEnabled(true);
-//            searchView.setOnQueryTextListener(this);
 
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String memberId = intent.getDataString();
+
+            if (memberId != null) {
+                try {
+                    Member member = mMemberDao.queryForId(Integer.parseInt(memberId));
+                    TextView nameView = (TextView) findViewById(R.id.member_name);
+                    nameView.setText(member.getName());
+                    mMenuItem.collapseActionView();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

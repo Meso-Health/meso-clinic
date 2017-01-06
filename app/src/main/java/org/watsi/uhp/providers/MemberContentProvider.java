@@ -1,12 +1,15 @@
 package org.watsi.uhp.providers;
 
+import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.models.Member;
@@ -33,24 +36,29 @@ public class MemberContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-//        String query = uri.getLastPathSegment().toLowerCase();
-//        AndroidDatabaseResults dbResults = (AndroidDatabaseResults) memberDao.iterator().getRawResults();
+        String query = uri.getLastPathSegment().toLowerCase();
 
-        String[] cursorColumns = {"_ID", "SUGGEST_COLUMN_TEXT_1", "SUGGEST_COLUMN_TEXT_2"};
+        String[] cursorColumns = {
+                BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2,
+                SearchManager.SUGGEST_COLUMN_INTENT_DATA
+        };
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
-        List<Member> matchingMembers = new ArrayList<Member>();
-//        try {
-//            matchingMembers = memberDao.queryForAll();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        for (Member member : matchingMembers) {
-//            String idString = String.valueOf(member.getId());
-//            Object[] searchSuggestion = { idString, member.getName(), idString };
-//            resultsCursor.addRow(searchSuggestion);
-//        }
-        resultsCursor.addRow(new Object[]{1l, "foo", "bar"});
-        resultsCursor.addRow(new Object[]{2l, "foot", "barb"});
+
+        try {
+            PreparedQuery<Member> pq = memberDao.queryBuilder().where().like(Member.FIELD_NAME_NAME, "%" + query + "%").prepare();
+            List<Member> matchingMembers = memberDao.query(pq);
+
+            for (Member member : matchingMembers) {
+                String idString = String.valueOf(member.getId());
+                Object[] searchSuggestion = { idString, member.getName(), idString, idString };
+                resultsCursor.addRow(searchSuggestion);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return resultsCursor;
     }
 

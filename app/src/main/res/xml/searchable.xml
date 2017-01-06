@@ -3,5 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/receiption_activity_name"
     android:hint="@string/search_hint"
+    android:searchSuggestThreshold="3"
+    android:searchSuggestIntentAction="android.intent.action.SEARCH"
+    android:singleLine = "true"
     android:searchSuggestAuthority="org.watsi.uhp.provider">
 </searchable>
