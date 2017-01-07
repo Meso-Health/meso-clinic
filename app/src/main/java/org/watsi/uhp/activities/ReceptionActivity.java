@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.models.Member;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,11 +48,13 @@ public class ReceptionActivity extends Activity {
             mMemberDao = helper.getMemberDao();
             seedDb(helper);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Rollbar.reportException(e);
+        } catch (IOException e) {
+            Rollbar.reportException(e);
         }
     }
 
-    private void seedDb(DatabaseHelper helper) throws SQLException {
+    private void seedDb(DatabaseHelper helper) throws SQLException, IOException {
         TableUtils.clearTable(helper.getConnectionSource(), Member.class);
 
         List<Member> newMembers = new ArrayList<Member>();
@@ -60,9 +64,12 @@ public class ReceptionActivity extends Activity {
             Member member = new Member();
             member.setName("Member " + i);
             member.setBirthdate(new Date(cal.getTimeInMillis()));
+            member.setPhotoUrl("https://d3w52z135jkm97.cloudfront.net/uploads/profile/photo/11325/profile_638x479_177b9aad-88b7-49c5-860b-52bf97a0e7d9.jpg");
             newMembers.add(member);
         }
         mMemberDao.create(newMembers);
+        Member firstMember = newMembers.get(0);
+        firstMember.fetchAndSetPhotoFromUrl(getApplicationContext(), mMemberDao);
     }
 
     @Override
@@ -103,7 +110,13 @@ public class ReceptionActivity extends Activity {
         birthdateView.setText(simpleDate.format(member.getBirthdate()));
         TextView idView = (TextView) findViewById(R.id.member_id);
         idView.setText(String.valueOf(member.getId()));
+
         ImageView imageView = (ImageView) findViewById(R.id.member_photo);
-        imageView.setImageResource(R.drawable.sample_portrait);
+        Bitmap photoBitmap = member.getPhotoBitmap();
+        if (photoBitmap != null) {
+            imageView.setImageBitmap(photoBitmap);
+        } else {
+            imageView.setImageResource(R.drawable.sample_portrait);
+        }
     }
 }
