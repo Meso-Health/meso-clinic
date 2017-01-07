@@ -8,6 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.watsi.uhp.models.CheckIn;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -27,6 +28,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Member.class);
+            TableUtils.createTable(connectionSource, CheckIn.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -37,6 +39,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         // TODO: figure out better way to handle upgrades than drop/re-create
         try {
             TableUtils.dropTable(connectionSource, Member.class, true);
+            TableUtils.dropTable(connectionSource, CheckIn.class, true);
             onCreate(database, connectionSource);
         } catch (SQLException e) {
             throw new RuntimeException(e);

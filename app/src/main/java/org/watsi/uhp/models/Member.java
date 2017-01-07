@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 
-@DatabaseTable(tableName = Member.TABLE_NAME_MEMBERS)
+@DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member {
 
-    public static final String TABLE_NAME_MEMBERS = "members";
+    public static final String TABLE_NAME = "members";
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_NAME = "name";
