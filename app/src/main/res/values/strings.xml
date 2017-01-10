@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Watsi</string>
-    <string name="receiption_activity_label">Search patient by name or ID</string>
-    <string name="search_hint">"Search patient name or ID"</string>
+    <string name="reception_label">Reception</string>
+    <string name="search_hint">Search patient name or ID</string>
+    <string name="check_in_cta">Check-in</string>
 </resources>

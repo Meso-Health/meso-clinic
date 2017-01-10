@@ -20,6 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member {
@@ -146,6 +149,17 @@ public class Member {
     public Bitmap getPhotoBitmap() {
         if (mPhoto != null) {
             return BitmapFactory.decodeByteArray(this.mPhoto, 0, this.mPhoto.length);
+        } else {
+            return null;
+        }
+    }
+
+    public CheckIn getLastCheckIn(Dao<CheckIn, Integer> checkInDao) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<String,Object>();
+        queryMap.put(CheckIn.FIELD_NAME_MEMBER_ID, getId());
+        List<CheckIn> checkIns = checkInDao.queryForFieldValues(queryMap);
+        if (checkIns.size() > 0) {
+            return checkIns.get(0);
         } else {
             return null;
         }

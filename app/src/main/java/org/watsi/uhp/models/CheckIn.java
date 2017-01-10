@@ -3,7 +3,6 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Calendar;
 import java.util.Date;
 
 @DatabaseTable(tableName = CheckIn.TABLE_NAME)
@@ -16,22 +15,22 @@ public class CheckIn {
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_OUTCOME = "outcome";
 
-    private enum OutcomeEnum { TURNED_AWAY, ADMITTED_OUTPATIENT, ADMITTED_INPATIENT }
+    public enum OutcomeEnum { TURNED_AWAY, ADMITTED_OUTPATIENT, ADMITTED_INPATIENT }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private int mId;
 
-    @DatabaseField(columnName = FIELD_NAME_DATE, generatedId = true)
+    @DatabaseField(columnName = FIELD_NAME_DATE)
     private Date mDate;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
-    private int mMemberId;
+    private Member mMember;
 
-    @DatabaseField(columnName = FIELD_NAME_OUTCOME)
+    @DatabaseField(columnName = FIELD_NAME_OUTCOME, canBeNull = false)
     private OutcomeEnum mOutcome;
 
     public CheckIn() {
-        this.mDate = Calendar.getInstance().getTime();
+        // empty constructor necessary for ORM
     }
 
     public int getId() {
@@ -46,12 +45,12 @@ public class CheckIn {
         return mDate;
     }
 
-    public void setMemberId(int memberId) {
-        this.mMemberId = memberId;
+    public void setMember(Member member) {
+        this.mMember = member;
     }
 
-    public int getMemberId() {
-        return mMemberId;
+    public Member getMember() {
+        return mMember;
     }
 
     public void setOutcome(OutcomeEnum outcome) {

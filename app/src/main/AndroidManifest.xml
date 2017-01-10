@@ -15,7 +15,7 @@
             android:authorities="org.watsi.uhp.provider" />
         <activity
             android:name=".activities.ReceptionActivity"
-            android:label="@string/receiption_activity_label"
+            android:label="@string/reception_label"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

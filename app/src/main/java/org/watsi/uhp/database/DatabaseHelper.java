@@ -2,6 +2,7 @@ package org.watsi.uhp.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -18,7 +19,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "org.watsi.db";
     private static final int DATABASE_VERSION = 1;
 
-    private Dao<Member, Integer> mMemberDao = null;
+    private Dao<Member, Integer> mMemberDao;
+    private Dao<CheckIn, Integer> mCheckInDao;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -29,6 +31,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(connectionSource, Member.class);
             TableUtils.createTable(connectionSource, CheckIn.class);
+            Log.d("UHP", "onCreate database helper called");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -37,6 +40,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         // TODO: figure out better way to handle upgrades than drop/re-create
+        Log.d("UHP", "onUpgrade database helper called");
+
         try {
             TableUtils.dropTable(connectionSource, Member.class, true);
             TableUtils.dropTable(connectionSource, CheckIn.class, true);
@@ -56,6 +61,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         return mMemberDao;
+    }
+
+    public void setCheckInDao(Dao checkInDao) {
+        this.mCheckInDao = checkInDao;
+    }
+
+    public Dao<CheckIn, Integer> getCheckInDao() throws SQLException {
+        if (mCheckInDao == null) {
+            setCheckInDao(getDao(CheckIn.class));
+        }
+
+        return mCheckInDao;
     }
 
     @Override
