@@ -2,14 +2,22 @@ package org.watsi.uhp;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.WindowManager;
 import android.widget.EditText;
 
-import org.hamcrest.Matchers;
+import com.j256.ormlite.dao.Dao;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ReceptionActivity;
+import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.models.Member;
+
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -31,10 +39,12 @@ public class ReceptionActivityFeature {
             new ActivityTestRule<ReceptionActivity>(ReceptionActivity.class);
 
     private ReceptionActivity mActivity = null;
+    private Member mMember = null;
 
     @Before
-    public void setActivity() {
+    public void setUp() throws Exception {
         mActivity = mActivityRule.getActivity();
+        mMember = createAndPersistUser();
     }
 
     @Test
@@ -49,5 +59,37 @@ public class ReceptionActivityFeature {
         onView(withText("Member 1"))
                 .inRoot(withDecorView(not(is(mActivity.getWindow().getDecorView()))))
                 .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void checkInMember_updatesLastCheckedInDate() throws Exception {
+        // set member detail view to created member
+        mActivity.runOnUiThread(new Runnable() {
+           public void run() {
+               try {
+                   mActivity.setMember(mMember.getId());
+               } catch (SQLException e) {
+                   e.printStackTrace();
+               }
+           }
+       });
+
+        onView(withText("Check-in")).perform(click());
+        onView(withText("Admitted as inpatient")).perform(click());
+
+        String dateString = new SimpleDateFormat("yyyy/MM/dd").format(Calendar.getInstance().getTime());
+        onView(withId(R.id.member_last_check_in)).check(matches(withText(dateString)));
+    }
+
+    private Member createAndPersistUser() throws SQLException {
+        DatabaseHelper dbHelper = new DatabaseHelper(mActivity);
+        Dao<Member, Integer> memberDao = dbHelper.getMemberDao();
+        Member member = new Member();
+        member.setName("Foo");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -24);
+        member.setBirthdate(cal.getTime());
+        memberDao.create(member);
+        return member;
     }
 }

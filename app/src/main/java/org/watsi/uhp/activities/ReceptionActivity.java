@@ -18,6 +18,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.types.IntegerObjectType;
 import com.j256.ormlite.table.TableUtils;
 import com.rollbar.android.Rollbar;
 
@@ -100,14 +101,18 @@ public class ReceptionActivity extends Activity {
 
             if (memberId != null) {
                 try {
-                    this.mCurrentMember = mMemberDao.queryForId(Integer.parseInt(memberId));
-                    fillOutMemberDetails(mCurrentMember);
-                    mMenuItem.collapseActionView();
+                    setMember(Integer.parseInt(memberId));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    public void setMember(int memberId) throws SQLException {
+        this.mCurrentMember = mMemberDao.queryForId(memberId);
+        fillOutMemberDetails(mCurrentMember);
+        mMenuItem.collapseActionView();
     }
 
     private void fillOutMemberDetails(Member member) throws SQLException {
