@@ -1,5 +1,6 @@
 package org.watsi.uhp.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -7,9 +8,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,14 +21,18 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.types.IntegerObjectType;
 import com.j256.ormlite.table.TableUtils;
 import com.rollbar.android.Rollbar;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.models.CheckIn;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.services.OfflineNotificationService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -62,6 +69,30 @@ public class ReceptionActivity extends Activity {
         } catch (IOException e) {
             Rollbar.reportException(e);
         }
+
+        Intent serviceIntent = new Intent(this, OfflineNotificationService.class);
+        startService(serviceIntent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessage(OfflineNotificationEvent event) {
+        if (event.isOffline()) {
+            getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_offline_color)));
+        } else {
+            getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_online_color)));
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void seedDb(DatabaseHelper helper) throws SQLException, IOException {
