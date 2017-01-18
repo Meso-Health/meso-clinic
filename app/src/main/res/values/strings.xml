@@ -3,4 +3,5 @@
     <string name="reception_label">Reception</string>
     <string name="search_hint">Search patient name or ID</string>
     <string name="check_in_cta">Check-in</string>
+    <string name="barcode_button">Scan barcode</string>
 </resources>

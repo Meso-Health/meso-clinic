@@ -64,16 +64,7 @@ public class ReceptionActivityFeature {
 
     @Test
     public void checkInMember_updatesLastCheckedInDate() throws Exception {
-        // set member detail view to created member
-        mActivity.runOnUiThread(new Runnable() {
-           public void run() {
-               try {
-                   mActivity.setMember(mMember.getId());
-               } catch (SQLException e) {
-                   e.printStackTrace();
-               }
-           }
-       });
+        mActivity.setDetailFragment(String.valueOf(mMember.getId()));
 
         onView(withText("Check-in")).perform(click());
         onView(withText("Admitted as inpatient")).perform(click());
