@@ -78,7 +78,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         mMemberDao = null;
-
+        mCheckInDao = null;
         super.close();
     }
 }
