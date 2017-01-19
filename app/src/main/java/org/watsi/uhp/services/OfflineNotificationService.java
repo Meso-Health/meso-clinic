@@ -55,7 +55,9 @@ public class OfflineNotificationService extends Service {
         } catch (ExecutionException e) {
             Log.d("UHP", e.getMessage());
         } catch (TimeoutException e) {
-            Log.d("UHP", e.getMessage());
+            if (e.getMessage() != null) {
+                Log.d("UHP", e.getMessage());
+            }
         }
         return false;
     }

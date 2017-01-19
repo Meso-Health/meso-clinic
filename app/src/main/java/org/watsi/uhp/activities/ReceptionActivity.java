@@ -8,10 +8,17 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
 import android.widget.SearchView;
 
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 import com.rollbar.android.Rollbar;
@@ -22,6 +29,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
+import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.DefaultFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.models.Member;
@@ -38,7 +46,8 @@ public class ReceptionActivity extends FragmentActivity {
 
     private Dao<Member, Integer> mMemberDao;
     private MenuItem mMenuItem;
-    private final Context context = this;
+    private BarcodeDetector mBarcodeDetector;
+    private CameraSource mCameraSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +57,6 @@ public class ReceptionActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reception_activity);
 
-        // initial DB code based on this guide: https://blog.jayway.com/2016/03/15/android-ormlite/
         try {
             DatabaseHelper helper = new DatabaseHelper(this);
             mMemberDao = helper.getMemberDao();
@@ -58,6 +66,8 @@ public class ReceptionActivity extends FragmentActivity {
         } catch (IOException e) {
             Rollbar.reportException(e);
         }
+
+        setupBarcodeDetector();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -142,5 +152,67 @@ public class ReceptionActivity extends FragmentActivity {
         transaction.commit();
 
         mMenuItem.collapseActionView();
+    }
+
+    public void setupBarcodeDetector() {
+        mBarcodeDetector = new BarcodeDetector
+                .Builder(getBaseContext())
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
+
+        if (!mBarcodeDetector.isOperational()) {
+            // TODO: handle not being ready for barcode
+            Log.d("UHP", "barcode detector is not operational");
+        } else {
+            mBarcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+                @Override
+                public void release() {
+                    Log.d("UHP", "barcode processor release");
+                }
+
+                @Override
+                public void receiveDetections(Detector.Detections<Barcode> detections) {
+                    SparseArray<Barcode> barcodes = detections.getDetectedItems();
+                    if (barcodes.size() > 0) {
+                        Barcode barcode = barcodes.valueAt(0);
+                        if (barcode != null) {
+                            try {
+                                // TODO: lookup appropriate member Id once we determine barcode encoding scheme
+                                Member member = mMemberDao.queryForAll().get(0);
+                                setDetailFragment(String.valueOf(member.getId()));
+                            } catch (SQLException e) {
+                                Rollbar.reportException(e);
+                            }
+                        }
+                    }
+                }
+            });
+
+            mCameraSource = new CameraSource
+                    .Builder(getBaseContext(), mBarcodeDetector)
+                    .setFacing(CameraSource.CAMERA_FACING_BACK)
+                    .setRequestedFps(15.0f)
+                    .setAutoFocusEnabled(true)
+                    .build();
+
+        }
+    }
+
+    public void setBarcodeFragment() {
+        BarcodeFragment barcodeFragment = new BarcodeFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, barcodeFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void startBarcodeCapture(SurfaceHolder holder) {
+        try {
+            mCameraSource.start(holder);
+        } catch (IOException e) {
+            Rollbar.reportException(e);
+        } catch (SecurityException e) {
+            Rollbar.reportException(e);
+        }
     }
 }
