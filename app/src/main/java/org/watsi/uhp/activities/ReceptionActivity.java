@@ -19,8 +19,6 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.table.TableUtils;
 import com.rollbar.android.Rollbar;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.DefaultFragment;
@@ -37,14 +36,9 @@ import org.watsi.uhp.services.OfflineNotificationService;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 public class ReceptionActivity extends FragmentActivity {
 
-    private Dao<Member, Integer> mMemberDao;
     private MenuItem mMenuItem;
     private BarcodeDetector mBarcodeDetector;
     private CameraSource mCameraSource;
@@ -58,9 +52,8 @@ public class ReceptionActivity extends FragmentActivity {
         setContentView(R.layout.reception_activity);
 
         try {
-            DatabaseHelper helper = new DatabaseHelper(this);
-            mMemberDao = helper.getMemberDao();
-            seedDb(helper);
+            DatabaseHelper.init(getBaseContext());
+            DatabaseHelper.getHelper().seedDb(this.getBaseContext());
         } catch (SQLException e) {
             Rollbar.reportException(e);
         } catch (IOException e) {
@@ -97,24 +90,6 @@ public class ReceptionActivity extends FragmentActivity {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    private void seedDb(DatabaseHelper helper) throws SQLException, IOException {
-        TableUtils.clearTable(helper.getConnectionSource(), Member.class);
-
-        List<Member> newMembers = new ArrayList<Member>();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -24);
-        for (int i = 0; i < 10; i++) {
-            Member member = new Member();
-            member.setName("Member " + i);
-            member.setBirthdate(new Date(cal.getTimeInMillis()));
-            member.setPhotoUrl("https://d3w52z135jkm97.cloudfront.net/uploads/profile/photo/11325/profile_638x479_177b9aad-88b7-49c5-860b-52bf97a0e7d9.jpg");
-            newMembers.add(member);
-        }
-        mMemberDao.create(newMembers);
-        Member firstMember = newMembers.get(0);
-        firstMember.fetchAndSetPhotoFromUrl(getApplicationContext(), mMemberDao);
     }
 
     @Override
@@ -178,7 +153,7 @@ public class ReceptionActivity extends FragmentActivity {
                         if (barcode != null) {
                             try {
                                 // TODO: lookup appropriate member Id once we determine barcode encoding scheme
-                                Member member = mMemberDao.queryForAll().get(0);
+                                Member member = MemberDao.all().get(0);
                                 setDetailFragment(String.valueOf(member.getId()));
                             } catch (SQLException e) {
                                 Rollbar.reportException(e);

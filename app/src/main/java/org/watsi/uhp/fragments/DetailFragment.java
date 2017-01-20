@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.j256.ormlite.dao.Dao;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.CheckInDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.CheckIn;
 import org.watsi.uhp.models.Member;
 
@@ -28,15 +28,11 @@ public class DetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        DatabaseHelper helper = new DatabaseHelper(getActivity());
-
         View view = inflater.inflate(R.layout.detail_fragment, container, false);
         String memberId = getArguments().getString("memberId");
 
         try {
-            final Dao<Member, Integer> memberDao = helper.getMemberDao();
-            final Dao<CheckIn, Integer> checkInDao = helper.getCheckInDao();
-            final Member member = memberDao.queryForId(Integer.parseInt(memberId));
+            final Member member = MemberDao.findById(Integer.parseInt(memberId));
 
             TextView nameView = (TextView) view.findViewById(R.id.member_name);
             nameView.setText(member.getName());
@@ -55,7 +51,7 @@ public class DetailFragment extends Fragment {
             TextView idView = (TextView) view.findViewById(R.id.member_id);
             idView.setText(String.valueOf(member.getId()));
 
-            CheckIn lastCheckIn = member.getLastCheckIn(checkInDao);
+            CheckIn lastCheckIn = member.getLastCheckIn();
             final TextView lastCheckInView = (TextView) view.findViewById(R.id.member_last_check_in);
 
             if (lastCheckIn != null) {
@@ -91,9 +87,9 @@ public class DetailFragment extends Fragment {
                                     checkIn.setOutcome(outcomes[which]);
                                     checkIn.setMember(member);
                                     try {
-                                        checkInDao.create(checkIn);
-                                        memberDao.refresh(member);
-                                        CheckIn lastCheckIn = member.getLastCheckIn(checkInDao);
+                                        CheckInDao.create(checkIn);
+                                        MemberDao.refresh(member);
+                                        CheckIn lastCheckIn = member.getLastCheckIn();
                                         lastCheckInView.setText(simpleDate.format(lastCheckIn.getDate()));
                                     } catch (SQLException e) {
                                         Rollbar.reportException(e);

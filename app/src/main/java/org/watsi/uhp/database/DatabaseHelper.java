@@ -12,18 +12,39 @@ import com.j256.ormlite.table.TableUtils;
 import org.watsi.uhp.models.CheckIn;
 import org.watsi.uhp.models.Member;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+/**
+ * Singleton for managing access to local Sqlite DB
+ */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
     private static final int DATABASE_VERSION = 1;
 
+    private static DatabaseHelper instance;
+
     private Dao<Member, Integer> mMemberDao;
     private Dao<CheckIn, Integer> mCheckInDao;
 
-    public DatabaseHelper(Context context) {
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static synchronized DatabaseHelper getHelper() {
+        if (instance == null) {
+            throw new RuntimeException("Must initialize DatabaseHelper before acquiring instance");
+        }
+        return instance;
+    }
+
+    public static void init(Context context) {
+        instance = new DatabaseHelper(context);
     }
 
     @Override
@@ -73,6 +94,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         return mCheckInDao;
+    }
+
+    public void seedDb(Context context) throws SQLException, IOException {
+        TableUtils.clearTable(getConnectionSource(), Member.class);
+
+        List<Member> newMembers = new ArrayList<Member>();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -24);
+        for (int i = 0; i < 10; i++) {
+            Member member = new Member();
+            member.setName("Member " + i);
+            member.setBirthdate(new Date(cal.getTimeInMillis()));
+            member.setPhotoUrl("https://d3w52z135jkm97.cloudfront.net/uploads/profile/photo/11325/profile_638x479_177b9aad-88b7-49c5-860b-52bf97a0e7d9.jpg");
+            newMembers.add(member);
+        }
+        MemberDao.create(newMembers);
+        Member firstMember = newMembers.get(0);
+        firstMember.fetchAndSetPhotoFromUrl(context);
     }
 
     @Override

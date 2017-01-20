@@ -26,7 +26,8 @@ public class DatabaseHelperTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        databaseHelper = new DatabaseHelper(fakeContext);
+        DatabaseHelper.init(fakeContext);
+        databaseHelper = DatabaseHelper.getHelper();
     }
 
     @Test

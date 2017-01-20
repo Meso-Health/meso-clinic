@@ -8,30 +8,19 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-
-import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MemberContentProvider extends ContentProvider {
-
-    private Dao<Member, Integer> memberDao;
 
     public MemberContentProvider() {}
 
     @Override
     public boolean onCreate() {
-        try {
-            this.memberDao = new DatabaseHelper(getContext()).getMemberDao();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        return true;
     }
 
     @Override
@@ -47,8 +36,7 @@ public class MemberContentProvider extends ContentProvider {
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         try {
-            PreparedQuery<Member> pq = memberDao.queryBuilder().where().like(Member.FIELD_NAME_NAME, "%" + query + "%").prepare();
-            List<Member> matchingMembers = memberDao.query(pq);
+            List<Member> matchingMembers = MemberDao.withNameLike(query);
 
             for (Member member : matchingMembers) {
                 String idString = String.valueOf(member.getId());

@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -14,7 +13,8 @@ import com.rollbar.android.Rollbar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.CheckInDao;
+import org.watsi.uhp.database.MemberDao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -116,9 +116,8 @@ public class Member {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void fetchAndSetPhotoFromUrl(Context context, Dao<Member, Integer> memberDao) throws IOException, SQLException {
+    public void fetchAndSetPhotoFromUrl(Context context) throws IOException, SQLException {
         final Member self = this;
-        final Dao<Member, Integer> innerMemberDao = new DatabaseHelper(context).getMemberDao();
 
         Target target = new Target() {
             @Override
@@ -127,7 +126,7 @@ public class Member {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 setPhoto(stream.toByteArray());
                 try {
-                    innerMemberDao.update(self);
+                    MemberDao.update(self);
                 } catch (SQLException e) {
                     Rollbar.reportException(e);
                 }
@@ -154,10 +153,10 @@ public class Member {
         }
     }
 
-    public CheckIn getLastCheckIn(Dao<CheckIn, Integer> checkInDao) throws SQLException {
+    public CheckIn getLastCheckIn() throws SQLException {
         Map<String,Object> queryMap = new HashMap<String,Object>();
         queryMap.put(CheckIn.FIELD_NAME_MEMBER_ID, getId());
-        List<CheckIn> checkIns = checkInDao.queryForFieldValues(queryMap);
+        List<CheckIn> checkIns = CheckInDao.find(queryMap);
         if (checkIns.size() > 0) {
             return checkIns.get(0);
         } else {

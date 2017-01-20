@@ -4,8 +4,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.EditText;
 
-import com.j256.ormlite.dao.Dao;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -13,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ReceptionActivity;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -74,14 +73,13 @@ public class ReceptionActivityFeature {
     }
 
     private Member createAndPersistUser() throws SQLException {
-        DatabaseHelper dbHelper = new DatabaseHelper(mActivity);
-        Dao<Member, Integer> memberDao = dbHelper.getMemberDao();
+        DatabaseHelper.init(mActivity.getBaseContext());
         Member member = new Member();
         member.setName("Foo");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -24);
         member.setBirthdate(cal.getTime());
-        memberDao.create(member);
+        MemberDao.create(member);
         return member;
     }
 }
