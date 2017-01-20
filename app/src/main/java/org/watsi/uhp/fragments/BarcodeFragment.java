@@ -27,6 +27,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         ReceptionActivity activity = (ReceptionActivity) getActivity();
+        // TODO: this permission check is just used for debugging
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             Log.d("UHP", "camera permission NOT granted");
         } else {
