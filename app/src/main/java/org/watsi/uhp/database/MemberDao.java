@@ -13,40 +13,57 @@ import java.util.List;
  */
 public class MemberDao {
 
-    private static Dao<Member, Integer> getMemberDao() throws SQLException {
-        return DatabaseHelper.getHelper().getMemberDao();
+    private Dao<Member, Integer> mMemberDao;
+
+    private static MemberDao getInstance() {
+        return new MemberDao();
+    }
+
+    private MemberDao() {
+    }
+
+    private void setMemberDao(Dao memberDao) {
+        this.mMemberDao = memberDao;
+    }
+
+    private Dao<Member, Integer> getMemberDao() throws SQLException {
+        if (mMemberDao == null) {
+            setMemberDao(DatabaseHelper.getHelper().getDao(Member.class));
+        }
+
+        return mMemberDao;
     }
 
     public static void create(Member member) throws SQLException {
-        getMemberDao().create(member);
+        getInstance().getMemberDao().create(member);
     }
 
     public static void create(List<Member> members) throws SQLException {
-        getMemberDao().create(members);
+        getInstance().getMemberDao().create(members);
     }
 
     public static List<Member> all() throws SQLException {
-        return getMemberDao().queryForAll();
+        return getInstance().getMemberDao().queryForAll();
     }
 
     public static Member findById(int memberId) throws SQLException {
-        return getMemberDao().queryForId(memberId);
+        return getInstance().getMemberDao().queryForId(memberId);
     }
 
     public static void update(Member member) throws SQLException {
-        getMemberDao().update(member);
+        getInstance().getMemberDao().update(member);
     }
 
     public static void refresh(Member member) throws SQLException {
-        getMemberDao().refresh(member);
+        getInstance().getMemberDao().refresh(member);
     }
 
     public static List<Member> withNameLike(String query) throws SQLException {
-        PreparedQuery<Member> pq = getMemberDao()
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()
                 .like(Member.FIELD_NAME_NAME, "%" + query + "%")
                 .prepare();
-        return getMemberDao().query(pq);
+        return getInstance().getMemberDao().query(pq);
     }
 }

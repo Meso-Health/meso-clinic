@@ -13,27 +13,44 @@ import java.util.Map;
  */
 public class CheckInDao {
 
-    public static Dao<CheckIn, Integer> getCheckInDao() throws SQLException {
-        return DatabaseHelper.getHelper().getCheckInDao();
+    private Dao<CheckIn, Integer> mCheckInDao;
+
+    private static CheckInDao getInstance() {
+        return new CheckInDao();
+    }
+
+    private CheckInDao() {
+    }
+
+    private void setMemberDao(Dao checkInDao) {
+        this.mCheckInDao = checkInDao;
+    }
+
+    private Dao<CheckIn, Integer> getCheckInDao() throws SQLException {
+        if (mCheckInDao == null) {
+            setMemberDao(DatabaseHelper.getHelper().getDao(CheckIn.class));
+        }
+
+        return mCheckInDao;
     }
 
     public static void create(CheckIn checkIn) throws SQLException {
-        getCheckInDao().create(checkIn);
+        getInstance().getCheckInDao().create(checkIn);
     }
 
     public static List<CheckIn> all() throws SQLException {
-        return getCheckInDao().queryForAll();
+        return getInstance().getCheckInDao().queryForAll();
     }
 
     public static CheckIn findById(int checkInId) throws SQLException {
-        return getCheckInDao().queryForId(checkInId);
+        return getInstance().getCheckInDao().queryForId(checkInId);
     }
 
     public static void update(CheckIn checkIn) throws SQLException {
-        getCheckInDao().update(checkIn);
+        getInstance().getCheckInDao().update(checkIn);
     }
 
     public static List<CheckIn> find(Map<String,Object> queryMap) throws SQLException {
-        return getCheckInDao().queryForFieldValues(queryMap);
+        return getInstance().getCheckInDao().queryForFieldValues(queryMap);
     }
 }
