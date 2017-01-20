@@ -154,7 +154,7 @@ public class Member {
     }
 
     public CheckIn getLastCheckIn() throws SQLException {
-        Map<String,Object> queryMap = new HashMap<String,Object>();
+        Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(CheckIn.FIELD_NAME_MEMBER_ID, getId());
         List<CheckIn> checkIns = CheckInDao.find(queryMap);
         if (checkIns.size() > 0) {

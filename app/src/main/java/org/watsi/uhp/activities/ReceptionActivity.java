@@ -40,7 +40,6 @@ import java.sql.SQLException;
 public class ReceptionActivity extends FragmentActivity {
 
     private MenuItem mMenuItem;
-    private BarcodeDetector mBarcodeDetector;
     private CameraSource mCameraSource;
 
     @Override
@@ -54,9 +53,7 @@ public class ReceptionActivity extends FragmentActivity {
         try {
             DatabaseHelper.init(getBaseContext());
             DatabaseHelper.getHelper().seedDb(this.getBaseContext());
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             Rollbar.reportException(e);
         }
 
@@ -73,10 +70,12 @@ public class ReceptionActivity extends FragmentActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessage(OfflineNotificationEvent event) {
-        if (event.isOffline()) {
-            getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_offline_color)));
-        } else {
-            getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_online_color)));
+        if (getActionBar() != null) {
+            if (event.isOffline()) {
+                getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_offline_color)));
+            } else {
+                getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_online_color)));
+            }
         }
     }
 
@@ -130,16 +129,16 @@ public class ReceptionActivity extends FragmentActivity {
     }
 
     public void setupBarcodeDetector() {
-        mBarcodeDetector = new BarcodeDetector
+        BarcodeDetector barcodeDetector = new BarcodeDetector
                 .Builder(getBaseContext())
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
-        if (!mBarcodeDetector.isOperational()) {
+        if (!barcodeDetector.isOperational()) {
             // TODO: handle not being ready for barcode
             Log.d("UHP", "barcode detector is not operational");
         } else {
-            mBarcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
                 @Override
                 public void release() {
                     Log.d("UHP", "barcode processor release");
@@ -164,7 +163,7 @@ public class ReceptionActivity extends FragmentActivity {
             });
 
             mCameraSource = new CameraSource
-                    .Builder(getBaseContext(), mBarcodeDetector)
+                    .Builder(getBaseContext(), barcodeDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setRequestedFps(15.0f)
                     .setAutoFocusEnabled(true)
@@ -184,9 +183,7 @@ public class ReceptionActivity extends FragmentActivity {
     public void startBarcodeCapture(SurfaceHolder holder) {
         try {
             mCameraSource.start(holder);
-        } catch (IOException e) {
-            Rollbar.reportException(e);
-        } catch (SecurityException e) {
+        } catch (IOException | SecurityException e) {
             Rollbar.reportException(e);
         }
     }

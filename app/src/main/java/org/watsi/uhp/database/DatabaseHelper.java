@@ -71,7 +71,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void seedDb(Context context) throws SQLException, IOException {
         TableUtils.clearTable(getConnectionSource(), Member.class);
 
-        List<Member> newMembers = new ArrayList<Member>();
+        List<Member> newMembers = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -24);
         for (int i = 0; i < 10; i++) {

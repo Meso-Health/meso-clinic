@@ -23,6 +23,7 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class DetailFragment extends Fragment {
 
@@ -37,7 +38,7 @@ public class DetailFragment extends Fragment {
             TextView nameView = (TextView) view.findViewById(R.id.member_name);
             nameView.setText(member.getName());
             TextView birthdateView = (TextView) view.findViewById(R.id.member_birthdate);
-            final SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM/dd");
+            final SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
             birthdateView.setText(simpleDate.format(member.getBirthdate()));
 
             ImageView imageView = (ImageView) view.findViewById(R.id.member_photo);

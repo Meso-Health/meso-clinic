@@ -50,11 +50,7 @@ public class OfflineNotificationService extends Service {
         try {
             future.get(10, TimeUnit.SECONDS);
             return true;
-        } catch (InterruptedException e) {
-            Log.d("UHP", e.getMessage());
-        } catch (ExecutionException e) {
-            Log.d("UHP", e.getMessage());
-        } catch (TimeoutException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             if (e.getMessage() != null) {
                 Log.d("UHP", e.getMessage());
             }

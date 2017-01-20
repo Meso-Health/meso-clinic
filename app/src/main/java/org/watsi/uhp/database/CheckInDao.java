@@ -38,18 +38,6 @@ public class CheckInDao {
         getInstance().getCheckInDao().create(checkIn);
     }
 
-    public static List<CheckIn> all() throws SQLException {
-        return getInstance().getCheckInDao().queryForAll();
-    }
-
-    public static CheckIn findById(int checkInId) throws SQLException {
-        return getInstance().getCheckInDao().queryForId(checkInId);
-    }
-
-    public static void update(CheckIn checkIn) throws SQLException {
-        getInstance().getCheckInDao().update(checkIn);
-    }
-
     public static List<CheckIn> find(Map<String,Object> queryMap) throws SQLException {
         return getInstance().getCheckInDao().queryForFieldValues(queryMap);
     }
