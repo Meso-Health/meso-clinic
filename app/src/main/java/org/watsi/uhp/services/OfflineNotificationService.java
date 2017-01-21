@@ -29,6 +29,7 @@ public class OfflineNotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        final String apiHost = intent.getExtras().getString("apiHost");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -38,17 +39,16 @@ public class OfflineNotificationService extends Service {
                     } catch (InterruptedException e) {
                         Rollbar.reportException(e);
                     }
-                    EventBus.getDefault().post(new OfflineNotificationEvent(!pingService()));
+                    EventBus.getDefault().post(new OfflineNotificationEvent(!pingService(apiHost)));
                 }
             }
         }).start();
         return Service.START_STICKY;
     }
 
-    public boolean pingService() {
+    public boolean pingService(String apiHost) {
         RequestFuture<String> future = RequestFuture.newFuture();
-        // TODO: replace this with a ping request to the UHP back-end service
-        String url = "https://watsi.org";
+        String url = apiHost + "status";
         final StringRequest request = new StringRequest(url, future, future);
         getRequestQueue().add(request);
         try {

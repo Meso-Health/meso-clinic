@@ -54,6 +54,7 @@ public class MainActivity extends FragmentActivity {
                 .commit();
 
         Intent serviceIntent = new Intent(this, OfflineNotificationService.class);
+        serviceIntent.putExtra("apiHost", ConfigManager.getApiHost(this));
         startService(serviceIntent);
     }
 
