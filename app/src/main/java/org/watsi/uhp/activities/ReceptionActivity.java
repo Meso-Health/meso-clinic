@@ -31,6 +31,7 @@ import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.DefaultFragment;
 import org.watsi.uhp.fragments.DetailFragment;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.OfflineNotificationService;
 
@@ -44,8 +45,8 @@ public class ReceptionActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: move this key to a secure Keystore
-        Rollbar.init(this, "f5fe49118ae44f6397da61934e8f0a2c", "development");
+
+        Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reception_activity);

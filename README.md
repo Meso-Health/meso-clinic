@@ -10,6 +10,15 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
+In order to run the application, you must also create a resource file for storing private config settings. Do this by creating an xml file in `app/src/main/res/xml/secret.xml` with the following format:
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<secret>
+    <entry key="API_KEY_NAME">api_key_value</entry>
+</secret>
+```
+
 ## Conventions
 
 - http://source.android.com/source/code-style.html
