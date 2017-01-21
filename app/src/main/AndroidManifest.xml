@@ -19,8 +19,8 @@
             android:name=".services.OfflineNotificationService"
             android:exported="false" />
         <activity
-            android:name=".activities.ReceptionActivity"
-            android:label="@string/reception_label"
+            android:name=".activities.MainActivity"
+            android:label="@string/main_activity_label"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

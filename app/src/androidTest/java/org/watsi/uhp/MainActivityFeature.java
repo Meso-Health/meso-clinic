@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.watsi.uhp.activities.ReceptionActivity;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Member;
@@ -31,13 +31,13 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
-public class ReceptionActivityFeature {
+public class MainActivityFeature {
 
     @Rule
-    public ActivityTestRule<ReceptionActivity> mActivityRule =
-            new ActivityTestRule<ReceptionActivity>(ReceptionActivity.class);
+    public ActivityTestRule<MainActivity> mActivityRule =
+            new ActivityTestRule<MainActivity>(MainActivity.class);
 
-    private ReceptionActivity mActivity = null;
+    private MainActivity mActivity = null;
     private Member mMember = null;
 
     @Before

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Service class that starts upon application start-up that
- * polls the UHP API to determine if the device is online  
+ * polls the UHP API to determine if the device is online
  */
 public class OfflineNotificationService extends Service {
 
