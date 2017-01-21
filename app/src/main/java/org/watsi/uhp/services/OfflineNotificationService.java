@@ -18,6 +18,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Service class that starts upon application start-up that
+ * polls the UHP API to determine if the device is online  
+ */
 public class OfflineNotificationService extends Service {
 
     private static int SLEEP_TIME = 5000;
