@@ -62,7 +62,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // intentionally blank
+        mCameraSource.release();
     }
 
     private void setupBarcodeDetector() {
@@ -80,7 +80,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
             barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
                 @Override
                 public void release() {
-                    Log.d("UHP", "barcode processor release");
+                    // no-op
                 }
 
                 @Override
