@@ -22,13 +22,13 @@ public class CheckInDao {
     private CheckInDao() {
     }
 
-    private void setMemberDao(Dao checkInDao) {
+    private void setCheckInDao(Dao checkInDao) {
         this.mCheckInDao = checkInDao;
     }
 
     private Dao<CheckIn, Integer> getCheckInDao() throws SQLException {
         if (mCheckInDao == null) {
-            setMemberDao(DatabaseHelper.getHelper().getDao(CheckIn.class));
+            setCheckInDao(DatabaseHelper.getHelper().getDao(CheckIn.class));
         }
 
         return mCheckInDao;
