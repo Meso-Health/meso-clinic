@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme">
+        android:theme="@style/main_theme">
         <provider
             android:name=".providers.MemberContentProvider"
             android:authorities="org.watsi.uhp.provider" />

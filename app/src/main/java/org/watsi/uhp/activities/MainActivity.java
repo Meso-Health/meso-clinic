@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
 
 import com.rollbar.android.Rollbar;
 
@@ -21,7 +23,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.DefaultFragment;
+import org.watsi.uhp.fragments.RecentCheckInsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.services.OfflineNotificationService;
@@ -29,7 +31,7 @@ import org.watsi.uhp.services.OfflineNotificationService;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     private MenuItem mMenuItem;
 
@@ -48,14 +50,55 @@ public class MainActivity extends FragmentActivity {
             Rollbar.reportException(e);
         }
 
+        setupToolbar();
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new DefaultFragment())
+                .add(R.id.fragment_container, new RecentCheckInsFragment())
                 .commit();
 
         Intent serviceIntent = new Intent(this, OfflineNotificationService.class);
         serviceIntent.putExtra("apiHost", ConfigManager.getApiHost(this));
         startService(serviceIntent);
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Recent").setTag("recent"));
+        tabLayout.addTab(tabLayout.newTab().setText("Scan ID").setTag("barcode"));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                String tabName = (tab.getTag() != null) ? (String) tab.getTag() : "";
+                switch (tabName) {
+                    case "recent":
+                        RecentCheckInsFragment recentCheckInsFragment = new RecentCheckInsFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, recentCheckInsFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+
+                        break;
+                    case "barcode":
+                        setBarcodeFragment();
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // no-op
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // no-op
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -90,7 +133,7 @@ public class MainActivity extends FragmentActivity {
         SearchView searchView = (SearchView) mMenuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
