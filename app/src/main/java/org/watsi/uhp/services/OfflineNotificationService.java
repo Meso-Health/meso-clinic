@@ -43,7 +43,7 @@ public class OfflineNotificationService extends Service {
                 }
             }
         }).start();
-        return Service.START_STICKY;
+        return Service.START_REDELIVER_INTENT;
     }
 
     public boolean pingService(String apiHost) {

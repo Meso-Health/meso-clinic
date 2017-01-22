@@ -66,4 +66,9 @@ public class MemberDao {
                 .prepare();
         return getInstance().getMemberDao().query(pq);
     }
+
+    public static List<Member> recentMembers() throws SQLException {
+        // TODO: query for only recently checked-in members
+        return getInstance().getMemberDao().queryForAll();
+    }
 }
