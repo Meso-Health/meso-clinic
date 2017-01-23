@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -19,7 +20,6 @@ import org.watsi.uhp.database.MemberDao;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,33 +30,34 @@ public class Member {
     public static final String TABLE_NAME = "members";
 
     public static final String FIELD_NAME_ID = "id";
+    public static final String FIELD_NAME_CARD_ID = "card_id";
     public static final String FIELD_NAME_NAME = "name";
-    public static final String FIELD_NAME_BIRTHDATE = "birthdate";
-    public static final String FIELD_NAME_GENDER = "gender";
-    public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
+    public static final String FIELD_NAME_AGE = "age";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
     private enum GenderEnum { M, F }
 
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private int mId;
+    @SerializedName(FIELD_NAME_ID)
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
+    private String mId;
 
-    @DatabaseField(columnName = FIELD_NAME_NAME)
+    @SerializedName(FIELD_NAME_CARD_ID)
+    @DatabaseField(columnName = FIELD_NAME_CARD_ID, canBeNull = false)
+    private String mCardId;
+
+    @SerializedName(FIELD_NAME_NAME)
+    @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
     private String mName;
 
-    @DatabaseField(columnName = FIELD_NAME_BIRTHDATE)
-    private Date mBirthdate;
-
-    @DatabaseField(columnName = FIELD_NAME_GENDER)
-    private GenderEnum mGender;
-
-    @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
-    private String mPhoneNumber;
+    @SerializedName(FIELD_NAME_AGE)
+    @DatabaseField(columnName = FIELD_NAME_AGE)
+    private int mAge;
 
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
     private byte[] mPhoto;
 
+    @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
@@ -72,32 +73,20 @@ public class Member {
         return this.mName;
     }
 
-    public int getId() {
+    public String getId() {
         return this.mId;
     }
 
-    public Date getBirthdate() {
-        return mBirthdate;
+    public long getIdAsLong() {
+        return Long.valueOf(getId().hashCode());
     }
 
-    public void setBirthdate(Date birthdate) {
-        this.mBirthdate = birthdate;
+    public String getCardId() {
+        return mCardId;
     }
 
-    public GenderEnum getGender() {
-        return mGender;
-    }
-
-    public void setGender(GenderEnum gender) {
-        this.mGender = gender;
-    }
-
-    public String getPhoneNumber() {
-        return mPhoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.mPhoneNumber = phoneNumber;
+    public int getAge() {
+        return mAge;
     }
 
     public byte[] getPhoto() {
@@ -110,10 +99,6 @@ public class Member {
 
     public String getPhotoUrl() {
         return mPhotoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.mPhotoUrl = photoUrl;
     }
 
     public void fetchAndSetPhotoFromUrl(Context context) throws IOException, SQLException {

@@ -33,24 +33,24 @@ public class DetailFragment extends Fragment {
         String memberId = getArguments().getString("memberId");
 
         try {
-            final Member member = MemberDao.findById(Integer.parseInt(memberId));
+            final Member member = MemberDao.findById(memberId);
+            final SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
 
             TextView nameView = (TextView) view.findViewById(R.id.member_name);
             nameView.setText(member.getName());
-            TextView birthdateView = (TextView) view.findViewById(R.id.member_birthdate);
-            final SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
-            birthdateView.setText(simpleDate.format(member.getBirthdate()));
+            TextView ageView = (TextView) view.findViewById(R.id.member_age);
+            ageView.setText(String.valueOf(member.getAge()));
 
             ImageView imageView = (ImageView) view.findViewById(R.id.member_photo);
             Bitmap photoBitmap = member.getPhotoBitmap();
             if (photoBitmap != null) {
                 imageView.setImageBitmap(photoBitmap);
             } else {
-                imageView.setImageResource(R.drawable.sample_portrait);
+                imageView.setImageResource(R.drawable.portrait_placeholder);
             }
 
             TextView idView = (TextView) view.findViewById(R.id.member_id);
-            idView.setText(String.valueOf(member.getId()));
+            idView.setText(String.valueOf(member.getCardId()));
 
             CheckIn lastCheckIn = member.getLastCheckIn();
             final TextView lastCheckInView = (TextView) view.findViewById(R.id.member_last_check_in);
@@ -89,6 +89,7 @@ public class DetailFragment extends Fragment {
                                     checkIn.setMember(member);
                                     try {
                                         CheckInDao.create(checkIn);
+                                        // TODO: this refresh is dangerous if member list is being refreshed at same time
                                         MemberDao.refresh(member);
                                         CheckIn lastCheckIn = member.getLastCheckIn();
                                         lastCheckInView.setText(simpleDate.format(lastCheckIn.getDate()));

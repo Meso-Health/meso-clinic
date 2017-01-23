@@ -21,17 +21,26 @@ import java.util.Map;
 public class ConfigManager {
     private static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
     private static String API_HOST = "API_HOST";
+    private static String FACILITY_ID = "FACILITY_ID";
 
     public static String getRollbarApiKey(Activity activity) {
-        String key = readConfig(activity).get(ROLLBAR_API_KEY);
-        if (key == null) {
-            throw new RuntimeException("must set ROLLBAR_API_KEY in res/xml/secret.xml");
-        }
-        return key;
+        return getConfigValue(ROLLBAR_API_KEY, activity);
     }
 
     public static String getApiHost(Activity activity) {
-        return readConfig(activity).get(API_HOST);
+        return getConfigValue(API_HOST, activity);
+    }
+
+    public static int getFacilityId(Activity activity) {
+        return Integer.parseInt(getConfigValue(FACILITY_ID, activity));
+    }
+
+    private static String getConfigValue(String key, Activity activity) {
+        String configValue = readConfig(activity).get(key);
+        if (key == null) {
+            throw new RuntimeException("must set ROLLBAR_API_KEY in res/xml/secret.xml");
+        }
+        return configValue;
     }
 
     private static Map<String,String> readConfig(Activity activity) {

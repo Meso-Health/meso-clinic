@@ -4,8 +4,24 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.rollbar.android.Rollbar;
+
+import org.greenrobot.eventbus.EventBus;
+import org.watsi.uhp.api.UhpApi;
+import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.events.OfflineNotificationEvent;
+import org.watsi.uhp.models.Member;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Service class that continuously polls the UHP API
@@ -13,34 +29,54 @@ import com.rollbar.android.Rollbar;
  */
 public class RefreshMemberListService extends Service {
 
-    private static int SLEEP_TIME = 30000;
+    private static int SLEEP_TIME = 10000;
+    private UhpApi mUhpApi;
+    private Integer mFacilityId;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (mFacilityId == null) {
+            mFacilityId = intent.getExtras().getInt("facilityId");
+        }
+        if (mUhpApi == null) {
+            mUhpApi = new Retrofit.Builder()
+                    .baseUrl(intent.getExtras().getString("apiHost"))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                    .create(UhpApi.class);
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true){
                     try {
                         Thread.sleep(SLEEP_TIME);
-                    } catch (InterruptedException e) {
+                        fetchNewMemberData();
+                    } catch (IOException | SQLException | InterruptedException e) {
                         Rollbar.reportException(e);
                     }
-                    fetchNewMemberData();
                 }
             }
         }).start();
-        return Service.START_STICKY;
+        return Service.START_REDELIVER_INTENT;
     }
 
-    private boolean memberListUpdated() {
-        // TODO: ask the UHP API if local member data needs to be updated
-        return false;
-    }
-
-    private void fetchNewMemberData() {
-        if (memberListUpdated()) {
-            // TODO: query UHP API for new member data
+    private void fetchNewMemberData() throws IOException, SQLException {
+        Call<List<Member>> request = mUhpApi.members(MemberDao.lastModifiedString(), mFacilityId);
+        Response<List<Member>> response = request.execute();
+        if (response.isSuccessful()) {
+            EventBus.getDefault().post(new OfflineNotificationEvent(false));
+            List<Member> members = response.body();
+            MemberDao.clear();
+            MemberDao.create(members);
+        } else {
+            if (response.code() == 304) {
+                Log.d("UHP", "not modified");
+                EventBus.getDefault().post(new OfflineNotificationEvent(false));
+            } else {
+                EventBus.getDefault().post(new OfflineNotificationEvent(true));
+            }
         }
     }
 

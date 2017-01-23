@@ -2,11 +2,18 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * POJO helper for querying Members
@@ -46,8 +53,10 @@ public class MemberDao {
         return getInstance().getMemberDao().queryForAll();
     }
 
-    public static Member findById(int memberId) throws SQLException {
-        return getInstance().getMemberDao().queryForId(memberId);
+    public static Member findById(String memberId) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("id", memberId);
+        return getInstance().getMemberDao().queryForFieldValues(queryMap).get(0);
     }
 
     public static void update(Member member) throws SQLException {
@@ -70,5 +79,19 @@ public class MemberDao {
     public static List<Member> recentMembers() throws SQLException {
         // TODO: query for only recently checked-in members
         return getInstance().getMemberDao().queryForAll();
+    }
+
+    public static void clear() throws SQLException {
+        TableUtils.clearTable(getInstance().getMemberDao().getConnectionSource(), Member.class);
+    }
+
+    public static String lastModifiedString() throws SQLException {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+        calendar.add(Calendar.DAY_OF_MONTH, -5);
+        // TODO: make sure timezone logic is correct
+        dateFormat.setTimeZone(TimeZone.getDefault());
+        return dateFormat.format(calendar.getTime());
     }
 }

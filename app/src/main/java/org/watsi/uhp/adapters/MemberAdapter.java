@@ -64,7 +64,9 @@ public class MemberAdapter implements ListAdapter {
 
     @Override
     public long getItemId(int position) {
-        return ((Member) getItem(position)).getId();
+        // TODO: not safe, needs to hash full ID
+        Member member = (Member) getItem(position);
+        return Long.parseLong(member.getCardId().replaceAll("[^\\d]", ""));
     }
 
     @Override
@@ -91,7 +93,7 @@ public class MemberAdapter implements ListAdapter {
         Member member = (Member) getItem(position);
         if (member != null) {
             viewHolder.titleView.setText(member.getName());
-            viewHolder.subTitleView.setText(String.valueOf(member.getId()));
+            viewHolder.subTitleView.setText(String.valueOf(member.getCardId()));
         }
 
         return convertView;

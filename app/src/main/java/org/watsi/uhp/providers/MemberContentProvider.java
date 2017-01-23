@@ -37,11 +37,16 @@ public class MemberContentProvider extends ContentProvider {
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         try {
+            // TODO: also search by card ID
             List<Member> matchingMembers = MemberDao.withNameLike(query);
 
             for (Member member : matchingMembers) {
-                String idString = String.valueOf(member.getId());
-                Object[] searchSuggestion = { idString, member.getName(), idString, idString };
+                Object[] searchSuggestion = {
+                        member.getIdAsLong(),
+                        member.getName(),
+                        member.getCardId(),
+                        member.getId()
+                };
                 resultsCursor.addRow(searchSuggestion);
             }
 

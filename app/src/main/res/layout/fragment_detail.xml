@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_fragment"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -19,21 +18,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/member_birthdate"
+            android:id="@+id/member_age"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/member_name" />
     </RelativeLayout>
     <ImageView
         android:id="@+id/member_photo"
+        android:contentDescription="@string/member_photo_content_description"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/member_info" />
+        android:layout_height="wrap_content" />
     <RelativeLayout
         android:id="@+id/member_history"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/member_photo">
+        android:layout_height="wrap_content" >
         <TextView
             android:id="@+id/member_id"
             android:layout_width="wrap_content"
@@ -48,7 +46,6 @@
         android:id="@+id/check_in_button"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_below="@id/member_history"
         android:visibility="gone"
         android:text="@string/check_in_cta" />
 </LinearLayout>

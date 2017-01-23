@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,10 +27,7 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.RecentCheckInsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.services.OfflineNotificationService;
-
-import java.io.IOException;
-import java.sql.SQLException;
+import org.watsi.uhp.services.RefreshMemberListService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,16 +37,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
+        DatabaseHelper.init(getBaseContext());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        try {
-            DatabaseHelper.init(getBaseContext());
-            DatabaseHelper.getHelper().seedDb(this.getBaseContext());
-        } catch (SQLException | IOException e) {
-            Rollbar.reportException(e);
-        }
 
         setupToolbar();
 
@@ -57,9 +49,10 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.fragment_container, new RecentCheckInsFragment())
                 .commit();
 
-        Intent serviceIntent = new Intent(this, OfflineNotificationService.class);
-        serviceIntent.putExtra("apiHost", ConfigManager.getApiHost(this));
-        startService(serviceIntent);
+        Intent fetchMembersService = new Intent(this, RefreshMemberListService.class);
+        fetchMembersService.putExtra("apiHost", ConfigManager.getApiHost(this));
+        fetchMembersService.putExtra("facilityId", ConfigManager.getFacilityId(this));
+        startService(fetchMembersService);
     }
 
     private void setupToolbar() {
@@ -142,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String memberId = intent.getDataString();
-
+            Log.d("UHP", "intention memberId: " + memberId);
             if (memberId != null) {
                 setDetailFragment(memberId);
             }
