@@ -13,10 +13,12 @@ import java.util.Map;
  */
 public class CheckInDao {
 
+    private static CheckInDao instance = new CheckInDao();
+
     private Dao<CheckIn, Integer> mCheckInDao;
 
     private static CheckInDao getInstance() {
-        return new CheckInDao();
+        return instance;
     }
 
     private CheckInDao() {

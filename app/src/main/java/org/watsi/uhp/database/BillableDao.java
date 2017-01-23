@@ -12,10 +12,12 @@ import java.util.List;
  */
 public class BillableDao {
 
+    private static BillableDao instance = new BillableDao();
+
     private Dao<Billable, Integer> mBillableDao;
 
     private static BillableDao getInstance() {
-        return new BillableDao();
+        return instance;
     }
 
     private BillableDao() {

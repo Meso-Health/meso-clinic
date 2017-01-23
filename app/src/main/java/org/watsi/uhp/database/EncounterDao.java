@@ -11,10 +11,12 @@ import java.sql.SQLException;
  */
 public class EncounterDao {
 
+    private static EncounterDao instance = new EncounterDao();
+
     private Dao<Encounter, Integer> mEncounterDao;
 
     private static EncounterDao getInstance() {
-        return new EncounterDao();
+        return instance;
     }
 
     private EncounterDao() {

@@ -7,23 +7,22 @@ import com.j256.ormlite.table.TableUtils;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * POJO helper for querying Members
  */
 public class MemberDao {
 
+    private static MemberDao instance = new MemberDao();
+
     private Dao<Member, Integer> mMemberDao;
+    private String mLastModifiedAtString;
 
     private static MemberDao getInstance() {
-        return new MemberDao();
+        return instance;
     }
 
     private MemberDao() {
@@ -39,6 +38,10 @@ public class MemberDao {
         }
 
         return mMemberDao;
+    }
+
+    private String getLastModifiedAtString() {
+        return mLastModifiedAtString;
     }
 
     public static void create(Member member) throws SQLException {
@@ -86,12 +89,10 @@ public class MemberDao {
     }
 
     public static String lastModifiedString() throws SQLException {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-        calendar.add(Calendar.DAY_OF_MONTH, -5);
-        // TODO: make sure timezone logic is correct
-        dateFormat.setTimeZone(TimeZone.getDefault());
-        return dateFormat.format(calendar.getTime());
+        return getInstance().getLastModifiedAtString();
+    }
+
+    public static void setLastModifiedAt(String lastModifiedAtString) {
+        getInstance().mLastModifiedAtString = lastModifiedAtString;
     }
 }
