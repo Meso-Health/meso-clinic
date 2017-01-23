@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.rollbar.android.Rollbar;
 
@@ -67,12 +66,12 @@ public class RefreshMemberListService extends Service {
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             EventBus.getDefault().post(new OfflineNotificationEvent(false));
+            MemberDao.setLastModifiedAt(response.headers().get("last-modified"));
             List<Member> members = response.body();
             MemberDao.clear();
             MemberDao.create(members);
         } else {
             if (response.code() == 304) {
-                Log.d("UHP", "not modified");
                 EventBus.getDefault().post(new OfflineNotificationEvent(false));
             } else {
                 EventBus.getDefault().post(new OfflineNotificationEvent(true));
