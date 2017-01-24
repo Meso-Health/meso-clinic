@@ -8,13 +8,21 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.BillableEncounter;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -72,8 +80,51 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public void seedDb(Context context) throws SQLException, IOException {
-        // TODO: seed billables
+    public static void loadBillables(Context context) throws SQLException, IOException {
+        TableUtils.clearTable(DatabaseHelper.getHelper().getConnectionSource(), Billable.class);
+
+        // setup enum conversion maps
+        Map<String, Billable.CategoryEnum> categoryMap = new HashMap<>();
+        categoryMap.put("Drugs & Supplies", Billable.CategoryEnum.DRUGS_AND_SUPPLIES);
+        categoryMap.put("Labs", Billable.CategoryEnum.LABS);
+        categoryMap.put("Services", Billable.CategoryEnum.SERVICES);
+
+        Map<String, Billable.DepartmentEnum> departmentMap = new HashMap<>();
+        departmentMap.put("Ante-natal", Billable.DepartmentEnum.ANTE_NATAL);
+        departmentMap.put("ART Clinic", Billable.DepartmentEnum.ART_CLINIC);
+        departmentMap.put("Natural family planning", Billable.DepartmentEnum.FAMILY_PLANNING);
+        departmentMap.put("Immunisation", Billable.DepartmentEnum.IMMUNISATION);
+        departmentMap.put("Maternity", Billable.DepartmentEnum.MATERNITY);
+        departmentMap.put("Post-natal", Billable.DepartmentEnum.POST_NATAL);
+        departmentMap.put("", Billable.DepartmentEnum.UNSPECIFIED);
+        departmentMap.put("?", Billable.DepartmentEnum.UNSPECIFIED);
+
+        // parse CSV
+        List<Billable> billables = new ArrayList<>();
+        InputStream inputStream = context.getResources().openRawResource(R.raw.price_list);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        try {
+            String csvLine;
+            while ((csvLine = reader.readLine()) != null) {
+                String[] row = csvLine.split(",");
+                Billable billable = new Billable();
+                billable.setCategory(categoryMap.get(row[0]));
+                billable.setName(row[1]);
+                String unit = row[4];
+                if (unit.length() > 0 && !"?".equals(unit)) {
+                    billable.setUnit(unit);
+                    billable.setAmount(row[3]);
+                }
+                billable.setDepartment(departmentMap.get(row[5]));
+                billables.add(billable);
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Error in reading CSV file: "+ex);
+        } finally {
+            inputStream.close();
+        }
+        BillableDao.create(billables);
     }
 
     @Override

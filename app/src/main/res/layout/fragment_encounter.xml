@@ -10,7 +10,34 @@
     android:paddingTop="@dimen/activity_vertical_margin" >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/encounter_info"/>
+        android:text="@string/encounter_department_label"/>
+
+    <Spinner
+        android:id="@+id/department_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/encounter_category_label"/>
+
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/encounter_product_label"/>
+
+    <AutoCompleteTextView
+        android:id="@+id/encounter_product_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionNext"
+        android:completionThreshold="3" />
 </LinearLayout>
