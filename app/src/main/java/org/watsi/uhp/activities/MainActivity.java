@@ -24,7 +24,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.RecentCheckInsFragment;
+import org.watsi.uhp.fragments.RecentEncountersFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.services.RefreshMemberListService;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new RecentCheckInsFragment())
+                .add(R.id.fragment_container, new RecentEncountersFragment())
                 .commit();
 
         Intent fetchMembersService = new Intent(this, RefreshMemberListService.class);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 String tabName = (tab.getTag() != null) ? (String) tab.getTag() : "";
                 switch (tabName) {
                     case "recent":
-                        RecentCheckInsFragment recentCheckInsFragment = new RecentCheckInsFragment();
+                        RecentEncountersFragment recentCheckInsFragment = new RecentEncountersFragment();
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container, recentCheckInsFragment);
                         transaction.addToBackStack(null);

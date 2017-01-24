@@ -5,6 +5,8 @@ import com.j256.ormlite.dao.Dao;
 import org.watsi.uhp.models.Encounter;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * POJO helper for querying Encounters
@@ -36,5 +38,9 @@ public class EncounterDao {
 
     public static void create(Encounter encounter) throws SQLException {
         getInstance().getEncounterDao().create(encounter);
+    }
+
+    public static List<Encounter> find(Map<String,Object> queryMap) throws SQLException {
+        return getInstance().getEncounterDao().queryForFieldValues(queryMap);
     }
 }

@@ -10,16 +10,11 @@ import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.BillableEncounter;
-import org.watsi.uhp.models.CheckIn;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -52,7 +47,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Member.class);
-            TableUtils.createTable(connectionSource, CheckIn.class);
             TableUtils.createTable(connectionSource, Billable.class);
             TableUtils.createTable(connectionSource, Encounter.class);
             TableUtils.createTable(connectionSource, BillableEncounter.class);
@@ -69,7 +63,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         try {
             TableUtils.dropTable(connectionSource, Member.class, true);
-            TableUtils.dropTable(connectionSource, CheckIn.class, true);
             TableUtils.dropTable(connectionSource, Billable.class, true);
             TableUtils.dropTable(connectionSource, Encounter.class, true);
             TableUtils.dropTable(connectionSource, BillableEncounter.class, true);

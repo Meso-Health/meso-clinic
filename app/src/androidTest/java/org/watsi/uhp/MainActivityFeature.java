@@ -4,8 +4,9 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.EditText;
 
+import com.j256.ormlite.table.TableUtils;
+
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +16,6 @@ import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -35,50 +34,43 @@ public class MainActivityFeature {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule =
-            new ActivityTestRule<MainActivity>(MainActivity.class);
+            new ActivityTestRule<>(MainActivity.class);
 
     private MainActivity mActivity = null;
-    private Member mMember = null;
 
     @Before
     public void setUp() throws Exception {
         mActivity = mActivityRule.getActivity();
-        mMember = createAndPersistUser();
+        createAndPersistUser();
     }
 
-    @Ignore // ignoring due to issues with root views not working in CI environment
     @Test
     public void searchByMemberName_showsMemberSuggestions() throws Exception {
         // click on search icon
         onView(withId(R.id.search)).perform(click());
 
         // fill in search text
-        onView(isAssignableFrom(EditText.class)).perform(typeText("Mem"));
+        onView(isAssignableFrom(EditText.class)).perform(typeText("Foo"));
 
-        // check that member suggestions are displayed
-        onView(withText("Member 1"))
+        // click on member in suggested options dropdown
+        onView(withText("Foo Bar"))
                 .inRoot(withDecorView(not(is(mActivity.getWindow().getDecorView()))))
+                .perform(click());
+
+        // check that detail view is shown (can see member age)
+        onView(withText("22"))
                 .check(matches(isDisplayed()));
-    }
 
-    @Test
-    public void checkInMember_updatesLastCheckedInDate() throws Exception {
-        mActivity.setDetailFragment(String.valueOf(mMember.getId()));
-
-        onView(withText("Check-in")).perform(click());
-        onView(withText("Admitted as inpatient")).perform(click());
-
-        String dateString = new SimpleDateFormat("yyyy/MM/dd").format(Calendar.getInstance().getTime());
-        onView(withId(R.id.member_last_check_in)).check(matches(withText(dateString)));
     }
 
     private Member createAndPersistUser() throws SQLException {
         DatabaseHelper.init(mActivity.getBaseContext());
+        TableUtils.clearTable(DatabaseHelper.getHelper().getConnectionSource(), Member.class);
         Member member = new Member();
-        member.setName("Foo");
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -24);
-        member.setBirthdate(cal.getTime());
+        member.setId("3293-3249-9348");
+        member.setCardId("RWI8581734");
+        member.setName("Foo Bar");
+        member.setAge(22);
         MemberDao.create(member);
         return member;
     }

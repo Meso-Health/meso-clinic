@@ -3,6 +3,7 @@
     <string name="main_activity_label">Universal Health Project</string>
     <string name="search_hint">Search patient name or ID</string>
     <string name="member_photo_content_description">Member photo</string>
-    <string name="check_in_cta">Check-in</string>
+    <string name="create_encounter">Create encounter</string>
     <string name="barcode_button">Scan barcode</string>
+    <string name="encounter_info">Encounter</string>
 </resources>

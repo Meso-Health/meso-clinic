@@ -14,7 +14,7 @@ import com.rollbar.android.Rollbar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.watsi.uhp.database.CheckInDao;
+import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.MemberDao;
 
 import java.io.ByteArrayOutputStream;
@@ -35,8 +35,6 @@ public class Member {
     public static final String FIELD_NAME_AGE = "age";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
-
-    private enum GenderEnum { M, F }
 
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
@@ -77,6 +75,10 @@ public class Member {
         return this.mId;
     }
 
+    public void setId(String id) {
+        this.mId = id;
+    }
+
     public long getIdAsLong() {
         return Long.valueOf(getId().hashCode());
     }
@@ -85,8 +87,16 @@ public class Member {
         return mCardId;
     }
 
+    public void setCardId(String cardId) {
+        this.mCardId = cardId;
+    }
+
     public int getAge() {
         return mAge;
+    }
+
+    public void setAge(int age) {
+        this.mAge = age;
     }
 
     public byte[] getPhoto() {
@@ -138,12 +148,12 @@ public class Member {
         }
     }
 
-    public CheckIn getLastCheckIn() throws SQLException {
+    public Encounter getLastEncounter() throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put(CheckIn.FIELD_NAME_MEMBER_ID, getId());
-        List<CheckIn> checkIns = CheckInDao.find(queryMap);
-        if (checkIns.size() > 0) {
-            return checkIns.get(0);
+        queryMap.put(Encounter.FIELD_NAME_MEMBER_ID, getId());
+        List<Encounter> encounters = EncounterDao.find(queryMap);
+        if (encounters.size() > 0) {
+            return encounters.get(0);
         } else {
             return null;
         }

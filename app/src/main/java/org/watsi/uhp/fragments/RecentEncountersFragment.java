@@ -14,10 +14,10 @@ import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.models.Member;
 
-public class RecentCheckInsFragment extends Fragment {
+public class RecentEncountersFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recent_check_ins, container, false);
+        View view = inflater.inflate(R.layout.fragment_recent_encounters, container, false);
         ListView listView = (ListView) view.findViewById(R.id.recent_members);
         ListAdapter adapter = new MemberAdapter(getContext());
         listView.setAdapter(adapter);

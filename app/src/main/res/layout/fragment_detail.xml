@@ -37,15 +37,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/member_last_check_in"
+            android:id="@+id/member_last_encounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/member_id"/>
     </RelativeLayout>
     <Button
-        android:id="@+id/check_in_button"
+        android:id="@+id/create_encounter"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:visibility="gone"
-        android:text="@string/check_in_cta" />
+        android:text="@string/create_encounter" />
 </LinearLayout>
