@@ -27,7 +27,7 @@ public class RecentEncountersFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Member member = (Member) parent.getItemAtPosition(position);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.setDetailFragment(String.valueOf(member.getId()), Encounter.IdMethodEnum.SEARCH);
+                activity.setDetailFragment(String.valueOf(member.getId()), Encounter.IdMethodEnum.RECENT);
             }
         });
 
