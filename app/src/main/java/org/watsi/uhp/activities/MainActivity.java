@@ -27,6 +27,7 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.RecentEncountersFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.services.RefreshMemberListService;
 
 public class MainActivity extends AppCompatActivity {
@@ -137,15 +138,16 @@ public class MainActivity extends AppCompatActivity {
             String memberId = intent.getDataString();
             Log.d("UHP", "intention memberId: " + memberId);
             if (memberId != null) {
-                setDetailFragment(memberId);
+                setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
             }
         }
     }
 
-    public void setDetailFragment(String memberId) {
+    public void setDetailFragment(String memberId, Encounter.IdMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);
+        bundle.putString("idMethod", idMethod.toString());
         detailFragment.setArguments(bundle);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
