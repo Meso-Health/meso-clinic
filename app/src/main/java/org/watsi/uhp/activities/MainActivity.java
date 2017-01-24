@@ -29,6 +29,9 @@ import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.services.RefreshMemberListService;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class MainActivity extends AppCompatActivity {
 
     private MenuItem mMenuItem;
@@ -38,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
         DatabaseHelper.init(getBaseContext());
+        try {
+            DatabaseHelper.loadBillables(getBaseContext());
+        } catch (SQLException | IOException e) {
+            Rollbar.reportException(e);
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
