@@ -28,6 +28,7 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         String memberId = getArguments().getString("memberId");
+        final String idMethod = getArguments().getString("idMethod");
 
         try {
             final Member member = MemberDao.findById(memberId);
@@ -60,10 +61,13 @@ public class DetailFragment extends Fragment {
             encounterButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FragmentTransaction transaction = getActivity()
-                            .getSupportFragmentManager()
-                            .beginTransaction();
-                    transaction.replace(R.id.fragment_container, new EncounterFragment());
+                    EncounterFragment encounterFragment = new EncounterFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("idMethod", idMethod);
+                    encounterFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, encounterFragment);
                     transaction.addToBackStack(null);
                     transaction.commit();
                 }

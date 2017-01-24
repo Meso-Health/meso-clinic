@@ -14,6 +14,9 @@ import android.widget.Spinner;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+
+import android.util.Log;
+
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 public class EncounterFragment extends Fragment {
 
     private Billable.DepartmentEnum selectedDepartment = null;
@@ -31,6 +35,8 @@ public class EncounterFragment extends Fragment {
     private Map<String,List<Billable>> filteredBillableMap = new HashMap<>();
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        String idMethod = getArguments().getString("idMethod");
+        Log.d("UHP", "intention memberId: " + idMethod);
         View view = inflater.inflate(R.layout.fragment_encounter, container, false);
 
         Spinner departmentSpinner = (Spinner) view.findViewById(R.id.department_spinner);

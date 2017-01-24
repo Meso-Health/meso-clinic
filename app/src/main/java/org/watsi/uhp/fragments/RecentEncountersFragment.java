@@ -12,6 +12,7 @@ import android.widget.ListView;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
 public class RecentEncountersFragment extends Fragment {
@@ -26,7 +27,7 @@ public class RecentEncountersFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Member member = (Member) parent.getItemAtPosition(position);
                 MainActivity activity = (MainActivity) getActivity();
-                activity.setDetailFragment(String.valueOf(member.getId()));
+                activity.setDetailFragment(String.valueOf(member.getId()), Encounter.IdMethodEnum.RECENT);
             }
         });
 
