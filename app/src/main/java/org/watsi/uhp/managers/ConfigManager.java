@@ -32,23 +32,24 @@ public class ConfigManager {
     }
 
     public static int getFacilityId(Activity activity) {
-        return Integer.parseInt(getConfigValue(FACILITY_ID, activity));
+        String facilityId = getConfigValue(FACILITY_ID, activity);
+        if (facilityId == null) {
+            return 0;
+        } else {
+            return Integer.parseInt(facilityId);
+        }
     }
 
     private static String getConfigValue(String key, Activity activity) {
-        String configValue = readConfig(activity).get(key);
-        if (key == null) {
-            throw new RuntimeException("must set ROLLBAR_API_KEY in res/xml/secret.xml");
-        }
-        return configValue;
+        return readConfig(activity).get(key);
     }
 
     private static Map<String,String> readConfig(Activity activity) {
         Map<String,String> configMap = new HashMap<>();
+        int eventType = -1;
         Resources res = activity.getResources();
         XmlResourceParser xrp = res.getXml(R.xml.secret);
 
-        int eventType = -1;
         try {
             while(eventType != XmlResourceParser.END_DOCUMENT) {
                 if (xrp.getEventType() == XmlResourceParser.START_TAG) {
@@ -63,7 +64,7 @@ public class ConfigManager {
                 eventType = xrp.getEventType();
             }
         } catch (XmlPullParserException | IOException e) {
-            Log.d("UHP", e.getMessage());
+            Log.w("UHP", e.getMessage());
             Rollbar.reportException(e);
         }
         return configMap;

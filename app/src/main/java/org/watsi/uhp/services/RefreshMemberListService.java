@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.rollbar.android.Rollbar;
 
@@ -34,30 +35,31 @@ public class RefreshMemberListService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (mFacilityId == null) {
-            mFacilityId = intent.getExtras().getInt("facilityId");
-        }
-        if (mUhpApi == null) {
+        mFacilityId = intent.getExtras().getInt("facilityId");
+        String apiHost = intent.getExtras().getString("apiHost");
+        if (apiHost == null) {
+            Log.w("UHP", "no api host provided, will not fetch data");
+        } else {
             mUhpApi = new Retrofit.Builder()
                     .baseUrl(intent.getExtras().getString("apiHost"))
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(UhpApi.class);
-        }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        Thread.sleep(SLEEP_TIME);
-                        fetchNewMemberData();
-                    } catch (IOException | SQLException | InterruptedException e) {
-                        Rollbar.reportException(e);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while(true){
+                        try {
+                            Thread.sleep(SLEEP_TIME);
+                            fetchNewMemberData();
+                        } catch (IOException | SQLException | InterruptedException e) {
+                            Rollbar.reportException(e);
+                        }
                     }
                 }
-            }
-        }).start();
+            }).start();
+        }
         return Service.START_REDELIVER_INTENT;
     }
 
