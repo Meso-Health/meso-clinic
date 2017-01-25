@@ -17,7 +17,7 @@ public class EncounterDao {
 
     private Dao<Encounter, Integer> mEncounterDao;
 
-    private static EncounterDao getInstance() {
+    private static synchronized EncounterDao getInstance() {
         return instance;
     }
 

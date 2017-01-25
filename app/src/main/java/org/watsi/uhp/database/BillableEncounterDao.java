@@ -15,7 +15,7 @@ public class BillableEncounterDao {
 
     private Dao<BillableEncounter, Integer> mBillableEncounterDao;
 
-    private static BillableEncounterDao getInstance() {
+    private static synchronized BillableEncounterDao getInstance() {
         return instance;
     }
 

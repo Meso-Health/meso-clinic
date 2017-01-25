@@ -21,7 +21,7 @@ public class MemberDao {
     private Dao<Member, Integer> mMemberDao;
     private String mLastModifiedAtString;
 
-    private static MemberDao getInstance() {
+    private static synchronized MemberDao getInstance() {
         return instance;
     }
 
