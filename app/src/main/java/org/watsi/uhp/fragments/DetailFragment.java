@@ -37,7 +37,7 @@ public class DetailFragment extends Fragment {
             TextView nameView = (TextView) view.findViewById(R.id.member_name);
             nameView.setText(member.getName());
             TextView ageView = (TextView) view.findViewById(R.id.member_age);
-            ageView.setText(String.valueOf(member.getAge()));
+            ageView.setText("Age - " + String.valueOf(member.getAge()));
 
             ImageView imageView = (ImageView) view.findViewById(R.id.member_photo);
             Bitmap photoBitmap = member.getPhotoBitmap();

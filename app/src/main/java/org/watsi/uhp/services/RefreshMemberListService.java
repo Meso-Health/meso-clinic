@@ -1,21 +1,25 @@
 package org.watsi.uhp.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.watsi.uhp.api.UhpApi;
+import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,16 +36,18 @@ public class RefreshMemberListService extends Service {
     private static int SLEEP_TIME = 10000;
     private UhpApi mUhpApi;
     private Integer mFacilityId;
+    private final List<Target> targets = new ArrayList<Target>();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        DatabaseHelper.init(getApplicationContext());
         mFacilityId = intent.getExtras().getInt("facilityId");
         String apiHost = intent.getExtras().getString("apiHost");
         if (apiHost == null) {
             Log.w("UHP", "no api host provided, will not fetch data");
         } else {
             mUhpApi = new Retrofit.Builder()
-                    .baseUrl(intent.getExtras().getString("apiHost"))
+                    .baseUrl(apiHost)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(UhpApi.class);
@@ -69,9 +75,25 @@ public class RefreshMemberListService extends Service {
         if (response.isSuccessful()) {
             EventBus.getDefault().post(new OfflineNotificationEvent(false));
             MemberDao.setLastModifiedAt(response.headers().get("last-modified"));
-            List<Member> members = response.body();
+            final List<Member> members = response.body();
             MemberDao.clear();
             MemberDao.create(members);
+            final Context context = getApplicationContext();
+            targets.clear();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (Member member : members) {
+                        try {
+                            Target target = member.createTarget();
+                            targets.add(target);
+                            member.fetchAndSetPhotoFromUrl(target, context);
+                        } catch (IOException | SQLException e) {
+                            Rollbar.reportException(e);
+                        }
+                    }
+                }
+            }).start();
         } else {
             if (response.code() == 304) {
                 EventBus.getDefault().post(new OfflineNotificationEvent(false));

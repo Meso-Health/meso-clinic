@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -111,16 +113,15 @@ public class Member {
         return mPhotoUrl;
     }
 
-    public void fetchAndSetPhotoFromUrl(Context context) throws IOException, SQLException {
+    public Target createTarget() {
         final Member self = this;
-
-        Target target = new Target() {
+        return new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 setPhoto(stream.toByteArray());
-                try {
+                 try {
                     MemberDao.update(self);
                 } catch (SQLException e) {
                     Rollbar.reportException(e);
@@ -134,10 +135,20 @@ public class Member {
 
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-                Log.d("UHP", "on prepare load");
+                // no-op
             }
         };
-        Picasso.with(context).load(mPhotoUrl).into(target);
+    }
+
+    public void fetchAndSetPhotoFromUrl(Target target, Context context) throws IOException, SQLException {
+        final Context finalContext = context;
+        final Target finalTarget = target;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Picasso.with(finalContext).load(getPhotoUrl()).into(finalTarget);
+            }
+        });
     }
 
     public Bitmap getPhotoBitmap() {
