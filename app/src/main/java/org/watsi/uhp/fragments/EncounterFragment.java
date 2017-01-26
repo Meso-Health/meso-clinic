@@ -3,6 +3,7 @@ package org.watsi.uhp.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +21,19 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
 
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.BillableAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.database.BillableEncounterDao;
+import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.BillableEncounter;
+import org.watsi.uhp.models.Encounter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +52,7 @@ public class EncounterFragment extends Fragment {
     private final Map<String, List<Billable>> filteredBillablesMap = new HashMap<>();
     private BillableAdapter billableAdapter;
     private List<Billable> billables;
+    private Button createEncounterButton;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         String idMethod = getArguments().getString("idMethod");
@@ -95,6 +104,34 @@ public class EncounterFragment extends Fragment {
         billableAdapter = new BillableAdapter(getContext(), android.R.layout.simple_list_item_2, billables);
         billablesListView.setAdapter(billableAdapter);
 
+        createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        createEncounterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: this should be in a transaction
+                Encounter encounter = new Encounter();
+                encounter.setIdMethod(Encounter.IdMethodEnum.BARCODE);
+                encounter.setDate(Calendar.getInstance().getTime());
+                try {
+                    encounter.setMember(MemberDao.all().get(0));
+                    EncounterDao.create(encounter);
+                    BillableDao.create(billables);
+                    for (Billable billable : billables) {
+                        BillableEncounter billableEncounter = new BillableEncounter(billable, encounter);
+                        BillableEncounterDao.create(billableEncounter);
+                    }
+                } catch (SQLException e) {
+                    Rollbar.reportException(e);
+                }
+                MainActivity activity = (MainActivity) getActivity();
+                RecentEncountersFragment fragment = new RecentEncountersFragment();
+                FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
         return view;
     }
 
@@ -115,7 +152,6 @@ public class EncounterFragment extends Fragment {
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
-        Log.d("UHP", "billables loaded: " + filteredBillablesMap.size());
         return filteredBillablesMap;
     }
 
@@ -201,6 +237,9 @@ public class EncounterFragment extends Fragment {
                 selectedBillable.setCategory(selectedCategory);
             }
             billableAdapter.add(selectedBillable);
+            if (createEncounterButton.getVisibility() == View.GONE) {
+                createEncounterButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 }
