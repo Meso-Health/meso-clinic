@@ -13,13 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
 
+import org.watsi.uhp.adapters.BillableAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 
@@ -41,6 +42,8 @@ public class EncounterFragment extends Fragment {
     private AutoCompleteTextView productSearch;
     private View currentProductView;
     private final Map<String, List<Billable>> filteredBillablesMap = new HashMap<>();
+    private BillableAdapter billableAdapter;
+    private List<Billable> billables;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         String idMethod = getArguments().getString("idMethod");
@@ -85,7 +88,12 @@ public class EncounterFragment extends Fragment {
         categorySpinner.setOnItemSelectedListener(listener);
 
         final Button selectBillableButton = (Button) view.findViewById(R.id.enter_billable);
-        selectBillableButton.setOnClickListener(new CreateBillableListener(view));
+        selectBillableButton.setOnClickListener(new CreateBillableListener());
+
+        ListView billablesListView = (ListView) view.findViewById(R.id.billables_list);
+        billables = new ArrayList<>();
+        billableAdapter = new BillableAdapter(getContext(), android.R.layout.simple_list_item_2, billables);
+        billablesListView.setAdapter(billableAdapter);
 
         return view;
     }
@@ -112,7 +120,7 @@ public class EncounterFragment extends Fragment {
     }
 
     private ArrayAdapter getProductAdapter(Map<String, List<Billable>> billableMap) {
-        SortedSet<String> filteredBillableDisplayStrings = new TreeSet<String>(billableMap.keySet());
+        SortedSet<String> filteredBillableDisplayStrings = new TreeSet<>(billableMap.keySet());
         // TODO: check that creation of new adapter each time does not have memory implications
         return new ArrayAdapter<>(
                 getContext(),
@@ -183,12 +191,6 @@ public class EncounterFragment extends Fragment {
 
     private class CreateBillableListener implements View.OnClickListener {
 
-        private LinearLayout parentLayout;
-
-        private CreateBillableListener(LinearLayout view) {
-            parentLayout = view;
-        }
-
         @Override
         public void onClick(View v) {
             Billable selectedBillable = getSelectedBillable(currentProductView);
@@ -198,9 +200,7 @@ public class EncounterFragment extends Fragment {
                 selectedBillable.setDepartment(selectedDepartment);
                 selectedBillable.setCategory(selectedCategory);
             }
-            TextView newBillableView = new TextView(getContext());
-            newBillableView.setText(selectedBillable.getDisplayName());
-            parentLayout.addView(newBillableView);
+            billableAdapter.add(selectedBillable);
         }
     }
 }
