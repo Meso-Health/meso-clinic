@@ -23,11 +23,7 @@ public class Billable {
     }
     public enum DepartmentEnum {
         ART_CLINIC,
-        ANTE_NATAL,
-        IMMUNISATION,
-        MATERNITY,
-        FAMILY_PLANNING,
-        POST_NATAL,
+        ANTENATAL,
         UNSPECIFIED
     }
 

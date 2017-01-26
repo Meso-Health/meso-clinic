@@ -90,14 +90,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         categoryMap.put("Services", Billable.CategoryEnum.SERVICES);
 
         Map<String, Billable.DepartmentEnum> departmentMap = new HashMap<>();
-        departmentMap.put("Ante-natal", Billable.DepartmentEnum.ANTE_NATAL);
-        departmentMap.put("ART Clinic", Billable.DepartmentEnum.ART_CLINIC);
-        departmentMap.put("Natural family planning", Billable.DepartmentEnum.FAMILY_PLANNING);
-        departmentMap.put("Immunisation", Billable.DepartmentEnum.IMMUNISATION);
-        departmentMap.put("Maternity", Billable.DepartmentEnum.MATERNITY);
-        departmentMap.put("Post-natal", Billable.DepartmentEnum.POST_NATAL);
+        departmentMap.put("Antenatal", Billable.DepartmentEnum.ANTENATAL);
+        departmentMap.put("ART", Billable.DepartmentEnum.ART_CLINIC);
         departmentMap.put("", Billable.DepartmentEnum.UNSPECIFIED);
-        departmentMap.put("?", Billable.DepartmentEnum.UNSPECIFIED);
 
         // parse CSV
         List<Billable> billables = new ArrayList<>();
@@ -110,13 +105,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 String[] row = csvLine.split(",");
                 Billable billable = new Billable();
                 billable.setCategory(categoryMap.get(row[0]));
-                billable.setName(row[1]);
-                String unit = row[4];
-                if (unit.length() > 0 && !"?".equals(unit)) {
+                billable.setName(row[1].trim());
+                String unit = row[2];
+                if (unit.length() > 0) {
                     billable.setUnit(unit);
-                    billable.setAmount(row[3]);
                 }
-                billable.setDepartment(departmentMap.get(row[5]));
+                String amount = row[3];
+                if (amount.length() > 0) {
+                    billable.setAmount(amount);
+                }
+                billable.setDepartment(departmentMap.get(row[4]));
+                int price = 0;
+                if (row[5].length() > 0) {
+                    price = Integer.parseInt(row[5]);
+                }
+                billable.setPrice(price);
                 billables.add(billable);
             }
         } catch (IOException ex) {
