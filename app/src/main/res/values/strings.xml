@@ -9,4 +9,5 @@
     <string name="encounter_department_label">Department</string>
     <string name="encounter_category_label">Category</string>
     <string name="encounter_product_label">Product</string>
+    <string name="enter_billable_button">Select</string>
 </resources>

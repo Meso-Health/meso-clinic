@@ -1,10 +1,7 @@
 package org.watsi.uhp.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -42,13 +39,6 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        MainActivity activity = (MainActivity) getActivity();
-        // TODO: this permission check is just used for debugging
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("UHP", "camera permission NOT granted");
-        } else {
-            Log.d("UHP", "camera permission granted");
-        }
         try {
             mCameraSource.start(holder);
         } catch (IOException | SecurityException e) {

@@ -7,7 +7,9 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" >
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
 
     <TextView
         android:layout_width="fill_parent"
@@ -32,12 +34,29 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/encounter_product_label"/>
+        android:text="@string/encounter_product_label" />
 
-    <AutoCompleteTextView
-        android:id="@+id/encounter_product_search"
+    <Spinner
+        android:id="@+id/services_spinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionNext"
+        android:visibility="gone" />
+
+    <Spinner
+        android:id="@+id/labs_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <AutoCompleteTextView
+        android:id="@+id/drug_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:completionThreshold="3" />
+
+    <Button
+        android:id="@+id/enter_billable"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/enter_billable_button" />
 </LinearLayout>
