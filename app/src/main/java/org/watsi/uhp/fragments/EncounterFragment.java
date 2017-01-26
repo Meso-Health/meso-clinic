@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,10 +52,11 @@ public class EncounterFragment extends Fragment {
     private BillableAdapter billableAdapter;
     private List<Billable> billables;
     private Button createEncounterButton;
+    private Encounter.IdMethodEnum idMethod;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        String idMethod = getArguments().getString("idMethod");
-        Log.d("UHP", "intention memberId: " + idMethod);
+        idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
+
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
         Spinner departmentSpinner = (Spinner) view.findViewById(R.id.department_spinner);
@@ -112,6 +112,7 @@ public class EncounterFragment extends Fragment {
                 Encounter encounter = new Encounter();
                 encounter.setIdMethod(Encounter.IdMethodEnum.BARCODE);
                 encounter.setDate(Calendar.getInstance().getTime());
+                encounter.setIdMethod(idMethod);
                 try {
                     encounter.setMember(MemberDao.all().get(0));
                     EncounterDao.create(encounter);
