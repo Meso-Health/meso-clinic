@@ -11,9 +11,41 @@
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/inpatient_outpatient_select_radio"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+        <RadioButton android:id="@+id/radio_outpatient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/outpatient_radio_label"
+            android:layout_weight="1" />
+        <RadioButton android:id="@+id/radio_ninjas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/inpatient_radio_label"
+            android:layout_weight="1" />
+    </RadioGroup>
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/encounter_form_margin"
+        android:text="@string/encounter_opd_ipd_label"/>
+
+    <EditText
+        android:id="@+id/encounter_opd_ipd"
+        android:inputType="number"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/encounter_form_margin"
         android:text="@string/encounter_category_label"/>
 
     <Spinner
@@ -24,48 +56,59 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/encounter_form_margin"
         android:text="@string/encounter_product_label" />
 
-    <Spinner
-        android:id="@+id/services_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <Spinner
-        android:id="@+id/labs_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <AutoCompleteTextView
-        android:id="@+id/drug_search"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:completionThreshold="3" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+        <Spinner
+            android:id="@+id/services_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/labs_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:visibility="gone" />
+
+        <AutoCompleteTextView
+            android:id="@+id/drug_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:completionThreshold="3" />
 
         <Button
             android:id="@+id/enter_billable"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/enter_billable_button"
-            android:layout_alignParentStart="true"/>
+            android:layout_weight="1"
+            android:text="@string/enter_billable_button" />
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/save_encounter"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/save_encounter_button"
-            android:layout_alignParentEnd="true"
-            android:visibility="gone"/>
-    </RelativeLayout>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/encounter_form_margin"
+        android:text="@string/encounter_product_list_label" />
 
     <ListView
         android:id="@+id/billables_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/save_encounter"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/save_encounter_button"
+        android:visibility="gone"/>
 </LinearLayout>

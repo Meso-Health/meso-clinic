@@ -7,48 +7,60 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
+import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 
 import java.util.List;
 
 public class BillableAdapter extends ArrayAdapter<Billable> {
 
-    public BillableAdapter(Context context, int resource, List<Billable> billableList) {
-        super(context, resource, billableList);
+    private Button mCreateEncounterButton;
+
+    public BillableAdapter(Context context, List<Billable> billableList, Button createEncounterButton) {
+        super(context, R.layout.item_billable_list, billableList);
+        this.mCreateEncounterButton = createEncounterButton;
     }
 
     @Override
     @NonNull
     public View getView(int position, View convertView,@NonNull ViewGroup parent) {
         ViewHolder viewHolder;
+
         if (convertView == null) {
             LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-            convertView = layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+            convertView = layoutInflater.inflate(R.layout.item_billable_list, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.titleView = (TextView) convertView.findViewById(android.R.id.text1);
-            viewHolder.subTitleView = (TextView) convertView.findViewById(android.R.id.text2);
+            viewHolder.billableName = (TextView) convertView.findViewById(R.id.billable_name);
+            viewHolder.removeBillableBtn = (Button) convertView.findViewById(R.id.remove_billable_btn);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Billable billable = getItem(position);
+        final Billable billable = getItem(position);
         if (billable != null) {
-            viewHolder.titleView.setText(billable.getName());
-            if (billable.getUnit() != null) {
-                viewHolder.subTitleView.setText(billable.getUnit() + " " + billable.getAmount());
-            }
+            viewHolder.billableName.setText(billable.getName());
+            viewHolder.removeBillableBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    remove(billable);
+                    if (isEmpty()) {
+                        mCreateEncounterButton.setVisibility(View.GONE);
+                    }
+                }
+            });
         }
 
         return convertView;
     }
 
     private static class ViewHolder {
-        TextView titleView;
-        TextView subTitleView;
+        TextView billableName;
+        Button removeBillableBtn;
     }
 }

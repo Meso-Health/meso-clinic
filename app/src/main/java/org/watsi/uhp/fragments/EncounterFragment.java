@@ -4,17 +4,21 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.rollbar.android.Rollbar;
 
@@ -58,6 +62,19 @@ public class EncounterFragment extends Fragment {
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
+        final EditText opdIpdInput = (EditText) view.findViewById(R.id.encounter_opd_ipd);
+        opdIpdInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                    opdIpdInput.clearFocus();
+                }
+                return false;
+            }
+        });
+
         Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
@@ -88,9 +105,6 @@ public class EncounterFragment extends Fragment {
         selectBillableButton.setOnClickListener(new CreateBillableListener());
 
         ListView billablesListView = (ListView) view.findViewById(R.id.billables_list);
-        billables = new ArrayList<>();
-        billableAdapter = new BillableAdapter(getContext(), android.R.layout.simple_list_item_2, billables);
-        billablesListView.setAdapter(billableAdapter);
 
         createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
         createEncounterButton.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +136,10 @@ public class EncounterFragment extends Fragment {
             }
         });
 
+        billables = new ArrayList<>();
+        billableAdapter = new BillableAdapter(getContext(), billables, createEncounterButton);
+        billablesListView.setAdapter(billableAdapter);
+
         return view;
     }
 
@@ -131,6 +149,10 @@ public class EncounterFragment extends Fragment {
             List<Billable> filteredBillables =
                     BillableDao.findByCategory(category);
             for (Billable billable : filteredBillables) {
+                if (billable.getName().equals("In-Patient")) {
+                    // In-patient is determined by radio button selection
+                    continue;
+                }
                 if (filteredBillablesMap.containsKey(billable.getDisplayName())) {
                     filteredBillablesMap.get(billable.getDisplayName()).add(billable);
                 } else {
