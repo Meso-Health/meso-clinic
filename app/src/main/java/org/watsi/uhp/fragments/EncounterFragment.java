@@ -42,7 +42,6 @@ import java.util.TreeSet;
 
 public class EncounterFragment extends Fragment {
 
-    private Billable.DepartmentEnum selectedDepartment = null;
     private Billable.CategoryEnum selectedCategory = null;
     private Spinner servicesSpinner;
     private Spinner labsSpinner;
@@ -58,16 +57,6 @@ public class EncounterFragment extends Fragment {
         idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
-
-        Spinner departmentSpinner = (Spinner) view.findViewById(R.id.department_spinner);
-        final ArrayAdapter departmentAdapter = new ArrayAdapter<>(
-                getContext(),
-                android.R.layout.simple_spinner_item,
-                Billable.DepartmentEnum.values()
-        );
-        departmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        departmentSpinner.setAdapter(departmentAdapter);
-        departmentSpinner.setTag("department");
 
         Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
@@ -92,8 +81,7 @@ public class EncounterFragment extends Fragment {
             }
         });
 
-        CategoryDepartmentListener listener = new CategoryDepartmentListener();
-        departmentSpinner.setOnItemSelectedListener(listener);
+        CategoryListener listener = new CategoryListener();
         categorySpinner.setOnItemSelectedListener(listener);
 
         final Button selectBillableButton = (Button) view.findViewById(R.id.enter_billable);
@@ -114,6 +102,7 @@ public class EncounterFragment extends Fragment {
                 encounter.setDate(Calendar.getInstance().getTime());
                 encounter.setIdMethod(idMethod);
                 try {
+                    // TODO: get actual member instead of arbitrarily selecting first
                     encounter.setMember(MemberDao.all().get(0));
                     EncounterDao.create(encounter);
                     BillableDao.create(billables);
@@ -136,11 +125,11 @@ public class EncounterFragment extends Fragment {
         return view;
     }
 
-    private Map<String,List<Billable>> getFilteredBillableMap(Billable.DepartmentEnum department, Billable.CategoryEnum category) {
+    private Map<String,List<Billable>> getFilteredBillableMap(Billable.CategoryEnum category) {
         filteredBillablesMap.clear();
         try {
             List<Billable> filteredBillables =
-                    BillableDao.findByDepartmentAndCategory(department, category);
+                    BillableDao.findByCategory(category);
             for (Billable billable : filteredBillables) {
                 if (filteredBillablesMap.containsKey(billable.getDisplayName())) {
                     filteredBillablesMap.get(billable.getDisplayName()).add(billable);
@@ -178,46 +167,40 @@ public class EncounterFragment extends Fragment {
         if (matches == null) {
             return null;
         } else {
-            // TODO: find billable with matching service
+            // TODO: if multiple matches, find billable based on department
             return matches.get(0);
         }
     }
 
-    private class CategoryDepartmentListener implements AdapterView.OnItemSelectedListener {
+    private class CategoryListener implements AdapterView.OnItemSelectedListener {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (parent.getTag().equals("category")) {
-                selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
-                servicesSpinner.setVisibility(View.GONE);
-                labsSpinner.setVisibility(View.GONE);
-                productSearch.setVisibility(View.GONE);
-                switch (selectedCategory) {
-                    case SERVICES:
-                        currentProductView = servicesSpinner;
-                        break;
-                    case LABS:
-                        currentProductView = labsSpinner;
-                        break;
-                    case DRUGS_AND_SUPPLIES:
-                        currentProductView = productSearch;
-                        break;
-                }
-            } else {
-                selectedDepartment = (Billable.DepartmentEnum) parent.getItemAtPosition(position);
+            selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
+            servicesSpinner.setVisibility(View.GONE);
+            labsSpinner.setVisibility(View.GONE);
+            productSearch.setVisibility(View.GONE);
+            switch (selectedCategory) {
+                case SERVICES:
+                    currentProductView = servicesSpinner;
+                    break;
+                case LABS:
+                    currentProductView = labsSpinner;
+                    break;
+                case DRUGS_AND_SUPPLIES:
+                    currentProductView = productSearch;
+                    break;
             }
 
-            if (selectedCategory != null && selectedDepartment != null) {
-                Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedDepartment, selectedCategory);
-                ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
-                // AutoCompleteTextView & Spinner are not descendants of same adapter interface, so forced to cast
-                if (Billable.CategoryEnum.DRUGS_AND_SUPPLIES.equals(selectedCategory)) {
-                    ((AutoCompleteTextView) currentProductView).setAdapter(adapter);
-                } else {
-                    ((Spinner) currentProductView).setAdapter(adapter);
-                }
-                currentProductView.setVisibility(View.VISIBLE);
+            Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
+            ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
+            // AutoCompleteTextView & Spinner are not descendants of same adapter interface, so forced to cast
+            if (Billable.CategoryEnum.DRUGS_AND_SUPPLIES.equals(selectedCategory)) {
+                ((AutoCompleteTextView) currentProductView).setAdapter(adapter);
+            } else {
+                ((Spinner) currentProductView).setAdapter(adapter);
             }
+            currentProductView.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -234,7 +217,6 @@ public class EncounterFragment extends Fragment {
             if (selectedBillable == null) {
                 selectedBillable = new Billable();
                 selectedBillable.setName(productSearch.getEditableText().toString());
-                selectedBillable.setDepartment(selectedDepartment);
                 selectedBillable.setCategory(selectedCategory);
             }
             billableAdapter.add(selectedBillable);

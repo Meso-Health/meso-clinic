@@ -1,12 +1,13 @@
 package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * POJO helper for querying Billables
@@ -36,22 +37,13 @@ public class BillableDao {
         return mBillableDao;
     }
 
-    public static List<Billable> all() throws SQLException {
-        return getInstance().getBillableDao().queryForAll();
-    }
-
     public static void create(List<Billable> billables) throws SQLException {
         getInstance().getBillableDao().create(billables);
     }
 
-    public static List<Billable> findByDepartmentAndCategory(Billable.DepartmentEnum department, Billable.CategoryEnum category) throws SQLException {
-        PreparedQuery<Billable> pq = getInstance().getBillableDao()
-                .queryBuilder()
-                .where()
-                .eq(Billable.FIELD_NAME_CATEGORY, category)
-                .and()
-                .in(Billable.FIELD_NAME_DEPARTMENT, department, Billable.DepartmentEnum.UNSPECIFIED)
-                .prepare();
-        return getInstance().getBillableDao().query(pq);
+    public static List<Billable> findByCategory(Billable.CategoryEnum category) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("category", category);
+        return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 }

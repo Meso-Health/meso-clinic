@@ -14,16 +14,6 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/encounter_department_label"/>
-
-    <Spinner
-        android:id="@+id/department_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:text="@string/encounter_category_label"/>
 
     <Spinner
@@ -63,14 +53,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/enter_billable_button"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentStart="true"/>
 
         <Button
             android:id="@+id/save_encounter"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/save_encounter_button"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:visibility="gone"/>
     </RelativeLayout>
 
