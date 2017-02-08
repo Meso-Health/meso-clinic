@@ -70,6 +70,7 @@ public class RefreshMemberListService extends Service {
     }
 
     private void fetchNewMemberData() throws IOException, SQLException {
+        Log.d("UHP", "fetching new member data");
         Call<List<Member>> request = mUhpApi.members(MemberDao.lastModifiedString(), mFacilityId);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
