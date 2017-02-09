@@ -1,114 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/encounter_fragment"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:focusable="true"
-    android:focusableInTouchMode="true" >
+    android:layout_height="match_parent" >
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/inpatient_outpatient_select_radio"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2" >
-        <RadioButton android:id="@+id/radio_outpatient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/outpatient_radio_label"
-            android:layout_weight="1" />
-        <RadioButton android:id="@+id/radio_ninjas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/inpatient_radio_label"
-            android:layout_weight="1" />
-    </RadioGroup>
+        android:layout_height="wrap_content" >
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:focusable="true"
+            android:focusableInTouchMode="true" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/encounter_form_margin"
-        android:text="@string/encounter_opd_ipd_label"/>
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/inpatient_outpatient_select_radio"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2" >
+                <RadioButton android:id="@+id/radio_outpatient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/outpatient_radio_label"
+                    android:layout_weight="1" />
+                <RadioButton android:id="@+id/radio_ninjas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/inpatient_radio_label"
+                    android:layout_weight="1" />
+            </RadioGroup>
 
-    <EditText
-        android:id="@+id/encounter_opd_ipd"
-        android:inputType="number"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:imeOptions="actionDone" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/encounter_form_margin"
+                android:text="@string/encounter_opd_ipd_label"/>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/encounter_form_margin"
-        android:text="@string/encounter_category_label"/>
+            <EditText
+                android:id="@+id/encounter_opd_ipd"
+                android:inputType="number"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone" />
 
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/encounter_form_margin"
+                android:text="@string/encounter_category_label"/>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/encounter_form_margin"
-        android:text="@string/encounter_product_label" />
+            <android.support.v7.widget.SearchView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="5">
+            </android.support.v7.widget.SearchView>
 
-        <Spinner
-            android:id="@+id/services_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:visibility="gone" />
+            <Spinner
+                android:id="@+id/category_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
 
-        <Spinner
-            android:id="@+id/labs_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:visibility="gone" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/encounter_form_margin"
+                android:text="@string/encounter_product_label" />
 
-        <AutoCompleteTextView
-            android:id="@+id/drug_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:completionThreshold="3" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5">
 
-        <Button
-            android:id="@+id/enter_billable"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/enter_billable_button" />
-    </LinearLayout>
+                <Spinner
+                    android:id="@+id/services_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:visibility="gone" />
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/encounter_form_margin"
-        android:text="@string/encounter_product_list_label" />
+                <Spinner
+                    android:id="@+id/labs_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:visibility="gone" />
 
-    <ListView
-        android:id="@+id/billables_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+                <AutoCompleteTextView
+                    android:id="@+id/drug_search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:completionThreshold="3" />
 
-    <Button
-        android:id="@+id/save_encounter"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/save_encounter_button"
-        android:visibility="gone"/>
+                <Button
+                    android:id="@+id/enter_billable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/enter_billable_button" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/encounter_form_margin"
+                android:text="@string/encounter_product_list_label" />
+
+            <ListView
+                android:id="@+id/billables_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/save_encounter"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/save_encounter_button"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
