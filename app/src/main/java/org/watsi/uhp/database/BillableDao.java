@@ -1,6 +1,7 @@
 package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.models.Billable;
 
@@ -45,5 +46,14 @@ public class BillableDao {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put("category", category);
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
+    }
+
+    public static List<Billable> withNameLike(String query) throws SQLException {
+        PreparedQuery<Billable> pq = getInstance().getBillableDao()
+                .queryBuilder()
+                .where()
+                .like(Billable.FIELD_NAME_NAME, "%" + query + "%")
+                .prepare();
+        return getInstance().getBillableDao().query(pq);
     }
 }

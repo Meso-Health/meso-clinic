@@ -57,9 +57,7 @@ public class MemberContentProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(@NonNull Uri uri) {
-        return null;
-    }
+    public String getType(@NonNull Uri uri) { return null; }
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
