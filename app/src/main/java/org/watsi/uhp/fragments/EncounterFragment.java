@@ -62,18 +62,18 @@ public class EncounterFragment extends Fragment {
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
-        final EditText opdIpdInput = (EditText) view.findViewById(R.id.encounter_opd_ipd);
-        opdIpdInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE){
-                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                    opdIpdInput.clearFocus();
-                }
-                return false;
-            }
-        });
+//        final EditText opdIpdInput = (EditText) view.findViewById(R.id.encounter_opd_ipd);
+//        opdIpdInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if(actionId == EditorInfo.IME_ACTION_DONE){
+//                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    in.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+//                    opdIpdInput.clearFocus();
+//                }
+//                return false;
+//            }
+//        });
 
         Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
@@ -191,6 +191,15 @@ public class EncounterFragment extends Fragment {
         } else {
             // TODO: if multiple matches, find billable based on department
             return matches.get(0);
+        }
+    }
+
+    public void addSearchSuggestionToBillableList (String billableId) {
+        try {
+            Billable billable = BillableDao.findById(billableId);
+            billableAdapter.add(billable);
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
         }
     }
 

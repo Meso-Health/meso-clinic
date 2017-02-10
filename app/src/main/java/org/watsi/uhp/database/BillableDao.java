@@ -43,6 +43,12 @@ public class BillableDao {
         getInstance().getBillableDao().create(billables);
     }
 
+    public static Billable findById(String billableId) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("id", billableId);
+        return getInstance().getBillableDao().queryForFieldValues(queryMap).get(0);
+    }
+
     public static List<Billable> findByCategory(Billable.CategoryEnum category) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put("category", category);
