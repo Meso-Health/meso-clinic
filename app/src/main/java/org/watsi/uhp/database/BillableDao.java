@@ -6,6 +6,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +49,31 @@ public class BillableDao {
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 
+    public static List<Billable> findByName(String name) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("name", name);
+        return getInstance().getBillableDao().queryForFieldValues(queryMap);
+    }
+
     public static List<Billable> withNameLike(String query) throws SQLException {
         PreparedQuery<Billable> pq = getInstance().getBillableDao()
                 .queryBuilder()
                 .where()
                 .like(Billable.FIELD_NAME_NAME, "%" + query + "%")
                 .prepare();
+        return getInstance().getBillableDao().query(pq);
+    }
+
+    public static List<Billable> allBillables() throws SQLException {
+        return getInstance().getBillableDao().queryForAll();
+    }
+
+    public static List<Billable> allNames() throws SQLException {
+        PreparedQuery<Billable> pq = getInstance().getBillableDao()
+                .queryBuilder()
+                .selectColumns(Billable.FIELD_NAME_NAME)
+                .prepare();
+
         return getInstance().getBillableDao().query(pq);
     }
 }

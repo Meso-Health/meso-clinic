@@ -12,8 +12,20 @@ import android.support.annotation.NonNull;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 
+import java.sql.Array;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
+
+import static android.R.id.list;
 
 public class BillableContentProvider extends ContentProvider {
 
@@ -27,16 +39,40 @@ public class BillableContentProvider extends ContentProvider {
         String query = uri.getLastPathSegment().toLowerCase();
 
         String[] cursorColumns = {
-                SearchManager.SUGGEST_COLUMN_TEXT_1
+                BaseColumns._ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2
         };
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         try {
-            List<Billable> matchingBillables = BillableDao.withNameLike(query);
+            List<Billable> allBillableNames = BillableDao.allNames();
+
+            List<String> names = new ArrayList<String>(allBillableNames.size());
+            for (Billable billable : allBillableNames) {
+                names.add(billable != null ? billable.getName() : null);
+            }
+
+            Set<String> uniqueNames = new HashSet<String>(names);
+
+            List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, (Collection<String>) uniqueNames, 5);
+
+            ArrayList<Billable> matchingBillables = new ArrayList<Billable>();
+            for (ExtractedResult result : topMatchingNames) {
+                String name = result.getString();
+                matchingBillables.addAll(BillableDao.findByName(name));
+            }
 
             for (Billable billable : matchingBillables) {
+                String billableDetails = new String();
+                if (billable.getAmount() != null) billableDetails += billable.getAmount() + " ";
+                if (billable.getUnit() != null) billableDetails += billable.getUnit();
+                if (billable.getDepartment() != Billable.DepartmentEnum.UNSPECIFIED) billableDetails += " - " + billable.getDepartment();
+
                 Object[] searchSuggestion = {
-                        billable.getName()
+                        billable.getId(),
+                        billable.getName(),
+                        billableDetails
                 };
                 resultsCursor.addRow(searchSuggestion);
             }
