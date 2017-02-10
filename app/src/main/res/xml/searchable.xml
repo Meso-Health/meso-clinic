@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/encounter_search_label"
     android:hint="@string/encounter_search_hint"
-    android:searchSuggestThreshold="1"
+    android:searchSuggestThreshold="3"
     android:searchSuggestIntentAction="android.intent.action.SEARCH"
     android:singleLine = "true"
     android:searchSuggestAuthority="org.watsi.uhp.provider">

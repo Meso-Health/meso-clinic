@@ -55,7 +55,7 @@ public class BillableContentProvider extends ContentProvider {
 
             Set<String> uniqueNames = new HashSet<String>(names);
 
-            List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, (Collection<String>) uniqueNames, 5);
+            List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, (Collection<String>) uniqueNames, 5, 50);
 
             ArrayList<Billable> matchingBillables = new ArrayList<Billable>();
             for (ExtractedResult result : topMatchingNames) {
