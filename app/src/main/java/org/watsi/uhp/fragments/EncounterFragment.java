@@ -1,29 +1,24 @@
 package org.watsi.uhp.fragments;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.BillableAdapter;
 import org.watsi.uhp.database.BillableDao;
@@ -49,7 +44,7 @@ public class EncounterFragment extends Fragment {
     private Billable.CategoryEnum selectedCategory = null;
     private Spinner servicesSpinner;
     private Spinner labsSpinner;
-    private AutoCompleteTextView productSearch;
+    private SearchView drugSearch;
     private View currentProductView;
     private final Map<String, List<Billable>> filteredBillablesMap = new HashMap<>();
     private BillableAdapter billableAdapter;
@@ -87,19 +82,14 @@ public class EncounterFragment extends Fragment {
 
         servicesSpinner = (Spinner) view.findViewById(R.id.services_spinner);
         labsSpinner = (Spinner) view.findViewById(R.id.labs_spinner);
-
-        productSearch = (AutoCompleteTextView) view.findViewById(R.id.drug_search);
-        productSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                // dismisses keyboard when product is selected from autocomplete suggestions
-                InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                in.hideSoftInputFromWindow(arg1.getApplicationWindowToken(), 0);
-            }
-        });
+        drugSearch = (SearchView) view.findViewById(R.id.drug_search);
 
         CategoryListener listener = new CategoryListener();
         categorySpinner.setOnItemSelectedListener(listener);
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) view.findViewById(R.id.drug_search);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
         final Button selectBillableButton = (Button) view.findViewById(R.id.enter_billable);
         selectBillableButton.setOnClickListener(new CreateBillableListener());
@@ -179,12 +169,8 @@ public class EncounterFragment extends Fragment {
 
     private Billable getSelectedBillable(View view) {
         String displayString;
-        if (Billable.CategoryEnum.DRUGS_AND_SUPPLIES.equals(selectedCategory)) {
-            displayString = ((AutoCompleteTextView) view).getEditableText().toString();
-        } else {
-            Spinner spinner = (Spinner) view;
-            displayString = (String) spinner.getSelectedItem();
-        }
+        Spinner spinner = (Spinner) view;
+        displayString = (String) spinner.getSelectedItem();
         List<Billable> matches = filteredBillablesMap.get(displayString);
         if (matches == null) {
             return null;
@@ -210,7 +196,7 @@ public class EncounterFragment extends Fragment {
             selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
             servicesSpinner.setVisibility(View.GONE);
             labsSpinner.setVisibility(View.GONE);
-            productSearch.setVisibility(View.GONE);
+            drugSearch.setVisibility(View.GONE);
             switch (selectedCategory) {
                 case SERVICES:
                     currentProductView = servicesSpinner;
@@ -219,16 +205,13 @@ public class EncounterFragment extends Fragment {
                     currentProductView = labsSpinner;
                     break;
                 case DRUGS_AND_SUPPLIES:
-                    currentProductView = productSearch;
+                    currentProductView = drugSearch;
                     break;
             }
 
-            Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
-            ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
-            // AutoCompleteTextView & Spinner are not descendants of same adapter interface, so forced to cast
-            if (Billable.CategoryEnum.DRUGS_AND_SUPPLIES.equals(selectedCategory)) {
-                ((AutoCompleteTextView) currentProductView).setAdapter(adapter);
-            } else {
+            if (!Billable.CategoryEnum.DRUGS_AND_SUPPLIES.equals(selectedCategory)) {
+                Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
+                ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
                 ((Spinner) currentProductView).setAdapter(adapter);
             }
             currentProductView.setVisibility(View.VISIBLE);
@@ -245,11 +228,6 @@ public class EncounterFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Billable selectedBillable = getSelectedBillable(currentProductView);
-            if (selectedBillable == null) {
-                selectedBillable = new Billable();
-                selectedBillable.setName(productSearch.getEditableText().toString());
-                selectedBillable.setCategory(selectedCategory);
-            }
             billableAdapter.add(selectedBillable);
             if (createEncounterButton.getVisibility() == View.GONE) {
                 createEncounterButton.setVisibility(View.VISIBLE);
