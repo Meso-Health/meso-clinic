@@ -19,6 +19,7 @@
             android:name=".services.RefreshMemberListService"
             android:exported="false" />
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".activities.MainActivity"
             android:label="@string/main_activity_label"
             android:launchMode="singleTop" >
