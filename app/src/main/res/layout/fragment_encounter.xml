@@ -48,6 +48,20 @@
             android:layout_weight="4"
             android:visibility="gone" />
 
+        <Spinner
+            android:id="@+id/supplies_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/vaccines_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:visibility="gone" />
+
         <SearchView
             android:id="@+id/drug_search"
             android:layout_width="wrap_content"

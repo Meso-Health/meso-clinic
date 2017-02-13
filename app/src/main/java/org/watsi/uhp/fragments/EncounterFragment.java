@@ -44,6 +44,8 @@ public class EncounterFragment extends Fragment {
     private Billable.CategoryEnum selectedCategory = null;
     private Spinner servicesSpinner;
     private Spinner labsSpinner;
+    private Spinner suppliesSpinner;
+    private Spinner vaccinesSpinner;
     private SearchView drugSearch;
     private View currentProductView;
     private final Map<String, List<Billable>> filteredBillablesMap = new HashMap<>();
@@ -69,14 +71,15 @@ public class EncounterFragment extends Fragment {
 
         servicesSpinner = (Spinner) view.findViewById(R.id.services_spinner);
         labsSpinner = (Spinner) view.findViewById(R.id.labs_spinner);
+        suppliesSpinner = (Spinner) view.findViewById(R.id.supplies_spinner);
+        vaccinesSpinner = (Spinner) view.findViewById(R.id.vaccines_spinner);
         drugSearch = (SearchView) view.findViewById(R.id.drug_search);
 
         CategoryListener listener = new CategoryListener();
         categorySpinner.setOnItemSelectedListener(listener);
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) view.findViewById(R.id.drug_search);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        drugSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
         final Button selectBillableButton = (Button) view.findViewById(R.id.enter_billable);
         selectBillableButton.setOnClickListener(new CreateBillableListener());
@@ -126,10 +129,6 @@ public class EncounterFragment extends Fragment {
             List<Billable> filteredBillables =
                     BillableDao.findByCategory(category);
             for (Billable billable : filteredBillables) {
-                if (billable.getName().equals("In-Patient")) {
-                    // In-patient is determined by radio button selection
-                    continue;
-                }
                 if (filteredBillablesMap.containsKey(billable.getDisplayName())) {
                     filteredBillablesMap.get(billable.getDisplayName()).add(billable);
                 } else {
@@ -181,22 +180,30 @@ public class EncounterFragment extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
+            drugSearch.setVisibility(View.GONE);
             servicesSpinner.setVisibility(View.GONE);
             labsSpinner.setVisibility(View.GONE);
-            drugSearch.setVisibility(View.GONE);
+            suppliesSpinner.setVisibility(View.GONE);
+            vaccinesSpinner.setVisibility(View.GONE);
             switch (selectedCategory) {
+                case DRUGS:
+                    currentProductView = drugSearch;
+                    break;
                 case SERVICES:
                     currentProductView = servicesSpinner;
                     break;
                 case LABS:
                     currentProductView = labsSpinner;
                     break;
-                case DRUGS_AND_SUPPLIES:
-                    currentProductView = drugSearch;
+                case SUPPLIES:
+                    currentProductView = suppliesSpinner;
+                    break;
+                case VACCINES:
+                    currentProductView = vaccinesSpinner;
                     break;
             }
 
-            if (!Billable.CategoryEnum.DRUGS_AND_SUPPLIES.equals(selectedCategory)) {
+            if (!Billable.CategoryEnum.DRUGS.equals(selectedCategory)) {
                 Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
                 ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
                 ((Spinner) currentProductView).setAdapter(adapter);
