@@ -85,10 +85,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         // setup enum conversion maps
         Map<String, Billable.CategoryEnum> categoryMap = new HashMap<>();
-        categoryMap.put("Drugs & Supplies", Billable.CategoryEnum.DRUGS_AND_SUPPLIES);
-        categoryMap.put("Labs", Billable.CategoryEnum.LABS);
         categoryMap.put("Services", Billable.CategoryEnum.SERVICES);
+        categoryMap.put("Labs", Billable.CategoryEnum.LABS);
+        categoryMap.put("Supplies", Billable.CategoryEnum.SUPPLIES);
+        categoryMap.put("Vaccines", Billable.CategoryEnum.VACCINES);
+        categoryMap.put("Drugs", Billable.CategoryEnum.DRUGS);
 
+        // TODO: remove
         Map<String, Billable.DepartmentEnum> departmentMap = new HashMap<>();
         departmentMap.put("Antenatal", Billable.DepartmentEnum.ANTENATAL);
         departmentMap.put("ART", Billable.DepartmentEnum.ART_CLINIC);
@@ -123,11 +126,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 billables.add(billable);
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Error in reading CSV file: "+ex);
+            throw new RuntimeException("Error in reading CSV file: " + ex);
         } finally {
             inputStream.close();
         }
-        BillableDao.create(billables);
+        try {
+            BillableDao.create(billables);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error in creating billables: " + ex);
+        }
     }
 
     @Override

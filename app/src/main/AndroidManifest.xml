@@ -13,7 +13,7 @@
         android:launchMode="singleTop"
         android:theme="@style/main_theme">
         <provider
-            android:name=".providers.MemberContentProvider"
+            android:name=".providers.BillableContentProvider"
             android:authorities="org.watsi.uhp.provider" />
         <service
             android:name=".services.RefreshMemberListService"

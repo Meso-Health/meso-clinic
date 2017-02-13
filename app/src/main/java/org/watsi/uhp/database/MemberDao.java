@@ -74,7 +74,7 @@ public class MemberDao {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()
-                .like(Member.FIELD_NAME_NAME, "%" + query + "%")
+                .like(Member.FIELD_NAME_FULL_NAME, "%" + query + "%")
                 .prepare();
         return getInstance().getMemberDao().query(pq);
     }

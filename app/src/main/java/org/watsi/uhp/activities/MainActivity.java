@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.RecentEncountersFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.managers.ConfigManager;
@@ -148,6 +150,9 @@ public class MainActivity extends AppCompatActivity {
             if (memberId != null) {
                 setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
             }
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            String billableId = intent.getDataString();
+            addBillable(billableId);
         }
     }
 
@@ -162,6 +167,14 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void addBillable(String billableId) {
+        Fragment fragment =
+                getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment instanceof EncounterFragment) {
+         ((EncounterFragment) fragment).addSearchSuggestionToBillableList(billableId);
+        }
     }
 
     public void setBarcodeFragment() {
