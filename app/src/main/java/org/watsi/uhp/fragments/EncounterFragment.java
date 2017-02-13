@@ -207,6 +207,7 @@ public class EncounterFragment extends Fragment {
                 Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
                 ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
                 ((Spinner) currentProductView).setAdapter(adapter);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             }
             currentProductView.setVisibility(View.VISIBLE);
         }
