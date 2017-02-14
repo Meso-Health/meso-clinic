@@ -48,13 +48,6 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
         final Billable billable = getItem(position);
 
-        if (billable.getCategory().equals(Billable.CategoryEnum.SERVICES) ||
-                billable.getCategory().equals(Billable.CategoryEnum.LABS)) {
-            viewHolder.incQuantityBtn.setVisibility(View.GONE);
-            viewHolder.billableQuantity.setVisibility(View.GONE);
-            viewHolder.decQuantityBtn.setVisibility(View.GONE);
-        }
-
         if (billable != null) {
             viewHolder.billableName.setText(billable.getName());
             viewHolder.removeBillableBtn.setOnClickListener(new View.OnClickListener() {
@@ -67,41 +60,53 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                 }
             });
 
-            final ViewHolder vh = viewHolder;
+            if (billable.getCategory().equals(Billable.CategoryEnum.SERVICES) ||
+                    billable.getCategory().equals(Billable.CategoryEnum.LABS)) {
+                viewHolder.incQuantityBtn.setVisibility(View.GONE);
+                viewHolder.billableQuantity.setVisibility(View.GONE);
+                viewHolder.decQuantityBtn.setVisibility(View.GONE);
+            } else {
+                viewHolder.incQuantityBtn.setVisibility(View.VISIBLE);
+                viewHolder.billableQuantity.setVisibility(View.VISIBLE);
+                viewHolder.decQuantityBtn.setVisibility(View.VISIBLE);
 
-            viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                protected String decreaseQuantity(ViewHolder vh) {
-                    String value = vh.billableQuantity.getText().toString();
+                final ViewHolder vh = viewHolder;
+                viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
+                    protected String decreaseQuantity(ViewHolder vh) {
+                        String value = vh.billableQuantity.getText().toString();
 
-                    if (value.equals("1")) {
-                        return "1";
+                        if (value.equals("1")) {
+                            return "1";
+                        }
+                        else {
+                            int int_value = Integer.parseInt(value);
+                            int new_int_value = int_value - 1;
+                            String new_value = Integer.toString(new_int_value);
+                            return new_value;
+                        }
                     }
-                    else {
+
+                    public void onClick(View v) {
+                        vh.billableQuantity.setText(decreaseQuantity(vh));
+                    }
+                });
+
+                viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
+                    protected String increaseQuantity(ViewHolder vh) {
+                        String value = vh.billableQuantity.getText().toString();
                         int int_value = Integer.parseInt(value);
-                        int new_int_value = int_value - 1;
+                        int new_int_value = int_value + 1;
                         String new_value = Integer.toString(new_int_value);
                         return new_value;
                     }
-                }
 
-                public void onClick(View v) {
-                    vh.billableQuantity.setText(decreaseQuantity(vh));
-                }
-            });
+                    public void onClick(View v) {
+                        vh.billableQuantity.setText(increaseQuantity(vh));
+                    }
+                });
+            }
 
-            viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                protected String increaseQuantity(ViewHolder vh) {
-                    String value = vh.billableQuantity.getText().toString();
-                    int int_value = Integer.parseInt(value);
-                    int new_int_value = int_value + 1;
-                    String new_value = Integer.toString(new_int_value);
-                    return new_value;
-                }
 
-                public void onClick(View v) {
-                    vh.billableQuantity.setText(increaseQuantity(vh));
-                }
-            });
         }
 
         return convertView;
