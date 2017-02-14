@@ -17,4 +17,8 @@
     <string name="save_encounter_button">Save encounter</string>
     <string name="inpatient_radio_label">In-patient</string>
     <string name="outpatient_radio_label">Out-patient</string>
+
+    <string name="inc_billable_quantity">+</string>
+    <string name="dec_billable_quantity">-</string>
+    <string name="default_billable_quantity">1</string>
 </resources>

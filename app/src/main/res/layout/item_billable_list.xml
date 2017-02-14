@@ -3,18 +3,44 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:weightSum="5" >
+    android:weightSum="4" >
+
+    <Button
+        android:id="@+id/remove_billable_btn"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="@string/remove_billable_button" />
 
     <TextView
         android:id="@+id/billable_name"
+        android:paddingLeft="10dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="4" />
 
     <Button
-        android:id="@+id/remove_billable_btn"
-        android:layout_width="0dp"
+        android:id="@+id/dec_billable_quantity"
+        android:layout_width="32dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/remove_billable_button" />
+        android:layout_weight="0"
+        android:text="@string/dec_billable_quantity"/>
+
+    <EditText
+        android:id="@+id/billable_quantity"
+        android:text="@string/default_billable_quantity"
+        android:background="@drawable/background_rectangle"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_weight="0"
+        android:inputType="number"/>
+
+    <Button
+        android:id="@+id/inc_billable_quantity"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:text="@string/inc_billable_quantity"/>
+
 </LinearLayout>
