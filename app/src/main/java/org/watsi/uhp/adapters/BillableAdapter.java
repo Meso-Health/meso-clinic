@@ -47,6 +47,14 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
         }
 
         final Billable billable = getItem(position);
+
+        if (billable.getCategory().equals(Billable.CategoryEnum.SERVICES) ||
+                billable.getCategory().equals(Billable.CategoryEnum.LABS)) {
+            viewHolder.incQuantityBtn.setVisibility(View.GONE);
+            viewHolder.billableQuantity.setVisibility(View.GONE);
+            viewHolder.decQuantityBtn.setVisibility(View.GONE);
+        }
+
         if (billable != null) {
             viewHolder.billableName.setText(billable.getName());
             viewHolder.removeBillableBtn.setOnClickListener(new View.OnClickListener() {
