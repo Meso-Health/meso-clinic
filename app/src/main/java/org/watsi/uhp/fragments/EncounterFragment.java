@@ -2,9 +2,11 @@ package org.watsi.uhp.fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +34,7 @@ import org.watsi.uhp.models.Encounter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 
 public class EncounterFragment extends Fragment {
@@ -48,7 +46,6 @@ public class EncounterFragment extends Fragment {
     private Spinner vaccinesSpinner;
     private SearchView drugSearch;
     private View currentProductView;
-    private final Map<String, List<Billable>> filteredBillablesMap = new HashMap<>();
     private BillableAdapter billableAdapter;
     private List<Billable> billables;
     private Button createEncounterButton;
@@ -62,10 +59,9 @@ public class EncounterFragment extends Fragment {
         Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
-                android.R.layout.simple_spinner_item,
+                android.R.layout.simple_spinner_dropdown_item,
                 Billable.CategoryEnum.values()
         );
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setTag("category");
 
@@ -80,9 +76,6 @@ public class EncounterFragment extends Fragment {
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         drugSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-
-        final Button selectBillableButton = (Button) view.findViewById(R.id.enter_billable);
-        selectBillableButton.setOnClickListener(new CreateBillableListener());
 
         ListView billablesListView = (ListView) view.findViewById(R.id.billables_list);
 
@@ -123,47 +116,21 @@ public class EncounterFragment extends Fragment {
         return view;
     }
 
-    private Map<String,List<Billable>> getFilteredBillableMap(Billable.CategoryEnum category) {
-        filteredBillablesMap.clear();
+    private SimpleCursorAdapter getProductAdapter(Billable.CategoryEnum category) {
+        // TODO: check that creation of new adapter each time does not have memory implications
         try {
-            List<Billable> filteredBillables =
-                    BillableDao.findByCategory(category);
-            for (Billable billable : filteredBillables) {
-                if (filteredBillablesMap.containsKey(billable.getDisplayName())) {
-                    filteredBillablesMap.get(billable.getDisplayName()).add(billable);
-                } else {
-                    List<Billable> list = new ArrayList<>();
-                    list.add(billable);
-                    filteredBillablesMap.put(billable.getDisplayName(), list);
-                }
-            }
+            Cursor cursor = BillableDao.getBillablesByCategoryCursor(category);
+            String[] from = { Billable.FIELD_NAME_NAME };
+            int[] to = new int[] { android.R.id.text1 };
+
+            return new SimpleCursorAdapter(getContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    cursor, from, to, 0
+            );
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
-        return filteredBillablesMap;
-    }
-
-    private ArrayAdapter getProductAdapter(Map<String, List<Billable>> billableMap) {
-        SortedSet<String> filteredBillableDisplayStrings = new TreeSet<>(billableMap.keySet());
-        // TODO: check that creation of new adapter each time does not have memory implications
-        return new ArrayAdapter<>(
-                getContext(),
-                android.R.layout.simple_spinner_item,
-                filteredBillableDisplayStrings.toArray(new String[filteredBillableDisplayStrings.size()])
-        );
-    }
-
-    private Billable getSelectedBillable(View view) {
-        String displayString;
-        Spinner spinner = (Spinner) view;
-        displayString = (String) spinner.getSelectedItem();
-        List<Billable> matches = filteredBillablesMap.get(displayString);
-        if (matches == null) {
-            return null;
-        } else {
-            // TODO: if multiple matches, find billable based on department
-            return matches.get(0);
-        }
+        return null;
     }
 
     public void addSearchSuggestionToBillableList (String billableId) {
@@ -204,10 +171,26 @@ public class EncounterFragment extends Fragment {
             }
 
             if (!Billable.CategoryEnum.DRUGS.equals(selectedCategory)) {
-                Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
-                ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
-                ((Spinner) currentProductView).setAdapter(adapter);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                SimpleCursorAdapter adapter = getProductAdapter(selectedCategory);
+
+                Spinner currentSpinner = (Spinner) currentProductView;
+                currentSpinner.setAdapter(adapter);
+                currentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            Billable billable = BillableDao.findById(Long.toString(id));
+                            billableAdapter.add(billable);
+                        } catch (SQLException e) {
+                            Rollbar.reportException(e);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        //no-op
+                    }
+                });
             }
             currentProductView.setVisibility(View.VISIBLE);
         }
@@ -215,18 +198,6 @@ public class EncounterFragment extends Fragment {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             // no-op
-        }
-    }
-
-    private class CreateBillableListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            Billable selectedBillable = getSelectedBillable(currentProductView);
-            billableAdapter.add(selectedBillable);
-            if (createEncounterButton.getVisibility() == View.GONE) {
-                createEncounterButton.setVisibility(View.VISIBLE);
-            }
         }
     }
 }

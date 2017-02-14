@@ -30,7 +30,6 @@
             android:layout_height="35dp"/>
     </RelativeLayout>
 
-
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -41,50 +40,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="5"
         android:paddingBottom="20dp">
 
         <Spinner
             android:id="@+id/services_spinner"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
             android:visibility="gone" />
 
         <Spinner
             android:id="@+id/labs_spinner"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
             android:visibility="gone" />
 
         <Spinner
             android:id="@+id/supplies_spinner"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
             android:visibility="gone" />
 
         <Spinner
             android:id="@+id/vaccines_spinner"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
             android:visibility="gone" />
 
         <SearchView
             android:id="@+id/drug_search"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:iconifiedByDefault="false"
             android:queryHint="Search drugs" />
-
-        <Button
-            android:id="@+id/enter_billable"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/enter_billable_button" />
     </LinearLayout>
 
     <View
