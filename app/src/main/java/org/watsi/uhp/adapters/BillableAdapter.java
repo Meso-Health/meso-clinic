@@ -77,8 +77,7 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
                         if (value.equals("1")) {
                             return "1";
-                        }
-                        else {
+                        } else {
                             int int_value = Integer.parseInt(value);
                             int new_int_value = int_value - 1;
                             String new_value = Integer.toString(new_int_value);
