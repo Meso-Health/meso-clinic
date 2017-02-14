@@ -15,12 +15,21 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/encounter_form_margin"
-        android:text="@string/encounter_category_label"/>
+        android:text="@string/encounter_category_label"
+        android:paddingBottom="10dp"/>
 
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/background_rectangle">
+
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="35dp"/>
+    </RelativeLayout>
+
 
     <TextView
         android:layout_width="fill_parent"
