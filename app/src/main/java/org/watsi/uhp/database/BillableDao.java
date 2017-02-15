@@ -78,7 +78,6 @@ public class BillableDao {
 
         CloseableIterator<Billable> iterator = getInstance().getBillableDao().iterator(pq);
         AndroidDatabaseResults results = (AndroidDatabaseResults)iterator.getRawResults();
-        Cursor cursor = results.getRawCursor();
-        return cursor;
+        return results.getRawCursor();
     }
 }

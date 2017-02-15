@@ -3,6 +3,8 @@ package org.watsi.uhp.fragments;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -58,7 +60,7 @@ public class EncounterFragment extends Fragment {
 
         Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         ArrayList<Object> categories = new ArrayList<>();
-        categories.add(R.string.prompt_category);
+        categories.add(getContext().getString(R.string.prompt_category));
         for (Billable.CategoryEnum c : Billable.CategoryEnum.values()) {
             categories.add(c);
         }
@@ -125,13 +127,22 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter getProductAdapter(Billable.CategoryEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
         try {
+            //Create prompt
+            MatrixCursor extras = new MatrixCursor(new String[] { "_id", "name" });
+            extras.addRow(new String[] { "0", getContext().getString(R.string.prompt_billable) });
+
+            //Merge prompt with billable results
             Cursor cursor = BillableDao.getBillablesByCategoryCursor(category);
+            Cursor[] cursors = { extras, cursor };
+            Cursor extendedCursor = new MergeCursor(cursors);
+
+            //Create cursor adapter with merged cursor
             String[] from = { Billable.FIELD_NAME_NAME };
             int[] to = new int[] { android.R.id.text1 };
 
             return new SimpleCursorAdapter(getContext(),
                     android.R.layout.simple_spinner_dropdown_item,
-                    cursor, from, to, 0
+                    extendedCursor, from, to, 0
             );
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -187,8 +198,10 @@ public class EncounterFragment extends Fragment {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             try {
-                                Billable billable = BillableDao.findById(Long.toString(id));
-                                billableAdapter.add(billable);
+                                if (position != 0) {
+                                    Billable billable = BillableDao.findById(Long.toString(id));
+                                    billableAdapter.add(billable);
+                                }
                             } catch (SQLException e) {
                                 Rollbar.reportException(e);
                             }

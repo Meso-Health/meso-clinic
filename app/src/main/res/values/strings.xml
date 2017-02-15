@@ -22,4 +22,5 @@
     <string name="dec_billable_quantity">-</string>
     <string name="default_billable_quantity">1</string>
     <string name="prompt_category">Select a category&#8230;</string>
+    <string name="prompt_billable">Select a billable&#8230;</string>
 </resources>
