@@ -151,8 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
             }
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            String billableId = intent.getDataString();
-            addBillable(billableId);
+                String billableId = intent.getDataString();
+                addBillable(billableId);
+                clearDrugSearchView();
         }
     }
 
@@ -174,6 +175,16 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment instanceof EncounterFragment) {
          ((EncounterFragment) fragment).addSearchSuggestionToBillableList(billableId);
+        }
+    }
+
+    public void clearDrugSearchView() {
+        Fragment fragment =
+                getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment instanceof EncounterFragment) {
+            android.widget.SearchView drugSearch = ((EncounterFragment) fragment).getDrugSearch();
+            drugSearch.clearFocus();
+            drugSearch.setQuery("", false);
         }
     }
 

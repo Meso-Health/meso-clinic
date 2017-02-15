@@ -175,6 +175,10 @@ public class EncounterFragment extends Fragment {
         }
     }
 
+    public SearchView getDrugSearch() {
+        return drugSearch;
+    }
+
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
 
         @Override
