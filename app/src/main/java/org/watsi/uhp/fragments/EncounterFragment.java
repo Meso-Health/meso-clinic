@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
@@ -160,10 +161,24 @@ public class EncounterFragment extends Fragment {
         return null;
     }
 
+    public static boolean containsId(List<Billable> list, long id) {
+        for (Billable object : list) {
+            if (object.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addSearchSuggestionToBillableList (String billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
-            billableAdapter.add(billable);
+
+            if (containsId(billables, Long.parseLong(billableId))) {
+                Toast.makeText(getActivity().getApplicationContext(), "Already in List Items", Toast.LENGTH_SHORT).show();
+            } else {
+                billableAdapter.add(billable);
+            }
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
@@ -204,7 +219,12 @@ public class EncounterFragment extends Fragment {
             try {
                 if (position != 0) {
                     Billable billable = BillableDao.findById(Long.toString(id));
-                    billableAdapter.add(billable);
+
+                    if (containsId(billables, id)) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Already in List Items", Toast.LENGTH_SHORT).show();
+                    } else {
+                        billableAdapter.add(billable);
+                    }
                 }
             } catch (SQLException e) {
                 Rollbar.reportException(e);
