@@ -40,6 +40,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
+            Log.d("UHP", "surface created");
             mCameraSource.start(holder);
         } catch (IOException | SecurityException e) {
             Rollbar.reportException(e);
@@ -91,7 +92,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     }
                 }
             });
-
+            Log.d("UHP", "camera source started");
             mCameraSource = new CameraSource
                     .Builder(activity.getBaseContext(), barcodeDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)

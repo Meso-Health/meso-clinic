@@ -13,7 +13,7 @@ import static junit.framework.Assert.assertNull;
 public class DatabaseHelperTest {
 
     @Mock
-    Context fakeContext;
+    Context context;
 
     @Before
     public void setup() {
@@ -22,7 +22,7 @@ public class DatabaseHelperTest {
 
     @Test
     public void getHelper_doesNotThrowExceptionIfInitialized() throws Exception {
-        DatabaseHelper.init(fakeContext);
+        DatabaseHelper.init(context);
         try {
             DatabaseHelper.getHelper();
         } catch (Exception e) {

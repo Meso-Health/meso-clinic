@@ -22,6 +22,8 @@ import org.watsi.uhp.database.MemberDao;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +166,12 @@ public class Member {
         queryMap.put(Encounter.FIELD_NAME_MEMBER_ID, getId());
         List<Encounter> encounters = EncounterDao.find(queryMap);
         if (encounters.size() > 0) {
+            Collections.sort(encounters, new Comparator<Encounter>() {
+                @Override
+                public int compare(Encounter e1, Encounter e2) {
+                    return e2.getDate().compareTo(e1.getDate());
+                }
+            });
             return encounters.get(0);
         } else {
             return null;
