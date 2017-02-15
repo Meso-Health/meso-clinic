@@ -76,7 +76,7 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
                 final ViewHolder vh = viewHolder;
                 viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                    protected String decreaseQuantity(ViewHolder vh) {
+                    private String decreaseQuantity(ViewHolder vh) {
                         String value = vh.billableQuantity.getText().toString();
 
                         if (value.equals("1")) {
@@ -84,8 +84,7 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                         } else {
                             int int_value = Integer.parseInt(value);
                             int new_int_value = int_value - 1;
-                            String new_value = Integer.toString(new_int_value);
-                            return new_value;
+                            return Integer.toString(new_int_value);
                         }
                     }
 
@@ -99,12 +98,11 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                 });
 
                 viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                    protected String increaseQuantity(ViewHolder vh) {
+                    private String increaseQuantity(ViewHolder vh) {
                         String value = vh.billableQuantity.getText().toString();
                         int int_value = Integer.parseInt(value);
                         int new_int_value = int_value + 1;
-                        String new_value = Integer.toString(new_int_value);
-                        return new_value;
+                        return Integer.toString(new_int_value);
                     }
 
                     public void onClick(View v) {
