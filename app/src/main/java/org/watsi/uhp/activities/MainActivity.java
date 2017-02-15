@@ -151,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
             }
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-                String billableId = intent.getDataString();
-                addBillable(billableId);
-                clearDrugSearchView();
+            String billableId = intent.getDataString();
+            addBillable(billableId);
+            clearDrugSearchView();
         }
     }
 
