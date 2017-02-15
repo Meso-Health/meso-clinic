@@ -175,8 +175,9 @@ public class EncounterFragment extends Fragment {
         }
     }
 
-    public SearchView getDrugSearch() {
-        return drugSearch;
+    public void clearDrugSearch() {
+        drugSearch.clearFocus();
+        drugSearch.setQuery("", false);
     }
 
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
