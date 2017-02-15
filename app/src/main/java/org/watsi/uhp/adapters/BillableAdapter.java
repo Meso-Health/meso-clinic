@@ -112,8 +112,6 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                     }
                 });
             }
-
-
         }
 
         return convertView;
