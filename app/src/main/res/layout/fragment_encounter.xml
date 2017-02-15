@@ -11,13 +11,6 @@
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/encounter_form_margin"
-        android:text="@string/encounter_category_label"
-        android:paddingBottom="10dp"/>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

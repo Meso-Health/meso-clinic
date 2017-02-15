@@ -57,11 +57,17 @@ public class EncounterFragment extends Fragment {
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
         Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
+        ArrayList<Object> categories = new ArrayList<>();
+        categories.add(R.string.prompt_category);
+        for (Billable.CategoryEnum c : Billable.CategoryEnum.values()) {
+            categories.add(c);
+        }
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                Billable.CategoryEnum.values()
+                categories
         );
+
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setTag("category");
 
@@ -146,53 +152,56 @@ public class EncounterFragment extends Fragment {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
             drugSearch.setVisibility(View.GONE);
             servicesSpinner.setVisibility(View.GONE);
             labsSpinner.setVisibility(View.GONE);
             suppliesSpinner.setVisibility(View.GONE);
             vaccinesSpinner.setVisibility(View.GONE);
-            switch (selectedCategory) {
-                case DRUGS:
-                    currentProductView = drugSearch;
-                    break;
-                case SERVICES:
-                    currentProductView = servicesSpinner;
-                    break;
-                case LABS:
-                    currentProductView = labsSpinner;
-                    break;
-                case SUPPLIES:
-                    currentProductView = suppliesSpinner;
-                    break;
-                case VACCINES:
-                    currentProductView = vaccinesSpinner;
-                    break;
-            }
 
-            if (!Billable.CategoryEnum.DRUGS.equals(selectedCategory)) {
-                SimpleCursorAdapter adapter = getProductAdapter(selectedCategory);
+            if (position != 0) {
+                selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
+                switch (selectedCategory) {
+                    case DRUGS:
+                        currentProductView = drugSearch;
+                        break;
+                    case SERVICES:
+                        currentProductView = servicesSpinner;
+                        break;
+                    case LABS:
+                        currentProductView = labsSpinner;
+                        break;
+                    case SUPPLIES:
+                        currentProductView = suppliesSpinner;
+                        break;
+                    case VACCINES:
+                        currentProductView = vaccinesSpinner;
+                        break;
+                }
 
-                Spinner currentSpinner = (Spinner) currentProductView;
-                currentSpinner.setAdapter(adapter);
-                currentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        try {
-                            Billable billable = BillableDao.findById(Long.toString(id));
-                            billableAdapter.add(billable);
-                        } catch (SQLException e) {
-                            Rollbar.reportException(e);
+                if (!Billable.CategoryEnum.DRUGS.equals(selectedCategory)) {
+                    SimpleCursorAdapter adapter = getProductAdapter(selectedCategory);
+
+                    Spinner currentSpinner = (Spinner) currentProductView;
+                    currentSpinner.setAdapter(adapter);
+                    currentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            try {
+                                Billable billable = BillableDao.findById(Long.toString(id));
+                                billableAdapter.add(billable);
+                            } catch (SQLException e) {
+                                Rollbar.reportException(e);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        //no-op
-                    }
-                });
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                            //no-op
+                        }
+                    });
+                }
+                currentProductView.setVisibility(View.VISIBLE);
             }
-            currentProductView.setVisibility(View.VISIBLE);
         }
 
         @Override
