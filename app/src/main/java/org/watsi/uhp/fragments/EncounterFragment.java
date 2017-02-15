@@ -175,6 +175,11 @@ public class EncounterFragment extends Fragment {
         }
     }
 
+    public void clearDrugSearch() {
+        drugSearch.clearFocus();
+        drugSearch.setQuery("", false);
+    }
+
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
 
         @Override

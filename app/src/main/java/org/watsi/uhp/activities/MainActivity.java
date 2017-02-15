@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String billableId = intent.getDataString();
             addBillable(billableId);
+            clearDrugSearchView();
         }
     }
 
@@ -174,6 +175,14 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment instanceof EncounterFragment) {
          ((EncounterFragment) fragment).addSearchSuggestionToBillableList(billableId);
+        }
+    }
+
+    public void clearDrugSearchView() {
+        Fragment fragment =
+                getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment instanceof EncounterFragment) {
+            ((EncounterFragment) fragment).clearDrugSearch();
         }
     }
 
