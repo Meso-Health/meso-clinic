@@ -11,6 +11,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
+    <!--hacky method to add box around spinner without rewriting material design styles-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,14 +21,14 @@
         <Spinner
             android:id="@+id/category_spinner"
             android:layout_width="fill_parent"
-            android:layout_height="35dp"/>
+            android:layout_height="40dp" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="20dp"
+        android:paddingTop="10dp"
         android:paddingBottom="20dp">
 
         <RelativeLayout
@@ -37,33 +38,15 @@
             android:background="@drawable/background_rectangle">
 
             <Spinner
-                android:id="@+id/services_spinner"
+                android:id="@+id/billable_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:visibility="gone" />
-
-            <Spinner
-                android:id="@+id/labs_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:visibility="gone" />
-
-            <Spinner
-                android:id="@+id/supplies_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:visibility="gone" />
-
-            <Spinner
-                android:id="@+id/vaccines_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
                 android:visibility="gone" />
 
             <SearchView
                 android:id="@+id/drug_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:iconifiedByDefault="false"
                 android:queryHint="Search drugs"
                 android:visibility="gone" />
