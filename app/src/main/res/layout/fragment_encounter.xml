@@ -34,6 +34,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/encounter_form_margin"
+        android:layout_marginBottom="10dp"
         android:text="@string/encounter_product_label" />
 
     <LinearLayout
@@ -42,36 +43,44 @@
         android:orientation="horizontal"
         android:paddingBottom="20dp">
 
-        <Spinner
-            android:id="@+id/services_spinner"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:orientation="horizontal"
+            android:background="@drawable/background_rectangle">
 
-        <Spinner
-            android:id="@+id/labs_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            <Spinner
+                android:id="@+id/services_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:visibility="gone" />
 
-        <Spinner
-            android:id="@+id/supplies_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            <Spinner
+                android:id="@+id/labs_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:visibility="gone" />
 
-        <Spinner
-            android:id="@+id/vaccines_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            <Spinner
+                android:id="@+id/supplies_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:visibility="gone" />
 
-        <SearchView
-            android:id="@+id/drug_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search drugs" />
+            <Spinner
+                android:id="@+id/vaccines_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:visibility="gone" />
+
+            <SearchView
+                android:id="@+id/drug_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search drugs"
+                android:visibility="gone" />
+        </RelativeLayout>
     </LinearLayout>
 
     <View
