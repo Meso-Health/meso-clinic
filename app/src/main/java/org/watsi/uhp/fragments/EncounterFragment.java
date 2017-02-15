@@ -164,6 +164,7 @@ public class EncounterFragment extends Fragment {
         try {
             Billable billable = BillableDao.findById(billableId);
             billableAdapter.add(billable);
+            createEncounterButton.setVisibility(View.VISIBLE);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
@@ -205,6 +206,7 @@ public class EncounterFragment extends Fragment {
                 if (position != 0) {
                     Billable billable = BillableDao.findById(Long.toString(id));
                     billableAdapter.add(billable);
+                    createEncounterButton.setVisibility(View.VISIBLE);
                 }
             } catch (SQLException e) {
                 Rollbar.reportException(e);
