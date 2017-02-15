@@ -86,7 +86,11 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                     }
 
                     public void onClick(View v) {
-                        vh.billableQuantity.setText(decreaseQuantity(vh));
+                        if (vh.billableQuantity.getText().toString().equals("")) {
+                            vh.billableQuantity.setText("1");
+                        } else {
+                            vh.billableQuantity.setText(decreaseQuantity(vh));
+                        }
                     }
                 });
 
@@ -100,7 +104,11 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                     }
 
                     public void onClick(View v) {
-                        vh.billableQuantity.setText(increaseQuantity(vh));
+                        if (vh.billableQuantity.getText().toString().equals("")) {
+                            vh.billableQuantity.setText("1");
+                        } else {
+                            vh.billableQuantity.setText(increaseQuantity(vh));
+                        }
                     }
                 });
             }
