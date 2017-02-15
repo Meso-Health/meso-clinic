@@ -90,8 +90,8 @@ public class Billable {
         return mUnit;
     }
 
-    public void setUnit(String mUnit) {
-        this.mUnit = mUnit;
+    public void setUnit(String unit) {
+        this.mUnit = unit;
     }
 
     public String getAmount() {
