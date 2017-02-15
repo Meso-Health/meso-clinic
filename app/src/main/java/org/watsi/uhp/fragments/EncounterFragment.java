@@ -2,9 +2,13 @@ package org.watsi.uhp.fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,62 +35,75 @@ import org.watsi.uhp.models.Encounter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 
 public class EncounterFragment extends Fragment {
 
-    private Billable.CategoryEnum selectedCategory = null;
-    private Spinner servicesSpinner;
-    private Spinner labsSpinner;
-    private Spinner suppliesSpinner;
-    private Spinner vaccinesSpinner;
-    private SearchView drugSearch;
-    private View currentProductView;
-    private final Map<String, List<Billable>> filteredBillablesMap = new HashMap<>();
+    private Spinner categorySpinner;
     private BillableAdapter billableAdapter;
+    private Spinner billableSpinner;
+    private SearchView billableSearch;
     private List<Billable> billables;
+    private ListView billablesListView;
     private Button createEncounterButton;
     private Encounter.IdMethodEnum idMethod;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
-
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
-        Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
+        categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
+        billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
+        billableSearch = (SearchView) view.findViewById(R.id.drug_search);
+        billablesListView = (ListView) view.findViewById(R.id.billables_list);
+        createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
+
+        setCategorySpinner();
+        setBillableSearch();
+        setBillableList();
+        setCreateEncounterButton();
+
+        return view;
+    }
+
+    private void setCategorySpinner() {
+        ArrayList<Object> categories = new ArrayList<>();
+        categories.add(getContext().getString(R.string.prompt_category));
+        categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
+        
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
-                android.R.layout.simple_spinner_item,
-                Billable.CategoryEnum.values()
+                android.R.layout.simple_spinner_dropdown_item,
+                categories
         );
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setTag("category");
-
-        servicesSpinner = (Spinner) view.findViewById(R.id.services_spinner);
-        labsSpinner = (Spinner) view.findViewById(R.id.labs_spinner);
-        suppliesSpinner = (Spinner) view.findViewById(R.id.supplies_spinner);
-        vaccinesSpinner = (Spinner) view.findViewById(R.id.vaccines_spinner);
-        drugSearch = (SearchView) view.findViewById(R.id.drug_search);
-
-        CategoryListener listener = new CategoryListener();
-        categorySpinner.setOnItemSelectedListener(listener);
-
+        categorySpinner.setOnItemSelectedListener(new CategoryListener());
+    }
+    
+    private void setBillableSearch() {
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        drugSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        billableSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+    }
+    
+    private void setBillableSpinner(Billable.CategoryEnum category) {
+        SimpleCursorAdapter adapter = getBillableAdapter(category);
 
-        final Button selectBillableButton = (Button) view.findViewById(R.id.enter_billable);
-        selectBillableButton.setOnClickListener(new CreateBillableListener());
+        billableSpinner.setAdapter(adapter);
+        billableSpinner.setOnItemSelectedListener(new BillableListener());
+    }
 
-        ListView billablesListView = (ListView) view.findViewById(R.id.billables_list);
+    private void setBillableList() {
+        billables = new ArrayList<>();
+        billableAdapter = new BillableAdapter(getContext(), billables, createEncounterButton);
+        billablesListView.setAdapter(billableAdapter);
+    }
 
-        createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+    private void setCreateEncounterButton() {
         createEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,55 +132,32 @@ public class EncounterFragment extends Fragment {
                 transaction.commit();
             }
         });
-
-        billables = new ArrayList<>();
-        billableAdapter = new BillableAdapter(getContext(), billables, createEncounterButton);
-        billablesListView.setAdapter(billableAdapter);
-
-        return view;
     }
 
-    private Map<String,List<Billable>> getFilteredBillableMap(Billable.CategoryEnum category) {
-        filteredBillablesMap.clear();
+    private SimpleCursorAdapter getBillableAdapter(Billable.CategoryEnum category) {
+        // TODO: check that creation of new adapter each time does not have memory implications
         try {
-            List<Billable> filteredBillables =
-                    BillableDao.findByCategory(category);
-            for (Billable billable : filteredBillables) {
-                if (filteredBillablesMap.containsKey(billable.getDisplayName())) {
-                    filteredBillablesMap.get(billable.getDisplayName()).add(billable);
-                } else {
-                    List<Billable> list = new ArrayList<>();
-                    list.add(billable);
-                    filteredBillablesMap.put(billable.getDisplayName(), list);
-                }
-            }
+            //Create prompt
+            MatrixCursor extras = new MatrixCursor(new String[] { "_id", "name" });
+            extras.addRow(new String[] { "0", getContext().getString(R.string.prompt_billable) });
+
+            //Merge prompt with billable results
+            Cursor cursor = BillableDao.getBillablesByCategoryCursor(category);
+            Cursor[] cursors = { extras, cursor };
+            Cursor extendedCursor = new MergeCursor(cursors);
+
+            //Create cursor adapter with merged cursor
+            String[] from = { Billable.FIELD_NAME_NAME };
+            int[] to = new int[] { android.R.id.text1 };
+
+            return new SimpleCursorAdapter(getContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    extendedCursor, from, to, 0
+            );
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
-        return filteredBillablesMap;
-    }
-
-    private ArrayAdapter getProductAdapter(Map<String, List<Billable>> billableMap) {
-        SortedSet<String> filteredBillableDisplayStrings = new TreeSet<>(billableMap.keySet());
-        // TODO: check that creation of new adapter each time does not have memory implications
-        return new ArrayAdapter<>(
-                getContext(),
-                android.R.layout.simple_spinner_item,
-                filteredBillableDisplayStrings.toArray(new String[filteredBillableDisplayStrings.size()])
-        );
-    }
-
-    private Billable getSelectedBillable(View view) {
-        String displayString;
-        Spinner spinner = (Spinner) view;
-        displayString = (String) spinner.getSelectedItem();
-        List<Billable> matches = filteredBillablesMap.get(displayString);
-        if (matches == null) {
-            return null;
-        } else {
-            // TODO: if multiple matches, find billable based on department
-            return matches.get(0);
-        }
+        return null;
     }
 
     public void addSearchSuggestionToBillableList (String billableId) {
@@ -176,45 +170,26 @@ public class EncounterFragment extends Fragment {
     }
 
     public void clearDrugSearch() {
-        drugSearch.clearFocus();
-        drugSearch.setQuery("", false);
+        billableSearch.clearFocus();
+        billableSearch.setQuery("", false);
     }
 
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
-
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            selectedCategory = (Billable.CategoryEnum) parent.getItemAtPosition(position);
-            drugSearch.setVisibility(View.GONE);
-            servicesSpinner.setVisibility(View.GONE);
-            labsSpinner.setVisibility(View.GONE);
-            suppliesSpinner.setVisibility(View.GONE);
-            vaccinesSpinner.setVisibility(View.GONE);
-            switch (selectedCategory) {
-                case DRUGS:
-                    currentProductView = drugSearch;
-                    break;
-                case SERVICES:
-                    currentProductView = servicesSpinner;
-                    break;
-                case LABS:
-                    currentProductView = labsSpinner;
-                    break;
-                case SUPPLIES:
-                    currentProductView = suppliesSpinner;
-                    break;
-                case VACCINES:
-                    currentProductView = vaccinesSpinner;
-                    break;
-            }
+            billableSearch.setVisibility(View.GONE);
+            billableSpinner.setVisibility(View.GONE);
 
-            if (!Billable.CategoryEnum.DRUGS.equals(selectedCategory)) {
-                Map<String, List<Billable>> filteredBillableMap = getFilteredBillableMap(selectedCategory);
-                ArrayAdapter adapter = getProductAdapter(filteredBillableMap);
-                ((Spinner) currentProductView).setAdapter(adapter);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            if (position != 0) {
+                Billable.CategoryEnum selectedCategory = (Billable.CategoryEnum) parent
+                        .getItemAtPosition(position);
+                if (selectedCategory.equals(Billable.CategoryEnum.DRUGS)) {
+                    billableSearch.setVisibility(View.VISIBLE);
+                } else {
+                    setBillableSpinner(selectedCategory);
+                    billableSpinner.setVisibility(View.VISIBLE);
+                }
             }
-            currentProductView.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -223,15 +198,22 @@ public class EncounterFragment extends Fragment {
         }
     }
 
-    private class CreateBillableListener implements View.OnClickListener {
+    private class BillableListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            try {
+                if (position != 0) {
+                    Billable billable = BillableDao.findById(Long.toString(id));
+                    billableAdapter.add(billable);
+                }
+            } catch (SQLException e) {
+                Rollbar.reportException(e);
+            }
+        }
 
         @Override
-        public void onClick(View v) {
-            Billable selectedBillable = getSelectedBillable(currentProductView);
-            billableAdapter.add(selectedBillable);
-            if (createEncounterButton.getVisibility() == View.GONE) {
-                createEncounterButton.setVisibility(View.VISIBLE);
-            }
+        public void onNothingSelected(AdapterView<?> parent) {
+            //no-op
         }
     }
 }
