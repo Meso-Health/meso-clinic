@@ -36,6 +36,8 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
             viewHolder = new ViewHolder();
             viewHolder.billableName = (TextView) convertView.findViewById(R.id.billable_name);
+            viewHolder.billableDosage = (TextView) convertView.findViewById(R.id.billable_dosage);
+            viewHolder.billableUnit = (TextView) convertView.findViewById(R.id.billable_unit);
             viewHolder.removeBillableBtn = (Button) convertView.findViewById(R.id.remove_billable_btn);
             viewHolder.billableQuantity = (EditText) convertView.findViewById(R.id.billable_quantity);
             viewHolder.decQuantityBtn = (Button) convertView.findViewById(R.id.dec_billable_quantity);
@@ -50,6 +52,8 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
         if (billable != null) {
             viewHolder.billableName.setText(billable.getName());
+            viewHolder.billableDosage.setText(billable.getAmount());
+            viewHolder.billableUnit.setText(billable.getUnit());
             viewHolder.removeBillableBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,6 +117,8 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
     private static class ViewHolder {
         TextView billableName;
+        TextView billableUnit;
+        TextView billableDosage;
         Button removeBillableBtn;
         EditText billableQuantity;
         Button decQuantityBtn;
