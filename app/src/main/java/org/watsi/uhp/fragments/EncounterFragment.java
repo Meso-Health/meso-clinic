@@ -107,29 +107,40 @@ public class EncounterFragment extends Fragment {
         createEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: this should be in a transaction
-                Encounter encounter = new Encounter();
-                encounter.setIdMethod(Encounter.IdMethodEnum.BARCODE);
-                encounter.setDate(Calendar.getInstance().getTime());
-                encounter.setIdMethod(idMethod);
-                try {
-                    // TODO: get actual member instead of arbitrarily selecting first
-                    encounter.setMember(MemberDao.all().get(0));
-                    EncounterDao.create(encounter);
-                    BillableDao.create(billables);
-                    for (Billable billable : billables) {
-                        BillableEncounter billableEncounter = new BillableEncounter(billable, encounter);
-                        BillableEncounterDao.create(billableEncounter);
-                    }
-                } catch (SQLException e) {
-                    Rollbar.reportException(e);
-                }
-                MainActivity activity = (MainActivity) getActivity();
-                RecentEncountersFragment fragment = new RecentEncountersFragment();
-                FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment);
+
+
+
+                ReceiptFragment receiptFragment = new ReceiptFragment();
+                Bundle bundle = new Bundle();
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, receiptFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+
+//                // TODO: this should be in a transaction
+//                Encounter encounter = new Encounter();
+//                encounter.setIdMethod(Encounter.IdMethodEnum.BARCODE);
+//                encounter.setDate(Calendar.getInstance().getTime());
+//                encounter.setIdMethod(idMethod);
+//                try {
+//                    // TODO: get actual member instead of arbitrarily selecting first
+//                    encounter.setMember(MemberDao.all().get(0));
+//                    EncounterDao.create(encounter);
+//                    BillableDao.create(billables);
+//                    for (Billable billable : billables) {
+//                        BillableEncounter billableEncounter = new BillableEncounter(billable, encounter);
+//                        BillableEncounterDao.create(billableEncounter);
+//                    }
+//                } catch (SQLException e) {
+//                    Rollbar.reportException(e);
+//                }
+//                MainActivity activity = (MainActivity) getActivity();
+//                RecentEncountersFragment fragment = new RecentEncountersFragment();
+//                FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.fragment_container, fragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
             }
         });
     }
