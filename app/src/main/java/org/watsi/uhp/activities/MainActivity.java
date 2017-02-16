@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this.getApplication());
 
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
         DatabaseHelper.init(getBaseContext());
@@ -50,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             Rollbar.reportException(e);
         }
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         setupToolbar();
