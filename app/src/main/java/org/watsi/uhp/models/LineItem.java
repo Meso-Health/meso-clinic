@@ -8,11 +8,15 @@ public class LineItem {
 
     public static final String TABLE_NAME = "line_items";
     public static final String FIELD_NAME_ID = "id";
+    public static final String FIELD_NAME_ENCOUNTER_ID = "encounter_id";
     public static final String FIELD_NAME_BILLABLE_ID = "billable_id";
     public static final String FIELD_NAME_QUANTITY = "quantity";
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private int mId;
+
+    @DatabaseField(columnName = FIELD_NAME_ENCOUNTER_ID, foreign = true)
+    private Encounter mEncounter;
 
     @DatabaseField(columnName = FIELD_NAME_BILLABLE_ID, foreign = true)
     private Billable mBillable;
