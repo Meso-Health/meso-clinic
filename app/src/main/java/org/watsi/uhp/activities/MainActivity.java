@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment =
                 getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (fragment instanceof EncounterFragment) {
-         ((EncounterFragment) fragment).addSearchSuggestionToBillableList(billableId);
+         ((EncounterFragment) fragment).addToLineItemList(billableId);
         }
     }
 

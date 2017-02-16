@@ -16,9 +16,9 @@ public class ReceiptFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
-        ListView listView = (ListView) view.findViewById(R.id.receipt_items);
-        ListAdapter adapter = new ReceiptItemAdapter(getContext());
-        listView.setAdapter(adapter);
+//        ListView listView = (ListView) view.findViewById(R.id.receipt_items);
+//        ListAdapter adapter = new ReceiptItemAdapter(getContext());
+//        listView.setAdapter(adapter);
 
 
         return view;

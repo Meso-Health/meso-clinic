@@ -2,37 +2,34 @@ package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.LineItem;
 
 import java.util.List;
 
-public class ReceiptItemAdapter implements ListAdapter {
-    private List<Billable> mItemList;
-    private Context mContext;
-
-    public ReceiptItemAdapter(Context context) {
-        mContext = context;
-        // TODO: specify what item list is from encounter fragment:
-        // mItemList = ;
+public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
+    public ReceiptItemAdapter(Context context, List<LineItem> lineItemList) {
+        super(context, R.layout.item_receipt_list, lineItemList);
     }
 
     @Override
-    public Object getItem(int position) { return mItemList.get(position); }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView,@NonNull ViewGroup parent) {
         ViewHolder viewHolder;
 
         if (convertView == null) {
-            LayoutInflater layoutInflater = ((Activity) mContext).getLayoutInflater();
+            LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
             convertView = layoutInflater.inflate(R.layout.item_receipt_list, parent, false);
 
             viewHolder = new ViewHolder();
@@ -46,8 +43,11 @@ public class ReceiptItemAdapter implements ListAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Billable billable = (Billable) getItem(position);
-        if (billable != null) {
+        LineItem lineItem = getItem(position);
+
+        if (lineItem != null) {
+            final Billable billable = lineItem.getBillable();
+
             // TODO: viewHolder.billableQuantity.setText();
             viewHolder.billableName.setText(billable.getName());
             viewHolder.billableDetails.setText(billable.getDisplayName());
@@ -64,4 +64,3 @@ public class ReceiptItemAdapter implements ListAdapter {
         TextView billablePrice;
     }
 }
-

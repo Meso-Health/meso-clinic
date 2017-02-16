@@ -10,7 +10,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.BillableEncounter;
+import org.watsi.uhp.models.LineItemEncounter;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
@@ -57,7 +57,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Member.class);
             TableUtils.createTable(connectionSource, Billable.class);
             TableUtils.createTable(connectionSource, Encounter.class);
-            TableUtils.createTable(connectionSource, BillableEncounter.class);
+            TableUtils.createTable(connectionSource, LineItemEncounter.class);
             Log.d("UHP", "onCreate database helper called");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,7 +73,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Member.class, true);
             TableUtils.dropTable(connectionSource, Billable.class, true);
             TableUtils.dropTable(connectionSource, Encounter.class, true);
-            TableUtils.dropTable(connectionSource, BillableEncounter.class, true);
+            TableUtils.dropTable(connectionSource, LineItemEncounter.class, true);
             onCreate(database, connectionSource);
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -65,7 +65,7 @@
         android:text="@string/encounter_product_list_label" />
 
     <ListView
-        android:id="@+id/billables_list"
+        android:id="@+id/line_items_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
