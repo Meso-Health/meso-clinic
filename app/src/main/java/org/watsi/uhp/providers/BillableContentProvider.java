@@ -60,15 +60,10 @@ public class BillableContentProvider extends ContentProvider {
             }
 
             for (Billable billable : matchingBillables) {
-                String billableDetails = "";
-                if (billable.getAmount() != null) billableDetails += billable.getAmount() + " ";
-                if (billable.getUnit() != null) billableDetails += billable.getUnit();
-                if (billable.getDepartment() != Billable.DepartmentEnum.UNSPECIFIED) billableDetails += " - " + billable.getDepartment();
-
                 Object[] searchSuggestion = {
                         billable.getId(),
                         billable.getName(),
-                        billableDetails,
+                        billable.getDisplayDetails(),
                         billable.getId()
                 };
                 resultsCursor.addRow(searchSuggestion);

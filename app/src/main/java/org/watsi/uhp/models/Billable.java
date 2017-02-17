@@ -112,9 +112,16 @@ public class Billable {
 
     public String getDisplayName() {
         if (getUnit() != null) {
-            return getName() + " - " + getUnit() + " " + getAmount();
+            return getName() + " - " + getDisplayDetails();
         } else {
             return getName();
         }
+    }
+
+    public String getDisplayDetails() {
+        String billableDetails = "";
+        if (getAmount() != null) billableDetails += getAmount() + " ";
+        if (getUnit() != null) billableDetails += getUnit();
+        return billableDetails;
     }
 }
