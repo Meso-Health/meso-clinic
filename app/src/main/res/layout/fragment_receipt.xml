@@ -1,60 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="10dp">
+    android:padding="10dp">
 
     <TextView
+        android:id="@+id/receipt_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/receipt_title"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textAllCaps="true"/>
 
     <TextView
+        android:id="@+id/receipt_prompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/receipt_check_prompt"
-        android:textSize="15dp"/>
+        android:textSize="15sp"
+        android:layout_below="@id/receipt_title"/>
 
     <ListView
         android:id="@+id/receipt_items"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/receipt_prompt"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/total"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="@string/total"
+        android:textSize="20sp"
+        android:layout_below="@id/receipt_items"/>
+
+    <TextView
+        android:id="@+id/total_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/total"
-            android:textSize="20dp"/>
-
-        <TextView
-            android:id="@+id/total_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textAlignment="gravity"
-            android:textSize="20dp"/>
-    </LinearLayout>
-
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/back_button"/>
+        android:textSize="20sp"
+        android:layout_below="@id/receipt_items"
+        android:gravity="end"
+        android:textAlignment="gravity"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/total"/>
 
     <Button
         android:id="@+id/create_encounter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/save_encounter_button"/>
-
-</LinearLayout>
+        android:text="@string/save_encounter_button"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
