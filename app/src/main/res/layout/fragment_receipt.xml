@@ -35,7 +35,6 @@
         android:textSize="20sp"
         android:layout_below="@id/receipt_items"/>
 
-
     <TextView
         android:id="@+id/total_price"
         android:layout_width="match_parent"
@@ -53,5 +52,4 @@
         android:layout_height="wrap_content"
         android:text="@string/save_encounter_button"
         android:layout_alignParentBottom="true"/>
-
 </RelativeLayout>
