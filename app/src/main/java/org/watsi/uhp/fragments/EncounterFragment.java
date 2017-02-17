@@ -103,11 +103,13 @@ public class EncounterFragment extends Fragment {
         createEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                ArrayList<LineItem> lineItemsArrayList = new ArrayList<LineItem>();
+                lineItemsArrayList.addAll(lineItems);
 
                 ReceiptFragment receiptFragment = new ReceiptFragment();
                 Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("lineItems", lineItemsArrayList);
+                receiptFragment.setArguments(bundle);
 
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, receiptFragment);
