@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">UHP</string>
-    <string name="main_activity_label">Universal Health Project</string>
+    <string name="main_activity_label">Universal Healthcare Project</string>
     <string name="search_hint">Search patient name or ID</string>
     <string name="encounter_search_hint">Search drug, lab or service</string>
     <string name="encounter_search_label">Add</string>
@@ -23,4 +23,6 @@
     <string name="default_billable_quantity">1</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a billable&#8230;</string>
+    <string name="identification_button">CHECK IN</string>
+    <string name="encounter_button">CHECK OUT</string>
 </resources>

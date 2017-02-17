@@ -45,17 +45,17 @@ public class EncounterFragment extends Fragment {
     private LineItemAdapter lineItemAdapter;
     private List<LineItem> lineItems;
     private Button createEncounterButton;
-    private Encounter.IdMethodEnum idMethod;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
+        //TODO: pass this to ReceiptView
+        String memberId = getArguments().getString("memberId");
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
-        idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
 
         setCategorySpinner();
         setBillableSearch();
