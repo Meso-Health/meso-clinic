@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.adapters.LineItemAdapter;
+import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
@@ -42,7 +42,7 @@ public class EncounterFragment extends Fragment {
     private Spinner billableSpinner;
     private SearchView billableSearch;
     private ListView lineItemsListView;
-    private LineItemAdapter lineItemAdapter;
+    private EncounterItemAdapter encounterItemAdapter;
     private List<LineItem> lineItems;
     private Button createEncounterButton;
     private Encounter.IdMethodEnum idMethod;
@@ -87,7 +87,7 @@ public class EncounterFragment extends Fragment {
     }
     
     private void setBillableSpinner(Billable.CategoryEnum category) {
-        SimpleCursorAdapter adapter = getlineItemAdapter(category);
+        SimpleCursorAdapter adapter = getEncounterItemAdapter(category);
 
         billableSpinner.setAdapter(adapter);
         billableSpinner.setOnItemSelectedListener(new BillableListener());
@@ -95,8 +95,8 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         lineItems = new ArrayList<>();
-        lineItemAdapter = new LineItemAdapter(getContext(), lineItems, createEncounterButton);
-        lineItemsListView.setAdapter(lineItemAdapter);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, createEncounterButton);
+        lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
     private void setCreateEncounterButton() {
@@ -141,7 +141,7 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private SimpleCursorAdapter getlineItemAdapter(Billable.CategoryEnum category) {
+    private SimpleCursorAdapter getEncounterItemAdapter(Billable.CategoryEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
         try {
             //Create prompt
@@ -187,7 +187,7 @@ public class EncounterFragment extends Fragment {
                 LineItem lineItem = new LineItem();
                 lineItem.setBillable(billable);
 
-                lineItemAdapter.add(lineItem);
+                encounterItemAdapter.add(lineItem);
                 createEncounterButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {

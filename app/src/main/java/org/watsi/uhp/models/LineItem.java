@@ -1,10 +1,18 @@
 package org.watsi.uhp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.android.gms.vision.text.Line;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+
+import static android.os.UserHandle.readFromParcel;
+
 @DatabaseTable(tableName = LineItem.TABLE_NAME)
-public class LineItem {
+public class LineItem implements Parcelable {
 
     public static final String TABLE_NAME = "line_items";
     public static final String FIELD_NAME_ID = "id";
@@ -52,5 +60,34 @@ public class LineItem {
         if (mQuantity > 1) {
             this.mQuantity--;
         }
+    }
+
+    @SuppressWarnings("unused")
+    public LineItem(Parcel in) {
+        this();
+        readFromParcel(in);
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public final Parcelable.Creator<LineItem> CREATOR = new Parcelable.Creator<LineItem>() {
+        public LineItem createFromParcel(Parcel in) {
+            return new LineItem(in);
+        }
+
+        public LineItem[] newArray(int size) {
+            return new LineItem[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mBillable.getName());
+        dest.writeInt(mBillable.getPrice());
+        dest.writeString(mBillable.getAmount());
+        dest.writeString(mBillable.getUnit());
+        dest.writeInt(mQuantity);
     }
 }

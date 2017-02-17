@@ -73,6 +73,6 @@
         android:id="@+id/save_encounter"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/save_encounter_button"
+        android:text="@string/continue_encounter_button"
         android:visibility="gone"/>
 </LinearLayout>
