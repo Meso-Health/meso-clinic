@@ -2,7 +2,6 @@ package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.ListView;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.LineItemDao;
@@ -60,11 +60,8 @@ public class ReceiptFragment extends Fragment {
                     Rollbar.reportException(e);
                 }
 
-                RecentEncountersFragment fragment = new RecentEncountersFragment();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                // TODO: clear backstack
+                ((MainActivity) getActivity()).setMainFragment();
             }
         });
     }
