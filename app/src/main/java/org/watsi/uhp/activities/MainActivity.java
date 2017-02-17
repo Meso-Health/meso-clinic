@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupToolbar();
-        setMainFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, new MainFragment())
+                .commit();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -109,10 +113,14 @@ public class MainActivity extends AppCompatActivity {
     //TODO: consider moving these to a "NavigationManager" class
 
     public void setMainFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container, new MainFragment())
-                .commit();
+        FragmentManager fm = getSupportFragmentManager();
+
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fragment_container, new MainFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     public void setDetailFragment(String memberId, Encounter.IdMethodEnum idMethod) {

@@ -74,7 +74,6 @@ public class ReceiptFragment extends Fragment {
                     Rollbar.reportException(e);
                 }
 
-                // TODO: clear backstack
                 ((MainActivity) getActivity()).setMainFragment();
             }
         });
