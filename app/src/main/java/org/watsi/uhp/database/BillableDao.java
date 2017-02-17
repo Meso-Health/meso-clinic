@@ -58,10 +58,12 @@ public class BillableDao {
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 
-    public static List<Billable> allNames() throws SQLException {
+    public static List<Billable> allDrugNames() throws SQLException {
         PreparedQuery<Billable> pq = getInstance().getBillableDao()
                 .queryBuilder()
                 .selectColumns(Billable.FIELD_NAME_NAME)
+                .where()
+                .eq(Billable.FIELD_NAME_CATEGORY, Billable.CategoryEnum.DRUGS)
                 .prepare();
 
         return getInstance().getBillableDao().query(pq);
