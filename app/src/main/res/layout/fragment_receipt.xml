@@ -42,10 +42,10 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_below="@id/receipt_items"
-        android:gravity="right"
+        android:gravity="end"
         android:textAlignment="gravity"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/total"/>
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/total"/>
 
     <Button
         android:id="@+id/create_encounter"
