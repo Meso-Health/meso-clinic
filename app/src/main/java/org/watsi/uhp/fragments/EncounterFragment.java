@@ -47,6 +47,8 @@ public class EncounterFragment extends Fragment {
     private Button createEncounterButton;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(R.string.encounter_fragment_label);
+
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
         //TODO: pass this to ReceiptView
         String memberId = getArguments().getString("memberId");

@@ -17,6 +17,7 @@ public class MainFragment extends Fragment {
     private Button mEncounterButton;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(R.string.main_activity_label);
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_main, container, false);
 
         mIdentificationButton = (Button) view.findViewById(R.id.identification_button);

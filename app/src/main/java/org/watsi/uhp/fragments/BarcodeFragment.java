@@ -30,6 +30,8 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
     private CameraSource mCameraSource;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(R.string.barcode_fragment_label);
+
         setupBarcodeDetector();
         View view = inflater.inflate(R.layout.fragment_barcode, container, false);
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);

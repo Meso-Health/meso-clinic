@@ -25,6 +25,8 @@ import java.util.List;
 public class CurrentPatientsFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(R.string.current_patients_fragment_label);
+
         View view = inflater.inflate(R.layout.fragment_current_patients, container, false);
         ListView listView = (ListView) view.findViewById(R.id.current_patients);
 
