@@ -44,7 +44,7 @@ public class EncounterFragment extends Fragment {
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
     private List<LineItem> lineItems;
-    private Button createEncounterButton;
+    private Button saveEncounterButton;
     private Encounter.IdMethodEnum idMethod;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class EncounterFragment extends Fragment {
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
-        createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
         idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
 
         setCategorySpinner();
@@ -95,15 +95,15 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         lineItems = new ArrayList<>();
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, createEncounterButton);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
     private void setCreateEncounterButton() {
-        createEncounterButton.setOnClickListener(new View.OnClickListener() {
+        saveEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<LineItem> lineItemsArrayList = new ArrayList<LineItem>();
+                ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
                 lineItemsArrayList.addAll(lineItems);
 
                 ReceiptFragment receiptFragment = new ReceiptFragment();
@@ -115,30 +115,6 @@ public class EncounterFragment extends Fragment {
                 transaction.replace(R.id.fragment_container, receiptFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
-
-//                // TODO: this should be in a transaction
-//                Encounter encounter = new Encounter();
-//                encounter.setIdMethod(Encounter.IdMethodEnum.BARCODE);
-//                encounter.setDate(Calendar.getInstance().getTime());
-//                encounter.setIdMethod(idMethod);
-//                try {
-//                    // TODO: get actual member instead of arbitrarily selecting first
-//                    encounter.setMember(MemberDao.all().get(0));
-//                    EncounterDao.create(encounter);
-//                    BillableDao.create(billables);
-//                    for (Billable billable : billables) {
-//                        LineItemEncounter billableEncounter = new LineItemEncounter(billable, encounter);
-//                        BillableEncounterDao.create(billableEncounter);
-//                    }
-//                } catch (SQLException e) {
-//                    Rollbar.reportException(e);
-//                }
-//                MainActivity activity = (MainActivity) getActivity();
-//                RecentEncountersFragment fragment = new RecentEncountersFragment();
-//                FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.fragment_container, fragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
             }
         });
     }
@@ -190,7 +166,7 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-                createEncounterButton.setVisibility(View.VISIBLE);
+                saveEncounterButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
