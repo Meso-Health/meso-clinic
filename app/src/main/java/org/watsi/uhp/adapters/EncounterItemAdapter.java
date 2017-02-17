@@ -17,11 +17,11 @@ import org.watsi.uhp.models.LineItem;
 
 import java.util.List;
 
-public class LineItemAdapter extends ArrayAdapter<LineItem> {
+public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
     private Button mCreateEncounterButton;
 
-    public LineItemAdapter(Context context, List<LineItem> lineItemList, Button
+    public EncounterItemAdapter(Context context, List<LineItem> lineItemList, Button
             createEncounterButton) {
         super(context, R.layout.item_line_item_list, lineItemList);
         this.mCreateEncounterButton = createEncounterButton;

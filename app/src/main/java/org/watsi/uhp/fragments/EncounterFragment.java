@@ -23,7 +23,7 @@ import android.widget.Spinner;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.adapters.LineItemAdapter;
+import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
@@ -41,7 +41,7 @@ public class EncounterFragment extends Fragment {
     private Spinner billableSpinner;
     private SearchView billableSearch;
     private ListView lineItemsListView;
-    private LineItemAdapter lineItemAdapter;
+    private EncounterItemAdapter encounterItemAdapter;
     private List<LineItem> lineItems;
     private Button createEncounterButton;
     private Encounter.IdMethodEnum idMethod;
@@ -94,8 +94,8 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         lineItems = new ArrayList<>();
-        lineItemAdapter = new LineItemAdapter(getContext(), lineItems, createEncounterButton);
-        lineItemsListView.setAdapter(lineItemAdapter);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, createEncounterButton);
+        lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
     private void setCreateEncounterButton() {
@@ -172,7 +172,7 @@ public class EncounterFragment extends Fragment {
             LineItem lineItem = new LineItem();
             lineItem.setBillable(billable);
             
-            lineItemAdapter.add(lineItem);
+            encounterItemAdapter.add(lineItem);
             createEncounterButton.setVisibility(View.VISIBLE);
         } catch (SQLException e) {
             Rollbar.reportException(e);
