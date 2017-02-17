@@ -20,6 +20,6 @@ public class BillableTest {
         billable.setUnit("Tablet");
         billable.setAmount("30g");
 
-        assertEquals(billable.getDisplayName(), "Foo - Tablet 30g");
+        assertEquals(billable.getDisplayName(), "Foo - 30g Tablet");
     }
 }
