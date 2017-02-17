@@ -24,6 +24,7 @@
     <string name="dec_billable_quantity">-</string>
     <string name="default_billable_quantity">1</string>
     <string name="remove_billable_button">X</string>
+    <string name="encounter_product_list_label">LIST ITEMS</string>
     <string name="continue_encounter_button">CONTINUE</string>
 
     <string name="receipt_fragment_label">Review receipt</string>
