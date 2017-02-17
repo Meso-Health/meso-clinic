@@ -4,6 +4,7 @@
     <string name="current_patients_fragment_label">Select a patient</string>
     <string name="encounter_fragment_label">Enter line items</string>
     <string name="barcode_fragment_label">Scan ID</string>
+    <string name="receipt_fragment_label">Review receipt</string>
 
     <string name="search_hint">Search patient name or ID</string>
     <string name="encounter_search_hint">Search drug, lab or service</string>

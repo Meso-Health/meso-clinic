@@ -10,13 +10,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/receipt_title"
-        android:textSize="20dp"
-        android:textAllCaps="true"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="@string/receipt_check_prompt"
         android:textSize="15dp"/>
 

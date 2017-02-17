@@ -33,6 +33,8 @@ public class ReceiptFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        getActivity().setTitle(R.string.receipt_fragment_label);
+
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
         mLineItems = getArguments().getParcelableArrayList("lineItems");
         mCreateEncounterButton = (Button) view.findViewById(R.id.create_encounter);
