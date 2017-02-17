@@ -42,7 +42,7 @@ public class ReceiptFragment extends Fragment {
         listView.setAdapter((ListAdapter) mAdapter);
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
-        priceTextView.setText(Integer.toString(priceTotal(mLineItems)));
+        priceTextView.setText(Integer.toString(priceTotal(mLineItems)) + " UGX");
 
         setCreateEncounterButton();
         return view;
