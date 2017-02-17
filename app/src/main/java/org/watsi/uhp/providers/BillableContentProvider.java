@@ -40,11 +40,12 @@ public class BillableContentProvider extends ContentProvider {
         };
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
+        //TODO: properly and efficiently implement this fuzzy search
         try {
-            List<Billable> allBillableNames = BillableDao.allNames();
+            List<Billable> billables = BillableDao.allDrugNames();
 
-            List<String> names = new ArrayList<>(allBillableNames.size());
-            for (Billable billable : allBillableNames) {
+            List<String> names = new ArrayList<>(billables.size());
+            for (Billable billable : billables) {
                 names.add(billable != null ? billable.getName() : null);
             }
 
