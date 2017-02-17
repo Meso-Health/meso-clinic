@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
@@ -166,14 +167,29 @@ public class EncounterFragment extends Fragment {
         return null;
     }
 
+    public static boolean containsId(List<LineItem> list, long id) {
+        for (LineItem item : list) {
+            if (item.getBillable().getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addToLineItemList (String billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
-            LineItem lineItem = new LineItem();
-            lineItem.setBillable(billable);
-            
-            lineItemAdapter.add(lineItem);
-            createEncounterButton.setVisibility(View.VISIBLE);
+
+            if (containsId(lineItems, Long.parseLong(billableId))) {
+                Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                LineItem lineItem = new LineItem();
+                lineItem.setBillable(billable);
+
+                lineItemAdapter.add(lineItem);
+                createEncounterButton.setVisibility(View.VISIBLE);
+            }
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
