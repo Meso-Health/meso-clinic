@@ -26,8 +26,6 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
-import static android.R.id.list;
-
 public class ReceiptFragment extends Fragment {
 
     private List<LineItem> mLineItems;
@@ -82,5 +80,4 @@ public class ReceiptFragment extends Fragment {
             }
         });
     }
->>>>>>> d86fc7cb77280e3d3e20dd97c8135184a9fc6699
 }
