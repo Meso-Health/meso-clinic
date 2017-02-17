@@ -9,6 +9,7 @@ import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rollbar.android.Rollbar;
 
@@ -40,8 +41,19 @@ public class ReceiptFragment extends Fragment {
         Adapter mAdapter = new ReceiptItemAdapter(getActivity(), mLineItems);
         listView.setAdapter((ListAdapter) mAdapter);
 
+        TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
+        priceTextView.setText(Integer.toString(priceTotal(mLineItems)) + " UGX");
+
         setCreateEncounterButton();
         return view;
+    }
+
+    private int priceTotal(List<LineItem> lineItems) {
+        int sum = 0;
+        for (LineItem item : lineItems) {
+            sum = sum + (item.getBillable().getPrice() * item.getQuantity());
+        }
+        return sum;
     }
 
     private void setCreateEncounterButton() {
