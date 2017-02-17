@@ -8,12 +8,15 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.models.LineItem;
 
 import java.util.List;
+
+import static android.R.id.list;
 
 public class ReceiptFragment extends Fragment {
 
@@ -26,6 +29,18 @@ public class ReceiptFragment extends Fragment {
         Adapter mAdapter = new ReceiptItemAdapter(getActivity(), mLineItems);
         listView.setAdapter((ListAdapter) mAdapter);
 
+        TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
+        priceTextView.setText(Integer.toString(priceTotal(mLineItems)));
+
         return view;
     }
+
+    private int priceTotal(List<LineItem> lineItems) {
+        int sum = 0;
+        for (LineItem item : lineItems) {
+            sum = sum + (item.getBillable().getPrice() * item.getQuantity());
+        }
+        return sum;
+    }
+
 }

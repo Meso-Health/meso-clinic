@@ -26,6 +26,7 @@
 
     <string name="receipt_title"><b>Receipt Overview</b></string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
+    <string name="total"><b>TOTAL</b></string>
     <string name="back_button">NO, GO BACK</string>
     <string name="save_encounter_button">YES, SAVE ENCOUNTER</string>
 </resources>

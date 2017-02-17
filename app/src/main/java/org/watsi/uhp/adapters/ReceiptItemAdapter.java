@@ -34,7 +34,6 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
 
             viewHolder = new ViewHolder();
             viewHolder.billableQuantity = (TextView) convertView.findViewById(R.id.receipt_billable_quantity);
-            viewHolder.billableName = (TextView) convertView.findViewById(R.id.receipt_billable_name);
             viewHolder.billableDetails = (TextView) convertView.findViewById(R.id.receipt_billable_details);
             viewHolder.billablePrice = (TextView) convertView.findViewById(R.id.receipt_billable_price);
 
@@ -47,11 +46,11 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
 
         if (lineItem != null) {
             final Billable billable = lineItem.getBillable();
+            final int quantity = lineItem.getQuantity();
 
-            // TODO: viewHolder.billableQuantity.setText();
-            viewHolder.billableName.setText(billable.getName());
+            viewHolder.billableQuantity.setText(Integer.toString(quantity));
             viewHolder.billableDetails.setText(billable.getDisplayName());
-            viewHolder.billablePrice.setText(String.valueOf(billable.getPrice()));
+            viewHolder.billablePrice.setText(String.valueOf(billable.getPrice()) + " UGX");
         }
 
         return convertView;
@@ -59,7 +58,6 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
 
     private static class ViewHolder {
         TextView billableQuantity;
-        TextView billableName;
         TextView billableDetails;
         TextView billablePrice;
     }
