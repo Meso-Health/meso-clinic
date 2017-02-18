@@ -28,6 +28,11 @@
     <string name="encounter_product_list_label">LIST ITEMS</string>
     <string name="continue_encounter_button">CONTINUE</string>
 
+    <string name="add_new_billable_fragment_label">Add new billable</string>
+    <string name="add_new_name">Name:</string>
+    <string name="add_new_price">Price:</string>
+    <string name="add_new_billable">Add</string>
+
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
     <string name="total"><b>TOTAL</b></string>
