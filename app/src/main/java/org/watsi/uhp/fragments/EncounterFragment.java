@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
@@ -45,6 +46,7 @@ public class EncounterFragment extends Fragment {
     private EncounterItemAdapter encounterItemAdapter;
     private List<LineItem> lineItems;
     private Button saveEncounterButton;
+    private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.encounter_fragment_label);
@@ -56,6 +58,7 @@ public class EncounterFragment extends Fragment {
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
+        addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
 
@@ -63,6 +66,7 @@ public class EncounterFragment extends Fragment {
         setBillableSearch();
         setLineItemList();
         setCreateEncounterButton();
+        setAddBillableLink();
 
         return view;
     }
@@ -99,6 +103,20 @@ public class EncounterFragment extends Fragment {
         lineItems = new ArrayList<>();
         encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
+    }
+
+    private void setAddBillableLink() {
+        addBillableLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddNewBillableFragment addNewBillableFragment = new AddNewBillableFragment();
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, addNewBillableFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
     }
 
     private void setCreateEncounterButton() {
