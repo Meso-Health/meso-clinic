@@ -24,32 +24,27 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
-import org.watsi.uhp.adapters.BillableAdapter;
+import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.database.BillableEncounterDao;
-import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.BillableEncounter;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 
 public class EncounterFragment extends Fragment {
 
     private Spinner categorySpinner;
-    private BillableAdapter billableAdapter;
     private Spinner billableSpinner;
     private SearchView billableSearch;
-    private List<Billable> billables;
-    private ListView billablesListView;
-    private Button createEncounterButton;
+    private ListView lineItemsListView;
+    private EncounterItemAdapter encounterItemAdapter;
+    private List<LineItem> lineItems;
+    private Button saveEncounterButton;
     private Encounter.IdMethodEnum idMethod;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,13 +53,13 @@ public class EncounterFragment extends Fragment {
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
-        billablesListView = (ListView) view.findViewById(R.id.billables_list);
-        createEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
+        saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
         idMethod = Encounter.IdMethodEnum.valueOf(getArguments().getString("idMethod"));
 
         setCategorySpinner();
         setBillableSearch();
-        setBillableList();
+        setLineItemList();
         setCreateEncounterButton();
 
         return view;
@@ -92,50 +87,39 @@ public class EncounterFragment extends Fragment {
     }
     
     private void setBillableSpinner(Billable.CategoryEnum category) {
-        SimpleCursorAdapter adapter = getBillableAdapter(category);
+        SimpleCursorAdapter adapter = getEncounterItemAdapter(category);
 
         billableSpinner.setAdapter(adapter);
         billableSpinner.setOnItemSelectedListener(new BillableListener());
     }
 
-    private void setBillableList() {
-        billables = new ArrayList<>();
-        billableAdapter = new BillableAdapter(getContext(), billables, createEncounterButton);
-        billablesListView.setAdapter(billableAdapter);
+    private void setLineItemList() {
+        lineItems = new ArrayList<>();
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
+        lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
     private void setCreateEncounterButton() {
-        createEncounterButton.setOnClickListener(new View.OnClickListener() {
+        saveEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: this should be in a transaction
-                Encounter encounter = new Encounter();
-                encounter.setIdMethod(Encounter.IdMethodEnum.BARCODE);
-                encounter.setDate(Calendar.getInstance().getTime());
-                encounter.setIdMethod(idMethod);
-                try {
-                    // TODO: get actual member instead of arbitrarily selecting first
-                    encounter.setMember(MemberDao.all().get(0));
-                    EncounterDao.create(encounter);
-                    BillableDao.create(billables);
-                    for (Billable billable : billables) {
-                        BillableEncounter billableEncounter = new BillableEncounter(billable, encounter);
-                        BillableEncounterDao.create(billableEncounter);
-                    }
-                } catch (SQLException e) {
-                    Rollbar.reportException(e);
-                }
-                MainActivity activity = (MainActivity) getActivity();
-                RecentEncountersFragment fragment = new RecentEncountersFragment();
-                FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment);
+                ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
+                lineItemsArrayList.addAll(lineItems);
+
+                ReceiptFragment receiptFragment = new ReceiptFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("lineItems", lineItemsArrayList);
+                receiptFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, receiptFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
         });
     }
 
-    private SimpleCursorAdapter getBillableAdapter(Billable.CategoryEnum category) {
+    private SimpleCursorAdapter getEncounterItemAdapter(Billable.CategoryEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
         try {
             //Create prompt
@@ -161,23 +145,28 @@ public class EncounterFragment extends Fragment {
         return null;
     }
 
-    public static boolean containsId(List<Billable> list, long id) {
-        for (Billable object : list) {
-            if (object.getId() == id) {
+    public static boolean containsId(List<LineItem> list, String id) {
+        for (LineItem item : list) {
+            if (item.getBillable().getId() == Integer.parseInt(id)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void addSearchSuggestionToBillableList (String billableId) {
+    public void addToLineItemList (String billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
 
-            if (containsId(billables, Long.parseLong(billableId))) {
-                Toast.makeText(getActivity().getApplicationContext(), "Already in List Items", Toast.LENGTH_SHORT).show();
+            if (containsId(lineItems, billableId)) {
+                Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
+                        Toast.LENGTH_SHORT).show();
             } else {
-                billableAdapter.add(billable);
+                LineItem lineItem = new LineItem();
+                lineItem.setBillable(billable);
+
+                encounterItemAdapter.add(lineItem);
+                saveEncounterButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -216,18 +205,8 @@ public class EncounterFragment extends Fragment {
     private class BillableListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            try {
-                if (position != 0) {
-                    Billable billable = BillableDao.findById(Long.toString(id));
-
-                    if (containsId(billables, id)) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Already in List Items", Toast.LENGTH_SHORT).show();
-                    } else {
-                        billableAdapter.add(billable);
-                    }
-                }
-            } catch (SQLException e) {
-                Rollbar.reportException(e);
+            if (position != 0) {
+                addToLineItemList(Long.toString(id));
             }
         }
 

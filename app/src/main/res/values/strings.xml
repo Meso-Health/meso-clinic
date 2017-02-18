@@ -14,7 +14,7 @@
     <string name="encounter_product_list_label">Line items</string>
     <string name="enter_billable_button">+</string>
     <string name="remove_billable_button">X</string>
-    <string name="save_encounter_button">Save encounter</string>
+    <string name="continue_encounter_button">CONTINUE</string>
     <string name="inpatient_radio_label">In-patient</string>
     <string name="outpatient_radio_label">Out-patient</string>
 
@@ -23,4 +23,10 @@
     <string name="default_billable_quantity">1</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a billable&#8230;</string>
+
+    <string name="receipt_title"><b>Receipt Overview</b></string>
+    <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
+    <string name="total"><b>TOTAL</b></string>
+    <string name="back_button">NO, GO BACK</string>
+    <string name="save_encounter_button">YES, SAVE ENCOUNTER</string>
 </resources>
