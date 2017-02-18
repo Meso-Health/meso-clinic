@@ -165,9 +165,9 @@ public class EncounterFragment extends Fragment {
         return null;
     }
 
-    public static boolean containsId(List<LineItem> list, long id) {
+    public static boolean containsId(List<LineItem> list, String id) {
         for (LineItem item : list) {
-            if (item.getBillable().getId() == id) {
+            if (item.getBillable().getId() == Integer.parseInt(id)) {
                 return true;
             }
         }
@@ -178,7 +178,7 @@ public class EncounterFragment extends Fragment {
         try {
             Billable billable = BillableDao.findById(billableId);
 
-            if (containsId(lineItems, Long.parseLong(billableId))) {
+            if (containsId(lineItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
                         Toast.LENGTH_SHORT).show();
             } else {
