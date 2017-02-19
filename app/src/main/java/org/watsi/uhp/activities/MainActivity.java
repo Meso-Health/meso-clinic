@@ -138,6 +138,14 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    public void setSearchMemberFragment() {
+        SearchMemberFragment searchMemberFragment = new SearchMemberFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, searchMemberFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public void setEncounterFragment(String memberId) {
         EncounterFragment encounterFragment = new EncounterFragment();
         Bundle bundle = new Bundle();
