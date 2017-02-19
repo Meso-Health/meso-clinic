@@ -15,7 +15,7 @@ import org.watsi.uhp.R;
 
 public class SearchMemberFragment extends Fragment {
 
-    SearchView memberSearch;
+    private SearchView mMemberSearch;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.member_search_fragment_label);
@@ -23,10 +23,10 @@ public class SearchMemberFragment extends Fragment {
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_member_search,
                 container, false);
 
-        memberSearch = (SearchView) view.findViewById(R.id.member_search);
+        mMemberSearch = (SearchView) view.findViewById(R.id.member_search);
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        memberSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        mMemberSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
         return view;
     }
