@@ -101,7 +101,15 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        lineItems = new ArrayList<>();
+        Activity activity = getActivity();
+        if (activity instanceof LineItemInterface) {
+            if (((LineItemInterface) activity).getCurrentLineItems() == null) {
+                lineItems = new ArrayList<>();
+            } else {
+                lineItems = ((LineItemInterface) activity).getCurrentLineItems();
+            }
+        }
+
         encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
