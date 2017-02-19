@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
@@ -29,5 +30,16 @@ public class SearchMemberFragment extends Fragment {
         mMemberSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
         return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mMemberSearch.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
     }
 }
