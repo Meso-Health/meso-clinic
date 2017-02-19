@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LineItemInterface {
 
-    public void setCurrentLineItems();
+    void setCurrentLineItems(List<LineItem> lineItems);
 
-    public List<LineItem> getCurrentLineItems();
+    List<LineItem> getCurrentLineItems();
 }
