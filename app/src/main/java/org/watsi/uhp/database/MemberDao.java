@@ -7,9 +7,15 @@ import com.j256.ormlite.table.TableUtils;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
 /**
  * POJO helper for querying Members
@@ -58,8 +64,14 @@ public class MemberDao {
 
     public static Member findById(String memberId) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("id", memberId);
+        queryMap.put("_id", memberId);
         return getInstance().getMemberDao().queryForFieldValues(queryMap).get(0);
+    }
+
+    public static List<Member> findByName(String name) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("full_name", name);
+        return getInstance().getMemberDao().queryForFieldValues(queryMap);
     }
 
     public static void update(Member member) throws SQLException {
@@ -70,13 +82,32 @@ public class MemberDao {
         getInstance().getMemberDao().refresh(member);
     }
 
-    public static List<Member> withNameLike(String query) throws SQLException {
+    public static Set<String> allUniqueMemberNames() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
-                .where()
-                .like(Member.FIELD_NAME_FULL_NAME, "%" + query + "%")
+                .selectColumns(Member.FIELD_NAME_FULL_NAME)
                 .prepare();
-        return getInstance().getMemberDao().query(pq);
+
+        List<Member> members = getInstance().getMemberDao().query(pq);
+        List<String> names = new ArrayList<>();
+        for (Member m : members) {
+            names.add(m.getName());
+        }
+        return new HashSet<>(names);
+    }
+
+    public static ArrayList<Member> fuzzySearchMembers(String query, int number, int threshold)
+            throws SQLException {
+        List<ExtractedResult> topMatchingNames =
+                FuzzySearch.extractTop(query, allUniqueMemberNames(), number, threshold);
+
+        ArrayList<Member> topMatchingMembers = new ArrayList<>();
+        for (ExtractedResult result : topMatchingNames) {
+            String name = result.getString();
+            topMatchingMembers.addAll(findByName(name));
+        }
+
+        return topMatchingMembers;
     }
 
     public static List<Member> recentMembers() throws SQLException {

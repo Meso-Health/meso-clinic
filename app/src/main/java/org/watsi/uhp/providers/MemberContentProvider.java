@@ -38,11 +38,11 @@ public class MemberContentProvider extends ContentProvider {
 
         try {
             // TODO: also search by card ID
-            List<Member> matchingMembers = MemberDao.withNameLike(query);
+            List<Member> matchingMembers = MemberDao.fuzzySearchMembers(query, 5, 50);
 
             for (Member member : matchingMembers) {
                 Object[] searchSuggestion = {
-                        member.getIdAsLong(),
+                        member.getId(),
                         member.getName(),
                         member.getCardId(),
                         member.getId()
