@@ -8,20 +8,11 @@
     android:paddingRight="10dp">
 
     <TextView
-        android:id="@+id/receipt_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/receipt_title"
-        android:textSize="20sp"
-        android:textAllCaps="true"/>
-
-    <TextView
         android:id="@+id/receipt_prompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/receipt_check_prompt"
-        android:textSize="15sp"
-        android:layout_below="@id/receipt_title"/>
+        android:textSize="15sp"/>
 
     <ListView
         android:id="@+id/receipt_items"
