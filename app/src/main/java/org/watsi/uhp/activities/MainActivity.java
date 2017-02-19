@@ -37,9 +37,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LineItemInterface {
     private List<LineItem> mCurrentLineItems;
 
-    public void setCurrentLineItems() {
-        Fragment encounterFragment = getSupportFragmentManager().findFragmentById(R.id.encounter_fragment);
-        mCurrentLineItems = ((EncounterFragment)encounterFragment).currentLineItems();
+    public void setCurrentLineItems(List<LineItem> lineItems) {
+        mCurrentLineItems = lineItems;
     }
 
     public List<LineItem> getCurrentLineItems() {
@@ -157,7 +156,10 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
     }
 
     public void setEncounterFragment(String memberId) {
-        mCurrentLineItems.clear();
+        if (mCurrentLineItems != null) {
+            mCurrentLineItems.clear();
+        }
+
         EncounterFragment encounterFragment = new EncounterFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);
