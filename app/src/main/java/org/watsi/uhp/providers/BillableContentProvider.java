@@ -40,24 +40,8 @@ public class BillableContentProvider extends ContentProvider {
         };
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
-        //TODO: properly and efficiently implement this fuzzy search
         try {
-            List<Billable> billables = BillableDao.allDrugNames();
-
-            List<String> names = new ArrayList<>(billables.size());
-            for (Billable billable : billables) {
-                names.add(billable != null ? billable.getName() : null);
-            }
-
-            Set<String> uniqueNames = new HashSet<>(names);
-
-            List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, uniqueNames, 5, 50);
-
-            ArrayList<Billable> matchingBillables = new ArrayList<>();
-            for (ExtractedResult result : topMatchingNames) {
-                String name = result.getString();
-                matchingBillables.addAll(BillableDao.findByName(name));
-            }
+            ArrayList<Billable> matchingBillables = BillableDao.fuzzySearchDrugs(query, 5, 50);
 
             for (Billable billable : matchingBillables) {
                 Object[] searchSuggestion = {
@@ -72,7 +56,6 @@ public class BillableContentProvider extends ContentProvider {
             e.printStackTrace();
         }
         return resultsCursor;
-
     }
 
     @Override
