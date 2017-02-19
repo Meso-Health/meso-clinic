@@ -27,12 +27,24 @@ import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.MainFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.services.RefreshMemberListService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LineItemInterface {
+    private List<LineItem> mCurrentLineItems;
+
+    public void setCurrentLineItems() {
+        Fragment encounterFragment = getSupportFragmentManager().findFragmentById(R.id.encounter_fragment);
+        mCurrentLineItems = ((EncounterFragment)encounterFragment).currentLineItems();
+    }
+
+    public List<LineItem> getCurrentLineItems() {
+        return mCurrentLineItems;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setEncounterFragment(String memberId) {
+        mCurrentLineItems.clear();
         EncounterFragment encounterFragment = new EncounterFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);
