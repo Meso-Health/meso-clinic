@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,10 +26,10 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.LineItemInterface;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
@@ -186,6 +187,12 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
+
+                Activity activity = getActivity();
+                if (activity instanceof LineItemInterface) {
+                    ((LineItemInterface) activity).setCurrentLineItems(lineItems);
+                }
+
                 saveEncounterButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
