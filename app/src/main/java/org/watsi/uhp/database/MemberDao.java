@@ -82,6 +82,15 @@ public class MemberDao {
         getInstance().getMemberDao().refresh(member);
     }
 
+    public static List<Member> withCardIdLike(String query) throws SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .like(Member.FIELD_NAME_CARD_ID, "%" + query + "%")
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
+    }
+
     public static Set<String> allUniqueMemberNames() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()

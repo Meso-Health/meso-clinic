@@ -36,9 +36,13 @@ public class MemberContentProvider extends ContentProvider {
         };
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
+        List<Member> matchingMembers;
         try {
-            // TODO: also search by card ID
-            List<Member> matchingMembers = MemberDao.fuzzySearchMembers(query, 5, 50);
+            if (containsNumber(query)) {
+                matchingMembers = MemberDao.withCardIdLike(query);
+            } else {
+                matchingMembers = MemberDao.fuzzySearchMembers(query, 5, 50);
+            }
 
             for (Member member : matchingMembers) {
                 Object[] searchSuggestion = {
@@ -72,5 +76,9 @@ public class MemberContentProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
+    }
+
+    private boolean containsNumber(String str) {
+        return str.matches(".*\\d+.*");
     }
 }
