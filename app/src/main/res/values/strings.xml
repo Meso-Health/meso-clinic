@@ -8,9 +8,12 @@
 
     <!--Identification-->
     <string name="barcode_fragment_label">Scan ID</string>
-    <string name="search_hint">Search patient name or ID</string>
-    <string name="member_photo_content_description">Member photo</string>
+    <string name="search_member_hint">Search patient name or ID</string>
+
+    <string name="member_search_fragment_label">Search</string>
+
     <string name="detail_fragment_label">Is this the right person?</string>
+    <string name="member_photo_content_description">Member photo</string>
     <string name="checkin_member">YES, CHECK IN</string>
 
     <!--Encounter-->
@@ -19,6 +22,7 @@
     <string name="encounter_fragment_label">Enter line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a billable&#8230;</string>
+    <string name="search_drug_hint">Search drugs</string>
     <string name="encounter_search_label">Add</string>
     <string name="inc_billable_quantity">+</string>
     <string name="dec_billable_quantity">-</string>
