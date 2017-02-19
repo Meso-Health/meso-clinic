@@ -33,7 +33,7 @@ public class Member {
 
     public static final String TABLE_NAME = "members";
 
-    public static final String FIELD_NAME_ID = "id";
+    public static final String FIELD_NAME_ID = "_id";
     public static final String FIELD_NAME_CARD_ID = "card_id";
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
@@ -41,8 +41,8 @@ public class Member {
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
-    private String mId;
+    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true, canBeNull = false)
+    private int mId;
 
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID, canBeNull = false)
@@ -72,19 +72,15 @@ public class Member {
     }
 
     public String getName() {
-        return this.mFullName;
+        return mFullName;
     }
 
-    public String getId() {
-        return this.mId;
+    public int getId() {
+        return mId;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.mId = id;
-    }
-
-    public long getIdAsLong() {
-        return Long.valueOf(getId().hashCode());
     }
 
     public String getCardId() {
