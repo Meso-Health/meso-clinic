@@ -77,6 +77,7 @@ public class EncounterFragment extends Fragment {
         ArrayList<Object> categories = new ArrayList<>();
         categories.add(getContext().getString(R.string.prompt_category));
         categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
+        categories.remove(Billable.CategoryEnum.UNSPECIFIED);
         
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
