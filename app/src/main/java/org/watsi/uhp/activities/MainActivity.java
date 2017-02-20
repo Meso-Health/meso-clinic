@@ -23,6 +23,7 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Encounter;
@@ -154,6 +155,14 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, encounterFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void setReceiptFragment() {
+        ReceiptFragment receiptFragment = new ReceiptFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, receiptFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

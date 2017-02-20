@@ -121,18 +121,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
-                lineItemsArrayList.addAll(((MainActivity) getActivity()).getCurrentLineItems());
-
-                ReceiptFragment receiptFragment = new ReceiptFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("lineItems", lineItemsArrayList);
-                receiptFragment.setArguments(bundle);
-
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, receiptFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                ((MainActivity) getActivity()).setReceiptFragment();
             }
         });
     }
