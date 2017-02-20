@@ -9,4 +9,6 @@ public interface LineItemInterface {
     void setCurrentLineItems(List<LineItem> lineItems);
 
     List<LineItem> getCurrentLineItems();
+
+    List<LineItem> addLineItem(LineItem lineItem);
 }

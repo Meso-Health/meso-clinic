@@ -32,6 +32,7 @@ import org.watsi.uhp.services.RefreshMemberListService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LineItemInterface {
@@ -42,6 +43,14 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
     }
 
     public List<LineItem> getCurrentLineItems() {
+        return mCurrentLineItems;
+    }
+
+    public List<LineItem> addLineItem(LineItem lineItem) {
+        if (mCurrentLineItems == null) {
+            mCurrentLineItems = new ArrayList<>();
+        }
+        mCurrentLineItems.add(lineItem);
         return mCurrentLineItems;
     }
 
