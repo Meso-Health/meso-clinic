@@ -3,10 +3,8 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.List;
-
 @DatabaseTable(tableName = Billable.TABLE_NAME)
-public class Billable {
+public class Billable extends AbstractModel {
 
     public static final String TABLE_NAME = "billables";
 
@@ -56,7 +54,7 @@ public class Billable {
     private Integer mPrice;
 
     public Billable() {
-        // empty constructor necessary for ORM
+        super();
     }
 
     public int getId() {

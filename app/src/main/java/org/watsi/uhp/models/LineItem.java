@@ -3,16 +3,13 @@ package org.watsi.uhp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.android.gms.vision.text.Line;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import java.util.ArrayList;
 
 import static android.os.UserHandle.readFromParcel;
 
 @DatabaseTable(tableName = LineItem.TABLE_NAME)
-public class LineItem implements Parcelable {
+public class LineItem extends AbstractModel implements Parcelable {
 
     public static final String TABLE_NAME = "line_items";
     public static final String FIELD_NAME_ID = "id";
@@ -33,7 +30,7 @@ public class LineItem implements Parcelable {
     private int mQuantity = 1;
 
     public LineItem() {
-        // empty constructor necessary for ORM
+        super();
     }
 
     public Billable getBillable() {
@@ -53,12 +50,12 @@ public class LineItem implements Parcelable {
     }
 
     public void increaseQuantity() {
-        this.mQuantity++;
+        setQuantity(getQuantity() + 1);
     }
 
     public void decreaseQuantity() {
-        if (mQuantity > 1) {
-            this.mQuantity--;
+        if (getQuantity() > 1) {
+            setQuantity(getQuantity() - 1);
         }
     }
 
