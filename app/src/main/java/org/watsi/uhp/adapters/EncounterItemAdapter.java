@@ -79,24 +79,31 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
                 viewHolder.decQuantityBtn.setVisibility(View.VISIBLE);
 
                 final ViewHolder vh = viewHolder;
+                viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            String quantity = vh.billableQuantity.getText().toString();
+
+                            if (quantity.equals("")) {
+                                vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
+                            } else {
+                                lineItem.setQuantity(Integer.valueOf(quantity));
+                            }
+                        }
+                    }
+                });
+
                 viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        if (vh.billableQuantity.getText().toString().equals("")) {
-                            lineItem.setQuantity(1);
-                        } else {
-                            lineItem.decreaseQuantity();
-                        }
+                        lineItem.decreaseQuantity();
                         vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
                     }
                 });
 
                 viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        if (vh.billableQuantity.getText().toString().equals("")) {
-                            lineItem.setQuantity(1);
-                        } else {
-                            lineItem.increaseQuantity();
-                        }
+                        lineItem.increaseQuantity();
                         vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
                     }
                 });
