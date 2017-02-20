@@ -1,6 +1,8 @@
 package org.watsi.uhp.database;
 
+import android.app.SearchManager;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 
 import com.j256.ormlite.android.AndroidDatabaseResults;
 import com.j256.ormlite.dao.CloseableIterator;
@@ -8,11 +10,18 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
 /**
  * POJO helper for querying Billables
@@ -58,7 +67,7 @@ public class BillableDao {
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 
-    public static List<Billable> allDrugNames() throws SQLException {
+    public static Set<String> allUniqueDrugNames() throws SQLException {
         PreparedQuery<Billable> pq = getInstance().getBillableDao()
                 .queryBuilder()
                 .selectColumns(Billable.FIELD_NAME_NAME)
@@ -66,7 +75,48 @@ public class BillableDao {
                 .eq(Billable.FIELD_NAME_CATEGORY, Billable.CategoryEnum.DRUGS)
                 .prepare();
 
-        return getInstance().getBillableDao().query(pq);
+        List<Billable> allDrugs = getInstance().getBillableDao().query(pq);
+        List<String> names = new ArrayList<>();
+        for (Billable billable : allDrugs) {
+            names.add(billable.getName());
+        }
+        return new HashSet<>(names);
+    }
+
+    public static ArrayList<Billable> fuzzySearchDrugs(String query, int number, int threshold)
+            throws SQLException {
+        List<ExtractedResult> topMatchingNames =
+                FuzzySearch.extractTop(query, allUniqueDrugNames(), number, threshold);
+
+        ArrayList<Billable> topMatchingDrugs = new ArrayList<>();
+        for (ExtractedResult result : topMatchingNames) {
+            String name = result.getString();
+            topMatchingDrugs.addAll(findByName(name));
+        }
+
+        return topMatchingDrugs;
+    }
+
+    public static Cursor fuzzySearchDrugsCursor(String query, int number, int threshold) throws SQLException {
+        ArrayList<Billable> topMatchingDrugs = fuzzySearchDrugs(query, number, threshold);
+
+        String[] cursorColumns = {
+                Member.FIELD_NAME_ID,
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2,
+        };
+        MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
+
+        for (Billable drug : topMatchingDrugs) {
+            Object[] searchSuggestion = {
+                    drug.getId(),
+                    drug.getName(),
+                    drug.getDisplayDetails()
+            };
+            resultsCursor.addRow(searchSuggestion);
+        }
+
+        return resultsCursor;
     }
 
     public static Cursor getBillablesByCategoryCursor(Billable.CategoryEnum category) throws
