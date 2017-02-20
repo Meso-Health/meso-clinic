@@ -251,23 +251,25 @@ public class EncounterFragment extends Fragment {
 
     private SimpleCursorAdapter getBillableItemAdapter(String query) {
         // TODO: check that creation of new adapter each time does not have memory implications
-        try {
-            Cursor cursor = BillableDao.fuzzySearchDrugsCursor(query, 5, 50);
-            String[] from = {
-                    SearchManager.SUGGEST_COLUMN_TEXT_1,
-                    SearchManager.SUGGEST_COLUMN_TEXT_2
-            };
-            int[] to = new int[] {
-                    R.id.text1,
-                    R.id.text2
-            };
+        if (query.length() > 2) {
+            try {
+                Cursor cursor = BillableDao.fuzzySearchDrugsCursor(query, 5, 50);
+                String[] from = {
+                        SearchManager.SUGGEST_COLUMN_TEXT_1,
+                        SearchManager.SUGGEST_COLUMN_TEXT_2
+                };
+                int[] to = new int[]{
+                        R.id.text1,
+                        R.id.text2
+                };
 
-            return new android.widget.SimpleCursorAdapter(getContext(),
-                    R.layout.item_billable_search_suggestion,
-                    cursor, from, to, 0
-            );
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
+                return new android.widget.SimpleCursorAdapter(getContext(),
+                        R.layout.item_billable_search_suggestion,
+                        cursor, from, to, 0
+                );
+            } catch (SQLException e) {
+                Rollbar.reportException(e);
+            }
         }
         return null;
     }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -24,11 +25,21 @@ import java.util.List;
 
 public class CurrentPatientsFragment extends Fragment {
 
+    private Button mNewPatientButton;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.current_patients_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_current_patients, container, false);
+        mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
         ListView listView = (ListView) view.findViewById(R.id.current_patients);
+
+        mNewPatientButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).setBarcodeFragment();
+            }
+        });
 
         //TODO: change to show only members who have been identified but not had an encounter
         try {

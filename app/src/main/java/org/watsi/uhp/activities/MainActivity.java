@@ -23,7 +23,6 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
-import org.watsi.uhp.fragments.MainFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Encounter;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
         setupToolbar();
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new MainFragment())
+                .add(R.id.fragment_container, new CurrentPatientsFragment())
                 .commit();
     }
 
@@ -109,17 +108,6 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
     }
 
     //TODO: consider moving these to a "NavigationManager" class
-
-    public void setMainFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, new MainFragment());
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }
 
     public void setDetailFragment(String memberId, Encounter.IdMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
@@ -190,10 +178,14 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
     }
 
     public void setCurrentPatientsFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+
         CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.fragment_container, currentPatientsFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }
