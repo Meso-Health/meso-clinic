@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -10,8 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.LineItemInterface;
+import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.LineItem;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class AddNewBillableFragment extends Fragment {
 
@@ -29,6 +33,8 @@ public class AddNewBillableFragment extends Fragment {
         priceField = (EditText) view.findViewById(R.id.price_field);
         addBillableButton = (Button) view.findViewById(R.id.add_billable_button);
 
+        setAddBillableButton();
+
         return view;
     }
 
@@ -36,15 +42,21 @@ public class AddNewBillableFragment extends Fragment {
         addBillableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<String> newBillableArrayList = new ArrayList<String>();
-                newBillableArrayList.add(nameField.getText().toString());
-                newBillableArrayList.add(priceField.getText().toString());
+                Billable billable = new Billable();
+                billable.setName(nameField.getText().toString());
+                billable.setPrice(Integer.parseInt(priceField.getText().toString()));
+                billable.setCategory(Billable.CategoryEnum.UNSPECIFIED);
 
-                // TODO: below line should not go to new encounter fragment but previous one
+                LineItem lineItem = new LineItem();
+                lineItem.setBillable(billable);
+
+                Activity activity = getActivity();
+                if (activity instanceof LineItemInterface) {
+                    List<LineItem> currentLineItems = ((LineItemInterface) activity).addLineItem(lineItem);
+                    ((LineItemInterface) activity).setCurrentLineItems(currentLineItems);
+                }
+
                 EncounterFragment encounterFragment = new EncounterFragment();
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("newBillable", newBillableArrayList);
-                encounterFragment.setArguments(bundle);
 
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, encounterFragment);
