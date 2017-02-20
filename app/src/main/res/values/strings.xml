@@ -34,6 +34,7 @@
     <string name="add_new_name">Name:</string>
     <string name="add_new_price">Price:</string>
     <string name="add_new_billable">Add</string>
+    <string name="UGX">UGX</string>
 
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
