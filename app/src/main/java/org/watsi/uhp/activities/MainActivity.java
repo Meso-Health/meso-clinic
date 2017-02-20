@@ -1,5 +1,6 @@
 package org.watsi.uhp.activities;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -24,7 +25,7 @@ import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.services.RefreshMemberListService;
 
 import java.io.IOException;
@@ -74,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
+            Identification.IdMethodEnum idMethod = Identification.IdMethodEnum.valueOf(
+                    intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
+
             if (memberId != null) {
-                setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
+                setDetailFragment(memberId, idMethod);
             }
         }
     }
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO: consider moving these to a "NavigationManager" class
 
-    public void setDetailFragment(String memberId, Encounter.IdMethodEnum idMethod) {
+    public void setDetailFragment(String memberId, Identification.IdMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);
