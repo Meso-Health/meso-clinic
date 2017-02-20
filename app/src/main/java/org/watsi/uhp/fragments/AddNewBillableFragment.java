@@ -55,6 +55,7 @@ public class AddNewBillableFragment extends Fragment {
                 Activity activity = getActivity();
                 ((LineItemInterface) activity).addLineItem(lineItem);
 
+                //TODO: change the following to setEncounterFragment(memberId); once we decide how we're gonna pass around memberId
                 EncounterFragment encounterFragment = new EncounterFragment();
 
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
