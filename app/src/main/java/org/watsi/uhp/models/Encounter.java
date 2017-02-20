@@ -13,9 +13,6 @@ public class Encounter {
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_DATE = "date";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
-    public static final String FIELD_NAME_ID_METHOD = "id_method";
-
-    public enum IdMethodEnum { SEARCH, BARCODE, FINGERPRINT, RECENT }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private int mId;
@@ -25,9 +22,6 @@ public class Encounter {
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
-
-    @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
-    private IdMethodEnum mIdMethod;
 
     public Encounter() {
         // empty constructor necessary for ORM
@@ -51,13 +45,5 @@ public class Encounter {
 
     public Member getMember() {
         return mMember;
-    }
-
-    public IdMethodEnum getIdMethod() {
-        return mIdMethod;
-    }
-
-    public void setIdMethod(IdMethodEnum idMethod) {
-        this.mIdMethod = idMethod;
     }
 }
