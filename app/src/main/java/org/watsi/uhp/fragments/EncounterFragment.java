@@ -44,7 +44,7 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableSearchAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private Button saveEncounterButton;
+    private Button continueToReceiptButton;
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,12 +59,12 @@ public class EncounterFragment extends Fragment {
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
-        saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setCreateEncounterButton();
+        setContinueToReceiptButton();
         setAddBillableLink();
 
         return view;
@@ -102,9 +102,9 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
-        saveEncounterButton.setVisibility(View.VISIBLE);
+        continueToReceiptButton.setVisibility(View.VISIBLE);
 
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, continueToReceiptButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
@@ -117,8 +117,8 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private void setCreateEncounterButton() {
-        saveEncounterButton.setOnClickListener(new View.OnClickListener() {
+    private void setContinueToReceiptButton() {
+        continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
@@ -187,7 +187,7 @@ public class EncounterFragment extends Fragment {
                 encounterItemAdapter.add(lineItem);
                 lineItems.add(lineItem);
 
-                saveEncounterButton.setVisibility(View.VISIBLE);
+                continueToReceiptButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
