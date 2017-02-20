@@ -52,7 +52,7 @@ public class MemberContentProvider extends ContentProvider {
             for (Member member : matchingMembers) {
                 Object[] searchSuggestion = {
                         member.getId(),
-                        member.getName(),
+                        member.getFullName(),
                         member.getCardId(),
                         member.getId(),
                         idMethod

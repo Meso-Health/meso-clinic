@@ -13,13 +13,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
 public class BillableContentProvider extends ContentProvider {
 
@@ -41,7 +35,7 @@ public class BillableContentProvider extends ContentProvider {
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         try {
-            ArrayList<Billable> matchingBillables = BillableDao.fuzzySearchDrugs(query, 5, 50);
+            List<Billable> matchingBillables = BillableDao.fuzzySearchDrugs(query, 5, 50);
 
             for (Billable billable : matchingBillables) {
                 Object[] searchSuggestion = {

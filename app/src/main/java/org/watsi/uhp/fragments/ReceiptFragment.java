@@ -23,7 +23,6 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.List;
 
 public class ReceiptFragment extends Fragment {
@@ -64,7 +63,6 @@ public class ReceiptFragment extends Fragment {
             public void onClick(View v) {
                 // TODO: this should be in a transaction
                 Encounter encounter = new Encounter();
-                encounter.setDate(Calendar.getInstance().getTime());
                 try {
                     // TODO: get actual member instead of arbitrarily selecting first
                     encounter.setMember(MemberDao.all().get(0));

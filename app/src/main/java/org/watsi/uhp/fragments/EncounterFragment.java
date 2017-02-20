@@ -18,11 +18,13 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
@@ -42,26 +44,28 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableSearchAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private List<LineItem> lineItems;
-    private Button saveEncounterButton;
+    private Button continueToReceiptButton;
+    private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.encounter_fragment_label);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
         //TODO: pass this to ReceiptView
-        String memberId = getArguments().getString("memberId");
+//        String memberId = getArguments().getString("memberId");
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
+        addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
-        saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setCreateEncounterButton();
+        setContinueToReceiptButton();
+        setAddBillableLink();
 
         return view;
     }
@@ -70,6 +74,7 @@ public class EncounterFragment extends Fragment {
         ArrayList<Object> categories = new ArrayList<>();
         categories.add(getContext().getString(R.string.prompt_category));
         categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
+        categories.remove(Billable.CategoryEnum.UNSPECIFIED);
         
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
@@ -96,17 +101,28 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        lineItems = new ArrayList<>();
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
+        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        continueToReceiptButton.setVisibility(View.VISIBLE);
+
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, continueToReceiptButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
-    private void setCreateEncounterButton() {
-        saveEncounterButton.setOnClickListener(new View.OnClickListener() {
+    private void setAddBillableLink() {
+        addBillableLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).setAddNewBillableFragment();
+            }
+        });
+    }
+
+    private void setContinueToReceiptButton() {
+        continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
-                lineItemsArrayList.addAll(lineItems);
+                lineItemsArrayList.addAll(((MainActivity) getActivity()).getCurrentLineItems());
 
                 ReceiptFragment receiptFragment = new ReceiptFragment();
                 Bundle bundle = new Bundle();
@@ -156,9 +172,10 @@ public class EncounterFragment extends Fragment {
         return false;
     }
 
-    public void addToLineItemList (String billableId) {
+    public void addToLineItemList(String billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
+            List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
             if (containsId(lineItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
@@ -168,7 +185,9 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-                saveEncounterButton.setVisibility(View.VISIBLE);
+                lineItems.add(lineItem);
+
+                continueToReceiptButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);

@@ -61,7 +61,7 @@ public class DetailFragment extends Fragment {
     }
 
     private void setPatientCard() {
-        mMemberName.setText(mMember.getName());
+        mMemberName.setText(mMember.getFullName());
         mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
         mMemberId.setText(String.valueOf(mMember.getCardId()));
         Bitmap photoBitmap = mMember.getPhotoBitmap();

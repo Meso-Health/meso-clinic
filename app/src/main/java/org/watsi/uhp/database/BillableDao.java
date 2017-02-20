@@ -57,13 +57,13 @@ public class BillableDao {
 
     public static Billable findById(String billableId) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("_id", billableId);
+        queryMap.put(Billable.FIELD_NAME_ID, billableId);
         return getInstance().getBillableDao().queryForFieldValues(queryMap).get(0);
     }
 
     public static List<Billable> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("name", name);
+        queryMap.put(Billable.FIELD_NAME_NAME, name);
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 
@@ -83,12 +83,12 @@ public class BillableDao {
         return new HashSet<>(names);
     }
 
-    public static ArrayList<Billable> fuzzySearchDrugs(String query, int number, int threshold)
+    public static List<Billable> fuzzySearchDrugs(String query, int number, int threshold)
             throws SQLException {
         List<ExtractedResult> topMatchingNames =
                 FuzzySearch.extractTop(query, allUniqueDrugNames(), number, threshold);
 
-        ArrayList<Billable> topMatchingDrugs = new ArrayList<>();
+        List<Billable> topMatchingDrugs = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
             String name = result.getString();
             topMatchingDrugs.addAll(findByName(name));
@@ -98,7 +98,7 @@ public class BillableDao {
     }
 
     public static Cursor fuzzySearchDrugsCursor(String query, int number, int threshold) throws SQLException {
-        ArrayList<Billable> topMatchingDrugs = fuzzySearchDrugs(query, number, threshold);
+        List<Billable> topMatchingDrugs = fuzzySearchDrugs(query, number, threshold);
 
         String[] cursorColumns = {
                 Member.FIELD_NAME_ID,
