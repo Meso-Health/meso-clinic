@@ -43,7 +43,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
         Member member = getItem(position);
 
         if (member != null) {
-            viewHolder.name.setText(member.getName());
+            viewHolder.name.setText(member.getFullName());
             viewHolder.card_id.setText(String.valueOf(member.getCardId()));
 
             Bitmap photoBitmap = member.getPhotoBitmap();

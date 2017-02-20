@@ -2,6 +2,7 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Encounter;
 
 import java.sql.SQLException;
@@ -37,6 +38,7 @@ public class EncounterDao {
     }
 
     public static void create(Encounter encounter) throws SQLException {
+        encounter.setCreatedAt(Clock.getCurrentTime());
         getInstance().getEncounterDao().create(encounter);
     }
 

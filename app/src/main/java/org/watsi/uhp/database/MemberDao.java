@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
@@ -24,7 +25,7 @@ public class MemberDao {
 
     private static MemberDao instance = new MemberDao();
 
-    private Dao<Member, Integer> mMemberDao;
+    private Dao<Member, UUID> mMemberDao;
     private String mLastModifiedAtString;
 
     private static synchronized MemberDao getInstance() {
@@ -38,7 +39,7 @@ public class MemberDao {
         this.mMemberDao = memberDao;
     }
 
-    private Dao<Member, Integer> getMemberDao() throws SQLException {
+    private Dao<Member, UUID> getMemberDao() throws SQLException {
         if (mMemberDao == null) {
             setMemberDao(DatabaseHelper.getHelper().getDao(Member.class));
         }
@@ -64,13 +65,13 @@ public class MemberDao {
 
     public static Member findById(String memberId) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("_id", memberId);
+        queryMap.put(Member.FIELD_NAME_ID, memberId);
         return getInstance().getMemberDao().queryForFieldValues(queryMap).get(0);
     }
 
     public static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("full_name", name);
+        queryMap.put(Member.FIELD_NAME_FULL_NAME, name);
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
     }
 
@@ -100,7 +101,7 @@ public class MemberDao {
         List<Member> members = getInstance().getMemberDao().query(pq);
         List<String> names = new ArrayList<>();
         for (Member m : members) {
-            names.add(m.getName());
+            names.add(m.getFullName());
         }
         return new HashSet<>(names);
     }

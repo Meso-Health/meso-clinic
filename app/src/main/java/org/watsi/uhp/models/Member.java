@@ -27,9 +27,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
-public class Member {
+public class Member extends AbstractModel {
 
     public static final String TABLE_NAME = "members";
 
@@ -41,8 +42,8 @@ public class Member {
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true, canBeNull = false)
-    private int mId;
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
+    private UUID mId;
 
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID, canBeNull = false)
@@ -64,24 +65,24 @@ public class Member {
     private String mPhotoUrl;
 
     public Member() {
-        // empty constructor necessary for ORM
+        super();
     }
 
-    public void setName(String name) {
-        this.mFullName = name;
+    public void setFullName(String fullName) {
+        this.mFullName = fullName;
     }
 
-    public String getName() {
-        return mFullName;
+    public String getFullName() {
+        return this.mFullName;
     }
 
-    public int getId() {
+    public UUID getId() {
         return mId;
     }
 
-    public void setId(int id) {
-        this.mId = id;
-    }
+//    public void setId(String id) {
+//        this.mId = id;
+//    }
 
     public String getCardId() {
         return mCardId;
@@ -103,8 +104,8 @@ public class Member {
         return mPhoto;
     }
 
-    public void setPhoto(byte[] photo_bytes) {
-        this.mPhoto = photo_bytes;
+    public void setPhoto(byte[] photoBytes) {
+        this.mPhoto = photoBytes;
     }
 
     public String getPhotoUrl() {
@@ -165,7 +166,7 @@ public class Member {
             Collections.sort(encounters, new Comparator<Encounter>() {
                 @Override
                 public int compare(Encounter e1, Encounter e2) {
-                    return e2.getDate().compareTo(e1.getDate());
+                    return e2.getCreatedAt().compareTo(e1.getCreatedAt());
                 }
             });
             return encounters.get(0);
