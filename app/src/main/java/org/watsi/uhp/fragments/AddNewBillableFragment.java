@@ -12,8 +12,10 @@ import android.widget.EditText;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.LineItemInterface;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.Member;
 
 import java.util.List;
 
@@ -51,10 +53,8 @@ public class AddNewBillableFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 Activity activity = getActivity();
-                if (activity instanceof LineItemInterface) {
-                    List<LineItem> currentLineItems = ((LineItemInterface) activity).addLineItem(lineItem);
-                    ((LineItemInterface) activity).setCurrentLineItems(currentLineItems);
-                }
+                List<LineItem> currentLineItems = ((LineItemInterface) activity).addLineItem(lineItem);
+                ((LineItemInterface) activity).setCurrentLineItems(currentLineItems);
 
                 EncounterFragment encounterFragment = new EncounterFragment();
 

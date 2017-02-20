@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
+import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
@@ -35,23 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LineItemInterface {
-    private List<LineItem> mCurrentLineItems;
-
-    public void setCurrentLineItems(List<LineItem> lineItems) {
-        mCurrentLineItems = lineItems;
-    }
-
-    public List<LineItem> getCurrentLineItems() {
-        return mCurrentLineItems;
-    }
-
-    public List<LineItem> addLineItem(LineItem lineItem) {
-        if (mCurrentLineItems == null) {
-            mCurrentLineItems = new ArrayList<>();
-        }
-        mCurrentLineItems.add(lineItem);
-        return mCurrentLineItems;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +150,21 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
         transaction.commit();
     }
 
+    private List<LineItem> mCurrentLineItems;
+
+    public void setCurrentLineItems(List<LineItem> lineItems) {
+        mCurrentLineItems = lineItems;
+    }
+
+    public List<LineItem> getCurrentLineItems() {
+        return mCurrentLineItems;
+    }
+
+    public List<LineItem> addLineItem(LineItem lineItem) {
+        mCurrentLineItems.add(lineItem);
+        return mCurrentLineItems;
+    }
+
     public void setEncounterFragment(String memberId) {
         if (mCurrentLineItems != null) {
             mCurrentLineItems.clear();
@@ -178,6 +177,14 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, encounterFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void setAddNewBillableFragment() {
+        AddNewBillableFragment addNewBillableFragment = new AddNewBillableFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, addNewBillableFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

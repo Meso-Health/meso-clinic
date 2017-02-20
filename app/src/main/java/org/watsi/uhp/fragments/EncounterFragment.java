@@ -26,6 +26,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.LineItemInterface;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
@@ -103,14 +104,14 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         Activity activity = getActivity();
-        if (activity instanceof LineItemInterface) {
-            if (((LineItemInterface) activity).getCurrentLineItems() == null) {
-                lineItems = new ArrayList<>();
-            } else {
-                lineItems = ((LineItemInterface) activity).getCurrentLineItems();
-                saveEncounterButton.setVisibility(View.VISIBLE);
-            }
+
+        if (((LineItemInterface) activity).getCurrentLineItems() == null) {
+            lineItems = new ArrayList<>();
+        } else {
+            lineItems = ((LineItemInterface) activity).getCurrentLineItems();
+            saveEncounterButton.setVisibility(View.VISIBLE);
         }
+
 
         encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
@@ -120,12 +121,7 @@ public class EncounterFragment extends Fragment {
         addBillableLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddNewBillableFragment addNewBillableFragment = new AddNewBillableFragment();
-
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, addNewBillableFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                ((MainActivity) getActivity()).setAddNewBillableFragment();
             }
         });
     }
