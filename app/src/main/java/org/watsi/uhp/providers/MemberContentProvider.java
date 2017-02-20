@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -32,16 +33,20 @@ public class MemberContentProvider extends ContentProvider {
                 BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2,
-                SearchManager.SUGGEST_COLUMN_INTENT_DATA
+                SearchManager.SUGGEST_COLUMN_INTENT_DATA,
+                SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA
         };
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         List<Member> matchingMembers;
+        String idMethod;
         try {
             if (containsNumber(query)) {
                 matchingMembers = MemberDao.withCardIdLike(query);
+                idMethod = Identification.IdMethodEnum.SEARCH_ID.toString();
             } else {
                 matchingMembers = MemberDao.fuzzySearchMembers(query, 5, 50);
+                idMethod = Identification.IdMethodEnum.SEARCH_NAME.toString();
             }
 
             for (Member member : matchingMembers) {
@@ -49,7 +54,9 @@ public class MemberContentProvider extends ContentProvider {
                         member.getId(),
                         member.getName(),
                         member.getCardId(),
-                        member.getId()
+                        member.getId(),
+                        idMethod
+
                 };
                 resultsCursor.addRow(searchSuggestion);
             }
