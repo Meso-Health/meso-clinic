@@ -185,7 +185,6 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-                lineItems.add(lineItem);
 
                 continueToReceiptButton.setVisibility(View.VISIBLE);
             }
