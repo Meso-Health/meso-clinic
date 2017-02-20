@@ -21,7 +21,8 @@ public class Billable extends AbstractModel {
         SERVICES,
         LABS,
         SUPPLIES,
-        VACCINES
+        VACCINES,
+        UNSPECIFIED
     }
 
     //TODO: remove

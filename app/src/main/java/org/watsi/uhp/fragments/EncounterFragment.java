@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -18,11 +19,14 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.LineItemInterface;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
@@ -44,17 +48,19 @@ public class EncounterFragment extends Fragment {
     private EncounterItemAdapter encounterItemAdapter;
     private List<LineItem> lineItems;
     private Button saveEncounterButton;
+    private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.encounter_fragment_label);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
         //TODO: pass this to ReceiptView
-        String memberId = getArguments().getString("memberId");
+//        String memberId = getArguments().getString("memberId");
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
+        addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
 
@@ -62,6 +68,7 @@ public class EncounterFragment extends Fragment {
         setBillableSearch();
         setLineItemList();
         setCreateEncounterButton();
+        setAddBillableLink();
 
         return view;
     }
@@ -70,6 +77,7 @@ public class EncounterFragment extends Fragment {
         ArrayList<Object> categories = new ArrayList<>();
         categories.add(getContext().getString(R.string.prompt_category));
         categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
+        categories.remove(Billable.CategoryEnum.UNSPECIFIED);
         
         final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
@@ -96,9 +104,27 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        lineItems = new ArrayList<>();
+        Activity activity = getActivity();
+
+        if (((LineItemInterface) activity).getCurrentLineItems() == null) {
+            lineItems = new ArrayList<>();
+        } else {
+            lineItems = ((LineItemInterface) activity).getCurrentLineItems();
+            saveEncounterButton.setVisibility(View.VISIBLE);
+        }
+
+
         encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
+    }
+
+    private void setAddBillableLink() {
+        addBillableLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).setAddNewBillableFragment();
+            }
+        });
     }
 
     private void setCreateEncounterButton() {
@@ -168,6 +194,12 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
+
+                Activity activity = getActivity();
+                if (activity instanceof LineItemInterface) {
+                    ((LineItemInterface) activity).setCurrentLineItems(lineItems);
+                }
+
                 saveEncounterButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
