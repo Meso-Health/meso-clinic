@@ -148,9 +148,14 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
         return mCurrentLineItems;
     }
 
-    public List<LineItem> addLineItem(LineItem lineItem) {
-        mCurrentLineItems.add(lineItem);
-        return mCurrentLineItems;
+    public void addLineItem(LineItem lineItem) {
+        if (mCurrentLineItems == null) {
+            mCurrentLineItems = new ArrayList<>();
+            mCurrentLineItems.add(lineItem);
+        } else {
+            mCurrentLineItems.add(lineItem);
+        }
+        setCurrentLineItems(mCurrentLineItems);
     }
 
     public void setEncounterFragment(String memberId) {

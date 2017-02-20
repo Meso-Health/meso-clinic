@@ -53,8 +53,7 @@ public class AddNewBillableFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 Activity activity = getActivity();
-                List<LineItem> currentLineItems = ((LineItemInterface) activity).addLineItem(lineItem);
-                ((LineItemInterface) activity).setCurrentLineItems(currentLineItems);
+                ((LineItemInterface) activity).addLineItem(lineItem);
 
                 EncounterFragment encounterFragment = new EncounterFragment();
 

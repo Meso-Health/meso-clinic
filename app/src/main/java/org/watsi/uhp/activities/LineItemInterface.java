@@ -10,5 +10,5 @@ public interface LineItemInterface {
 
     List<LineItem> getCurrentLineItems();
 
-    List<LineItem> addLineItem(LineItem lineItem);
+    void addLineItem(LineItem lineItem);
 }
