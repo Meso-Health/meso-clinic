@@ -3,6 +3,8 @@ package org.watsi.uhp.models;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.j256.ormlite.dao.Dao;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,10 +56,10 @@ public class MemberTest {
     public void getLastEncounter() throws Exception {
         Calendar cal = Calendar.getInstance();
         Encounter e1 = new Encounter();
-        e1.setDate(cal.getTime());
-        Encounter e2 = new Encounter();
+        e1.setCreatedAt(cal.getTime());
         cal.add(Calendar.DAY_OF_MONTH, -5);
-        e2.setDate(cal.getTime());
+        Encounter e2 = new Encounter();
+        e2.setCreatedAt(cal.getTime());
 
         mockStatic(EncounterDao.class);
         when(EncounterDao.find(Mockito.anyMap())).thenReturn(Arrays.asList(new Encounter[]{e2, e1}));
