@@ -65,7 +65,7 @@ public class DetailFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     //TODO: save identification record with idMethod
-                    ((MainActivity) getActivity()).setMainFragment();
+                    ((MainActivity) getActivity()).setCurrentPatientsFragment();
                 }
             });
 

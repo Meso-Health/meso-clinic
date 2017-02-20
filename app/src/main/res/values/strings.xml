@@ -2,11 +2,9 @@
     <string name="app_name">UHP</string>
     <string name="main_activity_label">Universal Healthcare Project</string>
 
-    <!--Main-->
-    <string name="identification_button">CHECK IN</string>
-    <string name="encounter_button">CHECK OUT</string>
-
     <!--Identification-->
+    <string name="identification_button">CHECK IN NEW PATIENT</string>
+
     <string name="barcode_fragment_label">Scan ID</string>
     <string name="search_member_hint">Search patient name or ID</string>
 

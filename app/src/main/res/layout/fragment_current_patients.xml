@@ -9,6 +9,12 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
+    <Button
+        android:id="@+id/identification_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/identification_button" />
+
     <ListView
         android:id="@+id/current_patients"
         android:layout_width="match_parent"
