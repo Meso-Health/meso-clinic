@@ -54,7 +54,7 @@ public class EncounterFragment extends Fragment {
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
         //TODO: pass this to ReceiptView
-        String memberId = getArguments().getString("memberId");
+//        String memberId = getArguments().getString("memberId");
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
@@ -107,6 +107,7 @@ public class EncounterFragment extends Fragment {
                 lineItems = new ArrayList<>();
             } else {
                 lineItems = ((LineItemInterface) activity).getCurrentLineItems();
+                saveEncounterButton.setVisibility(View.VISIBLE);
             }
         }
 
