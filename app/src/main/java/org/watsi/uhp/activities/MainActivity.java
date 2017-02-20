@@ -34,7 +34,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LineItemInterface {
+public class MainActivity extends AppCompatActivity {
+
+    private final List<LineItem> mCurrentLineItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,30 +140,12 @@ public class MainActivity extends AppCompatActivity implements LineItemInterface
         transaction.commit();
     }
 
-    private List<LineItem> mCurrentLineItems;
-
-    public void setCurrentLineItems(List<LineItem> lineItems) {
-        mCurrentLineItems = lineItems;
-    }
-
     public List<LineItem> getCurrentLineItems() {
         return mCurrentLineItems;
     }
 
-    public void addLineItem(LineItem lineItem) {
-        if (mCurrentLineItems == null) {
-            mCurrentLineItems = new ArrayList<>();
-            mCurrentLineItems.add(lineItem);
-        } else {
-            mCurrentLineItems.add(lineItem);
-        }
-        setCurrentLineItems(mCurrentLineItems);
-    }
-
     public void setEncounterFragment(String memberId) {
-        if (mCurrentLineItems != null) {
-            mCurrentLineItems.clear();
-        }
+        mCurrentLineItems.clear();
 
         EncounterFragment encounterFragment = new EncounterFragment();
         Bundle bundle = new Bundle();

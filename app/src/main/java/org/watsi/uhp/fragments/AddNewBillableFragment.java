@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,13 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.LineItemInterface;
-import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
-import org.watsi.uhp.models.Member;
-
-import java.util.List;
 
 public class AddNewBillableFragment extends Fragment {
 
@@ -52,8 +47,7 @@ public class AddNewBillableFragment extends Fragment {
                 LineItem lineItem = new LineItem();
                 lineItem.setBillable(billable);
 
-                Activity activity = getActivity();
-                ((LineItemInterface) activity).addLineItem(lineItem);
+                ((MainActivity) getActivity()).getCurrentLineItems().add(lineItem);
 
                 //TODO: change the following to setEncounterFragment(memberId); once we decide how we're gonna pass around memberId
                 EncounterFragment encounterFragment = new EncounterFragment();

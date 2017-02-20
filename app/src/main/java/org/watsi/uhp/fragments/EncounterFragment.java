@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -25,7 +24,6 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.LineItemInterface;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
@@ -46,7 +44,6 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableSearchAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private List<LineItem> lineItems;
     private Button saveEncounterButton;
     private TextView addBillableLink;
 
@@ -104,15 +101,8 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        Activity activity = getActivity();
-
-        if (((LineItemInterface) activity).getCurrentLineItems() == null) {
-            lineItems = new ArrayList<>();
-        } else {
-            lineItems = ((LineItemInterface) activity).getCurrentLineItems();
-            saveEncounterButton.setVisibility(View.VISIBLE);
-        }
-
+        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        saveEncounterButton.setVisibility(View.VISIBLE);
 
         encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
@@ -132,7 +122,7 @@ public class EncounterFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
-                lineItemsArrayList.addAll(lineItems);
+                lineItemsArrayList.addAll(((MainActivity) getActivity()).getCurrentLineItems());
 
                 ReceiptFragment receiptFragment = new ReceiptFragment();
                 Bundle bundle = new Bundle();
@@ -182,9 +172,10 @@ public class EncounterFragment extends Fragment {
         return false;
     }
 
-    public void addToLineItemList (String billableId) {
+    public void addToLineItemList(String billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
+            List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
             if (containsId(lineItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
@@ -194,11 +185,7 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-
-                Activity activity = getActivity();
-                if (activity instanceof LineItemInterface) {
-                    ((LineItemInterface) activity).setCurrentLineItems(lineItems);
-                }
+                lineItems.add(lineItem);
 
                 saveEncounterButton.setVisibility(View.VISIBLE);
             }
