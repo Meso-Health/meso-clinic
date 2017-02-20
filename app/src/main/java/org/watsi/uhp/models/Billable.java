@@ -3,6 +3,8 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.UUID;
+
 @DatabaseTable(tableName = Billable.TABLE_NAME)
 public class Billable extends AbstractModel {
 
@@ -33,7 +35,7 @@ public class Billable extends AbstractModel {
     }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private int mId;
+    private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
     private String mName;
@@ -57,7 +59,7 @@ public class Billable extends AbstractModel {
         super();
     }
 
-    public int getId() {
+    public UUID getId() {
         return mId;
     }
 

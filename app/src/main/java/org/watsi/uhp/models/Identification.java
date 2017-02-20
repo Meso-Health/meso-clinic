@@ -3,10 +3,10 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Date;
+import java.util.UUID;
 
 @DatabaseTable(tableName = Identification.TABLE_NAME)
-public class Identification {
+public class Identification extends AbstractModel{
 
     public static final String TABLE_NAME = "identifications";
 
@@ -18,7 +18,7 @@ public class Identification {
     public enum IdMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private int mId;
+    private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
@@ -30,10 +30,10 @@ public class Identification {
     private boolean mSuccessful;
 
     public Identification() {
-        // empty constructor necessary for ORM
+        super();
     }
 
-    public int getId() {
+    public UUID getId() {
         return mId;
     }
 

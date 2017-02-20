@@ -3,6 +3,8 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.UUID;
+
 @DatabaseTable(tableName = Encounter.TABLE_NAME)
 public class Encounter extends AbstractModel {
 
@@ -12,7 +14,7 @@ public class Encounter extends AbstractModel {
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private int mId;
+    private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
@@ -21,7 +23,7 @@ public class Encounter extends AbstractModel {
         super();
     }
 
-    public int getId() {
+    public UUID getId() {
         return mId;
     }
 
