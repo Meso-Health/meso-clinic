@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.rollbar.android.Rollbar;
 
@@ -25,6 +23,7 @@ import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.MainFragment;
+import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.services.RefreshMemberListService;
@@ -74,16 +73,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
-            Log.d("UHP", "intention memberId: " + memberId);
             if (memberId != null) {
                 setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
             }
-        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            String billableId = intent.getDataString();
-            addBillable(billableId);
-            clearDrugSearchView();
         }
     }
 
@@ -144,6 +138,14 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    public void setSearchMemberFragment() {
+        SearchMemberFragment searchMemberFragment = new SearchMemberFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, searchMemberFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public void setEncounterFragment(String memberId) {
         EncounterFragment encounterFragment = new EncounterFragment();
         Bundle bundle = new Bundle();
@@ -162,21 +164,5 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, currentPatientsFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    public void addBillable(String billableId) {
-        Fragment fragment =
-                getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment instanceof EncounterFragment) {
-         ((EncounterFragment) fragment).addToLineItemList(billableId);
-        }
-    }
-
-    public void clearDrugSearchView() {
-        Fragment fragment =
-                getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment instanceof EncounterFragment) {
-            ((EncounterFragment) fragment).clearDrugSearch();
-        }
     }
 }

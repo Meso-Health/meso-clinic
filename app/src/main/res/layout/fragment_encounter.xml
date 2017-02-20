@@ -49,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:iconifiedByDefault="false"
-                android:queryHint="Search drugs"
+                android:queryHint="@string/search_drug_hint"
                 android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>

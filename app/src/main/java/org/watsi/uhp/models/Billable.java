@@ -36,7 +36,7 @@ public class Billable {
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private int mId;
 
-    @DatabaseField(columnName = FIELD_NAME_NAME)
+    @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
     private String mName;
 
     @DatabaseField(columnName = FIELD_NAME_CATEGORY, canBeNull = false)
@@ -51,7 +51,7 @@ public class Billable {
     @DatabaseField(columnName = FIELD_NAME_AMOUNT)
     private String mAmount;
 
-    @DatabaseField(columnName = FIELD_NAME_PRICE)
+    @DatabaseField(columnName = FIELD_NAME_PRICE, canBeNull = false)
     private Integer mPrice;
 
     public Billable() {

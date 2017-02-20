@@ -1,14 +1,12 @@
 package org.watsi.uhp.fragments;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -27,7 +26,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
@@ -41,6 +39,7 @@ public class EncounterFragment extends Fragment {
     private Spinner categorySpinner;
     private Spinner billableSpinner;
     private SearchView billableSearch;
+    private SimpleCursorAdapter billableSearchAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
     private List<LineItem> lineItems;
@@ -84,8 +83,9 @@ public class EncounterFragment extends Fragment {
     }
     
     private void setBillableSearch() {
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        billableSearch.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        billableSearch.setOnQueryTextListener(new BillableSearchListener());
+        billableSearch.setOnSuggestionListener(new SuggestionClickListener());
+        billableSearch.setQueryHint(getActivity().getString(R.string.search_drug_hint));
     }
     
     private void setBillableSpinner(Billable.CategoryEnum category) {
@@ -215,6 +215,63 @@ public class EncounterFragment extends Fragment {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             //no-op
+        }
+    }
+
+    private SimpleCursorAdapter getBillableItemAdapter(String query) {
+        // TODO: check that creation of new adapter each time does not have memory implications
+        try {
+            Cursor cursor = BillableDao.fuzzySearchDrugsCursor(query, 5, 50);
+            String[] from = {
+                    SearchManager.SUGGEST_COLUMN_TEXT_1,
+                    SearchManager.SUGGEST_COLUMN_TEXT_2
+            };
+            int[] to = new int[] {
+                    R.id.text1,
+                    R.id.text2
+            };
+
+            return new android.widget.SimpleCursorAdapter(getContext(),
+                    R.layout.item_billable_search_suggestion,
+                    cursor, from, to, 0
+            );
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+        }
+        return null;
+    }
+
+    private class BillableSearchListener implements SearchView.OnQueryTextListener {
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            if (!newText.isEmpty()) {
+                billableSearchAdapter = getBillableItemAdapter(newText);
+                billableSearch.setSuggestionsAdapter(billableSearchAdapter);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            //no-op
+            return true;
+        }
+    }
+
+    private class SuggestionClickListener implements SearchView.OnSuggestionListener {
+
+        @Override
+        public boolean onSuggestionSelect(int position) {
+            //no-op
+            return true;
+        }
+
+        @Override
+        public boolean onSuggestionClick(int position) {
+            String billableId = Long.toString(billableSearchAdapter.getItemId(position));
+            addToLineItemList(billableId);
+            clearDrugSearch();
+            return true;
         }
     }
 }

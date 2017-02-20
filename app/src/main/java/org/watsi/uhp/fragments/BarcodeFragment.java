@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -28,14 +29,19 @@ import java.sql.SQLException;
 public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback {
 
     private CameraSource mCameraSource;
+    private Button mSearchMemberButton;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.barcode_fragment_label);
 
         setupBarcodeDetector();
         View view = inflater.inflate(R.layout.fragment_barcode, container, false);
+
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
+        mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
+
+        setupSearchMemberButton();
         return view;
     }
 
@@ -102,5 +108,14 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     .setAutoFocusEnabled(true)
                     .build();
         }
+    }
+
+    private void setupSearchMemberButton() {
+        mSearchMemberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).setSearchMemberFragment();
+            }
+        });
     }
 }
