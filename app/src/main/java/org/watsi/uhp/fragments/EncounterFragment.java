@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -25,7 +24,6 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.LineItemInterface;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
@@ -46,8 +44,7 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableSearchAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private List<LineItem> lineItems;
-    private Button saveEncounterButton;
+    private Button continueToReceiptButton;
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,12 +59,12 @@ public class EncounterFragment extends Fragment {
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
-        saveEncounterButton = (Button) view.findViewById(R.id.save_encounter);
+        continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setCreateEncounterButton();
+        setContinueToReceiptButton();
         setAddBillableLink();
 
         return view;
@@ -104,17 +101,10 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        Activity activity = getActivity();
+        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        continueToReceiptButton.setVisibility(View.VISIBLE);
 
-        if (((LineItemInterface) activity).getCurrentLineItems() == null) {
-            lineItems = new ArrayList<>();
-        } else {
-            lineItems = ((LineItemInterface) activity).getCurrentLineItems();
-            saveEncounterButton.setVisibility(View.VISIBLE);
-        }
-
-
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, saveEncounterButton);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, continueToReceiptButton);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
@@ -127,12 +117,12 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private void setCreateEncounterButton() {
-        saveEncounterButton.setOnClickListener(new View.OnClickListener() {
+    private void setContinueToReceiptButton() {
+        continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
-                lineItemsArrayList.addAll(lineItems);
+                lineItemsArrayList.addAll(((MainActivity) getActivity()).getCurrentLineItems());
 
                 ReceiptFragment receiptFragment = new ReceiptFragment();
                 Bundle bundle = new Bundle();
@@ -182,9 +172,10 @@ public class EncounterFragment extends Fragment {
         return false;
     }
 
-    public void addToLineItemList (String billableId) {
+    public void addToLineItemList(String billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
+            List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
             if (containsId(lineItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
@@ -194,13 +185,9 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
+                lineItems.add(lineItem);
 
-                Activity activity = getActivity();
-                if (activity instanceof LineItemInterface) {
-                    ((LineItemInterface) activity).setCurrentLineItems(lineItems);
-                }
-
-                saveEncounterButton.setVisibility(View.VISIBLE);
+                continueToReceiptButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
