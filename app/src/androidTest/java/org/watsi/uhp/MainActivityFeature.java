@@ -22,6 +22,6 @@ public class MainActivityFeature {
 
     @Test
     public void showsMainScreen() throws Exception {
-        onView(withText("Universal Health Project")).check(matches(isDisplayed()));
+        onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
     }
 }

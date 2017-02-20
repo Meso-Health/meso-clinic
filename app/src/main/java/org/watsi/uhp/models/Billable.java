@@ -23,7 +23,8 @@ public class Billable {
         SERVICES,
         LABS,
         SUPPLIES,
-        VACCINES
+        VACCINES,
+        UNSPECIFIED
     }
 
     //TODO: remove
