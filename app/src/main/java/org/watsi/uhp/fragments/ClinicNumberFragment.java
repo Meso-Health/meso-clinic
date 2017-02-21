@@ -2,9 +2,11 @@ package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,12 +17,12 @@ import org.watsi.uhp.models.Encounter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class ClinicNumberFragment extends Fragment {
     private Spinner numberTypeSpinner;
     private EditText numberField;
     private Button submitNumberButton;
+    private Encounter.ClinicNumberTypeEnum selectedNumberTypeValue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -33,6 +35,8 @@ public class ClinicNumberFragment extends Fragment {
         submitNumberButton = (Button) view.findViewById(R.id.clinic_number_continue_button);
 
         setNumberTypeSpinner();
+        setSubmitNumberButton();
+
         return view;
     }
 
@@ -47,6 +51,38 @@ public class ClinicNumberFragment extends Fragment {
         );
 
         numberTypeSpinner.setAdapter(numberTypeAdapter);
+        numberTypeSpinner.setOnItemSelectedListener(new NumberTypeListener());
     }
 
+    private void setSubmitNumberButton() {
+        submitNumberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Encounter encounter = new Encounter();
+
+                encounter.setClinicNumberType(selectedNumberTypeValue);
+                encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
+
+                //TODO: change the following to setEncounterFragment(memberId); once we decide how we're gonna pass around memberId
+                EncounterFragment encounterFragment = new EncounterFragment();
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, encounterFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+    }
+
+    private class NumberTypeListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            selectedNumberTypeValue = (Encounter.ClinicNumberTypeEnum) parent.getItemAtPosition(position);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            //no-op
+        }
+    }
 }
