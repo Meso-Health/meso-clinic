@@ -1,8 +1,12 @@
 package org.watsi.uhp.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Encounter.TABLE_NAME)
@@ -12,7 +16,6 @@ public class Encounter extends AbstractModel {
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
-    public static final String FIELD_NAME_ID_METHOD = "id_method";
     public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
 
@@ -22,16 +25,11 @@ public class Encounter extends AbstractModel {
         DELIVERY
     }
 
-    public enum IdMethodEnum { SEARCH, BARCODE, RECENT }
-
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
-
-    @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
-    private IdMethodEnum mIdMethod;
 
     @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
     private Integer mClinicNumber;
@@ -39,43 +37,50 @@ public class Encounter extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE, canBeNull = false)
     private ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
+    @ForeignCollectionField
+    Collection<LineItem> mLineItems;
+
     public Encounter() {
         super();
+    }
+
+    public Encounter(List<LineItem> lineItems) {
+        this.mLineItems = lineItems;
     }
 
     public UUID getId() {
         return mId;
     }
 
-    public void setMember(Member member) {
-        this.mMember = member;
-    }
-
     public Member getMember() {
         return mMember;
     }
 
-    public IdMethodEnum getIdMethod() {
-        return mIdMethod;
+    public void setMember(Member member) {
+        this.mMember = member;
     }
 
-    public void setIdMethod(IdMethodEnum idMethod) {
-        this.mIdMethod = idMethod;
+    public List<LineItem> getLineItems() {
+        return new ArrayList<>(mLineItems);
     }
 
-    public void setClinicNumber(Integer n) {
-        this.mClinicNumber = n;
+    public void setLineItems(Collection<LineItem> lineItems) {
+        this.mLineItems = lineItems;
     }
 
     public Integer getClinicNumber() {
         return mClinicNumber;
     }
 
-    public void setClinicNumberType(ClinicNumberTypeEnum numberType) {
-        this.mClinicNumberTypeEnum = numberType;
+    public void setClinicNumber(Integer n) {
+        this.mClinicNumber = n;
     }
 
     public ClinicNumberTypeEnum getClinicNumberType() {
         return mClinicNumberTypeEnum;
+    }
+
+    public void setClinicNumberType(ClinicNumberTypeEnum numberType) {
+        this.mClinicNumberTypeEnum = numberType;
     }
 }

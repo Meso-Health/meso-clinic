@@ -12,7 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.squareup.haha.perflib.Main;
+
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.models.Encounter;
 
 import java.util.ArrayList;
@@ -58,18 +61,13 @@ public class ClinicNumberFragment extends Fragment {
         submitNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Encounter encounter = new Encounter();
+                MainActivity activity = (MainActivity) getActivity();
 
+                Encounter encounter = activity.getCurrentEncounter();
                 encounter.setClinicNumberType(selectedNumberTypeValue);
                 encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
 
-                //TODO: change the following to setEncounterFragment(memberId); once we decide how we're gonna pass around memberId
-                EncounterFragment encounterFragment = new EncounterFragment();
-
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, encounterFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                activity.setEncounterFragment();
             }
         });
     }
