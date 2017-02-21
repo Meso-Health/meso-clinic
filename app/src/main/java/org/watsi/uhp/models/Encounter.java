@@ -24,14 +24,14 @@ public class Encounter extends AbstractModel {
     private Member mMember;
 
     @ForeignCollectionField
-    Collection<LineItem> mLineItems;
+    private final Collection<LineItem> mLineItems = new ArrayList<>();
 
     public Encounter() {
         super();
     }
 
     public Encounter(List<LineItem> lineItems) {
-        this.mLineItems = lineItems;
+        setLineItems(lineItems);
     }
 
     public UUID getId() {
@@ -46,11 +46,12 @@ public class Encounter extends AbstractModel {
         this.mMember = member;
     }
 
-    public List<LineItem> getLineItems() {
-        return new ArrayList<>(mLineItems);
+    public Collection<LineItem> getLineItems() {
+        return mLineItems;
     }
 
     public void setLineItems(Collection<LineItem> lineItems) {
-        this.mLineItems = lineItems;
+        this.mLineItems.clear();
+        this.mLineItems.addAll(lineItems);
     }
 }

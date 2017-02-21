@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public List<LineItem> getCurrentLineItems() {
-        return mCurrentEncounter.getLineItems();
+        return (List<LineItem>) mCurrentEncounter.getLineItems();
     }
 
     //TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
