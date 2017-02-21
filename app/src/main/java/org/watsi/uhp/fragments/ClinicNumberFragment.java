@@ -39,6 +39,11 @@ public class ClinicNumberFragment extends Fragment {
         numberField = (EditText) view.findViewById(R.id.clinic_number_field);
         submitNumberButton = (Button) view.findViewById(R.id.clinic_number_continue_button);
 
+        numberField.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+
         setNumberTypeSpinner();
         setNumberField();
         setSubmitNumberButton();
