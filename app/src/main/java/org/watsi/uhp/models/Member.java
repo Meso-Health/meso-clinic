@@ -34,7 +34,7 @@ public class Member extends AbstractModel {
 
     public static final String TABLE_NAME = "members";
 
-    public static final String FIELD_NAME_ID = "_id";
+    public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_CARD_ID = "card_id";
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";

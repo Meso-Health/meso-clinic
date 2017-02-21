@@ -127,7 +127,7 @@ public class EncounterFragment extends Fragment {
         // TODO: check that creation of new adapter each time does not have memory implications
         try {
             //Create prompt
-            MatrixCursor extras = new MatrixCursor(new String[] { "_id", "name" });
+            MatrixCursor extras = new MatrixCursor(new String[] { Billable.FIELD_NAME_ID, Billable.FIELD_NAME_NAME });
             extras.addRow(new String[] { "0", getContext().getString(R.string.prompt_billable) });
 
             //Merge prompt with billable results

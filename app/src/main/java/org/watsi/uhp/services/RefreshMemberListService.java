@@ -11,10 +11,11 @@ import com.rollbar.android.Rollbar;
 import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
-import org.watsi.uhp.api.UhpApi;
+import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.events.OfflineNotificationEvent;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -24,8 +25,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Service class that continuously polls the UHP API
@@ -34,44 +33,33 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RefreshMemberListService extends Service {
 
     private static int SLEEP_TIME = 10000;
-    private UhpApi mUhpApi;
-    private Integer mFacilityId;
-    private final List<Target> targets = new ArrayList<Target>();
+    private final List<Target> targets = new ArrayList<>();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
-        mFacilityId = intent.getExtras().getInt("facilityId");
-        String apiHost = intent.getExtras().getString("apiHost");
-        if (apiHost == null) {
-            Log.w("UHP", "no api host provided, will not fetch data");
-        } else {
-            mUhpApi = new Retrofit.Builder()
-                    .baseUrl(apiHost)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(UhpApi.class);
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while(true){
-                        try {
-                            Thread.sleep(SLEEP_TIME);
-                            fetchNewMemberData();
-                        } catch (IOException | SQLException | InterruptedException e) {
-                            Rollbar.reportException(e);
-                        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(SLEEP_TIME);
+                        fetchNewMemberData();
+                    } catch (IOException | SQLException | InterruptedException e) {
+                        Rollbar.reportException(e);
                     }
                 }
-            }).start();
-        }
+            }
+        }).start();
         return Service.START_REDELIVER_INTENT;
     }
 
     private void fetchNewMemberData() throws IOException, SQLException {
         Log.d("UHP", "fetching new member data");
-        Call<List<Member>> request = mUhpApi.members(MemberDao.lastModifiedString(), mFacilityId);
+        int facilityId = ConfigManager.getFacilityId(getApplicationContext());
+        Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
+                .members(MemberDao.lastModifiedString(), facilityId);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             EventBus.getDefault().post(new OfflineNotificationEvent(false));

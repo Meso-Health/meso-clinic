@@ -115,10 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startFetchMembersService() {
-        Intent fetchMembersService = new Intent(this, RefreshMemberListService.class);
-        fetchMembersService.putExtra("apiHost", ConfigManager.getApiHost(this));
-        fetchMembersService.putExtra("facilityId", ConfigManager.getFacilityId(this));
-        startService(fetchMembersService);
+        startService(new Intent(this, RefreshMemberListService.class));
     }
 
     private void setupToolbar() {
