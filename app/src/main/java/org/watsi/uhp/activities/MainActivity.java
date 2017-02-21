@@ -46,10 +46,9 @@ public class MainActivity extends AppCompatActivity {
         startFetchMembersService();
 
         super.onCreate(savedInstanceState);
-        setUpCanaryLeak();
-
         setContentView(R.layout.activity_main);
 
+        setUpLeakCanary();
         setupToolbar();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setUpCanaryLeak() {
+    private void setUpLeakCanary() {
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
