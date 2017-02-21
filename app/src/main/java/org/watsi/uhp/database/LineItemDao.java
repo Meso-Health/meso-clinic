@@ -35,6 +35,10 @@ public class LineItemDao {
         return mLineItemDao;
     }
 
+    public static void create(LineItem lineItem) throws SQLException {
+        getInstance().getLineItemDao().create(lineItem);
+    }
+
     public static void create(List<LineItem> lineItems) throws SQLException {
         getInstance().getLineItemDao().create(lineItems);
     }

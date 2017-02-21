@@ -1,7 +1,13 @@
 package org.watsi.uhp.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @DatabaseTable(tableName = Encounter.TABLE_NAME)
 public class Encounter extends AbstractModel {
@@ -10,40 +16,41 @@ public class Encounter extends AbstractModel {
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
-    public static final String FIELD_NAME_ID_METHOD = "id_method";
-
-    public enum IdMethodEnum { SEARCH, BARCODE, RECENT }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private int mId;
+    private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
 
-    @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
-    private IdMethodEnum mIdMethod;
+    @ForeignCollectionField
+    Collection<LineItem> mLineItems;
 
     public Encounter() {
         super();
     }
 
-    public int getId() {
-        return mId;
+    public Encounter(List<LineItem> lineItems) {
+        this.mLineItems = lineItems;
     }
 
-    public void setMember(Member member) {
-        this.mMember = member;
+    public UUID getId() {
+        return mId;
     }
 
     public Member getMember() {
         return mMember;
     }
 
-    public IdMethodEnum getIdMethod() {
-        return mIdMethod;
+    public void setMember(Member member) {
+        this.mMember = member;
     }
 
-    public void setIdMethod(IdMethodEnum idMethod) {
-        this.mIdMethod = idMethod;
+    public List<LineItem> getLineItems() {
+        return new ArrayList<>(mLineItems);
+    }
+
+    public void setLineItems(Collection<LineItem> lineItems) {
+        this.mLineItems = lineItems;
     }
 }

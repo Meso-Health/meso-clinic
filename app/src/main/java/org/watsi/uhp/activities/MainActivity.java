@@ -1,5 +1,6 @@
 package org.watsi.uhp.activities;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,10 +25,13 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.RefreshMemberListService;
 
 import java.io.IOException;
@@ -36,7 +41,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final List<LineItem> mCurrentLineItems = new ArrayList<>();
+    private final Encounter mCurrentEncounter = new Encounter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setUpLeakCanary();
         setupToolbar();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -80,8 +86,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
+            Identification.IdMethodEnum idMethod = Identification.IdMethodEnum.valueOf(
+                    intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
+
             if (memberId != null) {
-                setDetailFragment(memberId, Encounter.IdMethodEnum.SEARCH);
+                setDetailFragment(memberId, idMethod);
             }
         }
     }
@@ -96,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setUpLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this.getApplication());
+    }
+
     private void startFetchMembersService() {
         startService(new Intent(this, RefreshMemberListService.class));
     }
@@ -106,9 +124,34 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(Color.WHITE);
     }
 
-    //TODO: consider moving these to a "NavigationManager" class
+    public void setNewEncounter(Member member) {
+        mCurrentEncounter.setMember(member);
+        mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
+    }
 
-    public void setDetailFragment(String memberId, Encounter.IdMethodEnum idMethod) {
+    public Encounter getCurrentEncounter() {
+        return mCurrentEncounter;
+    }
+
+    public List<LineItem> getCurrentLineItems() {
+        return mCurrentEncounter.getLineItems();
+    }
+
+    //TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
+
+    public void setCurrentPatientsFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+
+        CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fragment_container, currentPatientsFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    public void setDetailFragment(String memberId, Identification.IdMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);
@@ -137,20 +180,18 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public List<LineItem> getCurrentLineItems() {
-        return mCurrentLineItems;
-    }
-
-    public void setEncounterFragment(String memberId) {
-        mCurrentLineItems.clear();
-
+    public void setEncounterFragment() {
         EncounterFragment encounterFragment = new EncounterFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId);
-        encounterFragment.setArguments(bundle);
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, encounterFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void setReceiptFragment() {
+        ReceiptFragment receiptFragment = new ReceiptFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, receiptFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -161,17 +202,5 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, addNewBillableFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    public void setCurrentPatientsFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-
-        CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, currentPatientsFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }

@@ -6,7 +6,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,8 +50,6 @@ public class EncounterFragment extends Fragment {
         getActivity().setTitle(R.string.encounter_fragment_label);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
-        //TODO: pass this to ReceiptView
-//        String memberId = getArguments().getString("memberId");
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
@@ -121,18 +118,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<LineItem> lineItemsArrayList = new ArrayList<>();
-                lineItemsArrayList.addAll(((MainActivity) getActivity()).getCurrentLineItems());
-
-                ReceiptFragment receiptFragment = new ReceiptFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("lineItems", lineItemsArrayList);
-                receiptFragment.setArguments(bundle);
-
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, receiptFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                ((MainActivity) getActivity()).setReceiptFragment();
             }
         });
     }
@@ -185,7 +171,6 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-                lineItems.add(lineItem);
 
                 continueToReceiptButton.setVisibility(View.VISIBLE);
             }

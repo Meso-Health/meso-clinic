@@ -3,7 +3,6 @@ package org.watsi.uhp.fragments;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +14,23 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
+import org.watsi.uhp.database.IdentificationDao;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 public class DetailFragment extends Fragment {
+
+    private Member mMember;
+    private TextView mMemberName;
+    private TextView mMemberAge;
+    private TextView mMemberId;
+    private ImageView mMemberPhoto;
+    private Identification.IdMethodEnum mIdMethod;
+    private Button mConfirmButton;
+    private Button mRejectButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,47 +38,71 @@ public class DetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         String memberId = getArguments().getString("memberId");
-        final String idMethod = getArguments().getString("idMethod");
+        String idMethod = getArguments().getString("idMethod");
+        mIdMethod = Identification.IdMethodEnum.valueOf(idMethod);
 
         try {
-            final Member member = MemberDao.findById(memberId);
-            final SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
-
-            TextView nameView = (TextView) view.findViewById(R.id.member_name);
-            nameView.setText(member.getFullName());
-            TextView ageView = (TextView) view.findViewById(R.id.member_age);
-            ageView.setText("Age - " + String.valueOf(member.getAge()));
-
-            ImageView imageView = (ImageView) view.findViewById(R.id.member_photo);
-            Bitmap photoBitmap = member.getPhotoBitmap();
-            if (photoBitmap != null) {
-                imageView.setImageBitmap(photoBitmap);
-            } else {
-                imageView.setImageResource(R.drawable.portrait_placeholder);
-            }
-
-            TextView idView = (TextView) view.findViewById(R.id.member_id);
-            idView.setText(String.valueOf(member.getCardId()));
-
-            Encounter lastEncounter = member.getLastEncounter();
-            final TextView lastEncounterView = (TextView) view.findViewById(R.id.member_last_encounter);
-
-            if (lastEncounter != null) {
-                lastEncounterView.setText(simpleDate.format(lastEncounter.getCreatedAt()));
-            }
-
-            Button checkinButton = (Button) view.findViewById(R.id.checkin_member);
-            checkinButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO: save identification record with idMethod
-                    ((MainActivity) getActivity()).setCurrentPatientsFragment();
-                }
-            });
-
+            mMember = MemberDao.findById(memberId);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
+
+        mMemberName = (TextView) view.findViewById(R.id.member_name);
+        mMemberAge = (TextView) view.findViewById(R.id.member_age);
+        mMemberId = (TextView) view.findViewById(R.id.member_id);
+        mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
+        mConfirmButton = (Button) view.findViewById(R.id.confirm_identity);
+        mRejectButton = (Button) view.findViewById(R.id.reject_identity);
+
+        setPatientCard();
+        setConfirmButton();
+        setRejectButton();
         return view;
+    }
+
+    private void setPatientCard() {
+        mMemberName.setText(mMember.getFullName());
+        mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
+        mMemberId.setText(String.valueOf(mMember.getCardId()));
+        Bitmap photoBitmap = mMember.getPhotoBitmap();
+        if (photoBitmap != null) {
+            mMemberPhoto.setImageBitmap(photoBitmap);
+        } else {
+            mMemberPhoto.setImageResource(R.drawable.portrait_placeholder);
+        }
+    }
+
+    private void setConfirmButton() {
+        mConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createIdentification(true);
+                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+            }
+        });
+    }
+
+    private void setRejectButton() {
+        mRejectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createIdentification(false);
+                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+            }
+        });
+    }
+
+    private void createIdentification(boolean successful) {
+        // TODO: this should be in a transaction
+        Identification id = new Identification();
+        id.setMember(mMember);
+        id.setIdMethod(mIdMethod);
+        id.setSuccessful(successful);
+
+        try {
+            IdentificationDao.create(id);
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+        }
     }
 }
