@@ -6,7 +6,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,8 +50,6 @@ public class EncounterFragment extends Fragment {
         getActivity().setTitle(R.string.encounter_fragment_label);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
-        //TODO: pass this to ReceiptView
-//        String memberId = getArguments().getString("memberId");
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
@@ -130,7 +127,7 @@ public class EncounterFragment extends Fragment {
         // TODO: check that creation of new adapter each time does not have memory implications
         try {
             //Create prompt
-            MatrixCursor extras = new MatrixCursor(new String[] { "_id", "name" });
+            MatrixCursor extras = new MatrixCursor(new String[] { Billable.FIELD_NAME_ID, Billable.FIELD_NAME_NAME });
             extras.addRow(new String[] { "0", getContext().getString(R.string.prompt_billable) });
 
             //Merge prompt with billable results
