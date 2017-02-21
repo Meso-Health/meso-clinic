@@ -11,6 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
 
@@ -56,6 +57,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(connectionSource, Member.class);
             TableUtils.createTable(connectionSource, Billable.class);
+            TableUtils.createTable(connectionSource, Identification.class);
             TableUtils.createTable(connectionSource, Encounter.class);
             TableUtils.createTable(connectionSource, LineItem.class);
             Log.d("UHP", "onCreate database helper called");
@@ -72,6 +74,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.dropTable(connectionSource, Member.class, true);
             TableUtils.dropTable(connectionSource, Billable.class, true);
+            TableUtils.dropTable(connectionSource, Identification.class, true);
             TableUtils.dropTable(connectionSource, Encounter.class, true);
             TableUtils.dropTable(connectionSource, LineItem.class, true);
             onCreate(database, connectionSource);

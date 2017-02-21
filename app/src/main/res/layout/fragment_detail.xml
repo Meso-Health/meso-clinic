@@ -48,10 +48,16 @@
                 android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/checkin_member"
+                android:id="@+id/confirm_identity"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:text="@string/checkin_member" />
+                android:text="@string/confirm_identity" />
+
+            <Button
+                android:id="@+id/reject_identity"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/reject_identity" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
