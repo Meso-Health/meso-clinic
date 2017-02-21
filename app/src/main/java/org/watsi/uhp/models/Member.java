@@ -157,21 +157,4 @@ public class Member extends AbstractModel {
             return null;
         }
     }
-
-    public Encounter getLastEncounter() throws SQLException {
-        Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put(Encounter.FIELD_NAME_MEMBER_ID, getId());
-        List<Encounter> encounters = EncounterDao.find(queryMap);
-        if (encounters.size() > 0) {
-            Collections.sort(encounters, new Comparator<Encounter>() {
-                @Override
-                public int compare(Encounter e1, Encounter e2) {
-                    return e2.getCreatedAt().compareTo(e1.getCreatedAt());
-                }
-            });
-            return encounters.get(0);
-        } else {
-            return null;
-        }
-    }
 }

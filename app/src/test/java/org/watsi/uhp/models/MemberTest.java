@@ -51,19 +51,4 @@ public class MemberTest {
 
         assertEquals(member.getPhotoBitmap(), bitmap);
     }
-
-    @Test
-    public void getLastEncounter() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        Encounter e1 = new Encounter();
-        e1.setCreatedAt(cal.getTime());
-        cal.add(Calendar.DAY_OF_MONTH, -5);
-        Encounter e2 = new Encounter();
-        e2.setCreatedAt(cal.getTime());
-
-        mockStatic(EncounterDao.class);
-        when(EncounterDao.find(Mockito.anyMap())).thenReturn(Arrays.asList(new Encounter[]{e2, e1}));
-
-        assertEquals(member.getLastEncounter(), e1);
-    }
 }
