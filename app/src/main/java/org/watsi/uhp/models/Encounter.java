@@ -11,6 +11,14 @@ public class Encounter extends AbstractModel {
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_ID_METHOD = "id_method";
+    public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
+    public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
+
+    public enum ClinicNumberTypeEnum {
+        OPD,
+        IPD,
+        DELIVERY
+    }
 
     public enum IdMethodEnum { SEARCH, BARCODE, RECENT }
 
@@ -22,6 +30,12 @@ public class Encounter extends AbstractModel {
 
     @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
     private IdMethodEnum mIdMethod;
+
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
+    private Integer mClinicNumber;
+
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE, canBeNull = false)
+    private ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
     public Encounter() {
         super();
@@ -46,4 +60,21 @@ public class Encounter extends AbstractModel {
     public void setIdMethod(IdMethodEnum idMethod) {
         this.mIdMethod = idMethod;
     }
+
+    public void setClinicNumber(Integer n) {
+        this.mClinicNumber = n;
+    }
+
+    public Integer getClinicNumber() {
+        return mClinicNumber;
+    }
+
+    public void setClinicNumberType(ClinicNumberTypeEnum numberType) {
+        this.mClinicNumberTypeEnum = numberType;
+    }
+
+    public ClinicNumberTypeEnum getClinicNumberType() {
+        return mClinicNumberTypeEnum;
+    }
+
 }
