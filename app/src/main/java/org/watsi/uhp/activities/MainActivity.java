@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setUpLeakCanary();
         setupToolbar();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -97,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setUpLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this.getApplication());
+    }
     private void startFetchMembersService() {
         Intent fetchMembersService = new Intent(this, RefreshMemberListService.class);
         fetchMembersService.putExtra("apiHost", ConfigManager.getApiHost(this));
