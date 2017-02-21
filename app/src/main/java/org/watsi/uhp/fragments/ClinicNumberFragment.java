@@ -1,20 +1,20 @@
 package org.watsi.uhp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
-import com.squareup.haha.perflib.Main;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
@@ -85,13 +85,18 @@ public class ClinicNumberFragment extends Fragment {
         submitNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
+                if (numberField.getText().toString() == null || numberField.getText().toString().length() == 0) {
+                    Toast.makeText(getActivity().getApplicationContext(), R.string.empty_clinic_field_toast,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    MainActivity activity = (MainActivity) getActivity();
 
-                Encounter encounter = activity.getCurrentEncounter();
-                encounter.setClinicNumberType(selectedNumberTypeValue);
-                encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
+                    Encounter encounter = activity.getCurrentEncounter();
+                    encounter.setClinicNumberType(selectedNumberTypeValue);
+                    encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
 
-                activity.setEncounterFragment();
+                    activity.setEncounterFragment();
+                }
             }
         });
     }
