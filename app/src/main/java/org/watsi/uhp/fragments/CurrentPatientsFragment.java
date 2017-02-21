@@ -50,9 +50,7 @@ public class CurrentPatientsFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Member member = (Member) parent.getItemAtPosition(position);
-                    MainActivity activity = (MainActivity) getActivity();
-                    activity.setEncounterFragment(String.valueOf(member.getId()));
+                    ((MainActivity) getActivity()).setClinicNumberFragment();
                 }
             });
         } catch (SQLException e) {

@@ -20,6 +20,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.ClinicNumberFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
@@ -137,6 +138,14 @@ public class MainActivity extends AppCompatActivity {
         SearchMemberFragment searchMemberFragment = new SearchMemberFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, searchMemberFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void setClinicNumberFragment() {
+        ClinicNumberFragment clinicNumberFragment = new ClinicNumberFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, clinicNumberFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
