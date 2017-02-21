@@ -50,7 +50,7 @@ public class CurrentPatientsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.setCurrentEncounter(member);
+                    activity.setNewEncounter(member);
                     activity.setEncounterFragment();
                 }
             });

@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(Color.WHITE);
     }
 
-    public void setCurrentEncounter(Member member) {
+    public void setNewEncounter(Member member) {
         mCurrentEncounter.setMember(member);
         mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
     }
