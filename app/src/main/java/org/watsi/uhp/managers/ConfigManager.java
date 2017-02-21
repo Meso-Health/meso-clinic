@@ -1,6 +1,6 @@
 package org.watsi.uhp.managers;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.util.Log;
@@ -21,18 +21,28 @@ import java.util.Map;
 public class ConfigManager {
     private static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
     private static String API_HOST = "API_HOST";
+    private static String API_USERNAME = "API_USERNAME";
+    private static String API_PASSWORD = "API_PASSWORD";
     private static String FACILITY_ID = "FACILITY_ID";
 
-    public static String getRollbarApiKey(Activity activity) {
-        return getConfigValue(ROLLBAR_API_KEY, activity);
+    public static String getRollbarApiKey(Context context) {
+        return getConfigValue(ROLLBAR_API_KEY, context);
     }
 
-    public static String getApiHost(Activity activity) {
-        return getConfigValue(API_HOST, activity);
+    public static String getApiHost(Context context) {
+        return getConfigValue(API_HOST, context);
     }
 
-    public static int getFacilityId(Activity activity) {
-        String facilityId = getConfigValue(FACILITY_ID, activity);
+    public static String getApiUsername(Context context) {
+        return getConfigValue(API_USERNAME, context);
+    }
+
+    public static String getApiPassword(Context context) {
+        return getConfigValue(API_PASSWORD, context);
+    }
+
+    public static int getFacilityId(Context context) {
+        String facilityId = getConfigValue(FACILITY_ID, context);
         if (facilityId == null) {
             return 0;
         } else {
@@ -40,14 +50,14 @@ public class ConfigManager {
         }
     }
 
-    private static String getConfigValue(String key, Activity activity) {
-        return readConfig(activity).get(key);
+    private static String getConfigValue(String key, Context context) {
+        return readConfig(context).get(key);
     }
 
-    private static Map<String,String> readConfig(Activity activity) {
+    private static Map<String,String> readConfig(Context context) {
         Map<String,String> configMap = new HashMap<>();
         int eventType = -1;
-        Resources res = activity.getResources();
+        Resources res = context.getResources();
         XmlResourceParser xrp = res.getXml(R.xml.secret);
 
         try {
