@@ -20,7 +20,7 @@ import com.rollbar.android.Rollbar;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -92,7 +92,8 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                             try {
                                 // TODO: lookup appropriate member Id once we determine barcode encoding scheme
                                 Member member = MemberDao.all().get(0);
-                                activity.setDetailFragment(String.valueOf(member.getId()), Encounter.IdMethodEnum.BARCODE);
+                                activity.setDetailFragment(String.valueOf(member.getId()),
+                                        Identification.IdMethodEnum.BARCODE);
                             } catch (SQLException e) {
                                 Rollbar.reportException(e);
                             }
