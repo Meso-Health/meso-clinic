@@ -11,13 +11,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.rollbar.android.Rollbar;
-import com.rollbar.android.RollbarExceptionHandler;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -52,7 +50,8 @@ public class CurrentPatientsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.setEncounterFragment(String.valueOf(member.getId()));
+                    activity.setCurrentEncounter(member);
+                    activity.setEncounterFragment();
                 }
             });
         } catch (SQLException e) {
