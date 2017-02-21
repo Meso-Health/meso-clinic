@@ -100,6 +100,10 @@ public class ClinicNumberFragment extends Fragment {
                     encounter.setClinicNumberType(selectedNumberTypeValue);
                     encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
 
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context
+                            .INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+
                     activity.setEncounterFragment();
                 }
             }
