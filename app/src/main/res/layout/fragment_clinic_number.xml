@@ -7,17 +7,26 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/encounter_number_prompt" />
+        android:textSize="15dp"
+        android:text="@string/encounter_number_prompt"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/clinic_number_type" />
 
-    <Spinner
-        android:id="@+id/clinic_number_type_dropdown"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/background_rectangle"
+        android:layout_marginBottom="@dimen/activity_vertical_margin">
+        <Spinner
+            android:id="@+id/clinic_number_type_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -28,7 +37,8 @@
         android:id="@+id/clinic_number_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number" />
+        android:inputType="number"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
     <Button
         android:id="@+id/clinic_number_continue_button"
