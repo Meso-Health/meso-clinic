@@ -35,7 +35,7 @@ public class ReceiptFragment extends Fragment {
         getActivity().setTitle(R.string.receipt_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
-        mLineItems = getArguments().getParcelableArrayList("lineItems");
+        mLineItems = ((MainActivity) getActivity()).getCurrentLineItems();
         mCreateEncounterButton = (Button) view.findViewById(R.id.create_encounter);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);

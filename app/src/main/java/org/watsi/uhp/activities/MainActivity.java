@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,6 +25,7 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Identification;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setUpLeakCanary();
         setupToolbar();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -100,6 +103,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setUpLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this.getApplication());
+    }
     private void startFetchMembersService() {
         Intent fetchMembersService = new Intent(this, RefreshMemberListService.class);
         fetchMembersService.putExtra("apiHost", ConfigManager.getApiHost(this));
@@ -158,6 +169,14 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, encounterFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void setReceiptFragment() {
+        ReceiptFragment receiptFragment = new ReceiptFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, receiptFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
