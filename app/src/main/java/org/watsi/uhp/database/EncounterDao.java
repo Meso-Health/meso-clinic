@@ -52,4 +52,8 @@ public class EncounterDao {
     public static List<Encounter> find(Map<String,Object> queryMap) throws SQLException {
         return getInstance().getEncounterDao().queryForFieldValues(queryMap);
     }
+
+    public static List<Encounter> all() throws SQLException {
+        return getInstance().getEncounterDao().queryForAll();
+    }
 }
