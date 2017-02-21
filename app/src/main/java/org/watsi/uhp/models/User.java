@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.UUID;
-
 @DatabaseTable(tableName = User.TABLE_NAME)
 public class User extends AbstractModel {
 
@@ -18,7 +16,7 @@ public class User extends AbstractModel {
 
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
-    private UUID mId;
+    private int mId;
 
     @SerializedName(FIELD_NAME_NAME)
     @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
@@ -36,11 +34,11 @@ public class User extends AbstractModel {
         super();
     }
 
-    public UUID getId() {
+    public int getId() {
         return mId;
     }
 
-    public void setId(UUID id) {
+    public void setId(int id) {
         this.mId = id;
     }
 
