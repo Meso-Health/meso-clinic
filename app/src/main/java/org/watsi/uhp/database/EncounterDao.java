@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -39,7 +40,13 @@ public class EncounterDao {
 
     public static void create(Encounter encounter) throws SQLException {
         encounter.setCreatedAt(Clock.getCurrentTime());
+        //TODO: put inside transaction
         getInstance().getEncounterDao().create(encounter);
+
+        for (LineItem lineItem : encounter.getLineItems()) {
+            lineItem.setEncounter(encounter);
+            LineItemDao.create(lineItem);
+        }
     }
 
     public static List<Encounter> find(Map<String,Object> queryMap) throws SQLException {
