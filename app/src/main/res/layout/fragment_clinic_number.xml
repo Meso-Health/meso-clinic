@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:text="@string/encounter_number_prompt"
         android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
@@ -44,5 +44,6 @@
         android:id="@+id/clinic_number_continue_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/clinic_number_button"/>
+        android:text="@string/clinic_number_button"
+        android:visibility="gone"/>
 </LinearLayout>

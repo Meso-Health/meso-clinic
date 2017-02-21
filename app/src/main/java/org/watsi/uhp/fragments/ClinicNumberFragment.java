@@ -3,6 +3,8 @@ package org.watsi.uhp.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ public class ClinicNumberFragment extends Fragment {
         submitNumberButton = (Button) view.findViewById(R.id.clinic_number_continue_button);
 
         setNumberTypeSpinner();
+        setNumberField();
         setSubmitNumberButton();
 
         return view;
@@ -55,6 +58,27 @@ public class ClinicNumberFragment extends Fragment {
 
         numberTypeSpinner.setAdapter(numberTypeAdapter);
         numberTypeSpinner.setOnItemSelectedListener(new NumberTypeListener());
+    }
+
+    private void setNumberField() {
+        numberField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //no-op
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (numberField.getText().toString().length() != 0) {
+                    submitNumberButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //no-op
+            }
+        });
     }
 
     private void setSubmitNumberButton() {
