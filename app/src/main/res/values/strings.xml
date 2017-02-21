@@ -17,6 +17,12 @@
     <!--Encounter-->
     <string name="current_patients_fragment_label">Select a patient</string>
 
+    <string name="clinic_number_fragment_label">Enter Encounter Number</string>
+    <string name="encounter_number_prompt">Enter either OPD or Delivery number</string>
+    <string name="clinic_number_type">Number Type:</string>
+    <string name="clinic_number">Number:</string>
+    <string name="clinic_number_button">CONTINUE</string>
+
     <string name="encounter_fragment_label">Enter line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a billable&#8230;</string>
