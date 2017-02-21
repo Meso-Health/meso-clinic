@@ -16,5 +16,5 @@ public interface UhpApi {
     Call<List<Member>> members(@Header("If-Modified-Since") String lastModified, @Path("facilityId") int facilityId);
 
     @POST("authentication_token")
-    Call<ApiService.AuthenticationToken> getAuthToken();
+    Call<AuthenticationToken> getAuthToken();
 }

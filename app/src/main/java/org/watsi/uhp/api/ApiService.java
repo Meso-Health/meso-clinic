@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.gson.annotations.SerializedName;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.managers.ConfigManager;
@@ -66,43 +65,5 @@ public class ApiService {
         }
         return false;
 
-    }
-
-    public static class AuthenticationToken {
-
-        @SerializedName("token")
-        private String token;
-
-        @SerializedName("expires_at")
-        private String expiresAt;
-
-        @SerializedName("user")
-        private Object user;
-
-        public AuthenticationToken() {}
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
-
-        public String getExpiresAt() {
-            return expiresAt;
-        }
-
-        public void setExpiresAt(String expiresAt) {
-            this.expiresAt = expiresAt;
-        }
-
-        public Object getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
     }
 }
