@@ -17,9 +17,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.database.LineItemDao;
-import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
@@ -61,18 +58,15 @@ public class ReceiptFragment extends Fragment {
         mCreateEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: this should be in a transaction
-                Encounter encounter = new Encounter();
+                MainActivity activity = (MainActivity) getActivity();
+
                 try {
-                    // TODO: get actual member instead of arbitrarily selecting first
-                    encounter.setMember(MemberDao.all().get(0));
-                    EncounterDao.create(encounter);
-                    LineItemDao.create(mLineItems);
+                    EncounterDao.create(activity.getCurrentEncounter());
                 } catch (SQLException e) {
                     Rollbar.reportException(e);
                 }
 
-                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                activity.setCurrentPatientsFragment();
             }
         });
     }

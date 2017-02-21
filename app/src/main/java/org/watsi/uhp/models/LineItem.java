@@ -33,6 +33,14 @@ public class LineItem extends AbstractModel implements Parcelable {
         super();
     }
 
+    public Encounter getEncounter() {
+        return mEncounter;
+    }
+
+    public void setEncounter(Encounter encounter) {
+        this.mEncounter = encounter;
+    }
+
     public Billable getBillable() {
         return mBillable;
     }

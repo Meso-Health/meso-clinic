@@ -1,8 +1,12 @@
 package org.watsi.uhp.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Encounter.TABLE_NAME)
@@ -19,19 +23,34 @@ public class Encounter extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
 
+    @ForeignCollectionField
+    Collection<LineItem> mLineItems;
+
     public Encounter() {
         super();
+    }
+
+    public Encounter(List<LineItem> lineItems) {
+        this.mLineItems = lineItems;
     }
 
     public UUID getId() {
         return mId;
     }
 
+    public Member getMember() {
+        return mMember;
+    }
+
     public void setMember(Member member) {
         this.mMember = member;
     }
 
-    public Member getMember() {
-        return mMember;
+    public List<LineItem> getLineItems() {
+        return new ArrayList<>(mLineItems);
+    }
+
+    public void setLineItems(Collection<LineItem> lineItems) {
+        this.mLineItems = lineItems;
     }
 }
