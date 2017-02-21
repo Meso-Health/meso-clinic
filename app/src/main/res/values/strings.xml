@@ -1,26 +1,44 @@
 <resources>
     <string name="app_name">UHP</string>
-    <string name="main_activity_label">Universal Health Project</string>
-    <string name="search_hint">Search patient name or ID</string>
-    <string name="encounter_search_hint">Search drug, lab or service</string>
-    <string name="encounter_search_label">Add</string>
-    <string name="member_photo_content_description">Member photo</string>
-    <string name="create_encounter">Create encounter</string>
-    <string name="barcode_button">Scan barcode</string>
-    <string name="encounter_info">Encounter</string>
-    <string name="encounter_opd_ipd_label">OPD/IPD</string>
-    <string name="encounter_category_label">Category</string>
-    <string name="encounter_product_label">Select product</string>
-    <string name="encounter_product_list_label">Line items</string>
-    <string name="enter_billable_button">+</string>
-    <string name="remove_billable_button">X</string>
-    <string name="save_encounter_button">Save encounter</string>
-    <string name="inpatient_radio_label">In-patient</string>
-    <string name="outpatient_radio_label">Out-patient</string>
+    <string name="main_activity_label">Universal Healthcare Project</string>
 
+    <!--Identification-->
+    <string name="identification_button">CHECK IN NEW PATIENT</string>
+
+    <string name="barcode_fragment_label">Scan ID</string>
+    <string name="search_member_hint">Search patient name or ID</string>
+
+    <string name="member_search_fragment_label">Search</string>
+
+    <string name="detail_fragment_label">Is this the right person?</string>
+    <string name="member_photo_content_description">Member photo</string>
+    <string name="checkin_member">YES, CHECK IN</string>
+
+    <!--Encounter-->
+    <string name="current_patients_fragment_label">Select a patient</string>
+
+    <string name="encounter_fragment_label">Enter line items</string>
+    <string name="prompt_category">Select a category&#8230;</string>
+    <string name="prompt_billable">Select a billable&#8230;</string>
+    <string name="search_drug_hint">Search drugs</string>
+    <string name="encounter_search_label">Add</string>
+    <string name="add_billable_prompt"><u>Not in search?</u></string>
     <string name="inc_billable_quantity">+</string>
     <string name="dec_billable_quantity">-</string>
     <string name="default_billable_quantity">1</string>
-    <string name="prompt_category">Select a category&#8230;</string>
-    <string name="prompt_billable">Select a billable&#8230;</string>
+    <string name="remove_billable_button">X</string>
+    <string name="encounter_product_list_label">LIST ITEMS</string>
+    <string name="continue_encounter_button">CONTINUE</string>
+
+    <string name="add_new_billable_fragment_label">Add new billable</string>
+    <string name="add_new_name">Name:</string>
+    <string name="add_new_price">Price:</string>
+    <string name="add_new_billable">Add</string>
+    <string name="UGX">UGX</string>
+
+    <string name="receipt_fragment_label">Review receipt</string>
+    <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
+    <string name="total"><b>TOTAL</b></string>
+    <string name="back_button">NO, GO BACK</string>
+    <string name="save_encounter_button">YES, SAVE ENCOUNTER</string>
 </resources>

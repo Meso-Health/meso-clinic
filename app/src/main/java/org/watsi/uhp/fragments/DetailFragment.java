@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
@@ -26,6 +27,8 @@ public class DetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(R.string.detail_fragment_label);
+
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         String memberId = getArguments().getString("memberId");
         final String idMethod = getArguments().getString("idMethod");
@@ -35,7 +38,7 @@ public class DetailFragment extends Fragment {
             final SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
 
             TextView nameView = (TextView) view.findViewById(R.id.member_name);
-            nameView.setText(member.getName());
+            nameView.setText(member.getFullName());
             TextView ageView = (TextView) view.findViewById(R.id.member_age);
             ageView.setText("Age - " + String.valueOf(member.getAge()));
 
@@ -54,22 +57,15 @@ public class DetailFragment extends Fragment {
             final TextView lastEncounterView = (TextView) view.findViewById(R.id.member_last_encounter);
 
             if (lastEncounter != null) {
-                lastEncounterView.setText(simpleDate.format(lastEncounter.getDate()));
+                lastEncounterView.setText(simpleDate.format(lastEncounter.getCreatedAt()));
             }
 
-            Button encounterButton = (Button) view.findViewById(R.id.create_encounter);
-            encounterButton.setOnClickListener(new View.OnClickListener() {
+            Button checkinButton = (Button) view.findViewById(R.id.checkin_member);
+            checkinButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EncounterFragment encounterFragment = new EncounterFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("idMethod", idMethod);
-                    encounterFragment.setArguments(bundle);
-
-                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, encounterFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                    //TODO: save identification record with idMethod
+                    ((MainActivity) getActivity()).setCurrentPatientsFragment();
                 }
             });
 

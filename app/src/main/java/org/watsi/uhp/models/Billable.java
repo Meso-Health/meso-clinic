@@ -3,10 +3,8 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.List;
-
 @DatabaseTable(tableName = Billable.TABLE_NAME)
-public class Billable {
+public class Billable extends AbstractModel {
 
     public static final String TABLE_NAME = "billables";
 
@@ -23,7 +21,8 @@ public class Billable {
         SERVICES,
         LABS,
         SUPPLIES,
-        VACCINES
+        VACCINES,
+        UNSPECIFIED
     }
 
     //TODO: remove
@@ -36,7 +35,7 @@ public class Billable {
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private int mId;
 
-    @DatabaseField(columnName = FIELD_NAME_NAME)
+    @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
     private String mName;
 
     @DatabaseField(columnName = FIELD_NAME_CATEGORY, canBeNull = false)
@@ -51,11 +50,11 @@ public class Billable {
     @DatabaseField(columnName = FIELD_NAME_AMOUNT)
     private String mAmount;
 
-    @DatabaseField(columnName = FIELD_NAME_PRICE)
+    @DatabaseField(columnName = FIELD_NAME_PRICE, canBeNull = false)
     private Integer mPrice;
 
     public Billable() {
-        // empty constructor necessary for ORM
+        super();
     }
 
     public int getId() {
@@ -112,9 +111,16 @@ public class Billable {
 
     public String getDisplayName() {
         if (getUnit() != null) {
-            return getName() + " - " + getUnit() + " " + getAmount();
+            return getName() + " - " + getDisplayDetails();
         } else {
             return getName();
         }
+    }
+
+    public String getDisplayDetails() {
+        String billableDetails = "";
+        if (getAmount() != null) billableDetails += getAmount() + " ";
+        if (getUnit() != null) billableDetails += getUnit();
+        return billableDetails;
     }
 }

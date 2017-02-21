@@ -13,15 +13,17 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.LineItem;
 
 import java.util.List;
 
-public class BillableAdapter extends ArrayAdapter<Billable> {
+public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
     private Button mCreateEncounterButton;
 
-    public BillableAdapter(Context context, List<Billable> billableList, Button createEncounterButton) {
-        super(context, R.layout.item_billable_list, billableList);
+    public EncounterItemAdapter(Context context, List<LineItem> lineItemList, Button
+            createEncounterButton) {
+        super(context, R.layout.item_line_item_list, lineItemList);
         this.mCreateEncounterButton = createEncounterButton;
     }
 
@@ -32,13 +34,13 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
 
         if (convertView == null) {
             LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.item_billable_list, parent, false);
+            convertView = layoutInflater.inflate(R.layout.item_line_item_list, parent, false);
 
             viewHolder = new ViewHolder();
             viewHolder.billableName = (TextView) convertView.findViewById(R.id.billable_name);
             viewHolder.billableDosage = (TextView) convertView.findViewById(R.id.billable_dosage);
             viewHolder.billableUnit = (TextView) convertView.findViewById(R.id.billable_unit);
-            viewHolder.removeBillableBtn = (Button) convertView.findViewById(R.id.remove_billable_btn);
+            viewHolder.removeLineItemBtn = (Button) convertView.findViewById(R.id.remove_line_item_btn);
             viewHolder.billableQuantity = (EditText) convertView.findViewById(R.id.billable_quantity);
             viewHolder.decQuantityBtn = (Button) convertView.findViewById(R.id.dec_billable_quantity);
             viewHolder.incQuantityBtn = (Button) convertView.findViewById(R.id.inc_billable_quantity);
@@ -48,16 +50,18 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final Billable billable = getItem(position);
+        final LineItem lineItem = getItem(position);
 
-        if (billable != null) {
+        if (lineItem != null) {
+            final Billable billable = lineItem.getBillable();
+
             viewHolder.billableName.setText(billable.getName());
             viewHolder.billableDosage.setText(billable.getAmount());
             viewHolder.billableUnit.setText(billable.getUnit());
-            viewHolder.removeBillableBtn.setOnClickListener(new View.OnClickListener() {
+            viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    remove(billable);
+                    remove(lineItem);
                     if (isEmpty()) {
                         mCreateEncounterButton.setVisibility(View.GONE);
                     }
@@ -75,42 +79,32 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
                 viewHolder.decQuantityBtn.setVisibility(View.VISIBLE);
 
                 final ViewHolder vh = viewHolder;
-                viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                    private String decreaseQuantity(ViewHolder vh) {
-                        String value = vh.billableQuantity.getText().toString();
+                viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            String quantity = vh.billableQuantity.getText().toString();
 
-                        if (value.equals("1")) {
-                            return "1";
-                        } else {
-                            int int_value = Integer.parseInt(value);
-                            int new_int_value = int_value - 1;
-                            return Integer.toString(new_int_value);
-                        }
-                    }
-
-                    public void onClick(View v) {
-                        if (vh.billableQuantity.getText().toString().equals("")) {
-                            vh.billableQuantity.setText("1");
-                        } else {
-                            vh.billableQuantity.setText(decreaseQuantity(vh));
+                            if (quantity.equals("")) {
+                                vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
+                            } else {
+                                lineItem.setQuantity(Integer.valueOf(quantity));
+                            }
                         }
                     }
                 });
 
-                viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                    private String increaseQuantity(ViewHolder vh) {
-                        String value = vh.billableQuantity.getText().toString();
-                        int int_value = Integer.parseInt(value);
-                        int new_int_value = int_value + 1;
-                        return Integer.toString(new_int_value);
-                    }
-
+                viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        if (vh.billableQuantity.getText().toString().equals("")) {
-                            vh.billableQuantity.setText("1");
-                        } else {
-                            vh.billableQuantity.setText(increaseQuantity(vh));
-                        }
+                        lineItem.decreaseQuantity();
+                        vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
+                    }
+                });
+
+                viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        lineItem.increaseQuantity();
+                        vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
                     }
                 });
             }
@@ -120,10 +114,10 @@ public class BillableAdapter extends ArrayAdapter<Billable> {
     }
 
     private static class ViewHolder {
+        Button removeLineItemBtn;
         TextView billableName;
         TextView billableUnit;
         TextView billableDosage;
-        Button removeBillableBtn;
         EditText billableQuantity;
         Button decQuantityBtn;
         Button incQuantityBtn;

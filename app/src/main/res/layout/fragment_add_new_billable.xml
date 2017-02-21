@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_new_name" />
+    <EditText
+        android:id="@+id/name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"/>
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_new_price"
+        android:layout_below="@id/name_field"/>
+    <EditText
+        android:id="@+id/price_field"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:layout_below="@id/price" />
+    <TextView
+        android:id="@+id/ugx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:textAlignment="gravity"
+        android:text="@string/UGX"
+        android:textSize="20dp"
+        android:layout_toEndOf="@id/price_field"
+        android:layout_below="@id/price"/>
+
+    <Button
+        android:id="@+id/add_billable_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_new_billable"
+        android:textAllCaps="true"
+        android:layout_below="@id/price_field"/>
+</RelativeLayout>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <searchable
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:label="@string/encounter_search_label"
-    android:hint="@string/encounter_search_hint"
+    android:label="@string/main_activity_label"
+    android:hint="@string/search_member_hint"
     android:searchSuggestThreshold="3"
     android:searchSuggestIntentAction="android.intent.action.VIEW"
     android:singleLine = "true"
-    android:searchSuggestAuthority="org.watsi.uhp.provider">
+    android:searchSuggestAuthority="org.watsi.uhp.provider.member">
 </searchable>

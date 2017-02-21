@@ -2,120 +2,64 @@ package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.rollbar.android.Rollbar;
-
-import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.R;
 import org.watsi.uhp.models.Member;
 
-import java.sql.SQLException;
 import java.util.List;
 
-public class MemberAdapter implements ListAdapter {
+public class MemberAdapter extends ArrayAdapter<Member> {
 
-    private List<Member> mMemberList;
-    private Context mContext;
-
-    public MemberAdapter(Context context) {
-        mContext = context;
-        try {
-            mMemberList = MemberDao.recentMembers();
-        } catch (SQLException e) {
-            // TODO: how to handle this case?
-            Rollbar.reportException(e);
-        }
+    public MemberAdapter(Context context, List<Member> memberList) {
+        super(context, R.layout.item_member_list, memberList);
     }
 
     @Override
-    public boolean areAllItemsEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return true;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-        // no-op
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-        // no-op
-    }
-
-    @Override
-    public int getCount() {
-        return mMemberList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mMemberList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        // TODO: not safe, needs to hash full ID
-        Member member = (Member) getItem(position);
-        return Long.parseLong(member.getCardId().replaceAll("[^\\d]", ""));
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView,@NonNull ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            LayoutInflater layoutInflater = ((Activity) mContext).getLayoutInflater();
-            convertView = layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+            LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
+            convertView = layoutInflater.inflate(R.layout.item_member_list, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.titleView = (TextView) convertView.findViewById(android.R.id.text1);
-            viewHolder.subTitleView = (TextView) convertView.findViewById(android.R.id.text2);
+            viewHolder.name = (TextView) convertView.findViewById(R.id.member_name);
+            viewHolder.card_id = (TextView) convertView.findViewById(R.id.member_card_id);
+            viewHolder.photo = (ImageView) convertView.findViewById(R.id.member_photo);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Member member = (Member) getItem(position);
+        Member member = getItem(position);
+
         if (member != null) {
-            viewHolder.titleView.setText(member.getName());
-            viewHolder.subTitleView.setText(String.valueOf(member.getCardId()));
+            viewHolder.name.setText(member.getFullName());
+            viewHolder.card_id.setText(String.valueOf(member.getCardId()));
+
+            Bitmap photoBitmap = member.getPhotoBitmap();
+            if (photoBitmap != null) {
+                viewHolder.photo.setImageBitmap(photoBitmap);
+            } else {
+                viewHolder.photo.setImageResource(R.drawable.portrait_placeholder);
+            }
         }
 
         return convertView;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return mMemberList.size() == 0;
-    }
-
     private static class ViewHolder {
-        TextView titleView;
-        TextView subTitleView;
+        TextView name;
+        TextView card_id;
+        ImageView photo;
     }
 }

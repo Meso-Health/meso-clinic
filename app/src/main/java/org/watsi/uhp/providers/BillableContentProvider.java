@@ -13,13 +13,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
 public class BillableContentProvider extends ContentProvider {
 
@@ -41,33 +35,13 @@ public class BillableContentProvider extends ContentProvider {
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         try {
-            List<Billable> allBillableNames = BillableDao.allNames();
-
-            List<String> names = new ArrayList<>(allBillableNames.size());
-            for (Billable billable : allBillableNames) {
-                names.add(billable != null ? billable.getName() : null);
-            }
-
-            Set<String> uniqueNames = new HashSet<>(names);
-
-            List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, uniqueNames, 5, 50);
-
-            ArrayList<Billable> matchingBillables = new ArrayList<>();
-            for (ExtractedResult result : topMatchingNames) {
-                String name = result.getString();
-                matchingBillables.addAll(BillableDao.findByName(name));
-            }
+            List<Billable> matchingBillables = BillableDao.fuzzySearchDrugs(query, 5, 50);
 
             for (Billable billable : matchingBillables) {
-                String billableDetails = "";
-                if (billable.getAmount() != null) billableDetails += billable.getAmount() + " ";
-                if (billable.getUnit() != null) billableDetails += billable.getUnit();
-                if (billable.getDepartment() != Billable.DepartmentEnum.UNSPECIFIED) billableDetails += " - " + billable.getDepartment();
-
                 Object[] searchSuggestion = {
                         billable.getId(),
                         billable.getName(),
-                        billableDetails,
+                        billable.getDisplayDetails(),
                         billable.getId()
                 };
                 resultsCursor.addRow(searchSuggestion);
@@ -76,7 +50,6 @@ public class BillableContentProvider extends ContentProvider {
             e.printStackTrace();
         }
         return resultsCursor;
-
     }
 
     @Override

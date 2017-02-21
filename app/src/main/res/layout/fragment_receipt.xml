@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <TextView
+        android:id="@+id/receipt_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/receipt_check_prompt"
+        android:textSize="15sp"/>
+
+    <ListView
+        android:id="@+id/receipt_items"
+        android:layout_width="match_parent"
+        android:layout_height="325dp"
+        android:layout_below="@id/receipt_prompt"/>
+
+    <TextView
+        android:id="@+id/total"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="@string/total"
+        android:textSize="20sp"
+        android:layout_below="@id/receipt_items"/>
+
+    <TextView
+        android:id="@+id/total_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_below="@id/receipt_items"
+        android:gravity="end"
+        android:textAlignment="gravity"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/total"/>
+
+    <Button
+        android:id="@+id/create_encounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_encounter_button"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
