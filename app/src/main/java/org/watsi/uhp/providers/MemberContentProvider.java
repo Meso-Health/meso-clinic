@@ -56,7 +56,6 @@ public class MemberContentProvider extends ContentProvider {
                         member.getCardId(),
                         member.getId(),
                         idMethod
-
                 };
                 resultsCursor.addRow(searchSuggestion);
             }
