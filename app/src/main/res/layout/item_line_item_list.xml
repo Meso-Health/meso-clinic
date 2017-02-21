@@ -1,58 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="10dp"
-    android:weightSum="6" >
+    android:layout_height="match_parent">
 
     <Button
         android:id="@+id/remove_line_item_btn"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/remove_billable_button" />
+        android:layout_width="30dp"
+        android:layout_height="60dp"
+        android:text="@string/remove_billable_button"/>
 
     <TextView
         android:id="@+id/billable_name"
-        android:layout_width="0dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3" />
+        android:textSize="16sp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@id/remove_line_item_btn"
+        android:gravity="center_vertical"
+        android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/billable_unit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"/>
-
-    <TextView
-        android:id="@+id/billable_dosage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-
-    <Button
-        android:id="@+id/dec_billable_quantity"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/dec_billable_quantity"/>
+        android:id="@+id/billable_details"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_below="@id/billable_name"
+        android:layout_toEndOf="@id/remove_line_item_btn"
+        android:gravity="center_vertical"/>
 
     <EditText
         android:id="@+id/billable_quantity"
+        android:layout_marginTop="5dp"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_toEndOf="@id/billable_name"
         android:text="@string/default_billable_quantity"
         android:background="@drawable/background_rectangle"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_weight="0"
-        android:inputType="number"/>
-
-    <Button
-        android:id="@+id/inc_billable_quantity"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/inc_billable_quantity"/>
-
-</LinearLayout>
+        android:inputType="number"
+        android:selectAllOnFocus="true" />
+</RelativeLayout>
