@@ -36,14 +36,14 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
-    public enum GenderEnum { MALE, FEMALE }
+    public enum GenderEnum { M, F }
     
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
     @SerializedName(FIELD_NAME_CARD_ID)
-    @DatabaseField(columnName = FIELD_NAME_CARD_ID, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_CARD_ID)
     private String mCardId;
 
     @SerializedName(FIELD_NAME_FULL_NAME)
