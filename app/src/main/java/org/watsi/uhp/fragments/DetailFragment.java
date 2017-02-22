@@ -28,7 +28,7 @@ public class DetailFragment extends Fragment {
     private TextView mMemberAge;
     private TextView mMemberId;
     private ImageView mMemberPhoto;
-    private Identification.IdMethodEnum mIdMethod;
+    private Identification.SearchMethodEnum mIdMethod;
     private Button mConfirmButton;
     private Button mRejectButton;
 
@@ -39,7 +39,7 @@ public class DetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         String memberId = getArguments().getString("memberId");
         String idMethod = getArguments().getString("idMethod");
-        mIdMethod = Identification.IdMethodEnum.valueOf(idMethod);
+        mIdMethod = Identification.SearchMethodEnum.valueOf(idMethod);
 
         try {
             mMember = MemberDao.findById(memberId);
@@ -96,7 +96,7 @@ public class DetailFragment extends Fragment {
         // TODO: this should be in a transaction
         Identification id = new Identification();
         id.setMember(mMember);
-        id.setIdMethod(mIdMethod);
+        id.setSearchMethod(mIdMethod);
         id.setAccepted(accepted);
 
         try {

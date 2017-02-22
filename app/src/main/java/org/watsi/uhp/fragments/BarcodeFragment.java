@@ -98,7 +98,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                                 Member member = MemberDao.findByCardId(barcode.displayValue);
                                 if (member != null) {
                                     activity.setDetailFragment(String.valueOf(member.getId()),
-                                            Identification.IdMethodEnum.BARCODE);
+                                            Identification.SearchMethodEnum.BARCODE);
                                 } else {
                                     displayFailureToast();
                                 }

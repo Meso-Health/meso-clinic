@@ -12,10 +12,10 @@ public class Identification extends AbstractModel{
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
-    public static final String FIELD_NAME_ID_METHOD = "id_method";
+    public static final String FIELD_NAME_SEARCH_METHOD = "search_method";
     public static final String FIELD_NAME_ACCEPTED = "accepted";
 
-    public enum IdMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
+    public enum SearchMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private UUID mId;
@@ -23,8 +23,8 @@ public class Identification extends AbstractModel{
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
 
-    @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
-    private IdMethodEnum mIdMethod;
+    @DatabaseField(columnName = FIELD_NAME_SEARCH_METHOD, canBeNull = false)
+    private SearchMethodEnum mSearchMethod;
 
     @DatabaseField(columnName = FIELD_NAME_ACCEPTED, canBeNull = false)
     private boolean mAccepted;
@@ -45,12 +45,12 @@ public class Identification extends AbstractModel{
         this.mMember = member;
     }
 
-    public IdMethodEnum getIdMethod() {
-        return mIdMethod;
+    public SearchMethodEnum getSearchMethod() {
+        return mSearchMethod;
     }
 
-    public void setIdMethod(IdMethodEnum idMethod) {
-        this.mIdMethod = idMethod;
+    public void setSearchMethod(SearchMethodEnum searchMethod) {
+        this.mSearchMethod = searchMethod;
     }
 
     public boolean getAccepted() {
