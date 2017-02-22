@@ -13,8 +13,10 @@
 
     <string name="detail_fragment_label">Is this the right person?</string>
     <string name="member_photo_content_description">Member photo</string>
-    <string name="confirm_identity">YES, CHECK IN</string>
+    <string name="approve_identity">YES, CHECK IN</string>
     <string name="reject_identity">NO, TRY AGAIN</string>
+    <string name="identification_approved">has been successfully checked in</string>
+    <string name="identification_rejected">could not be confirmed as a UHP member.</string>
 
     <!--Encounter-->
     <string name="current_patients_fragment_label">Select a patient</string>

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
@@ -54,7 +55,7 @@ public class DetailFragment extends Fragment {
         mMemberGender = (TextView) view.findViewById(R.id.member_gender);
         mMemberId = (TextView) view.findViewById(R.id.member_id);
         mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
-        mConfirmButton = (Button) view.findViewById(R.id.confirm_identity);
+        mConfirmButton = (Button) view.findViewById(R.id.approve_identity);
         mRejectButton = (Button) view.findViewById(R.id.reject_identity);
 
         setPatientCard();
@@ -82,6 +83,11 @@ public class DetailFragment extends Fragment {
             public void onClick(View v) {
                 createIdentification(true);
                 ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        mMember.getFullName() + " " + getActivity().getString(R.string
+                                .identification_approved),
+                        Toast.LENGTH_LONG).
+                        show();
             }
         });
     }
@@ -92,6 +98,11 @@ public class DetailFragment extends Fragment {
             public void onClick(View v) {
                 createIdentification(false);
                 ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        mMember.getFullName() + " " + getActivity().getString(R.string
+                                .identification_rejected),
+                        Toast.LENGTH_LONG).
+                        show();
             }
         });
     }
