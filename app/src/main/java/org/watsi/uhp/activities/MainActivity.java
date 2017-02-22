@@ -141,18 +141,15 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
 
-    public void setCurrentPatientsFragment(boolean clearBackStack) {
+    public void setCurrentPatientsFragment() {
         FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack("home", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, currentPatientsFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
 
-        if (clearBackStack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
+        transaction.replace(R.id.fragment_container, currentPatientsFragment, "home");
+        transaction.commit();
     }
 
     public void setDetailFragment(String memberId, Identification.IdMethodEnum idMethod) {
