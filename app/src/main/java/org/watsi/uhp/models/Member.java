@@ -38,9 +38,12 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_CARD_ID = "card_id";
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
+    public static final String FIELD_NAME_GENDER = "gender";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
+    public enum GenderEnum { MALE, FEMALE }
+    
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
     private UUID mId;
@@ -56,6 +59,10 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
     private int mAge;
+
+    @SerializedName(FIELD_NAME_GENDER)
+    @DatabaseField(columnName = FIELD_NAME_GENDER)
+    private GenderEnum mGender;
 
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
     private byte[] mPhoto;
@@ -98,6 +105,14 @@ public class Member extends AbstractModel {
 
     public void setAge(int age) {
         this.mAge = age;
+    }
+
+    public GenderEnum getGender() {
+        return mGender;
+    }
+
+    public void setGender(GenderEnum gender) {
+        this.mGender = gender;
     }
 
     public byte[] getPhoto() {
