@@ -47,10 +47,6 @@ public class MemberDao {
         return mMemberDao;
     }
 
-    private String getLastModifiedAtString() {
-        return mLastModifiedAtString;
-    }
-
     public static void create(Member member) throws SQLException {
         getInstance().getMemberDao().create(member);
     }
@@ -63,10 +59,8 @@ public class MemberDao {
         return getInstance().getMemberDao().queryForAll();
     }
 
-    public static Member findById(String memberId) throws SQLException {
-        Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put(Member.FIELD_NAME_ID, memberId);
-        return getInstance().getMemberDao().queryForFieldValues(queryMap).get(0);
+    public static Member findById(UUID id) throws SQLException {
+        return getInstance().getMemberDao().queryForId(id);
     }
 
     public static List<Member> findByName(String name) throws SQLException {
@@ -130,10 +124,11 @@ public class MemberDao {
     }
 
     public static String lastModifiedString() throws SQLException {
-        return getInstance().getLastModifiedAtString();
+        return getInstance().mLastModifiedAtString;
     }
 
     public static void setLastModifiedAt(String lastModifiedAtString) {
+        // TODO: better to store somewhere persisted like SharedPreferences
         getInstance().mLastModifiedAtString = lastModifiedAtString;
     }
 }
