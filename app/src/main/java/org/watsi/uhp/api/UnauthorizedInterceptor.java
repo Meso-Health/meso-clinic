@@ -15,7 +15,6 @@ import okhttp3.Response;
 public class UnauthorizedInterceptor implements Interceptor {
 
     private final Context context;
-    private int UNAUTHORIZED_RESPONSE_CODE = 401;
 
     protected UnauthorizedInterceptor(Context context) {
         this.context = context;
@@ -25,7 +24,7 @@ public class UnauthorizedInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         Response response = chain.proceed(request);
-        if (response.code() == UNAUTHORIZED_RESPONSE_CODE) {
+        if (response.code() == 401) {
             if (ApiService.refreshApiToken(context)) {
                 // successfully re-authenticated, so retry original request
                 return response.newBuilder().build();
