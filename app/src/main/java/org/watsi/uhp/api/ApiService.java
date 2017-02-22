@@ -23,7 +23,7 @@ public class ApiService {
     public static synchronized UhpApi requestBuilder(Context context) {
         if (instance == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor(context));
+            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.authenticator(new TokenAuthenticator(context));
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(ConfigManager.getApiHost(context))
@@ -35,9 +35,9 @@ public class ApiService {
         return instance;
     }
 
-    protected static boolean refreshApiToken(Context context) {
+    public static boolean login(String username, String password, Context context) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.authenticator(new BasicAuthenticator(context));
+        httpClient.authenticator(new BasicAuthenticator(username, password));
         Retrofit builder = new Retrofit.Builder()
                 .baseUrl(ConfigManager.getApiHost(context))
                 .addConverterFactory(GsonConverterFactory.create())
