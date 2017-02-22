@@ -1,9 +1,5 @@
 package org.watsi.uhp.api;
 
-import android.content.Context;
-
-import org.watsi.uhp.managers.ConfigManager;
-
 import java.io.IOException;
 
 import okhttp3.Authenticator;
@@ -15,20 +11,19 @@ import okhttp3.Route;
 /**
  *  Authenticator for requesting an authentication token
  */
-public class BasicAuthenticator implements Authenticator {
+class BasicAuthenticator implements Authenticator {
 
-    private final Context context;
+    private final String username;
+    private final String password;
 
-    public BasicAuthenticator(Context context) {
-        this.context = context;
+    BasicAuthenticator(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
-        String basicAuthToken = Credentials.basic(
-                ConfigManager.getApiUsername(context),
-                ConfigManager.getApiPassword(context)
-        );
+        String basicAuthToken = Credentials.basic(username, password);
         return response.request()
                 .newBuilder()
                 .header("Authorization", basicAuthToken)

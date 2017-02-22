@@ -53,7 +53,20 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
     public void surfaceCreated(SurfaceHolder holder) {
         try {
             Log.d("UHP", "surface created");
-            setupBarcodeDetector();
+            BarcodeDetector barcodeDetector = new BarcodeDetector
+                    .Builder(getContext())
+                    .setBarcodeFormats(Barcode.QR_CODE)
+                    .build();
+
+            while (!barcodeDetector.isOperational()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Rollbar.reportException(e);
+                }
+            }
+
+            setBarcodeProcessor(barcodeDetector);
             mCameraSource.start(holder);
         } catch (IOException | SecurityException e) {
             Rollbar.reportException(e);
@@ -70,50 +83,41 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
         mCameraSource.release();
     }
 
-    private void setupBarcodeDetector() {
+    private void setBarcodeProcessor(BarcodeDetector barcodeDetector) {
         final MainActivity activity = (MainActivity) getActivity();
 
-        BarcodeDetector barcodeDetector = new BarcodeDetector
-                .Builder(activity.getBaseContext())
-                .setBarcodeFormats(Barcode.QR_CODE)
-                .build();
+         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+                // no-op
+            }
 
-        if (!barcodeDetector.isOperational()) {
-            // TODO: handle not being ready for barcode
-            Log.d("UHP", "barcode detector is not operational");
-        } else {
-            barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
-                @Override
-                public void release() {
-                    // no-op
-                }
-
-                @Override
-                public void receiveDetections(Detector.Detections<Barcode> detections) {
-                    SparseArray<Barcode> barcodes = detections.getDetectedItems();
-                    if (barcodes.size() > 0) {
-                        Barcode barcode = barcodes.valueAt(0);
-                        if (barcode != null) {
-                            try {
-                                Member member = MemberDao.findByCardId(barcode.displayValue);
-                                activity.setDetailFragment(String.valueOf(member.getId()),
-                                        Identification.SearchMethodEnum.BARCODE);
-                            } catch (SQLException e) {
-                                displayFailureToast();
-                                Rollbar.reportException(e);
-                            }
+            @Override
+            public void receiveDetections(Detector.Detections<Barcode> detections) {
+                SparseArray<Barcode> barcodes = detections.getDetectedItems();
+                if (barcodes.size() > 0) {
+                    Barcode barcode = barcodes.valueAt(0);
+                    if (barcode != null) {
+                        try {
+                            Member member = MemberDao.findByCardId(barcode.displayValue);
+                            activity.setDetailFragment(String.valueOf(member.getId()),
+                                    Identification.SearchMethodEnum.BARCODE);
+                        } catch (SQLException e) {
+                            displayFailureToast();
+                            Rollbar.reportException(e);
                         }
                     }
                 }
-            });
-            Log.d("UHP", "camera source started");
-            mCameraSource = new CameraSource
-                    .Builder(activity.getBaseContext(), barcodeDetector)
-                    .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedFps(15.0f)
-                    .setAutoFocusEnabled(true)
-                    .build();
-        }
+            }
+         });
+
+        Log.d("UHP", "camera source started");
+        mCameraSource = new CameraSource
+                .Builder(activity.getBaseContext(), barcodeDetector)
+                .setFacing(CameraSource.CAMERA_FACING_BACK)
+                .setRequestedFps(15.0f)
+                .setAutoFocusEnabled(true)
+                .build();
     }
 
     private void setupSearchMemberButton() {

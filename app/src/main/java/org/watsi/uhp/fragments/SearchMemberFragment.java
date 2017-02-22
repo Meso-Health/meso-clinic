@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.managers.KeyboardManager;
 
 public class SearchMemberFragment extends Fragment {
 
@@ -36,8 +37,6 @@ public class SearchMemberFragment extends Fragment {
         super.onResume();
 
         mMemberSearch.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context
-                .INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+        KeyboardManager.hideKeyboard(getContext());
     }
 }

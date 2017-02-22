@@ -21,8 +21,6 @@ import java.util.Map;
 public class ConfigManager {
     private static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
     private static String API_HOST = "API_HOST";
-    private static String API_USERNAME = "API_USERNAME";
-    private static String API_PASSWORD = "API_PASSWORD";
     private static String FACILITY_ID = "FACILITY_ID";
 
     public static String getRollbarApiKey(Context context) {
@@ -31,14 +29,6 @@ public class ConfigManager {
 
     public static String getApiHost(Context context) {
         return getConfigValue(API_HOST, context);
-    }
-
-    public static String getApiUsername(Context context) {
-        return getConfigValue(API_USERNAME, context);
-    }
-
-    public static String getApiPassword(Context context) {
-        return getConfigValue(API_PASSWORD, context);
     }
 
     public static int getFacilityId(Context context) {
