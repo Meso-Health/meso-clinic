@@ -7,6 +7,7 @@ import org.watsi.uhp.models.Identification;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * POJO helper for querying Identifications
@@ -15,7 +16,7 @@ public class IdentificationDao {
 
     private static IdentificationDao instance = new IdentificationDao();
 
-    private Dao<Identification, Integer> mIdentificationDao;
+    private Dao<Identification, UUID> mIdentificationDao;
 
     private static synchronized IdentificationDao getInstance() {
         return instance;
@@ -28,7 +29,7 @@ public class IdentificationDao {
         this.mIdentificationDao = identificationDao;
     }
 
-    private Dao<Identification, Integer> getIdentificationDao() throws SQLException {
+    private Dao<Identification, UUID> getIdentificationDao() throws SQLException {
         if (mIdentificationDao == null) {
             setIdentificationDao(DatabaseHelper.getHelper().getDao(Identification.class));
         }
@@ -42,5 +43,13 @@ public class IdentificationDao {
 
     public static List<Identification> find(Map<String,Object> queryMap) throws SQLException {
         return getInstance().getIdentificationDao().queryForFieldValues(queryMap);
+    }
+
+    public static Identification findById(UUID id) throws SQLException {
+        return getInstance().getIdentificationDao().queryForId(id);
+    }
+
+    public static List<Identification> all() throws SQLException {
+        return getInstance().getIdentificationDao().queryForAll();
     }
 }
