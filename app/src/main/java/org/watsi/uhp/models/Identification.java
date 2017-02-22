@@ -13,7 +13,7 @@ public class Identification extends AbstractModel{
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_ID_METHOD = "id_method";
-    public static final String FIELD_NAME_SUCCESSFUL = "successful";
+    public static final String FIELD_NAME_ACCEPTED = "accepted";
 
     public enum IdMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
 
@@ -26,8 +26,8 @@ public class Identification extends AbstractModel{
     @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
     private IdMethodEnum mIdMethod;
 
-    @DatabaseField(columnName = FIELD_NAME_SUCCESSFUL, canBeNull = false)
-    private boolean mSuccessful;
+    @DatabaseField(columnName = FIELD_NAME_ACCEPTED, canBeNull = false)
+    private boolean mAccepted;
 
     public Identification() {
         super();
@@ -53,11 +53,11 @@ public class Identification extends AbstractModel{
         this.mIdMethod = idMethod;
     }
 
-    public boolean getSuccessful() {
-        return mSuccessful;
+    public boolean getAccepted() {
+        return mAccepted;
     }
 
-    public void setSuccessful(boolean successful) {
-        this.mSuccessful = successful;
+    public void setAccepted(boolean accepted) {
+        this.mAccepted = accepted;
     }
 }

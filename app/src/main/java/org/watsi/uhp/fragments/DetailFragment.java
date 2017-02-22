@@ -92,12 +92,12 @@ public class DetailFragment extends Fragment {
         });
     }
 
-    private void createIdentification(boolean successful) {
+    private void createIdentification(boolean accepted) {
         // TODO: this should be in a transaction
         Identification id = new Identification();
         id.setMember(mMember);
         id.setIdMethod(mIdMethod);
-        id.setSuccessful(successful);
+        id.setAccepted(accepted);
 
         try {
             IdentificationDao.create(id);
