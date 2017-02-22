@@ -31,12 +31,12 @@
     <string name="search_drug_hint">Search drugs</string>
     <string name="encounter_search_label">Add</string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
-    <string name="already_in_list_items">Already in List Items</string>
+    <string name="already_in_list_items">Already in Line Items</string>
     <string name="inc_billable_quantity">+</string>
     <string name="dec_billable_quantity">-</string>
     <string name="default_billable_quantity">1</string>
     <string name="remove_billable_button">X</string>
-    <string name="encounter_product_list_label">LIST ITEMS</string>
+    <string name="encounter_product_list_label">LINE ITEMS</string>
     <string name="continue_encounter_button">CONTINUE</string>
 
     <string name="add_new_billable_fragment_label">Add new billable</string>
