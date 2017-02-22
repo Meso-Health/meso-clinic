@@ -43,7 +43,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
         mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
 
         mErrorToast = Toast.makeText(getActivity().getApplicationContext(),
-                getActivity().getString(R.string.id_not_found_toast), Toast.LENGTH_LONG);
+                R.string.id_not_found_toast, Toast.LENGTH_LONG);
 
         setupSearchMemberButton();
         return view;
