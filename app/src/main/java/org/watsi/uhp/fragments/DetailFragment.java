@@ -20,12 +20,14 @@ import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class DetailFragment extends Fragment {
 
     private Member mMember;
     private TextView mMemberName;
     private TextView mMemberAge;
+    private TextView mMemberGender;
     private TextView mMemberId;
     private ImageView mMemberPhoto;
     private Identification.SearchMethodEnum mIdMethod;
@@ -42,13 +44,14 @@ public class DetailFragment extends Fragment {
         mIdMethod = Identification.SearchMethodEnum.valueOf(idMethod);
 
         try {
-            mMember = MemberDao.findById(memberId);
+            mMember = MemberDao.findById(UUID.fromString(memberId));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
 
         mMemberName = (TextView) view.findViewById(R.id.member_name);
         mMemberAge = (TextView) view.findViewById(R.id.member_age);
+        mMemberGender = (TextView) view.findViewById(R.id.member_gender);
         mMemberId = (TextView) view.findViewById(R.id.member_id);
         mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
         mConfirmButton = (Button) view.findViewById(R.id.confirm_identity);
@@ -63,6 +66,7 @@ public class DetailFragment extends Fragment {
     private void setPatientCard() {
         mMemberName.setText(mMember.getFullName());
         mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
+        mMemberGender.setText(String.valueOf(mMember.getGender()));
         mMemberId.setText(String.valueOf(mMember.getCardId()));
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         if (photoBitmap != null) {

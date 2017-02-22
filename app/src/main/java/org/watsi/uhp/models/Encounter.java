@@ -16,12 +16,26 @@ public class Encounter extends AbstractModel {
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
+    public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
+    public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
+
+    public enum ClinicNumberTypeEnum {
+        OPD,
+        IPD,
+        DELIVERY
+    }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
+
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
+    private Integer mClinicNumber;
+
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE, canBeNull = false)
+    private ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
     @ForeignCollectionField
     private final Collection<LineItem> mLineItems = new ArrayList<>();
@@ -53,5 +67,21 @@ public class Encounter extends AbstractModel {
     public void setLineItems(Collection<LineItem> lineItems) {
         this.mLineItems.clear();
         this.mLineItems.addAll(lineItems);
+    }
+
+    public Integer getClinicNumber() {
+        return mClinicNumber;
+    }
+
+    public void setClinicNumber(Integer n) {
+        this.mClinicNumber = n;
+    }
+
+    public ClinicNumberTypeEnum getClinicNumberType() {
+        return mClinicNumberTypeEnum;
+    }
+
+    public void setClinicNumberType(ClinicNumberTypeEnum numberType) {
+        this.mClinicNumberTypeEnum = numberType;
     }
 }

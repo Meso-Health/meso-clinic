@@ -16,17 +16,11 @@ import com.rollbar.android.Rollbar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.MemberDao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
@@ -38,11 +32,14 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_CARD_ID = "card_id";
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
+    public static final String FIELD_NAME_GENDER = "gender";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
+    public enum GenderEnum { MALE, FEMALE }
+    
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
     @SerializedName(FIELD_NAME_CARD_ID)
@@ -56,6 +53,10 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
     private int mAge;
+
+    @SerializedName(FIELD_NAME_GENDER)
+    @DatabaseField(columnName = FIELD_NAME_GENDER)
+    private GenderEnum mGender;
 
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
     private byte[] mPhoto;
@@ -80,10 +81,6 @@ public class Member extends AbstractModel {
         return mId;
     }
 
-//    public void setId(String id) {
-//        this.mId = id;
-//    }
-
     public String getCardId() {
         return mCardId;
     }
@@ -98,6 +95,14 @@ public class Member extends AbstractModel {
 
     public void setAge(int age) {
         this.mAge = age;
+    }
+
+    public GenderEnum getGender() {
+        return mGender;
+    }
+
+    public void setGender(GenderEnum gender) {
+        this.mGender = gender;
     }
 
     public byte[] getPhoto() {

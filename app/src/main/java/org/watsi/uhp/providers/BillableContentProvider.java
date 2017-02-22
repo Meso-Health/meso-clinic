@@ -35,13 +35,13 @@ public class BillableContentProvider extends ContentProvider {
         MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
 
         try {
-            List<Billable> matchingBillables = BillableDao.fuzzySearchDrugs(query, 5, 50);
+            List<Billable> matchingBillables = BillableDao.fuzzySearchDrugs(query);
 
             for (Billable billable : matchingBillables) {
                 Object[] searchSuggestion = {
                         billable.getId(),
                         billable.getName(),
-                        billable.getDisplayDetails(),
+                        billable.toString(),
                         billable.getId()
                 };
                 resultsCursor.addRow(searchSuggestion);

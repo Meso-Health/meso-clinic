@@ -1,16 +1,9 @@
 package org.watsi.uhp.database;
 
-import android.app.SearchManager;
-import android.database.Cursor;
-import android.database.MatrixCursor;
-
-import com.j256.ormlite.android.AndroidDatabaseResults;
-import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
@@ -30,7 +24,7 @@ public class BillableDao {
 
     private static BillableDao instance = new BillableDao();
 
-    private Dao<Billable, Integer> mBillableDao;
+    private Dao<Billable, UUID> mBillableDao;
 
     private static synchronized BillableDao getInstance() {
         return instance;
@@ -43,7 +37,7 @@ public class BillableDao {
         this.mBillableDao = billableDao;
     }
 
-    private Dao<Billable, Integer> getBillableDao() throws SQLException {
+    private Dao<Billable, UUID> getBillableDao() throws SQLException {
         if (mBillableDao == null) {
             setBillableDao(DatabaseHelper.getHelper().getDao(Billable.class));
         }
@@ -55,10 +49,8 @@ public class BillableDao {
         getInstance().getBillableDao().create(billables);
     }
 
-    public static Billable findById(String billableId) throws SQLException {
-        Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put(Billable.FIELD_NAME_ID, billableId);
-        return getInstance().getBillableDao().queryForFieldValues(queryMap).get(0);
+    public static Billable findById(UUID id) throws SQLException {
+        return getInstance().getBillableDao().queryForId(id);
     }
 
     public static List<Billable> findByName(String name) throws SQLException {
@@ -83,10 +75,9 @@ public class BillableDao {
         return new HashSet<>(names);
     }
 
-    public static List<Billable> fuzzySearchDrugs(String query, int number, int threshold)
-            throws SQLException {
+    public static List<Billable> fuzzySearchDrugs(String query) throws SQLException {
         List<ExtractedResult> topMatchingNames =
-                FuzzySearch.extractTop(query, allUniqueDrugNames(), number, threshold);
+                FuzzySearch.extractTop(query, allUniqueDrugNames(), 5, 50);
 
         List<Billable> topMatchingDrugs = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
@@ -97,39 +88,9 @@ public class BillableDao {
         return topMatchingDrugs;
     }
 
-    public static Cursor fuzzySearchDrugsCursor(String query, int number, int threshold) throws SQLException {
-        List<Billable> topMatchingDrugs = fuzzySearchDrugs(query, number, threshold);
-
-        String[] cursorColumns = {
-                Member.FIELD_NAME_ID,
-                SearchManager.SUGGEST_COLUMN_TEXT_1,
-                SearchManager.SUGGEST_COLUMN_TEXT_2,
-        };
-        MatrixCursor resultsCursor = new MatrixCursor(cursorColumns);
-
-        for (Billable drug : topMatchingDrugs) {
-            Object[] searchSuggestion = {
-                    drug.getId(),
-                    drug.getName(),
-                    drug.getDisplayDetails()
-            };
-            resultsCursor.addRow(searchSuggestion);
-        }
-
-        return resultsCursor;
-    }
-
-    public static Cursor getBillablesByCategoryCursor(Billable.CategoryEnum category) throws
-            SQLException {
-        PreparedQuery<Billable> pq = getInstance().getBillableDao()
-                .queryBuilder()
-                .selectColumns(Billable.FIELD_NAME_ID, Billable.FIELD_NAME_NAME)
-                .where()
-                .eq(Billable.FIELD_NAME_CATEGORY, category)
-                .prepare();
-
-        CloseableIterator<Billable> iterator = getInstance().getBillableDao().iterator(pq);
-        AndroidDatabaseResults results = (AndroidDatabaseResults)iterator.getRawResults();
-        return results.getRawCursor();
+    public static List<Billable> getBillablesByCategory(Billable.CategoryEnum category) throws SQLException {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put(Billable.FIELD_NAME_CATEGORY, category);
+        return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 }

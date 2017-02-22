@@ -1,9 +1,7 @@
 package org.watsi.uhp.fragments;
 
 import android.app.SearchManager;
-import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.database.MergeCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -33,14 +31,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.UUID;
 
 public class EncounterFragment extends Fragment {
 
     private Spinner categorySpinner;
     private Spinner billableSpinner;
     private SearchView billableSearch;
-    private SimpleCursorAdapter billableSearchAdapter;
+    private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
     private Button continueToReceiptButton;
@@ -72,13 +70,13 @@ public class EncounterFragment extends Fragment {
         categories.add(getContext().getString(R.string.prompt_category));
         categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
         categories.remove(Billable.CategoryEnum.UNSPECIFIED);
-        
-        final ArrayAdapter categoryAdapter = new ArrayAdapter<>(
+
+        ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_dropdown_item,
                 categories
         );
-        
+
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setTag("category");
         categorySpinner.setOnItemSelectedListener(new CategoryListener());
@@ -91,10 +89,10 @@ public class EncounterFragment extends Fragment {
     }
     
     private void setBillableSpinner(Billable.CategoryEnum category) {
-        SimpleCursorAdapter adapter = getEncounterItemAdapter(category);
+        ArrayAdapter<Billable> adapter = getEncounterItemAdapter(category);
 
         billableSpinner.setAdapter(adapter);
-        billableSpinner.setOnItemSelectedListener(new BillableListener());
+        billableSpinner.setOnItemSelectedListener(new BillableListener(adapter));
     }
 
     private void setLineItemList() {
@@ -123,48 +121,41 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private SimpleCursorAdapter getEncounterItemAdapter(Billable.CategoryEnum category) {
+    private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.CategoryEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
+        List<Billable> billables = new ArrayList<>();
+        Billable placeholderBillable = new Billable();
+        placeholderBillable.setName(getContext().getString(R.string.prompt_billable));
+        billables.add(placeholderBillable);
         try {
-            //Create prompt
-            MatrixCursor extras = new MatrixCursor(new String[] { Billable.FIELD_NAME_ID, Billable.FIELD_NAME_NAME });
-            extras.addRow(new String[] { "0", getContext().getString(R.string.prompt_billable) });
-
-            //Merge prompt with billable results
-            Cursor cursor = BillableDao.getBillablesByCategoryCursor(category);
-            Cursor[] cursors = { extras, cursor };
-            Cursor extendedCursor = new MergeCursor(cursors);
-
-            //Create cursor adapter with merged cursor
-            String[] from = { Billable.FIELD_NAME_NAME };
-            int[] to = new int[] { android.R.id.text1 };
-
-            return new SimpleCursorAdapter(getContext(),
-                    android.R.layout.simple_spinner_dropdown_item,
-                    extendedCursor, from, to, 0
-            );
+            billables.addAll(BillableDao.getBillablesByCategory(category));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
-        return null;
+
+        return new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                billables
+        );
     }
 
-    public static boolean containsId(List<LineItem> list, String id) {
+    public static boolean containsId(List<LineItem> list, UUID id) {
         for (LineItem item : list) {
-            if (item.getBillable().getId() == Integer.parseInt(id)) {
+            if (item.getBillable().getId().equals(id)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void addToLineItemList(String billableId) {
+    public void addToLineItemList(UUID billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
             List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
             if (containsId(lineItems, billableId)) {
-                Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
+                Toast.makeText(getActivity().getApplicationContext(), R.string.already_in_list_items,
                         Toast.LENGTH_SHORT).show();
             } else {
                 LineItem lineItem = new LineItem();
@@ -209,10 +200,18 @@ public class EncounterFragment extends Fragment {
     }
 
     private class BillableListener implements AdapterView.OnItemSelectedListener {
+
+        private ArrayAdapter adapter;
+
+        public BillableListener(ArrayAdapter adapter) {
+            this.adapter = adapter;
+        }
+
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position != 0) {
-                addToLineItemList(Long.toString(id));
+                UUID billableId = ((Billable) adapter.getItem(position)).getId();
+                addToLineItemList(billableId);
             }
         }
 
@@ -222,37 +221,50 @@ public class EncounterFragment extends Fragment {
         }
     }
 
-    private SimpleCursorAdapter getBillableItemAdapter(String query) {
-        // TODO: check that creation of new adapter each time does not have memory implications
-        if (query.length() > 2) {
-            try {
-                Cursor cursor = BillableDao.fuzzySearchDrugsCursor(query, 5, 50);
-                String[] from = {
-                        SearchManager.SUGGEST_COLUMN_TEXT_1,
-                        SearchManager.SUGGEST_COLUMN_TEXT_2
-                };
-                int[] to = new int[]{
-                        R.id.text1,
-                        R.id.text2
-                };
-
-                return new android.widget.SimpleCursorAdapter(getContext(),
-                        R.layout.item_billable_search_suggestion,
-                        cursor, from, to, 0
-                );
-            } catch (SQLException e) {
-                Rollbar.reportException(e);
+    private SimpleCursorAdapter getBillableCursorAdapter(String query) {
+        if (query.length() < 3) {
+            return null;
+        } else {
+            String[] cursorColumns = new String[] {
+                    "_id",
+                    SearchManager.SUGGEST_COLUMN_TEXT_1,
+                    SearchManager.SUGGEST_COLUMN_TEXT_2,
+                    Billable.FIELD_NAME_ID
+            };
+            MatrixCursor cursor = new MatrixCursor(cursorColumns);
+            if (query.length() > 2) {
+                try {
+                    for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
+                        cursor.addRow(new Object[] {
+                                billable.getId().getMostSignificantBits(),
+                                billable.getName(),
+                                billable.dosageDetails(),
+                                billable.getId().toString()
+                        });
+                    }
+                } catch (SQLException e) {
+                    Rollbar.reportException(e);
+                }
             }
+
+            return new SimpleCursorAdapter(
+                    getContext(),
+                    R.layout.item_billable_search_suggestion,
+                    cursor,
+                    new String[] { SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2 },
+                    new int[] { R.id.text1, R.id.text2 },
+                    0
+            );
         }
-        return null;
     }
 
     private class BillableSearchListener implements SearchView.OnQueryTextListener {
+
         @Override
         public boolean onQueryTextChange(String newText) {
             if (!newText.isEmpty()) {
-                billableSearchAdapter = getBillableItemAdapter(newText);
-                billableSearch.setSuggestionsAdapter(billableSearchAdapter);
+                billableCursorAdapter = getBillableCursorAdapter(newText);
+                billableSearch.setSuggestionsAdapter(billableCursorAdapter);
             }
             return true;
         }
@@ -274,8 +286,9 @@ public class EncounterFragment extends Fragment {
 
         @Override
         public boolean onSuggestionClick(int position) {
-            String billableId = Long.toString(billableSearchAdapter.getItemId(position));
-            addToLineItemList(billableId);
+            MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
+            String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
+            addToLineItemList(UUID.fromString(uuidString));
             clearDrugSearch();
             return true;
         }

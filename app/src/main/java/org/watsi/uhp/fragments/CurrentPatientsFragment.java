@@ -51,7 +51,7 @@ public class CurrentPatientsFragment extends Fragment {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
                     activity.setNewEncounter(member);
-                    activity.setEncounterFragment();
+                    activity.setClinicNumberFragment();
                 }
             });
         } catch (SQLException e) {

@@ -38,12 +38,9 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
             viewHolder = new ViewHolder();
             viewHolder.billableName = (TextView) convertView.findViewById(R.id.billable_name);
-            viewHolder.billableDosage = (TextView) convertView.findViewById(R.id.billable_dosage);
-            viewHolder.billableUnit = (TextView) convertView.findViewById(R.id.billable_unit);
+            viewHolder.billableDetails = (TextView) convertView.findViewById(R.id.billable_details);
             viewHolder.removeLineItemBtn = (Button) convertView.findViewById(R.id.remove_line_item_btn);
             viewHolder.billableQuantity = (EditText) convertView.findViewById(R.id.billable_quantity);
-            viewHolder.decQuantityBtn = (Button) convertView.findViewById(R.id.dec_billable_quantity);
-            viewHolder.incQuantityBtn = (Button) convertView.findViewById(R.id.inc_billable_quantity);
 
             convertView.setTag(viewHolder);
         } else {
@@ -56,8 +53,7 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
             final Billable billable = lineItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
-            viewHolder.billableDosage.setText(billable.getAmount());
-            viewHolder.billableUnit.setText(billable.getUnit());
+            viewHolder.billableDetails.setText(billable.dosageDetails());
             viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -70,13 +66,9 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
             if (billable.getCategory().equals(Billable.CategoryEnum.SERVICES) ||
                     billable.getCategory().equals(Billable.CategoryEnum.LABS)) {
-                viewHolder.incQuantityBtn.setVisibility(View.GONE);
                 viewHolder.billableQuantity.setVisibility(View.GONE);
-                viewHolder.decQuantityBtn.setVisibility(View.GONE);
             } else {
-                viewHolder.incQuantityBtn.setVisibility(View.VISIBLE);
                 viewHolder.billableQuantity.setVisibility(View.VISIBLE);
-                viewHolder.decQuantityBtn.setVisibility(View.VISIBLE);
 
                 final ViewHolder vh = viewHolder;
                 viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -86,25 +78,11 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
                             String quantity = vh.billableQuantity.getText().toString();
 
                             if (quantity.equals("")) {
-                                vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
+                                vh.billableQuantity.setText(String.valueOf(lineItem.getQuantity()));
                             } else {
                                 lineItem.setQuantity(Integer.valueOf(quantity));
                             }
                         }
-                    }
-                });
-
-                viewHolder.decQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        lineItem.decreaseQuantity();
-                        vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
-                    }
-                });
-
-                viewHolder.incQuantityBtn.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        lineItem.increaseQuantity();
-                        vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
                     }
                 });
             }
@@ -116,10 +94,7 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
     private static class ViewHolder {
         Button removeLineItemBtn;
         TextView billableName;
-        TextView billableUnit;
-        TextView billableDosage;
+        TextView billableDetails;
         EditText billableQuantity;
-        Button decQuantityBtn;
-        Button incQuantityBtn;
     }
 }

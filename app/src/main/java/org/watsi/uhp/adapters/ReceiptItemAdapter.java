@@ -7,11 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
@@ -48,8 +45,8 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
             final Billable billable = lineItem.getBillable();
             final int quantity = lineItem.getQuantity();
 
-            viewHolder.billableQuantity.setText(Integer.toString(quantity));
-            viewHolder.billableDetails.setText(billable.getDisplayName());
+            viewHolder.billableQuantity.setText(String.valueOf(quantity));
+            viewHolder.billableDetails.setText(billable.toString());
             viewHolder.billablePrice.setText(String.valueOf(billable.getPrice()) + " UGX");
         }
 

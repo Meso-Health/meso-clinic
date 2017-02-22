@@ -13,7 +13,6 @@ import android.widget.SearchView;
 
 import org.watsi.uhp.R;
 
-
 public class SearchMemberFragment extends Fragment {
 
     private SearchView mMemberSearch;
@@ -31,7 +30,6 @@ public class SearchMemberFragment extends Fragment {
 
         return view;
     }
-
 
     @Override
     public void onResume() {
