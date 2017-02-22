@@ -9,6 +9,7 @@ import org.watsi.uhp.models.LineItem;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * POJO helper for querying Encounters
@@ -17,7 +18,7 @@ public class EncounterDao {
 
     private static EncounterDao instance = new EncounterDao();
 
-    private Dao<Encounter, Integer> mEncounterDao;
+    private Dao<Encounter, UUID> mEncounterDao;
 
     private static synchronized EncounterDao getInstance() {
         return instance;
@@ -30,7 +31,7 @@ public class EncounterDao {
         this.mEncounterDao = encounterDao;
     }
 
-    private Dao<Encounter, Integer> getEncounterDao() throws SQLException {
+    private Dao<Encounter, UUID> getEncounterDao() throws SQLException {
         if (mEncounterDao == null) {
             setEncounterDao(DatabaseHelper.getHelper().getDao(Encounter.class));
         }
@@ -51,6 +52,10 @@ public class EncounterDao {
 
     public static List<Encounter> find(Map<String,Object> queryMap) throws SQLException {
         return getInstance().getEncounterDao().queryForFieldValues(queryMap);
+    }
+
+    public static Encounter findById(UUID id) throws SQLException {
+        return getInstance().getEncounterDao().queryForId(id);
     }
 
     public static List<Encounter> all() throws SQLException {

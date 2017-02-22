@@ -82,7 +82,7 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createIdentification(true);
-                ((MainActivity) getActivity()).setCurrentPatientsFragment(true);
+                ((MainActivity) getActivity()).setCurrentPatientsFragment();
                 Toast.makeText(getActivity().getApplicationContext(),
                         mMember.getFullName() + " " + getActivity().getString(R.string
                                 .identification_approved),
@@ -97,7 +97,7 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createIdentification(false);
-                ((MainActivity) getActivity()).setCurrentPatientsFragment(true);
+                ((MainActivity) getActivity()).setCurrentPatientsFragment();
                 Toast.makeText(getActivity().getApplicationContext(),
                         mMember.getFullName() + " " + getActivity().getString(R.string
                                 .identification_rejected),

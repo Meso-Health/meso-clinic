@@ -97,12 +97,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         categoryMap.put("Vaccines", Billable.CategoryEnum.VACCINES);
         categoryMap.put("Drugs", Billable.CategoryEnum.DRUGS);
 
-        // TODO: remove
-        Map<String, Billable.DepartmentEnum> departmentMap = new HashMap<>();
-        departmentMap.put("Antenatal", Billable.DepartmentEnum.ANTENATAL);
-        departmentMap.put("ART", Billable.DepartmentEnum.ART_CLINIC);
-        departmentMap.put("", Billable.DepartmentEnum.UNSPECIFIED);
-
         // parse CSV
         List<Billable> billables = new ArrayList<>();
         InputStream inputStream = context.getResources().openRawResource(R.raw.price_list);
@@ -123,7 +117,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 if (amount.length() > 0) {
                     billable.setAmount(amount);
                 }
-                billable.setDepartment(departmentMap.get(row[4]));
                 int price = 0;
                 if (row[5].length() > 0) {
                     price = Integer.parseInt(row[5]);

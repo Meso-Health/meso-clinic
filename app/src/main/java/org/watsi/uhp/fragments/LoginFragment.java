@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment {
                                 }
                             });
                         } else {
-                            ((MainActivity) getActivity()).setCurrentPatientsFragment(false);
+                            ((MainActivity) getActivity()).setCurrentPatientsFragment();
                         }
                     }
                 }).start();
