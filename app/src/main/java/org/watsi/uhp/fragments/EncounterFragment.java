@@ -164,7 +164,7 @@ public class EncounterFragment extends Fragment {
             List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
             if (containsId(lineItems, billableId)) {
-                Toast.makeText(getActivity().getApplicationContext(), "Already in Line Items",
+                Toast.makeText(getActivity().getApplicationContext(), R.string.already_in_list_items,
                         Toast.LENGTH_SHORT).show();
             } else {
                 LineItem lineItem = new LineItem();
