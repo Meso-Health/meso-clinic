@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setNewEncounter(Member member) {
         mCurrentEncounter.setMember(member);
+        mCurrentEncounter.setIdentification(member.getLastIdentification());
         mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
     }
 

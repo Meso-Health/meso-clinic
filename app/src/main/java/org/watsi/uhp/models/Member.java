@@ -68,7 +68,7 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
-    @ForeignCollectionField
+    @ForeignCollectionField(orderColumnName = Identification.FIELD_NAME_CREATED_AT)
     private final Collection<Identification> mIdentifications = new ArrayList<>();
 
     @ForeignCollectionField
@@ -128,6 +128,11 @@ public class Member extends AbstractModel {
 
     public Collection<Identification> getIdentifications() {
         return mIdentifications;
+    }
+
+    public Identification getLastIdentification() {
+        ArrayList<Identification> allIdentifications = new ArrayList<>(getIdentifications());
+        return allIdentifications.get(allIdentifications.size() -1);
     }
 
     public void setIdentifications(Collection<Identification> identifications) {
