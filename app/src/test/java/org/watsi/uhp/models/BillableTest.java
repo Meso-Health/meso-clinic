@@ -15,11 +15,11 @@ public class BillableTest {
     }
 
     @Test
-    public void getDisplayName() throws Exception {
+    public void toString_displaysDescriptive() throws Exception {
         billable.setName("Foo");
         billable.setUnit("Tablet");
         billable.setAmount("30g");
 
-        assertEquals(billable.getDisplayName(), "Foo - 30g Tablet");
+        assertEquals(billable.toString(), "Foo - 30g Tablet");
     }
 }

@@ -20,6 +20,7 @@ import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class DetailFragment extends Fragment {
 
@@ -43,7 +44,7 @@ public class DetailFragment extends Fragment {
         mIdMethod = Identification.IdMethodEnum.valueOf(idMethod);
 
         try {
-            mMember = MemberDao.findById(memberId);
+            mMember = MemberDao.findById(UUID.fromString(memberId));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }

@@ -53,7 +53,7 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
             final Billable billable = lineItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
-            viewHolder.billableDetails.setText(billable.getDisplayDetails());
+            viewHolder.billableDetails.setText(billable.dosageDetails());
             viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -78,7 +78,7 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
                             String quantity = vh.billableQuantity.getText().toString();
 
                             if (quantity.equals("")) {
-                                vh.billableQuantity.setText(Integer.toString(lineItem.getQuantity()));
+                                vh.billableQuantity.setText(String.valueOf(lineItem.getQuantity()));
                             } else {
                                 lineItem.setQuantity(Integer.valueOf(quantity));
                             }

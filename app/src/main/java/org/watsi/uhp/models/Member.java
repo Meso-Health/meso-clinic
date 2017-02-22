@@ -16,17 +16,11 @@ import com.rollbar.android.Rollbar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.MemberDao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
@@ -45,7 +39,7 @@ public class Member extends AbstractModel {
     public enum GenderEnum { MALE, FEMALE }
     
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, id = true, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
     @SerializedName(FIELD_NAME_CARD_ID)
@@ -86,10 +80,6 @@ public class Member extends AbstractModel {
     public UUID getId() {
         return mId;
     }
-
-//    public void setId(String id) {
-//        this.mId = id;
-//    }
 
     public String getCardId() {
         return mCardId;

@@ -3,12 +3,15 @@ package org.watsi.uhp.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.UUID;
+
 @DatabaseTable(tableName = Billable.TABLE_NAME)
 public class Billable extends AbstractModel {
 
     public static final String TABLE_NAME = "billables";
 
     public static final String FIELD_NAME_ID = "id";
+    public static final String FIELD_NAME_CURSOR_ID = "_id";
     public static final String FIELD_NAME_CATEGORY = "category";
     public static final String FIELD_NAME_DEPARTMENT = "department";
     public static final String FIELD_NAME_UNIT = "unit";
@@ -33,7 +36,7 @@ public class Billable extends AbstractModel {
     }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private int mId;
+    private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
     private String mName;
@@ -57,7 +60,7 @@ public class Billable extends AbstractModel {
         super();
     }
 
-    public int getId() {
+    public UUID getId() {
         return mId;
     }
 
@@ -109,18 +112,25 @@ public class Billable extends AbstractModel {
         this.mPrice = price;
     }
 
-    public String getDisplayName() {
-        if (getUnit() != null) {
-            return getName() + " - " + getDisplayDetails();
-        } else {
-            return getName();
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getName());
+        if (dosageDetails() != null) {
+            sb.append(" - " + dosageDetails());
         }
+        return sb.toString();
     }
 
-    public String getDisplayDetails() {
-        String billableDetails = "";
-        if (getAmount() != null) billableDetails += getAmount() + " ";
-        if (getUnit() != null) billableDetails += getUnit();
-        return billableDetails;
+    public String dosageDetails() {
+        if (getUnit() != null) {
+            StringBuilder sb = new StringBuilder();
+            if (getAmount() != null) {
+                sb.append(getAmount() + " ");
+            }
+            sb.append(getUnit());
+            return sb.toString();
+        } else {
+            return null;
+        }
     }
 }
