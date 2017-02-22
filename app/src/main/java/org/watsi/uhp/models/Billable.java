@@ -11,7 +11,6 @@ public class Billable extends AbstractModel {
     public static final String TABLE_NAME = "billables";
 
     public static final String FIELD_NAME_ID = "id";
-    public static final String FIELD_NAME_CURSOR_ID = "_id";
     public static final String FIELD_NAME_CATEGORY = "category";
     public static final String FIELD_NAME_DEPARTMENT = "department";
     public static final String FIELD_NAME_UNIT = "unit";
