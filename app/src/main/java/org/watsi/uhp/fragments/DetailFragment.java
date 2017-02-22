@@ -81,7 +81,7 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createIdentification(true);
-                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                ((MainActivity) getActivity()).setCurrentPatientsFragment(true);
             }
         });
     }
@@ -91,7 +91,7 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createIdentification(false);
-                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                ((MainActivity) getActivity()).setCurrentPatientsFragment(true);
             }
         });
     }

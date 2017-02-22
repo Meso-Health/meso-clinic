@@ -29,10 +29,11 @@ public class CurrentPatientsFragmentFeature {
     @Before
     public void setup() {
         mainActivity = mActivityRule.getActivity();
+        mainActivity.setCurrentPatientsFragment(true);
     }
 
     @Test
-    public void showsMainScreen() throws Exception {
+    public void showsCurrentPatientsFragment() throws Exception {
         // checks that fragment title appears
         onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
     }

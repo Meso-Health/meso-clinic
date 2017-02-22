@@ -63,10 +63,10 @@ public class RefreshMemberListService extends Service {
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             EventBus.getDefault().post(new OfflineNotificationEvent(false));
-            MemberDao.setLastModifiedAt(response.headers().get("last-modified"));
             final List<Member> members = response.body();
             MemberDao.clear();
             MemberDao.create(members);
+            MemberDao.setLastModifiedAt(response.headers().get("last-modified"));
             final Context context = getApplicationContext();
             targets.clear();
             new Thread(new Runnable() {

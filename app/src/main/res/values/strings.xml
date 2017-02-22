@@ -50,4 +50,12 @@
     <string name="total"><b>TOTAL</b></string>
     <string name="back_button">NO, GO BACK</string>
     <string name="save_encounter_button">YES, SAVE ENCOUNTER</string>
+
+    <!--LoginFragment-->
+    <string name="login_fragment_label">User Login</string>
+    <string name="login_username_label">Username</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_button_text">Login</string>
+    <string name="login_generic_failure_message">Failed to login</string>
+    <string name="login_wrong_password_message">Incorrect password</string>
 </resources>

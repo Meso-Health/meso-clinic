@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
+import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.Encounter;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class ClinicNumberFragment extends Fragment {
         submitNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (numberField.getText().toString() == null || numberField.getText().toString().length() == 0) {
+                if (numberField.getText().toString().length() == 0) {
                     Toast.makeText(getActivity().getApplicationContext(), R.string.empty_clinic_field_toast,
                             Toast.LENGTH_LONG).show();
                 } else {
@@ -95,10 +96,7 @@ public class ClinicNumberFragment extends Fragment {
                     encounter.setClinicNumberType(selectedNumberTypeValue);
                     encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
 
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context
-                            .INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
-
+                    KeyboardManager.hideKeyboard(getContext());
                     activity.setEncounterFragment();
                 }
             }
@@ -109,9 +107,7 @@ public class ClinicNumberFragment extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             numberField.requestFocus();
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context
-                    .INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+            KeyboardManager.hideKeyboard(getContext());
 
             selectedNumberTypeValue = (Encounter.ClinicNumberTypeEnum) parent.getItemAtPosition(position);
         }

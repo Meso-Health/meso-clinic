@@ -26,6 +26,7 @@ import org.watsi.uhp.fragments.ClinicNumberFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new CurrentPatientsFragment())
+                .add(R.id.fragment_container, new LoginFragment())
                 .commit();
     }
 
@@ -138,9 +139,9 @@ public class MainActivity extends AppCompatActivity {
         return (List<LineItem>) mCurrentEncounter.getLineItems();
     }
 
-    //TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
+    // TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
 
-    public void setCurrentPatientsFragment() {
+    public void setCurrentPatientsFragment(boolean clearBackStack) {
         FragmentManager fm = getSupportFragmentManager();
 
         CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
@@ -149,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
 
-        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (clearBackStack) {
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     public void setDetailFragment(String memberId, Identification.IdMethodEnum idMethod) {

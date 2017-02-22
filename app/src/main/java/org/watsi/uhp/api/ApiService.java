@@ -23,7 +23,7 @@ public class ApiService {
     public static synchronized UhpApi requestBuilder(Context context) {
         if (instance == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor(context));
+            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.authenticator(new TokenAuthenticator(context));
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(ConfigManager.getApiHost(context))
@@ -35,9 +35,9 @@ public class ApiService {
         return instance;
     }
 
-    protected static boolean refreshApiToken(Context context) {
+    public static retrofit2.Response login(String username, String password, Context context) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.authenticator(new BasicAuthenticator(context));
+        httpClient.authenticator(new BasicAuthenticator(username, password));
         Retrofit builder = new Retrofit.Builder()
                 .baseUrl(ConfigManager.getApiHost(context))
                 .addConverterFactory(GsonConverterFactory.create())
@@ -54,16 +54,12 @@ public class ApiService {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(TokenAuthenticator.TOKEN_PREFERENCES_KEY, token);
                 editor.apply();
-                return true;
-            } else {
-                // report reason why it failed
-                Log.d("UHP", "failed to get auth token");
             }
+            return response;
         } catch (IOException | IllegalStateException e) {
             // TODO: starts a loop if it gets here
             Rollbar.reportException(e);
         }
-        return false;
-
+        return null;
     }
 }

@@ -66,7 +66,7 @@ public class ReceiptFragment extends Fragment {
                     Rollbar.reportException(e);
                 }
 
-                activity.setCurrentPatientsFragment();
+                activity.setCurrentPatientsFragment(true);
             }
         });
     }
