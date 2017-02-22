@@ -35,7 +35,7 @@ public class ApiService {
         return instance;
     }
 
-    public static boolean login(String username, String password, Context context) {
+    public static retrofit2.Response login(String username, String password, Context context) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.authenticator(new BasicAuthenticator(username, password));
         Retrofit builder = new Retrofit.Builder()
@@ -54,16 +54,12 @@ public class ApiService {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(TokenAuthenticator.TOKEN_PREFERENCES_KEY, token);
                 editor.apply();
-                return true;
-            } else {
-                // report reason why it failed
-                Log.d("UHP", "failed to get auth token");
             }
+            return response;
         } catch (IOException | IllegalStateException e) {
             // TODO: starts a loop if it gets here
             Rollbar.reportException(e);
         }
-        return false;
-
+        return null;
     }
 }
