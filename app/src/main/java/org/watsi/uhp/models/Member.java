@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.rollbar.android.Rollbar;
 import com.squareup.picasso.Picasso;
@@ -21,6 +22,8 @@ import org.watsi.uhp.database.MemberDao;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
@@ -65,6 +68,12 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
+    @ForeignCollectionField
+    private final Collection<Identification> mIdentifications = new ArrayList<>();
+
+    @ForeignCollectionField
+    private final Collection<Encounter> mEncounters = new ArrayList<>();
+    
     public Member() {
         super();
     }
@@ -115,6 +124,24 @@ public class Member extends AbstractModel {
 
     public String getPhotoUrl() {
         return mPhotoUrl;
+    }
+
+    public Collection<Identification> getIdentifications() {
+        return mIdentifications;
+    }
+
+    public void setIdentifications(Collection<Identification> identifications) {
+        this.mIdentifications.clear();
+        this.mIdentifications.addAll(identifications);
+    }
+    
+    public Collection<Encounter> getEncounters() {
+        return mEncounters;
+    }
+
+    public void setEncounters(Collection<Encounter> encounters) {
+        this.mEncounters.clear();
+        this.mEncounters.addAll(encounters);
     }
 
     public Target createTarget() {
