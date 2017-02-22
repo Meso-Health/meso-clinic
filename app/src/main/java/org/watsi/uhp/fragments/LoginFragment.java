@@ -9,11 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.KeyboardManager;
+
+import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
 
@@ -44,10 +47,21 @@ public class LoginFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if (ApiService.login(username, password, getContext())) {
-                            ((MainActivity) getActivity()).setCurrentPatientsFragment(false);
+                        Response response = ApiService.login(username, password, getContext());
+                        if (response == null || !response.isSuccessful()) {
+                            final String errorMessage = getContext().getString(R.string.login_generic_failure_message);
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(
+                                            getActivity().getApplicationContext(),
+                                            errorMessage,
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            });
                         } else {
-                            // TODO: handle failed login
+                            ((MainActivity) getActivity()).setCurrentPatientsFragment(false);
                         }
                     }
                 }).start();
