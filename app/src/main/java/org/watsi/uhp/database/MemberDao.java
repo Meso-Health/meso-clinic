@@ -69,6 +69,18 @@ public class MemberDao {
         return getInstance().getMemberDao().queryForFieldValues(queryMap).get(0);
     }
 
+    public static Member findByCardId(String cardId) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);
+
+        List<Member> results = getInstance().getMemberDao().queryForFieldValues(queryMap);
+        if (results.size() == 0) {
+            return null;
+        } else {
+            return results.get(0);
+        }
+    }
+
     public static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_FULL_NAME, name);

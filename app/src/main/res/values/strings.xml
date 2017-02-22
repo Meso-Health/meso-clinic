@@ -7,6 +7,7 @@
 
     <string name="barcode_fragment_label">Scan ID</string>
     <string name="search_member_hint">Search patient name or ID</string>
+    <string name="id_not_found_toast">Card not found. Try searching by name.</string>
 
     <string name="member_search_fragment_label">Search</string>
 
