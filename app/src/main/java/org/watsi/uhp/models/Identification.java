@@ -13,6 +13,7 @@ public class Identification extends AbstractModel{
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_SEARCH_METHOD = "search_method";
+    public static final String FIELD_NAME_VALIDATED_BY_PHOTO = "validated_by_photo";
     public static final String FIELD_NAME_ACCEPTED = "accepted";
 
     public enum SearchMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
@@ -25,6 +26,10 @@ public class Identification extends AbstractModel{
 
     @DatabaseField(columnName = FIELD_NAME_SEARCH_METHOD, canBeNull = false)
     private SearchMethodEnum mSearchMethod;
+
+    @DatabaseField(columnName = FIELD_NAME_VALIDATED_BY_PHOTO, canBeNull = false,
+            defaultValue = "true")
+    private Boolean mValidatedByPhoto;
 
     @DatabaseField(columnName = FIELD_NAME_ACCEPTED, canBeNull = false)
     private boolean mAccepted;
@@ -51,6 +56,14 @@ public class Identification extends AbstractModel{
 
     public void setSearchMethod(SearchMethodEnum searchMethod) {
         this.mSearchMethod = searchMethod;
+    }
+
+    public Boolean getValidatedByPhoto() {
+        return mValidatedByPhoto;
+    }
+
+    public void setValidatedByPhoto(Boolean validatedByPhoto) {
+        this.mValidatedByPhoto = validatedByPhoto;
     }
 
     public boolean getAccepted() {

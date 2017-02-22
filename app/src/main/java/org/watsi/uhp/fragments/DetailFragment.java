@@ -98,13 +98,16 @@ public class DetailFragment extends Fragment {
 
     private void createIdentification(boolean accepted) {
         // TODO: this should be in a transaction
-        Identification id = new Identification();
-        id.setMember(mMember);
-        id.setSearchMethod(mIdMethod);
-        id.setAccepted(accepted);
+        Identification idEvent = new Identification();
+        idEvent.setMember(mMember);
+        idEvent.setSearchMethod(mIdMethod);
+        if (mMember.getPhoto() == null) {
+            idEvent.setValidatedByPhoto(false);
+        }
+        idEvent.setAccepted(accepted);
 
         try {
-            IdentificationDao.create(id);
+            IdentificationDao.create(idEvent);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
