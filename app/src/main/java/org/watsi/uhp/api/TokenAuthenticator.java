@@ -15,7 +15,7 @@ import okhttp3.Route;
  */
 public class TokenAuthenticator implements Authenticator {
 
-    protected final static String TOKEN_PREFERENCES_KEY = "token";
+    public final static String TOKEN_PREFERENCES_KEY = "token";
 
     private final Context context;
 

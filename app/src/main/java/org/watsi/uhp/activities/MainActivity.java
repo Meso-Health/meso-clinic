@@ -1,13 +1,15 @@
 package org.watsi.uhp.activities;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
@@ -18,7 +20,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
-import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
@@ -110,8 +111,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setOnMenuItemClickListener(new LogoutListener(this));
     }
 
     public void setNewEncounter(Member member) {
@@ -126,5 +128,26 @@ public class MainActivity extends AppCompatActivity {
 
     public List<LineItem> getCurrentLineItems() {
         return (List<LineItem>) mCurrentEncounter.getLineItems();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    private class LogoutListener implements Toolbar.OnMenuItemClickListener {
+
+        private Activity activity;
+
+        LogoutListener(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            new NavigationManager(activity).logout();
+            return true;
+        }
     }
 }

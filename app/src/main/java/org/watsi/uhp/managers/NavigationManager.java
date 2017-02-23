@@ -1,13 +1,16 @@
 package org.watsi.uhp.managers;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.api.TokenAuthenticator;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.ClinicNumberFragment;
@@ -86,5 +89,14 @@ public class NavigationManager {
 
     public void setLoginFragment() {
         setFragment(new LoginFragment(), "login", true);
+    }
+
+    public void logout() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(TokenAuthenticator.TOKEN_PREFERENCES_KEY);
+        editor.apply();
+
+        setLoginFragment();
     }
 }
