@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
-            Identification.IdMethodEnum idMethod = Identification.IdMethodEnum.valueOf(
+            Identification.SearchMethodEnum idMethod = Identification.SearchMethodEnum.valueOf(
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setNewEncounter(Member member) {
         mCurrentEncounter.setMember(member);
+        mCurrentEncounter.setIdentification(member.getLastIdentification());
         mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
     }
 
@@ -141,21 +142,18 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
 
-    public void setCurrentPatientsFragment(boolean clearBackStack) {
+    public void setCurrentPatientsFragment() {
         FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack("home", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, currentPatientsFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
 
-        if (clearBackStack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
+        transaction.replace(R.id.fragment_container, currentPatientsFragment, "home");
+        transaction.commit();
     }
 
-    public void setDetailFragment(String memberId, Identification.IdMethodEnum idMethod) {
+    public void setDetailFragment(String memberId, Identification.SearchMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);

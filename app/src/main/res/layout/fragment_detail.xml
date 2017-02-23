@@ -53,10 +53,10 @@
                 android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/confirm_identity"
+                android:id="@+id/approve_identity"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:text="@string/confirm_identity" />
+                android:text="@string/approve_identity" />
 
             <Button
                 android:id="@+id/reject_identity"

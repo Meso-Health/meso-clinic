@@ -39,9 +39,8 @@ public class CurrentPatientsFragment extends Fragment {
             }
         });
 
-        //TODO: change to show only members who have been identified but not had an encounter
         try {
-            List<Member> currentPatients = MemberDao.recentMembers();
+            List<Member> currentPatients = MemberDao.getCheckedInMembers();
             ListAdapter adapter = new MemberAdapter(getContext(), currentPatients);
 
             listView.setAdapter(adapter);

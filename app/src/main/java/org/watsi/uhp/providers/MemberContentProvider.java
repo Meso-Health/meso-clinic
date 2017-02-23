@@ -43,10 +43,10 @@ public class MemberContentProvider extends ContentProvider {
         try {
             if (containsNumber(query)) {
                 matchingMembers = MemberDao.withCardIdLike(query);
-                idMethod = Identification.IdMethodEnum.SEARCH_ID.toString();
+                idMethod = Identification.SearchMethodEnum.SEARCH_ID.toString();
             } else {
                 matchingMembers = MemberDao.fuzzySearchMembers(query, 5, 50);
-                idMethod = Identification.IdMethodEnum.SEARCH_NAME.toString();
+                idMethod = Identification.SearchMethodEnum.SEARCH_NAME.toString();
             }
 
             for (Member member : matchingMembers) {
