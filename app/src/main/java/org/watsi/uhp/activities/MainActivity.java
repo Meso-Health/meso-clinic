@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {
-                new NavigationManager(this).setDetailFragment(memberId, idMethod);
+                new NavigationManager(this).setDetailFragment(memberId, idMethod, null);
             }
         }
     }

@@ -14,7 +14,8 @@
         android:id="@+id/name_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name"/>
+        android:layout_below="@id/name"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/price"
@@ -27,7 +28,7 @@
         android:layout_width="175dp"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:layout_below="@id/price" />
+        android:layout_below="@id/price"/>
     <TextView
         android:id="@+id/ugx"
         android:layout_width="match_parent"
@@ -45,5 +46,6 @@
         android:layout_height="wrap_content"
         android:text="@string/add_new_billable"
         android:textAllCaps="true"
-        android:layout_below="@id/price_field"/>
+        android:layout_below="@id/price_field"
+        android:visibility="gone" />
 </RelativeLayout>

@@ -131,6 +131,7 @@ public class MemberDao {
                 "INNER JOIN (\n" +
                 "   SELECT id, member_id, max(created_at) \n" +
                 "   FROM identifications\n" +
+                "   WHERE accepted = 1\n" +
                 "   GROUP BY member_id\n" +
                 ") last_identifications on last_identifications.member_id = members.id\n" +
                 "LEFT OUTER JOIN encounters ON encounters.identification_id = last_identifications.id\n" +
@@ -149,6 +150,18 @@ public class MemberDao {
             members.add(findById(UUID.fromString(id)));
         }
         return members;
+    }
+
+    public static List<Member> getRemainingHouseholdMembers(UUID householdId, UUID memberId) throws
+            SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .eq(Member.FIELD_NAME_HOUSEHOLD_ID, householdId)
+                .and()
+                .not().eq(Member.FIELD_NAME_ID, memberId)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
     }
 
     public static void clear() throws SQLException {

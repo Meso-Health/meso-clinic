@@ -16,6 +16,7 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_OCCURRED_AT = "occurred_at";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
+    public static final String FIELD_NAME_THROUGH_MEMBER_ID = "through_member_id";
     public static final String FIELD_NAME_SEARCH_METHOD = "search_method";
     public static final String FIELD_NAME_PHOTO_VERIFIED = "photo_verified";
     public static final String FIELD_NAME_ACCEPTED = "accepted";
@@ -23,7 +24,8 @@ public class IdentificationEvent extends SyncableModel {
     public enum SearchMethodEnum {
         @SerializedName("scan_barcode") SCAN_BARCODE,
         @SerializedName("search_id") SEARCH_ID,
-        @SerializedName("search_name") SEARCH_NAME
+        @SerializedName("search_name") SEARCH_NAME,
+        @SerializedName("through_household") THROUGH_HOUSEHOLD
     }
 
     @Expose
@@ -42,6 +44,13 @@ public class IdentificationEvent extends SyncableModel {
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
+
+    @Expose
+    @SerializedName(FIELD_NAME_THROUGH_MEMBER_ID)
+    private UUID mThroughMemberId;
+
+    @DatabaseField(columnName = FIELD_NAME_THROUGH_MEMBER_ID, foreign = true)
+    private Member mThroughMember;
 
     @Expose
     @SerializedName(FIELD_NAME_SEARCH_METHOD)
@@ -88,6 +97,14 @@ public class IdentificationEvent extends SyncableModel {
 
     public void setMember(Member member) {
         this.mMember = member;
+    }
+
+    public Member getThroughMember() {
+        return mThroughMember;
+    }
+
+    public void setThroughMember(Member throughMember) {
+        this.mThroughMember = throughMember;
     }
 
     public SearchMethodEnum getSearchMethod() {

@@ -101,8 +101,11 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     if (barcode != null) {
                         try {
                             Member member = MemberDao.findByCardId(barcode.displayValue);
-                            new NavigationManager(activity).setDetailFragment(String.valueOf(member.getId()),
-                                    IdentificationEvent.SearchMethodEnum.SCAN_BARCODE);
+                            new NavigationManager(activity).setDetailFragment(
+                                    String.valueOf(member.getId()),
+                                    IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
+                                    null
+                            );
                         } catch (SQLException e) {
                             displayFailureToast();
                             Rollbar.reportException(e);

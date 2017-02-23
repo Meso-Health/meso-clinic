@@ -39,6 +39,8 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_GENDER = "gender";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
+    public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
+    public static final String FIELD_NAME_ABSENTEE = "absentee";
 
     public enum GenderEnum { M, F }
 
@@ -74,6 +76,16 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
+
+    @Expose
+    @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
+    @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
+    private UUID mHouseholdId;
+
+    @Expose
+    @SerializedName(FIELD_NAME_ABSENTEE)
+    @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
+    private Boolean mAbsentee;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
@@ -133,12 +145,28 @@ public class Member extends AbstractModel {
         return mPhotoUrl;
     }
 
-    public Collection<IdentificationEvent> getIdentifications() {
+    public void setHouseholdId(UUID householdId) {
+        this.mHouseholdId = householdId;
+    }
+
+    public UUID getHouseholdId() {
+        return mHouseholdId;
+    }
+
+    public void setAbsentee(boolean absentee) {
+        this.mAbsentee = absentee;
+    }
+
+    public Boolean getAbsentee() {
+        return mAbsentee;
+    }
+
+    public Collection<IdentificationEvent> getIdentificationEvents() {
         return mIdentificationEvents;
     }
 
     public IdentificationEvent getLastIdentification() {
-        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentifications());
+        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentificationEvents());
         return allIdentificationEvents.get(allIdentificationEvents.size() -1);
     }
 

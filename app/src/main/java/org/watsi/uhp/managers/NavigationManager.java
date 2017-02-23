@@ -53,10 +53,13 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), "home", true);
     }
 
-    public void setDetailFragment(String memberId, IdentificationEvent.SearchMethodEnum idMethod) {
+    public void setDetailFragment(String memberId,
+                                  IdentificationEvent.SearchMethodEnum idMethod,
+                                  String throughMemberId) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);
+        bundle.putString("throughMemberId", throughMemberId);
         bundle.putString("idMethod", idMethod.toString());
         detailFragment.setArguments(bundle);
 
