@@ -68,8 +68,8 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
-    @ForeignCollectionField(orderColumnName = Identification.FIELD_NAME_CREATED_AT)
-    private final Collection<Identification> mIdentifications = new ArrayList<>();
+    @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
+    private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
 
     @ForeignCollectionField
     private final Collection<Encounter> mEncounters = new ArrayList<>();
@@ -126,18 +126,18 @@ public class Member extends AbstractModel {
         return mPhotoUrl;
     }
 
-    public Collection<Identification> getIdentifications() {
-        return mIdentifications;
+    public Collection<IdentificationEvent> getIdentifications() {
+        return mIdentificationEvents;
     }
 
-    public Identification getLastIdentification() {
-        ArrayList<Identification> allIdentifications = new ArrayList<>(getIdentifications());
-        return allIdentifications.get(allIdentifications.size() -1);
+    public IdentificationEvent getLastIdentification() {
+        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentifications());
+        return allIdentificationEvents.get(allIdentificationEvents.size() -1);
     }
 
-    public void setIdentifications(Collection<Identification> identifications) {
-        this.mIdentifications.clear();
-        this.mIdentifications.addAll(identifications);
+    public void setIdentifications(Collection<IdentificationEvent> identificationEvents) {
+        this.mIdentificationEvents.clear();
+        this.mIdentificationEvents.addAll(identificationEvents);
     }
     
     public Collection<Encounter> getEncounters() {

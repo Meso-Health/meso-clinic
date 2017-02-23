@@ -20,7 +20,7 @@ import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 
 /**
  * Helper class for managing navigation between fragments
@@ -53,7 +53,7 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), "home", true);
     }
 
-    public void setDetailFragment(String memberId, Identification.SearchMethodEnum idMethod) {
+    public void setDetailFragment(String memberId, IdentificationEvent.SearchMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);

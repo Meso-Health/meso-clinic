@@ -23,7 +23,7 @@ import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.RefreshMemberListService;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
-            Identification.SearchMethodEnum idMethod = Identification.SearchMethodEnum.valueOf(
+            IdentificationEvent.SearchMethodEnum idMethod = IdentificationEvent.SearchMethodEnum.valueOf(
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {

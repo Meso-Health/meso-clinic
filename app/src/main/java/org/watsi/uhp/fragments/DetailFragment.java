@@ -14,10 +14,10 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.IdentificationDao;
+import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -31,7 +31,7 @@ public class DetailFragment extends Fragment {
     private TextView mMemberGender;
     private TextView mMemberId;
     private ImageView mMemberPhoto;
-    private Identification.SearchMethodEnum mIdMethod;
+    private IdentificationEvent.SearchMethodEnum mIdMethod;
     private Button mConfirmButton;
     private Button mRejectButton;
 
@@ -42,7 +42,7 @@ public class DetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         String memberId = getArguments().getString("memberId");
         String idMethod = getArguments().getString("idMethod");
-        mIdMethod = Identification.SearchMethodEnum.valueOf(idMethod);
+        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(idMethod);
 
         try {
             mMember = MemberDao.findById(UUID.fromString(memberId));
@@ -109,7 +109,7 @@ public class DetailFragment extends Fragment {
 
     private void createIdentification(boolean accepted) {
         // TODO: this should be in a transaction
-        Identification idEvent = new Identification();
+        IdentificationEvent idEvent = new IdentificationEvent();
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         if (mMember.getPhoto() == null) {
@@ -118,7 +118,7 @@ public class DetailFragment extends Fragment {
         idEvent.setAccepted(accepted);
 
         try {
-            IdentificationDao.create(idEvent);
+            IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }

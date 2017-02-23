@@ -5,8 +5,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.UUID;
 
-@DatabaseTable(tableName = Identification.TABLE_NAME)
-public class Identification extends AbstractModel{
+@DatabaseTable(tableName = IdentificationEvent.TABLE_NAME)
+public class IdentificationEvent extends AbstractModel {
 
     public static final String TABLE_NAME = "identifications";
 
@@ -34,7 +34,7 @@ public class Identification extends AbstractModel{
     @DatabaseField(columnName = FIELD_NAME_ACCEPTED, canBeNull = false)
     private boolean mAccepted;
 
-    public Identification() {
+    public IdentificationEvent() {
         super();
     }
 
