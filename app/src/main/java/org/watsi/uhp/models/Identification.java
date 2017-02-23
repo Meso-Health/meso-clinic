@@ -16,7 +16,7 @@ public class Identification extends AbstractModel{
     public static final String FIELD_NAME_VALIDATED_BY_PHOTO = "validated_by_photo";
     public static final String FIELD_NAME_ACCEPTED = "accepted";
 
-    public enum SearchMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
+    public enum SearchMethodEnum { SCAN_BARCODE, SEARCH_ID, SEARCH_NAME }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private UUID mId;
