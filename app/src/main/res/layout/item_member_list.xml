@@ -30,6 +30,11 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/member_age_and_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:id="@+id/member_card_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
