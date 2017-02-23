@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -30,6 +31,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
     private CameraSource mCameraSource;
     private Button mSearchMemberButton;
+    private Toast mErrorToast;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.barcode_fragment_label);
@@ -39,6 +41,9 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
         mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
+
+        mErrorToast = Toast.makeText(getActivity().getApplicationContext(),
+                R.string.id_not_found_toast, Toast.LENGTH_LONG);
 
         setupSearchMemberButton();
         return view;
@@ -94,11 +99,11 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     Barcode barcode = barcodes.valueAt(0);
                     if (barcode != null) {
                         try {
-                            // TODO: lookup appropriate member Id once we determine barcode encoding scheme
-                            Member member = MemberDao.all().get(0);
+                            Member member = MemberDao.findByCardId(barcode.displayValue);
                             activity.setDetailFragment(String.valueOf(member.getId()),
-                                    Identification.IdMethodEnum.BARCODE);
+                                    Identification.SearchMethodEnum.BARCODE);
                         } catch (SQLException e) {
+                            displayFailureToast();
                             Rollbar.reportException(e);
                         }
                     }
@@ -120,6 +125,18 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).setSearchMemberFragment();
+            }
+        });
+    }
+
+    private void displayFailureToast() {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                // prevents numerous toasts from being triggered by the barcode detector's
+                // "receive detections" thread
+                if (!mErrorToast.getView().isShown()) {
+                    mErrorToast.show();
+                }
             }
         });
     }

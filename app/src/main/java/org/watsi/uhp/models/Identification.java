@@ -12,10 +12,11 @@ public class Identification extends AbstractModel{
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
-    public static final String FIELD_NAME_ID_METHOD = "id_method";
-    public static final String FIELD_NAME_SUCCESSFUL = "successful";
+    public static final String FIELD_NAME_SEARCH_METHOD = "search_method";
+    public static final String FIELD_NAME_VALIDATED_BY_PHOTO = "validated_by_photo";
+    public static final String FIELD_NAME_ACCEPTED = "accepted";
 
-    public enum IdMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
+    public enum SearchMethodEnum { BARCODE, SEARCH_ID, SEARCH_NAME }
 
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private UUID mId;
@@ -23,11 +24,15 @@ public class Identification extends AbstractModel{
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
     private Member mMember;
 
-    @DatabaseField(columnName = FIELD_NAME_ID_METHOD, canBeNull = false)
-    private IdMethodEnum mIdMethod;
+    @DatabaseField(columnName = FIELD_NAME_SEARCH_METHOD, canBeNull = false)
+    private SearchMethodEnum mSearchMethod;
 
-    @DatabaseField(columnName = FIELD_NAME_SUCCESSFUL, canBeNull = false)
-    private boolean mSuccessful;
+    @DatabaseField(columnName = FIELD_NAME_VALIDATED_BY_PHOTO, canBeNull = false,
+            defaultValue = "true")
+    private Boolean mValidatedByPhoto;
+
+    @DatabaseField(columnName = FIELD_NAME_ACCEPTED, canBeNull = false)
+    private boolean mAccepted;
 
     public Identification() {
         super();
@@ -45,19 +50,27 @@ public class Identification extends AbstractModel{
         this.mMember = member;
     }
 
-    public IdMethodEnum getIdMethod() {
-        return mIdMethod;
+    public SearchMethodEnum getSearchMethod() {
+        return mSearchMethod;
     }
 
-    public void setIdMethod(IdMethodEnum idMethod) {
-        this.mIdMethod = idMethod;
+    public void setSearchMethod(SearchMethodEnum searchMethod) {
+        this.mSearchMethod = searchMethod;
     }
 
-    public boolean getSuccessful() {
-        return mSuccessful;
+    public Boolean getValidatedByPhoto() {
+        return mValidatedByPhoto;
     }
 
-    public void setSuccessful(boolean successful) {
-        this.mSuccessful = successful;
+    public void setValidatedByPhoto(Boolean validatedByPhoto) {
+        this.mValidatedByPhoto = validatedByPhoto;
+    }
+
+    public boolean getAccepted() {
+        return mAccepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.mAccepted = accepted;
     }
 }

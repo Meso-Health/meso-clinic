@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
-            Identification.IdMethodEnum idMethod = Identification.IdMethodEnum.valueOf(
+            Identification.SearchMethodEnum idMethod = Identification.SearchMethodEnum.valueOf(
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setNewEncounter(Member member) {
         mCurrentEncounter.setMember(member);
+        mCurrentEncounter.setIdentification(member.getLastIdentification());
         mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
     }
 
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void setDetailFragment(String memberId, Identification.IdMethodEnum idMethod) {
+    public void setDetailFragment(String memberId, Identification.SearchMethodEnum idMethod) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId);

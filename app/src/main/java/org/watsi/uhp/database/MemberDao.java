@@ -1,6 +1,8 @@
 package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.table.TableUtils;
 
@@ -63,6 +65,15 @@ public class MemberDao {
         return getInstance().getMemberDao().queryForId(id);
     }
 
+    public static Member findByCardId(String cardId) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);
+
+        List<Member> results = getInstance().getMemberDao().queryForFieldValues(queryMap);
+        if (results.size() == 0) { throw new SQLException("Record not found."); }
+        return results.get(0);
+    }
+
     public static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_FULL_NAME, name);
@@ -114,9 +125,30 @@ public class MemberDao {
         return topMatchingMembers;
     }
 
-    public static List<Member> recentMembers() throws SQLException {
-        // TODO: query for only recently checked-in members
-        return getInstance().getMemberDao().queryForAll();
+    public static List<Member> getCheckedInMembers() throws SQLException {
+        String rawQuery = "SELECT members.id\n" +
+                "FROM members\n" +
+                "INNER JOIN (\n" +
+                "   SELECT id, member_id, max(created_at) \n" +
+                "   FROM identifications\n" +
+                "   GROUP BY member_id\n" +
+                ") last_identifications on last_identifications.member_id = members.id\n" +
+                "LEFT OUTER JOIN encounters ON encounters.identification_id = last_identifications.id\n" +
+                "WHERE encounters.identification_id IS NULL";
+
+        GenericRawResults<String> rawResults =
+                getInstance().getMemberDao().queryRaw(rawQuery,
+                        new RawRowMapper<String>() {
+                            public String mapRow(String[] columnNames, String[] resultColumns) {
+                                return resultColumns[0];
+                            }
+                        });
+
+        List<Member> members = new ArrayList<>();
+        for (String id : rawResults.getResults()) {
+            members.add(findById(UUID.fromString(id)));
+        }
+        return members;
     }
 
     public static void clear() throws SQLException {
