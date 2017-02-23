@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
@@ -67,6 +68,16 @@ public class ReceiptFragment extends Fragment {
                 }
 
                 new NavigationManager(activity).setCurrentPatientsFragment();
+
+                String toastMessage = activity.getCurrentEncounter()
+                        .getMember()
+                        .getFullName() + " " + getString(R.string.encounter_submitted);
+
+                Toast.makeText(
+                        activity.getApplicationContext(),
+                        toastMessage,
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
     }

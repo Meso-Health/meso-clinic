@@ -15,7 +15,7 @@
     <string name="member_photo_content_description">Member photo</string>
     <string name="approve_identity">YES, CHECK IN</string>
     <string name="reject_identity">NO, TRY AGAIN</string>
-    <string name="identification_approved">has been successfully checked in</string>
+    <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">could not be confirmed as a UHP member.</string>
 
     <!--Encounter-->
@@ -53,6 +53,7 @@
     <string name="total"><b>TOTAL</b></string>
     <string name="back_button">NO, GO BACK</string>
     <string name="save_encounter_button">YES, SAVE ENCOUNTER</string>
+    <string name="encounter_submitted">has been successfully submitted.</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
