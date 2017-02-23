@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -141,16 +142,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
+    private void setFragment(Fragment fragment, String tag, boolean popBackStack) {
+        if (popBackStack) {
+            FragmentManager fm = getSupportFragmentManager();
+            fm.popBackStack(tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment, tag);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void setFragment(Fragment fragment) {
+        setFragment(fragment, null, false);
+    }
 
     public void setCurrentPatientsFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStack("home", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
-        FragmentTransaction transaction = fm.beginTransaction();
-
-        transaction.replace(R.id.fragment_container, currentPatientsFragment, "home");
-        transaction.commit();
+        setFragment(new CurrentPatientsFragment(), "home", true);
     }
 
     public void setDetailFragment(String memberId, Identification.SearchMethodEnum idMethod) {
@@ -160,57 +169,30 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString("idMethod", idMethod.toString());
         detailFragment.setArguments(bundle);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, detailFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(detailFragment);
     }
 
     public void setBarcodeFragment() {
-        BarcodeFragment barcodeFragment = new BarcodeFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, barcodeFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(new BarcodeFragment());
     }
 
     public void setSearchMemberFragment() {
-        SearchMemberFragment searchMemberFragment = new SearchMemberFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, searchMemberFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(new SearchMemberFragment());
     }
 
     public void setClinicNumberFragment() {
-        ClinicNumberFragment clinicNumberFragment = new ClinicNumberFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, clinicNumberFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(new ClinicNumberFragment());
     }
 
     public void setEncounterFragment() {
-        EncounterFragment encounterFragment = new EncounterFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, encounterFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(new EncounterFragment());
     }
 
     public void setReceiptFragment() {
-        ReceiptFragment receiptFragment = new ReceiptFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, receiptFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(new ReceiptFragment());
     }
 
     public void setAddNewBillableFragment() {
-        AddNewBillableFragment addNewBillableFragment = new AddNewBillableFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, addNewBillableFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setFragment(new AddNewBillableFragment());
     }
 }
