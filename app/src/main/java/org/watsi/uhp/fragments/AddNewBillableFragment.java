@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
 
@@ -48,7 +49,7 @@ public class AddNewBillableFragment extends Fragment {
 
                 MainActivity activity = (MainActivity) getActivity();
                 activity.getCurrentLineItems().add(lineItem);
-                activity.setEncounterFragment();
+                new NavigationManager(activity).setEncounterFragment();
             }
         });
     }

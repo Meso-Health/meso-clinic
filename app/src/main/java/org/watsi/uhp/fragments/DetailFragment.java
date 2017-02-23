@@ -14,9 +14,9 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.IdentificationDao;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.Member;
 
@@ -82,7 +82,7 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createIdentification(true);
-                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                new NavigationManager(getActivity()).setCurrentPatientsFragment();
                 Toast.makeText(getActivity().getApplicationContext(),
                         mMember.getFullName() + " " + getActivity().getString(R.string
                                 .identification_approved),
@@ -97,7 +97,7 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createIdentification(false);
-                ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                new NavigationManager(getActivity()).setCurrentPatientsFragment();
                 Toast.makeText(getActivity().getApplicationContext(),
                         mMember.getFullName() + " " + getActivity().getString(R.string
                                 .identification_rejected),

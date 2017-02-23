@@ -16,6 +16,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -35,7 +36,7 @@ public class CurrentPatientsFragment extends Fragment {
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setBarcodeFragment();
+                new NavigationManager(getActivity()).setBarcodeFragment();
             }
         });
 
@@ -50,7 +51,7 @@ public class CurrentPatientsFragment extends Fragment {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
                     activity.setNewEncounter(member);
-                    activity.setClinicNumberFragment();
+                    new NavigationManager(activity).setClinicNumberFragment();
                 }
             });
         } catch (SQLException e) {

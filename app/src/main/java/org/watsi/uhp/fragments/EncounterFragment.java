@@ -24,6 +24,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
 
@@ -107,7 +108,7 @@ public class EncounterFragment extends Fragment {
         addBillableLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setAddNewBillableFragment();
+                new NavigationManager(getActivity()).setAddNewBillableFragment();
             }
         });
     }
@@ -116,7 +117,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setReceiptFragment();
+                new NavigationManager(getActivity()).setReceiptFragment();
             }
         });
     }
@@ -203,7 +204,7 @@ public class EncounterFragment extends Fragment {
 
         private ArrayAdapter adapter;
 
-        public BillableListener(ArrayAdapter adapter) {
+        BillableListener(ArrayAdapter adapter) {
             this.adapter = adapter;
         }
 

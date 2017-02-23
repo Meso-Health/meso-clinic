@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -8,7 +7,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +17,7 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.managers.KeyboardManager;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class ClinicNumberFragment extends Fragment {
                     encounter.setClinicNumber(Integer.parseInt(numberField.getText().toString()));
 
                     KeyboardManager.hideKeyboard(getContext());
-                    activity.setEncounterFragment();
+                    new NavigationManager(activity).setEncounterFragment();
                 }
             }
         });

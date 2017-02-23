@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,16 +18,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.events.OfflineNotificationEvent;
-import org.watsi.uhp.fragments.AddNewBillableFragment;
-import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.ClinicNumberFragment;
-import org.watsi.uhp.fragments.CurrentPatientsFragment;
-import org.watsi.uhp.fragments.DetailFragment;
-import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.LoginFragment;
-import org.watsi.uhp.fragments.ReceiptFragment;
-import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Identification;
 import org.watsi.uhp.models.LineItem;
@@ -92,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {
-                setDetailFragment(memberId, idMethod);
+                new NavigationManager(this).setDetailFragment(memberId, idMethod);
             }
         }
     }
@@ -138,79 +129,5 @@ public class MainActivity extends AppCompatActivity {
 
     public List<LineItem> getCurrentLineItems() {
         return (List<LineItem>) mCurrentEncounter.getLineItems();
-    }
-
-    // TODO: consider moving these to a "NavigationManager" class and/or DRY these up.
-
-    public void setCurrentPatientsFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStack("home", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        CurrentPatientsFragment currentPatientsFragment = new CurrentPatientsFragment();
-        FragmentTransaction transaction = fm.beginTransaction();
-
-        transaction.replace(R.id.fragment_container, currentPatientsFragment, "home");
-        transaction.commit();
-    }
-
-    public void setDetailFragment(String memberId, Identification.SearchMethodEnum idMethod) {
-        DetailFragment detailFragment = new DetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId);
-        bundle.putString("idMethod", idMethod.toString());
-        detailFragment.setArguments(bundle);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, detailFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void setBarcodeFragment() {
-        BarcodeFragment barcodeFragment = new BarcodeFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, barcodeFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void setSearchMemberFragment() {
-        SearchMemberFragment searchMemberFragment = new SearchMemberFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, searchMemberFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void setClinicNumberFragment() {
-        ClinicNumberFragment clinicNumberFragment = new ClinicNumberFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, clinicNumberFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void setEncounterFragment() {
-        EncounterFragment encounterFragment = new EncounterFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, encounterFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void setReceiptFragment() {
-        ReceiptFragment receiptFragment = new ReceiptFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, receiptFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void setAddNewBillableFragment() {
-        AddNewBillableFragment addNewBillableFragment = new AddNewBillableFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, addNewBillableFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
     }
 }
