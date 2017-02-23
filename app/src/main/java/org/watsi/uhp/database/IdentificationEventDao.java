@@ -2,9 +2,11 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,18 +40,17 @@ public class IdentificationEventDao {
     }
 
     public static void create(IdentificationEvent identificationEvent) throws SQLException {
+        identificationEvent.setCreatedAt(Clock.getCurrentTime());
         getInstance().getIdentificationDao().create(identificationEvent);
     }
 
-    public static List<IdentificationEvent> find(Map<String,Object> queryMap) throws SQLException {
+    public static List<IdentificationEvent> unsynced() throws SQLException {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put(IdentificationEvent.FIELD_NAME_SYNCED, false);
         return getInstance().getIdentificationDao().queryForFieldValues(queryMap);
     }
 
-    public static IdentificationEvent findById(UUID id) throws SQLException {
-        return getInstance().getIdentificationDao().queryForId(id);
-    }
-
-    public static List<IdentificationEvent> all() throws SQLException {
-        return getInstance().getIdentificationDao().queryForAll();
+    public static void update(IdentificationEvent identificationEvent) throws SQLException {
+        getInstance().getIdentificationDao().update(identificationEvent);
     }
 }

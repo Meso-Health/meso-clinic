@@ -51,7 +51,7 @@ public class RefreshMemberListService extends Service {
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Rollbar.reportException(e);
                     }
 
                 }

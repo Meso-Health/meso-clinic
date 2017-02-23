@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -40,23 +41,28 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
 
     public enum GenderEnum { M, F }
-    
+
+    @Expose
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
+    @Expose
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID)
     private String mCardId;
 
+    @Expose
     @SerializedName(FIELD_NAME_FULL_NAME)
     @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false)
     private String mFullName;
 
+    @Expose
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
     private int mAge;
 
+    @Expose
     @SerializedName(FIELD_NAME_GENDER)
     @DatabaseField(columnName = FIELD_NAME_GENDER)
     private GenderEnum mGender;
@@ -64,6 +70,7 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
     private byte[] mPhoto;
 
+    @Expose
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;

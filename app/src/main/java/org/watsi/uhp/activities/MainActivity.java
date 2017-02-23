@@ -27,6 +27,7 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.RefreshMemberListService;
+import org.watsi.uhp.services.SyncService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupApp();
-        startFetchMembersService();
+        startServices();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -105,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
         LeakCanary.install(this.getApplication());
     }
 
-    private void startFetchMembersService() {
+    private void startServices() {
+        startService(new Intent(this, SyncService.class));
         startService(new Intent(this, RefreshMemberListService.class));
     }
 

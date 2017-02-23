@@ -16,6 +16,7 @@ import com.rollbar.android.Rollbar;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -113,9 +114,10 @@ public class DetailFragment extends Fragment {
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         if (mMember.getPhoto() == null) {
-            idEvent.setValidatedByPhoto(false);
+            idEvent.setPhotoVerified(false);
         }
         idEvent.setAccepted(accepted);
+        idEvent.setOccurredAt(Clock.getCurrentTime());
 
         try {
             IdentificationEventDao.create(idEvent);
