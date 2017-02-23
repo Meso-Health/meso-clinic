@@ -17,6 +17,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
@@ -24,7 +25,6 @@ import java.util.List;
 
 public class ReceiptFragment extends Fragment {
 
-    private List<LineItem> mLineItems;
     private Button mCreateEncounterButton;
 
     @Override
@@ -32,15 +32,15 @@ public class ReceiptFragment extends Fragment {
         getActivity().setTitle(R.string.receipt_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
-        mLineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
         mCreateEncounterButton = (Button) view.findViewById(R.id.create_encounter);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
-        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), mLineItems);
+        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), lineItems);
         listView.setAdapter((ListAdapter) mAdapter);
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
-        priceTextView.setText(Integer.toString(priceTotal(mLineItems)) + " UGX");
+        priceTextView.setText(Integer.toString(priceTotal(lineItems)) + " UGX");
 
         setCreateEncounterButton();
         return view;
@@ -66,7 +66,7 @@ public class ReceiptFragment extends Fragment {
                     Rollbar.reportException(e);
                 }
 
-                activity.setCurrentPatientsFragment();
+                new NavigationManager(activity).setCurrentPatientsFragment();
             }
         });
     }

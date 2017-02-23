@@ -13,9 +13,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.KeyboardManager;
+import org.watsi.uhp.managers.NavigationManager;
 
 import retrofit2.Response;
 
@@ -67,7 +67,7 @@ public class LoginFragment extends Fragment {
                                 }
                             });
                         } else {
-                            ((MainActivity) getActivity()).setCurrentPatientsFragment();
+                            new NavigationManager(getActivity()).setCurrentPatientsFragment();
                         }
                     }
                 }).start();
