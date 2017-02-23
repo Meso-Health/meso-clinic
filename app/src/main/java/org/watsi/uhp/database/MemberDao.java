@@ -152,6 +152,18 @@ public class MemberDao {
         return members;
     }
 
+    public static List<Member> getRemainingHouseholdMembers(UUID householdId, UUID memberId) throws
+            SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .eq(Member.FIELD_NAME_HOUSEHOLD_ID, householdId)
+                .and()
+                .not().eq(Member.FIELD_NAME_ID, memberId)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
+    }
+
     public static void clear() throws SQLException {
         TableUtils.clearTable(getInstance().getMemberDao().getConnectionSource(), Member.class);
     }
