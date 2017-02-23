@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -43,11 +44,16 @@ public class LoginFragment extends Fragment {
                 KeyboardManager.hideKeyboard(getContext());
                 final String username = usernameView.getText().toString();
                 final String password = passwordView.getText().toString();
+                final ProgressDialog spinner = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
+                spinner.setCancelable(false);
+                spinner.setMessage(getContext().getString(R.string.login_progress_message));
+                spinner.show();
                 // TODO: put up loading spinner
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Response response = ApiService.login(username, password, getContext());
+                        spinner.dismiss();
                         if (response == null || !response.isSuccessful()) {
                             final String errorMessage = getContext().getString(R.string.login_generic_failure_message);
                             getActivity().runOnUiThread(new Runnable() {
