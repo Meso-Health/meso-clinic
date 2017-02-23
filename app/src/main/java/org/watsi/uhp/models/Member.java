@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -42,23 +43,28 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_ABSENTEE = "absentee";
 
     public enum GenderEnum { M, F }
-    
+
+    @Expose
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
+    @Expose
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID)
     private String mCardId;
 
+    @Expose
     @SerializedName(FIELD_NAME_FULL_NAME)
     @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false)
     private String mFullName;
 
+    @Expose
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
     private int mAge;
 
+    @Expose
     @SerializedName(FIELD_NAME_GENDER)
     @DatabaseField(columnName = FIELD_NAME_GENDER)
     private GenderEnum mGender;
@@ -66,20 +72,23 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
     private byte[] mPhoto;
 
+    @Expose
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
+    @Expose
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
     private UUID mHouseholdId;
 
+    @Expose
     @SerializedName(FIELD_NAME_ABSENTEE)
     @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
     private Boolean mAbsentee;
 
-    @ForeignCollectionField(orderColumnName = Identification.FIELD_NAME_CREATED_AT)
-    private final Collection<Identification> mIdentifications = new ArrayList<>();
+    @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
+    private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
 
     @ForeignCollectionField
     private final Collection<Encounter> mEncounters = new ArrayList<>();
@@ -152,18 +161,18 @@ public class Member extends AbstractModel {
         return mAbsentee;
     }
 
-    public Collection<Identification> getIdentifications() {
-        return mIdentifications;
+    public Collection<IdentificationEvent> getIdentificationEvents() {
+        return mIdentificationEvents;
     }
 
-    public Identification getLastIdentification() {
-        ArrayList<Identification> allIdentifications = new ArrayList<>(getIdentifications());
-        return allIdentifications.get(allIdentifications.size() -1);
+    public IdentificationEvent getLastIdentification() {
+        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentificationEvents());
+        return allIdentificationEvents.get(allIdentificationEvents.size() -1);
     }
 
-    public void setIdentifications(Collection<Identification> identifications) {
-        this.mIdentifications.clear();
-        this.mIdentifications.addAll(identifications);
+    public void setIdentifications(Collection<IdentificationEvent> identificationEvents) {
+        this.mIdentificationEvents.clear();
+        this.mIdentificationEvents.addAll(identificationEvents);
     }
     
     public Collection<Encounter> getEncounters() {

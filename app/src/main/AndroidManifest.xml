@@ -18,6 +18,9 @@
         <service
             android:name=".services.RefreshMemberListService"
             android:exported="false" />
+        <service
+            android:name=".services.SyncService"
+            android:exported="false" />
         <activity
             android:windowSoftInputMode="adjustPan"
             android:name=".activities.MainActivity"

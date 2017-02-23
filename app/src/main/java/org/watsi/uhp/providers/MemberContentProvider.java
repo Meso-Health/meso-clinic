@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -43,10 +43,10 @@ public class MemberContentProvider extends ContentProvider {
         try {
             if (containsNumber(query)) {
                 matchingMembers = MemberDao.withCardIdLike(query);
-                idMethod = Identification.SearchMethodEnum.SEARCH_ID.toString();
+                idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_ID.toString();
             } else {
                 matchingMembers = MemberDao.fuzzySearchMembers(query, 5, 50);
-                idMethod = Identification.SearchMethodEnum.SEARCH_NAME.toString();
+                idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_NAME.toString();
             }
 
             for (Member member : matchingMembers) {
