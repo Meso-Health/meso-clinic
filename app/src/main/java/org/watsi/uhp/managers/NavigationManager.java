@@ -33,24 +33,32 @@ public class NavigationManager {
         this.mActivity = (AppCompatActivity) activity;
     }
 
-    private void setFragment(Fragment fragment, String tag, boolean popBackStack) {
+    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
+                             popBackStack) {
+
+        FragmentManager fm = mActivity.getSupportFragmentManager();
         if (popBackStack) {
-            FragmentManager fm = mActivity.getSupportFragmentManager();
-            fm.popBackStack(tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            // manually remove the previous "home" fragment from the fragment container
+            if (fm.findFragmentByTag("home") != null) {
+                fm.beginTransaction().remove(fm.findFragmentByTag("home")).commit();
+            }
         }
 
         FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
-        transaction.addToBackStack(null);
+        if (addToBackstack) {
+            transaction.addToBackStack(null);
+        }
         transaction.commit();
     }
 
     private void setFragment(Fragment fragment) {
-        setFragment(fragment, null, false);
+        setFragment(fragment, null, true, false);
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), "home", true);
+        setFragment(new CurrentPatientsFragment(), "home", false, true);
     }
 
     public void setDetailFragment(String memberId, Identification.SearchMethodEnum idMethod,
@@ -90,7 +98,7 @@ public class NavigationManager {
     }
 
     public void setLoginFragment() {
-        setFragment(new LoginFragment(), "login", true);
+        setFragment(new LoginFragment(), null, false, false);
     }
 
     public void logout() {
