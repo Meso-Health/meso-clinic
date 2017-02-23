@@ -45,6 +45,10 @@ public class BillableDao {
         return mBillableDao;
     }
 
+    public static void create(Billable billable) throws SQLException {
+        getInstance().getBillableDao().create(billable);
+    }
+
     public static void create(List<Billable> billables) throws SQLException {
         getInstance().getBillableDao().create(billables);
     }

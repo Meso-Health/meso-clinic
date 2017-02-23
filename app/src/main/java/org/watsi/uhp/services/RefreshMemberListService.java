@@ -32,7 +32,7 @@ import retrofit2.Response;
  */
 public class RefreshMemberListService extends Service {
 
-    private static int SLEEP_TIME = 10000;
+    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
     private final List<Target> targets = new ArrayList<>();
 
     @Override
@@ -44,8 +44,8 @@ public class RefreshMemberListService extends Service {
             public void run() {
                 while(true){
                     try {
-                        Thread.sleep(SLEEP_TIME);
                         fetchNewMemberData();
+                        Thread.sleep(SLEEP_TIME);
                     } catch (IOException | SQLException | InterruptedException e) {
                         Rollbar.reportException(e);
                     }
