@@ -17,12 +17,13 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
-import org.watsi.uhp.database.IdentificationDao;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -32,7 +33,7 @@ import java.util.UUID;
 public class DetailFragment extends Fragment {
 
     private Member mMember;
-    private Identification.SearchMethodEnum mIdMethod;
+    private IdentificationEvent.SearchMethodEnum mIdMethod;
     private Member mThroughMember;
     private TextView mMemberName;
     private TextView mMemberAge;
@@ -51,7 +52,7 @@ public class DetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        mIdMethod = Identification.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
+        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
         String memberId = getArguments().getString("memberId");
         String throughMemberId = getArguments().getString("throughMemberId");
 
@@ -148,7 +149,7 @@ public class DetailFragment extends Fragment {
 
                     new NavigationManager(activity).setDetailFragment(
                             String.valueOf(member.getId()),
-                            Identification.SearchMethodEnum.THROUGH_HOUSEHOLD,
+                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
                             String.valueOf(mMember.getId())
                     );
                 }
@@ -160,17 +161,18 @@ public class DetailFragment extends Fragment {
 
     private void createIdentification(boolean accepted) {
         // TODO: this should be in a transaction
-        Identification idEvent = new Identification();
+        IdentificationEvent idEvent = new IdentificationEvent();
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
         if (mMember.getPhoto() == null) {
-            idEvent.setValidatedByPhoto(false);
+            idEvent.setPhotoVerified(false);
         }
         idEvent.setAccepted(accepted);
+        idEvent.setOccurredAt(Clock.getCurrentTime());
 
         try {
-            IdentificationDao.create(idEvent);
+            IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }

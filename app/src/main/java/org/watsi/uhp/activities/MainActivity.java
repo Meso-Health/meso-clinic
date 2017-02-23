@@ -23,10 +23,11 @@ import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.RefreshMemberListService;
+import org.watsi.uhp.services.SyncService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupApp();
-        startFetchMembersService();
+        startServices();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String memberId = intent.getDataString();
-            Identification.SearchMethodEnum idMethod = Identification.SearchMethodEnum.valueOf(
+            IdentificationEvent.SearchMethodEnum idMethod = IdentificationEvent.SearchMethodEnum.valueOf(
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {
@@ -105,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
         LeakCanary.install(this.getApplication());
     }
 
-    private void startFetchMembersService() {
+    private void startServices() {
+        startService(new Intent(this, SyncService.class));
         startService(new Intent(this, RefreshMemberListService.class));
     }
 

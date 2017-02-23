@@ -22,7 +22,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Identification;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -101,8 +101,11 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     if (barcode != null) {
                         try {
                             Member member = MemberDao.findByCardId(barcode.displayValue);
-                            new NavigationManager(activity).setDetailFragment(String.valueOf(member.getId()),
-                                    Identification.SearchMethodEnum.SCAN_BARCODE, null);
+                            new NavigationManager(activity).setDetailFragment(
+                                    String.valueOf(member.getId()),
+                                    IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
+                                    null
+                            );
                         } catch (SQLException e) {
                             displayFailureToast();
                             Rollbar.reportException(e);

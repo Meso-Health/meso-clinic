@@ -33,7 +33,7 @@ public class Encounter extends AbstractModel {
     private Member mMember;
 
     @DatabaseField(columnName = FIELD_NAME_IDENTIFICATION_ID, foreign = true, canBeNull = false)
-    private Identification mIdentification;
+    private IdentificationEvent mIdentificationEvent;
     
     @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
     private Integer mClinicNumber;
@@ -64,12 +64,12 @@ public class Encounter extends AbstractModel {
         this.mMember = member;
     }
 
-    public Identification getIdentification() {
-        return mIdentification;
+    public IdentificationEvent getIdentification() {
+        return mIdentificationEvent;
     }
 
-    public void setIdentification(Identification identification) {
-        this.mIdentification = identification;
+    public void setIdentification(IdentificationEvent identificationEvent) {
+        this.mIdentificationEvent = identificationEvent;
     }
 
     public Collection<LineItem> getLineItems() {

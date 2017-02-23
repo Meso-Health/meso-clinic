@@ -5,8 +5,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 
 import java.io.IOException;
@@ -29,9 +32,13 @@ public class ApiService {
             if (apiHost == null) {
                 throw new IllegalStateException("API hostname not configured");
             }
+            Gson gson = new GsonBuilder()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .setDateFormat(Clock.ISO_DATE_FORMAT)
+                    .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(apiHost)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build())
                     .build();
             instance = builder.create(UhpApi.class);
