@@ -131,6 +131,7 @@ public class MemberDao {
                 "INNER JOIN (\n" +
                 "   SELECT id, member_id, max(created_at) \n" +
                 "   FROM identifications\n" +
+                "   WHERE accepted = 1\n" +
                 "   GROUP BY member_id\n" +
                 ") last_identifications on last_identifications.member_id = members.id\n" +
                 "LEFT OUTER JOIN encounters ON encounters.identification_id = last_identifications.id\n" +
