@@ -23,8 +23,7 @@ import retrofit2.Response;
 
 public class SyncService extends Service {
 
-//    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private static int SLEEP_TIME = 10000; // 10 minutes
+    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
