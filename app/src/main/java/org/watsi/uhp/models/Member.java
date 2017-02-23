@@ -158,8 +158,9 @@ public class Member extends AbstractModel {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 setPhoto(stream.toByteArray());
                  try {
-                    MemberDao.update(self);
-                } catch (SQLException e) {
+                     MemberDao.update(self);
+                     stream.close();
+                } catch (SQLException | IOException e) {
                     Rollbar.reportException(e);
                 }
             }
