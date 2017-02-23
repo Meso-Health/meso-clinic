@@ -32,6 +32,8 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.member_name);
+            viewHolder.age_and_gender = (TextView) convertView.findViewById(R.id
+                    .member_age_and_gender);
             viewHolder.card_id = (TextView) convertView.findViewById(R.id.member_card_id);
             viewHolder.photo = (ImageView) convertView.findViewById(R.id.member_photo);
 
@@ -44,6 +46,8 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
         if (member != null) {
             viewHolder.name.setText(member.getFullName());
+            viewHolder.age_and_gender.setText(String.valueOf(member.getAge()) + " " + String
+                    .valueOf(member.getGender()));
             viewHolder.card_id.setText(String.valueOf(member.getCardId()));
 
             Bitmap photoBitmap = member.getPhotoBitmap();
@@ -59,6 +63,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
     private static class ViewHolder {
         TextView name;
+        TextView age_and_gender;
         TextView card_id;
         ImageView photo;
     }
