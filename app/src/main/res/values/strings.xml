@@ -50,6 +50,8 @@
     <string name="add_new_price">Price:</string>
     <string name="add_new_billable">Add</string>
     <string name="UGX">UGX</string>
+    <string name="empty_billable_name_field">Please enter name in the blank above</string>
+    <string name="empty_billable_price_field">Please enter price in the blank above</string>
 
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
