@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,6 +25,8 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         getActivity().setTitle(R.string.login_fragment_label);
+        setHasOptionsMenu(true);
+        getActivity().invalidateOptionsMenu();
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
@@ -108,5 +111,11 @@ public class LoginFragment extends Fragment {
                 loginButton.setEnabled(true);
             }
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_logout).setVisible(false);
     }
 }

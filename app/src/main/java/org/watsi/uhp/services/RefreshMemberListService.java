@@ -45,17 +45,22 @@ public class RefreshMemberListService extends Service {
                 while(true){
                     try {
                         fetchNewMemberData();
-                        Thread.sleep(SLEEP_TIME);
-                    } catch (IOException | SQLException | InterruptedException e) {
+                    } catch (IOException | SQLException | IllegalStateException e) {
                         Rollbar.reportException(e);
                     }
+                    try {
+                        Thread.sleep(SLEEP_TIME);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         }).start();
         return Service.START_REDELIVER_INTENT;
     }
 
-    private void fetchNewMemberData() throws IOException, SQLException {
+    private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
         Log.d("UHP", "fetching new member data");
         int facilityId = ConfigManager.getFacilityId(getApplicationContext());
         Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())

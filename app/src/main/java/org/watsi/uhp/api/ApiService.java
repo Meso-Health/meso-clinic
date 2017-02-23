@@ -20,13 +20,17 @@ public class ApiService {
 
     private static UhpApi instance;
 
-    public static synchronized UhpApi requestBuilder(Context context) {
+    public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.authenticator(new TokenAuthenticator(context));
+            String apiHost = ConfigManager.getApiHost(context);
+            if (apiHost == null) {
+                throw new IllegalStateException("API hostname not configured");
+            }
             Retrofit builder = new Retrofit.Builder()
-                    .baseUrl(ConfigManager.getApiHost(context))
+                    .baseUrl(apiHost)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClient.build())
                     .build();
