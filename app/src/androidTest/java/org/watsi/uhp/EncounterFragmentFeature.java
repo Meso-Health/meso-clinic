@@ -55,7 +55,7 @@ public class EncounterFragmentFeature {
 
         // click on Service category in dropdown
         onData(anything())
-                .inAdapterView(withId(R.id.category_spinner))
+                .inAdapterView(withId(16908308))
                 .atPosition(1)
                 .perform(click());
 
