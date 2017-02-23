@@ -40,11 +40,15 @@ public class EncounterDao {
     }
 
     public static void create(Encounter encounter) throws SQLException {
-        encounter.setCreatedAt(Clock.getCurrentTime());
         //TODO: put inside transaction
+        encounter.setCreatedAt(Clock.getCurrentTime());
         getInstance().getEncounterDao().create(encounter);
 
         for (LineItem lineItem : encounter.getLineItems()) {
+            if (lineItem.getBillable().getId() == null) {
+                BillableDao.create(lineItem.getBillable());
+            }
+
             lineItem.setEncounter(encounter);
             LineItemDao.create(lineItem);
         }
