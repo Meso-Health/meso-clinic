@@ -14,6 +14,7 @@ import org.watsi.uhp.fragments.ClinicNumberFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.models.Identification;
@@ -81,4 +82,9 @@ public class NavigationManager {
 
     public void setAddNewBillableFragment() {
         setFragment(new AddNewBillableFragment());
-    }}
+    }
+
+    public void setLoginFragment() {
+        setFragment(new LoginFragment(), "login", true);
+    }
+}

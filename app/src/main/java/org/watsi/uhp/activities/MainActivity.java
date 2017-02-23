@@ -46,10 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         setUpLeakCanary();
         setupToolbar();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container, new LoginFragment())
-                .commit();
+        new NavigationManager(this).setLoginFragment();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
