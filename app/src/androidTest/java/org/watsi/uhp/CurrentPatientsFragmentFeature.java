@@ -29,7 +29,7 @@ public class CurrentPatientsFragmentFeature {
     @Before
     public void setup() {
         mainActivity = mActivityRule.getActivity();
-        mainActivity.setCurrentPatientsFragment(true);
+        mainActivity.setCurrentPatientsFragment();
     }
 
     @Test
