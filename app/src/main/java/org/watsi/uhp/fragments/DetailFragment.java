@@ -32,13 +32,14 @@ import java.util.UUID;
 public class DetailFragment extends Fragment {
 
     private Member mMember;
+    private Identification.SearchMethodEnum mIdMethod;
+    private Member mThroughMember;
     private TextView mMemberName;
     private TextView mMemberAge;
     private TextView mMemberGender;
     private TextView mMemberCardId;
     private ImageView mMemberPhoto;
-    private Identification.SearchMethodEnum mIdMethod;
-    private Member mThroughMember;
+    private TextView mAbsenteeNotification;
     private Button mConfirmButton;
     private Button mRejectButton;
     private TextView mHouseholdListLabel;
@@ -70,6 +71,7 @@ public class DetailFragment extends Fragment {
         mMemberGender = (TextView) view.findViewById(R.id.member_gender);
         mMemberCardId = (TextView) view.findViewById(R.id.member_card_id);
         mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
+        mAbsenteeNotification = (TextView) view.findViewById(R.id.absentee_notification);
         mConfirmButton = (Button) view.findViewById(R.id.approve_identity);
         mRejectButton = (Button) view.findViewById(R.id.reject_identity);
         mHouseholdListLabel = (TextView) view.findViewById(R.id.household_members_label);
@@ -92,6 +94,9 @@ public class DetailFragment extends Fragment {
             mMemberPhoto.setImageBitmap(photoBitmap);
         } else {
             mMemberPhoto.setImageResource(R.drawable.portrait_placeholder);
+        }
+        if (mMember.getAbsentee()) {
+            mAbsenteeNotification.setVisibility(View.VISIBLE);
         }
     }
 

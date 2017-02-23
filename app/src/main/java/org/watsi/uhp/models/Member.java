@@ -39,6 +39,7 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
+    public static final String FIELD_NAME_ABSENTEE = "absentee";
 
     public enum GenderEnum { M, F }
     
@@ -72,6 +73,10 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
     private UUID mHouseholdId;
+
+    @SerializedName(FIELD_NAME_ABSENTEE)
+    @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
+    private Boolean mAbsentee;
 
     @ForeignCollectionField(orderColumnName = Identification.FIELD_NAME_CREATED_AT)
     private final Collection<Identification> mIdentifications = new ArrayList<>();
@@ -137,6 +142,14 @@ public class Member extends AbstractModel {
 
     public UUID getHouseholdId() {
         return mHouseholdId;
+    }
+
+    public void setAbsentee(boolean absentee) {
+        this.mAbsentee = absentee;
+    }
+
+    public Boolean getAbsentee() {
+        return mAbsentee;
     }
 
     public Collection<Identification> getIdentifications() {
