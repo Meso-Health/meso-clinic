@@ -28,7 +28,6 @@ public class MemberDao {
     private static MemberDao instance = new MemberDao();
 
     private Dao<Member, UUID> mMemberDao;
-    private String mLastModifiedAtString;
 
     private static synchronized MemberDao getInstance() {
         return instance;
@@ -166,15 +165,6 @@ public class MemberDao {
 
     public static void clear() throws SQLException {
         TableUtils.clearTable(getInstance().getMemberDao().getConnectionSource(), Member.class);
-    }
-
-    public static String lastModifiedString() throws SQLException {
-        return getInstance().mLastModifiedAtString;
-    }
-
-    public static void setLastModifiedAt(String lastModifiedAtString) {
-        // TODO: better to store somewhere persisted like SharedPreferences
-        getInstance().mLastModifiedAtString = lastModifiedAtString;
     }
 
     public static List<Member> membersWithPhotosToFetch() throws SQLException {
