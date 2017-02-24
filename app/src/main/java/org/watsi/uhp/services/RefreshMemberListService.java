@@ -8,11 +8,9 @@ import android.util.Log;
 
 import com.rollbar.android.Rollbar;
 
-import org.greenrobot.eventbus.EventBus;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Member;
 
@@ -32,6 +30,7 @@ import retrofit2.Response;
 public class RefreshMemberListService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
+
     private final Queue<Member> fetchPhotoQueue = new LinkedBlockingDeque<>();
 
     @Override
@@ -61,22 +60,24 @@ public class RefreshMemberListService extends Service {
     }
 
     private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
-        Log.d("UHP", "fetching new member data");
         int facilityId = ConfigManager.getFacilityId(getApplicationContext());
+        String lastModifiedTimestamp = ConfigManager.getMemberLastModified(getApplicationContext());
         Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
-                .members(MemberDao.lastModifiedString(), facilityId);
+                .members(lastModifiedTimestamp, facilityId);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
-            EventBus.getDefault().post(new OfflineNotificationEvent(false));
-            final List<Member> members = response.body();
+            Log.d("UHP", "updating member data");
+            List<Member> members = response.body();
+            copyUnchangedMemberPhotos(members);
             MemberDao.clear();
             MemberDao.create(members);
-            MemberDao.setLastModifiedAt(response.headers().get("last-modified"));
+            ConfigManager.setMemberLastModified(
+                    response.headers().get("last-modified"),
+                    getApplicationContext()
+            );
         } else {
-            if (response.code() == 304) {
-                EventBus.getDefault().post(new OfflineNotificationEvent(false));
-            } else {
-                EventBus.getDefault().post(new OfflineNotificationEvent(true));
+            if (response.code() != 304) {
+                // TODO: request failed
             }
         }
     }
@@ -104,6 +105,17 @@ public class RefreshMemberListService extends Service {
                 }
             }
         }).start();
+    }
+
+    private void copyUnchangedMemberPhotos(List<Member> members) throws SQLException {
+        for (Member member : members) {
+            Member prevMember = MemberDao.findById(member.getId());
+            if (prevMember != null && prevMember.getPhoto() != null) {
+                if (prevMember.getPhotoUrl().equals(member.getPhotoUrl())) {
+                    member.setPhoto(prevMember.getPhoto());
+                }
+            }
+        }
     }
 
     @Nullable

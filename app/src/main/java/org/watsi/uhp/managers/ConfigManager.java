@@ -1,8 +1,10 @@
 package org.watsi.uhp.managers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.rollbar.android.Rollbar;
@@ -22,6 +24,7 @@ public class ConfigManager {
     private static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
     private static String API_HOST = "API_HOST";
     private static String FACILITY_ID = "FACILITY_ID";
+    private static String MEMBERS_LAST_MODIFIED_PREF_KEY = "members_last_modified";
 
     public static String getRollbarApiKey(Context context) {
         return getConfigValue(ROLLBAR_API_KEY, context);
@@ -68,5 +71,17 @@ public class ConfigManager {
             Rollbar.reportException(e);
         }
         return configMap;
+    }
+
+    public static void setMemberLastModified(String lastModifiedTimestamp, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(MEMBERS_LAST_MODIFIED_PREF_KEY, lastModifiedTimestamp);
+        editor.apply();
+    }
+
+    public static String getMemberLastModified(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(MEMBERS_LAST_MODIFIED_PREF_KEY, null);
     }
 }
