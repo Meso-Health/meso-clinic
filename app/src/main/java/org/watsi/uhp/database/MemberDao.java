@@ -48,16 +48,8 @@ public class MemberDao {
         return mMemberDao;
     }
 
-    public static void create(Member member) throws SQLException {
-        getInstance().getMemberDao().create(member);
-    }
-
     public static void create(List<Member> members) throws SQLException {
         getInstance().getMemberDao().create(members);
-    }
-
-    public static List<Member> all() throws SQLException {
-        return getInstance().getMemberDao().queryForAll();
     }
 
     public static Member findById(UUID id) throws SQLException {
@@ -81,10 +73,6 @@ public class MemberDao {
 
     public static void update(Member member) throws SQLException {
         getInstance().getMemberDao().update(member);
-    }
-
-    public static void refresh(Member member) throws SQLException {
-        getInstance().getMemberDao().refresh(member);
     }
 
     public static List<Member> withCardIdLike(String query) throws SQLException {

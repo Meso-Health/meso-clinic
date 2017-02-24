@@ -16,11 +16,8 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import retrofit2.Call;
@@ -71,8 +68,8 @@ public class RefreshMemberListService extends Service {
         if (response.isSuccessful()) {
             Log.d("UHP", "updating member data");
             List<Member> members = response.body();
+            copyUnchangedMemberPhotos(members);
             MemberDao.clear();
-            copyUnchangedMemberPhotos(members, previousMembersById());
             MemberDao.create(members);
             ConfigManager.setMemberLastModified(
                     response.headers().get("last-modified"),
@@ -110,21 +107,11 @@ public class RefreshMemberListService extends Service {
         }).start();
     }
 
-    private Map<UUID, Member> previousMembersById() throws SQLException {
-        List<Member> currentMembers = MemberDao.all();
-        Map<UUID, Member> memberByIdMap = new HashMap<>();
-        for (Member member : currentMembers) {
-            memberByIdMap.put(member.getId(), member);
-        }
-        return memberByIdMap;
-    }
-
-    private void copyUnchangedMemberPhotos(List<Member> newMemberData, Map<UUID, Member> oldMembers) {
-        for (Member member : newMemberData) {
-            Member prevMember = oldMembers.get(member.getId());
-            if (prevMember != null) {
-                if (prevMember.getPhoto() != null &&
-                        prevMember.getPhotoUrl() == member.getPhotoUrl()) {
+    private void copyUnchangedMemberPhotos(List<Member> members) throws SQLException {
+        for (Member member : members) {
+            Member prevMember = MemberDao.findById(member.getId());
+            if (prevMember != null && prevMember.getPhoto() != null) {
+                if (prevMember.getPhotoUrl().equals(member.getPhotoUrl())) {
                     member.setPhoto(prevMember.getPhoto());
                 }
             }
