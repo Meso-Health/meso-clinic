@@ -75,7 +75,9 @@ public class ConfigManager {
 
     public static void setMemberLastModified(String lastModifiedTimestamp, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString(MEMBERS_LAST_MODIFIED_PREF_KEY, lastModifiedTimestamp);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(MEMBERS_LAST_MODIFIED_PREF_KEY, lastModifiedTimestamp);
+        editor.apply();
     }
 
     public static String getMemberLastModified(Context context) {
