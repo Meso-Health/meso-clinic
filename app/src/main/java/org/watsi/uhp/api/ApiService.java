@@ -11,6 +11,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.models.User;
 
 import java.io.IOException;
 
@@ -61,10 +62,12 @@ public class ApiService {
             if (response.isSuccessful()) {
                 Log.d("UHP", "got auth token");
                 String token = response.body().getToken();
+                User user = response.body().getUser();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(TokenAuthenticator.TOKEN_PREFERENCES_KEY, token);
                 editor.apply();
+                Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
             }
             return response;
         } catch (IOException | IllegalStateException e) {
