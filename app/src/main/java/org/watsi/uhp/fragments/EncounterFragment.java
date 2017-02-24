@@ -143,7 +143,8 @@ public class EncounterFragment extends Fragment {
 
     public static boolean containsId(List<LineItem> list, UUID id) {
         for (LineItem item : list) {
-            if (item.getBillable().getId().equals(id)) {
+            UUID itemId = item.getBillable().getId();
+            if (itemId != null && itemId.equals(id)) {
                 return true;
             }
         }
