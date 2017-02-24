@@ -15,7 +15,7 @@ import retrofit2.http.Path;
 public interface UhpApi {
 
     @POST("authentication_token")
-    Call<AuthenticationToken> getAuthToken();
+    Call<AuthenticationToken> getAuthToken(@Header("Authorization") String authorization);
 
     @GET("facilities/{facilityId}/members")
     Call<List<Member>> members(

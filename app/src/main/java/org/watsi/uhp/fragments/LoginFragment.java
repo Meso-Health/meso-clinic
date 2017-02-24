@@ -13,10 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.rollbar.android.Rollbar;
+
 import org.watsi.uhp.R;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Response;
 
@@ -51,14 +56,27 @@ public class LoginFragment extends Fragment {
                 spinner.setCancelable(false);
                 spinner.setMessage(getContext().getString(R.string.login_progress_message));
                 spinner.show();
-                // TODO: put up loading spinner
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Response response = ApiService.login(username, password, getContext());
                         spinner.dismiss();
                         if (response == null || !response.isSuccessful()) {
-                            final String errorMessage = getContext().getString(R.string.login_generic_failure_message);
+                            StringBuilder sb = new StringBuilder();
+                            if (response == null) {
+                                sb.append(getContext().getString(R.string.login_generic_failure_message));
+                            } else {
+                                if (response.code() == 401) {
+                                    sb.append(getContext().getString(R.string.login_wrong_password_message));
+                                } else {
+                                    Map<String, String> errorParams = new HashMap<>();
+                                    errorParams.put("username", username);
+                                    errorParams.put("http_status_code", String.valueOf(response.code()));
+                                    Rollbar.reportMessage("Login failed", "warning", errorParams);
+                                    sb.append(getContext().getString(R.string.login_generic_failure_message));
+                                }
+                            }
+                            final String errorMessage = sb.toString();
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

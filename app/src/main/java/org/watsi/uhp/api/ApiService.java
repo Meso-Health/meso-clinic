@@ -15,6 +15,7 @@ import org.watsi.uhp.models.User;
 
 import java.io.IOException;
 
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -48,15 +49,12 @@ public class ApiService {
     }
 
     public static retrofit2.Response login(String username, String password, Context context) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.authenticator(new BasicAuthenticator(username, password));
-        Retrofit builder = new Retrofit.Builder()
+        UhpApi api = new Retrofit.Builder()
                 .baseUrl(ConfigManager.getApiHost(context))
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build();
-        UhpApi api = builder.create(UhpApi.class);
-        Call<AuthenticationToken> request = api.getAuthToken();
+                .build()
+                .create(UhpApi.class);
+        Call<AuthenticationToken> request = api.getAuthToken(Credentials.basic(username, password));
         try {
             retrofit2.Response<AuthenticationToken> response = request.execute();
             if (response.isSuccessful()) {
@@ -71,7 +69,6 @@ public class ApiService {
             }
             return response;
         } catch (IOException | IllegalStateException e) {
-            // TODO: starts a loop if it gets here
             Rollbar.reportException(e);
         }
         return null;
