@@ -1,14 +1,12 @@
 package org.watsi.uhp.services;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.rollbar.android.Rollbar;
-import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.watsi.uhp.api.ApiService;
@@ -20,8 +18,9 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -33,7 +32,7 @@ import retrofit2.Response;
 public class RefreshMemberListService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private final List<Target> targets = new ArrayList<>();
+    private final Queue<Member> fetchPhotoQueue = new LinkedBlockingDeque<>();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -45,6 +44,7 @@ public class RefreshMemberListService extends Service {
                 while(true){
                     try {
                         fetchNewMemberData();
+                        fetchMemberPhotos();
                     } catch (IOException | SQLException | IllegalStateException e) {
                         Rollbar.reportException(e);
                     }
@@ -72,22 +72,6 @@ public class RefreshMemberListService extends Service {
             MemberDao.clear();
             MemberDao.create(members);
             MemberDao.setLastModifiedAt(response.headers().get("last-modified"));
-            final Context context = getApplicationContext();
-            targets.clear();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (Member member : members) {
-                        try {
-                            Target target = member.createTarget();
-                            targets.add(target);
-                            member.fetchAndSetPhotoFromUrl(target, context);
-                        } catch (IOException | SQLException e) {
-                            Rollbar.reportException(e);
-                        }
-                    }
-                }
-            }).start();
         } else {
             if (response.code() == 304) {
                 EventBus.getDefault().post(new OfflineNotificationEvent(false));
@@ -95,6 +79,31 @@ public class RefreshMemberListService extends Service {
                 EventBus.getDefault().post(new OfflineNotificationEvent(true));
             }
         }
+    }
+
+    private void fetchMemberPhotos() throws SQLException {
+        for (Member member : MemberDao.membersWithPhotosToFetch()) {
+            if (!fetchPhotoQueue.contains(member)) {
+                fetchPhotoQueue.add(member);
+            }
+        }
+        Log.d("UHP", "members with photos to fetch: " + fetchPhotoQueue.size());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Member member = fetchPhotoQueue.poll();
+                while (member != null) {
+                    try {
+                        member.fetchAndSetPhotoFromUrl();
+                        MemberDao.update(member);
+                    } catch (IOException | SQLException e) {
+                        Rollbar.reportException(e);
+                    }
+                    Log.d("UHP", "photos left to fetch: " + fetchPhotoQueue.size());
+                    member = fetchPhotoQueue.poll();
+                }
+            }
+        }).start();
     }
 
     @Nullable
