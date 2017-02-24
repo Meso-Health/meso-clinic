@@ -176,4 +176,15 @@ public class MemberDao {
         // TODO: better to store somewhere persisted like SharedPreferences
         getInstance().mLastModifiedAtString = lastModifiedAtString;
     }
+
+    public static List<Member> membersWithPhotosToFetch() throws SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .isNull(Member.FIELD_NAME_PHOTO)
+                .and()
+                .isNotNull(Member.FIELD_NAME_PHOTO_URL)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
+    }
 }
