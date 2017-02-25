@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.IdentificationEvent;
 
 public class ClinicNumberDialogFragment extends DialogFragment {
@@ -58,6 +59,7 @@ public class ClinicNumberDialogFragment extends DialogFragment {
 
                 mSubmitButton.setEnabled(false);
                 setTextChangedListener();
+                KeyboardManager.hideKeyboard(getContext());
             }
         });
 
