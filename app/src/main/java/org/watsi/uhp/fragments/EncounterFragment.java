@@ -217,6 +217,7 @@ public class EncounterFragment extends Fragment {
             if (position != 0) {
                 UUID billableId = ((Billable) adapter.getItem(position)).getId();
                 addToLineItemList(billableId);
+                categorySpinner.setSelection(0);
             }
         }
 
