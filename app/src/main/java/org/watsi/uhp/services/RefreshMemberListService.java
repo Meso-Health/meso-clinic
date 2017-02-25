@@ -18,10 +18,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingDeque;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -34,8 +32,6 @@ public class RefreshMemberListService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
 
-    private final Queue<Member> fetchPhotoQueue = new LinkedBlockingDeque<>();
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
@@ -46,7 +42,6 @@ public class RefreshMemberListService extends Service {
                 while(true){
                     try {
                         fetchNewMemberData();
-                        fetchMemberPhotos();
                     } catch (IOException | SQLException | IllegalStateException e) {
                         Rollbar.reportException(e);
                     }
@@ -84,38 +79,12 @@ public class RefreshMemberListService extends Service {
         }
     }
 
-    private void fetchMemberPhotos() throws SQLException {
-        for (Member member : MemberDao.membersWithPhotosToFetch()) {
-            if (!fetchPhotoQueue.contains(member)) {
-                fetchPhotoQueue.add(member);
-            }
-        }
-        Log.d("UHP", "members with photos to fetch: " + fetchPhotoQueue.size());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Member member = fetchPhotoQueue.poll();
-                while (member != null) {
-                    try {
-                        member.fetchAndSetPhotoFromUrl();
-                        MemberDao.update(member);
-                    } catch (IOException | SQLException e) {
-                        Rollbar.reportException(e);
-                    }
-                    Log.d("UHP", "photos left to fetch: " + fetchPhotoQueue.size());
-                    member = fetchPhotoQueue.poll();
-                }
-            }
-        }).start();
-    }
-
     private void deleteRemovedMembers(List<Member> members) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
         for (Member member : members) {
             previousMemberIds.remove(member.getId());
         }
         MemberDao.deleteById(previousMemberIds);
-
     }
 
     private void createOrUpdateMembers(List<Member> members) throws SQLException {
