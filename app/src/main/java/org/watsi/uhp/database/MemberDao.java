@@ -48,8 +48,8 @@ public class MemberDao {
         return mMemberDao;
     }
 
-    public static void create(List<Member> members) throws SQLException {
-        getInstance().getMemberDao().create(members);
+    public static void createOrUpdate(Member member) throws SQLException {
+        getInstance().getMemberDao().createOrUpdate(member);
     }
 
     public static Member findById(UUID id) throws SQLException {
@@ -65,7 +65,7 @@ public class MemberDao {
         return results.get(0);
     }
 
-    public static List<Member> findByName(String name) throws SQLException {
+    private static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_FULL_NAME, name);
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
@@ -84,7 +84,7 @@ public class MemberDao {
         return getInstance().getMemberDao().query(pq);
     }
 
-    public static Set<String> allUniqueMemberNames() throws SQLException {
+    private static Set<String> allUniqueMemberNames() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .selectColumns(Member.FIELD_NAME_FULL_NAME)
@@ -151,10 +151,6 @@ public class MemberDao {
         return getInstance().getMemberDao().query(pq);
     }
 
-    public static void clear() throws SQLException {
-        TableUtils.clearTable(getInstance().getMemberDao().getConnectionSource(), Member.class);
-    }
-
     public static List<Member> membersWithPhotosToFetch() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
@@ -164,5 +160,25 @@ public class MemberDao {
                 .isNotNull(Member.FIELD_NAME_PHOTO_URL)
                 .prepare();
         return getInstance().getMemberDao().query(pq);
+    }
+
+    public static Set<UUID> allMemberIds() throws SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .selectColumns(Member.FIELD_NAME_ID)
+                .prepare();
+
+        List<Member> members = getInstance().getMemberDao().query(pq);
+        Set<UUID> ids = new HashSet<>();
+        for (Member m : members) {
+            ids.add(m.getId());
+        }
+        return ids;
+    }
+
+    public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
+        for (UUID id : memberIdsToDelete) {
+            getInstance().getMemberDao().deleteById(id);
+        }
     }
 }

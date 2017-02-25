@@ -16,8 +16,11 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import retrofit2.Call;
@@ -68,9 +71,8 @@ public class RefreshMemberListService extends Service {
         if (response.isSuccessful()) {
             Log.d("UHP", "updating member data");
             List<Member> members = response.body();
-            copyUnchangedMemberPhotos(members);
-            MemberDao.clear();
-            MemberDao.create(members);
+            deleteRemovedMembers(members);
+            createOrUpdateMembers(members);
             ConfigManager.setMemberLastModified(
                     response.headers().get("last-modified"),
                     getApplicationContext()
@@ -107,14 +109,30 @@ public class RefreshMemberListService extends Service {
         }).start();
     }
 
-    private void copyUnchangedMemberPhotos(List<Member> members) throws SQLException {
+    private void deleteRemovedMembers(List<Member> members) throws SQLException {
+        Set<UUID> previousMemberIds = MemberDao.allMemberIds();
         for (Member member : members) {
+            previousMemberIds.remove(member.getId());
+        }
+        MemberDao.deleteById(previousMemberIds);
+
+    }
+
+    private void createOrUpdateMembers(List<Member> members) throws SQLException {
+        Iterator<Member> iterator = members.iterator();
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
+
             Member prevMember = MemberDao.findById(member.getId());
             if (prevMember != null && prevMember.getPhoto() != null) {
                 if (prevMember.getPhotoUrl().equals(member.getPhotoUrl())) {
                     member.setPhoto(prevMember.getPhoto());
                 }
             }
+            MemberDao.createOrUpdate(member);
+
+            // free up memory so we don't keep all member photos in memory
+            iterator.remove();
         }
     }
 
