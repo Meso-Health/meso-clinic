@@ -26,6 +26,7 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.services.FetchMemberPhotosService;
 import org.watsi.uhp.services.RefreshMemberListService;
 import org.watsi.uhp.services.SyncService;
 
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     private void startServices() {
         startService(new Intent(this, SyncService.class));
         startService(new Intent(this, RefreshMemberListService.class));
+        startService(new Intent(this, FetchMemberPhotosService.class));
     }
 
     private void setupToolbar() {
