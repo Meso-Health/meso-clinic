@@ -42,7 +42,6 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private Button continueToReceiptButton;
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,12 +54,12 @@ public class EncounterFragment extends Fragment {
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
-        continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
+        Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setContinueToReceiptButton();
+        setContinueToReceiptButton(continueToReceiptButton);
         setAddBillableLink();
 
         return view;
@@ -98,9 +97,8 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
-        continueToReceiptButton.setVisibility(View.VISIBLE);
 
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, continueToReceiptButton);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
@@ -113,7 +111,7 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private void setContinueToReceiptButton() {
+    private void setContinueToReceiptButton(Button continueToReceiptButton) {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,8 +162,6 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-
-                continueToReceiptButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
