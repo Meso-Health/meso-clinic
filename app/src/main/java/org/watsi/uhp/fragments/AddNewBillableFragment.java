@@ -105,6 +105,8 @@ public class AddNewBillableFragment extends Fragment {
                     LineItem lineItem = new LineItem();
                     lineItem.setBillable(billable);
 
+                    KeyboardManager.hideKeyboard(getContext());
+
                     MainActivity activity = (MainActivity) getActivity();
                     activity.getCurrentLineItems().add(lineItem);
                     new NavigationManager(activity).setEncounterFragment();
