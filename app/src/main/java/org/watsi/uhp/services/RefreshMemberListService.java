@@ -16,9 +16,10 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Set;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -31,8 +32,6 @@ public class RefreshMemberListService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
 
-    private final Queue<Member> fetchPhotoQueue = new LinkedBlockingDeque<>();
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
@@ -43,7 +42,6 @@ public class RefreshMemberListService extends Service {
                 while(true){
                     try {
                         fetchNewMemberData();
-                        fetchMemberPhotos();
                     } catch (IOException | SQLException | IllegalStateException e) {
                         Rollbar.reportException(e);
                     }
@@ -68,9 +66,8 @@ public class RefreshMemberListService extends Service {
         if (response.isSuccessful()) {
             Log.d("UHP", "updating member data");
             List<Member> members = response.body();
-            copyUnchangedMemberPhotos(members);
-            MemberDao.clear();
-            MemberDao.create(members);
+            deleteRemovedMembers(members);
+            createOrUpdateMembers(members);
             ConfigManager.setMemberLastModified(
                     response.headers().get("last-modified"),
                     getApplicationContext()
@@ -82,39 +79,29 @@ public class RefreshMemberListService extends Service {
         }
     }
 
-    private void fetchMemberPhotos() throws SQLException {
-        for (Member member : MemberDao.membersWithPhotosToFetch()) {
-            if (!fetchPhotoQueue.contains(member)) {
-                fetchPhotoQueue.add(member);
-            }
+    private void deleteRemovedMembers(List<Member> members) throws SQLException {
+        Set<UUID> previousMemberIds = MemberDao.allMemberIds();
+        for (Member member : members) {
+            previousMemberIds.remove(member.getId());
         }
-        Log.d("UHP", "members with photos to fetch: " + fetchPhotoQueue.size());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Member member = fetchPhotoQueue.poll();
-                while (member != null) {
-                    try {
-                        member.fetchAndSetPhotoFromUrl();
-                        MemberDao.update(member);
-                    } catch (IOException | SQLException e) {
-                        Rollbar.reportException(e);
-                    }
-                    Log.d("UHP", "photos left to fetch: " + fetchPhotoQueue.size());
-                    member = fetchPhotoQueue.poll();
-                }
-            }
-        }).start();
+        MemberDao.deleteById(previousMemberIds);
     }
 
-    private void copyUnchangedMemberPhotos(List<Member> members) throws SQLException {
-        for (Member member : members) {
+    private void createOrUpdateMembers(List<Member> members) throws SQLException {
+        Iterator<Member> iterator = members.iterator();
+        while (iterator.hasNext()) {
+            Member member = iterator.next();
+
             Member prevMember = MemberDao.findById(member.getId());
             if (prevMember != null && prevMember.getPhoto() != null) {
                 if (prevMember.getPhotoUrl().equals(member.getPhotoUrl())) {
                     member.setPhoto(prevMember.getPhoto());
                 }
             }
+            MemberDao.createOrUpdate(member);
+
+            // free up memory so we don't keep all member photos in memory
+            iterator.remove();
         }
     }
 

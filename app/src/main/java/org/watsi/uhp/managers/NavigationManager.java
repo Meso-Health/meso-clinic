@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.api.TokenAuthenticator;
+import org.watsi.uhp.api.TokenInterceptor;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
@@ -98,11 +98,7 @@ public class NavigationManager {
     }
 
     public void logout() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(TokenAuthenticator.TOKEN_PREFERENCES_KEY);
-        editor.apply();
-
+        ConfigManager.setLoggedInUserToken(null, mActivity.getApplicationContext());
         setLoginFragment();
     }
 }
