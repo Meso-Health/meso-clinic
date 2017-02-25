@@ -25,6 +25,7 @@ public interface UhpApi {
 
     @POST("facilities/{facilityId}/identification_events")
     Call<IdentificationEvent> syncIdentificationEvent(
+            @Header("Authorization") String tokenAuthorization,
             @Path("facilityId") int facilityId,
             @Body IdentificationEvent unsyncedEvent
     );

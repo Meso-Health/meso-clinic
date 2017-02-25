@@ -103,11 +103,7 @@ public class NavigationManager {
     }
 
     public void logout() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(TokenInterceptor.TOKEN_PREFERENCES_KEY);
-        editor.apply();
-
+        ConfigManager.setLoggedInUserToken(null, mActivity.getApplicationContext());
         setLoginFragment();
     }
 }

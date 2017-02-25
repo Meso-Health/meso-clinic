@@ -1,8 +1,6 @@
 package org.watsi.uhp.api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -60,11 +58,8 @@ public class ApiService {
             if (response.isSuccessful()) {
                 Log.d("UHP", "got auth token");
                 String token = response.body().getToken();
+                ConfigManager.setLoggedInUserToken(token, context);
                 User user = response.body().getUser();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(TokenInterceptor.TOKEN_PREFERENCES_KEY, token);
-                editor.apply();
                 Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
             }
             return response;

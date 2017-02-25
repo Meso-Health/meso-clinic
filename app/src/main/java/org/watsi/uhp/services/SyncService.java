@@ -16,7 +16,9 @@ import org.watsi.uhp.models.IdentificationEvent;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -58,14 +60,19 @@ public class SyncService extends Service {
         int facilityId = ConfigManager.getFacilityId(context);
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
+            String tokenAuthorizationString = "Token " + event.getToken();
             Call<IdentificationEvent> request =
-                    ApiService.requestBuilder(context).syncIdentificationEvent(facilityId, event);
+                    ApiService.requestBuilder(context)
+                            .syncIdentificationEvent(tokenAuthorizationString, facilityId, event);
             Response<IdentificationEvent> response = request.execute();
             if (response.isSuccessful()) {
                 event.setSynced(true);
                 IdentificationEventDao.update(event);
             } else {
-                // TODO: handle failure
+                Map<String,String> reportParams = new HashMap<>();
+                reportParams.put("identification_id", event.getId().toString());
+                reportParams.put("member_name", event.getMember().getId().toString());
+                Rollbar.reportMessage("Failed to sync identification", "warning", reportParams);
             }
         }
     }
