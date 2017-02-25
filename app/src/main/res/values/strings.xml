@@ -23,15 +23,14 @@
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">could not be confirmed as a UHP member.</string>
 
+    <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
+    <string name="radio_opd">OPD</string>
+    <string name="radio_delivery">Delivery</string>
+    <string name="clinic_number">Number</string>
+    <string name="clinic_number_button">Submit</string>
+
     <!--Encounter-->
     <string name="current_patients_fragment_label">Select a patient</string>
-
-    <string name="clinic_number_fragment_label">Enter Encounter Number</string>
-    <string name="encounter_number_prompt">Enter either OPD or Delivery number</string>
-    <string name="clinic_number_type">Number Type:</string>
-    <string name="clinic_number">Number:</string>
-    <string name="empty_clinic_field_toast">Please enter number in the blank above</string>
-    <string name="clinic_number_button">CONTINUE</string>
 
     <string name="encounter_fragment_label">Enter line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
