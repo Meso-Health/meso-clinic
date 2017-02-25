@@ -22,6 +22,7 @@ import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -170,6 +171,7 @@ public class DetailFragment extends Fragment {
         }
         idEvent.setAccepted(accepted);
         idEvent.setOccurredAt(Clock.getCurrentTime());
+        idEvent.setToken(ConfigManager.getLoggedInUserToken(getContext()));
 
         try {
             IdentificationEventDao.create(idEvent);

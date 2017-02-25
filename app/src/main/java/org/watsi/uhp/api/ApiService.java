@@ -1,8 +1,6 @@
 package org.watsi.uhp.api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -29,7 +27,7 @@ public class ApiService {
         if (instance == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
-            httpClient.authenticator(new TokenAuthenticator(context));
+            httpClient.addNetworkInterceptor(new TokenInterceptor(context));
             String apiHost = ConfigManager.getApiHost(context);
             if (apiHost == null) {
                 throw new IllegalStateException("API hostname not configured");
@@ -60,11 +58,8 @@ public class ApiService {
             if (response.isSuccessful()) {
                 Log.d("UHP", "got auth token");
                 String token = response.body().getToken();
+                ConfigManager.setLoggedInUserToken(token, context);
                 User user = response.body().getUser();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(TokenAuthenticator.TOKEN_PREFERENCES_KEY, token);
-                editor.apply();
                 Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
             }
             return response;
