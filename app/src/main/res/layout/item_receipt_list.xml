@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:textAlignment="gravity"/>
+        android:textAlignment="gravity"
+        android:layout_margin="5dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,16 +21,17 @@
 
         <TextView
             android:id="@+id/receipt_billable_quantity"
-            android:layout_width="30dp"
+            android:layout_width="25dp"
             android:layout_weight="0"
             android:layout_height="wrap_content"
-            android:textSize="20dp"/>
+            android:textSize="15dp"/>
 
         <TextView
             android:id="@+id/receipt_billable_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:textSize="20dp"/>
+            android:textSize="15dp"
+            android:textStyle="bold"/>
     </LinearLayout>
 </LinearLayout>
