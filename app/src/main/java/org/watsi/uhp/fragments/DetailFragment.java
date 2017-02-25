@@ -131,7 +131,7 @@ public class DetailFragment extends Fragment {
         try {
             List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
                     mMember.getHouseholdId(), mMember.getId());
-            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers);
+            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
             mHouseholdListLabel.setText(getActivity().getString(R.string.household_label) +

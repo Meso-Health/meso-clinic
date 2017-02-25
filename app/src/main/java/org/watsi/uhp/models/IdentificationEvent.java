@@ -156,6 +156,10 @@ public class IdentificationEvent extends SyncableModel {
         this.mClinicNumber = n;
     }
 
+    public String getFormattedClinicNumber() {
+        return mClinicNumberTypeEnum.toString() + ": " + mClinicNumber.toString();
+    }
+
     public IdentificationEvent.ClinicNumberTypeEnum getClinicNumberType() {
         return mClinicNumberTypeEnum;
     }

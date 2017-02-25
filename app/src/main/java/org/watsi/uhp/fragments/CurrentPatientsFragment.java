@@ -42,7 +42,7 @@ public class CurrentPatientsFragment extends Fragment {
 
         try {
             List<Member> currentPatients = MemberDao.getCheckedInMembers();
-            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients);
+            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients, true);
 
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

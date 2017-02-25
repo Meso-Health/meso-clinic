@@ -37,7 +37,7 @@ public class ClinicNumberDialogFragment extends DialogFragment {
                                 .findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
                         IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
                                 IdentificationEvent.ClinicNumberTypeEnum.valueOf(selectedRadioButton
-                                        .getText().toString());
+                                        .getText().toString().toUpperCase());
                         int clinicNumber = Integer.valueOf(mClinicNumberView.getText().toString());
 
                         ((DetailFragment) getTargetFragment()).completeIdentification(
@@ -73,16 +73,16 @@ public class ClinicNumberDialogFragment extends DialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int count, int after) {
-                if (mClinicNumberView.getText().toString().length() != 0) {
-                    mSubmitButton.setEnabled(true);
-                } else {
-                    mSubmitButton.setEnabled(false);
-                }
+                // no-op
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // no-op
+                if (mClinicNumberView.getText().toString().isEmpty()) {
+                    mSubmitButton.setEnabled(false);
+                } else {
+                    mSubmitButton.setEnabled(true);
+                }
             }
         });
     }
