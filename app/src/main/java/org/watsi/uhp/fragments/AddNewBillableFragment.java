@@ -34,8 +34,7 @@ public class AddNewBillableFragment extends Fragment {
         priceField = (EditText) view.findViewById(R.id.price_field);
         addBillableButton = (Button) view.findViewById(R.id.add_billable_button);
 
-        nameField.requestFocus();
-        KeyboardManager.hideKeyboard(getContext());
+        KeyboardManager.focusAndShowKeyboard(nameField, getContext());
 
         setAddBillableButton();
         setNameField();

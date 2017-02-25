@@ -59,7 +59,7 @@ public class ClinicNumberDialogFragment extends DialogFragment {
 
                 mSubmitButton.setEnabled(false);
                 setTextChangedListener();
-                KeyboardManager.hideKeyboard(getContext());
+                KeyboardManager.focusAndShowKeyboard(mClinicNumberView, getContext());
             }
         });
 
