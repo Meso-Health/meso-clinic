@@ -24,6 +24,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
@@ -188,6 +189,8 @@ public class EncounterFragment extends Fragment {
                         .getItemAtPosition(position);
                 if (selectedCategory.equals(Billable.CategoryEnum.DRUGS)) {
                     billableSearch.setVisibility(View.VISIBLE);
+                    billableSearch.requestFocus();
+                    KeyboardManager.hideKeyboard(getContext());
                 } else {
                     setBillableSpinner(selectedCategory);
                     billableSpinner.setVisibility(View.VISIBLE);
@@ -214,6 +217,7 @@ public class EncounterFragment extends Fragment {
             if (position != 0) {
                 UUID billableId = ((Billable) adapter.getItem(position)).getId();
                 addToLineItemList(billableId);
+                categorySpinner.setSelection(0);
             }
         }
 
