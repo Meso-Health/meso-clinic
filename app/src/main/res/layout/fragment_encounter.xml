@@ -96,7 +96,6 @@
             android:id="@+id/save_encounter"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="@string/continue_encounter_button"
-            android:visibility="gone"/>
+            android:text="@string/continue_encounter_button" />
     </RelativeLayout>
 </LinearLayout>
