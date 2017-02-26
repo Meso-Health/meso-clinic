@@ -108,6 +108,13 @@ public class Member extends AbstractModel {
         return mCardId;
     }
 
+    public String getFormattedCardId() {
+        if (getCardId() == null) {
+            return "NO CARD ID";
+        }
+        return getCardId();
+    }
+
     public void setCardId(String cardId) {
         this.mCardId = cardId;
     }

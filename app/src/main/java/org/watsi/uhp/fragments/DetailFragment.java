@@ -42,7 +42,7 @@ public class DetailFragment extends Fragment {
     private TextView mMemberGender;
     private TextView mMemberCardId;
     private ImageView mMemberPhoto;
-    private TextView mAbsenteeNotification;
+    private TextView mMemberNotification;
     private Button mConfirmButton;
     private Button mRejectButton;
     private TextView mHouseholdListLabel;
@@ -74,7 +74,7 @@ public class DetailFragment extends Fragment {
         mMemberGender = (TextView) view.findViewById(R.id.member_gender);
         mMemberCardId = (TextView) view.findViewById(R.id.member_card_id);
         mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
-        mAbsenteeNotification = (TextView) view.findViewById(R.id.absentee_notification);
+        mMemberNotification = (TextView) view.findViewById(R.id.member_notification);
         mConfirmButton = (Button) view.findViewById(R.id.approve_identity);
         mRejectButton = (Button) view.findViewById(R.id.reject_identity);
         mHouseholdListLabel = (TextView) view.findViewById(R.id.household_members_label);
@@ -91,7 +91,7 @@ public class DetailFragment extends Fragment {
         mMemberName.setText(mMember.getFullName());
         mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
         mMemberGender.setText(String.valueOf(mMember.getGender()));
-        mMemberCardId.setText(String.valueOf(mMember.getCardId()));
+        mMemberCardId.setText(String.valueOf(mMember.getFormattedCardId()));
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         if (photoBitmap != null) {
             mMemberPhoto.setImageBitmap(photoBitmap);
@@ -99,7 +99,11 @@ public class DetailFragment extends Fragment {
             mMemberPhoto.setImageResource(R.drawable.portrait_placeholder);
         }
         if (mMember.getAbsentee()) {
-            mAbsenteeNotification.setVisibility(View.VISIBLE);
+            mMemberNotification.setVisibility(View.VISIBLE);
+            mMemberNotification.setText(R.string.absentee_notification);
+        } else if (mMember.getCardId() == null) {
+            mMemberNotification.setVisibility(View.VISIBLE);
+            mMemberNotification.setText(R.string.replace_card_notification);
         }
     }
 
