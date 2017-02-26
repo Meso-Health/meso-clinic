@@ -16,6 +16,7 @@
 
     <!--CurrentPatientsFragment-->
     <string name="identification_button">CHECK IN NEW PATIENT</string>
+    <string name="current_patients_empty_text">There are no checked-in patients.</string>
 
     <!--BarcodeFragment-->
     <string name="barcode_fragment_label">Scan ID</string>

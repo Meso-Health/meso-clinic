@@ -19,4 +19,14 @@
         android:id="@+id/current_patients"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/current_patients_empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/current_patients_empty_text"
+        android:textAlignment="center"
+        android:paddingTop="16dp"
+        android:textSize="18sp"
+        android:visibility="gone"/>
 </LinearLayout>

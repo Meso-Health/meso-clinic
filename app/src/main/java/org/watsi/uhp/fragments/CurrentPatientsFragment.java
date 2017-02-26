@@ -24,14 +24,13 @@ import java.util.List;
 
 public class CurrentPatientsFragment extends Fragment {
 
-    private Button mNewPatientButton;
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.current_patients_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_current_patients, container, false);
-        mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
+        Button mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
         ListView listView = (ListView) view.findViewById(R.id.current_patients);
+        listView.setEmptyView(view.findViewById(R.id.current_patients_empty_text));
 
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
