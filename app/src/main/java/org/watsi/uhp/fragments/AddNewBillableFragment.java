@@ -23,18 +23,19 @@ public class AddNewBillableFragment extends Fragment {
     private EditText nameField;
     private EditText priceField;
     private Button addBillableButton;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         getActivity().setTitle(R.string.add_new_billable_fragment_label);
 
-        View view = inflater.inflate(R.layout.fragment_add_new_billable, container, false);
+        view = inflater.inflate(R.layout.fragment_add_new_billable, container, false);
 
         nameField = (EditText) view.findViewById(R.id.name_field);
         priceField = (EditText) view.findViewById(R.id.price_field);
         addBillableButton = (Button) view.findViewById(R.id.add_billable_button);
 
-        KeyboardManager.focusAndShowKeyboard(nameField, getContext());
+        KeyboardManager.focusAndForceShowKeyboard(nameField, getContext());
 
         setAddBillableButton();
         setNameField();
@@ -104,7 +105,7 @@ public class AddNewBillableFragment extends Fragment {
                     LineItem lineItem = new LineItem();
                     lineItem.setBillable(billable);
 
-                    KeyboardManager.hideKeyboard(getContext());
+                    KeyboardManager.hideKeyboard(view, getContext());
 
                     MainActivity activity = (MainActivity) getActivity();
                     activity.getCurrentLineItems().add(lineItem);

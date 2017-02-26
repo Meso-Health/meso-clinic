@@ -33,7 +33,7 @@ public class LoginFragment extends Fragment {
         setHasOptionsMenu(true);
         getActivity().invalidateOptionsMenu();
 
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        final View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         final EditText usernameView = (EditText) view.findViewById(R.id.login_username);
         final EditText passwordView = (EditText) view.findViewById(R.id.login_password);
@@ -49,7 +49,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 usernameView.clearFocus();
                 passwordView.clearFocus();
-                KeyboardManager.hideKeyboard(getContext());
+                KeyboardManager.hideKeyboard(view, getContext());
                 final String username = usernameView.getText().toString();
                 final String password = passwordView.getText().toString();
                 final ProgressDialog spinner = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);

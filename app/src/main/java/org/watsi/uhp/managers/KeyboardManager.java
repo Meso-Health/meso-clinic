@@ -23,11 +23,9 @@ public class KeyboardManager {
         }
     }
 
-    // this is more convenient than the .hideSoftInputFromWindow() method (which requires a window
-    // object), but also uses the *toggle* command, so use carefully.
-    public static void hideKeyboard(Context context) {
+    public static void hideKeyboard(View view, Context context) {
         InputMethodManager imm = (InputMethodManager) context
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
