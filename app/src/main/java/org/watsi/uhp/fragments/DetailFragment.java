@@ -139,8 +139,8 @@ public class DetailFragment extends Fragment {
             ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
-            mHouseholdListLabel.setText(getActivity().getString(R.string.household_label) +
-                    " (" + String.valueOf(householdSize) + ")");
+            mHouseholdListLabel.setText(String.valueOf(householdSize) + " " +
+                    getActivity().getString(R.string.household_label));
             mHouseholdListView.setAdapter(adapter);
             mHouseholdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

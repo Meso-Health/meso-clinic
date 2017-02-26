@@ -47,19 +47,19 @@
 
     <!--EncounterFragment-->
     <string name="current_patients_fragment_label">Select a patient</string>
-    <string name="encounter_fragment_label">Enter line items</string>
+    <string name="encounter_fragment_label">Enter clinical record items</string>
     <string name="prompt_category">Select a category&#8230;</string>
-    <string name="prompt_billable">Select a billable&#8230;</string>
+    <string name="prompt_billable">Select an item&#8230;</string>
     <string name="search_drug_hint">Search drugs</string>
-    <string name="already_in_list_items">Already in Line Items</string>
+    <string name="already_in_list_items">Already in Items</string>
     <string name="default_billable_quantity">1</string>
     <string name="remove_billable_button">X</string>
-    <string name="encounter_product_list_label">LINE ITEMS</string>
+    <string name="encounter_product_list_label">ITEMS</string>
     <string name="continue_encounter_button">CONTINUE</string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!--AddNewBillableFragment-->
-    <string name="add_new_billable_fragment_label">Add new billable</string>
+    <string name="add_new_billable_fragment_label">Add new item</string>
     <string name="add_new_name">Name:</string>
     <string name="add_new_price">Price:</string>
     <string name="add_new_billable">Add</string>
@@ -72,7 +72,7 @@
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
     <string name="total"><b>TOTAL</b></string>
     <string name="back_button">NO, GO BACK</string>
-    <string name="save_encounter_button">YES, SAVE ENCOUNTER</string>
+    <string name="save_encounter_button">YES, SUBMIT</string>
     <string name="encounter_submitted">has been successfully submitted.</string>
 
 </resources>
