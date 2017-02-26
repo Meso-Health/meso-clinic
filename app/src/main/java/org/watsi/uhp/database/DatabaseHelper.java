@@ -8,7 +8,6 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -16,15 +15,7 @@ import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -83,56 +74,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             onCreate(database, connectionSource);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static void loadBillables(Context context) throws SQLException, IOException {
-        TableUtils.clearTable(DatabaseHelper.getHelper().getConnectionSource(), Billable.class);
-
-        // setup enum conversion maps
-        Map<String, Billable.CategoryEnum> categoryMap = new HashMap<>();
-        categoryMap.put("Services", Billable.CategoryEnum.SERVICES);
-        categoryMap.put("Labs", Billable.CategoryEnum.LABS);
-        categoryMap.put("Supplies", Billable.CategoryEnum.SUPPLIES);
-        categoryMap.put("Vaccines", Billable.CategoryEnum.VACCINES);
-        categoryMap.put("Drugs", Billable.CategoryEnum.DRUGS);
-
-        // parse CSV
-        List<Billable> billables = new ArrayList<>();
-        InputStream inputStream = context.getResources().openRawResource(R.raw.price_list);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-        try {
-            String csvLine;
-            while ((csvLine = reader.readLine()) != null) {
-                String[] row = csvLine.split(",");
-                Billable billable = new Billable();
-                billable.setCategory(categoryMap.get(row[0]));
-                billable.setName(row[1].trim());
-                String unit = row[2];
-                if (unit.length() > 0) {
-                    billable.setUnit(unit);
-                }
-                String amount = row[3];
-                if (amount.length() > 0) {
-                    billable.setAmount(amount);
-                }
-                int price = 0;
-                if (row[5].length() > 0) {
-                    price = Integer.parseInt(row[5]);
-                }
-                billable.setPrice(price);
-                billables.add(billable);
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException("Error in reading CSV file: " + ex);
-        } finally {
-            inputStream.close();
-        }
-        try {
-            BillableDao.create(billables);
-        } catch (SQLException ex) {
-            throw new RuntimeException("Error in creating billables: " + ex);
         }
     }
 

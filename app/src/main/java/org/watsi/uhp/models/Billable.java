@@ -1,5 +1,7 @@
 package org.watsi.uhp.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -11,36 +13,48 @@ public class Billable extends AbstractModel {
     public static final String TABLE_NAME = "billables";
 
     public static final String FIELD_NAME_ID = "id";
-    public static final String FIELD_NAME_CATEGORY = "category";
+    public static final String FIELD_NAME_TYPE = "type";
+    public static final String FIELD_NAME_COMPOSITION = "composition";
     public static final String FIELD_NAME_UNIT = "unit";
-    public static final String FIELD_NAME_AMOUNT = "amount";
     public static final String FIELD_NAME_PRICE = "price";
     public static final String FIELD_NAME_NAME = "name";
 
-    public enum CategoryEnum {
-        DRUGS,
-        SERVICES,
-        LABS,
-        SUPPLIES,
-        VACCINES,
-        UNSPECIFIED
+    public enum TypeEnum {
+        @SerializedName("drug") DRUG,
+        @SerializedName("service") SERVICE,
+        @SerializedName("lab") LAB,
+        @SerializedName("supply") SUPPLY,
+        @SerializedName("vaccine") VACCINE,
+        @SerializedName("unspecified") UNSPECIFIED
     }
 
+    @Expose
+    @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
     private UUID mId;
 
+    @Expose
+    @SerializedName(FIELD_NAME_NAME)
     @DatabaseField(columnName = FIELD_NAME_NAME, canBeNull = false)
     private String mName;
 
-    @DatabaseField(columnName = FIELD_NAME_CATEGORY, canBeNull = false)
-    private CategoryEnum mCategory;
+    @Expose
+    @SerializedName(FIELD_NAME_TYPE)
+    @DatabaseField(columnName = FIELD_NAME_TYPE, canBeNull = false)
+    private TypeEnum mType;
 
+    @Expose
+    @SerializedName(FIELD_NAME_UNIT)
     @DatabaseField(columnName = FIELD_NAME_UNIT)
     private String mUnit;
 
-    @DatabaseField(columnName = FIELD_NAME_AMOUNT)
-    private String mAmount;
+    @Expose
+    @SerializedName(FIELD_NAME_COMPOSITION)
+    @DatabaseField(columnName = FIELD_NAME_COMPOSITION)
+    private String mComposition;
 
+    @Expose
+    @SerializedName(FIELD_NAME_PRICE)
     @DatabaseField(columnName = FIELD_NAME_PRICE, canBeNull = false)
     private Integer mPrice;
 
@@ -60,12 +74,12 @@ public class Billable extends AbstractModel {
         this.mName = name;
     }
 
-    public void setCategory(CategoryEnum category) {
-        this.mCategory = category;
+    public void setType(TypeEnum type) {
+        this.mType = type;
     }
 
-    public CategoryEnum getCategory() {
-        return mCategory;
+    public TypeEnum getType() {
+        return mType;
     }
 
     public String getUnit() {
@@ -76,12 +90,12 @@ public class Billable extends AbstractModel {
         this.mUnit = unit;
     }
 
-    public String getAmount() {
-        return mAmount;
+    public String getComposition() {
+        return mComposition;
     }
 
-    public void setAmount(String amount) {
-        this.mAmount = amount;
+    public void setComposition(String composition) {
+        this.mComposition = composition;
     }
 
     public Integer getPrice() {
@@ -102,12 +116,12 @@ public class Billable extends AbstractModel {
     }
 
     public String dosageDetails() {
-        if (getUnit() != null) {
+        if (getComposition() != null) {
             StringBuilder sb = new StringBuilder();
-            if (getAmount() != null) {
-                sb.append(getAmount() + " ");
+            if (getUnit() != null) {
+                sb.append(getUnit() + " ");
             }
-            sb.append(getUnit());
+            sb.append(getComposition());
             return sb.toString();
         } else {
             return null;

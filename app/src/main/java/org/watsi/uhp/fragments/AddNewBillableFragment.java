@@ -100,7 +100,7 @@ public class AddNewBillableFragment extends Fragment {
                     Billable billable = new Billable();
                     billable.setName(nameField.getText().toString());
                     billable.setPrice(Integer.parseInt(priceField.getText().toString()));
-                    billable.setCategory(Billable.CategoryEnum.UNSPECIFIED);
+                    billable.setType(Billable.TypeEnum.UNSPECIFIED);
 
                     LineItem lineItem = new LineItem();
                     lineItem.setBillable(billable);

@@ -70,8 +70,8 @@ public class EncounterFragment extends Fragment {
     private void setCategorySpinner() {
         ArrayList<Object> categories = new ArrayList<>();
         categories.add(getContext().getString(R.string.prompt_category));
-        categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
-        categories.remove(Billable.CategoryEnum.UNSPECIFIED);
+        categories.addAll(Arrays.asList(Billable.TypeEnum.values()));
+        categories.remove(Billable.TypeEnum.UNSPECIFIED);
 
         ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
@@ -90,7 +90,7 @@ public class EncounterFragment extends Fragment {
         billableSearch.setQueryHint(getActivity().getString(R.string.search_drug_hint));
     }
     
-    private void setBillableSpinner(Billable.CategoryEnum category) {
+    private void setBillableSpinner(Billable.TypeEnum category) {
         ArrayAdapter<Billable> adapter = getEncounterItemAdapter(category);
 
         billableSpinner.setAdapter(adapter);
@@ -123,7 +123,7 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.CategoryEnum category) {
+    private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
         List<Billable> billables = new ArrayList<>();
         Billable placeholderBillable = new Billable();
@@ -185,9 +185,9 @@ public class EncounterFragment extends Fragment {
             billableSpinner.setVisibility(View.GONE);
 
             if (position != 0) {
-                Billable.CategoryEnum selectedCategory = (Billable.CategoryEnum) parent
+                Billable.TypeEnum selectedCategory = (Billable.TypeEnum) parent
                         .getItemAtPosition(position);
-                if (selectedCategory.equals(Billable.CategoryEnum.DRUGS)) {
+                if (selectedCategory.equals(Billable.TypeEnum.DRUG)) {
                     billableSearch.setVisibility(View.VISIBLE);
                     billableSearch.requestFocus();
                     KeyboardManager.hideKeyboard(getContext());

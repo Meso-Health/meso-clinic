@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.managers.ConfigManager;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -54,7 +55,7 @@ public class TokenInterceptorTest {
 
     @Test
     public void getRequest_storedTokenIsNull_addsEmptyTokenAuthHeader() throws Exception {
-        when(mockSharedPreferences.getString(TokenInterceptor.TOKEN_PREFERENCES_KEY, null))
+        when(mockSharedPreferences.getString(ConfigManager.TOKEN_PREFERENCES_KEY, null))
                 .thenReturn(null);
         when(mockChain.request()).thenReturn(mockRequest);
         when(mockRequest.method()).thenReturn("GET");
@@ -74,7 +75,7 @@ public class TokenInterceptorTest {
     public void getRequest_storedTokenIsNotNull() throws Exception {
         String token = "32do8j3dkndsl8i3fin238fwhefaewf8e";
 
-        when(mockSharedPreferences.getString(TokenInterceptor.TOKEN_PREFERENCES_KEY, null))
+        when(mockSharedPreferences.getString(ConfigManager.TOKEN_PREFERENCES_KEY, null))
                 .thenReturn(token);
         when(mockChain.request()).thenReturn(mockRequest);
         when(mockRequest.method()).thenReturn("GET");
