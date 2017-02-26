@@ -295,6 +295,7 @@ public class EncounterFragment extends Fragment {
             String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
             addToLineItemList(UUID.fromString(uuidString));
             clearDrugSearch();
+            categorySpinner.setSelection(0);
             return true;
         }
     }
