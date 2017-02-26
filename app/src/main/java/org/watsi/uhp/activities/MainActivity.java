@@ -49,7 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
         setUpLeakCanary();
         setupToolbar();
-        new NavigationManager(this).setLoginFragment();
+
+        if (ConfigManager.getLoggedInUserToken(getApplicationContext()) != null) {
+            new NavigationManager(this).setCurrentPatientsFragment();
+        } else {
+            new NavigationManager(this).setLoginFragment();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
