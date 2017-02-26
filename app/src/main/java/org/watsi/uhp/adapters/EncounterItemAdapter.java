@@ -19,12 +19,8 @@ import java.util.List;
 
 public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
-    private Button mCreateEncounterButton;
-
-    public EncounterItemAdapter(Context context, List<LineItem> lineItemList, Button
-            createEncounterButton) {
+    public EncounterItemAdapter(Context context, List<LineItem> lineItemList) {
         super(context, R.layout.item_line_item_list, lineItemList);
-        this.mCreateEncounterButton = createEncounterButton;
     }
 
     @Override
@@ -58,9 +54,6 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
                 @Override
                 public void onClick(View v) {
                     remove(lineItem);
-                    if (isEmpty()) {
-                        mCreateEncounterButton.setVisibility(View.GONE);
-                    }
                 }
             });
 
