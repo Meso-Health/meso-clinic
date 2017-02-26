@@ -13,7 +13,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.api.TokenInterceptor;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.ClinicNumberFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
@@ -80,10 +79,6 @@ public class NavigationManager {
 
     public void setSearchMemberFragment() {
         setFragment(new SearchMemberFragment());
-    }
-
-    public void setClinicNumberFragment() {
-        setFragment(new ClinicNumberFragment());
     }
 
     public void setEncounterFragment() {

@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,9 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
@@ -106,28 +107,23 @@ public class DetailFragment extends Fragment {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createIdentification(true);
-                new NavigationManager(getActivity()).setCurrentPatientsFragment();
-                Toast.makeText(getActivity().getApplicationContext(),
-                        mMember.getFullName() + " " + getActivity().getString(R.string
-                                .identification_approved),
-                        Toast.LENGTH_LONG).
-                        show();
+                openClinicNumberDialog();
             }
         });
+    }
+
+    private void openClinicNumberDialog() {
+        DialogFragment clinicNumberDialog = new ClinicNumberDialogFragment();
+        clinicNumberDialog.show(getActivity().getSupportFragmentManager(),
+                "ClinicNumberDialogFragment");
+        clinicNumberDialog.setTargetFragment(this, 0);
     }
 
     private void setRejectButton() {
         mRejectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createIdentification(false);
-                new NavigationManager(getActivity()).setCurrentPatientsFragment();
-                Toast.makeText(getActivity().getApplicationContext(),
-                        mMember.getFullName() + " " + getActivity().getString(R.string
-                                .identification_rejected),
-                        Toast.LENGTH_LONG).
-                        show();
+                completeIdentification(false, null, null);
             }
         });
     }
@@ -136,7 +132,7 @@ public class DetailFragment extends Fragment {
         try {
             List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
                     mMember.getHouseholdId(), mMember.getId());
-            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers);
+            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
             mHouseholdListLabel.setText(getActivity().getString(R.string.household_label) +
@@ -160,23 +156,34 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void createIdentification(boolean accepted) {
+    public void completeIdentification(boolean accepted,
+                                       IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
+                                       Integer clinicNumber) {
+
         // TODO: this should be in a transaction
         IdentificationEvent idEvent = new IdentificationEvent();
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
-        if (mMember.getPhoto() == null) {
-            idEvent.setPhotoVerified(false);
-        }
+        idEvent.setClinicNumberType(clinicNumberType);
+        idEvent.setClinicNumber(clinicNumber);
         idEvent.setAccepted(accepted);
         idEvent.setOccurredAt(Clock.getCurrentTime());
         idEvent.setToken(ConfigManager.getLoggedInUserToken(getContext()));
-
+        if (mMember.getPhoto() == null) {
+            idEvent.setPhotoVerified(false);
+        }
         try {
             IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
+
+        new NavigationManager(getActivity()).setCurrentPatientsFragment();
+        int messageStringId = accepted ? R.string.identification_approved : R.string.identification_rejected;
+        Toast.makeText(getActivity().getApplicationContext(),
+                mMember.getFullName() + " " + getActivity().getString(messageStringId),
+                Toast.LENGTH_LONG).
+                show();
     }
 }

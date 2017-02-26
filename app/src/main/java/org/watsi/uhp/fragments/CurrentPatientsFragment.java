@@ -42,7 +42,7 @@ public class CurrentPatientsFragment extends Fragment {
 
         try {
             List<Member> currentPatients = MemberDao.getCheckedInMembers();
-            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients);
+            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients, true);
 
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -51,7 +51,7 @@ public class CurrentPatientsFragment extends Fragment {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
                     activity.setNewEncounter(member);
-                    new NavigationManager(activity).setClinicNumberFragment();
+                    new NavigationManager(activity).setEncounterFragment();
                 }
             });
         } catch (SQLException e) {

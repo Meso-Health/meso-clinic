@@ -189,8 +189,7 @@ public class EncounterFragment extends Fragment {
                         .getItemAtPosition(position);
                 if (selectedCategory.equals(Billable.CategoryEnum.DRUGS)) {
                     billableSearch.setVisibility(View.VISIBLE);
-                    billableSearch.requestFocus();
-                    KeyboardManager.hideKeyboard(getContext());
+                    KeyboardManager.focusAndForceShowKeyboard(billableSearch, getContext());
                 } else {
                     setBillableSpinner(selectedCategory);
                     billableSpinner.setVisibility(View.VISIBLE);

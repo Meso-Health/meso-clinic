@@ -20,6 +20,13 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_SEARCH_METHOD = "search_method";
     public static final String FIELD_NAME_PHOTO_VERIFIED = "photo_verified";
     public static final String FIELD_NAME_ACCEPTED = "accepted";
+    public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
+    public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
+
+    public enum ClinicNumberTypeEnum {
+        @SerializedName("opd") OPD,
+        @SerializedName("delivery") DELIVERY
+    }
 
     public enum SearchMethodEnum {
         @SerializedName("scan_barcode") SCAN_BARCODE,
@@ -66,6 +73,16 @@ public class IdentificationEvent extends SyncableModel {
     @SerializedName(FIELD_NAME_ACCEPTED)
     @DatabaseField(columnName = FIELD_NAME_ACCEPTED, canBeNull = false, defaultValue = "true")
     private boolean mAccepted;
+
+    @Expose
+    @SerializedName(FIELD_NAME_CLINIC_NUMBER)
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
+    private Integer mClinicNumber;
+
+    @Expose
+    @SerializedName(FIELD_NAME_CLINIC_NUMBER_TYPE)
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE, canBeNull = false)
+    private IdentificationEvent.ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
     public IdentificationEvent() {
         super();
@@ -129,5 +146,25 @@ public class IdentificationEvent extends SyncableModel {
 
     public void setAccepted(boolean accepted) {
         this.mAccepted = accepted;
+    }
+
+    public Integer getClinicNumber() {
+        return mClinicNumber;
+    }
+
+    public void setClinicNumber(Integer n) {
+        this.mClinicNumber = n;
+    }
+
+    public String getFormattedClinicNumber() {
+        return mClinicNumberTypeEnum.toString() + ": " + mClinicNumber.toString();
+    }
+
+    public IdentificationEvent.ClinicNumberTypeEnum getClinicNumberType() {
+        return mClinicNumberTypeEnum;
+    }
+
+    public void setClinicNumberType(IdentificationEvent.ClinicNumberTypeEnum numberType) {
+        this.mClinicNumberTypeEnum = numberType;
     }
 }
