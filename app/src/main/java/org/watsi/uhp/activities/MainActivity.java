@@ -24,7 +24,7 @@ import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
@@ -121,15 +121,15 @@ public class MainActivity extends AppCompatActivity {
     public void setNewEncounter(Member member) {
         mCurrentEncounter.setMember(member);
         mCurrentEncounter.setIdentification(member.getLastIdentification());
-        mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
+        mCurrentEncounter.setLineItems(new ArrayList<EncounterItem>());
     }
 
     public Encounter getCurrentEncounter() {
         return mCurrentEncounter;
     }
 
-    public List<LineItem> getCurrentLineItems() {
-        return (List<LineItem>) mCurrentEncounter.getLineItems();
+    public List<EncounterItem> getCurrentLineItems() {
+        return (List<EncounterItem>) mCurrentEncounter.getLineItems();
     }
 
     @Override

@@ -5,10 +5,10 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.UUID;
 
-@DatabaseTable(tableName = LineItem.TABLE_NAME)
-public class LineItem extends AbstractModel {
+@DatabaseTable(tableName = EncounterItem.TABLE_NAME)
+public class EncounterItem extends AbstractModel {
 
-    public static final String TABLE_NAME = "line_items";
+    public static final String TABLE_NAME = "encounter_items";
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_ENCOUNTER_ID = "encounter_id";
     public static final String FIELD_NAME_BILLABLE_ID = "billable_id";
@@ -26,7 +26,7 @@ public class LineItem extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_QUANTITY)
     private int mQuantity = 1;
 
-    public LineItem() {
+    public EncounterItem() {
         super();
     }
 

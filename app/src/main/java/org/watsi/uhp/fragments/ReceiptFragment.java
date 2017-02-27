@@ -19,7 +19,7 @@ import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,23 +33,23 @@ public class ReceiptFragment extends Fragment {
         getActivity().setTitle(R.string.receipt_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
-        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
         mCreateEncounterButton = (Button) view.findViewById(R.id.create_encounter);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
-        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), lineItems);
+        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), encounterItems);
         listView.setAdapter((ListAdapter) mAdapter);
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
-        priceTextView.setText(Integer.toString(priceTotal(lineItems)) + " UGX");
+        priceTextView.setText(Integer.toString(priceTotal(encounterItems)) + " UGX");
 
         setCreateEncounterButton();
         return view;
     }
 
-    private int priceTotal(List<LineItem> lineItems) {
+    private int priceTotal(List<EncounterItem> encounterItems) {
         int sum = 0;
-        for (LineItem item : lineItems) {
+        for (EncounterItem item : encounterItems) {
             sum = sum + (item.getBillable().getPrice() * item.getQuantity());
         }
         return sum;
