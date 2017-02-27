@@ -189,6 +189,7 @@ public class EncounterFragment extends Fragment {
                 } else {
                     setBillableSpinner(selectedCategory);
                     billableSpinner.setVisibility(View.VISIBLE);
+                    billableSpinner.performClick();
                 }
             }
         }
