@@ -44,9 +44,13 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
             final Billable billable = lineItem.getBillable();
 
             viewHolder.billableDetails.setText(billable.toString());
-            viewHolder.billablePriceAndQuantity.setText(String.valueOf(lineItem.getQuantity()) + "  x  " + String.valueOf(billable.getPrice()) + " UGX");
-        }
 
+            if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
+                viewHolder.billablePriceAndQuantity.setText(String.valueOf(billable.getPrice()) + " UGX");
+            } else {
+                viewHolder.billablePriceAndQuantity.setText(String.valueOf(lineItem.getQuantity()) + "  x  " + String.valueOf(billable.getPrice()) + " UGX");
+            }
+        }
         return convertView;
     }
 
