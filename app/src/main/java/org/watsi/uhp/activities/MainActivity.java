@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.LineItemDao;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -30,7 +31,7 @@ import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -119,9 +120,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setNewEncounter(Member member) {
-        mCurrentEncounter.setMember(member);
-        mCurrentEncounter.setIdentification(member.getLastIdentification());
-        mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
+        try {
+            IdentificationEvent lastIdentification = member.getLastIdentification();
+            mCurrentEncounter.setMember(member);
+            mCurrentEncounter.setIdentification(lastIdentification);
+            mCurrentEncounter.setLineItems(
+                    LineItemDao.getDefaultLineItems(lastIdentification.getClinicNumberType()));
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+        }
     }
 
     public Encounter getCurrentEncounter() {
