@@ -97,6 +97,8 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        KeyboardManager.focusAndShowKeyboard(usernameView, getContext());
+
         return view;
     }
 
