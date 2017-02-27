@@ -22,6 +22,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptFragment extends Fragment {
@@ -41,7 +42,10 @@ public class ReceiptFragment extends Fragment {
         listView.setAdapter((ListAdapter) mAdapter);
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
-        priceTextView.setText(Integer.toString(priceTotal(lineItems)) + " UGX");
+
+        DecimalFormat df = new DecimalFormat("#,###,###");
+
+        priceTextView.setText(df.format(priceTotal(lineItems)) + " UGX");
 
         setCreateEncounterButton();
         return view;
