@@ -101,6 +101,7 @@ public class AddNewBillableFragment extends Fragment {
                     billable.setName(nameField.getText().toString());
                     billable.setPrice(Integer.parseInt(priceField.getText().toString()));
                     billable.setType(Billable.TypeEnum.UNSPECIFIED);
+                    billable.setCreatedDuringEncounter(true);
 
                     EncounterItem encounterItem = new EncounterItem();
                     encounterItem.setBillable(billable);

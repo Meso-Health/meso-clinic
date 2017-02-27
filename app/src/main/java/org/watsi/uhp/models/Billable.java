@@ -18,6 +18,7 @@ public class Billable extends AbstractModel {
     public static final String FIELD_NAME_UNIT = "unit";
     public static final String FIELD_NAME_PRICE = "price";
     public static final String FIELD_NAME_NAME = "name";
+    public static final String FIELD_NAME_CREATED_DURING_ENCOUNTER = "created_during_encounter";
 
     public enum TypeEnum {
         @SerializedName("drug") DRUG,
@@ -57,6 +58,9 @@ public class Billable extends AbstractModel {
     @SerializedName(FIELD_NAME_PRICE)
     @DatabaseField(columnName = FIELD_NAME_PRICE, canBeNull = false)
     private Integer mPrice;
+
+    @DatabaseField(columnName = FIELD_NAME_CREATED_DURING_ENCOUNTER, canBeNull = false, defaultValue = "false")
+    private Boolean mCreatedDuringEncounter;
 
     public Billable() {
         super();
@@ -104,6 +108,14 @@ public class Billable extends AbstractModel {
 
     public void setPrice(Integer price) {
         this.mPrice = price;
+    }
+
+    public Boolean getCreatedDuringEncounter() {
+        return mCreatedDuringEncounter;
+    }
+
+    public void setCreatedDuringEncounter(Boolean createdDuringEncounter) {
+        this.mCreatedDuringEncounter = createdDuringEncounter;
     }
 
     public String toString() {
