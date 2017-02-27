@@ -15,6 +15,9 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
+import org.watsi.uhp.fragments.EnrollmentPhotosFragment;
+import org.watsi.uhp.fragments.EnrollmentQuestionsFragment;
 import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
@@ -96,6 +99,18 @@ public class NavigationManager {
 
     public void setAddNewBillableFragment() {
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class));
+    }
+
+    public void setEnrollmentQuestionsFragment() {
+        setFragment(mFragmentProvider.createFragment(EnrollmentQuestionsFragment.class));
+    }
+
+    public void setEnrollmentPhotosFragment() {
+        setFragment(mFragmentProvider.createFragment(EnrollmentPhotosFragment.class));
+    }
+
+    public void setEnrollmentFingerprintFragment() {
+        setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class));
     }
 
     public void setLoginFragment() {

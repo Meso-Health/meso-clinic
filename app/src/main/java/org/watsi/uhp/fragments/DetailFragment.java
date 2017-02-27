@@ -37,16 +37,6 @@ public class DetailFragment extends Fragment {
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
     private Member mThroughMember;
-    private TextView mMemberName;
-    private TextView mMemberAge;
-    private TextView mMemberGender;
-    private TextView mMemberCardId;
-    private ImageView mMemberPhoto;
-    private TextView mMemberNotification;
-    private Button mConfirmButton;
-    private Button mRejectButton;
-    private TextView mHouseholdListLabel;
-    private ListView mHouseholdListView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,51 +59,66 @@ public class DetailFragment extends Fragment {
             Rollbar.reportException(e);
         }
 
-        mMemberName = (TextView) view.findViewById(R.id.member_name);
-        mMemberAge = (TextView) view.findViewById(R.id.member_age);
-        mMemberGender = (TextView) view.findViewById(R.id.member_gender);
-        mMemberCardId = (TextView) view.findViewById(R.id.member_card_id);
-        mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
-        mMemberNotification = (TextView) view.findViewById(R.id.member_notification);
-        mConfirmButton = (Button) view.findViewById(R.id.approve_identity);
-        mRejectButton = (Button) view.findViewById(R.id.reject_identity);
-        mHouseholdListLabel = (TextView) view.findViewById(R.id.household_members_label);
-        mHouseholdListView = (ListView) view.findViewById(R.id.household_members);
-
-        setPatientCard();
-        setConfirmButton();
-        setRejectButton();
-        setHouseholdList();
+        setPatientCard(view);
+        setButtons(
+                (Button) view.findViewById(R.id.approve_identity),
+                (Button) view.findViewById(R.id.reject_identity),
+                (Button) view.findViewById(R.id.complete_enrollment_btn)
+        );
+        setHouseholdList(view);
         return view;
     }
 
-    private void setPatientCard() {
-        mMemberName.setText(mMember.getFullName());
-        mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
-        mMemberGender.setText(String.valueOf(mMember.getGender()));
-        mMemberCardId.setText(String.valueOf(mMember.getFormattedCardId()));
+    private void setPatientCard(View detailView) {
+
+        ((TextView) detailView.findViewById(R.id.member_name)).setText(mMember.getFullName());
+        ((TextView) detailView.findViewById(R.id.member_age))
+                .setText("Age - " + String.valueOf(mMember.getAge()));
+        ((TextView) detailView.findViewById(R.id.member_gender))
+                .setText(String.valueOf(mMember.getGender()));
+        ((TextView) detailView.findViewById(R.id.member_card_id))
+                .setText(String.valueOf(mMember.getFormattedCardId()));
+
         Bitmap photoBitmap = mMember.getPhotoBitmap();
+        ImageView memberPhoto = (ImageView) detailView.findViewById(R.id.member_photo);
         if (photoBitmap != null) {
-            mMemberPhoto.setImageBitmap(photoBitmap);
+            memberPhoto.setImageBitmap(photoBitmap);
         } else {
-            mMemberPhoto.setImageResource(R.drawable.portrait_placeholder);
+            memberPhoto.setImageResource(R.drawable.portrait_placeholder);
         }
+
+        TextView memberNotification = (TextView) detailView.findViewById(R.id.member_notification);
         if (mMember.getAbsentee()) {
-            mMemberNotification.setVisibility(View.VISIBLE);
-            mMemberNotification.setText(R.string.absentee_notification);
+            memberNotification.setVisibility(View.VISIBLE);
+            memberNotification.setText(R.string.absentee_notification);
         } else if (mMember.getCardId() == null) {
-            mMemberNotification.setVisibility(View.VISIBLE);
-            mMemberNotification.setText(R.string.replace_card_notification);
+            memberNotification.setVisibility(View.VISIBLE);
+            memberNotification.setText(R.string.replace_card_notification);
         }
     }
 
-    private void setConfirmButton() {
-        mConfirmButton.setOnClickListener(new View.OnClickListener() {
+    private void setButtons(Button confirmButton, Button rejectButton, Button enrollButton) {
+        confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openClinicNumberDialog();
             }
         });
+        rejectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                completeIdentification(false, null, null);
+            }
+        });
+        if (mMember.getAbsentee()) {
+            enrollButton.setVisibility(View.VISIBLE);
+            enrollButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new NavigationManager(getActivity()).setEnrollmentQuestionsFragment();
+                }
+            });
+        }
     }
 
     private void openClinicNumberDialog() {
@@ -123,26 +128,20 @@ public class DetailFragment extends Fragment {
         clinicNumberDialog.setTargetFragment(this, 0);
     }
 
-    private void setRejectButton() {
-        mRejectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                completeIdentification(false, null, null);
-            }
-        });
-    }
+    private void setHouseholdList(View detailView) {
+        TextView householdListLabel = (TextView) detailView.findViewById(R.id.household_members_label);
+        ListView householdListView = (ListView) detailView.findViewById(R.id.household_members);
 
-    private void setHouseholdList() {
         try {
             List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
                     mMember.getHouseholdId(), mMember.getId());
             ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
-            mHouseholdListLabel.setText(String.valueOf(householdSize) + " " +
+            householdListLabel.setText(String.valueOf(householdSize) + " " +
                     getActivity().getString(R.string.household_label));
-            mHouseholdListView.setAdapter(adapter);
-            mHouseholdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            householdListView.setAdapter(adapter);
+            householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
