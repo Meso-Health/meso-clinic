@@ -6,7 +6,7 @@
     android:paddingBottom="15dp">
 
     <TextView
-        android:id="@+id/receipt_billable_price"
+        android:id="@+id/receipt_billable_price_and_quantity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
@@ -18,13 +18,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="4">
-
-        <TextView
-            android:id="@+id/receipt_billable_quantity"
-            android:layout_width="25dp"
-            android:layout_weight="0"
-            android:layout_height="wrap_content"
-            android:textSize="15dp"/>
 
         <TextView
             android:id="@+id/receipt_billable_details"

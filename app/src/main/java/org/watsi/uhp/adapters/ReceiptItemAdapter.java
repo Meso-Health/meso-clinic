@@ -30,9 +30,8 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
             convertView = layoutInflater.inflate(R.layout.item_receipt_list, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.billableQuantity = (TextView) convertView.findViewById(R.id.receipt_billable_quantity);
             viewHolder.billableDetails = (TextView) convertView.findViewById(R.id.receipt_billable_details);
-            viewHolder.billablePrice = (TextView) convertView.findViewById(R.id.receipt_billable_price);
+            viewHolder.billablePriceAndQuantity = (TextView) convertView.findViewById(R.id.receipt_billable_price_and_quantity);
 
             convertView.setTag(viewHolder);
         } else {
@@ -43,19 +42,16 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
 
         if (lineItem != null) {
             final Billable billable = lineItem.getBillable();
-            final int quantity = lineItem.getQuantity();
 
-            viewHolder.billableQuantity.setText(String.valueOf(quantity));
             viewHolder.billableDetails.setText(billable.toString());
-            viewHolder.billablePrice.setText(String.valueOf(billable.getPrice()) + " UGX");
+            viewHolder.billablePriceAndQuantity.setText(String.valueOf(lineItem.getQuantity()) + "  x  " + String.valueOf(billable.getPrice()) + " UGX");
         }
 
         return convertView;
     }
 
     private static class ViewHolder {
-        TextView billableQuantity;
         TextView billableDetails;
-        TextView billablePrice;
+        TextView billablePriceAndQuantity;
     }
 }
