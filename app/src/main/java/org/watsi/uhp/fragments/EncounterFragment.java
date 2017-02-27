@@ -125,7 +125,8 @@ public class EncounterFragment extends Fragment {
         // TODO: check that creation of new adapter each time does not have memory implications
         List<Billable> billables = new ArrayList<>();
         Billable placeholderBillable = new Billable();
-        placeholderBillable.setName(getContext().getString(R.string.prompt_billable));
+        placeholderBillable.setName(getContext().getString(R.string.prompt_billable) + " " +
+                category.toString().toLowerCase() + "...");
         billables.add(placeholderBillable);
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
