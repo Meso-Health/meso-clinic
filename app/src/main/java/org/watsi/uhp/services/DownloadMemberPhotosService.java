@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Service class to handle downloading member photos
  */
-public class FetchMemberPhotosService extends Service {
+public class DownloadMemberPhotosService extends Service {
 
     private static int SLEEP_TIME = 5 * 60 * 1000; // 5 minutes
 

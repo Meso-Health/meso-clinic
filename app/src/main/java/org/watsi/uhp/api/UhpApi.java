@@ -1,5 +1,6 @@
 package org.watsi.uhp.api;
 
+import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -19,6 +20,12 @@ public interface UhpApi {
 
     @GET("facilities/{facilityId}/members")
     Call<List<Member>> members(
+            @Header("If-Modified-Since") String lastModified,
+            @Path("facilityId") int facilityId
+    );
+
+    @GET("facilities/{facilityId}/billables")
+    Call<List<Billable>> billables(
             @Header("If-Modified-Since") String lastModified,
             @Path("facilityId") int facilityId
     );
