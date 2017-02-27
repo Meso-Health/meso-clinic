@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupApp() {
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
-        DatabaseHelper.init(getBaseContext());
+        DatabaseHelper.init(getApplicationContext());
     }
 
     private void setUpLeakCanary() {
