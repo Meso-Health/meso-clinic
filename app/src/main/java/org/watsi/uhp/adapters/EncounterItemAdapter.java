@@ -57,8 +57,8 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
                 }
             });
 
-            if (billable.getCategory().equals(Billable.CategoryEnum.SERVICES) ||
-                    billable.getCategory().equals(Billable.CategoryEnum.LABS)) {
+            if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
+                    billable.getType().equals(Billable.TypeEnum.LAB)) {
                 viewHolder.billableQuantity.setVisibility(View.GONE);
             } else {
                 viewHolder.billableQuantity.setVisibility(View.VISIBLE);

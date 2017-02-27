@@ -26,12 +26,10 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.services.FetchMemberPhotosService;
-import org.watsi.uhp.services.RefreshMemberListService;
+import org.watsi.uhp.services.DownloadMemberPhotosService;
+import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,11 +94,6 @@ public class MainActivity extends AppCompatActivity {
     private void setupApp() {
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
         DatabaseHelper.init(getBaseContext());
-        try {
-            DatabaseHelper.loadBillables(getBaseContext());
-        } catch (SQLException | IOException e) {
-            Rollbar.reportException(e);
-        }
     }
 
     private void setUpLeakCanary() {
@@ -114,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void startServices() {
         startService(new Intent(this, SyncService.class));
-        startService(new Intent(this, RefreshMemberListService.class));
-        startService(new Intent(this, FetchMemberPhotosService.class));
+        startService(new Intent(this, FetchService.class));
+        startService(new Intent(this, DownloadMemberPhotosService.class));
     }
 
     private void setupToolbar() {

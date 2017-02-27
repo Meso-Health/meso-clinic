@@ -16,10 +16,10 @@
             android:name=".providers.MemberContentProvider"
             android:authorities="org.watsi.uhp.provider.member" />
         <service
-            android:name=".services.FetchMemberPhotosService"
+            android:name=".services.DownloadMemberPhotosService"
             android:exported="false" />
         <service
-            android:name=".services.RefreshMemberListService"
+            android:name=".services.FetchService"
             android:exported="false" />
         <service
             android:name=".services.SyncService"
