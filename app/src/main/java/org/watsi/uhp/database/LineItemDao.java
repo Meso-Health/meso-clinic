@@ -2,9 +2,11 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LineItem;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,5 +52,17 @@ public class LineItemDao {
 
     public static List<LineItem> all() throws SQLException {
         return getInstance().getLineItemDao().queryForAll();
+    }
+
+    public static ArrayList<LineItem> getDefaultLineItems(
+            IdentificationEvent.ClinicNumberTypeEnum type) throws SQLException {
+        ArrayList<LineItem> defaultLineItems = new ArrayList<>();
+
+        if (type == IdentificationEvent.ClinicNumberTypeEnum.OPD) {
+            defaultLineItems.add(new LineItem(BillableDao.findByName("Consultation").get(0), 1));
+            defaultLineItems.add(new LineItem(BillableDao.findByName("Medical Form").get(0), 1));
+        }
+
+        return defaultLineItems;
     }
 }
