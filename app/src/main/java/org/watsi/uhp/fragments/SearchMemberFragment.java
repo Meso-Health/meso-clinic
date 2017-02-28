@@ -52,10 +52,22 @@ public class SearchMemberFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        KeyboardManager.focusAndShowKeyboard(mMemberSearch, getContext());
+        mMemberSearch.requestFocus();
     }
 
     private void setMemberSearch() {
+        // necessary to automatically show the search keyboard when requestFocus() is called
+        mMemberSearch.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    // for SearchViews, in order to properly show the search keyboard, we need to
+                    // use findFocus() to grab and pass a view *inside* of the SearchView
+                    KeyboardManager.showKeyboard(view.findFocus(), getContext());
+                }
+            }
+        });
+
         mMemberSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
