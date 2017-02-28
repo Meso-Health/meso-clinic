@@ -32,10 +32,12 @@ import org.watsi.uhp.services.SyncService;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private final Encounter mCurrentEncounter = new Encounter();
+    private UUID mMemberId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(new LogoutListener(this));
+        toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
     }
 
     public void setNewEncounter(Member member) {
@@ -131,17 +133,29 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private class LogoutListener implements Toolbar.OnMenuItemClickListener {
+    public void setMemberId(UUID memberId) {
+        this.mMemberId = memberId;
+    }
 
-        private Activity activity;
+    private class MenuItemClickListener implements Toolbar.OnMenuItemClickListener {
 
-        LogoutListener(Activity activity) {
-            this.activity = activity;
+        private Activity mActivity;
+
+        MenuItemClickListener(Activity activity) {
+            this.mActivity = activity;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            new NavigationManager(activity).logout();
+            switch (item.getItemId()) {
+                case R.id.menu_logout:
+                    new NavigationManager(mActivity).logout();
+                    break;
+                case R.id.menu_complete_enrollment:
+                    new NavigationManager(mActivity)
+                            .setEnrollmentMemberPhotoFragment(mMemberId);
+                    break;
+            }
             return true;
         }
     }

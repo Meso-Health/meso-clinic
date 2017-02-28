@@ -102,7 +102,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                         try {
                             Member member = MemberDao.findByCardId(barcode.displayValue);
                             new NavigationManager(activity).setDetailFragment(
-                                    member.getId().toString(),
+                                    member.getId(),
                                     IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
                                     null
                             );

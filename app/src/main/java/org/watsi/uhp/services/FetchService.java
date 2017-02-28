@@ -96,15 +96,27 @@ public class FetchService extends Service {
         while (iterator.hasNext()) {
             Member member = iterator.next();
 
-            Member prevMember = MemberDao.findById(member.getId());
-            if (prevMember != null && prevMember.getPhoto() != null) {
-                if (prevMember.getPhotoUrl().equals(member.getPhotoUrl())) {
-                    member.setPhoto(prevMember.getPhoto());
+            Member persistedMember = MemberDao.findById(member.getId());
+            if (persistedMember != null) {
+                // if the persisted member has not been synced to the back-end, assume it is
+                // the most up-to-date and do not update it with the fetched member attributes
+                if (!persistedMember.isSynced()) {
+                    iterator.remove();
+                    continue;
+                }
+
+                // if the existing member record has a photo and the fetched member record has
+                // the same photo url as the existing record, copy the photo to the new record
+                // so we do not have to re-download it
+                if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
+                        persistedMember.getPhotoUrl().equals(member.getPhotoUrl())) {
+                    member.setPhoto(persistedMember.getPhoto());
                 }
             }
+
+            member.setSynced(true);
             MemberDao.createOrUpdate(member);
 
-            // free up memory so we don't keep all member photos in memory
             iterator.remove();
         }
     }
