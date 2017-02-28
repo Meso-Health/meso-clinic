@@ -63,6 +63,9 @@ public class SyncService extends Service {
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
             String tokenAuthorizationString = "Token " + event.getToken();
+            if (event.getThroughMember() != null) {
+                event.setThroughMemberId(event.getThroughMember().getId());
+            }
             Call<IdentificationEvent> request =
                     ApiService.requestBuilder(getApplicationContext())
                             .syncIdentificationEvent(tokenAuthorizationString, mProviderId, event);

@@ -116,6 +116,14 @@ public class IdentificationEvent extends SyncableModel {
         this.mMember = member;
     }
 
+    public UUID getThroughMemberId() {
+        return mThroughMemberId;
+    }
+
+    public void setThroughMemberId(UUID throughMemberId) {
+        this.mThroughMemberId = throughMemberId;
+    }
+
     public Member getThroughMember() {
         return mThroughMember;
     }
