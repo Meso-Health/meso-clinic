@@ -110,8 +110,7 @@ public class SearchMemberFragment extends Fragment {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     Member member = (Member) parent.getItemAtPosition(position);
-                                    MainActivity activity = (MainActivity) getActivity();
-                                    new NavigationManager(activity).setDetailFragment(
+                                    new NavigationManager(getActivity()).setDetailFragment(
                                             member.getId().toString(), idMethod, null);
                                 }
                             });
