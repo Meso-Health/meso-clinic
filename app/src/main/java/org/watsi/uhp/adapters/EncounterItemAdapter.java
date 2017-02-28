@@ -13,18 +13,14 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.util.List;
 
-public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
+public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
 
-    private Button mCreateEncounterButton;
-
-    public EncounterItemAdapter(Context context, List<LineItem> lineItemList, Button
-            createEncounterButton) {
-        super(context, R.layout.item_line_item_list, lineItemList);
-        this.mCreateEncounterButton = createEncounterButton;
+    public EncounterItemAdapter(Context context, List<EncounterItem> encounterItemList) {
+        super(context, R.layout.item_encounter_item_list, encounterItemList);
     }
 
     @Override
@@ -34,7 +30,7 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
         if (convertView == null) {
             LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.item_line_item_list, parent, false);
+            convertView = layoutInflater.inflate(R.layout.item_encounter_item_list, parent, false);
 
             viewHolder = new ViewHolder();
             viewHolder.billableName = (TextView) convertView.findViewById(R.id.billable_name);
@@ -47,25 +43,22 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final LineItem lineItem = getItem(position);
+        final EncounterItem encounterItem = getItem(position);
 
-        if (lineItem != null) {
-            final Billable billable = lineItem.getBillable();
+        if (encounterItem != null) {
+            final Billable billable = encounterItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
             viewHolder.billableDetails.setText(billable.dosageDetails());
             viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    remove(lineItem);
-                    if (isEmpty()) {
-                        mCreateEncounterButton.setVisibility(View.GONE);
-                    }
+                    remove(encounterItem);
                 }
             });
 
-            if (billable.getCategory().equals(Billable.CategoryEnum.SERVICES) ||
-                    billable.getCategory().equals(Billable.CategoryEnum.LABS)) {
+            if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
+                    billable.getType().equals(Billable.TypeEnum.LAB)) {
                 viewHolder.billableQuantity.setVisibility(View.GONE);
             } else {
                 viewHolder.billableQuantity.setVisibility(View.VISIBLE);
@@ -78,9 +71,9 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
                             String quantity = vh.billableQuantity.getText().toString();
 
                             if (quantity.equals("")) {
-                                vh.billableQuantity.setText(String.valueOf(lineItem.getQuantity()));
+                                vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
                             } else {
-                                lineItem.setQuantity(Integer.valueOf(quantity));
+                                encounterItem.setQuantity(Integer.valueOf(quantity));
                             }
                         }
                     }

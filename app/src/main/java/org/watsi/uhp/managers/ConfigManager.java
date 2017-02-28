@@ -23,8 +23,9 @@ import java.util.Map;
 public class ConfigManager {
     private final static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
     private final static String API_HOST = "API_HOST";
-    private final static String FACILITY_ID = "FACILITY_ID";
+    private final static String PROVIDER_ID = "PROVIDER_ID";
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "members_last_modified";
+    private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billables_last_modified";
     public final static String TOKEN_PREFERENCES_KEY = "token";
 
     public static String getRollbarApiKey(Context context) {
@@ -35,12 +36,12 @@ public class ConfigManager {
         return getConfigValue(API_HOST, context);
     }
 
-    public static int getFacilityId(Context context) {
-        String facilityId = getConfigValue(FACILITY_ID, context);
-        if (facilityId == null) {
+    public static int getProviderId(Context context) {
+        String providerId = getConfigValue(PROVIDER_ID, context);
+        if (providerId == null) {
             return 0;
         } else {
-            return Integer.parseInt(facilityId);
+            return Integer.parseInt(providerId);
         }
     }
 
@@ -84,6 +85,18 @@ public class ConfigManager {
     public static String getMemberLastModified(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(MEMBERS_LAST_MODIFIED_PREF_KEY, null);
+    }
+
+    public static void setBillablesLastModified(String lastModifiedTimestamp, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(BILLABLES_LAST_MODIFIED_PREF_KEY, lastModifiedTimestamp);
+        editor.apply();
+    }
+
+    public static String getBillablesLastModified(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(BILLABLES_LAST_MODIFIED_PREF_KEY, null);
     }
 
     public static void setLoggedInUserToken(String token, Context context) {

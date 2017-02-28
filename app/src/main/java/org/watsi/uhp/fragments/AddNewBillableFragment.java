@@ -16,26 +16,26 @@ import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 public class AddNewBillableFragment extends Fragment {
 
     private EditText nameField;
     private EditText priceField;
     private Button addBillableButton;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         getActivity().setTitle(R.string.add_new_billable_fragment_label);
 
-        View view = inflater.inflate(R.layout.fragment_add_new_billable, container, false);
+        view = inflater.inflate(R.layout.fragment_add_new_billable, container, false);
 
         nameField = (EditText) view.findViewById(R.id.name_field);
         priceField = (EditText) view.findViewById(R.id.price_field);
         addBillableButton = (Button) view.findViewById(R.id.add_billable_button);
 
-        nameField.requestFocus();
-        KeyboardManager.hideKeyboard(getContext());
+        KeyboardManager.focusAndForceShowKeyboard(nameField, getContext());
 
         setAddBillableButton();
         setNameField();
@@ -100,15 +100,16 @@ public class AddNewBillableFragment extends Fragment {
                     Billable billable = new Billable();
                     billable.setName(nameField.getText().toString());
                     billable.setPrice(Integer.parseInt(priceField.getText().toString()));
-                    billable.setCategory(Billable.CategoryEnum.UNSPECIFIED);
+                    billable.setType(Billable.TypeEnum.UNSPECIFIED);
+                    billable.setCreatedDuringEncounter(true);
 
-                    LineItem lineItem = new LineItem();
-                    lineItem.setBillable(billable);
+                    EncounterItem encounterItem = new EncounterItem();
+                    encounterItem.setBillable(billable);
 
-                    KeyboardManager.hideKeyboard(getContext());
+                    KeyboardManager.hideKeyboard(view, getContext());
 
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.getCurrentLineItems().add(lineItem);
+                    activity.getCurrentLineItems().add(encounterItem);
                     new NavigationManager(activity).setEncounterFragment();
                 }
             }

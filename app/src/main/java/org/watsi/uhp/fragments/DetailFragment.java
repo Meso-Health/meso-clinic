@@ -2,10 +2,12 @@ package org.watsi.uhp.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,9 +19,9 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
@@ -41,7 +43,7 @@ public class DetailFragment extends Fragment {
     private TextView mMemberGender;
     private TextView mMemberCardId;
     private ImageView mMemberPhoto;
-    private TextView mAbsenteeNotification;
+    private TextView mMemberNotification;
     private Button mConfirmButton;
     private Button mRejectButton;
     private TextView mHouseholdListLabel;
@@ -73,7 +75,7 @@ public class DetailFragment extends Fragment {
         mMemberGender = (TextView) view.findViewById(R.id.member_gender);
         mMemberCardId = (TextView) view.findViewById(R.id.member_card_id);
         mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
-        mAbsenteeNotification = (TextView) view.findViewById(R.id.absentee_notification);
+        mMemberNotification = (TextView) view.findViewById(R.id.member_notification);
         mConfirmButton = (Button) view.findViewById(R.id.approve_identity);
         mRejectButton = (Button) view.findViewById(R.id.reject_identity);
         mHouseholdListLabel = (TextView) view.findViewById(R.id.household_members_label);
@@ -88,9 +90,9 @@ public class DetailFragment extends Fragment {
 
     private void setPatientCard() {
         mMemberName.setText(mMember.getFullName());
-        mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
-        mMemberGender.setText(String.valueOf(mMember.getGender()));
-        mMemberCardId.setText(String.valueOf(mMember.getCardId()));
+        mMemberAge.setText(mMember.getFormattedAge());
+        mMemberGender.setText(mMember.getFormattedGender());
+        mMemberCardId.setText(mMember.getFormattedCardId());
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         if (photoBitmap != null) {
             mMemberPhoto.setImageBitmap(photoBitmap);
@@ -98,7 +100,11 @@ public class DetailFragment extends Fragment {
             mMemberPhoto.setImageResource(R.drawable.portrait_placeholder);
         }
         if (mMember.getAbsentee()) {
-            mAbsenteeNotification.setVisibility(View.VISIBLE);
+            mMemberNotification.setVisibility(View.VISIBLE);
+            mMemberNotification.setText(R.string.absentee_notification);
+        } else if (mMember.getCardId() == null) {
+            mMemberNotification.setVisibility(View.VISIBLE);
+            mMemberNotification.setText(R.string.replace_card_notification);
         }
     }
 
@@ -106,28 +112,23 @@ public class DetailFragment extends Fragment {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createIdentification(true);
-                new NavigationManager(getActivity()).setCurrentPatientsFragment();
-                Toast.makeText(getActivity().getApplicationContext(),
-                        mMember.getFullName() + " " + getActivity().getString(R.string
-                                .identification_approved),
-                        Toast.LENGTH_LONG).
-                        show();
+                openClinicNumberDialog();
             }
         });
+    }
+
+    private void openClinicNumberDialog() {
+        DialogFragment clinicNumberDialog = new ClinicNumberDialogFragment();
+        clinicNumberDialog.show(getActivity().getSupportFragmentManager(),
+                "ClinicNumberDialogFragment");
+        clinicNumberDialog.setTargetFragment(this, 0);
     }
 
     private void setRejectButton() {
         mRejectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createIdentification(false);
-                new NavigationManager(getActivity()).setCurrentPatientsFragment();
-                Toast.makeText(getActivity().getApplicationContext(),
-                        mMember.getFullName() + " " + getActivity().getString(R.string
-                                .identification_rejected),
-                        Toast.LENGTH_LONG).
-                        show();
+                completeIdentification(false, null, null);
             }
         });
     }
@@ -136,11 +137,11 @@ public class DetailFragment extends Fragment {
         try {
             List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
                     mMember.getHouseholdId(), mMember.getId());
-            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers);
+            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
-            mHouseholdListLabel.setText(getActivity().getString(R.string.household_label) +
-                    " (" + String.valueOf(householdSize) + ")");
+            mHouseholdListLabel.setText(String.valueOf(householdSize) + " " +
+                    getActivity().getString(R.string.household_label));
             mHouseholdListView.setAdapter(adapter);
             mHouseholdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -149,7 +150,7 @@ public class DetailFragment extends Fragment {
                     MainActivity activity = (MainActivity) getActivity();
 
                     new NavigationManager(activity).setDetailFragment(
-                            String.valueOf(member.getId()),
+                            member.getId().toString(),
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
                             String.valueOf(mMember.getId())
                     );
@@ -160,23 +161,34 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void createIdentification(boolean accepted) {
+    public void completeIdentification(boolean accepted,
+                                       IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
+                                       Integer clinicNumber) {
+
         // TODO: this should be in a transaction
         IdentificationEvent idEvent = new IdentificationEvent();
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
-        if (mMember.getPhoto() == null) {
-            idEvent.setPhotoVerified(false);
-        }
+        idEvent.setClinicNumberType(clinicNumberType);
+        idEvent.setClinicNumber(clinicNumber);
         idEvent.setAccepted(accepted);
         idEvent.setOccurredAt(Clock.getCurrentTime());
         idEvent.setToken(ConfigManager.getLoggedInUserToken(getContext()));
-
+        if (mMember.getPhoto() == null) {
+            idEvent.setPhotoVerified(false);
+        }
         try {
             IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
+
+        new NavigationManager(getActivity()).setCurrentPatientsFragment();
+        int messageStringId = accepted ? R.string.identification_approved : R.string.identification_rejected;
+        Toast.makeText(getActivity().getApplicationContext(),
+                mMember.getFullName() + " " + getActivity().getString(messageStringId),
+                Toast.LENGTH_LONG).
+                show();
     }
 }

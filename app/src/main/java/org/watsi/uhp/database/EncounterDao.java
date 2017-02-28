@@ -3,10 +3,12 @@ package org.watsi.uhp.database;
 import com.j256.ormlite.dao.Dao;
 
 import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,29 +42,36 @@ public class EncounterDao {
     }
 
     public static void create(Encounter encounter) throws SQLException {
-        //TODO: put inside transaction
+        // TODO: put inside transaction
         encounter.setCreatedAt(Clock.getCurrentTime());
         getInstance().getEncounterDao().create(encounter);
 
-        for (LineItem lineItem : encounter.getLineItems()) {
-            if (lineItem.getBillable().getId() == null) {
-                BillableDao.create(lineItem.getBillable());
+        for (EncounterItem encounterItem : encounter.getEncounterItems()) {
+            Billable billable = encounterItem.getBillable();
+            if (billable.getId() == null) {
+                BillableDao.create(billable);
             }
 
-            lineItem.setEncounter(encounter);
-            LineItemDao.create(lineItem);
+            encounterItem.setEncounter(encounter);
+            EncounterItemDao.create(encounterItem);
         }
     }
 
-    public static List<Encounter> find(Map<String,Object> queryMap) throws SQLException {
+    public static void refresh(Encounter encounter) throws SQLException {
+        getInstance().getEncounterDao().refresh(encounter);
+    }
+
+    public static List<Encounter> unsynced() throws SQLException {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put(Encounter.FIELD_NAME_SYNCED, false);
         return getInstance().getEncounterDao().queryForFieldValues(queryMap);
     }
 
-    public static Encounter findById(UUID id) throws SQLException {
-        return getInstance().getEncounterDao().queryForId(id);
+    public static void update(Encounter encounter) throws SQLException {
+        getInstance().getEncounterDao().update(encounter);
     }
 
-    public static List<Encounter> all() throws SQLException {
-        return getInstance().getEncounterDao().queryForAll();
+    public static void delete(Encounter encounter) throws SQLException {
+        getInstance().getEncounterDao().delete(encounter);
     }
 }

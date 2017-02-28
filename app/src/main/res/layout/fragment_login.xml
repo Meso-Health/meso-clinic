@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/login_fragment"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:focusable="true"
-    android:focusableInTouchMode="true" >
+    android:paddingRight="@dimen/activity_horizontal_margin" >
 
     <TextView
         android:layout_width="fill_parent"
@@ -30,12 +29,20 @@
         android:text="@string/login_password_label"
         android:labelFor="@+id/login_password"/>
 
-    <EditText
+    <me.philio.pinentry.PinEntryView
         android:id="@+id/login_password"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:maxLines="1" />
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="5dp"
+        app:accentType="all"
+        app:digitBackground="@android:color/white"
+        app:digitElevation="2dp"
+        app:digitTextSize="5sp"
+        app:numDigits="6"
+        app:accentWidth="1dp"
+        app:digitWidth="35dp"
+        app:digitHeight="35dp"/>
 
     <Button
         android:id="@+id/login_button"

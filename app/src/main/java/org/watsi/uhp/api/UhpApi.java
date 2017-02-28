@@ -1,5 +1,7 @@
 package org.watsi.uhp.api;
 
+import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -17,16 +19,29 @@ public interface UhpApi {
     @POST("authentication_token")
     Call<AuthenticationToken> getAuthToken(@Header("Authorization") String authorization);
 
-    @GET("facilities/{facilityId}/members")
+    @GET("providers/{providerId}/members")
     Call<List<Member>> members(
             @Header("If-Modified-Since") String lastModified,
-            @Path("facilityId") int facilityId
+            @Path("providerId") int providerId
     );
 
-    @POST("facilities/{facilityId}/identification_events")
+    @GET("providers/{providerId}/billables")
+    Call<List<Billable>> billables(
+            @Header("If-Modified-Since") String lastModified,
+            @Path("providerId") int providerId
+    );
+
+    @POST("providers/{providerId}/identification_events")
     Call<IdentificationEvent> syncIdentificationEvent(
             @Header("Authorization") String tokenAuthorization,
-            @Path("facilityId") int facilityId,
+            @Path("providerId") int providerId,
             @Body IdentificationEvent unsyncedEvent
+    );
+
+    @POST("providers/{providerId}/encounters")
+    Call<Encounter> syncEncounter(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("providerId") int providerId,
+            @Body Encounter unsyncedEncounter
     );
 }

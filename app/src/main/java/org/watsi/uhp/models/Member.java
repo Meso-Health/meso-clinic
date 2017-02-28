@@ -100,12 +100,21 @@ public class Member extends AbstractModel {
         return this.mFullName;
     }
 
+    public void setId(UUID id) { this.mId = id; }
+
     public UUID getId() {
         return mId;
     }
 
     public String getCardId() {
         return mCardId;
+    }
+
+    public String getFormattedCardId() {
+        if (getCardId() == null) {
+            return "NO CARD ID";
+        }
+        return getCardId();
     }
 
     public void setCardId(String cardId) {
@@ -120,12 +129,28 @@ public class Member extends AbstractModel {
         this.mAge = age;
     }
 
+    public String getFormattedAge() {
+        if (getAge() == 1) {
+            return "1 year";
+        } else {
+            return getAge() + " years";
+        }
+    }
+
     public GenderEnum getGender() {
         return mGender;
     }
 
     public void setGender(GenderEnum gender) {
         this.mGender = gender;
+    }
+
+    public String getFormattedGender() {
+        if (getGender() == GenderEnum.M) {
+            return "Male";
+        } else {
+            return "Female";
+        }
     }
 
     public byte[] getPhoto() {

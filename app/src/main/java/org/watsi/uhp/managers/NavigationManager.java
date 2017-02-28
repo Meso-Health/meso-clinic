@@ -1,19 +1,17 @@
 package org.watsi.uhp.managers;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.rollbar.android.Rollbar;
+
 import org.watsi.uhp.R;
-import org.watsi.uhp.api.TokenInterceptor;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.ClinicNumberFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
@@ -28,9 +26,15 @@ import org.watsi.uhp.models.IdentificationEvent;
 public class NavigationManager {
 
     private AppCompatActivity mActivity;
+    private FragmentProvider mFragmentProvider;
+
+    public NavigationManager(Activity activity, FragmentProvider fragmentProvider) {
+        this.mActivity = (AppCompatActivity) activity;
+        this.mFragmentProvider = fragmentProvider;
+    }
 
     public NavigationManager(Activity activity) {
-        this.mActivity = (AppCompatActivity) activity;
+        this(activity, new FragmentProvider());
     }
 
     private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
@@ -75,27 +79,23 @@ public class NavigationManager {
     }
 
     public void setBarcodeFragment() {
-        setFragment(new BarcodeFragment());
+        setFragment(mFragmentProvider.createFragment(BarcodeFragment.class));
     }
 
     public void setSearchMemberFragment() {
-        setFragment(new SearchMemberFragment());
-    }
-
-    public void setClinicNumberFragment() {
-        setFragment(new ClinicNumberFragment());
+        setFragment(mFragmentProvider.createFragment(SearchMemberFragment.class));
     }
 
     public void setEncounterFragment() {
-        setFragment(new EncounterFragment());
+        setFragment(mFragmentProvider.createFragment(EncounterFragment.class));
     }
 
     public void setReceiptFragment() {
-        setFragment(new ReceiptFragment());
+        setFragment(mFragmentProvider.createFragment(ReceiptFragment.class));
     }
 
     public void setAddNewBillableFragment() {
-        setFragment(new AddNewBillableFragment());
+        setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class));
     }
 
     public void setLoginFragment() {
@@ -105,5 +105,16 @@ public class NavigationManager {
     public void logout() {
         ConfigManager.setLoggedInUserToken(null, mActivity.getApplicationContext());
         setLoginFragment();
+    }
+
+    public static class FragmentProvider {
+        public Fragment createFragment(Class<? extends Fragment> clazz) {
+            try {
+                return clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                Rollbar.reportException(e);
+                return null;
+            }
+        }
     }
 }

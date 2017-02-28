@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -23,6 +24,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import java.util.HashMap;
 import java.util.Map;
 
+import me.philio.pinentry.PinEntryView;
 import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
@@ -33,10 +35,10 @@ public class LoginFragment extends Fragment {
         setHasOptionsMenu(true);
         getActivity().invalidateOptionsMenu();
 
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        final View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         final EditText usernameView = (EditText) view.findViewById(R.id.login_username);
-        final EditText passwordView = (EditText) view.findViewById(R.id.login_password);
+        final PinEntryView passwordView = (PinEntryView) view.findViewById(R.id.login_password);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
 
         TextWatcher watcher = new LoginTextWatcher(usernameView, passwordView, loginButton);
@@ -49,7 +51,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 usernameView.clearFocus();
                 passwordView.clearFocus();
-                KeyboardManager.hideKeyboard(getContext());
+                KeyboardManager.hideKeyboard(view, getContext());
                 final String username = usernameView.getText().toString();
                 final String password = passwordView.getText().toString();
                 final ProgressDialog spinner = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
@@ -95,16 +97,18 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        KeyboardManager.focusAndShowKeyboard(usernameView, getContext());
+
         return view;
     }
 
     private class LoginTextWatcher implements TextWatcher {
 
         private EditText usernameEdit;
-        private EditText passwordEdit;
+        private PinEntryView passwordEdit;
         private Button loginButton;
 
-        private LoginTextWatcher(EditText usernameEdit, EditText passwordEdit, Button loginButton) {
+        private LoginTextWatcher(EditText usernameEdit, PinEntryView passwordEdit, Button loginButton) {
             this.usernameEdit = usernameEdit;
             this.passwordEdit = passwordEdit;
             this.loginButton = loginButton;

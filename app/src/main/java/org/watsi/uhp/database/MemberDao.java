@@ -120,8 +120,8 @@ public class MemberDao {
                 "   WHERE accepted = 1\n" +
                 "   GROUP BY member_id\n" +
                 ") last_identifications on last_identifications.member_id = members.id\n" +
-                "LEFT OUTER JOIN encounters ON encounters.identification_id = last_identifications.id\n" +
-                "WHERE encounters.identification_id IS NULL";
+                "LEFT OUTER JOIN encounters ON encounters.identification_event_id = last_identifications.id\n" +
+                "WHERE encounters.identification_event_id IS NULL";
 
         GenericRawResults<String> rawResults =
                 getInstance().getMemberDao().queryRaw(rawQuery,
@@ -142,6 +142,7 @@ public class MemberDao {
             SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
+                .orderBy(Member.FIELD_NAME_AGE, false)
                 .where()
                 .eq(Member.FIELD_NAME_HOUSEHOLD_ID, householdId)
                 .and()

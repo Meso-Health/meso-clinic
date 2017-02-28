@@ -2,11 +2,14 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.table.TableUtils;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,11 +49,24 @@ public class BillableDao {
     }
 
     public static void create(Billable billable) throws SQLException {
+        billable.setCreatedAt(Clock.getCurrentTime());
         getInstance().getBillableDao().create(billable);
     }
 
     public static void create(List<Billable> billables) throws SQLException {
+        Date createdAt = Clock.getCurrentTime();
+        for (Billable billable : billables) {
+            billable.setCreatedAt(createdAt);
+        }
         getInstance().getBillableDao().create(billables);
+    }
+
+    public static void refresh(Billable billable) throws SQLException {
+        getInstance().getBillableDao().refresh(billable);
+    }
+
+    public static void clear() throws SQLException {
+        TableUtils.clearTable(getInstance().getBillableDao().getConnectionSource(), Billable.class);
     }
 
     public static Billable findById(UUID id) throws SQLException {
@@ -68,7 +84,7 @@ public class BillableDao {
                 .queryBuilder()
                 .selectColumns(Billable.FIELD_NAME_NAME)
                 .where()
-                .eq(Billable.FIELD_NAME_CATEGORY, Billable.CategoryEnum.DRUGS)
+                .eq(Billable.FIELD_NAME_TYPE, Billable.TypeEnum.DRUG)
                 .prepare();
 
         List<Billable> allDrugs = getInstance().getBillableDao().query(pq);
@@ -92,9 +108,9 @@ public class BillableDao {
         return topMatchingDrugs;
     }
 
-    public static List<Billable> getBillablesByCategory(Billable.CategoryEnum category) throws SQLException {
+    public static List<Billable> getBillablesByCategory(Billable.TypeEnum category) throws SQLException {
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(Billable.FIELD_NAME_CATEGORY, category);
+        queryMap.put(Billable.FIELD_NAME_TYPE, category);
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 }
