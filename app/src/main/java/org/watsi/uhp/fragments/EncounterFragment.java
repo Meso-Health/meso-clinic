@@ -46,7 +46,9 @@ public class EncounterFragment extends Fragment {
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.encounter_fragment_label);
+        String currentMemberName = ((MainActivity)getActivity()).getCurrentEncounter().getMember().getFullName();
+
+        getActivity().setTitle(currentMemberName);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
