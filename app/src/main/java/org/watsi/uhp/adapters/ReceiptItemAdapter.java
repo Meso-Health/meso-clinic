@@ -42,7 +42,6 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
 
         if (encounterItem != null) {
             final Billable billable = encounterItem.getBillable();
-            final int quantity = encounterItem.getQuantity();
 
             viewHolder.billableDetails.setText(billable.toString());
 

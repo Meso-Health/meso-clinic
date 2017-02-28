@@ -151,7 +151,7 @@ public class DetailFragment extends Fragment {
                     MainActivity activity = (MainActivity) getActivity();
 
                     new NavigationManager(activity).setDetailFragment(
-                            String.valueOf(member.getId()),
+                            member.getId().toString(),
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
                             String.valueOf(mMember.getId())
                     );
