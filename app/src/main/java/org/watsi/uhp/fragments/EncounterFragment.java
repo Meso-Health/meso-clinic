@@ -235,19 +235,17 @@ public class EncounterFragment extends Fragment {
                     Billable.FIELD_NAME_ID
             };
             MatrixCursor cursor = new MatrixCursor(cursorColumns);
-            if (query.length() > 2) {
-                try {
-                    for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
-                        cursor.addRow(new Object[] {
-                                billable.getId().getMostSignificantBits(),
-                                billable.getName(),
-                                billable.dosageDetails(),
-                                billable.getId().toString()
-                        });
-                    }
-                } catch (SQLException e) {
-                    Rollbar.reportException(e);
+            try {
+                for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
+                    cursor.addRow(new Object[] {
+                            billable.getId().getMostSignificantBits(),
+                            billable.getName(),
+                            billable.dosageDetails(),
+                            billable.getId().toString()
+                    });
                 }
+            } catch (SQLException e) {
+                Rollbar.reportException(e);
             }
 
             return new SimpleCursorAdapter(
