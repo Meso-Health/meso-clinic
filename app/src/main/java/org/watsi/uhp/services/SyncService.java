@@ -12,9 +12,11 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -40,14 +42,9 @@ public class SyncService extends Service {
             public void run() {
                 while(true){
                     try {
-                        List<IdentificationEvent> events = IdentificationEventDao.unsynced();
-                        if (events.size() > 0) {
-                            syncIdentificationEvents(events);
-                        }
-                        List<Encounter> encounters = EncounterDao.unsynced();
-                        if (encounters.size() > 0) {
-                            syncEncounters(encounters);
-                        }
+                        syncIdentificationEvents(IdentificationEventDao.unsynced());
+                        syncEncounters(EncounterDao.unsynced());
+                        syncMembers(MemberDao.unsynced());
                     } catch (IOException | SQLException | IllegalStateException e) {
                         Rollbar.reportException(e);
                     }
@@ -63,13 +60,12 @@ public class SyncService extends Service {
     }
 
     private void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
-        int providerId = ConfigManager.getProviderId(getApplicationContext());
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
             String tokenAuthorizationString = "Token " + event.getToken();
             Call<IdentificationEvent> request =
                     ApiService.requestBuilder(getApplicationContext())
-                            .syncIdentificationEvent(tokenAuthorizationString, providerId, event);
+                            .syncIdentificationEvent(tokenAuthorizationString, mProviderId, event);
             Response<IdentificationEvent> response = request.execute();
             if (response.isSuccessful()) {
                 event.setSynced(true);
@@ -101,6 +97,20 @@ public class SyncService extends Service {
                 reportParams.put("encounter_id", encounter.getId().toString());
                 reportParams.put("member_id", encounter.getMember().getId().toString());
                 Rollbar.reportMessage("Failed to sync encounter", "warning", reportParams);
+            }
+        }
+    }
+
+    private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
+        for (Member member : unsyncedMembers) {
+            Response<Member> response = member.formatPatchRequest(getApplicationContext()).execute();
+            if (response.isSuccessful()) {
+                member.setSynced(true);
+                MemberDao.update(member);
+            } else {
+                Map<String,String> reportParams = new HashMap<>();
+                reportParams.put("member_id", member.getId().toString());
+                Rollbar.reportMessage("Failed to sync member", "warning", reportParams);
             }
         }
     }

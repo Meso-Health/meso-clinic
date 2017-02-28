@@ -1,5 +1,6 @@
 package org.watsi.uhp.models;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -11,6 +12,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.api.ApiService;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -283,5 +290,33 @@ public class Member extends SyncableModel {
         Member otherMember = (Member) o;
 
         return getId().equals(otherMember.getId());
+    }
+
+    public Call<Member> formatPatchRequest(Context context) {
+        String tokenAuthorizationString = "Token " + getToken();
+        RequestBody memberPhotoRequestBody =
+                RequestBody.create(MediaType.parse("image/jpg"), getPhoto());
+        MultipartBody.Part memberPhoto =
+                MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, memberPhotoRequestBody);
+        RequestBody idPhotoRequestBody =
+                RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
+        MultipartBody.Part idPhoto =
+                MultipartBody.Part.createFormData(Member.FIELD_NAME_NATIONAL_ID_PHOTO, null, idPhotoRequestBody);
+        String fingerprintGuid = "";
+        if (getFingerprintsGuid() != null) {
+            fingerprintGuid = getFingerprintsGuid().toString();
+        }
+        String phoneNumber = "";
+        if (getPhoneNumber() != null) {
+            phoneNumber = getPhoneNumber();
+        }
+        return ApiService.requestBuilder(context).syncMember(
+                tokenAuthorizationString,
+                getId().toString(),
+                RequestBody.create(MultipartBody.FORM, phoneNumber),
+                RequestBody.create(MultipartBody.FORM, fingerprintGuid),
+                memberPhoto,
+                idPhoto
+        );
     }
 }

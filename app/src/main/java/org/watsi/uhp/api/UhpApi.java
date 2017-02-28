@@ -7,11 +7,16 @@ import org.watsi.uhp.models.Member;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface UhpApi {
@@ -43,5 +48,16 @@ public interface UhpApi {
             @Header("Authorization") String tokenAuthorization,
             @Path("providerId") int providerId,
             @Body Encounter unsyncedEncounter
+    );
+
+    @Multipart
+    @PATCH("members/{memberId}")
+    Call<Member> syncMember(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("memberId") String memberId,
+            @Part(Member.FIELD_NAME_PHONE_NUMBER) RequestBody phoneNum,
+            @Part(Member.FIELD_NAME_FINGERPRINTS_GUID) RequestBody fingerprintGuid,
+            @Part MultipartBody.Part memberPhoto,
+            @Part MultipartBody.Part idPhoto
     );
 }
