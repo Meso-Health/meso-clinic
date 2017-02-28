@@ -14,9 +14,6 @@ import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
-import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
-import org.watsi.uhp.fragments.EnrollmentPhotosFragment;
-import org.watsi.uhp.fragments.EnrollmentQuestionsFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -115,33 +112,6 @@ public class NavigationManagerTest {
         addsToBackStackButDoesNotPopBackStack(fragment);
     }
 
-    @Test
-    public void setEnrollmentQuestionsFragment() throws Exception {
-        EnrollmentQuestionsFragment fragment = mock(EnrollmentQuestionsFragment.class);
-        when(mockFragmentProvider.createFragment(EnrollmentQuestionsFragment.class)).thenReturn(fragment);
-
-        navMgr.setEnrollmentQuestionsFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setEnrollmentPhotosFragment() throws Exception {
-        EnrollmentPhotosFragment fragment = mock(EnrollmentPhotosFragment.class);
-        when(mockFragmentProvider.createFragment(EnrollmentPhotosFragment.class)).thenReturn(fragment);
-
-        navMgr.setEnrollmentPhotosFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setEnrollmentFingerprintFragment() throws Exception {
-        EnrollmentFingerprintFragment fragment = mock(EnrollmentFingerprintFragment.class);
-        when(mockFragmentProvider.createFragment(EnrollmentFingerprintFragment.class)).thenReturn(fragment);
-
-        navMgr.setEnrollmentFingerprintFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
     private void addsToBackStackButDoesNotPopBackStack(Fragment fragment) {
         verify(mockFragmentManager, never()).popBackStack(anyString(), anyInt());
         verify(mockFragmentTransaction).addToBackStack(null);
@@ -151,6 +121,5 @@ public class NavigationManagerTest {
                 null
         );
         verify(mockFragmentTransaction).commit();
-
     }
 }

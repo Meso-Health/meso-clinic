@@ -32,6 +32,7 @@ import org.watsi.uhp.services.SyncService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                     intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
 
             if (memberId != null) {
-                new NavigationManager(this).setDetailFragment(memberId, idMethod, null);
+                new NavigationManager(this)
+                        .setDetailFragment(UUID.fromString(memberId), idMethod, null);
             }
         }
     }

@@ -115,7 +115,8 @@ public class DetailFragment extends Fragment {
             enrollButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new NavigationManager(getActivity()).setEnrollmentQuestionsFragment();
+                    new NavigationManager(getActivity())
+                            .setEnrollmentQuestionsFragment(mMember.getId());
                 }
             });
         }
@@ -148,9 +149,9 @@ public class DetailFragment extends Fragment {
                     MainActivity activity = (MainActivity) getActivity();
 
                     new NavigationManager(activity).setDetailFragment(
-                            String.valueOf(member.getId()),
+                            member.getId(),
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            String.valueOf(mMember.getId())
+                            mMember.getId()
                     );
                 }
             });

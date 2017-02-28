@@ -34,6 +34,8 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_GENDER = "gender";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
+    public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
+    public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
     public static final String FIELD_NAME_ABSENTEE = "absentee";
 
@@ -71,6 +73,14 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
+
+    @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO, dataType = DataType.BYTE_ARRAY)
+    private byte[] mNationalIdPhoto;
+
+    @Expose
+    @SerializedName(FIELD_NAME_NATIONAL_ID_PHOTO_URL)
+    @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO_URL)
+    private String mNationalIdPhotoUrl;
 
     @Expose
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
@@ -147,6 +157,22 @@ public class Member extends AbstractModel {
 
     public String getPhotoUrl() {
         return mPhotoUrl;
+    }
+
+    public byte[] getNationalIdPhoto() {
+        return mNationalIdPhoto;
+    }
+
+    public void setNationalIdPhoto(byte[] nationalIdPhoto) {
+        this.mNationalIdPhoto = nationalIdPhoto;
+    }
+
+    public String getNationalIdPhotoUrl() {
+        return mNationalIdPhotoUrl;
+    }
+
+    public void setNationalIdPhotoUrl(String nationalIdPhotoUrl) {
+        this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
     }
 
     public void setHouseholdId(UUID householdId) {

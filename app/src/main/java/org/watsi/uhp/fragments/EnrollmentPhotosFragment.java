@@ -15,8 +15,14 @@ import android.widget.ImageView;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.UUID;
 
 public class EnrollmentPhotosFragment extends Fragment {
 
@@ -28,15 +34,22 @@ public class EnrollmentPhotosFragment extends Fragment {
     private Member mMember;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.enrollment_photos_label);
+        try {
+            mMember = MemberDao.findById(UUID.fromString(getArguments().getString("memberId")));
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+        }
+
         View view = inflater.inflate(R.layout.fragment_enrollment_photos, container, false);
 
         Button continueBtn = (Button) view.findViewById(R.id.enrollment_photos_save_button);
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setEnrollmentFingerprintFragment();
+                new NavigationManager(getActivity())
+                        .setEnrollmentFingerprintFragment(mMember.getId());
             }
         });
 
@@ -58,14 +71,25 @@ public class EnrollmentPhotosFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ImageView imageView = (requestCode == TAKE_MEMBER_PHOTO_INTENT) ?
+                mMemberPhotoImageView : mIdPhotoImageView;
+
+        Bitmap photo = (Bitmap) data.getExtras().get("data");
+        imageView.setImageBitmap(photo);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
         if (requestCode == TAKE_MEMBER_PHOTO_INTENT) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            mMemberPhotoImageView.setImageBitmap(photo);
-        } else if (requestCode == TAKE_ID_PHOTO_INTENT) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            mIdPhotoImageView.setImageBitmap(photo);
+            mMember.setPhoto(byteArray);
         } else {
-            Rollbar.reportMessage("Unknown activity result in EnrollmentPhotosFragment: " + requestCode);
+            mMember.setNationalIdPhoto(byteArray);
+        }
+        try {
+            stream.close();
+        } catch (IOException e) {
+            Rollbar.reportException(e);
         }
     }
 
