@@ -90,9 +90,9 @@ public class DetailFragment extends Fragment {
 
     private void setPatientCard() {
         mMemberName.setText(mMember.getFullName());
-        mMemberAge.setText("Age - " + String.valueOf(mMember.getAge()));
-        mMemberGender.setText(String.valueOf(mMember.getGender()));
-        mMemberCardId.setText(String.valueOf(mMember.getFormattedCardId()));
+        mMemberAge.setText(mMember.getFormattedAge());
+        mMemberGender.setText(mMember.getFormattedGender());
+        mMemberCardId.setText(mMember.getFormattedCardId());
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         if (photoBitmap != null) {
             mMemberPhoto.setImageBitmap(photoBitmap);
