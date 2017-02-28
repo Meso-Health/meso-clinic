@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private void startServices() {
         startService(new Intent(this, SyncService.class));
         startService(new Intent(this, FetchService.class));
-        startService(new Intent(this, DownloadMemberPhotosService.class));
+//        startService(new Intent(this, DownloadMemberPhotosService.class));
     }
 
     private void setupToolbar() {

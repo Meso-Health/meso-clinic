@@ -161,12 +161,28 @@ public class Member extends SyncableModel {
         this.mAge = age;
     }
 
+    public String getFormattedAge() {
+        if (getAge() == 1) {
+            return "1 year";
+        } else {
+            return getAge() + " years";
+        }
+    }
+
     public GenderEnum getGender() {
         return mGender;
     }
 
     public void setGender(GenderEnum gender) {
         this.mGender = gender;
+    }
+
+    public String getFormattedGender() {
+        if (getGender() == GenderEnum.M) {
+            return "Male";
+        } else {
+            return "Female";
+        }
     }
 
     public byte[] getPhoto() {

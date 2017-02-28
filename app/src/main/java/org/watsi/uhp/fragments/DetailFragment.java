@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,12 +36,11 @@ public class DetailFragment extends Fragment {
 
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
-    private Member mThroughMember;
+    private Member mThroughMember = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.detail_fragment_label);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -54,8 +52,6 @@ public class DetailFragment extends Fragment {
             mMember = MemberDao.findById(UUID.fromString(memberId));
             if (throughMemberId != null) {
                 mThroughMember = MemberDao.findById(UUID.fromString(throughMemberId));
-            } else {
-                mThroughMember = null;
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -72,14 +68,10 @@ public class DetailFragment extends Fragment {
     }
 
     private void setPatientCard(View detailView) {
-
         ((TextView) detailView.findViewById(R.id.member_name)).setText(mMember.getFullName());
-        ((TextView) detailView.findViewById(R.id.member_age))
-                .setText("Age - " + String.valueOf(mMember.getAge()));
-        ((TextView) detailView.findViewById(R.id.member_gender))
-                .setText(String.valueOf(mMember.getGender()));
-        ((TextView) detailView.findViewById(R.id.member_card_id))
-                .setText(String.valueOf(mMember.getFormattedCardId()));
+        ((TextView) detailView.findViewById(R.id.member_age)).setText(mMember.getFormattedAge());
+        ((TextView) detailView.findViewById(R.id.member_gender)).setText(mMember.getFormattedGender());
+        ((TextView) detailView.findViewById(R.id.member_card_id)).setText(mMember.getFormattedCardId());
 
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         ImageView memberPhoto = (ImageView) detailView.findViewById(R.id.member_photo);
