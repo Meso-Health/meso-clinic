@@ -1,6 +1,7 @@
 package org.watsi.uhp.api;
 
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -35,5 +36,12 @@ public interface UhpApi {
             @Header("Authorization") String tokenAuthorization,
             @Path("providerId") int providerId,
             @Body IdentificationEvent unsyncedEvent
+    );
+
+    @POST("providers/{providerId}/encounters")
+    Call<Encounter> syncEncounter(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("providerId") int providerId,
+            @Body Encounter unsyncedEncounter
     );
 }

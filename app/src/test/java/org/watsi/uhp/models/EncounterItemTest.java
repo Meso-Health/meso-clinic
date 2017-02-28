@@ -1,17 +1,16 @@
 package org.watsi.uhp.models;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
-public class LineItemTest {
+public class EncounterItemTest {
 
-    private LineItem lineItem;
+    private EncounterItem encounterItem;
 
     @Before
     public void setup() {
-        lineItem = new LineItem();
+        encounterItem = new EncounterItem();
     }
 
 }

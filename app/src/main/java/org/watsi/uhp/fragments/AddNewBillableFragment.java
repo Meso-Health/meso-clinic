@@ -16,7 +16,7 @@ import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 public class AddNewBillableFragment extends Fragment {
 
@@ -101,14 +101,15 @@ public class AddNewBillableFragment extends Fragment {
                     billable.setName(nameField.getText().toString());
                     billable.setPrice(Integer.parseInt(priceField.getText().toString()));
                     billable.setType(Billable.TypeEnum.UNSPECIFIED);
+                    billable.setCreatedDuringEncounter(true);
 
-                    LineItem lineItem = new LineItem();
-                    lineItem.setBillable(billable);
+                    EncounterItem encounterItem = new EncounterItem();
+                    encounterItem.setBillable(billable);
 
                     KeyboardManager.hideKeyboard(view, getContext());
 
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.getCurrentLineItems().add(lineItem);
+                    activity.getCurrentLineItems().add(encounterItem);
                     new NavigationManager(activity).setEncounterFragment();
                 }
             }
