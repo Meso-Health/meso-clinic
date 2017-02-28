@@ -11,6 +11,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.rollbar.android.Rollbar;
 
@@ -30,6 +31,7 @@ public class SearchMemberFragment extends Fragment {
 
     private SearchView mMemberSearch;
     private ListView mSearchList;
+    private TextView mNoSearchResults;
     private RelativeLayout mLoadingPanel;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class SearchMemberFragment extends Fragment {
 
         mMemberSearch = (SearchView) view.findViewById(R.id.member_search);
         mSearchList = (ListView) view.findViewById(R.id.member_search_results);
+        mNoSearchResults = (TextView) view.findViewById(R.id.member_no_search_results_text);
         mLoadingPanel = (RelativeLayout) view.findViewById(R.id.loading_panel);
 
         setMemberSearch();
@@ -96,6 +99,11 @@ public class SearchMemberFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (matchingMembers.isEmpty()) {
+                                mNoSearchResults.setVisibility(View.VISIBLE);
+                            } else {
+                                mNoSearchResults.setVisibility(View.GONE);
+                            }
                             ListAdapter adapter = new MemberAdapter(getContext(), matchingMembers, false);
                             mSearchList.setAdapter(adapter);
                             mSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

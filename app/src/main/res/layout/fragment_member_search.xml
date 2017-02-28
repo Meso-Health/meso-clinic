@@ -25,6 +25,16 @@
             android:indeterminate="true" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/member_no_search_results_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/member_no_search_results_text"
+        android:textAlignment="center"
+        android:paddingTop="16dp"
+        android:textSize="18sp"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@+id/member_search_results"
         android:layout_width="match_parent"
