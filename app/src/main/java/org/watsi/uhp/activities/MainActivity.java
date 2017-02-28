@@ -37,8 +37,6 @@ import org.watsi.uhp.services.SyncService;
 import java.sql.SQLException;
 import java.util.List;
 
-<<<<<<<HEAD
-
 public class MainActivity extends AppCompatActivity {
 
     private final Encounter mCurrentEncounter = new Encounter();
