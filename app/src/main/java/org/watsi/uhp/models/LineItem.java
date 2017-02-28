@@ -30,6 +30,11 @@ public class LineItem extends AbstractModel {
         super();
     }
 
+    public LineItem(Billable billable, int quantity) {
+        setBillable(billable);
+        setQuantity(quantity);
+    }
+
     public Encounter getEncounter() {
         return mEncounter;
     }

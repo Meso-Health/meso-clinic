@@ -1,16 +1,19 @@
 package org.watsi.uhp.api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.models.User;
 
 import java.io.IOException;
 
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -20,14 +23,22 @@ public class ApiService {
 
     private static UhpApi instance;
 
-    public static synchronized UhpApi requestBuilder(Context context) {
+    public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
-            httpClient.authenticator(new TokenAuthenticator(context));
+            httpClient.addNetworkInterceptor(new TokenInterceptor(context));
+            String apiHost = ConfigManager.getApiHost(context);
+            if (apiHost == null) {
+                throw new IllegalStateException("API hostname not configured");
+            }
+            Gson gson = new GsonBuilder()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .setDateFormat(Clock.ISO_DATE_FORMAT)
+                    .create();
             Retrofit builder = new Retrofit.Builder()
-                    .baseUrl(ConfigManager.getApiHost(context))
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(apiHost)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build())
                     .build();
             instance = builder.create(UhpApi.class);
@@ -36,28 +47,23 @@ public class ApiService {
     }
 
     public static retrofit2.Response login(String username, String password, Context context) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.authenticator(new BasicAuthenticator(username, password));
-        Retrofit builder = new Retrofit.Builder()
+        UhpApi api = new Retrofit.Builder()
                 .baseUrl(ConfigManager.getApiHost(context))
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build();
-        UhpApi api = builder.create(UhpApi.class);
-        Call<AuthenticationToken> request = api.getAuthToken();
+                .build()
+                .create(UhpApi.class);
+        Call<AuthenticationToken> request = api.getAuthToken(Credentials.basic(username, password));
         try {
             retrofit2.Response<AuthenticationToken> response = request.execute();
             if (response.isSuccessful()) {
                 Log.d("UHP", "got auth token");
                 String token = response.body().getToken();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(TokenAuthenticator.TOKEN_PREFERENCES_KEY, token);
-                editor.apply();
+                ConfigManager.setLoggedInUserToken(token, context);
+                User user = response.body().getUser();
+                Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
             }
             return response;
         } catch (IOException | IllegalStateException e) {
-            // TODO: starts a loop if it gets here
             Rollbar.reportException(e);
         }
         return null;

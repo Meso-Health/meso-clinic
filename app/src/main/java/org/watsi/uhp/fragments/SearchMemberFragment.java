@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
@@ -35,8 +34,6 @@ public class SearchMemberFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        mMemberSearch.requestFocus();
-        KeyboardManager.hideKeyboard(getContext());
+        KeyboardManager.focusAndForceShowKeyboard(mMemberSearch, getContext());
     }
 }

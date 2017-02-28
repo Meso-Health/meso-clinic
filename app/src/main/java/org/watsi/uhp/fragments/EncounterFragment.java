@@ -24,6 +24,8 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.KeyboardManager;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
 
@@ -41,7 +43,6 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private Button continueToReceiptButton;
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,12 +55,12 @@ public class EncounterFragment extends Fragment {
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
-        continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
+        Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setContinueToReceiptButton();
+        setContinueToReceiptButton(continueToReceiptButton);
         setAddBillableLink();
 
         return view;
@@ -68,8 +69,8 @@ public class EncounterFragment extends Fragment {
     private void setCategorySpinner() {
         ArrayList<Object> categories = new ArrayList<>();
         categories.add(getContext().getString(R.string.prompt_category));
-        categories.addAll(Arrays.asList(Billable.CategoryEnum.values()));
-        categories.remove(Billable.CategoryEnum.UNSPECIFIED);
+        categories.addAll(Arrays.asList(Billable.TypeEnum.values()));
+        categories.remove(Billable.TypeEnum.UNSPECIFIED);
 
         ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
@@ -88,7 +89,7 @@ public class EncounterFragment extends Fragment {
         billableSearch.setQueryHint(getActivity().getString(R.string.search_drug_hint));
     }
     
-    private void setBillableSpinner(Billable.CategoryEnum category) {
+    private void setBillableSpinner(Billable.TypeEnum category) {
         ArrayAdapter<Billable> adapter = getEncounterItemAdapter(category);
 
         billableSpinner.setAdapter(adapter);
@@ -97,9 +98,8 @@ public class EncounterFragment extends Fragment {
 
     private void setLineItemList() {
         List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
-        continueToReceiptButton.setVisibility(View.VISIBLE);
 
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems, continueToReceiptButton);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
@@ -107,25 +107,26 @@ public class EncounterFragment extends Fragment {
         addBillableLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setAddNewBillableFragment();
+                new NavigationManager(getActivity()).setAddNewBillableFragment();
             }
         });
     }
 
-    private void setContinueToReceiptButton() {
+    private void setContinueToReceiptButton(Button continueToReceiptButton) {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setReceiptFragment();
+                new NavigationManager(getActivity()).setReceiptFragment();
             }
         });
     }
 
-    private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.CategoryEnum category) {
+    private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
         List<Billable> billables = new ArrayList<>();
         Billable placeholderBillable = new Billable();
-        placeholderBillable.setName(getContext().getString(R.string.prompt_billable));
+        placeholderBillable.setName(getContext().getString(R.string.prompt_billable) + " " +
+                category.toString().toLowerCase() + "...");
         billables.add(placeholderBillable);
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
@@ -142,7 +143,8 @@ public class EncounterFragment extends Fragment {
 
     public static boolean containsId(List<LineItem> list, UUID id) {
         for (LineItem item : list) {
-            if (item.getBillable().getId().equals(id)) {
+            UUID itemId = item.getBillable().getId();
+            if (itemId != null && itemId.equals(id)) {
                 return true;
             }
         }
@@ -162,8 +164,6 @@ public class EncounterFragment extends Fragment {
                 lineItem.setBillable(billable);
 
                 encounterItemAdapter.add(lineItem);
-
-                continueToReceiptButton.setVisibility(View.VISIBLE);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -182,13 +182,15 @@ public class EncounterFragment extends Fragment {
             billableSpinner.setVisibility(View.GONE);
 
             if (position != 0) {
-                Billable.CategoryEnum selectedCategory = (Billable.CategoryEnum) parent
+                Billable.TypeEnum selectedCategory = (Billable.TypeEnum) parent
                         .getItemAtPosition(position);
-                if (selectedCategory.equals(Billable.CategoryEnum.DRUGS)) {
+                if (selectedCategory.equals(Billable.TypeEnum.DRUG)) {
                     billableSearch.setVisibility(View.VISIBLE);
+                    KeyboardManager.focusAndForceShowKeyboard(billableSearch, getContext());
                 } else {
                     setBillableSpinner(selectedCategory);
                     billableSpinner.setVisibility(View.VISIBLE);
+                    billableSpinner.performClick();
                 }
             }
         }
@@ -203,7 +205,7 @@ public class EncounterFragment extends Fragment {
 
         private ArrayAdapter adapter;
 
-        public BillableListener(ArrayAdapter adapter) {
+        BillableListener(ArrayAdapter adapter) {
             this.adapter = adapter;
         }
 
@@ -212,6 +214,7 @@ public class EncounterFragment extends Fragment {
             if (position != 0) {
                 UUID billableId = ((Billable) adapter.getItem(position)).getId();
                 addToLineItemList(billableId);
+                categorySpinner.setSelection(0);
             }
         }
 
@@ -290,6 +293,7 @@ public class EncounterFragment extends Fragment {
             String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
             addToLineItemList(UUID.fromString(uuidString));
             clearDrugSearch();
+            categorySpinner.setSelection(0);
             return true;
         }
     }

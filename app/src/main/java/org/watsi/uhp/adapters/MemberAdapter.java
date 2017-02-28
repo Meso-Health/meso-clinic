@@ -18,8 +18,11 @@ import java.util.List;
 
 public class MemberAdapter extends ArrayAdapter<Member> {
 
-    public MemberAdapter(Context context, List<Member> memberList) {
+    private Boolean showClinicNumber;
+
+    public MemberAdapter(Context context, List<Member> memberList, boolean showClinicNumber) {
         super(context, R.layout.item_member_list, memberList);
+        this.showClinicNumber = showClinicNumber;
     }
 
     @Override
@@ -32,8 +35,14 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.member_name);
+            viewHolder.age_and_gender = (TextView) convertView.findViewById(R.id
+                    .member_age_and_gender);
             viewHolder.card_id = (TextView) convertView.findViewById(R.id.member_card_id);
             viewHolder.photo = (ImageView) convertView.findViewById(R.id.member_photo);
+            if (showClinicNumber) {
+                viewHolder.clinic_number = (TextView) convertView.findViewById(R.id
+                        .member_clinic_number);
+            }
 
             convertView.setTag(viewHolder);
         } else {
@@ -44,7 +53,13 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
         if (member != null) {
             viewHolder.name.setText(member.getFullName());
-            viewHolder.card_id.setText(String.valueOf(member.getCardId()));
+            viewHolder.age_and_gender.setText(String.valueOf(member.getAge()) + " " + String
+                    .valueOf(member.getGender()));
+            viewHolder.card_id.setText(String.valueOf(member.getFormattedCardId()));
+            if (showClinicNumber) {
+                viewHolder.clinic_number.setVisibility(View.VISIBLE);
+                viewHolder.clinic_number.setText(member.getLastIdentification().getFormattedClinicNumber());
+            }
 
             Bitmap photoBitmap = member.getPhotoBitmap();
             if (photoBitmap != null) {
@@ -59,7 +74,9 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
     private static class ViewHolder {
         TextView name;
+        TextView age_and_gender;
         TextView card_id;
+        TextView clinic_number;
         ImageView photo;
     }
 }

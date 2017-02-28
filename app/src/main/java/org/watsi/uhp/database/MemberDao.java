@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.models.Member;
 
@@ -28,7 +27,6 @@ public class MemberDao {
     private static MemberDao instance = new MemberDao();
 
     private Dao<Member, UUID> mMemberDao;
-    private String mLastModifiedAtString;
 
     private static synchronized MemberDao getInstance() {
         return instance;
@@ -49,16 +47,8 @@ public class MemberDao {
         return mMemberDao;
     }
 
-    public static void create(Member member) throws SQLException {
-        getInstance().getMemberDao().create(member);
-    }
-
-    public static void create(List<Member> members) throws SQLException {
-        getInstance().getMemberDao().create(members);
-    }
-
-    public static List<Member> all() throws SQLException {
-        return getInstance().getMemberDao().queryForAll();
+    public static void createOrUpdate(Member member) throws SQLException {
+        getInstance().getMemberDao().createOrUpdate(member);
     }
 
     public static Member findById(UUID id) throws SQLException {
@@ -74,7 +64,7 @@ public class MemberDao {
         return results.get(0);
     }
 
-    public static List<Member> findByName(String name) throws SQLException {
+    private static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_FULL_NAME, name);
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
@@ -82,10 +72,6 @@ public class MemberDao {
 
     public static void update(Member member) throws SQLException {
         getInstance().getMemberDao().update(member);
-    }
-
-    public static void refresh(Member member) throws SQLException {
-        getInstance().getMemberDao().refresh(member);
     }
 
     public static List<Member> withCardIdLike(String query) throws SQLException {
@@ -97,7 +83,7 @@ public class MemberDao {
         return getInstance().getMemberDao().query(pq);
     }
 
-    public static Set<String> allUniqueMemberNames() throws SQLException {
+    private static Set<String> allUniqueMemberNames() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .selectColumns(Member.FIELD_NAME_FULL_NAME)
@@ -131,6 +117,7 @@ public class MemberDao {
                 "INNER JOIN (\n" +
                 "   SELECT id, member_id, max(created_at) \n" +
                 "   FROM identifications\n" +
+                "   WHERE accepted = 1\n" +
                 "   GROUP BY member_id\n" +
                 ") last_identifications on last_identifications.member_id = members.id\n" +
                 "LEFT OUTER JOIN encounters ON encounters.identification_id = last_identifications.id\n" +
@@ -151,16 +138,46 @@ public class MemberDao {
         return members;
     }
 
-    public static void clear() throws SQLException {
-        TableUtils.clearTable(getInstance().getMemberDao().getConnectionSource(), Member.class);
+    public static List<Member> getRemainingHouseholdMembers(UUID householdId, UUID memberId) throws
+            SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .eq(Member.FIELD_NAME_HOUSEHOLD_ID, householdId)
+                .and()
+                .not().eq(Member.FIELD_NAME_ID, memberId)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
     }
 
-    public static String lastModifiedString() throws SQLException {
-        return getInstance().mLastModifiedAtString;
+    public static List<Member> membersWithPhotosToFetch() throws SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .isNull(Member.FIELD_NAME_PHOTO)
+                .and()
+                .isNotNull(Member.FIELD_NAME_PHOTO_URL)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
     }
 
-    public static void setLastModifiedAt(String lastModifiedAtString) {
-        // TODO: better to store somewhere persisted like SharedPreferences
-        getInstance().mLastModifiedAtString = lastModifiedAtString;
+    public static Set<UUID> allMemberIds() throws SQLException {
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .selectColumns(Member.FIELD_NAME_ID)
+                .prepare();
+
+        List<Member> members = getInstance().getMemberDao().query(pq);
+        Set<UUID> ids = new HashSet<>();
+        for (Member m : members) {
+            ids.add(m.getId());
+        }
+        return ids;
+    }
+
+    public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
+        for (UUID id : memberIdsToDelete) {
+            getInstance().getMemberDao().deleteById(id);
+        }
     }
 }

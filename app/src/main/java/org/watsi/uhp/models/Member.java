@@ -1,30 +1,26 @@
 package org.watsi.uhp.models;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.rollbar.android.Rollbar;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import org.watsi.uhp.database.MemberDao;
-
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends AbstractModel {
@@ -38,25 +34,32 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_GENDER = "gender";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
+    public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
+    public static final String FIELD_NAME_ABSENTEE = "absentee";
 
     public enum GenderEnum { M, F }
-    
+
+    @Expose
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
+    @Expose
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID)
     private String mCardId;
 
+    @Expose
     @SerializedName(FIELD_NAME_FULL_NAME)
     @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false)
     private String mFullName;
 
+    @Expose
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
     private int mAge;
 
+    @Expose
     @SerializedName(FIELD_NAME_GENDER)
     @DatabaseField(columnName = FIELD_NAME_GENDER)
     private GenderEnum mGender;
@@ -64,12 +67,23 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
     private byte[] mPhoto;
 
+    @Expose
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
-    @ForeignCollectionField(orderColumnName = Identification.FIELD_NAME_CREATED_AT)
-    private final Collection<Identification> mIdentifications = new ArrayList<>();
+    @Expose
+    @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
+    @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
+    private UUID mHouseholdId;
+
+    @Expose
+    @SerializedName(FIELD_NAME_ABSENTEE)
+    @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
+    private Boolean mAbsentee;
+
+    @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
+    private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
 
     @ForeignCollectionField
     private final Collection<Encounter> mEncounters = new ArrayList<>();
@@ -86,12 +100,21 @@ public class Member extends AbstractModel {
         return this.mFullName;
     }
 
+    public void setId(UUID id) { this.mId = id; }
+
     public UUID getId() {
         return mId;
     }
 
     public String getCardId() {
         return mCardId;
+    }
+
+    public String getFormattedCardId() {
+        if (getCardId() == null) {
+            return "NO CARD ID";
+        }
+        return getCardId();
     }
 
     public void setCardId(String cardId) {
@@ -126,18 +149,34 @@ public class Member extends AbstractModel {
         return mPhotoUrl;
     }
 
-    public Collection<Identification> getIdentifications() {
-        return mIdentifications;
+    public void setHouseholdId(UUID householdId) {
+        this.mHouseholdId = householdId;
     }
 
-    public Identification getLastIdentification() {
-        ArrayList<Identification> allIdentifications = new ArrayList<>(getIdentifications());
-        return allIdentifications.get(allIdentifications.size() -1);
+    public UUID getHouseholdId() {
+        return mHouseholdId;
     }
 
-    public void setIdentifications(Collection<Identification> identifications) {
-        this.mIdentifications.clear();
-        this.mIdentifications.addAll(identifications);
+    public void setAbsentee(boolean absentee) {
+        this.mAbsentee = absentee;
+    }
+
+    public Boolean getAbsentee() {
+        return mAbsentee;
+    }
+
+    public Collection<IdentificationEvent> getIdentificationEvents() {
+        return mIdentificationEvents;
+    }
+
+    public IdentificationEvent getLastIdentification() {
+        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentificationEvents());
+        return allIdentificationEvents.get(allIdentificationEvents.size() -1);
+    }
+
+    public void setIdentifications(Collection<IdentificationEvent> identificationEvents) {
+        this.mIdentificationEvents.clear();
+        this.mIdentificationEvents.addAll(identificationEvents);
     }
     
     public Collection<Encounter> getEncounters() {
@@ -149,43 +188,18 @@ public class Member extends AbstractModel {
         this.mEncounters.addAll(encounters);
     }
 
-    public Target createTarget() {
-        final Member self = this;
-        return new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                setPhoto(stream.toByteArray());
-                 try {
-                     MemberDao.update(self);
-                     stream.close();
-                } catch (SQLException | IOException e) {
-                    Rollbar.reportException(e);
-                }
-            }
+    public void fetchAndSetPhotoFromUrl() throws IOException {
+        Request request = new Request.Builder().url(getPhotoUrl()).build();
+        Response response = new OkHttpClient().newCall(request).execute();
+        InputStream is = response.body().byteStream();
+        DataInputStream dis = new DataInputStream(is);
+        byte[] imgData = new byte[(int) response.body().contentLength()];
+        dis.readFully(imgData);
+        setPhoto(imgData);
 
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                Log.d("UHP", "bitmap failed");
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                // no-op
-            }
-        };
-    }
-
-    public void fetchAndSetPhotoFromUrl(Target target, Context context) throws IOException, SQLException {
-        final Context finalContext = context;
-        final Target finalTarget = target;
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Picasso.with(finalContext).load(getPhotoUrl()).into(finalTarget);
-            }
-        });
+        is.close();
+        dis.close();
+        Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
     }
 
     public Bitmap getPhotoBitmap() {
@@ -194,5 +208,15 @@ public class Member extends AbstractModel {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Member)) return false;
+
+        Member otherMember = (Member) o;
+
+        return getId().equals(otherMember.getId());
     }
 }

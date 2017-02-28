@@ -16,6 +16,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -23,25 +24,24 @@ import java.util.List;
 
 public class CurrentPatientsFragment extends Fragment {
 
-    private Button mNewPatientButton;
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.current_patients_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_current_patients, container, false);
-        mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
+        Button mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
         ListView listView = (ListView) view.findViewById(R.id.current_patients);
+        listView.setEmptyView(view.findViewById(R.id.current_patients_empty_text));
 
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).setBarcodeFragment();
+                new NavigationManager(getActivity()).setBarcodeFragment();
             }
         });
 
         try {
             List<Member> currentPatients = MemberDao.getCheckedInMembers();
-            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients);
+            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients, true);
 
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -50,7 +50,7 @@ public class CurrentPatientsFragment extends Fragment {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
                     activity.setNewEncounter(member);
-                    activity.setClinicNumberFragment();
+                    new NavigationManager(activity).setEncounterFragment();
                 }
             });
         } catch (SQLException e) {

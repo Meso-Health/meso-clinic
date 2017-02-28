@@ -16,12 +16,18 @@
             android:name=".providers.MemberContentProvider"
             android:authorities="org.watsi.uhp.provider.member" />
         <service
-            android:name=".services.RefreshMemberListService"
+            android:name=".services.DownloadMemberPhotosService"
+            android:exported="false" />
+        <service
+            android:name=".services.FetchService"
+            android:exported="false" />
+        <service
+            android:name=".services.SyncService"
             android:exported="false" />
         <activity
-            android:windowSoftInputMode="adjustPan"
             android:name=".activities.MainActivity"
             android:label="@string/main_activity_label"
+            android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

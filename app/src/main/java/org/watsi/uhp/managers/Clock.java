@@ -10,6 +10,7 @@ import java.util.Date;
 public class Clock {
 
     private static Date mStaticTime = null;
+    public static String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ";
 
     public static void setTime(Date time) {
         mStaticTime = time;
