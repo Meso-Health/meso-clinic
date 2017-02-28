@@ -27,7 +27,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -97,9 +97,9 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), encounterItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
@@ -125,7 +125,8 @@ public class EncounterFragment extends Fragment {
         // TODO: check that creation of new adapter each time does not have memory implications
         List<Billable> billables = new ArrayList<>();
         Billable placeholderBillable = new Billable();
-        placeholderBillable.setName(getContext().getString(R.string.prompt_billable));
+        placeholderBillable.setName(getContext().getString(R.string.prompt_billable) + " " +
+                category.toString().toLowerCase() + "...");
         billables.add(placeholderBillable);
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
@@ -140,8 +141,8 @@ public class EncounterFragment extends Fragment {
         );
     }
 
-    public static boolean containsId(List<LineItem> list, UUID id) {
-        for (LineItem item : list) {
+    public static boolean containsId(List<EncounterItem> list, UUID id) {
+        for (EncounterItem item : list) {
             UUID itemId = item.getBillable().getId();
             if (itemId != null && itemId.equals(id)) {
                 return true;
@@ -153,16 +154,16 @@ public class EncounterFragment extends Fragment {
     public void addToLineItemList(UUID billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
-            List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+            List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
-            if (containsId(lineItems, billableId)) {
+            if (containsId(encounterItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), R.string.already_in_list_items,
                         Toast.LENGTH_SHORT).show();
             } else {
-                LineItem lineItem = new LineItem();
-                lineItem.setBillable(billable);
+                EncounterItem encounterItem = new EncounterItem();
+                encounterItem.setBillable(billable);
 
-                encounterItemAdapter.add(lineItem);
+                encounterItemAdapter.add(encounterItem);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -234,19 +235,17 @@ public class EncounterFragment extends Fragment {
                     Billable.FIELD_NAME_ID
             };
             MatrixCursor cursor = new MatrixCursor(cursorColumns);
-            if (query.length() > 2) {
-                try {
-                    for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
-                        cursor.addRow(new Object[] {
-                                billable.getId().getMostSignificantBits(),
-                                billable.getName(),
-                                billable.dosageDetails(),
-                                billable.getId().toString()
-                        });
-                    }
-                } catch (SQLException e) {
-                    Rollbar.reportException(e);
+            try {
+                for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
+                    cursor.addRow(new Object[] {
+                            billable.getId().getMostSignificantBits(),
+                            billable.getName(),
+                            billable.dosageDetails(),
+                            billable.getId().toString()
+                    });
                 }
+            } catch (SQLException e) {
+                Rollbar.reportException(e);
             }
 
             return new SimpleCursorAdapter(

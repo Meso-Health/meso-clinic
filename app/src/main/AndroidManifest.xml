@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:launchMode="singleTop"
         android:theme="@style/main_theme">
-        <provider
-            android:name=".providers.MemberContentProvider"
-            android:authorities="org.watsi.uhp.provider.member" />
         <service
             android:name=".services.DownloadMemberPhotosService"
             android:exported="false" />
@@ -29,16 +26,12 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/main_activity_label"
+            android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.SEARCH" />
-                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable_member" />
         </activity>
     </application>
 </manifest>

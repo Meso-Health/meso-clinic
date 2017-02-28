@@ -18,10 +18,14 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptFragment extends Fragment {
@@ -33,23 +37,25 @@ public class ReceiptFragment extends Fragment {
         getActivity().setTitle(R.string.receipt_fragment_label);
 
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
-        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
         mCreateEncounterButton = (Button) view.findViewById(R.id.create_encounter);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
-        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), lineItems);
+        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), encounterItems);
         listView.setAdapter((ListAdapter) mAdapter);
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
-        priceTextView.setText(Integer.toString(priceTotal(lineItems)) + " UGX");
+
+        DecimalFormat df = new DecimalFormat("#,###,###");
+        priceTextView.setText(df.format(priceTotal(encounterItems)) + " UGX");
 
         setCreateEncounterButton();
         return view;
     }
 
-    private int priceTotal(List<LineItem> lineItems) {
+    private int priceTotal(List<EncounterItem> encounterItems) {
         int sum = 0;
-        for (LineItem item : lineItems) {
+        for (EncounterItem item : encounterItems) {
             sum = sum + (item.getBillable().getPrice() * item.getQuantity());
         }
         return sum;
@@ -62,7 +68,10 @@ public class ReceiptFragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
 
                 try {
-                    EncounterDao.create(activity.getCurrentEncounter());
+                    Encounter encounter = activity.getCurrentEncounter();
+                    encounter.setOccurredAt(Clock.getCurrentTime());
+                    encounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
+                    EncounterDao.create(encounter);
                 } catch (SQLException e) {
                     Rollbar.reportException(e);
                 }

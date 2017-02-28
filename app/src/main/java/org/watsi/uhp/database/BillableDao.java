@@ -4,10 +4,12 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.table.TableUtils;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,11 +49,20 @@ public class BillableDao {
     }
 
     public static void create(Billable billable) throws SQLException {
+        billable.setCreatedAt(Clock.getCurrentTime());
         getInstance().getBillableDao().create(billable);
     }
 
     public static void create(List<Billable> billables) throws SQLException {
+        Date createdAt = Clock.getCurrentTime();
+        for (Billable billable : billables) {
+            billable.setCreatedAt(createdAt);
+        }
         getInstance().getBillableDao().create(billables);
+    }
+
+    public static void refresh(Billable billable) throws SQLException {
+        getInstance().getBillableDao().refresh(billable);
     }
 
     public static void clear() throws SQLException {

@@ -33,12 +33,12 @@ import retrofit2.Response;
 public class FetchService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private int mFacilityId;
+    private int mProviderId;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
-        mFacilityId = ConfigManager.getFacilityId(getApplicationContext());
+        mProviderId = ConfigManager.getProviderId(getApplicationContext());
 
         new Thread(new Runnable() {
             @Override
@@ -65,7 +65,7 @@ public class FetchService extends Service {
     private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
         String lastModifiedTimestamp = ConfigManager.getMemberLastModified(getApplicationContext());
         Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
-                .members(lastModifiedTimestamp, mFacilityId);
+                .members(lastModifiedTimestamp, mProviderId);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             Log.d("UHP", "updating member data");
@@ -112,7 +112,7 @@ public class FetchService extends Service {
     private void fetchBillables() throws IOException, SQLException {
         String lastModifiedTimestamp = ConfigManager.getBillablesLastModified(getApplicationContext());
         Call<List<Billable>> request = ApiService.requestBuilder(getApplicationContext())
-                .billables(lastModifiedTimestamp, mFacilityId);
+                .billables(lastModifiedTimestamp, mProviderId);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             Log.d("UHP", "updating billables data");

@@ -1,7 +1,6 @@
 package org.watsi.uhp.activities;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -19,20 +18,20 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,23 +78,9 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            String memberId = intent.getDataString();
-            IdentificationEvent.SearchMethodEnum idMethod = IdentificationEvent.SearchMethodEnum.valueOf(
-                    intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
-
-            if (memberId != null) {
-                new NavigationManager(this)
-                        .setDetailFragment(UUID.fromString(memberId), idMethod, null);
-            }
-        }
-    }
-
     private void setupApp() {
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
-        DatabaseHelper.init(getBaseContext());
+        DatabaseHelper.init(getApplicationContext());
     }
 
     private void setUpLeakCanary() {
@@ -121,17 +106,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setNewEncounter(Member member) {
-        mCurrentEncounter.setMember(member);
-        mCurrentEncounter.setIdentification(member.getLastIdentification());
-        mCurrentEncounter.setLineItems(new ArrayList<LineItem>());
+        try {
+            IdentificationEvent lastIdentification = member.getLastIdentification();
+            mCurrentEncounter.setMember(member);
+            mCurrentEncounter.setIdentificationEvent(lastIdentification);
+            mCurrentEncounter.setEncounterItems(
+                    EncounterItemDao.getDefaultEncounterItems(lastIdentification.getClinicNumberType()));
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+        }
     }
 
     public Encounter getCurrentEncounter() {
         return mCurrentEncounter;
     }
 
-    public List<LineItem> getCurrentLineItems() {
-        return (List<LineItem>) mCurrentEncounter.getLineItems();
+    public List<EncounterItem> getCurrentLineItems() {
+        return (List<EncounterItem>) mCurrentEncounter.getEncounterItems();
     }
 
     @Override

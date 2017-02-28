@@ -25,6 +25,7 @@
 
     <!--SearchMemberFragment-->
     <string name="member_search_fragment_label">Search</string>
+    <string name="member_no_search_results_text">No search results. Please try again.</string>
 
     <!--DetailFragment-->
     <string name="detail_fragment_label">Is this the right person?</string>
@@ -49,7 +50,7 @@
     <string name="current_patients_fragment_label">Select a patient</string>
     <string name="encounter_fragment_label">Enter clinical record items</string>
     <string name="prompt_category">Select a category&#8230;</string>
-    <string name="prompt_billable">Select an item&#8230;</string>
+    <string name="prompt_billable">Select a</string>
     <string name="search_drug_hint">Search drugs</string>
     <string name="already_in_list_items">Already in Items</string>
     <string name="default_billable_quantity">1</string>
