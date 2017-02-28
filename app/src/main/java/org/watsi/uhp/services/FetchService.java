@@ -78,7 +78,7 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                // TODO: request failed
+                Rollbar.reportMessage("Fetch members failed with code: " + response.code());
             }
         }
     }
@@ -137,7 +137,7 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                // TODO: request failed
+                Rollbar.reportMessage("Fetch billables failed with code: " + response.code());
             }
         }
 
