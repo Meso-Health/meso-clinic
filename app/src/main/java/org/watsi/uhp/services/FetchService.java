@@ -33,6 +33,7 @@ import retrofit2.Response;
 public class FetchService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
+    private static int WAIT_FOR_LOGIN_SLEEP_TIME = 60 * 1000; // 1 minute
     private int mProviderId;
 
     @Override
@@ -44,6 +45,15 @@ public class FetchService extends Service {
             @Override
             public void run() {
                 while(true){
+                    if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
+                        try {
+                            Thread.sleep(WAIT_FOR_LOGIN_SLEEP_TIME);
+                            continue;
+                        } catch (InterruptedException e) {
+                            Rollbar.reportException(e);
+                        }
+                    }
+
                     try {
                         fetchNewMemberData();
                         fetchBillables();
