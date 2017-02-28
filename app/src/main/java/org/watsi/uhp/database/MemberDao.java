@@ -142,6 +142,7 @@ public class MemberDao {
             SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
+                .orderBy(Member.FIELD_NAME_AGE, false)
                 .where()
                 .eq(Member.FIELD_NAME_HOUSEHOLD_ID, householdId)
                 .and()
