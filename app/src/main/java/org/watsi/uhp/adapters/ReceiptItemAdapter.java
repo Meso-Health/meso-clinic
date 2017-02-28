@@ -47,9 +47,9 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
             viewHolder.billableDetails.setText(billable.toString());
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
-                viewHolder.billablePriceAndQuantity.setText(priceDecorator(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(Billable.priceDecorator(billable.getPrice()) + " UGX");
             } else {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(encounterItem.getQuantity()) + "  x  " + priceDecorator(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(String.valueOf(encounterItem.getQuantity()) + "  x  " + Billable.priceDecorator(billable.getPrice()) + " UGX");
             }
         }
         return convertView;
@@ -58,12 +58,5 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
     private static class ViewHolder {
         TextView billableDetails;
         TextView billablePriceAndQuantity;
-    }
-
-    private String priceDecorator(int price) {
-        DecimalFormat df = new DecimalFormat("#,###,###");
-        String formattedPrice = df.format(price);
-
-        return formattedPrice;
     }
 }

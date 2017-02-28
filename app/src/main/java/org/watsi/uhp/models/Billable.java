@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Billable.TABLE_NAME)
@@ -140,5 +141,12 @@ public class Billable extends AbstractModel {
         } else {
             return null;
         }
+    }
+
+    public static String priceDecorator(int price) {
+        DecimalFormat df = new DecimalFormat("#,###,###");
+        String formattedPrice = df.format(price);
+
+        return formattedPrice;
     }
 }
