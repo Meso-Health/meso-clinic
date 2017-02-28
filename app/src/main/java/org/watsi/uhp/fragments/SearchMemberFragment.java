@@ -103,7 +103,7 @@ public class SearchMemberFragment extends Fragment {
                         matchingMembers = MemberDao.withCardIdLike(query);
                         idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_ID;
                     } else {
-                        matchingMembers = MemberDao.fuzzySearchMembers(query, 8, 60);
+                        matchingMembers = MemberDao.fuzzySearchMembers(query, 20, 60);
                         idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_NAME;
                     }
 
