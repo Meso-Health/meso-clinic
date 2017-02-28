@@ -121,6 +121,5 @@ public class NavigationManagerTest {
                 null
         );
         verify(mockFragmentTransaction).commit();
-
     }
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 public class ConfigManager {
     private final static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
     private final static String API_HOST = "API_HOST";
+    private final static String SIMPRINTS_API_KEY = "SIMPRINTS_API_KEY";
     private final static String PROVIDER_ID = "PROVIDER_ID";
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "members_last_modified";
     private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billables_last_modified";
@@ -43,6 +44,10 @@ public class ConfigManager {
         } else {
             return Integer.parseInt(providerId);
         }
+    }
+
+    public static String getSimprintsApiKey(Context context) {
+        return readConfig(context).get(SIMPRINTS_API_KEY);
     }
 
     private static String getConfigValue(String key, Context context) {

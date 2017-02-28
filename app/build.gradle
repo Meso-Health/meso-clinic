@@ -33,6 +33,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-vision:9.4.0'
     compile 'me.xdrop:fuzzywuzzy:1.1.6'
     compile 'me.philio:pinentryview:1.0.6'
+    compile 'com.simprints:LibSimprints:1.0.6'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

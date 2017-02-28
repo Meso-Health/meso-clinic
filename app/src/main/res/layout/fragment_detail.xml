@@ -90,7 +90,6 @@
                 android:text="@string/reject_identity" />
 
         </LinearLayout>
-
     </LinearLayout>
 
     <View

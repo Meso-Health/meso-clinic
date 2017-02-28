@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,82 +37,74 @@ public class DetailFragment extends Fragment {
 
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
-    private Member mThroughMember;
-    private TextView mMemberName;
-    private TextView mMemberAge;
-    private TextView mMemberGender;
-    private TextView mMemberCardId;
-    private ImageView mMemberPhoto;
-    private TextView mMemberNotification;
-    private Button mConfirmButton;
-    private Button mRejectButton;
-    private TextView mHouseholdListLabel;
-    private ListView mHouseholdListView;
+    private Member mThroughMember = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.detail_fragment_label);
+        setHasOptionsMenu(true);
+        getActivity().invalidateOptionsMenu();
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
-        String memberId = getArguments().getString("memberId");
+        UUID memberId = UUID.fromString(getArguments().getString("memberId"));
+        ((MainActivity) getActivity()).setMemberId(memberId);
         String throughMemberId = getArguments().getString("throughMemberId");
 
         try {
-            mMember = MemberDao.findById(UUID.fromString(memberId));
+            mMember = MemberDao.findById(memberId);
             if (throughMemberId != null) {
                 mThroughMember = MemberDao.findById(UUID.fromString(throughMemberId));
-            } else {
-                mThroughMember = null;
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
 
-        mMemberName = (TextView) view.findViewById(R.id.member_name);
-        mMemberAge = (TextView) view.findViewById(R.id.member_age);
-        mMemberGender = (TextView) view.findViewById(R.id.member_gender);
-        mMemberCardId = (TextView) view.findViewById(R.id.member_card_id);
-        mMemberPhoto = (ImageView) view.findViewById(R.id.member_photo);
-        mMemberNotification = (TextView) view.findViewById(R.id.member_notification);
-        mConfirmButton = (Button) view.findViewById(R.id.approve_identity);
-        mRejectButton = (Button) view.findViewById(R.id.reject_identity);
-        mHouseholdListLabel = (TextView) view.findViewById(R.id.household_members_label);
-        mHouseholdListView = (ListView) view.findViewById(R.id.household_members);
-
-        setPatientCard();
-        setConfirmButton();
-        setRejectButton();
-        setHouseholdList();
+        setPatientCard(view);
+        setButtons(
+                (Button) view.findViewById(R.id.approve_identity),
+                (Button) view.findViewById(R.id.reject_identity)
+        );
+        setHouseholdList(view);
         return view;
     }
 
-    private void setPatientCard() {
-        mMemberName.setText(mMember.getFullName());
-        mMemberAge.setText(mMember.getFormattedAge());
-        mMemberGender.setText(mMember.getFormattedGender());
-        mMemberCardId.setText(mMember.getFormattedCardId());
+    private void setPatientCard(View detailView) {
+        ((TextView) detailView.findViewById(R.id.member_name)).setText(mMember.getFullName());
+        ((TextView) detailView.findViewById(R.id.member_age)).setText(mMember.getFormattedAge());
+        ((TextView) detailView.findViewById(R.id.member_gender)).setText(mMember.getFormattedGender());
+        ((TextView) detailView.findViewById(R.id.member_card_id)).setText(mMember.getFormattedCardId());
+
         Bitmap photoBitmap = mMember.getPhotoBitmap();
+        ImageView memberPhoto = (ImageView) detailView.findViewById(R.id.member_photo);
         if (photoBitmap != null) {
-            mMemberPhoto.setImageBitmap(photoBitmap);
+            memberPhoto.setImageBitmap(photoBitmap);
         } else {
-            mMemberPhoto.setImageResource(R.drawable.portrait_placeholder);
+            memberPhoto.setImageResource(R.drawable.portrait_placeholder);
         }
+
+        TextView memberNotification = (TextView) detailView.findViewById(R.id.member_notification);
         if (mMember.getAbsentee()) {
-            mMemberNotification.setVisibility(View.VISIBLE);
-            mMemberNotification.setText(R.string.absentee_notification);
+            memberNotification.setVisibility(View.VISIBLE);
+            memberNotification.setText(R.string.absentee_notification);
         } else if (mMember.getCardId() == null) {
-            mMemberNotification.setVisibility(View.VISIBLE);
-            mMemberNotification.setText(R.string.replace_card_notification);
+            memberNotification.setVisibility(View.VISIBLE);
+            memberNotification.setText(R.string.replace_card_notification);
         }
     }
 
-    private void setConfirmButton() {
-        mConfirmButton.setOnClickListener(new View.OnClickListener() {
+    private void setButtons(Button confirmButton, Button rejectButton) {
+        confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openClinicNumberDialog();
+            }
+        });
+        rejectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                completeIdentification(false, null, null);
             }
         });
     }
@@ -124,35 +116,29 @@ public class DetailFragment extends Fragment {
         clinicNumberDialog.setTargetFragment(this, 0);
     }
 
-    private void setRejectButton() {
-        mRejectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                completeIdentification(false, null, null);
-            }
-        });
-    }
+    private void setHouseholdList(View detailView) {
+        TextView householdListLabel = (TextView) detailView.findViewById(R.id.household_members_label);
+        ListView householdListView = (ListView) detailView.findViewById(R.id.household_members);
 
-    private void setHouseholdList() {
         try {
             List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
                     mMember.getHouseholdId(), mMember.getId());
             ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
-            mHouseholdListLabel.setText(String.valueOf(householdSize) + " " +
+            householdListLabel.setText(String.valueOf(householdSize) + " " +
                     getActivity().getString(R.string.household_label));
-            mHouseholdListView.setAdapter(adapter);
-            mHouseholdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            householdListView.setAdapter(adapter);
+            householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
 
                     new NavigationManager(activity).setDetailFragment(
-                            member.getId().toString(),
+                            member.getId(),
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            String.valueOf(mMember.getId())
+                            mMember.getId()
                     );
                 }
             });
@@ -190,5 +176,13 @@ public class DetailFragment extends Fragment {
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (mMember != null && mMember.getAbsentee()) {
+            menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
+        }
     }
 }

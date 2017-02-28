@@ -15,10 +15,16 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.EnrollmentContactInfoFragment;
+import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
+import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
+import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
 import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.models.IdentificationEvent;
+
+import java.util.UUID;
 
 /**
  * Helper class for managing navigation between fragments
@@ -65,17 +71,17 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), "home", false, true);
     }
 
-    public void setDetailFragment(String memberId,
+    public void setDetailFragment(UUID memberId,
                                   IdentificationEvent.SearchMethodEnum idMethod,
-                                  String throughMemberId) {
-        DetailFragment detailFragment = new DetailFragment();
+                                  UUID throughMemberId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId);
-        bundle.putString("throughMemberId", throughMemberId);
+        bundle.putString("memberId", memberId.toString());
         bundle.putString("idMethod", idMethod.toString());
-        detailFragment.setArguments(bundle);
+        if (throughMemberId != null) {
+            bundle.putString("throughMemberId", throughMemberId.toString());
+        }
 
-        setFragment(detailFragment);
+        setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle));
     }
 
     public void setBarcodeFragment() {
@@ -98,6 +104,30 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class));
     }
 
+    public void setEnrollmentContactInfoFragment(UUID memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("memberId", memberId.toString());
+        setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
+    }
+
+    public void setEnrollmentMemberPhotoFragment(UUID memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("memberId", memberId.toString());
+        setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
+    }
+
+    public void setEnrollmentIdPhotoFragment(UUID memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("memberId", memberId.toString());
+        setFragment(mFragmentProvider.createFragment(EnrollmentIdPhotoFragment.class, bundle));
+    }
+
+    public void setEnrollmentFingerprintFragment(UUID memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("memberId", memberId.toString());
+        setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
+    }
+
     public void setLoginFragment() {
         setFragment(new LoginFragment(), null, false, false);
     }
@@ -109,8 +139,16 @@ public class NavigationManager {
 
     public static class FragmentProvider {
         public Fragment createFragment(Class<? extends Fragment> clazz) {
+            return createFragment(clazz, null);
+        }
+
+        public Fragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
             try {
-                return clazz.newInstance();
+                Fragment fragment = clazz.newInstance();
+                if (bundle != null) {
+                    fragment.setArguments(bundle);
+                }
+                return fragment;
             } catch (InstantiationException | IllegalAccessException e) {
                 Rollbar.reportException(e);
                 return null;

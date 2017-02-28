@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.KeyboardManager;
@@ -111,7 +110,7 @@ public class SearchMemberFragment extends Fragment {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     Member member = (Member) parent.getItemAtPosition(position);
                                     new NavigationManager(getActivity()).setDetailFragment(
-                                            member.getId().toString(), idMethod, null);
+                                            member.getId(), idMethod, null);
                                 }
                             });
                             mLoadingPanel.setVisibility(View.GONE);

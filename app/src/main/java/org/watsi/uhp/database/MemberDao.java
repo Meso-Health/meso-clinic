@@ -181,4 +181,10 @@ public class MemberDao {
             getInstance().getMemberDao().deleteById(id);
         }
     }
+
+    public static List<Member> unsynced() throws SQLException {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put(Member.FIELD_NAME_SYNCED, false);
+        return getInstance().getMemberDao().queryForFieldValues(queryMap);
+    }
 }

@@ -1,5 +1,6 @@
 package org.watsi.uhp.models;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -11,6 +12,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.api.ApiService;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,12 +21,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
-public class Member extends AbstractModel {
+public class Member extends SyncableModel {
 
     public static final String TABLE_NAME = "members";
 
@@ -34,8 +41,15 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_GENDER = "gender";
     public static final String FIELD_NAME_PHOTO = "photo";
     public static final String FIELD_NAME_PHOTO_URL = "photo_url";
+    public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
+    public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
     public static final String FIELD_NAME_ABSENTEE = "absentee";
+    public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
+    public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
+
+    public static final int MINIMUM_FINGERPRINT_AGE = 6;
+    public static final int MINIMUM_NATIONAL_ID_AGE = 18;
 
     public enum GenderEnum { M, F }
 
@@ -72,6 +86,14 @@ public class Member extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
     private String mPhotoUrl;
 
+    @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO, dataType = DataType.BYTE_ARRAY)
+    private byte[] mNationalIdPhoto;
+
+    @Expose
+    @SerializedName(FIELD_NAME_NATIONAL_ID_PHOTO_URL)
+    @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO_URL)
+    private String mNationalIdPhotoUrl;
+
     @Expose
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
@@ -81,6 +103,16 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_ABSENTEE)
     @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
     private Boolean mAbsentee;
+
+    @Expose
+    @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
+    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_GUID)
+    private UUID mFingerprintsGuid;
+
+    @Expose
+    @SerializedName(FIELD_NAME_PHONE_NUMBER)
+    @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
+    private String mPhoneNumber;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
@@ -165,6 +197,22 @@ public class Member extends AbstractModel {
         return mPhotoUrl;
     }
 
+    public byte[] getNationalIdPhoto() {
+        return mNationalIdPhoto;
+    }
+
+    public void setNationalIdPhoto(byte[] nationalIdPhoto) {
+        this.mNationalIdPhoto = nationalIdPhoto;
+    }
+
+    public String getNationalIdPhotoUrl() {
+        return mNationalIdPhotoUrl;
+    }
+
+    public void setNationalIdPhotoUrl(String nationalIdPhotoUrl) {
+        this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
+    }
+
     public void setHouseholdId(UUID householdId) {
         this.mHouseholdId = householdId;
     }
@@ -204,6 +252,22 @@ public class Member extends AbstractModel {
         this.mEncounters.addAll(encounters);
     }
 
+    public UUID getFingerprintsGuid() {
+        return mFingerprintsGuid;
+    }
+
+    public void setFingerprintsGuid(UUID fingerprintsGuid) {
+        this.mFingerprintsGuid = fingerprintsGuid;
+    }
+
+    public String getPhoneNumber() {
+        return mPhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.mPhoneNumber = phoneNumber;
+    }
+
     public void fetchAndSetPhotoFromUrl() throws IOException {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
@@ -226,6 +290,14 @@ public class Member extends AbstractModel {
         }
     }
 
+    public boolean shouldCaptureFingerprint() {
+        return getAge() >= Member.MINIMUM_FINGERPRINT_AGE;
+    }
+
+    public boolean shouldCaptureNationalIdPhoto() {
+        return getAge() >= Member.MINIMUM_NATIONAL_ID_AGE;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -234,5 +306,33 @@ public class Member extends AbstractModel {
         Member otherMember = (Member) o;
 
         return getId().equals(otherMember.getId());
+    }
+
+    public Call<Member> formatPatchRequest(Context context) {
+        String tokenAuthorizationString = "Token " + getToken();
+        RequestBody memberPhotoRequestBody =
+                RequestBody.create(MediaType.parse("image/jpg"), getPhoto());
+        MultipartBody.Part memberPhoto =
+                MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, memberPhotoRequestBody);
+        RequestBody idPhotoRequestBody =
+                RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
+        MultipartBody.Part idPhoto =
+                MultipartBody.Part.createFormData(Member.FIELD_NAME_NATIONAL_ID_PHOTO, null, idPhotoRequestBody);
+        String fingerprintGuid = "";
+        if (getFingerprintsGuid() != null) {
+            fingerprintGuid = getFingerprintsGuid().toString();
+        }
+        String phoneNumber = "";
+        if (getPhoneNumber() != null) {
+            phoneNumber = getPhoneNumber();
+        }
+        return ApiService.requestBuilder(context).syncMember(
+                tokenAuthorizationString,
+                getId().toString(),
+                RequestBody.create(MultipartBody.FORM, phoneNumber),
+                RequestBody.create(MultipartBody.FORM, fingerprintGuid),
+                memberPhoto,
+                idPhoto
+        );
     }
 }
