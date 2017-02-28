@@ -72,6 +72,6 @@
     <string name="total"><b>TOTAL</b></string>
     <string name="back_button">NO, GO BACK</string>
     <string name="save_encounter_button">YES, SUBMIT</string>
-    <string name="encounter_submitted">has been successfully submitted.</string>
+    <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
 
 </resources>
