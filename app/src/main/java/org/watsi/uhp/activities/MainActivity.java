@@ -1,7 +1,6 @@
 package org.watsi.uhp.activities;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -77,19 +76,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            String memberId = intent.getDataString();
-            IdentificationEvent.SearchMethodEnum idMethod = IdentificationEvent.SearchMethodEnum.valueOf(
-                    intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
-
-            if (memberId != null) {
-                new NavigationManager(this).setDetailFragment(memberId, idMethod, null);
-            }
-        }
     }
 
     private void setupApp() {
