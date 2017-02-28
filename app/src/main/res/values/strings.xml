@@ -3,6 +3,7 @@
     <string name="main_activity_label">Universal Healthcare Project</string>
 
     <!--Menu-->
+    <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_logout_label">Logout</string>
 
     <!--LoginFragment-->
@@ -37,7 +38,6 @@
     <string name="household_label">HOUSEHOLD MEMBERS</string>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">could not be confirmed as a UHP member.</string>
-    <string name="detail_complete_enrollment">Complete enrollment</string>
 
     <!--ClinicNumberDialogFragment-->
     <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,15 +42,18 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.detail_fragment_label);
+        setHasOptionsMenu(true);
+        getActivity().invalidateOptionsMenu();
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
-        String memberId = getArguments().getString("memberId");
+        UUID memberId = UUID.fromString(getArguments().getString("memberId"));
+        ((MainActivity) getActivity()).setMemberId(memberId);
         String throughMemberId = getArguments().getString("throughMemberId");
 
         try {
-            mMember = MemberDao.findById(UUID.fromString(memberId));
+            mMember = MemberDao.findById(memberId);
             if (throughMemberId != null) {
                 mThroughMember = MemberDao.findById(UUID.fromString(throughMemberId));
             }
@@ -60,8 +64,7 @@ public class DetailFragment extends Fragment {
         setPatientCard(view);
         setButtons(
                 (Button) view.findViewById(R.id.approve_identity),
-                (Button) view.findViewById(R.id.reject_identity),
-                (Button) view.findViewById(R.id.complete_enrollment_btn)
+                (Button) view.findViewById(R.id.reject_identity)
         );
         setHouseholdList(view);
         return view;
@@ -91,7 +94,7 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void setButtons(Button confirmButton, Button rejectButton, Button enrollButton) {
+    private void setButtons(Button confirmButton, Button rejectButton) {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,16 +107,6 @@ public class DetailFragment extends Fragment {
                 completeIdentification(false, null, null);
             }
         });
-        if (mMember.getAbsentee()) {
-            enrollButton.setVisibility(View.VISIBLE);
-            enrollButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new NavigationManager(getActivity())
-                            .setEnrollmentMemberPhotoFragment(mMember.getId());
-                }
-            });
-        }
     }
 
     private void openClinicNumberDialog() {
@@ -183,5 +176,13 @@ public class DetailFragment extends Fragment {
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (mMember != null && mMember.getAbsentee()) {
+            menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
+        }
     }
 }

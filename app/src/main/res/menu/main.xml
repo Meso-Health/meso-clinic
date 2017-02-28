@@ -3,8 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_logout"
+        android:id="@+id/menu_complete_enrollment"
         android:orderInCategory="100"
+        android:title="@string/menu_complete_enrollment_label"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:orderInCategory="101"
         android:title="@string/menu_logout_label"
         app:showAsAction="never"
         android:visible="true" />

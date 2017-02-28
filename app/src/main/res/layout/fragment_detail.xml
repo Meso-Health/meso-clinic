@@ -90,13 +90,6 @@
                 android:text="@string/reject_identity" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/complete_enrollment_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/detail_complete_enrollment"
-            android:visibility="gone" />
     </LinearLayout>
 
     <View
