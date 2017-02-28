@@ -116,7 +116,7 @@ public class DetailFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     new NavigationManager(getActivity())
-                            .setEnrollmentQuestionsFragment(mMember.getId());
+                            .setEnrollmentMemberPhotoFragment(mMember.getId());
                 }
             });
         }

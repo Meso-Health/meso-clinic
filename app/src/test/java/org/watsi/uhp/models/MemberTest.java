@@ -52,6 +52,24 @@ public class MemberTest {
     }
 
     @Test
+    public void shouldCaptureFingerprint() throws Exception {
+        member.setAge(Member.MINIMUM_FINGERPRINT_AGE - 1);
+        assertFalse(member.shouldCaptureFingerprint());
+
+        member.setAge(Member.MINIMUM_FINGERPRINT_AGE);
+        assertTrue(member.shouldCaptureFingerprint());
+    }
+
+    @Test
+    public void shouldCaptureNationalIdPhoto() throws Exception {
+        member.setAge(Member.MINIMUM_NATIONAL_ID_AGE - 1);
+        assertFalse(member.shouldCaptureNationalIdPhoto());
+
+        member.setAge(Member.MINIMUM_NATIONAL_ID_AGE);
+        assertTrue(member.shouldCaptureNationalIdPhoto());
+    }
+
+    @Test
     public void equals_returnsTrueIfSameObject() throws Exception {
         assertTrue(member.equals(member));
     }

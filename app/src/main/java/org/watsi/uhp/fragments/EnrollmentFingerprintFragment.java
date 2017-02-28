@@ -2,11 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -18,45 +14,54 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EnrollmentFingerprintFragment extends Fragment {
+public class EnrollmentFingerprintFragment extends EnrollmentFragment {
 
     private static int SIMPRINTS_ENROLLMENT_INTENT = 3;
 
-    private Member mMember;
     private View mSuccessMessageView;
     private View mFailedMessageView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        getActivity().setTitle(R.string.enrollment_fingerprint_label);
-        View view = inflater.inflate(R.layout.fragment_enrollment_fingerprint, container, false);
+    int getTitleLabelId() {
+        return R.string.enrollment_fingerprint_label;
+    }
 
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_enrollment_fingerprint;
+    }
+
+    @Override
+    boolean isLastStep() {
+        return true;
+    }
+
+    @Override
+    void nextStep() {
         try {
-            mMember = MemberDao.findById(UUID.fromString(getArguments().getString("memberId")));
+            mMember.setSynced(false);
+            MemberDao.update(mMember);
+            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            Toast.makeText(getContext(), "Enrolled!", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             Rollbar.reportException(e);
+            Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
         }
+    }
 
+    @Override
+    void setUpFragment(View view) {
         mSuccessMessageView = view.findViewById(R.id.enrollment_fingerprint_success_message);
         mFailedMessageView = view.findViewById(R.id.enrollment_fingerprint_failed_message);
 
-        Button continueBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_save_btn);
-        continueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new NavigationManager(getActivity()).setCurrentPatientsFragment();
-            }
-        });
         Button fingerprintBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_capture_btn);
         fingerprintBtn.setOnClickListener(new CaptureThumbprintClickListener(mMember.getId(), this));
-        return view;
     }
 
     private static class CaptureThumbprintClickListener implements View.OnClickListener {
@@ -64,7 +69,7 @@ public class EnrollmentFingerprintFragment extends Fragment {
         private UUID mMemberId;
         private EnrollmentFingerprintFragment mFragment;
 
-        public CaptureThumbprintClickListener(UUID memberId, EnrollmentFingerprintFragment fragment) {
+        CaptureThumbprintClickListener(UUID memberId, EnrollmentFingerprintFragment fragment) {
             this.mMemberId = memberId;
             this.mFragment = fragment;
         }

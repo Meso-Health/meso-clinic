@@ -23,7 +23,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
-public class Member extends AbstractModel {
+public class Member extends SyncableModel {
 
     public static final String TABLE_NAME = "members";
 
@@ -39,6 +39,10 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
     public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
+    public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
+
+    public static final int MINIMUM_FINGERPRINT_AGE = 6;
+    public static final int MINIMUM_NATIONAL_ID_AGE = 18;
 
     public enum GenderEnum { M, F }
 
@@ -97,6 +101,11 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
     @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_GUID)
     private UUID mFingerprintsGuid;
+
+    @Expose
+    @SerializedName(FIELD_NAME_PHONE_NUMBER)
+    @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
+    private String mPhoneNumber;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
@@ -228,6 +237,14 @@ public class Member extends AbstractModel {
         this.mFingerprintsGuid = fingerprintsGuid;
     }
 
+    public String getPhoneNumber() {
+        return mPhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.mPhoneNumber = phoneNumber;
+    }
+
     public void fetchAndSetPhotoFromUrl() throws IOException {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
@@ -248,6 +265,14 @@ public class Member extends AbstractModel {
         } else {
             return null;
         }
+    }
+
+    public boolean shouldCaptureFingerprint() {
+        return getAge() >= Member.MINIMUM_FINGERPRINT_AGE;
+    }
+
+    public boolean shouldCaptureNationalIdPhoto() {
+        return getAge() >= Member.MINIMUM_NATIONAL_ID_AGE;
     }
 
     @Override

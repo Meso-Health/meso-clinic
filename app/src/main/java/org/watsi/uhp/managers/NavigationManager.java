@@ -15,9 +15,10 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.EnrollmentContactInfoFragment;
 import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
-import org.watsi.uhp.fragments.EnrollmentPhotosFragment;
-import org.watsi.uhp.fragments.EnrollmentQuestionsFragment;
+import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
+import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
 import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
@@ -103,16 +104,22 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class));
     }
 
-    public void setEnrollmentQuestionsFragment(UUID memberId) {
+    public void setEnrollmentContactInfoFragment(UUID memberId) {
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId.toString());
-        setFragment(mFragmentProvider.createFragment(EnrollmentQuestionsFragment.class, bundle));
+        setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
     }
 
-    public void setEnrollmentPhotosFragment(UUID memberId) {
+    public void setEnrollmentMemberPhotoFragment(UUID memberId) {
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId.toString());
-        setFragment(mFragmentProvider.createFragment(EnrollmentPhotosFragment.class, bundle));
+        setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
+    }
+
+    public void setEnrollmentIdPhotoFragment(UUID memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("memberId", memberId.toString());
+        setFragment(mFragmentProvider.createFragment(EnrollmentIdPhotoFragment.class, bundle));
     }
 
     public void setEnrollmentFingerprintFragment(UUID memberId) {

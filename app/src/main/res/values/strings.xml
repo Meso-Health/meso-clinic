@@ -45,7 +45,6 @@
     <string name="clinic_number">Number</string>
     <string name="clinic_number_button">Submit</string>
 
-
     <!--EncounterFragment-->
     <string name="current_patients_fragment_label">Select a patient</string>
     <string name="encounter_fragment_label">Enter clinical record items</string>
@@ -76,18 +75,23 @@
     <string name="save_encounter_button">YES, SUBMIT</string>
     <string name="encounter_submitted">has been successfully submitted.</string>
 
-    <!--EnrollmentQuestionsFragment-->
-    <string name="enrollment_questions_label">Contact information</string>
-    <string name="enrollment_questions_phone_number_label">Phone number</string>
-    <string name="enrollment_questions_save">Continue</string>
+    <!-- Enrollment -->
+    <string name="enrollment_complete_btn">Complete enrollment</string>
+    <string name="enrollment_next_step_btn">Continue</string>
 
-    <!--EnrollmentPhotosFragment-->
-    <string name="enrollment_photos_label">Photos</string>
-    <string name="enrollment_photos_member_photo">Take member picture</string>
-    <string name="enrollment_photos_member_photo_description">Member photo</string>
-    <string name="enrollment_photos_id_photo">Take ID picture</string>
-    <string name="enrollment_photos_id_photo_description">ID photo</string>
-    <string name="enrollment_photos_save">Continue</string>
+    <!--EnrollmentMemberPhotoFragment-->
+    <string name="enrollment_member_photo_fragment_label">Member photo</string>
+    <string name="enrollment_member_photo_btn">Take member photo</string>
+    <string name="enrollment_member_photo_description">Member photo</string>
+
+    <!--EnrollmentIdPhotoFragment-->
+    <string name="enrollment_id_photo_fragment_label">National ID photo</string>
+    <string name="enrollment_id_photo_btn">Take national ID photo</string>
+    <string name="enrollment_id_photo_description">ID photo</string>
+
+    <!--EnrollmentContactInfoFragment-->
+    <string name="enrollment_contact_info_label">Contact information</string>
+    <string name="enrollment_contact_info_phone_number_label">Phone number</string>
 
     <!--EnrollmentFingerprintFragment-->
     <string name="enrollment_fingerprint_label">Fingerprint</string>
@@ -95,5 +99,4 @@
     <string name="enrollment_fingerprint_simprints_not_installed">Simprints app is not installed</string>
     <string name="enrollment_fingerprint_simprints_succeeded">Success!</string>
     <string name="enrollment_fingerprint_simprints_failed">Scan failed</string>
-    <string name="enrollment_fingerprint_save">Complete Enrollment</string>
 </resources>
