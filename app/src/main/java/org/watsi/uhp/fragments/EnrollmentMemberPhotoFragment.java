@@ -12,6 +12,7 @@ import com.rollbar.android.Rollbar;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 
 import java.io.ByteArrayOutputStream;
@@ -43,6 +44,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     void nextStep() {
         NavigationManager navigationManager = new NavigationManager(getActivity());
         if (!mMember.shouldCaptureFingerprint()) {
+            mMember.setToken(ConfigManager.getLoggedInUserToken(getContext()));
             mMember.setSynced(false);
         }
 
@@ -50,7 +52,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
             MemberDao.update(mMember);
             if (!mMember.shouldCaptureFingerprint()) {
                 navigationManager.setCurrentPatientsFragment();
-                Toast.makeText(getContext(), "Enrolled!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mMember.shouldCaptureNationalIdPhoto()) {
                 navigationManager.setEnrollmentIdPhotoFragment(mMember.getId());
             } else {

@@ -45,10 +45,11 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
     @Override
     void nextStep() {
         try {
+            mMember.setToken(ConfigManager.getLoggedInUserToken(getContext()));
             mMember.setSynced(false);
             MemberDao.update(mMember);
             new NavigationManager(getActivity()).setCurrentPatientsFragment();
-            Toast.makeText(getContext(), "Enrolled!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             Rollbar.reportException(e);
             Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
