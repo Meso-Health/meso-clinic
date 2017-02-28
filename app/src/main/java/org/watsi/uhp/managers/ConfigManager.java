@@ -22,6 +22,7 @@ import java.util.Map;
  */
 public class ConfigManager {
     private final static String ROLLBAR_API_KEY = "ROLLBAR_API_KEY";
+    private final static String ROLLBAR_ENV_KEY = "ROLLBAR_ENV_KEY";
     private final static String API_HOST = "API_HOST";
     private final static String SIMPRINTS_API_KEY = "SIMPRINTS_API_KEY";
     private final static String PROVIDER_ID = "PROVIDER_ID";
@@ -31,6 +32,10 @@ public class ConfigManager {
 
     public static String getRollbarApiKey(Context context) {
         return getConfigValue(ROLLBAR_API_KEY, context);
+    }
+
+    public static String getRollbarEnvKey(Context context) {
+        return getConfigValue(ROLLBAR_ENV_KEY, context);
     }
 
     public static String getApiHost(Context context) {
