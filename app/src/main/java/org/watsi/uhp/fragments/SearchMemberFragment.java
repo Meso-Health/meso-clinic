@@ -31,7 +31,7 @@ public class SearchMemberFragment extends Fragment {
 
     private SearchView mMemberSearch;
     private ListView mSearchList;
-    private TextView mNoSearchResults;
+    private TextView mNoSearchResultsMessage;
     private RelativeLayout mLoadingPanel;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class SearchMemberFragment extends Fragment {
 
         mMemberSearch = (SearchView) view.findViewById(R.id.member_search);
         mSearchList = (ListView) view.findViewById(R.id.member_search_results);
-        mNoSearchResults = (TextView) view.findViewById(R.id.member_no_search_results_text);
+        mNoSearchResultsMessage = (TextView) view.findViewById(R.id.member_no_search_results_text);
         mLoadingPanel = (RelativeLayout) view.findViewById(R.id.loading_panel);
 
         setMemberSearch();
@@ -100,9 +100,9 @@ public class SearchMemberFragment extends Fragment {
                         @Override
                         public void run() {
                             if (matchingMembers.isEmpty()) {
-                                mNoSearchResults.setVisibility(View.VISIBLE);
+                                mNoSearchResultsMessage.setVisibility(View.VISIBLE);
                             } else {
-                                mNoSearchResults.setVisibility(View.GONE);
+                                mNoSearchResultsMessage.setVisibility(View.GONE);
                             }
                             ListAdapter adapter = new MemberAdapter(getContext(), matchingMembers, false);
                             mSearchList.setAdapter(adapter);
