@@ -10,10 +10,26 @@
     android:focusableInTouchMode="true" >
 
     <Button
-        android:id="@+id/enrollment_fingerprint_btn"
+        android:id="@+id/enrollment_fingerprint_capture_btn"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="@string/enrollment_fingerprint_button" />
+
+    <TextView
+        android:id="@+id/enrollment_fingerprint_success_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/enrollment_fingerprint_simprints_succeeded"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/enrollment_fingerprint_failed_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/enrollment_fingerprint_simprints_failed"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:layout_width="match_parent"

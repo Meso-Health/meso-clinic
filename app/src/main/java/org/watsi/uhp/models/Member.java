@@ -38,6 +38,7 @@ public class Member extends AbstractModel {
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
     public static final String FIELD_NAME_ABSENTEE = "absentee";
+    public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
 
     public enum GenderEnum { M, F }
 
@@ -91,6 +92,11 @@ public class Member extends AbstractModel {
     @SerializedName(FIELD_NAME_ABSENTEE)
     @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
     private Boolean mAbsentee;
+
+    @Expose
+    @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
+    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_GUID)
+    private UUID mFingerprintsGuid;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
@@ -212,6 +218,14 @@ public class Member extends AbstractModel {
     public void setEncounters(Collection<Encounter> encounters) {
         this.mEncounters.clear();
         this.mEncounters.addAll(encounters);
+    }
+
+    public UUID getFingerprintsGuid() {
+        return mFingerprintsGuid;
+    }
+
+    public void setFingerprintsGuid(UUID fingerprintsGuid) {
+        this.mFingerprintsGuid = fingerprintsGuid;
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
