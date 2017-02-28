@@ -57,13 +57,13 @@ public class SyncService extends Service {
 
     private void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
         Context context = getApplicationContext();
-        int facilityId = ConfigManager.getFacilityId(context);
+        int providerId = ConfigManager.getProviderId(context);
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
             String tokenAuthorizationString = "Token " + event.getToken();
             Call<IdentificationEvent> request =
                     ApiService.requestBuilder(context)
-                            .syncIdentificationEvent(tokenAuthorizationString, facilityId, event);
+                            .syncIdentificationEvent(tokenAuthorizationString, providerId, event);
             Response<IdentificationEvent> response = request.execute();
             if (response.isSuccessful()) {
                 event.setSynced(true);

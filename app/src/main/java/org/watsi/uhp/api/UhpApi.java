@@ -18,22 +18,22 @@ public interface UhpApi {
     @POST("authentication_token")
     Call<AuthenticationToken> getAuthToken(@Header("Authorization") String authorization);
 
-    @GET("facilities/{facilityId}/members")
+    @GET("providers/{providerId}/members")
     Call<List<Member>> members(
             @Header("If-Modified-Since") String lastModified,
-            @Path("facilityId") int facilityId
+            @Path("providerId") int providerId
     );
 
-    @GET("facilities/{facilityId}/billables")
+    @GET("providers/{providerId}/billables")
     Call<List<Billable>> billables(
             @Header("If-Modified-Since") String lastModified,
-            @Path("facilityId") int facilityId
+            @Path("providerId") int providerId
     );
 
-    @POST("facilities/{facilityId}/identification_events")
+    @POST("providers/{providerId}/identification_events")
     Call<IdentificationEvent> syncIdentificationEvent(
             @Header("Authorization") String tokenAuthorization,
-            @Path("facilityId") int facilityId,
+            @Path("providerId") int providerId,
             @Body IdentificationEvent unsyncedEvent
     );
 }
