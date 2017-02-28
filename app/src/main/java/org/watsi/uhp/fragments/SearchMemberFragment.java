@@ -53,7 +53,7 @@ public class SearchMemberFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        KeyboardManager.focusAndForceShowKeyboard(mMemberSearch, getContext());
+        KeyboardManager.focusAndShowKeyboard(mMemberSearch, getContext());
     }
 
     private void setMemberSearch() {
