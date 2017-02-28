@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
@@ -55,6 +56,7 @@ public class CurrentPatientsFragment extends Fragment {
             });
         } catch (SQLException e) {
             Rollbar.reportException(e);
+            Toast.makeText(getContext(), "Failed to load members", Toast.LENGTH_LONG);
         }
 
         return view;

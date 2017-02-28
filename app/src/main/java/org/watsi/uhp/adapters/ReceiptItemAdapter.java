@@ -11,14 +11,14 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
-    public ReceiptItemAdapter(Context context, List<LineItem> lineItemList) {
-        super(context, R.layout.item_receipt_list, lineItemList);
+public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
+    public ReceiptItemAdapter(Context context, List<EncounterItem> encounterItemList) {
+        super(context, R.layout.item_receipt_list, encounterItemList);
     }
 
     @Override
@@ -39,17 +39,17 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        LineItem lineItem = getItem(position);
+        EncounterItem encounterItem = getItem(position);
 
-        if (lineItem != null) {
-            final Billable billable = lineItem.getBillable();
+        if (encounterItem != null) {
+            final Billable billable = encounterItem.getBillable();
 
             viewHolder.billableDetails.setText(billable.toString());
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
                 viewHolder.billablePriceAndQuantity.setText(priceDecorator(billable.getPrice()) + " UGX");
             } else {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(lineItem.getQuantity()) + "  x  " + priceDecorator(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(String.valueOf(encounterItem.getQuantity()) + "  x  " + priceDecorator(billable.getPrice()) + " UGX");
             }
         }
         return convertView;
