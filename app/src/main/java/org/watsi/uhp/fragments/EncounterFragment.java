@@ -125,7 +125,8 @@ public class EncounterFragment extends Fragment {
         // TODO: check that creation of new adapter each time does not have memory implications
         List<Billable> billables = new ArrayList<>();
         Billable placeholderBillable = new Billable();
-        placeholderBillable.setName(getContext().getString(R.string.prompt_billable));
+        placeholderBillable.setName(getContext().getString(R.string.prompt_billable) + " " +
+                category.toString().toLowerCase() + "...");
         billables.add(placeholderBillable);
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
@@ -189,6 +190,7 @@ public class EncounterFragment extends Fragment {
                 } else {
                     setBillableSpinner(selectedCategory);
                     billableSpinner.setVisibility(View.VISIBLE);
+                    billableSpinner.performClick();
                 }
             }
         }
@@ -233,19 +235,17 @@ public class EncounterFragment extends Fragment {
                     Billable.FIELD_NAME_ID
             };
             MatrixCursor cursor = new MatrixCursor(cursorColumns);
-            if (query.length() > 2) {
-                try {
-                    for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
-                        cursor.addRow(new Object[] {
-                                billable.getId().getMostSignificantBits(),
-                                billable.getName(),
-                                billable.dosageDetails(),
-                                billable.getId().toString()
-                        });
-                    }
-                } catch (SQLException e) {
-                    Rollbar.reportException(e);
+            try {
+                for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
+                    cursor.addRow(new Object[] {
+                            billable.getId().getMostSignificantBits(),
+                            billable.getName(),
+                            billable.dosageDetails(),
+                            billable.getId().toString()
+                    });
                 }
+            } catch (SQLException e) {
+                Rollbar.reportException(e);
             }
 
             return new SimpleCursorAdapter(

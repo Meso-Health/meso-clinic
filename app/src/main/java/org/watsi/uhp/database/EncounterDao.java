@@ -3,6 +3,7 @@ package org.watsi.uhp.database;
 import com.j256.ormlite.dao.Dao;
 
 import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
@@ -41,18 +42,23 @@ public class EncounterDao {
     }
 
     public static void create(Encounter encounter) throws SQLException {
-        //TODO: put inside transaction
+        // TODO: put inside transaction
         encounter.setCreatedAt(Clock.getCurrentTime());
         getInstance().getEncounterDao().create(encounter);
 
-        for (EncounterItem encounterItem : encounter.getLineItems()) {
-            if (encounterItem.getBillable().getId() == null) {
-                BillableDao.create(encounterItem.getBillable());
+        for (EncounterItem encounterItem : encounter.getEncounterItems()) {
+            Billable billable = encounterItem.getBillable();
+            if (billable.getId() == null) {
+                BillableDao.create(billable);
             }
 
             encounterItem.setEncounter(encounter);
             EncounterItemDao.create(encounterItem);
         }
+    }
+
+    public static void refresh(Encounter encounter) throws SQLException {
+        getInstance().getEncounterDao().refresh(encounter);
     }
 
     public static List<Encounter> unsynced() throws SQLException {
@@ -63,5 +69,9 @@ public class EncounterDao {
 
     public static void update(Encounter encounter) throws SQLException {
         getInstance().getEncounterDao().update(encounter);
+    }
+
+    public static void delete(Encounter encounter) throws SQLException {
+        getInstance().getEncounterDao().delete(encounter);
     }
 }

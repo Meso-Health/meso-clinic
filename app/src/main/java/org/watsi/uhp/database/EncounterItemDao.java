@@ -2,10 +2,16 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 
+import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -15,7 +21,7 @@ public class EncounterItemDao {
 
     private static EncounterItemDao instance = new EncounterItemDao();
 
-    private Dao<EncounterItem, UUID> mLineItemDao;
+    private Dao<EncounterItem, UUID> mEncounterItemDao;
 
     private static synchronized EncounterItemDao getInstance() {
         return instance;
@@ -24,31 +30,44 @@ public class EncounterItemDao {
     private EncounterItemDao() {
     }
 
-    private void setLineItemDao(Dao lineItemDao) {
-        this.mLineItemDao = lineItemDao;
+    private void setEncounterItemDao(Dao encounterItemDao) {
+        this.mEncounterItemDao = encounterItemDao;
     }
 
-    private Dao<EncounterItem, UUID> getLineItemDao() throws SQLException {
-        if (mLineItemDao == null) {
-            setLineItemDao(DatabaseHelper.getHelper().getDao(EncounterItem.class));
+    private Dao<EncounterItem, UUID> getEncounterItemDao() throws SQLException {
+        if (mEncounterItemDao == null) {
+            setEncounterItemDao(DatabaseHelper.getHelper().getDao(EncounterItem.class));
         }
 
-        return mLineItemDao;
+        return mEncounterItemDao;
     }
 
     public static void create(EncounterItem encounterItem) throws SQLException {
-        getInstance().getLineItemDao().create(encounterItem);
+        encounterItem.setCreatedAt(Clock.getCurrentTime());
+        getInstance().getEncounterItemDao().create(encounterItem);
     }
 
-    public static void create(List<EncounterItem> encounterItems) throws SQLException {
-        getInstance().getLineItemDao().create(encounterItems);
+    public static List<EncounterItem> fromEncounter(Encounter encounter) throws SQLException {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put(EncounterItem.FIELD_NAME_ENCOUNTER_ID, encounter.getId());
+        List<EncounterItem> encounterItems =
+                getInstance().getEncounterItemDao().queryForFieldValues(queryMap);
+        for (EncounterItem encounterItem : encounterItems) {
+            encounterItem.setEncounterId(encounterItem.getEncounter().getId());
+            BillableDao.refresh(encounterItem.getBillable());
+        }
+        return encounterItems;
     }
 
-    public static EncounterItem findById(UUID id) throws SQLException {
-        return getInstance().getLineItemDao().queryForId(id);
-    }
+    public static ArrayList<EncounterItem> getDefaultEncounterItems(
+            IdentificationEvent.ClinicNumberTypeEnum type) throws SQLException {
+        ArrayList<EncounterItem> defaultLineItems = new ArrayList<>();
 
-    public static List<EncounterItem> all() throws SQLException {
-        return getInstance().getLineItemDao().queryForAll();
+        if (type == IdentificationEvent.ClinicNumberTypeEnum.OPD) {
+            defaultLineItems.add(new EncounterItem(BillableDao.findByName("Consultation").get(0), 1));
+            defaultLineItems.add(new EncounterItem(BillableDao.findByName("Medical Form").get(0), 1));
+        }
+
+        return defaultLineItems;
     }
 }

@@ -3,7 +3,6 @@ package org.watsi.uhp.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ public class Encounter extends SyncableModel {
 
     @Expose
     @SerializedName(FIELD_NAME_MEMBER_ID)
-    @DatabaseField(columnName = FIELD_NAME_MEMBER_ID)
     private UUID mMemberId;
 
     @DatabaseField(columnName = FIELD_NAME_MEMBER_ID, foreign = true, canBeNull = false)
@@ -43,27 +41,33 @@ public class Encounter extends SyncableModel {
 
     @Expose
     @SerializedName(FIELD_NAME_IDENTIFICATION_EVENT_ID)
-    @DatabaseField(columnName = FIELD_NAME_IDENTIFICATION_EVENT_ID)
     private UUID mIdentificationEventId;
 
     @DatabaseField(columnName = FIELD_NAME_IDENTIFICATION_EVENT_ID, foreign = true, canBeNull = false)
     private IdentificationEvent mIdentificationEvent;
 
-    @Expose(deserialize = false)
+    @Expose
     @SerializedName(FIELD_NAME_ENCOUNTER_ITEMS)
-    @ForeignCollectionField
-    private final Collection<EncounterItem> mEncounterItems = new ArrayList<>();
+    private final List<EncounterItem> mEncounterItems = new ArrayList<>();
 
     public Encounter() {
         super();
     }
 
     public Encounter(List<EncounterItem> encounterItems) {
-        setLineItems(encounterItems);
+        setEncounterItems(encounterItems);
     }
 
     public UUID getId() {
         return mId;
+    }
+
+    public Date getOccurredAt() {
+        return mOccurredAt;
+    }
+
+    public void setOccurredAt(Date occurredAt) {
+        this.mOccurredAt = occurredAt;
     }
 
     public UUID getMemberId() {
@@ -90,19 +94,19 @@ public class Encounter extends SyncableModel {
         this.mIdentificationEventId = identificationEventId;
     }
 
-    public IdentificationEvent getIdentification() {
+    public IdentificationEvent getIdentificationEvent() {
         return mIdentificationEvent;
     }
 
-    public void setIdentification(IdentificationEvent identificationEvent) {
+    public void setIdentificationEvent(IdentificationEvent identificationEvent) {
         this.mIdentificationEvent = identificationEvent;
     }
 
-    public Collection<EncounterItem> getLineItems() {
+    public Collection<EncounterItem> getEncounterItems() {
         return mEncounterItems;
     }
 
-    public void setLineItems(Collection<EncounterItem> encounterItems) {
+    public void setEncounterItems(Collection<EncounterItem> encounterItems) {
         this.mEncounterItems.clear();
         this.mEncounterItems.addAll(encounterItems);
     }

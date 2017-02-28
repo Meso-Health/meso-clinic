@@ -18,10 +18,14 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptFragment extends Fragment {
@@ -41,7 +45,9 @@ public class ReceiptFragment extends Fragment {
         listView.setAdapter((ListAdapter) mAdapter);
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
-        priceTextView.setText(Integer.toString(priceTotal(encounterItems)) + " UGX");
+
+        DecimalFormat df = new DecimalFormat("#,###,###");
+        priceTextView.setText(df.format(priceTotal(encounterItems)) + " UGX");
 
         setCreateEncounterButton();
         return view;
@@ -62,7 +68,10 @@ public class ReceiptFragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
 
                 try {
-                    EncounterDao.create(activity.getCurrentEncounter());
+                    Encounter encounter = activity.getCurrentEncounter();
+                    encounter.setOccurredAt(Clock.getCurrentTime());
+                    encounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
+                    EncounterDao.create(encounter);
                 } catch (SQLException e) {
                     Rollbar.reportException(e);
                 }

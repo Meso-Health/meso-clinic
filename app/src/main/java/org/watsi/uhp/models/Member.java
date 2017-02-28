@@ -100,6 +100,8 @@ public class Member extends AbstractModel {
         return this.mFullName;
     }
 
+    public void setId(UUID id) { this.mId = id; }
+
     public UUID getId() {
         return mId;
     }

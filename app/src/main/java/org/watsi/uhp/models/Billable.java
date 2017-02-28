@@ -31,7 +31,7 @@ public class Billable extends AbstractModel {
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
     @Expose
@@ -59,6 +59,8 @@ public class Billable extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PRICE, canBeNull = false)
     private Integer mPrice;
 
+    @Expose
+    @SerializedName(FIELD_NAME_CREATED_DURING_ENCOUNTER)
     @DatabaseField(columnName = FIELD_NAME_CREATED_DURING_ENCOUNTER, canBeNull = false, defaultValue = "false")
     private Boolean mCreatedDuringEncounter;
 

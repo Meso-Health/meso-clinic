@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.events.OfflineNotificationEvent;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -30,7 +31,7 @@ import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupApp() {
         Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
-        DatabaseHelper.init(getBaseContext());
+        DatabaseHelper.init(getApplicationContext());
     }
 
     private void setUpLeakCanary() {
@@ -119,9 +120,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setNewEncounter(Member member) {
-        mCurrentEncounter.setMember(member);
-        mCurrentEncounter.setIdentification(member.getLastIdentification());
-        mCurrentEncounter.setLineItems(new ArrayList<EncounterItem>());
+        try {
+            IdentificationEvent lastIdentification = member.getLastIdentification();
+            mCurrentEncounter.setMember(member);
+            mCurrentEncounter.setIdentificationEvent(lastIdentification);
+            mCurrentEncounter.setEncounterItems(
+                    EncounterItemDao.getDefaultEncounterItems(lastIdentification.getClinicNumberType()));
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+        }
     }
 
     public Encounter getCurrentEncounter() {
@@ -129,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public List<EncounterItem> getCurrentLineItems() {
-        return (List<EncounterItem>) mCurrentEncounter.getLineItems();
+        return (List<EncounterItem>) mCurrentEncounter.getEncounterItems();
     }
 
     @Override
