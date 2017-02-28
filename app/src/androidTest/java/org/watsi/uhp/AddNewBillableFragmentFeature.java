@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.watsi.uhp.activities.MainActivity;
+import org.watsi.uhp.managers.NavigationManager;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -27,7 +28,7 @@ public class AddNewBillableFragmentFeature {
     @Before
     public void setup() {
         mainActivity = mainActivityRule.getActivity();
-        mainActivity.setAddNewBillableFragment();
+        new NavigationManager(mainActivity).setAddNewBillableFragment();
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.MainActivity;
+import org.watsi.uhp.managers.NavigationManager;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -29,7 +30,7 @@ public class CurrentPatientsFragmentFeature {
     @Before
     public void setup() {
         mainActivity = mActivityRule.getActivity();
-        mainActivity.setCurrentPatientsFragment();
+        new NavigationManager(mainActivity).setCurrentPatientsFragment();
     }
 
     @Test
@@ -56,6 +57,6 @@ public class CurrentPatientsFragmentFeature {
                 .perform(click());
 
         // check that clinic number fragment opens (checking for fragment title)
-        onView(withText(R.string.clinic_number_fragment_label)).check(matches(isDisplayed()));
+        onView(withText(R.string.encounter_fragment_label)).check(matches(isDisplayed()));
     }
 }

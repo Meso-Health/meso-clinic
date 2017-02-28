@@ -4,7 +4,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.rollbar.android.Rollbar;
-import com.squareup.haha.perflib.Main;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,12 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -26,13 +25,8 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.watsi.uhp.models.Billable.CategoryEnum.SERVICES;
+import static org.watsi.uhp.models.Billable.TypeEnum.SERVICE;
 
 @RunWith(AndroidJUnit4.class)
 public class EncounterFragmentFeature {
@@ -45,7 +39,7 @@ public class EncounterFragmentFeature {
     @Before
     public void setup() {
         mainActivity = mActivityRule.getActivity();
-        mainActivity.setEncounterFragment();
+        new NavigationManager(mainActivity).setEncounterFragment();
     }
 
     @Test
@@ -61,7 +55,7 @@ public class EncounterFragmentFeature {
 
         List<Billable> billables = new ArrayList<>();
         try {
-            billables.addAll(BillableDao.getBillablesByCategory(SERVICES));
+            billables.addAll(BillableDao.getBillablesByCategory(SERVICE));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
