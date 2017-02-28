@@ -80,7 +80,7 @@ public class ReceiptFragment extends Fragment {
 
                 String toastMessage = activity.getCurrentEncounter()
                         .getMember()
-                        .getFullName() + " " + getString(R.string.encounter_submitted);
+                        .getFullName() + getString(R.string.encounter_submitted);
 
                 Toast.makeText(
                         activity.getApplicationContext(),

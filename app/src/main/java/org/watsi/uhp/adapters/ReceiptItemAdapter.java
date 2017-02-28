@@ -13,6 +13,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.EncounterItem;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
@@ -46,9 +47,9 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
             viewHolder.billableDetails.setText(billable.toString());
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(Billable.priceDecorator(billable.getPrice()) + " UGX");
             } else {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(encounterItem.getQuantity()) + "  x  " + String.valueOf(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(String.valueOf(encounterItem.getQuantity()) + "  x  " + Billable.priceDecorator(billable.getPrice()) + " UGX");
             }
         }
         return convertView;

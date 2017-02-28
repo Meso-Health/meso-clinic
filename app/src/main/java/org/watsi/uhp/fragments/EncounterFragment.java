@@ -47,7 +47,9 @@ public class EncounterFragment extends Fragment {
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.encounter_fragment_label);
+        String currentMemberName = ((MainActivity)getActivity()).getCurrentEncounter().getMember().getFullName();
+        getActivity().setTitle(currentMemberName);
+
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
@@ -103,6 +105,15 @@ public class EncounterFragment extends Fragment {
 
         encounterItemAdapter = new EncounterItemAdapter(getContext(), encounterItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
+    }
+
+    private void scrollToBottom() {
+        lineItemsListView.post(new Runnable() {
+            @Override
+            public void run() {
+                lineItemsListView.setSelection(encounterItemAdapter.getCount() - 1);
+            }
+        });
     }
 
     private void setAddBillableLink() {
@@ -217,6 +228,7 @@ public class EncounterFragment extends Fragment {
                 UUID billableId = ((Billable) adapter.getItem(position)).getId();
                 addToLineItemList(billableId);
                 categorySpinner.setSelection(0);
+                scrollToBottom();
             }
         }
 
@@ -292,6 +304,7 @@ public class EncounterFragment extends Fragment {
             MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
             String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
             addToLineItemList(UUID.fromString(uuidString));
+            scrollToBottom();
             clearDrugSearch();
             categorySpinner.setSelection(0);
             return true;
