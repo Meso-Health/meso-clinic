@@ -13,6 +13,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.LineItem;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
@@ -46,9 +47,9 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
             viewHolder.billableDetails.setText(billable.toString());
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(priceDecorator(billable.getPrice()) + " UGX");
             } else {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(lineItem.getQuantity()) + "  x  " + String.valueOf(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceAndQuantity.setText(String.valueOf(lineItem.getQuantity()) + "  x  " + priceDecorator(billable.getPrice()) + " UGX");
             }
         }
         return convertView;
@@ -57,5 +58,12 @@ public class ReceiptItemAdapter extends ArrayAdapter<LineItem> {
     private static class ViewHolder {
         TextView billableDetails;
         TextView billablePriceAndQuantity;
+    }
+
+    private String priceDecorator(int price) {
+        DecimalFormat df = new DecimalFormat("#,###,###");
+        String formattedPrice = df.format(price);
+
+        return formattedPrice;
     }
 }
