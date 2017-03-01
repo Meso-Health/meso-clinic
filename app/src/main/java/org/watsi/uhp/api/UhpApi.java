@@ -60,4 +60,33 @@ public interface UhpApi {
             @Part MultipartBody.Part memberPhoto,
             @Part MultipartBody.Part idPhoto
     );
+
+    @Multipart
+    @PATCH("members/{memberId}")
+    Call<Member> syncMember(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("memberId") String memberId,
+            @Part(Member.FIELD_NAME_PHONE_NUMBER) RequestBody phoneNum,
+            @Part MultipartBody.Part memberPhoto,
+            @Part MultipartBody.Part idPhoto
+    );
+
+    @Multipart
+    @PATCH("members/{memberId}")
+    Call<Member> syncMember(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("memberId") String memberId,
+            @Part MultipartBody.Part memberPhoto,
+            @Part MultipartBody.Part idPhoto,
+            @Part(Member.FIELD_NAME_FINGERPRINTS_GUID) RequestBody fingerprintGuid
+    );
+
+    @Multipart
+    @PATCH("members/{memberId}")
+    Call<Member> syncMember(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("memberId") String memberId,
+            @Part MultipartBody.Part memberPhoto,
+            @Part MultipartBody.Part idPhoto
+    );
 }

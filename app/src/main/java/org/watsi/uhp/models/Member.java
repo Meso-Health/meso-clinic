@@ -323,21 +323,49 @@ public class Member extends SyncableModel {
             idPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, idPhotoRequestBody);
         }
 
-        String fingerprintGuid = "";
-        if (getFingerprintsGuid() != null) {
-            fingerprintGuid = getFingerprintsGuid().toString();
+        RequestBody fingerprintGuid = null;
+        RequestBody phoneNumber = null;
+
+        if (fingerprintGuid == null && phoneNumber == null) {
+            return ApiService.requestBuilder(context).syncMember(
+                    tokenAuthorizationString,
+                    getId().toString(),
+                    memberPhoto,
+                    idPhoto
+            );
+        } else if (fingerprintGuid != null && phoneNumber == null) {
+            fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
+
+            return ApiService.requestBuilder(context).syncMember(
+                    tokenAuthorizationString,
+                    getId().toString(),
+                    memberPhoto,
+                    idPhoto,
+                    fingerprintGuid
+            );
+        } else if (phoneNumber != null && fingerprintGuid == null) {
+            phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
+
+            return ApiService.requestBuilder(context).syncMember(
+                    tokenAuthorizationString,
+                    getId().toString(),
+                    phoneNumber,
+                    memberPhoto,
+                    idPhoto
+            );
+        } else {
+            phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
+            fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
+
+            return ApiService.requestBuilder(context).syncMember(
+                    tokenAuthorizationString,
+                    getId().toString(),
+                    phoneNumber,
+                    fingerprintGuid,
+                    memberPhoto,
+                    idPhoto
+            );
+
         }
-        String phoneNumber = "";
-        if (getPhoneNumber() != null) {
-            phoneNumber = getPhoneNumber();
-        }
-        return ApiService.requestBuilder(context).syncMember(
-                tokenAuthorizationString,
-                getId().toString(),
-                RequestBody.create(MultipartBody.FORM, phoneNumber),
-                RequestBody.create(MultipartBody.FORM, fingerprintGuid),
-                memberPhoto,
-                idPhoto
-        );
     }
 }
