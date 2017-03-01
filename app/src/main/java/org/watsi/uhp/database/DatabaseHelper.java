@@ -7,6 +7,7 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
@@ -23,7 +24,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static DatabaseHelper instance;
 
@@ -61,17 +62,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        // TODO: figure out better way to handle upgrades than drop/re-create
-        Log.d("UHP", "onUpgrade database helper called");
-
+        Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         try {
-            TableUtils.dropTable(connectionSource, Member.class, true);
-            TableUtils.dropTable(connectionSource, Billable.class, true);
-            TableUtils.dropTable(connectionSource, IdentificationEvent.class, true);
-            TableUtils.dropTable(connectionSource, Encounter.class, true);
-            TableUtils.dropTable(connectionSource, EncounterItem.class, true);
-            TableUtils.dropTable(connectionSource, User.class, true);
-            onCreate(database, connectionSource);
+            TableUtils.dropTable(connectionSource, IdentificationEvent.class, false);
+            TableUtils.dropTable(connectionSource, Encounter.class,false);
+            TableUtils.dropTable(connectionSource, EncounterItem.class, false);
+
+            TableUtils.createTable(connectionSource, IdentificationEvent.class);
+            TableUtils.createTable(connectionSource, Encounter.class);
+            TableUtils.createTable(connectionSource, EncounterItem.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
