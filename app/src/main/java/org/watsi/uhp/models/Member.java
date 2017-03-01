@@ -310,14 +310,19 @@ public class Member extends SyncableModel {
 
     public Call<Member> formatPatchRequest(Context context) {
         String tokenAuthorizationString = "Token " + getToken();
-        RequestBody memberPhotoRequestBody =
-                RequestBody.create(MediaType.parse("image/jpg"), getPhoto());
-        MultipartBody.Part memberPhoto =
-                MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, memberPhotoRequestBody);
-        RequestBody idPhotoRequestBody =
-                RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
-        MultipartBody.Part idPhoto =
-                MultipartBody.Part.createFormData(Member.FIELD_NAME_NATIONAL_ID_PHOTO, null, idPhotoRequestBody);
+
+        MultipartBody.Part memberPhoto = null;
+        if (getPhoto() != null) {
+            RequestBody memberPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getPhoto());
+            memberPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, memberPhotoRequestBody);
+        }
+
+        MultipartBody.Part idPhoto = null;
+        if (getNationalIdPhoto() != null) {
+            RequestBody idPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
+            idPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, idPhotoRequestBody);
+        }
+
         String fingerprintGuid = "";
         if (getFingerprintsGuid() != null) {
             fingerprintGuid = getFingerprintsGuid().toString();
