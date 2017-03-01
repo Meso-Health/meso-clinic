@@ -76,12 +76,12 @@ public class IdentificationEvent extends SyncableModel {
 
     @Expose
     @SerializedName(FIELD_NAME_CLINIC_NUMBER)
-    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER)
     private Integer mClinicNumber;
 
     @Expose
     @SerializedName(FIELD_NAME_CLINIC_NUMBER_TYPE)
-    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE)
     private IdentificationEvent.ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
     public IdentificationEvent() {
