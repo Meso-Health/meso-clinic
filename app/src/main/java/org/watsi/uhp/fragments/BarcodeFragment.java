@@ -108,7 +108,11 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                             );
                         } catch (SQLException e) {
                             displayFailureToast();
-                            Rollbar.reportException(e);
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e1) {
+                                Rollbar.reportException(e1);
+                            }
                         }
                     }
                 }
