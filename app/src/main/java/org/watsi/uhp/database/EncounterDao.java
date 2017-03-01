@@ -49,6 +49,7 @@ public class EncounterDao {
         for (EncounterItem encounterItem : encounter.getEncounterItems()) {
             Billable billable = encounterItem.getBillable();
             if (billable.getId() == null) {
+                billable.generateId();
                 BillableDao.create(billable);
             }
 

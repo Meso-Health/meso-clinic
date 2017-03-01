@@ -73,6 +73,10 @@ public class Billable extends AbstractModel {
         return mId;
     }
 
+    public void generateId() {
+        this.mId = UUID.randomUUID();
+    }
+
     public String getName() {
         return mName;
     }
