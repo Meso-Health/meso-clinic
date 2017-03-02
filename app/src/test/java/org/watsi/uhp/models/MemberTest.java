@@ -106,4 +106,25 @@ public class MemberTest {
         assertTrue(Member.validPhoneNumber("0734567894"));
         assertTrue(Member.validPhoneNumber("773041232"));
     }
+
+    @Test
+    public void getFormattedPhoneNumber() throws Exception {
+        member.setPhoneNumber(null);
+        assertEquals(member.getFormattedPhoneNumber(), null);
+
+        member.setPhoneNumber("0123456789");
+        assertEquals(member.getFormattedPhoneNumber(), "(0) 123 456 789");
+
+        member.setPhoneNumber("123456789");
+        assertEquals(member.getFormattedPhoneNumber(), "123 456 789");
+    }
+
+    @Test
+    public void getFormattedCardId() throws Exception {
+        member.setCardId(null);
+        assertEquals(member.getFormattedCardId(), null);
+
+        member.setCardId("RWI123456");
+        assertEquals(member.getFormattedCardId(), "RWI 123 456");
+    }
 }

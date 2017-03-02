@@ -35,9 +35,9 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.member_name);
-            viewHolder.age = (TextView) convertView.findViewById(R.id.member_age);
-            viewHolder.gender = (TextView) convertView.findViewById(R.id.member_gender);
+            viewHolder.gender_and_age = (TextView) convertView.findViewById(R.id.member_gender_and_age);
             viewHolder.card_id = (TextView) convertView.findViewById(R.id.member_card_id);
+            viewHolder.phone_number = (TextView) convertView.findViewById(R.id.member_phone_number);
             viewHolder.photo = (ImageView) convertView.findViewById(R.id.member_photo);
             if (showClinicNumber) {
                 viewHolder.clinic_number = (TextView) convertView.findViewById(R.id
@@ -53,10 +53,11 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
         if (member != null) {
             viewHolder.name.setText(member.getFullName());
-            viewHolder.age.setText(member.getFormattedAge());
-            viewHolder.gender.setText(member.getFormattedGender());
+            viewHolder.gender_and_age.setText(member.getFormattedGender() + " - " + member.getFormattedAge());
             viewHolder.card_id.setText(String.valueOf(member.getFormattedCardId()));
+            viewHolder.phone_number.setText(member.getFormattedPhoneNumber());
             if (showClinicNumber) {
+                viewHolder.phone_number.setVisibility(View.GONE);
                 viewHolder.clinic_number.setVisibility(View.VISIBLE);
                 viewHolder.clinic_number.setText(member.getLastIdentification().getFormattedClinicNumber());
             }
@@ -74,9 +75,9 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
     private static class ViewHolder {
         TextView name;
-        TextView age;
-        TextView gender;
+        TextView gender_and_age;
         TextView card_id;
+        TextView phone_number;
         TextView clinic_number;
         ImageView photo;
     }

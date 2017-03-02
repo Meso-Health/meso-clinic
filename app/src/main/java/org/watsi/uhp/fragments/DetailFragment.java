@@ -74,9 +74,10 @@ public class DetailFragment extends Fragment {
 
     private void setPatientCard(View detailView) {
         ((TextView) detailView.findViewById(R.id.member_name)).setText(mMember.getFullName());
-        ((TextView) detailView.findViewById(R.id.member_age)).setText(mMember.getFormattedAge());
-        ((TextView) detailView.findViewById(R.id.member_gender)).setText(mMember.getFormattedGender());
+        ((TextView) detailView.findViewById(R.id.member_gender_and_age))
+                .setText(mMember.getFormattedGender() + " - " + mMember.getFormattedAge());
         ((TextView) detailView.findViewById(R.id.member_card_id)).setText(mMember.getFormattedCardId());
+        ((TextView) detailView.findViewById(R.id.member_phone_number)).setText(mMember.getFormattedPhoneNumber());
 
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         ImageView memberPhoto = (ImageView) detailView.findViewById(R.id.member_photo);

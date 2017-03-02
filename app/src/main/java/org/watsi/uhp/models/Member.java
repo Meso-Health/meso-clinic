@@ -144,9 +144,10 @@ public class Member extends SyncableModel {
 
     public String getFormattedCardId() {
         if (getCardId() == null) {
-            return "NO CARD ID";
+            return null;
+        } else {
+            return getCardId().substring(0,3) + " " + getCardId().substring(3,6) + " " + getCardId().substring(6);
         }
-        return getCardId();
     }
 
     public void setCardId(String cardId) {
@@ -374,6 +375,18 @@ public class Member extends SyncableModel {
             return false;
         } else {
             return phoneNumber.matches("0?[1-9]\\d{8}");
+        }
+    }
+
+    public String getFormattedPhoneNumber() {
+        if (getPhoneNumber() == null) {
+            return null;
+        } else if (getPhoneNumber().length() == 10) {
+            return "(0) " + getPhoneNumber().substring(1,4) + " " +
+                    getPhoneNumber().substring(4,7) + " " + getPhoneNumber().substring(7);
+        } else {
+            return getPhoneNumber().substring(0,3) + " " + getPhoneNumber().substring(3,6) +" " +
+                    getPhoneNumber().substring(6,9);
         }
     }
 }
