@@ -34,7 +34,7 @@
     <string name="absentee_notification">MUST COMPLETE ENROLLMENT</string>
     <string name="replace_card_notification">NEEDS NEW CARD</string>
     <string name="approve_identity">CHECK IN</string>
-    <string name="reject_identity"><u>No, report</u></string>
+    <string name="reject_identity"><u>Report</u></string>
     <string name="household_label">HOUSEHOLD MEMBERS</string>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">could not be confirmed as a UHP member.</string>
