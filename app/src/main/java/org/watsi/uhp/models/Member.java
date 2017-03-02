@@ -321,20 +321,20 @@ public class Member extends SyncableModel {
         MultipartBody.Part idPhoto = null;
         if (getNationalIdPhoto() != null) {
             RequestBody idPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
-            idPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, idPhotoRequestBody);
+            idPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_NATIONAL_ID_PHOTO, null, idPhotoRequestBody);
         }
 
-        RequestBody fingerprintGuid = null;
-        RequestBody phoneNumber = null;
+        RequestBody fingerprintGuid;
+        RequestBody phoneNumber;
 
-        if (fingerprintGuid == null && phoneNumber == null) {
+        if (getFingerprintsGuid() == null && getPhoneNumber() == null) {
             return ApiService.requestBuilder(context).syncMember(
                     tokenAuthorizationString,
                     getId().toString(),
                     memberPhoto,
                     idPhoto
             );
-        } else if (fingerprintGuid != null && phoneNumber == null) {
+        } else if (getFingerprintsGuid() != null && getPhoneNumber() == null) {
             fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
 
             return ApiService.requestBuilder(context).syncMember(
@@ -344,7 +344,7 @@ public class Member extends SyncableModel {
                     idPhoto,
                     fingerprintGuid
             );
-        } else if (phoneNumber != null && fingerprintGuid == null) {
+        } else if (getPhoneNumber() != null && getFingerprintsGuid() == null) {
             phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
 
             return ApiService.requestBuilder(context).syncMember(
@@ -366,7 +366,6 @@ public class Member extends SyncableModel {
                     memberPhoto,
                     idPhoto
             );
-
         }
     }
 
