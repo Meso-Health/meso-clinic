@@ -28,13 +28,18 @@ public class ConfigManager {
     private final static String PROVIDER_ID = "PROVIDER_ID";
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "members_last_modified";
     private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billables_last_modified";
+    private final static String PROD_ENV_NAME = "production";
     public final static String TOKEN_PREFERENCES_KEY = "token";
+
+    public static boolean isProduction(Context context) {
+        return getRollbarEnv(context).equals(PROD_ENV_NAME);
+    }
 
     public static String getRollbarApiKey(Context context) {
         return getConfigValue(ROLLBAR_API_KEY, context);
     }
 
-    public static String getRollbarEnvKey(Context context) {
+    public static String getRollbarEnv(Context context) {
         return getConfigValue(ROLLBAR_ENV_KEY, context);
     }
 

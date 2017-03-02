@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Rollbar.init(
                 this,
                 ConfigManager.getRollbarApiKey(this),
-                ConfigManager.getRollbarEnvKey(this)
+                ConfigManager.getRollbarEnv(this)
         );
         DatabaseHelper.init(getApplicationContext());
     }
@@ -86,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
+        if (!ConfigManager.isProduction(getApplicationContext())) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
+        }
     }
 
     public void setNewEncounter(Member member) {
