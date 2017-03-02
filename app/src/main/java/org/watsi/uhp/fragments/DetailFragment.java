@@ -39,6 +39,7 @@ public class DetailFragment extends Fragment {
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
     private Member mThroughMember = null;
+    private TextView rejectIdentityLink;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class DetailFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        rejectIdentityLink = (TextView) view.findViewById(R.id.reject_identity);
 
         mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
         UUID memberId = UUID.fromString(getArguments().getString("memberId"));
@@ -65,11 +68,20 @@ public class DetailFragment extends Fragment {
 
         setPatientCard(view);
         setButtons(
-                (Button) view.findViewById(R.id.approve_identity),
-                (Button) view.findViewById(R.id.reject_identity)
+                (Button) view.findViewById(R.id.approve_identity)
         );
         setHouseholdList(view);
+        setRejectIdentityLink();
         return view;
+    }
+
+    private void setRejectIdentityLink() {
+        rejectIdentityLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                completeIdentification(false, null, null);
+            }
+        });
     }
 
     private void setPatientCard(View detailView) {
@@ -97,17 +109,11 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void setButtons(Button confirmButton, Button rejectButton) {
+    private void setButtons(Button confirmButton) {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openClinicNumberDialog();
-            }
-        });
-        rejectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                completeIdentification(false, null, null);
             }
         });
     }
