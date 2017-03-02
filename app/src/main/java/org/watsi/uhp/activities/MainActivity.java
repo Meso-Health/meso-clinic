@@ -29,6 +29,8 @@ import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
+import net.hockeyapp.android.UpdateManager;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
+        checkForUpdates();
     }
 
     private void setupApp() {
@@ -88,6 +91,15 @@ public class MainActivity extends AppCompatActivity {
         if (!ConfigManager.isProduction(getApplicationContext())) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
         }
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this);
+    }
+
+    private void unregisterManagers() {
+        UpdateManager.unregister();
     }
 
     public void setNewEncounter(Member member) {

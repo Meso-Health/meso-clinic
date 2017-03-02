@@ -7,9 +7,10 @@ android {
         applicationId "org.watsi.uhp"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "d9da3f64545942a4acda9a1da6799b7d"]
     }
     buildTypes {
         release {
@@ -33,6 +34,7 @@ dependencies {
     compile 'me.xdrop:fuzzywuzzy:1.1.6'
     compile 'me.philio:pinentryview:1.0.6'
     compile 'com.simprints:LibSimprints:1.0.6'
+    compile 'net.hockeyapp.android:HockeySDK:4.1.2'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
