@@ -54,7 +54,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
         if (member != null) {
             viewHolder.name.setText(member.getFullName());
             viewHolder.gender_and_age.setText(member.getFormattedGender() + " - " + member.getFormattedAge());
-            viewHolder.card_id.setText(String.valueOf(member.getFormattedCardId()));
+            viewHolder.card_id.setText(member.getFormattedCardId());
             viewHolder.phone_number.setText(member.getFormattedPhoneNumber());
             if (showClinicNumber) {
                 viewHolder.phone_number.setVisibility(View.GONE);
