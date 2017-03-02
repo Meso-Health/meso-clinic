@@ -1,7 +1,9 @@
 package org.watsi.uhp.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -44,16 +46,30 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
 
     @Override
     void nextStep() {
-        try {
-            mMember.setToken(ConfigManager.getLoggedInUserToken(getContext()));
-            mMember.setSynced(false);
-            MemberDao.update(mMember);
-            new NavigationManager(getActivity()).setCurrentPatientsFragment();
-            Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-            Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    mMember.setToken(ConfigManager.getLoggedInUserToken(getContext()));
+                    mMember.setSynced(false);
+                    MemberDao.update(mMember);
+                    new NavigationManager(getActivity()).setCurrentPatientsFragment();
+                    Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
+                } catch (SQLException e) {
+                    Rollbar.reportException(e);
+                    Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -128,4 +144,5 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
         mSuccessMessageView.setVisibility(View.GONE);
         mFailedMessageView.setVisibility(View.GONE);
     }
+
 }
