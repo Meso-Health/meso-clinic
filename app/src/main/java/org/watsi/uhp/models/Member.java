@@ -368,4 +368,12 @@ public class Member extends SyncableModel {
 
         }
     }
+
+    public static boolean validPhoneNumber(String phoneNumber) {
+        if (phoneNumber == null) {
+            return false;
+        } else {
+            return phoneNumber.matches("0?[1-9]\\d{8}");
+        }
+    }
 }

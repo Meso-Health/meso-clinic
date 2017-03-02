@@ -92,6 +92,9 @@
     <!--EnrollmentContactInfoFragment-->
     <string name="enrollment_contact_info_label">Contact information</string>
     <string name="enrollment_contact_info_phone_number_label">Phone number</string>
+    <string name="enrollment_contact_info_invalid_phone_number_message">
+        Invalid phone number. Phone number must be blank, a 9 digit number, or a 10 digit number starting with 0.
+    </string>
 
     <!--EnrollmentFingerprintFragment-->
     <string name="enrollment_fingerprint_label">Fingerprint</string>

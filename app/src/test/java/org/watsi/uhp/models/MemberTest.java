@@ -94,4 +94,16 @@ public class MemberTest {
 
         assertFalse(member1.equals(member2));
     }
+
+    @Test
+    public void validPhoneNumber() throws Exception {
+        assertFalse(Member.validPhoneNumber(null));
+        assertFalse(Member.validPhoneNumber(""));
+        assertFalse(Member.validPhoneNumber("123"));
+        assertFalse(Member.validPhoneNumber("001234567"));
+        assertFalse(Member.validPhoneNumber("1234567891"));
+
+        assertTrue(Member.validPhoneNumber("0734567894"));
+        assertTrue(Member.validPhoneNumber("773041232"));
+    }
 }
