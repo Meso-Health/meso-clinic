@@ -7,8 +7,8 @@ android {
         applicationId "org.watsi.uhp"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.0"
+        versionCode 4
+        versionName "1.05-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "d9da3f64545942a4acda9a1da6799b7d"]
     }
