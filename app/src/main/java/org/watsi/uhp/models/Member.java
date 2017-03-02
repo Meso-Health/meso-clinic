@@ -383,9 +383,11 @@ public class Member extends SyncableModel {
         } else if (getPhoneNumber().length() == 10) {
             return "(0) " + getPhoneNumber().substring(1,4) + " " +
                     getPhoneNumber().substring(4,7) + " " + getPhoneNumber().substring(7);
-        } else {
-            return getPhoneNumber().substring(0,3) + " " + getPhoneNumber().substring(3,6) +" " +
+        } else if (getPhoneNumber().length() == 9) {
+            return getPhoneNumber().substring(0,3) + " " + getPhoneNumber().substring(3,6) + " " +
                     getPhoneNumber().substring(6,9);
+        } else {
+            return null;
         }
     }
 }

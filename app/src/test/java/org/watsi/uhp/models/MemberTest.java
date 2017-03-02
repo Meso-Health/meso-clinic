@@ -110,19 +110,25 @@ public class MemberTest {
     @Test
     public void getFormattedPhoneNumber() throws Exception {
         member.setPhoneNumber(null);
-        assertEquals(member.getFormattedPhoneNumber(), null);
+        assertNull(member.getFormattedPhoneNumber());
 
         member.setPhoneNumber("0123456789");
         assertEquals(member.getFormattedPhoneNumber(), "(0) 123 456 789");
 
         member.setPhoneNumber("123456789");
         assertEquals(member.getFormattedPhoneNumber(), "123 456 789");
+
+        member.setPhoneNumber("12345");
+        assertNull(member.getFormattedPhoneNumber());
+
+        member.setPhoneNumber("12345678911");
+        assertNull(member.getFormattedPhoneNumber());
     }
 
     @Test
     public void getFormattedCardId() throws Exception {
         member.setCardId(null);
-        assertEquals(member.getFormattedCardId(), null);
+        assertNull(member.getFormattedCardId());
 
         member.setCardId("RWI123456");
         assertEquals(member.getFormattedCardId(), "RWI 123 456");
