@@ -23,6 +23,15 @@
         <service
             android:name=".services.SyncService"
             android:exported="false" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="org.watsi.uhp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/image_path" />
+        </provider>
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/main_activity_label"

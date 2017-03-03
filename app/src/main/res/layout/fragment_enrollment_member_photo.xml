@@ -10,7 +10,7 @@
     android:focusableInTouchMode="true" >
 
     <Button
-        android:id="@+id/enrollment_photos_member_photo_button"
+        android:id="@+id/photo_btn"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="@string/enrollment_member_photo_btn" />
@@ -18,8 +18,8 @@
     <ImageView
         android:id="@+id/photo"
         android:contentDescription="@string/enrollment_member_photo_description"
-        android:layout_height="wrap_content"
-        android:layout_width="200dp"
+        android:layout_height="400dp"
+        android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true" />
 

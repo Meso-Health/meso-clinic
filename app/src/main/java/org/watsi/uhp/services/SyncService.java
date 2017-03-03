@@ -14,6 +14,7 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -62,7 +64,7 @@ public class SyncService extends Service {
     private void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
-            String tokenAuthorizationString = "Token " + event.getToken();
+            String tokenAuthorizationString = event.getTokenAuthHeaderString();
             if (event.getThroughMember() != null) {
                 event.setThroughMemberId(event.getThroughMember().getId());
             }
@@ -87,7 +89,7 @@ public class SyncService extends Service {
             encounter.setMemberId(encounter.getMember().getId());
             encounter.setIdentificationEventId(encounter.getIdentificationEvent().getId());
             encounter.setEncounterItems(EncounterItemDao.fromEncounter(encounter));
-            String tokenAuthorizationString = "Token " + encounter.getToken();
+            String tokenAuthorizationString = encounter.getTokenAuthHeaderString();
             Call<Encounter> request =
                     ApiService.requestBuilder(getApplicationContext())
                             .syncEncounter(tokenAuthorizationString, mProviderId, encounter);
@@ -106,8 +108,15 @@ public class SyncService extends Service {
 
     private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
-            Response<Member> response = member.formatPatchRequest(getApplicationContext()).execute();
+            Map<String, RequestBody> multiPartBody = member.formatPatchRequest(getApplicationContext());
+            Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
+                    member.getTokenAuthHeaderString(),
+                    member.getId().toString(),
+                    multiPartBody
+            );
+            Response<Member> response = request.execute();
             if (response.isSuccessful()) {
+                member.deleteLocalImages();
                 member.setSynced(true);
                 MemberDao.update(member);
             } else {
