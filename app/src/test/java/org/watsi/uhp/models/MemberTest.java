@@ -17,12 +17,14 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class})
+@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, Member.class})
 public class MemberTest {
 
     private Member member;
@@ -30,6 +32,26 @@ public class MemberTest {
     @Before
     public void setup() {
         member = new Member();
+    }
+
+    @Test
+    public void setPhoneNumber() throws Exception {
+        member.setPhoneNumber(null);
+        assertEquals(member.getPhoneNumber(), null);
+
+        mockStatic(Member.class);
+        when(Member.validPhoneNumber(anyString())).thenReturn(true);
+
+        member.setPhoneNumber("0777555555");
+        assertEquals(member.getPhoneNumber(), "0777555555");
+
+        when(Member.validPhoneNumber(anyString())).thenReturn(false);
+        try {
+            member.setPhoneNumber("");
+            fail("Should throw validation exception");
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "phone_number: Invalid phone number");
+        }
     }
 
     @Test
@@ -117,12 +139,6 @@ public class MemberTest {
 
         member.setPhoneNumber("123456789");
         assertEquals(member.getFormattedPhoneNumber(), "123 456 789");
-
-        member.setPhoneNumber("12345");
-        assertNull(member.getFormattedPhoneNumber());
-
-        member.setPhoneNumber("12345678911");
-        assertNull(member.getFormattedPhoneNumber());
     }
 
     @Test

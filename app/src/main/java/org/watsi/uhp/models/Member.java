@@ -265,8 +265,16 @@ public class Member extends SyncableModel {
         return mPhoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.mPhoneNumber = phoneNumber;
+    public void setPhoneNumber(String phoneNumber) throws ValidationException {
+        if (phoneNumber == null) {
+            this.mPhoneNumber = null;
+        } else {
+            if (Member.validPhoneNumber(phoneNumber)) {
+                this.mPhoneNumber = phoneNumber;
+            } else {
+                throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Invalid phone number");
+            }
+        }
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
