@@ -115,13 +115,14 @@ public class MemberDao {
         String rawQuery = "SELECT members.id\n" +
                 "FROM members\n" +
                 "INNER JOIN (\n" +
-                "   SELECT id, member_id, max(created_at) \n" +
+                "   SELECT id, member_id, max(created_at) AS created_at\n" +
                 "   FROM identifications\n" +
                 "   WHERE accepted = 1\n" +
                 "   GROUP BY member_id\n" +
                 ") last_identifications on last_identifications.member_id = members.id\n" +
                 "LEFT OUTER JOIN encounters ON encounters.identification_event_id = last_identifications.id\n" +
-                "WHERE encounters.identification_event_id IS NULL";
+                "WHERE encounters.identification_event_id IS NULL\n" +
+                "ORDER BY last_identifications.created_at";
 
         GenericRawResults<String> rawResults =
                 getInstance().getMemberDao().queryRaw(rawQuery,

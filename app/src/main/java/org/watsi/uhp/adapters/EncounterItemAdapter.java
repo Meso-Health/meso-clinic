@@ -64,6 +64,7 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
                 viewHolder.billableQuantity.setVisibility(View.VISIBLE);
 
                 final ViewHolder vh = viewHolder;
+                viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
                 viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
