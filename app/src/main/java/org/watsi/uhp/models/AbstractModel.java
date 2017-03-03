@@ -21,4 +21,10 @@ public abstract class AbstractModel {
     public void setCreatedAt(Date createdAt) {
         this.mCreatedAt = createdAt;
     }
+
+    public static class ValidationException extends Exception {
+        public ValidationException(String fieldName, String reason) {
+            super(fieldName + ": " + reason);
+        }
+    }
 }
