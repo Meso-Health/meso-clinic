@@ -35,7 +35,8 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.member_name);
-            viewHolder.gender_and_age = (TextView) convertView.findViewById(R.id.member_gender_and_age);
+            viewHolder.age = (TextView) convertView.findViewById(R.id.member_age);
+            viewHolder.gender = (TextView) convertView.findViewById(R.id.member_gender);
             viewHolder.card_id = (TextView) convertView.findViewById(R.id.member_card_id);
             viewHolder.phone_number = (TextView) convertView.findViewById(R.id.member_phone_number);
             viewHolder.photo = (ImageView) convertView.findViewById(R.id.member_photo);
@@ -53,7 +54,8 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
         if (member != null) {
             viewHolder.name.setText(member.getFullName());
-            viewHolder.gender_and_age.setText(member.getFormattedGender() + " - " + member.getFormattedAge());
+            viewHolder.age.setText(member.getFormattedAge());
+            viewHolder.gender.setText(member.getFormattedGender());
             viewHolder.card_id.setText(member.getFormattedCardId());
             viewHolder.phone_number.setText(member.getFormattedPhoneNumber());
             if (showClinicNumber) {
@@ -75,7 +77,8 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
     private static class ViewHolder {
         TextView name;
-        TextView gender_and_age;
+        TextView age;
+        TextView gender;
         TextView card_id;
         TextView phone_number;
         TextView clinic_number;
