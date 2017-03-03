@@ -15,14 +15,14 @@
 
     <TextView
         android:id="@+id/receipt_billable_name"
-        android:layout_width="230dp"
+        android:layout_width="245dp"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:layout_toEndOf="@id/receipt_billable_quantity"/>
 
     <TextView
         android:id="@+id/receipt_billable_details"
-        android:layout_width="230dp"
+        android:layout_width="245dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/receipt_billable_name"
         android:layout_toEndOf="@id/receipt_billable_quantity"/>
@@ -31,5 +31,7 @@
         android:id="@+id/receipt_billable_price_of_quantity"
         android:layout_width="85dp"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textAlignment="gravity"
         android:layout_toEndOf="@id/receipt_billable_name"/>
 </RelativeLayout>

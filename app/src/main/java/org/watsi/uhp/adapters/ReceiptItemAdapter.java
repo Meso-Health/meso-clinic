@@ -50,9 +50,9 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
             viewHolder.billableDetails.setText(billable.dosageDetails());
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
-                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(billable.getPrice()));
             } else {
-                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(encounterItemQuantity(encounterItem) * billable.getPrice()) + " UGX");
+                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(encounterItemQuantity(encounterItem) * billable.getPrice()));
             }
         }
         return convertView;
