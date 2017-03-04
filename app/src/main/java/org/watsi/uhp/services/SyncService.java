@@ -14,6 +14,7 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -76,9 +77,14 @@ public class SyncService extends Service {
                 IdentificationEventDao.update(event);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("identification_event_id", event.getId().toString());
-                reportParams.put("member_id", event.getMember().getId().toString());
-                Rollbar.reportMessage("Failed to sync identification", "warning", reportParams);
+                reportParams.put("identification_event.id", event.getId().toString());
+                reportParams.put("member.id", event.getMember().getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync IdentificationEvent",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
             }
         }
     }
@@ -98,9 +104,14 @@ public class SyncService extends Service {
                 EncounterDao.update(encounter);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("encounter_id", encounter.getId().toString());
-                reportParams.put("member_id", encounter.getMember().getId().toString());
-                Rollbar.reportMessage("Failed to sync encounter", "warning", reportParams);
+                reportParams.put("encounter.id", encounter.getId().toString());
+                reportParams.put("member.id", encounter.getMember().getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync Encounter",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
             }
         }
     }
@@ -120,8 +131,13 @@ public class SyncService extends Service {
                 MemberDao.update(member);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("member_id", member.getId().toString());
-                Rollbar.reportMessage("Failed to sync member", "warning", reportParams);
+                reportParams.put("member.id", member.getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync Member",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
             }
         }
     }
