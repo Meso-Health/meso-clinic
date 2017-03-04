@@ -15,6 +15,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.managers.NotificationManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -288,10 +289,21 @@ public class Member extends SyncableModel {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
 
-        InputStream is = response.body().byteStream();
-        setPhoto(ByteStreams.toByteArray(is));
-        is.close();
-        Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
+        if (response.isSuccessful()) {
+            InputStream is = response.body().byteStream();
+            setPhoto(ByteStreams.toByteArray(is));
+            is.close();
+            Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
+        } else {
+            Map<String,String> params = new HashMap<>();
+            params.put("member.id", getId().toString());
+            NotificationManager.requestFailure(
+                    "Failed to fetch member photo",
+                    request,
+                    response,
+                    params
+            );
+        }
     }
 
     public Bitmap getPhotoBitmap() {

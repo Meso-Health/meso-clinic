@@ -13,6 +13,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
 
@@ -88,7 +89,11 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                Rollbar.reportMessage("Fetch members failed with code: " + response.code());
+                NotificationManager.requestFailure(
+                        "Failed to fetch members",
+                        request.request(),
+                        response.raw()
+                );
             }
         }
     }
@@ -147,7 +152,11 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                Rollbar.reportMessage("Fetch billables failed with code: " + response.code());
+                NotificationManager.requestFailure(
+                        "Failed to fetch billables",
+                        request.request(),
+                        response.raw()
+                );
             }
         }
 
