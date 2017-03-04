@@ -15,7 +15,11 @@ In order to run the application, you must also create a resource file for storin
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <secret>
-    <entry key="API_KEY_NAME">api_key_value</entry>
+    <entry key="ROLLBAR_API_KEY">################################</entry>
+    <entry key="ROLLBAR_ENV_KEY">sandbox</entry>
+    <entry key="API_HOST">https://uhp-sandbox.watsi.org/</entry>
+    <entry key="PROVIDER_ID">#</entry>
+    <entry key="SIMPRINTS_API_KEY">########-####-####-####-############</entry>
 </secret>
 ```
 
