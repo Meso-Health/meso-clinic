@@ -2,11 +2,11 @@ package org.watsi.uhp.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
@@ -19,12 +19,13 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, Member.class})
+@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, Member.class, Uri.class})
 public class MemberTest {
 
     private Member member;
@@ -65,7 +66,7 @@ public class MemberTest {
         member.setPhoto(photoBytes);
         mockStatic(Bitmap.class);
         mockStatic(BitmapFactory.class);
-        Bitmap bitmap = Mockito.mock(Bitmap.class);
+        Bitmap bitmap = mock(Bitmap.class);
 
         when(Bitmap.createBitmap(any(Bitmap.class))).thenReturn(bitmap);
         when(BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length)).thenReturn(bitmap);

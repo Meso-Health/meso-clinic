@@ -2,6 +2,10 @@
     <string name="app_name">UHP</string>
     <string name="main_activity_label">UHP</string>
 
+    <!-- General Errors -->
+    <string name="image_capture_failed">Image capture failed</string>
+    <string name="generic_error_message">An error has occurred. Contact support.</string>
+
     <!--Menu-->
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_logout_label">Logout</string>

@@ -3,6 +3,7 @@ package org.watsi.uhp.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.common.io.ByteStreams;
@@ -13,13 +14,15 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.FileManager;
 
-import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import okhttp3.MediaType;
@@ -28,7 +31,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import retrofit2.Call;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -199,6 +201,10 @@ public class Member extends SyncableModel {
         return mPhotoUrl;
     }
 
+    public void setPhotoUrl(String photoUrl) {
+        this.mPhotoUrl = photoUrl;
+    }
+
     public byte[] getNationalIdPhoto() {
         return mNationalIdPhoto;
     }
@@ -281,6 +287,7 @@ public class Member extends SyncableModel {
     public void fetchAndSetPhotoFromUrl() throws IOException {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
+
         InputStream is = response.body().byteStream();
         setPhoto(ByteStreams.toByteArray(is));
         is.close();
@@ -313,64 +320,34 @@ public class Member extends SyncableModel {
         return getId().equals(otherMember.getId());
     }
 
-    public Call<Member> formatPatchRequest(Context context) {
-        String tokenAuthorizationString = "Token " + getToken();
+    public Map<String, RequestBody> formatPatchRequest(Context context) {
+        Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        MultipartBody.Part memberPhoto = null;
-        if (getPhoto() != null) {
-            RequestBody memberPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getPhoto());
-            memberPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, memberPhotoRequestBody);
+        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+            byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+            requestPartMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
         }
 
-        MultipartBody.Part idPhoto = null;
-        if (getNationalIdPhoto() != null) {
-            RequestBody idPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
-            idPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_NATIONAL_ID_PHOTO, null, idPhotoRequestBody);
+        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
+            byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
+            requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
         }
 
-        RequestBody fingerprintGuid;
-        RequestBody phoneNumber;
-
-        if (getFingerprintsGuid() == null && getPhoneNumber() == null) {
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    memberPhoto,
-                    idPhoto
-            );
-        } else if (getFingerprintsGuid() != null && getPhoneNumber() == null) {
-            fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
-
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    memberPhoto,
-                    idPhoto,
-                    fingerprintGuid
-            );
-        } else if (getPhoneNumber() != null && getFingerprintsGuid() == null) {
-            phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
-
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    phoneNumber,
-                    memberPhoto,
-                    idPhoto
-            );
-        } else {
-            phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
-            fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
-
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    phoneNumber,
-                    fingerprintGuid,
-                    memberPhoto,
-                    idPhoto
+        if (getFingerprintsGuid() != null) {
+            requestPartMap.put(
+                    FIELD_NAME_FINGERPRINTS_GUID,
+                    RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
             );
         }
+
+        if (getPhoneNumber() != null) {
+            requestPartMap.put(
+                    FIELD_NAME_PHONE_NUMBER,
+                    RequestBody.create(MultipartBody.FORM, getPhoneNumber())
+            );
+        }
+
+        return requestPartMap;
     }
 
     public static boolean validPhoneNumber(String phoneNumber) {
@@ -392,6 +369,17 @@ public class Member extends SyncableModel {
                     getPhoneNumber().substring(6,9);
         } else {
             return null;
+        }
+    }
+
+    public void deleteLocalImages() {
+        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+            new File(getPhotoUrl()).delete();
+            setPhotoUrl(null);
+        }
+        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
+            new File(getNationalIdPhotoUrl()).delete();
+            setNationalIdPhotoUrl(null);
         }
     }
 }
