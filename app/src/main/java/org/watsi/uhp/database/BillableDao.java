@@ -2,6 +2,7 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.managers.Clock;
@@ -75,7 +76,7 @@ public class BillableDao {
 
     public static List<Billable> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put(Billable.FIELD_NAME_NAME, name);
+        queryMap.put(Billable.FIELD_NAME_NAME, new SelectArg(name));
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
 
