@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
@@ -281,13 +282,8 @@ public class Member extends SyncableModel {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
         InputStream is = response.body().byteStream();
-        DataInputStream dis = new DataInputStream(is);
-        byte[] imgData = new byte[(int) response.body().contentLength()];
-        dis.readFully(imgData);
-        setPhoto(imgData);
-
+        setPhoto(ByteStreams.toByteArray(is));
         is.close();
-        dis.close();
         Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
     }
 
