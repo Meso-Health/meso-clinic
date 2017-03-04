@@ -365,7 +365,7 @@ public class Member extends SyncableModel {
             return "(0) " + getPhoneNumber().substring(1,4) + " " +
                     getPhoneNumber().substring(4,7) + " " + getPhoneNumber().substring(7);
         } else if (getPhoneNumber().length() == 9) {
-            return getPhoneNumber().substring(0,3) + " " + getPhoneNumber().substring(3,6) + " " +
+            return "(0) " + getPhoneNumber().substring(0,3) + " " + getPhoneNumber().substring(3,6) + " " +
                     getPhoneNumber().substring(6,9);
         } else {
             return null;

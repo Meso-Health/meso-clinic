@@ -139,7 +139,7 @@ public class MemberTest {
         assertEquals(member.getFormattedPhoneNumber(), "(0) 123 456 789");
 
         member.setPhoneNumber("123456789");
-        assertEquals(member.getFormattedPhoneNumber(), "123 456 789");
+        assertEquals(member.getFormattedPhoneNumber(), "(0) 123 456 789");
     }
 
     @Test
