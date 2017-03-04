@@ -14,7 +14,6 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -31,7 +30,7 @@ import retrofit2.Response;
 
 public class SyncService extends Service {
 
-    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
+    private static int SLEEP_TIME = 60 * 1000; // every minute
     private int mProviderId;
 
     @Override
