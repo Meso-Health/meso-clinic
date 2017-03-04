@@ -9,6 +9,7 @@
     <!--Menu-->
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_logout_label">Logout</string>
+    <string name="menu_version_label">Version</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
@@ -107,4 +108,7 @@
     <string name="enrollment_fingerprint_simprints_succeeded">Success!</string>
     <string name="enrollment_fingerprint_simprints_failed">Scan failed</string>
     <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
+
+    <!--VersionFragment-->
+    <string name="version_label">Version</string>
 </resources>
