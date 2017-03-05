@@ -184,6 +184,7 @@ public class DetailFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_member_edit).setVisible(true);
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }

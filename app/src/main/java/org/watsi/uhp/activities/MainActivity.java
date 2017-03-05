@@ -154,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_logout:
                     new NavigationManager(mActivity).logout();
                     break;
+                case R.id.menu_member_edit:
+                    new NavigationManager(mActivity)
+                            .setMemberEditFragment(mMemberId);
+                    break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();
                     break;

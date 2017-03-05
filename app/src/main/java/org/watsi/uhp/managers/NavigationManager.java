@@ -20,6 +20,7 @@ import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
 import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
 import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
 import org.watsi.uhp.fragments.LoginFragment;
+import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.fragments.VersionFragment;
@@ -127,6 +128,12 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId.toString());
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
+    }
+
+    public void setMemberEditFragment(UUID memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("memberId", memberId.toString());
+        setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }
 
     public void setLoginFragment() {

@@ -128,8 +128,12 @@ public class Member extends SyncableModel {
         super();
     }
 
-    public void setFullName(String fullName) {
-        this.mFullName = fullName;
+    public void setFullName(String fullName) throws ValidationException {
+        if (fullName == null || fullName.isEmpty()) {
+            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
+        } else {
+            this.mFullName = fullName;
+        }
     }
 
     public String getFullName() {
@@ -154,8 +158,12 @@ public class Member extends SyncableModel {
         }
     }
 
-    public void setCardId(String cardId) {
-        this.mCardId = cardId;
+    public void setCardId(String cardId) throws ValidationException {
+        if (validCardId(cardId)) {
+            this.mCardId = cardId;
+        } else {
+            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
+        }
     }
 
     public int getAge() {
@@ -360,6 +368,14 @@ public class Member extends SyncableModel {
         }
 
         return requestPartMap;
+    }
+
+    public static boolean validCardId(String cardId) {
+        if (cardId == null || cardId.isEmpty()) {
+            return false;
+        } else {
+            return cardId.matches("0?[1-9]\\d{8}");
+        }
     }
 
     public static boolean validPhoneNumber(String phoneNumber) {
