@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.SelectArg;
 
 import org.watsi.uhp.models.Member;
 
@@ -66,7 +67,7 @@ public class MemberDao {
 
     private static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put(Member.FIELD_NAME_FULL_NAME, name);
+        queryMap.put(Member.FIELD_NAME_FULL_NAME, new SelectArg(name));
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
     }
 

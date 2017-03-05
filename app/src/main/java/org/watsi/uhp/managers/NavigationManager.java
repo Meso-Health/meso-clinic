@@ -22,6 +22,7 @@ import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
 import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
+import org.watsi.uhp.fragments.VersionFragment;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.util.UUID;
@@ -130,6 +131,10 @@ public class NavigationManager {
 
     public void setLoginFragment() {
         setFragment(new LoginFragment(), null, false, false);
+    }
+
+    public void setVersionFragment() {
+        setFragment(new VersionFragment());
     }
 
     public void logout() {
