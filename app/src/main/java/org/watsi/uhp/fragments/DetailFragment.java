@@ -1,5 +1,7 @@
 package org.watsi.uhp.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -79,7 +81,15 @@ public class DetailFragment extends Fragment {
         rejectIdentityLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                completeIdentification(false, null, null);
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.reject_identity_alert)
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                completeIdentification(false, null, null);
+                            }
+                            }).create().show();
             }
         });
     }

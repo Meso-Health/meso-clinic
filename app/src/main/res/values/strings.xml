@@ -40,9 +40,10 @@
     <string name="replace_card_notification">NEEDS NEW CARD</string>
     <string name="approve_identity">CHECK IN</string>
     <string name="reject_identity"><u>Report</u></string>
+    <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="household_label">HOUSEHOLD MEMBERS</string>
     <string name="identification_approved">has been successfully checked in.</string>
-    <string name="identification_rejected">could not be confirmed as a UHP member.</string>
+    <string name="identification_rejected">has been reported for suspicious behavior.</string>
 
     <!--ClinicNumberDialogFragment-->
     <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
