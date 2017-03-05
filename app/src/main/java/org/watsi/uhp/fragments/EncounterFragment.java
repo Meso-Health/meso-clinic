@@ -227,7 +227,6 @@ public class EncounterFragment extends Fragment {
             if (position != 0) {
                 UUID billableId = ((Billable) adapter.getItem(position)).getId();
                 addToLineItemList(billableId);
-                categorySpinner.setSelection(0);
                 scrollToBottom();
             }
         }
@@ -306,7 +305,6 @@ public class EncounterFragment extends Fragment {
             addToLineItemList(UUID.fromString(uuidString));
             scrollToBottom();
             clearDrugSearch();
-            categorySpinner.setSelection(0);
             return true;
         }
     }
