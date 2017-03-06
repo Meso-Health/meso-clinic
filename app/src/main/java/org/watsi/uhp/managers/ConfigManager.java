@@ -33,7 +33,12 @@ public class ConfigManager {
     public final static String TOKEN_PREFERENCES_KEY = "token";
 
     public static boolean isProduction(Context context) {
-        return getRollbarEnv(context).equals(PROD_ENV_NAME);
+        String rollbarEnv = getRollbarEnv(context);
+        if (rollbarEnv == null) {
+            return false;
+        } else {
+            return rollbarEnv.equals(PROD_ENV_NAME);
+        }
     }
 
     public static String getRollbarApiKey(Context context) {

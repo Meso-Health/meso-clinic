@@ -32,4 +32,8 @@ public abstract class SyncableModel extends AbstractModel {
     public void setSynced(boolean synced) {
         this.mSynced = synced;
     }
+
+    public String getTokenAuthHeaderString() {
+        return "Token " + getToken();
+    }
 }

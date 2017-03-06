@@ -10,6 +10,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -60,8 +61,10 @@ public class DownloadMemberPhotosService extends Service {
 
             Member member = iterator.next();
             try {
-                member.fetchAndSetPhotoFromUrl();
-                MemberDao.update(member);
+                if (!FileManager.isLocal(member.getPhotoUrl())) {
+                    member.fetchAndSetPhotoFromUrl();
+                    MemberDao.update(member);
+                }
             } catch (IOException | SQLException e) {
                 Rollbar.reportException(e);
                 fetchFailures++;

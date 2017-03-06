@@ -1,5 +1,7 @@
 package org.watsi.uhp.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -39,6 +41,7 @@ public class DetailFragment extends Fragment {
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
     private Member mThroughMember = null;
+    private TextView rejectIdentityLink;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +51,8 @@ public class DetailFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        rejectIdentityLink = (TextView) view.findViewById(R.id.reject_identity);
 
         mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
         UUID memberId = UUID.fromString(getArguments().getString("memberId"));
@@ -65,18 +70,36 @@ public class DetailFragment extends Fragment {
 
         setPatientCard(view);
         setButtons(
-                (Button) view.findViewById(R.id.approve_identity),
-                (Button) view.findViewById(R.id.reject_identity)
+                (Button) view.findViewById(R.id.approve_identity)
         );
         setHouseholdList(view);
+        setRejectIdentityLink();
         return view;
+    }
+
+    private void setRejectIdentityLink() {
+        rejectIdentityLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.reject_identity_alert)
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                completeIdentification(false, null, null);
+                            }
+                            }).create().show();
+            }
+        });
     }
 
     private void setPatientCard(View detailView) {
         ((TextView) detailView.findViewById(R.id.member_name)).setText(mMember.getFullName());
-        ((TextView) detailView.findViewById(R.id.member_age)).setText(mMember.getFormattedAge());
-        ((TextView) detailView.findViewById(R.id.member_gender)).setText(mMember.getFormattedGender());
+        ((TextView) detailView.findViewById(R.id.member_gender_and_age))
+                .setText(mMember.getFormattedGender() + " - " + mMember.getFormattedAge());
         ((TextView) detailView.findViewById(R.id.member_card_id)).setText(mMember.getFormattedCardId());
+        ((TextView) detailView.findViewById(R.id.member_phone_number)).setText(mMember.getFormattedPhoneNumber());
 
         Bitmap photoBitmap = mMember.getPhotoBitmap();
         ImageView memberPhoto = (ImageView) detailView.findViewById(R.id.member_photo);
@@ -96,17 +119,11 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void setButtons(Button confirmButton, Button rejectButton) {
+    private void setButtons(Button confirmButton) {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openClinicNumberDialog();
-            }
-        });
-        rejectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                completeIdentification(false, null, null);
             }
         });
     }

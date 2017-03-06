@@ -3,8 +3,10 @@ package org.watsi.uhp.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
+import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
@@ -12,13 +14,16 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.managers.NotificationManager;
 
-import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import okhttp3.MediaType;
@@ -27,7 +32,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import retrofit2.Call;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -144,9 +148,10 @@ public class Member extends SyncableModel {
 
     public String getFormattedCardId() {
         if (getCardId() == null) {
-            return "NO CARD ID";
+            return null;
+        } else {
+            return getCardId().substring(0,3) + " " + getCardId().substring(3,6) + " " + getCardId().substring(6);
         }
-        return getCardId();
     }
 
     public void setCardId(String cardId) {
@@ -195,6 +200,10 @@ public class Member extends SyncableModel {
 
     public String getPhotoUrl() {
         return mPhotoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.mPhotoUrl = photoUrl;
     }
 
     public byte[] getNationalIdPhoto() {
@@ -264,22 +273,37 @@ public class Member extends SyncableModel {
         return mPhoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.mPhoneNumber = phoneNumber;
+    public void setPhoneNumber(String phoneNumber) throws ValidationException {
+        if (phoneNumber == null) {
+            this.mPhoneNumber = null;
+        } else {
+            if (Member.validPhoneNumber(phoneNumber)) {
+                this.mPhoneNumber = phoneNumber;
+            } else {
+                throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Invalid phone number");
+            }
+        }
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
-        InputStream is = response.body().byteStream();
-        DataInputStream dis = new DataInputStream(is);
-        byte[] imgData = new byte[(int) response.body().contentLength()];
-        dis.readFully(imgData);
-        setPhoto(imgData);
 
-        is.close();
-        dis.close();
-        Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
+        if (response.isSuccessful()) {
+            InputStream is = response.body().byteStream();
+            setPhoto(ByteStreams.toByteArray(is));
+            is.close();
+            Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
+        } else {
+            Map<String,String> params = new HashMap<>();
+            params.put("member.id", getId().toString());
+            NotificationManager.requestFailure(
+                    "Failed to fetch member photo",
+                    request,
+                    response,
+                    params
+            );
+        }
     }
 
     public Bitmap getPhotoBitmap() {
@@ -308,65 +332,34 @@ public class Member extends SyncableModel {
         return getId().equals(otherMember.getId());
     }
 
-    public Call<Member> formatPatchRequest(Context context) {
-        String tokenAuthorizationString = "Token " + getToken();
+    public Map<String, RequestBody> formatPatchRequest(Context context) {
+        Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        MultipartBody.Part memberPhoto = null;
-        if (getPhoto() != null) {
-            RequestBody memberPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getPhoto());
-            memberPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, memberPhotoRequestBody);
+        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+            byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+            requestPartMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
         }
 
-        MultipartBody.Part idPhoto = null;
-        if (getNationalIdPhoto() != null) {
-            RequestBody idPhotoRequestBody = RequestBody.create(MediaType.parse("image/jpg"), getNationalIdPhoto());
-            idPhoto = MultipartBody.Part.createFormData(Member.FIELD_NAME_PHOTO, null, idPhotoRequestBody);
+        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
+            byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
+            requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
         }
 
-        RequestBody fingerprintGuid = null;
-        RequestBody phoneNumber = null;
-
-        if (fingerprintGuid == null && phoneNumber == null) {
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    memberPhoto,
-                    idPhoto
+        if (getFingerprintsGuid() != null) {
+            requestPartMap.put(
+                    FIELD_NAME_FINGERPRINTS_GUID,
+                    RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
             );
-        } else if (fingerprintGuid != null && phoneNumber == null) {
-            fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
-
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    memberPhoto,
-                    idPhoto,
-                    fingerprintGuid
-            );
-        } else if (phoneNumber != null && fingerprintGuid == null) {
-            phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
-
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    phoneNumber,
-                    memberPhoto,
-                    idPhoto
-            );
-        } else {
-            phoneNumber = RequestBody.create(MultipartBody.FORM, getPhoneNumber());
-            fingerprintGuid = RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString());
-
-            return ApiService.requestBuilder(context).syncMember(
-                    tokenAuthorizationString,
-                    getId().toString(),
-                    phoneNumber,
-                    fingerprintGuid,
-                    memberPhoto,
-                    idPhoto
-            );
-
         }
+
+        if (getPhoneNumber() != null) {
+            requestPartMap.put(
+                    FIELD_NAME_PHONE_NUMBER,
+                    RequestBody.create(MultipartBody.FORM, getPhoneNumber())
+            );
+        }
+
+        return requestPartMap;
     }
 
     public static boolean validPhoneNumber(String phoneNumber) {
@@ -374,6 +367,31 @@ public class Member extends SyncableModel {
             return false;
         } else {
             return phoneNumber.matches("0?[1-9]\\d{8}");
+        }
+    }
+
+    public String getFormattedPhoneNumber() {
+        if (getPhoneNumber() == null) {
+            return null;
+        } else if (getPhoneNumber().length() == 10) {
+            return "(0) " + getPhoneNumber().substring(1,4) + " " +
+                    getPhoneNumber().substring(4,7) + " " + getPhoneNumber().substring(7);
+        } else if (getPhoneNumber().length() == 9) {
+            return "(0) " + getPhoneNumber().substring(0,3) + " " + getPhoneNumber().substring(3,6) + " " +
+                    getPhoneNumber().substring(6,9);
+        } else {
+            return null;
+        }
+    }
+
+    public void deleteLocalImages() {
+        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+            new File(getPhotoUrl()).delete();
+            setPhotoUrl(null);
+        }
+        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
+            new File(getNationalIdPhotoUrl()).delete();
+            setNationalIdPhotoUrl(null);
         }
     }
 }

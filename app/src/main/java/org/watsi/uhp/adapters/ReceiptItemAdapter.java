@@ -13,7 +13,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.EncounterItem;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
@@ -31,8 +30,10 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
             convertView = layoutInflater.inflate(R.layout.item_receipt_list, parent, false);
 
             viewHolder = new ViewHolder();
+            viewHolder.billableQuantity = (TextView) convertView.findViewById(R.id.receipt_billable_quantity);
+            viewHolder.billableName = (TextView) convertView.findViewById(R.id.receipt_billable_name);
             viewHolder.billableDetails = (TextView) convertView.findViewById(R.id.receipt_billable_details);
-            viewHolder.billablePriceAndQuantity = (TextView) convertView.findViewById(R.id.receipt_billable_price_and_quantity);
+            viewHolder.billablePriceOfQuantity = (TextView) convertView.findViewById(R.id.receipt_billable_price_of_quantity);
 
             convertView.setTag(viewHolder);
         } else {
@@ -44,19 +45,31 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
         if (encounterItem != null) {
             final Billable billable = encounterItem.getBillable();
 
-            viewHolder.billableDetails.setText(billable.toString());
+            viewHolder.billableQuantity.setText(String.valueOf(encounterItemQuantity(encounterItem)));
+            viewHolder.billableName.setText(billable.getName());
+            viewHolder.billableDetails.setText(billable.dosageDetails());
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
-                viewHolder.billablePriceAndQuantity.setText(Billable.priceDecorator(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(billable.getPrice()));
             } else {
-                viewHolder.billablePriceAndQuantity.setText(String.valueOf(encounterItem.getQuantity()) + "  x  " + Billable.priceDecorator(billable.getPrice()) + " UGX");
+                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(encounterItemQuantity(encounterItem) * billable.getPrice()));
             }
         }
         return convertView;
     }
 
+    private int encounterItemQuantity(EncounterItem encounterItem) {
+        if (String.valueOf(encounterItem.getQuantity()) == null) {
+            return 1;
+        } else {
+            return encounterItem.getQuantity();
+        }
+    }
+
     private static class ViewHolder {
+        TextView billableQuantity;
+        TextView billableName;
         TextView billableDetails;
-        TextView billablePriceAndQuantity;
+        TextView billablePriceOfQuantity;
     }
 }

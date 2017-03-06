@@ -14,6 +14,7 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -24,12 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class SyncService extends Service {
 
-    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
+    private static int SLEEP_TIME = 60 * 1000; // every minute
     private int mProviderId;
 
     @Override
@@ -62,7 +64,7 @@ public class SyncService extends Service {
     private void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
-            String tokenAuthorizationString = "Token " + event.getToken();
+            String tokenAuthorizationString = event.getTokenAuthHeaderString();
             if (event.getThroughMember() != null) {
                 event.setThroughMemberId(event.getThroughMember().getId());
             }
@@ -75,9 +77,14 @@ public class SyncService extends Service {
                 IdentificationEventDao.update(event);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("identification_event_id", event.getId().toString());
-                reportParams.put("member_id", event.getMember().getId().toString());
-                Rollbar.reportMessage("Failed to sync identification", "warning", reportParams);
+                reportParams.put("identification_event.id", event.getId().toString());
+                reportParams.put("member.id", event.getMember().getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync IdentificationEvent",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
             }
         }
     }
@@ -87,7 +94,7 @@ public class SyncService extends Service {
             encounter.setMemberId(encounter.getMember().getId());
             encounter.setIdentificationEventId(encounter.getIdentificationEvent().getId());
             encounter.setEncounterItems(EncounterItemDao.fromEncounter(encounter));
-            String tokenAuthorizationString = "Token " + encounter.getToken();
+            String tokenAuthorizationString = encounter.getTokenAuthHeaderString();
             Call<Encounter> request =
                     ApiService.requestBuilder(getApplicationContext())
                             .syncEncounter(tokenAuthorizationString, mProviderId, encounter);
@@ -97,23 +104,40 @@ public class SyncService extends Service {
                 EncounterDao.update(encounter);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("encounter_id", encounter.getId().toString());
-                reportParams.put("member_id", encounter.getMember().getId().toString());
-                Rollbar.reportMessage("Failed to sync encounter", "warning", reportParams);
+                reportParams.put("encounter.id", encounter.getId().toString());
+                reportParams.put("member.id", encounter.getMember().getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync Encounter",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
             }
         }
     }
 
     private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
-            Response<Member> response = member.formatPatchRequest(getApplicationContext()).execute();
+            Map<String, RequestBody> multiPartBody = member.formatPatchRequest(getApplicationContext());
+            Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
+                    member.getTokenAuthHeaderString(),
+                    member.getId().toString(),
+                    multiPartBody
+            );
+            Response<Member> response = request.execute();
             if (response.isSuccessful()) {
+                member.deleteLocalImages();
                 member.setSynced(true);
                 MemberDao.update(member);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("member_id", member.getId().toString());
-                Rollbar.reportMessage("Failed to sync member", "warning", reportParams);
+                reportParams.put("member.id", member.getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync Member",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
             }
         }
     }

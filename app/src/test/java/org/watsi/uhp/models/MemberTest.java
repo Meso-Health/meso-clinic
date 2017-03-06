@@ -2,11 +2,11 @@ package org.watsi.uhp.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
@@ -17,12 +17,15 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class})
+@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, Member.class, Uri.class})
 public class MemberTest {
 
     private Member member;
@@ -30,6 +33,26 @@ public class MemberTest {
     @Before
     public void setup() {
         member = new Member();
+    }
+
+    @Test
+    public void setPhoneNumber() throws Exception {
+        member.setPhoneNumber(null);
+        assertEquals(member.getPhoneNumber(), null);
+
+        mockStatic(Member.class);
+        when(Member.validPhoneNumber(anyString())).thenReturn(true);
+
+        member.setPhoneNumber("0777555555");
+        assertEquals(member.getPhoneNumber(), "0777555555");
+
+        when(Member.validPhoneNumber(anyString())).thenReturn(false);
+        try {
+            member.setPhoneNumber("");
+            fail("Should throw validation exception");
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "phone_number: Invalid phone number");
+        }
     }
 
     @Test
@@ -43,7 +66,7 @@ public class MemberTest {
         member.setPhoto(photoBytes);
         mockStatic(Bitmap.class);
         mockStatic(BitmapFactory.class);
-        Bitmap bitmap = Mockito.mock(Bitmap.class);
+        Bitmap bitmap = mock(Bitmap.class);
 
         when(Bitmap.createBitmap(any(Bitmap.class))).thenReturn(bitmap);
         when(BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length)).thenReturn(bitmap);
@@ -105,5 +128,26 @@ public class MemberTest {
 
         assertTrue(Member.validPhoneNumber("0734567894"));
         assertTrue(Member.validPhoneNumber("773041232"));
+    }
+
+    @Test
+    public void getFormattedPhoneNumber() throws Exception {
+        member.setPhoneNumber(null);
+        assertNull(member.getFormattedPhoneNumber());
+
+        member.setPhoneNumber("0123456789");
+        assertEquals(member.getFormattedPhoneNumber(), "(0) 123 456 789");
+
+        member.setPhoneNumber("123456789");
+        assertEquals(member.getFormattedPhoneNumber(), "(0) 123 456 789");
+    }
+
+    @Test
+    public void getFormattedCardId() throws Exception {
+        member.setCardId(null);
+        assertNull(member.getFormattedCardId());
+
+        member.setCardId("RWI123456");
+        assertEquals(member.getFormattedCardId(), "RWI 123 456");
     }
 }

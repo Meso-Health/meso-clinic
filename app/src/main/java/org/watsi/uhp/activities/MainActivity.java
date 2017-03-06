@@ -167,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_logout:
                     new NavigationManager(mActivity).logout();
                     break;
+                case R.id.menu_version:
+                    new NavigationManager(mActivity).setVersionFragment();
+                    break;
                 case R.id.menu_complete_enrollment:
                     new NavigationManager(mActivity)
                             .setEnrollmentMemberPhotoFragment(mMemberId);

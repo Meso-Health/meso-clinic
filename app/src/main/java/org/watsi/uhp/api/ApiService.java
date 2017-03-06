@@ -9,6 +9,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.User;
 
@@ -63,6 +64,12 @@ public class ApiService {
                 ConfigManager.setLoggedInUserToken(token, context);
                 User user = response.body().getUser();
                 Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
+            } else {
+                NotificationManager.requestFailure(
+                        "Login failure",
+                        request.request(),
+                        response.raw()
+                );
             }
             return response;
         } catch (IOException | IllegalStateException e) {
