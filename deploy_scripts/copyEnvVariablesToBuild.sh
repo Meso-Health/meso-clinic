@@ -12,7 +12,7 @@ fi
 
 SECRET_XML_PATH="app/src/main/res/xml/secret.xml"
 
-echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>" >> ${SECRET_XML_PATH}
+echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>" > ${SECRET_XML_PATH}
 echo "<secret>" >> ${SECRET_XML_PATH}
 echo "    <entry key=\"ROLLBAR_API_KEY\">${ROLLBAR_API_KEY}</entry>" >> ${SECRET_XML_PATH}
 echo "    <entry key=\"API_HOST\">${API_HOST}</entry>" >> ${SECRET_XML_PATH}
