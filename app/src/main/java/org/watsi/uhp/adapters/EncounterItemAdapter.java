@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
@@ -59,7 +60,15 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
 
             if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
                     billable.getType().equals(Billable.TypeEnum.LAB)) {
-                viewHolder.billableQuantity.setVisibility(View.GONE);
+
+                viewHolder.billableQuantity.setFocusable(false);
+
+                viewHolder.billableQuantity.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       Toast.makeText(getContext(), "You cannot edit the quantity of a Lab or Service", Toast.LENGTH_SHORT).show();
+                   }
+                });
             } else {
                 viewHolder.billableQuantity.setVisibility(View.VISIBLE);
 

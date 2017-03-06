@@ -1,5 +1,7 @@
 package org.watsi.uhp.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -53,6 +55,7 @@ public class DetailFragment extends Fragment {
                 getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
         UUID memberId = UUID.fromString(
                 getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+
         ((MainActivity) getActivity()).setMemberId(memberId);
         String throughMemberId = getArguments().getString(
                 NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
@@ -68,11 +71,28 @@ public class DetailFragment extends Fragment {
 
         setPatientCard(view);
         setButtons(
-                (Button) view.findViewById(R.id.approve_identity),
-                (Button) view.findViewById(R.id.reject_identity)
+                (Button) view.findViewById(R.id.approve_identity)
         );
         setHouseholdList(view);
+        setRejectIdentityLink(view);
         return view;
+    }
+
+    private void setRejectIdentityLink(View view) {
+        ((TextView) view.findViewById(R.id.reject_identity)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.reject_identity_alert)
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                completeIdentification(false, null, null);
+                            }
+                            }).create().show();
+            }
+        });
     }
 
     private void setPatientCard(View detailView) {
@@ -100,17 +120,11 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void setButtons(Button confirmButton, Button rejectButton) {
+    private void setButtons(Button confirmButton) {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openClinicNumberDialog();
-            }
-        });
-        rejectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                completeIdentification(false, null, null);
             }
         });
     }
