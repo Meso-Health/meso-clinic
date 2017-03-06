@@ -39,13 +39,17 @@ dependencies:
     - /usr/local/android-sdk-linux/build-tools/25.0.2
 
 deployment:
-  # hockeyapp-production:
-  #   branch: michael_production
-  #   commands:
-  #     - ./gradlew assemble
-  #     - ./deploy_scripts/deployHockeyApp.sh
-  michael_sandbox:
-    branch: hockeyapp-test
+  production:
+    branch: production
+    commands:
+      # Copies the environment variables configured on circle to the application's secret.xml file.
+      - ./deploy_scripts/copyEnvVariablesToBuild.sh production
+      # Create a release candidate
+      - ./gradlew assembleSandbox
+      # Deploy to hockey
+      - ./deploy_scripts/deployHockeyApp.sh production
+  michael_sandbox: #TODO - replace this with master once done
+    branch: hockeyapp-test #TODO - replace this with master once done
     commands:
       # Copies the environment variables configured on circle to the application's secret.xml file.
       - ./deploy_scripts/copyEnvVariablesToBuild.sh sandbox
