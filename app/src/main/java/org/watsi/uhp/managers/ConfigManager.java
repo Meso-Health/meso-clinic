@@ -29,6 +29,7 @@ public class ConfigManager {
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "members_last_modified";
     private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billables_last_modified";
     private final static String PROD_ENV_NAME = "production";
+    private final static String HOCKEYAPP_APP_ID = "HOCKEYAPP_APP_ID";
     public final static String TOKEN_PREFERENCES_KEY = "token";
 
     public static boolean isProduction(Context context) {
@@ -41,6 +42,10 @@ public class ConfigManager {
 
     public static String getRollbarEnv(Context context) {
         return getConfigValue(ROLLBAR_ENV_KEY, context);
+    }
+
+    public static String getHockeyAppId(Context context) {
+        return getConfigValue(HOCKEYAPP_APP_ID, context);
     }
 
     public static String getApiHost(Context context) {

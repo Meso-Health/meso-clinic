@@ -34,6 +34,7 @@ import net.hockeyapp.android.UpdateManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this);
+        String hockeyAppId = ConfigManager.getHockeyAppId(this);
+        UpdateManager.register(this, hockeyAppId);
     }
 
     private void unregisterManagers() {
