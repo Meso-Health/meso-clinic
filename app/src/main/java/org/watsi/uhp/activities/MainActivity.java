@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
@@ -57,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
-        checkForUpdates();
+        if (!BuildConfig.DEBUG) {
+            checkForUpdates();
+        }
     }
 
     private void setupApp() {
@@ -97,10 +100,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkForUpdates() {
         String hockeyAppId = ConfigManager.getHockeyAppId(this);
         UpdateManager.register(this, hockeyAppId);
-    }
-
-    private void unregisterManagers() {
-        UpdateManager.unregister();
     }
 
     public void setNewEncounter(Member member) {

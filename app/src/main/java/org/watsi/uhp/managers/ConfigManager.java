@@ -50,12 +50,7 @@ public class ConfigManager {
     }
 
     public static String getHockeyAppId(Context context) {
-        String hockeyAppId = getConfigValue(HOCKEYAPP_APP_ID, context);
-        if (hockeyAppId == null) {
-            return "";
-        } else {
-            return hockeyAppId;
-        }
+        return getConfigValue(HOCKEYAPP_APP_ID, context);
     }
 
     public static String getApiHost(Context context) {
