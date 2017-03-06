@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         if (!ConfigManager.isProduction(getApplicationContext())) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
         }
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void setNewEncounter(Member member) {
@@ -172,6 +173,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             return true;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                new NavigationManager(this).setCurrentPatientsFragment();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
