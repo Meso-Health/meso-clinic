@@ -35,8 +35,11 @@ public class MemberEditFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
 
-        UUID memberId = UUID.fromString(getArguments().getString("memberId"));
-        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
+        UUID memberId = UUID.fromString(
+                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+
+        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(
+                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
 
         try {
             mMember = MemberDao.findById(memberId);
@@ -49,7 +52,12 @@ public class MemberEditFragment extends Fragment {
         final EditText nameView = (EditText) view.findViewById(R.id.member_name);
         nameView.getText().append(mMember.getFullName());
         final EditText cardIdView = (EditText) view.findViewById(R.id.card_id);
-        if (mMember.getCardId() != null) {
+
+        String mScannedCardId = getArguments().getString(
+                NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);
+        if (mScannedCardId != null) {
+            cardIdView.getText().append(mScannedCardId);
+        } else if (mMember.getCardId() != null) {
             cardIdView.getText().append(mMember.getCardId());
         }
         final EditText phoneNumView = (EditText) view.findViewById(R.id.phone_number);
@@ -57,8 +65,15 @@ public class MemberEditFragment extends Fragment {
             phoneNumView.getText().append(mMember.getPhoneNumber());
         }
 
-        Button saveBtn = (Button) view.findViewById(R.id.save_button);
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        ((Button) view.findViewById(R.id.scan_card)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new NavigationManager(getActivity())
+                        .setBarcodeFragment(true, mMember.getId(), mIdMethod);
+            }
+        });
+
+        ((Button) view.findViewById(R.id.save_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveChanges(nameView, cardIdView, phoneNumView);

@@ -120,6 +120,7 @@
     <string name="member_edit_name_label">Name</string>
     <string name="member_edit_card_id_label">Card ID</string>
     <string name="member_edit_phone_number_label">Phone number</string>
+    <string name="member_edit_scan_card_btn_label">Scan new card</string>
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 

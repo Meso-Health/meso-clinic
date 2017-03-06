@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                                     .findFragmentByTag("detail"))
                                     .getIdMethod();
                     new NavigationManager(mActivity)
-                            .setMemberEditFragment(mMemberId, searchMethod);
+                            .setMemberEditFragment(mMemberId, searchMethod, null);
                     break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();

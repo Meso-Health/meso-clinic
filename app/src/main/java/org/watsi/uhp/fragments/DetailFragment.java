@@ -49,10 +49,13 @@ public class DetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
-        UUID memberId = UUID.fromString(getArguments().getString("memberId"));
+        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(
+                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
+        UUID memberId = UUID.fromString(
+                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
         ((MainActivity) getActivity()).setMemberId(memberId);
-        String throughMemberId = getArguments().getString("throughMemberId");
+        String throughMemberId = getArguments().getString(
+                NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
         try {
             mMember = MemberDao.findById(memberId);

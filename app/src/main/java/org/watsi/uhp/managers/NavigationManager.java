@@ -33,6 +33,15 @@ import java.util.UUID;
  */
 public class NavigationManager {
 
+    public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
+    public static String MEMBER_ID_BUNDLE_FIELD = "memberId";
+    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMemberId";
+    public static String ONLY_SCAN_BUNDLE_FIELD = "onlyScan";
+    public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
+
+    public static String HOME_TAG = "home";
+    public static String DETAIL_TAG = "detail";
+
     private AppCompatActivity mActivity;
     private FragmentProvider mFragmentProvider;
 
@@ -51,8 +60,8 @@ public class NavigationManager {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         if (popBackStack) {
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            if (fm.findFragmentByTag("home") != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag("home")).commit();
+            if (fm.findFragmentByTag(HOME_TAG) != null) {
+                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
             }
         }
 
@@ -69,24 +78,30 @@ public class NavigationManager {
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), "home", false, true);
+        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
     public void setDetailFragment(UUID memberId,
                                   IdentificationEvent.SearchMethodEnum idMethod,
                                   UUID throughMemberId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId.toString());
-        bundle.putString("idMethod", idMethod.toString());
+        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
         if (throughMemberId != null) {
-            bundle.putString("throughMemberId", throughMemberId.toString());
+            bundle.putString(THROUGH_MEMBER_BUNDLE_FIELD, throughMemberId.toString());
         }
 
-        setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle));
+        setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
-    public void setBarcodeFragment() {
-        setFragment(mFragmentProvider.createFragment(BarcodeFragment.class));
+    public void setBarcodeFragment(boolean onlyScan,
+                                   UUID memberId,
+                                   IdentificationEvent.SearchMethodEnum idMethod) {
+        Bundle bundle = new Bundle();
+        if (memberId != null) bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        if (idMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
+        bundle.putBoolean(ONLY_SCAN_BUNDLE_FIELD, onlyScan);
+        setFragment(mFragmentProvider.createFragment(BarcodeFragment.class, bundle));
     }
 
     public void setSearchMemberFragment() {
@@ -107,32 +122,35 @@ public class NavigationManager {
 
     public void setEnrollmentContactInfoFragment(UUID memberId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId.toString());
+        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
         setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
     }
 
     public void setEnrollmentMemberPhotoFragment(UUID memberId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId.toString());
+        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
         setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
     }
 
     public void setEnrollmentIdPhotoFragment(UUID memberId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId.toString());
+        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
         setFragment(mFragmentProvider.createFragment(EnrollmentIdPhotoFragment.class, bundle));
     }
 
     public void setEnrollmentFingerprintFragment(UUID memberId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId.toString());
+        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
     }
 
-    public void setMemberEditFragment(UUID memberId, IdentificationEvent.SearchMethodEnum searchMethod) {
+    public void setMemberEditFragment(UUID memberId,
+                                      IdentificationEvent.SearchMethodEnum searchMethod,
+                                      String scannedCardId) {
         Bundle bundle = new Bundle();
-        bundle.putString("memberId", memberId.toString());
-        bundle.putString("idMethod" , searchMethod.toString());
+        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
+        bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }
 
