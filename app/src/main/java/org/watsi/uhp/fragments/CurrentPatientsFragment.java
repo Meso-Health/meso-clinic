@@ -36,7 +36,7 @@ public class CurrentPatientsFragment extends Fragment {
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setBarcodeFragment();
+                new NavigationManager(getActivity()).setBarcodeFragment(false, null, null);
             }
         });
 

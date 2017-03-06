@@ -121,15 +121,17 @@ public class Member extends SyncableModel {
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
 
-    @ForeignCollectionField
-    private final Collection<Encounter> mEncounters = new ArrayList<>();
-    
     public Member() {
         super();
     }
 
-    public void setFullName(String fullName) {
-        this.mFullName = fullName;
+    public void setFullName(String fullName) throws ValidationException {
+        if (fullName == null || fullName.isEmpty()) {
+            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
+        } else {
+            addDirtyField(FIELD_NAME_FULL_NAME);
+            this.mFullName = fullName;
+        }
     }
 
     public String getFullName() {
@@ -154,8 +156,13 @@ public class Member extends SyncableModel {
         }
     }
 
-    public void setCardId(String cardId) {
-        this.mCardId = cardId;
+    public void setCardId(String cardId) throws ValidationException {
+        if (validCardId(cardId)) {
+            addDirtyField(FIELD_NAME_CARD_ID);
+            this.mCardId = cardId;
+        } else {
+            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
+        }
     }
 
     public int getAge() {
@@ -163,6 +170,7 @@ public class Member extends SyncableModel {
     }
 
     public void setAge(int age) {
+        addDirtyField(FIELD_NAME_AGE);
         this.mAge = age;
     }
 
@@ -195,6 +203,7 @@ public class Member extends SyncableModel {
     }
 
     public void setPhoto(byte[] photoBytes) {
+        addDirtyField(FIELD_NAME_PHOTO);
         this.mPhoto = photoBytes;
     }
 
@@ -211,6 +220,7 @@ public class Member extends SyncableModel {
     }
 
     public void setNationalIdPhoto(byte[] nationalIdPhoto) {
+        addDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
         this.mNationalIdPhoto = nationalIdPhoto;
     }
 
@@ -251,21 +261,13 @@ public class Member extends SyncableModel {
         this.mIdentificationEvents.clear();
         this.mIdentificationEvents.addAll(identificationEvents);
     }
-    
-    public Collection<Encounter> getEncounters() {
-        return mEncounters;
-    }
-
-    public void setEncounters(Collection<Encounter> encounters) {
-        this.mEncounters.clear();
-        this.mEncounters.addAll(encounters);
-    }
 
     public UUID getFingerprintsGuid() {
         return mFingerprintsGuid;
     }
 
     public void setFingerprintsGuid(UUID fingerprintsGuid) {
+        addDirtyField(FIELD_NAME_FINGERPRINTS_GUID);
         this.mFingerprintsGuid = fingerprintsGuid;
     }
 
@@ -278,6 +280,7 @@ public class Member extends SyncableModel {
             this.mPhoneNumber = null;
         } else {
             if (Member.validPhoneNumber(phoneNumber)) {
+                addDirtyField(FIELD_NAME_PHONE_NUMBER);
                 this.mPhoneNumber = phoneNumber;
             } else {
                 throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Invalid phone number");
@@ -335,31 +338,53 @@ public class Member extends SyncableModel {
     public Map<String, RequestBody> formatPatchRequest(Context context) {
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+        if (dirty(FIELD_NAME_PHOTO)) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
             requestPartMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
         }
 
-        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
+        if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
             byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
             requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
         }
 
-        if (getFingerprintsGuid() != null) {
+        if (dirty(FIELD_NAME_FINGERPRINTS_GUID)) {
             requestPartMap.put(
                     FIELD_NAME_FINGERPRINTS_GUID,
                     RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
             );
         }
 
-        if (getPhoneNumber() != null) {
+        if (dirty(FIELD_NAME_PHONE_NUMBER)) {
             requestPartMap.put(
                     FIELD_NAME_PHONE_NUMBER,
                     RequestBody.create(MultipartBody.FORM, getPhoneNumber())
             );
         }
 
+        if (dirty(FIELD_NAME_FULL_NAME)) {
+            requestPartMap.put(
+                    FIELD_NAME_FULL_NAME,
+                    RequestBody.create(MultipartBody.FORM, getFullName())
+            );
+        }
+
+        if (dirty(FIELD_NAME_CARD_ID)) {
+            requestPartMap.put(
+                    FIELD_NAME_CARD_ID,
+                    RequestBody.create(MultipartBody.FORM, getCardId())
+            );
+        }
+
         return requestPartMap;
+    }
+
+    public static boolean validCardId(String cardId) {
+        if (cardId == null || cardId.isEmpty()) {
+            return false;
+        } else {
+            return cardId.matches("RWI[0-9]{6}");
+        }
     }
 
     public static boolean validPhoneNumber(String phoneNumber) {

@@ -41,7 +41,6 @@ public class DetailFragment extends Fragment {
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
     private Member mThroughMember = null;
-    private TextView rejectIdentityLink;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,12 +51,14 @@ public class DetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        rejectIdentityLink = (TextView) view.findViewById(R.id.reject_identity);
+        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(
+                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
+        UUID memberId = UUID.fromString(
+                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
 
-        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
-        UUID memberId = UUID.fromString(getArguments().getString("memberId"));
         ((MainActivity) getActivity()).setMemberId(memberId);
-        String throughMemberId = getArguments().getString("throughMemberId");
+        String throughMemberId = getArguments().getString(
+                NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
         try {
             mMember = MemberDao.findById(memberId);
@@ -73,12 +74,12 @@ public class DetailFragment extends Fragment {
                 (Button) view.findViewById(R.id.approve_identity)
         );
         setHouseholdList(view);
-        setRejectIdentityLink();
+        setRejectIdentityLink(view);
         return view;
     }
 
-    private void setRejectIdentityLink() {
-        rejectIdentityLink.setOnClickListener(new View.OnClickListener() {
+    private void setRejectIdentityLink(View view) {
+        ((TextView) view.findViewById(R.id.reject_identity)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
@@ -170,8 +171,8 @@ public class DetailFragment extends Fragment {
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
 
-        // TODO: this should be in a transaction
-        IdentificationEvent idEvent = new IdentificationEvent();
+        IdentificationEvent idEvent =
+                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -179,7 +180,6 @@ public class DetailFragment extends Fragment {
         idEvent.setClinicNumber(clinicNumber);
         idEvent.setAccepted(accepted);
         idEvent.setOccurredAt(Clock.getCurrentTime());
-        idEvent.setToken(ConfigManager.getLoggedInUserToken(getContext()));
         if (mMember.getPhoto() == null) {
             idEvent.setPhotoVerified(false);
         }
@@ -197,9 +197,14 @@ public class DetailFragment extends Fragment {
                 show();
     }
 
+    public IdentificationEvent.SearchMethodEnum getIdMethod() {
+        return this.mIdMethod;
+    }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_member_edit).setVisible(true);
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }

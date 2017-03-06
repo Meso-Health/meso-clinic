@@ -49,8 +49,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     void nextStep() {
         NavigationManager navigationManager = new NavigationManager(getActivity());
         if (!mMember.shouldCaptureFingerprint()) {
-            mMember.setToken(ConfigManager.getLoggedInUserToken(getContext()));
-            mMember.setSynced(false);
+            mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
         }
 
         try {

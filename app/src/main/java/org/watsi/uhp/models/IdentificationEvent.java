@@ -88,6 +88,11 @@ public class IdentificationEvent extends SyncableModel {
         super();
     }
 
+    public IdentificationEvent(String token) {
+        super();
+        setToken(token);
+    }
+
     public UUID getId() {
         return mId;
     }
