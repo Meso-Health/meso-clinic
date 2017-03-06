@@ -15,8 +15,10 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class MemberEditFragment extends Fragment {
 
     private Member mMember;
+    private IdentificationEvent.SearchMethodEnum mIdMethod;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class MemberEditFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
 
         UUID memberId = UUID.fromString(getArguments().getString("memberId"));
+        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
 
         try {
             mMember = MemberDao.findById(memberId);
@@ -73,14 +77,15 @@ public class MemberEditFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {
                     String toastMessage = mMember.getFullName() + "'s information has been updated.";
                     try {
-                        mMember.setSynced(false);
+                        mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
                         MemberDao.update(mMember);
                     } catch (SQLException e) {
                         Rollbar.reportException(e);
                         toastMessage = "Failed to update the member information.";
                     }
 
-                    new NavigationManager(getActivity()).setCurrentPatientsFragment();
+                    new NavigationManager(getActivity())
+                            .setDetailFragment(mMember.getId(), mIdMethod, null);
                     Toast.makeText(
                             getActivity().getApplicationContext(),
                             toastMessage,

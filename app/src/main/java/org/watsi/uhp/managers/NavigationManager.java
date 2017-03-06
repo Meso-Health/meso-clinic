@@ -51,7 +51,6 @@ public class NavigationManager {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         if (popBackStack) {
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            // manually remove the previous "home" fragment from the fragment container
             if (fm.findFragmentByTag("home") != null) {
                 fm.beginTransaction().remove(fm.findFragmentByTag("home")).commit();
             }
@@ -130,9 +129,10 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
     }
 
-    public void setMemberEditFragment(UUID memberId) {
+    public void setMemberEditFragment(UUID memberId, IdentificationEvent.SearchMethodEnum searchMethod) {
         Bundle bundle = new Bundle();
         bundle.putString("memberId", memberId.toString());
+        bundle.putString("idMethod" , searchMethod.toString());
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }
 

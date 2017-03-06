@@ -18,6 +18,7 @@ import com.squareup.leakcanary.LeakCanary;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
+import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -155,8 +156,12 @@ public class MainActivity extends AppCompatActivity {
                     new NavigationManager(mActivity).logout();
                     break;
                 case R.id.menu_member_edit:
+                    IdentificationEvent.SearchMethodEnum searchMethod =
+                            ((DetailFragment) getSupportFragmentManager()
+                                    .findFragmentByTag("detail"))
+                                    .getIdMethod();
                     new NavigationManager(mActivity)
-                            .setMemberEditFragment(mMemberId);
+                            .setMemberEditFragment(mMemberId, searchMethod);
                     break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();

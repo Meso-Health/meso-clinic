@@ -154,8 +154,8 @@ public class DetailFragment extends Fragment {
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
 
-        // TODO: this should be in a transaction
-        IdentificationEvent idEvent = new IdentificationEvent();
+        IdentificationEvent idEvent =
+                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -163,7 +163,6 @@ public class DetailFragment extends Fragment {
         idEvent.setClinicNumber(clinicNumber);
         idEvent.setAccepted(accepted);
         idEvent.setOccurredAt(Clock.getCurrentTime());
-        idEvent.setToken(ConfigManager.getLoggedInUserToken(getContext()));
         if (mMember.getPhoto() == null) {
             idEvent.setPhotoVerified(false);
         }
@@ -179,6 +178,10 @@ public class DetailFragment extends Fragment {
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public IdentificationEvent.SearchMethodEnum getIdMethod() {
+        return this.mIdMethod;
     }
 
     @Override

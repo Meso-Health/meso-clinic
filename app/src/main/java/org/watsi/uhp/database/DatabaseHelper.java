@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private static DatabaseHelper instance;
 
@@ -64,13 +64,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         try {
-            TableUtils.dropTable(connectionSource, IdentificationEvent.class, false);
-            TableUtils.dropTable(connectionSource, Encounter.class,false);
-            TableUtils.dropTable(connectionSource, EncounterItem.class, false);
+            switch (oldVersion) {
+                default:
+                case 2:
+                    TableUtils.dropTable(connectionSource, IdentificationEvent.class, false);
+                    TableUtils.dropTable(connectionSource, Encounter.class,false);
+                    TableUtils.dropTable(connectionSource, EncounterItem.class, false);
 
-            TableUtils.createTable(connectionSource, IdentificationEvent.class);
-            TableUtils.createTable(connectionSource, Encounter.class);
-            TableUtils.createTable(connectionSource, EncounterItem.class);
+                    TableUtils.createTable(connectionSource, IdentificationEvent.class);
+                    TableUtils.createTable(connectionSource, Encounter.class);
+                    TableUtils.createTable(connectionSource, EncounterItem.class);
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
+                    break;
+                case 3:
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN dirty_fields STRING;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dirty_fields STRING;");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

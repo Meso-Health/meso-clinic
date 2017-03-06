@@ -73,7 +73,7 @@ public class SyncService extends Service {
                             .syncIdentificationEvent(tokenAuthorizationString, mProviderId, event);
             Response<IdentificationEvent> response = request.execute();
             if (response.isSuccessful()) {
-                event.setSynced(true);
+                event.setSynced();
                 IdentificationEventDao.update(event);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
@@ -100,7 +100,7 @@ public class SyncService extends Service {
                             .syncEncounter(tokenAuthorizationString, mProviderId, encounter);
             Response<Encounter> response = request.execute();
             if (response.isSuccessful()) {
-                encounter.setSynced(true);
+                encounter.setSynced();
                 EncounterDao.update(encounter);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
@@ -127,7 +127,7 @@ public class SyncService extends Service {
             Response<Member> response = request.execute();
             if (response.isSuccessful()) {
                 member.deleteLocalImages();
-                member.setSynced(true);
+                member.setSynced();
                 MemberDao.update(member);
             } else {
                 Map<String,String> reportParams = new HashMap<>();
