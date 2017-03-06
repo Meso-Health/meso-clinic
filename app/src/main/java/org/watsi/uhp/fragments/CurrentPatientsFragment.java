@@ -56,7 +56,7 @@ public class CurrentPatientsFragment extends Fragment {
             });
         } catch (SQLException e) {
             Rollbar.reportException(e);
-            Toast.makeText(getContext(), "Failed to load members", Toast.LENGTH_LONG);
+            Toast.makeText(getContext(), "Failed to load members", Toast.LENGTH_LONG).show();
         }
 
         return view;
