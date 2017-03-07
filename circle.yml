@@ -45,15 +45,15 @@ deployment:
       # Copies the environment variables configured on circle to the application's secret.xml file.
       - ./deploy_scripts/copyEnvVariablesToBuild.sh production
       # Create a release candidate
-      - ./gradlew assembleSandbox
+      - ./gradlew assembleProductionRelease
       # Deploy to hockey
       - ./deploy_scripts/deployHockeyApp.sh production
   michael_sandbox: #TODO - replace this with master once done
     branch: hockeyapp-test #TODO - replace this with master once done
     commands:
-      # Copies the environment variables configured on circle to the application's secret.xml file.
       - ./deploy_scripts/copyEnvVariablesToBuild.sh sandbox
+      - ./deploy_scripts/download_keystore.sh
       # Create a release candidate
-      - ./gradlew assembleSandbox
+      - ./gradlew assembleSandboxRelease
       # Deploy to hockey
       - ./deploy_scripts/deployHockeyApp.sh sandbox
