@@ -27,7 +27,7 @@ import java.util.UUID;
 public class MemberEditFragment extends Fragment {
 
     private Member mMember;
-    private IdentificationEvent.SearchMethodEnum mIdMethod;
+    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,8 +38,10 @@ public class MemberEditFragment extends Fragment {
         UUID memberId = UUID.fromString(
                 getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
 
-        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(
-                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
+        String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+        if (searchMethodString != null) {
+            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
+        }
 
         try {
             mMember = MemberDao.findById(memberId);

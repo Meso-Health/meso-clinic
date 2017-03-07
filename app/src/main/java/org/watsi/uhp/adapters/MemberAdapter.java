@@ -61,7 +61,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
             if (showClinicNumber) {
                 viewHolder.phone_number.setVisibility(View.GONE);
                 viewHolder.clinic_number.setVisibility(View.VISIBLE);
-                viewHolder.clinic_number.setText(member.getLastIdentification().getFormattedClinicNumber());
+                viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
             }
 
             Bitmap photoBitmap = member.getPhotoBitmap();

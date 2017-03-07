@@ -257,16 +257,6 @@ public class Member extends SyncableModel {
         return mIdentificationEvents;
     }
 
-    public IdentificationEvent getLastIdentification() {
-        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentificationEvents());
-        return allIdentificationEvents.get(allIdentificationEvents.size() -1);
-    }
-
-    public void setIdentifications(Collection<IdentificationEvent> identificationEvents) {
-        this.mIdentificationEvents.clear();
-        this.mIdentificationEvents.addAll(identificationEvents);
-    }
-
     public UUID getFingerprintsGuid() {
         return mFingerprintsGuid;
     }
@@ -425,7 +415,7 @@ public class Member extends SyncableModel {
         }
     }
 
-    public UUID currentCheckInId() {
+    public IdentificationEvent currentCheckIn() {
         try {
             return IdentificationEventDao.openCheckIn(getId());
         } catch (SQLException e) {

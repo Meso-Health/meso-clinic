@@ -121,7 +121,7 @@ public class DetailFragment extends Fragment {
 
     private void setButton(View view) {
         Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
-        if (mMember.currentCheckInId() == null) {
+        if (mMember.currentCheckIn() == null) {
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

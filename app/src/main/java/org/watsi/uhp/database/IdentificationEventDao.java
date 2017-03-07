@@ -56,7 +56,7 @@ public class IdentificationEventDao {
         getInstance().getIdentificationDao().update(identificationEvent);
     }
 
-    public static UUID openCheckIn(UUID memberId) throws SQLException {
+    public static IdentificationEvent openCheckIn(UUID memberId) throws SQLException {
         String rawQuery = "SELECT identifications.id\n" +
                 "FROM identifications\n" +
                 "LEFT OUTER JOIN encounters ON encounters.identification_event_id = identifications.id\n" +
@@ -72,6 +72,10 @@ public class IdentificationEventDao {
                         });
 
         String result = rawResults.getFirstResult();
-        return (result == null) ? null : UUID.fromString(result);
+        if (result == null) {
+            return null;
+        } else {
+            return getInstance().getIdentificationDao().queryForId(UUID.fromString(result));
+        }
     }
 }

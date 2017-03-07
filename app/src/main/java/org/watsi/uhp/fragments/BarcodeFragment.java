@@ -56,8 +56,10 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
             mSearchMemberButton.setVisibility(View.GONE);
             mMemberID = UUID.fromString(
                     getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
-            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(
-                    getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
+            String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+            if (searchMethodString != null) {
+                mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
+            }
         }
 
         mErrorToast = Toast.makeText(getActivity().getApplicationContext(),

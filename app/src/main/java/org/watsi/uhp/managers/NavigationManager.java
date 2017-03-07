@@ -151,7 +151,7 @@ public class NavigationManager {
                                       String scannedCardId) {
         Bundle bundle = new Bundle();
         bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
-        bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
+        if (searchMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }
