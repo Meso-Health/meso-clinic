@@ -129,7 +129,7 @@ public class FetchService extends Service {
                 }
             }
 
-            member.setSynced(true);
+            member.setSynced();
             MemberDao.createOrUpdate(member);
 
             iterator.remove();

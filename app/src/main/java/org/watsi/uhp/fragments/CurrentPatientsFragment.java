@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class CurrentPatientsFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.current_patients_fragment_label);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         View view = inflater.inflate(R.layout.fragment_current_patients, container, false);
         Button mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
@@ -36,7 +38,9 @@ public class CurrentPatientsFragment extends Fragment {
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setBarcodeFragment();
+                new NavigationManager(getActivity()).setBarcodeFragment(false, null, null);
+                ((AppCompatActivity) getActivity()).getSupportActionBar()
+                        .setDisplayHomeAsUpEnabled(true);
             }
         });
 
@@ -50,13 +54,15 @@ public class CurrentPatientsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.setNewEncounter(member);
-                    new NavigationManager(activity).setEncounterFragment();
+                    new NavigationManager(activity).setDetailFragment(member.getId(), null, null);
+
+                    ((AppCompatActivity) getActivity()).getSupportActionBar()
+                            .setDisplayHomeAsUpEnabled(true);
                 }
             });
         } catch (SQLException e) {
             Rollbar.reportException(e);
-            Toast.makeText(getContext(), "Failed to load members", Toast.LENGTH_LONG);
+            Toast.makeText(getContext(), "Failed to load members", Toast.LENGTH_LONG).show();
         }
 
         return view;

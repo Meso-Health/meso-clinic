@@ -58,36 +58,30 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
                 }
             });
 
+            final ViewHolder vh = viewHolder;
+            viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        String quantity = vh.billableQuantity.getText().toString();
+
+                        if (quantity.equals("")) {
+                            vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
+                        } else {
+                            encounterItem.setQuantity(Integer.valueOf(quantity));
+                        }
+                    }
+                }
+            });
+            viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
+
             if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
                     billable.getType().equals(Billable.TypeEnum.LAB)) {
 
-                viewHolder.billableQuantity.setFocusable(false);
+                viewHolder.billableQuantity.setEnabled(false);
 
-                viewHolder.billableQuantity.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-                       Toast.makeText(getContext(), "You cannot edit the quantity of a Lab or Service", Toast.LENGTH_SHORT).show();
-                   }
-                });
             } else {
-                viewHolder.billableQuantity.setVisibility(View.VISIBLE);
-
-                final ViewHolder vh = viewHolder;
-                viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
-                viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            String quantity = vh.billableQuantity.getText().toString();
-
-                            if (quantity.equals("")) {
-                                vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
-                            } else {
-                                encounterItem.setQuantity(Integer.valueOf(quantity));
-                            }
-                        }
-                    }
-                });
+                viewHolder.billableQuantity.setEnabled(true);
             }
         }
 

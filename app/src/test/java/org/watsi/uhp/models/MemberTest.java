@@ -144,9 +144,6 @@ public class MemberTest {
 
     @Test
     public void getFormattedCardId() throws Exception {
-        member.setCardId(null);
-        assertNull(member.getFormattedCardId());
-
         member.setCardId("RWI123456");
         assertEquals(member.getFormattedCardId(), "RWI 123 456");
     }
