@@ -39,8 +39,8 @@ public class NavigationManager {
     public static String ONLY_SCAN_BUNDLE_FIELD = "onlyScan";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
 
-    public static String HOME_TAG = "home";
-    public static String DETAIL_TAG = "detail";
+    private static String HOME_TAG = "home";
+    private static String DETAIL_TAG = "detail";
 
     private AppCompatActivity mActivity;
     private FragmentProvider mFragmentProvider;
@@ -86,7 +86,9 @@ public class NavigationManager {
                                   UUID throughMemberId) {
         Bundle bundle = new Bundle();
         bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
-        bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
+        if (idMethod != null) {
+            bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
+        }
         if (throughMemberId != null) {
             bundle.putString(THROUGH_MEMBER_BUNDLE_FIELD, throughMemberId.toString());
         }
@@ -149,7 +151,7 @@ public class NavigationManager {
                                       String scannedCardId) {
         Bundle bundle = new Bundle();
         bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
-        bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
+        if (searchMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }

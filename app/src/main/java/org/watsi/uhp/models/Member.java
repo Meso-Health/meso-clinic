@@ -13,16 +13,21 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NotificationManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -252,16 +257,6 @@ public class Member extends SyncableModel {
         return mIdentificationEvents;
     }
 
-    public IdentificationEvent getLastIdentification() {
-        ArrayList<IdentificationEvent> allIdentificationEvents = new ArrayList<>(getIdentificationEvents());
-        return allIdentificationEvents.get(allIdentificationEvents.size() -1);
-    }
-
-    public void setIdentifications(Collection<IdentificationEvent> identificationEvents) {
-        this.mIdentificationEvents.clear();
-        this.mIdentificationEvents.addAll(identificationEvents);
-    }
-
     public UUID getFingerprintsGuid() {
         return mFingerprintsGuid;
     }
@@ -417,6 +412,15 @@ public class Member extends SyncableModel {
         if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
             new File(getNationalIdPhotoUrl()).delete();
             setNationalIdPhotoUrl(null);
+        }
+    }
+
+    public IdentificationEvent currentCheckIn() {
+        try {
+            return IdentificationEventDao.openCheckIn(getId());
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+            return null;
         }
     }
 }
