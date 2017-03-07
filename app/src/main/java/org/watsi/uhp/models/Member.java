@@ -208,7 +208,6 @@ public class Member extends SyncableModel {
     }
 
     public void setPhoto(byte[] photoBytes) {
-        addDirtyField(FIELD_NAME_PHOTO);
         this.mPhoto = photoBytes;
     }
 
@@ -217,6 +216,7 @@ public class Member extends SyncableModel {
     }
 
     public void setPhotoUrl(String photoUrl) {
+        addDirtyField(FIELD_NAME_PHOTO);
         this.mPhotoUrl = photoUrl;
     }
 
@@ -225,7 +225,6 @@ public class Member extends SyncableModel {
     }
 
     public void setNationalIdPhoto(byte[] nationalIdPhoto) {
-        addDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
         this.mNationalIdPhoto = nationalIdPhoto;
     }
 
@@ -234,6 +233,7 @@ public class Member extends SyncableModel {
     }
 
     public void setNationalIdPhotoUrl(String nationalIdPhotoUrl) {
+        addDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
         this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
     }
 
