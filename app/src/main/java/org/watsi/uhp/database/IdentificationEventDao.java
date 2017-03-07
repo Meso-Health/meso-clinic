@@ -1,6 +1,8 @@
 package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.dao.RawRowMapper;
 
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -52,5 +54,24 @@ public class IdentificationEventDao {
 
     public static void update(IdentificationEvent identificationEvent) throws SQLException {
         getInstance().getIdentificationDao().update(identificationEvent);
+    }
+
+    public static UUID openCheckIn(UUID memberId) throws SQLException {
+        String rawQuery = "SELECT identifications.id\n" +
+                "FROM identifications\n" +
+                "LEFT OUTER JOIN encounters ON encounters.identification_event_id = identifications.id\n" +
+                "WHERE encounters.identification_event_id IS NULL\n" +
+                "AND identifications.member_id = '" + memberId.toString() + "'";
+
+        GenericRawResults<String> rawResults =
+                getInstance().getIdentificationDao().queryRaw(rawQuery,
+                        new RawRowMapper<String>() {
+                            public String mapRow(String[] columnNames, String[] resultColumns) {
+                                return resultColumns[0];
+                            }
+                        });
+
+        String result = rawResults.getFirstResult();
+        return (result == null) ? null : UUID.fromString(result);
     }
 }
