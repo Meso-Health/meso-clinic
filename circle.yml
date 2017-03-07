@@ -46,6 +46,7 @@ deployment:
     commands:
       # Copies the environment variables configured on circle to the application's secret.xml file.
       - ./deploy_scripts/copyEnvVariablesToBuild.sh production
+      - ./deploy_scripts/download_keystore.sh
       # Create a release candidate
       - ./gradlew assembleProductionRelease
       # Deploy to hockey
