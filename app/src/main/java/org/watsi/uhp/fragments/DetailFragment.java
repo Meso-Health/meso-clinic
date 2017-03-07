@@ -39,9 +39,8 @@ import java.util.UUID;
 public class DetailFragment extends Fragment {
 
     private Member mMember;
-    private IdentificationEvent.SearchMethodEnum mIdMethod;
+    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
     private Member mThroughMember = null;
-    private TextView rejectIdentityLink;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,12 +51,16 @@ public class DetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        rejectIdentityLink = (TextView) view.findViewById(R.id.reject_identity);
+        String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+        if (searchMethodString != null) {
+            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
+        }
+        UUID memberId = UUID.fromString(
+                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
 
-        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(getArguments().getString("idMethod"));
-        UUID memberId = UUID.fromString(getArguments().getString("memberId"));
         ((MainActivity) getActivity()).setMemberId(memberId);
-        String throughMemberId = getArguments().getString("throughMemberId");
+        String throughMemberId = getArguments().getString(
+                NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
         try {
             mMember = MemberDao.findById(memberId);
@@ -69,27 +72,24 @@ public class DetailFragment extends Fragment {
         }
 
         setPatientCard(view);
-        setButtons(
-                (Button) view.findViewById(R.id.approve_identity)
-        );
+        setButton(view);
         setHouseholdList(view);
-        setRejectIdentityLink();
+        setRejectIdentityLink(view);
         return view;
     }
 
-    private void setRejectIdentityLink() {
-        rejectIdentityLink.setOnClickListener(new View.OnClickListener() {
+    private void setRejectIdentityLink(View view) {
+        view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.reject_identity_alert)
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
                             public void onClick(DialogInterface arg0, int arg1) {
                                 completeIdentification(false, null, null);
                             }
-                            }).create().show();
+                        }).create().show();
             }
         });
     }
@@ -119,13 +119,26 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void setButtons(Button confirmButton) {
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openClinicNumberDialog();
-            }
-        });
+    private void setButton(View view) {
+        Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
+        if (mMember.currentCheckIn() == null) {
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openClinicNumberDialog();
+                }
+            });
+        } else {
+            confirmButton.setText(R.string.detail_create_encounter);
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.setNewEncounter(mMember);
+                    new NavigationManager(activity).setEncounterFragment();
+                }
+            });
+        }
     }
 
     private void openClinicNumberDialog() {
@@ -170,8 +183,8 @@ public class DetailFragment extends Fragment {
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
 
-        // TODO: this should be in a transaction
-        IdentificationEvent idEvent = new IdentificationEvent();
+        IdentificationEvent idEvent =
+                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -179,7 +192,6 @@ public class DetailFragment extends Fragment {
         idEvent.setClinicNumber(clinicNumber);
         idEvent.setAccepted(accepted);
         idEvent.setOccurredAt(Clock.getCurrentTime());
-        idEvent.setToken(ConfigManager.getLoggedInUserToken(getContext()));
         if (mMember.getPhoto() == null) {
             idEvent.setPhotoVerified(false);
         }
@@ -197,9 +209,14 @@ public class DetailFragment extends Fragment {
                 show();
     }
 
+    public IdentificationEvent.SearchMethodEnum getIdMethod() {
+        return this.mIdMethod;
+    }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_member_edit).setVisible(true);
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }

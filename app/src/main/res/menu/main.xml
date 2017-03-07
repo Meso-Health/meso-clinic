@@ -10,15 +10,22 @@
         android:visible="false" />
 
     <item
-        android:id="@+id/menu_logout"
+        android:id="@+id/menu_member_edit"
         android:orderInCategory="101"
+        android:title="@string/menu_member_edit_label"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:orderInCategory="102"
         android:title="@string/menu_logout_label"
         app:showAsAction="never"
         android:visible="true" />
 
     <item
         android:id="@+id/menu_version"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:title="@string/menu_version_label"
         app:showAsAction="never"
         android:visible="true" />

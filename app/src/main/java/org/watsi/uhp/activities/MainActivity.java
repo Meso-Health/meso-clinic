@@ -19,6 +19,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
+import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         if (!ConfigManager.isProduction(getApplicationContext())) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
         }
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void checkForUpdates() {
@@ -104,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setNewEncounter(Member member) {
         try {
-            IdentificationEvent lastIdentification = member.getLastIdentification();
+            IdentificationEvent checkIn = member.currentCheckIn();
             mCurrentEncounter.setMember(member);
-            mCurrentEncounter.setIdentificationEvent(lastIdentification);
+            mCurrentEncounter.setIdentificationEvent(checkIn);
             mCurrentEncounter.setEncounterItems(
-                    EncounterItemDao.getDefaultEncounterItems(lastIdentification.getClinicNumberType()));
+                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
@@ -166,6 +168,14 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_logout:
                     new NavigationManager(mActivity).logout();
                     break;
+                case R.id.menu_member_edit:
+                    IdentificationEvent.SearchMethodEnum searchMethod =
+                            ((DetailFragment) getSupportFragmentManager()
+                                    .findFragmentByTag("detail"))
+                                    .getIdMethod();
+                    new NavigationManager(mActivity)
+                            .setMemberEditFragment(mMemberId, searchMethod, null);
+                    break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();
                     break;
@@ -175,6 +185,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             return true;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                new NavigationManager(this).setCurrentPatientsFragment();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

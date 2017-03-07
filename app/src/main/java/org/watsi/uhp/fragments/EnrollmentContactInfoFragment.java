@@ -51,7 +51,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
                 Toast.makeText(getContext(), "Failed to save contact information", Toast.LENGTH_LONG).show();
             }
         } catch (AbstractModel.ValidationException e) {
-            String errorMessage = getString(R.string.enrollment_contact_info_invalid_phone_number_message);
+            String errorMessage = getString(R.string.phone_number_validation_error);
             mPhoneNumberView.setError(errorMessage);
         }
     }

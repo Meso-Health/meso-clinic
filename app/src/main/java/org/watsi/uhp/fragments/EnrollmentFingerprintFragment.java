@@ -52,8 +52,7 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mMember.setToken(ConfigManager.getLoggedInUserToken(getContext()));
-                    mMember.setSynced(false);
+                    mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
                     MemberDao.update(mMember);
                     new NavigationManager(getActivity()).setCurrentPatientsFragment();
                     Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
