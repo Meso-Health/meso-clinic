@@ -58,10 +58,6 @@ public class EncounterDao {
         }
     }
 
-    public static void refresh(Encounter encounter) throws SQLException {
-        getInstance().getEncounterDao().refresh(encounter);
-    }
-
     public static List<Encounter> unsynced() throws SQLException {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put(Encounter.FIELD_NAME_SYNCED, false);
@@ -70,9 +66,5 @@ public class EncounterDao {
 
     public static void update(Encounter encounter) throws SQLException {
         getInstance().getEncounterDao().update(encounter);
-    }
-
-    public static void delete(Encounter encounter) throws SQLException {
-        getInstance().getEncounterDao().delete(encounter);
     }
 }

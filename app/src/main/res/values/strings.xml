@@ -48,6 +48,7 @@
     <string name="absentee_notification">MUST COMPLETE ENROLLMENT</string>
     <string name="replace_card_notification">NEEDS NEW CARD</string>
     <string name="approve_identity">Check-in</string>
+    <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="household_label">Household Members</string>

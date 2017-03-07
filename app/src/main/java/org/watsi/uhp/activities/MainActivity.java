@@ -94,11 +94,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setNewEncounter(Member member) {
         try {
-            IdentificationEvent lastIdentification = member.getLastIdentification();
+            IdentificationEvent checkIn = member.currentCheckIn();
             mCurrentEncounter.setMember(member);
-            mCurrentEncounter.setIdentificationEvent(lastIdentification);
+            mCurrentEncounter.setIdentificationEvent(checkIn);
             mCurrentEncounter.setEncounterItems(
-                    EncounterItemDao.getDefaultEncounterItems(lastIdentification.getClinicNumberType()));
+                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }

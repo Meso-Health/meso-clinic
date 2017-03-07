@@ -39,7 +39,7 @@ import java.util.UUID;
 public class DetailFragment extends Fragment {
 
     private Member mMember;
-    private IdentificationEvent.SearchMethodEnum mIdMethod;
+    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
     private Member mThroughMember = null;
 
     @Override
@@ -51,8 +51,10 @@ public class DetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(
-                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
+        String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+        if (searchMethodString != null) {
+            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
+        }
         UUID memberId = UUID.fromString(
                 getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
 
@@ -70,27 +72,24 @@ public class DetailFragment extends Fragment {
         }
 
         setPatientCard(view);
-        setButtons(
-                (Button) view.findViewById(R.id.approve_identity)
-        );
+        setButton(view);
         setHouseholdList(view);
         setRejectIdentityLink(view);
         return view;
     }
 
     private void setRejectIdentityLink(View view) {
-        ((TextView) view.findViewById(R.id.reject_identity)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.reject_identity_alert)
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
                             public void onClick(DialogInterface arg0, int arg1) {
                                 completeIdentification(false, null, null);
                             }
-                            }).create().show();
+                        }).create().show();
             }
         });
     }
@@ -120,13 +119,26 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void setButtons(Button confirmButton) {
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openClinicNumberDialog();
-            }
-        });
+    private void setButton(View view) {
+        Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
+        if (mMember.currentCheckIn() == null) {
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openClinicNumberDialog();
+                }
+            });
+        } else {
+            confirmButton.setText(R.string.detail_create_encounter);
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.setNewEncounter(mMember);
+                    new NavigationManager(activity).setEncounterFragment();
+                }
+            });
+        }
     }
 
     private void openClinicNumberDialog() {
