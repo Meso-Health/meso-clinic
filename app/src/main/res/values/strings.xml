@@ -30,7 +30,7 @@
     <string name="login_progress_message">Logging in…</string>
 
     <!--CurrentPatientsFragment-->
-    <string name="identification_button">CHECK IN NEW PATIENT</string>
+    <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
 
     <!--BarcodeFragment-->
@@ -47,11 +47,11 @@
     <string name="member_photo_content_description">Member photo</string>
     <string name="absentee_notification">MUST COMPLETE ENROLLMENT</string>
     <string name="replace_card_notification">NEEDS NEW CARD</string>
-    <string name="approve_identity">CHECK IN</string>
+    <string name="approve_identity">Check-in</string>
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
-    <string name="household_label">HOUSEHOLD MEMBERS</string>
+    <string name="household_label">Household Members</string>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">has been reported for suspicious behavior.</string>
 
@@ -67,11 +67,11 @@
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a</string>
     <string name="search_drug_hint">Search drugs</string>
-    <string name="already_in_list_items">Already in Items</string>
+    <string name="already_in_list_items">Already selected</string>
     <string name="default_billable_quantity">1</string>
     <string name="remove_billable_button">X</string>
-    <string name="encounter_product_list_label">ITEMS</string>
-    <string name="continue_encounter_button">CONTINUE</string>
+    <string name="encounter_product_list_label">Items</string>
+    <string name="continue_encounter_button">Continue</string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!--AddNewBillableFragment-->
@@ -86,9 +86,9 @@
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
-    <string name="total"><b>TOTAL</b></string>
-    <string name="back_button">NO, GO BACK</string>
-    <string name="save_encounter_button">YES, SUBMIT</string>
+    <string name="total"><b>Total</b></string>
+    <string name="back_button">Go back</string>
+    <string name="save_encounter_button">Submit</string>
     <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
 
     <!-- Enrollment -->
