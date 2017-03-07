@@ -1,11 +1,13 @@
 machine:
   environment:
     ADB_INSTALL_TIMEOUT: "10"
+    VERSION_CODE: ${CIRCLE_BUILD_NUM}
+    VERSION_NAME: "${CURRENT_BUILD_MAJOR}.${CURRENT_BUILD_MINOR}.${CIRCLE_BUILD_NUM}"
 
 test:
   override:
     - echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><secret></secret>" >> app/src/main/res/xml/secret.xml
-    # # run unit tests
+    # run unit tests
     # - ./gradlew test
     # # start the emulator
     # - emulator -avd circleci-android22 -no-audio -no-window:
@@ -48,7 +50,7 @@ deployment:
       - ./gradlew assembleProductionRelease
       # Deploy to hockey
       - ./deploy_scripts/deployHockeyApp.sh production
-  michael_sandbox: #TODO - replace this with master once done
+  master:
     branch: hockeyapp-test #TODO - replace this with master once done
     commands:
       - ./deploy_scripts/copyEnvVariablesToBuild.sh sandbox
