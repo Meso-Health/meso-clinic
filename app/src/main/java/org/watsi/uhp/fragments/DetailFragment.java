@@ -101,7 +101,7 @@ public class DetailFragment extends Fragment {
         ((TextView) detailView.findViewById(R.id.member_card_id)).setText(mMember.getFormattedCardId());
         ((TextView) detailView.findViewById(R.id.member_phone_number)).setText(mMember.getFormattedPhoneNumber());
 
-        Bitmap photoBitmap = mMember.getPhotoBitmap();
+        Bitmap photoBitmap = mMember.getPhotoBitmap(getContext().getContentResolver());
         ImageView memberPhoto = (ImageView) detailView.findViewById(R.id.member_photo);
         if (photoBitmap != null) {
             memberPhoto.setImageBitmap(photoBitmap);

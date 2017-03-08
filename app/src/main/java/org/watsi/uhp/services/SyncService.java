@@ -126,7 +126,13 @@ public class SyncService extends Service {
             );
             Response<Member> response = request.execute();
             if (response.isSuccessful()) {
-                member.deleteLocalImages();
+                // if we have updated the photo, remove the local version and fetch the remote one
+                if (member.getPhotoUrl() != null &&
+                        !member.getPhotoUrl().equals(response.body().getPhotoUrl())) {
+                    member.deleteLocalImages();
+                    member.setPhotoUrl(response.body().getPhotoUrl());
+                    member.fetchAndSetPhotoFromUrl();
+                }
                 member.setSynced();
                 MemberDao.update(member);
             } else {
