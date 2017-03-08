@@ -18,6 +18,9 @@ HOCKEYAPP_NOTES="${HOCKEYAPP_NOTES_HEADER_HTML} ${GIT_PRETTY_COMMIT_LOG}"
 HOCKEYAPP_EXPORT_APK_PATH="app/build/outputs/apk/app-sandbox-release.apk"
 
 echo "Build is green. Deploying application to Hockeyapp."
+echo "Build versionName: ${VERSION_NAME}"
+echo "Build versionCode: ${VERSION_CODE}"
+
 curl --verbose \
      --fail \
      --form "status=2" \
@@ -25,7 +28,7 @@ curl --verbose \
      --form "notes=${HOCKEYAPP_NOTES}" \
      --form "platform=Android" \
      --form "notes_type=0" \
-     --form "bundle_version=5" \
+     --form "bundle_version=${versionCode}" \
      --form "ipa=@${HOCKEYAPP_EXPORT_APK_PATH}" \
      --form "release_type=2" \
      --header "X-HockeyAppToken: ${HOCKEYAPP_ACCESS_TOKEN}" \
