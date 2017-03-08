@@ -1,9 +1,11 @@
 package org.watsi.uhp.models;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.common.io.ByteStreams;
@@ -304,12 +306,17 @@ public class Member extends SyncableModel {
         }
     }
 
-    public Bitmap getPhotoBitmap() {
+    public Bitmap getPhotoBitmap(ContentResolver contentResolver) {
         if (mPhoto != null) {
             return BitmapFactory.decodeByteArray(this.mPhoto, 0, this.mPhoto.length);
-        } else {
-            return null;
+        } else if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+            try {
+                return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
+            } catch (IOException e) {
+                Rollbar.reportException(e);
+            }
         }
+        return null;
     }
 
     public boolean shouldCaptureFingerprint() {

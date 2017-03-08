@@ -64,7 +64,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
                 viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
             }
 
-            Bitmap photoBitmap = member.getPhotoBitmap();
+            Bitmap photoBitmap = member.getPhotoBitmap(getContext().getContentResolver());
             if (photoBitmap != null) {
                 viewHolder.photo.setImageBitmap(photoBitmap);
             } else {
