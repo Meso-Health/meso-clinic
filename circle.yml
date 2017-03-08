@@ -54,10 +54,9 @@ deployment:
     commands:
       - ./deploy_scripts/copyEnvVariablesToBuild.sh sandbox
       - ./deploy_scripts/download_keystore.sh
+      - source deploy_scripts/test_script.sh
       # Exporting VERISON_CODE and VERSION_NAME for android app build in preparation for assembly.
       - echo ${CIRCLE_BUILD_NUM}
-      - export VERSION_CODE=${CIRCLE_BUILD_NUM}
-      - export VERSION_NAME="${CURRENT_BUILD_MAJOR}.${CURRENT_BUILD_MINOR}.${CIRCLE_BUILD_NUM}"
       # Create a release candidate
       - ./gradlew assembleSandboxRelease
       # Deploy to hockey
