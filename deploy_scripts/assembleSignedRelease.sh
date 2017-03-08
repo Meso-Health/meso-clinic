@@ -7,7 +7,6 @@ echo ${VERSION_CODE}
 echo ${VERSION_NAME}
 
 if [ $1 == 'sandbox' ]; then
-  # Create a release candidate
   ./gradlew assembleSandboxRelease
 else
   ./gradlew assembleProductionRelease

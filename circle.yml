@@ -42,9 +42,8 @@ deployment:
   production:
     branch: production
     commands:
-      # Copies the environment variables configured on circle to the application's secret.xml file.
       - ./deploy_scripts/copyEnvVariablesToBuild.sh production
-      - ./deploy_scripts/download_keystore.sh
+      - ./deploy_scripts/downloadKeystore.sh
       - ./deploy_scripts/assembleSignedRelease.sh production
       - ./deploy_scripts/deployHockeyApp.sh production
   master:

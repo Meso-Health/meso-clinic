@@ -3,7 +3,9 @@ if [ $1 == 'sandbox' ]; then
     HOCKEYAPP_ACCESS_TOKEN=${SANDBOX_HOCKEYAPP_ACCESS_TOKEN}
     HOCKEYAPP_APP_ID=${SANDBOX_HOCKEYAPP_APP_ID}
 else
-    echo "No production environment variables are set yet."
+    echo "Production environment variables set in deployHockeyApp."
+    HOCKEYAPP_ACCESS_TOKEN=${PRODUCTION_HOCKEYAPP_ACCESS_TOKEN}
+    HOCKEYAPP_APP_ID=${PRODUCTION_HOCKEYAPP_APP_ID}
 fi
 
 GIT_COMPARE_KEY=${CIRCLE_COMPARE_URL##*/}
@@ -28,6 +30,3 @@ curl --verbose \
      --form "release_type=2" \
      --header "X-HockeyAppToken: ${HOCKEYAPP_ACCESS_TOKEN}" \
      "https://upload.hockeyapp.net/api/2/apps/${HOCKEYAPP_APP_ID}/app_versions/upload"
-
-echo "Deployed to Hockeyapp."
-
