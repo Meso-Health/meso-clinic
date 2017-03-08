@@ -50,6 +50,6 @@ deployment:
     branch: hockeyapp-test #TODO - replace this with master once done
     commands:
       - ./deploy_scripts/copyEnvVariablesToBuild.sh sandbox
-      - ./deploy_scripts/download_keystore.sh
+      - ./deploy_scripts/downloadKeystore.sh
       - ./deploy_scripts/assembleSignedRelease.sh sandbox
       - ./deploy_scripts/deployHockeyApp.sh sandbox
