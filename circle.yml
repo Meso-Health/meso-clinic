@@ -1,8 +1,6 @@
 machine:
   environment:
     ADB_INSTALL_TIMEOUT: "10"
-    VERSION_CODE: "${CIRCLE_BUILD_NUM}"
-    VERSION_NAME: "${CURRENT_BUILD_MAJOR}.${CURRENT_BUILD_MINOR}.${CIRCLE_BUILD_NUM}"
 
 test:
   override:

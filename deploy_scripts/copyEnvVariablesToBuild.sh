@@ -23,3 +23,7 @@ echo "    <entry key=\"HOCKEYAPP_APP_ID\">${HOCKEYAPP_APP_ID}</entry>" >> ${SECR
 echo "</secret>" >> ${SECRET_XML_PATH}
 
 GRADLE_PROPERTIES_PATH="app/gradle.properties"
+
+# Exporting VERISON_CODE and VERSION_NAME for android app build in preparation for assembly.
+export VERSION_CODE="${CIRCLE_BUILD_NUM}"
+export VERSION_NAME="${CURRENT_BUILD_MAJOR}.${CURRENT_BUILD_MINOR}.${CIRCLE_BUILD_NUM}"
