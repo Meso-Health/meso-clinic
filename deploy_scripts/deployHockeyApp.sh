@@ -17,9 +17,6 @@ HOCKEYAPP_NOTES_HEADER_HTML=${HOCKEYAPP_NOTES_HEADER//$'\n'/<br>}
 HOCKEYAPP_NOTES="${HOCKEYAPP_NOTES_HEADER_HTML} ${GIT_PRETTY_COMMIT_LOG}"
 HOCKEYAPP_EXPORT_APK_PATH="app/build/outputs/apk/app-sandbox-release.apk"
 
-echo ${CIRCLE_BUILD_NUM}
-echo ${HOCKEYAPP_APP_ID}
-
 curl --verbose \
      --fail \
      --form "status=2" \
@@ -27,7 +24,6 @@ curl --verbose \
      --form "notes=${HOCKEYAPP_NOTES}" \
      --form "platform=Android" \
      --form "notes_type=0" \
-     --form "bundle_version=${CIRCLE_BUILD_NUM}" \
      --form "ipa=@${HOCKEYAPP_EXPORT_APK_PATH}" \
      --form "release_type=2" \
      --header "X-HockeyAppToken: ${HOCKEYAPP_ACCESS_TOKEN}" \
