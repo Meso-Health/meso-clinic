@@ -45,8 +45,8 @@
     <!--DetailFragment-->
     <string name="detail_fragment_label">Is this the right person?</string>
     <string name="member_photo_content_description">Member photo</string>
-    <string name="absentee_notification">MUST COMPLETE ENROLLMENT</string>
-    <string name="replace_card_notification">NEEDS NEW CARD</string>
+    <string name="absentee_notification">Must complete enrollment</string>
+    <string name="replace_card_notification">Needs new card</string>
     <string name="approve_identity">Check-in</string>
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
@@ -76,8 +76,8 @@
 
     <!--AddNewBillableFragment-->
     <string name="add_new_billable_fragment_label">Add new item</string>
-    <string name="add_new_name">Name:</string>
-    <string name="add_new_price">Price:</string>
+    <string name="add_new_name">Name</string>
+    <string name="add_new_price">Price</string>
     <string name="add_new_billable">Add</string>
     <string name="UGX">UGX</string>
     <string name="empty_billable_name_field">Please enter name in the blank above</string>
