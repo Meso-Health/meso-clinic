@@ -30,3 +30,4 @@ curl --verbose \
      "https://upload.hockeyapp.net/api/2/apps/${HOCKEYAPP_APP_ID}/app_versions/upload"
 
 echo "Deployed to Hockeyapp."
+
