@@ -17,6 +17,9 @@ HOCKEYAPP_NOTES_HEADER_HTML=${HOCKEYAPP_NOTES_HEADER//$'\n'/<br>}
 HOCKEYAPP_NOTES="${HOCKEYAPP_NOTES_HEADER_HTML} ${GIT_PRETTY_COMMIT_LOG}"
 HOCKEYAPP_EXPORT_APK_PATH="app/build/outputs/apk/app-sandbox-release.apk"
 
+echo ${CIRCLE_BUILD_NUM}
+echo ${HOCKEYAPP_APP_ID}
+
 curl --verbose \
      --fail \
      --form "status=2" \
