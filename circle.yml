@@ -45,14 +45,12 @@ deployment:
       # Copies the environment variables configured on circle to the application's secret.xml file.
       - ./deploy_scripts/copyEnvVariablesToBuild.sh production
       - ./deploy_scripts/download_keystore.sh
-      # Create a release candidate
-      - ./gradlew assembleProductionRelease
-      # Deploy to hockey
+      - ./deploy_scripts/assembleSignedRelease.sh production
       - ./deploy_scripts/deployHockeyApp.sh production
   master:
     branch: hockeyapp-test #TODO - replace this with master once done
     commands:
       - ./deploy_scripts/copyEnvVariablesToBuild.sh sandbox
-      # Exporting VERISON_CODE and VERSION_NAME for android app build in preparation for assembly.
+      - ./deploy_scripts/download_keystore.sh
       - ./deploy_scripts/assembleSignedRelease.sh sandbox
       - ./deploy_scripts/deployHockeyApp.sh sandbox
