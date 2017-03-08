@@ -28,7 +28,7 @@ curl --verbose \
      --form "notes=${HOCKEYAPP_NOTES}" \
      --form "platform=Android" \
      --form "notes_type=0" \
-     --form "bundle_version=${versionCode}" \
+     --form "bundle_version=${VERSION_CODE}" \
      --form "ipa=@${HOCKEYAPP_EXPORT_APK_PATH}" \
      --form "release_type=2" \
      --header "X-HockeyAppToken: ${HOCKEYAPP_ACCESS_TOKEN}" \
