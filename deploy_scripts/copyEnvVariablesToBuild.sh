@@ -1,4 +1,5 @@
 # Copies the environment variables configured on circle to the application's secret.xml file.
+
 if [ $1 == 'sandbox' ]; then
     echo "Sandbox environment variables set in copyEnvVariablesToSecrets"
     ROLLBAR_API_KEY=${ROLLBAR_API_KEY}

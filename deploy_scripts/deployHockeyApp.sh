@@ -1,3 +1,5 @@
+# Deploys the signed APK to hockeyapp.
+
 if [ $1 == 'sandbox' ]; then
     echo "Sandbox environment variables set in deployHockeyApp."
     HOCKEYAPP_ACCESS_TOKEN=${SANDBOX_HOCKEYAPP_ACCESS_TOKEN}

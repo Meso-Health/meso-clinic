@@ -1,4 +1,5 @@
-# Create some env vars
+# Assembles a signed release APK.
+
 export VERSION_CODE=${CIRCLE_BUILD_NUM}
 export VERSION_NAME="${CURRENT_BUILD_MAJOR}.${CURRENT_BUILD_MINOR}.${CIRCLE_BUILD_NUM}"
 
