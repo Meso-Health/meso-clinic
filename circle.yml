@@ -7,19 +7,19 @@ machine:
 test:
   override:
     - echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><secret></secret>" >> app/src/main/res/xml/secret.xml
-    # run unit tests
-    - ./gradlew test
-    # start the emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
-        background: true
-        parallel: true
-    # wait for emulator to boot
-    - circle-android wait-for-boot
-    # unlock the emulator screen
-    - sleep 30
-    - adb shell input keyevent 82
-    # run tests against the emulator
-    - ./gradlew connectedAndroidTest
+    # # run unit tests
+    # - ./gradlew test
+    # # start the emulator
+    # - emulator -avd circleci-android22 -no-audio -no-window:
+    #     background: true
+    #     parallel: true
+    # # wait for emulator to boot
+    # - circle-android wait-for-boot
+    # # unlock the emulator screen
+    # - sleep 30
+    # - adb shell input keyevent 82
+    # # run tests against the emulator
+    # - ./gradlew connectedAndroidTest
 
   post:
       # copy unit and instrument test results to Circle Test results directory
