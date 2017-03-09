@@ -1,6 +1,7 @@
 package org.watsi.uhp.models;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -14,10 +15,14 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.FileManager;
 
+import java.util.Map;
 import java.util.UUID;
+
+import okhttp3.RequestBody;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
@@ -183,5 +188,36 @@ public class MemberTest {
     public void getFormattedCardId() throws Exception {
         member.setCardId("RWI123456");
         assertEquals(member.getFormattedCardId(), "RWI 123 456");
+    }
+
+    @Test
+    public void formatPatchRequest_dirtyMemberAndNationalIdPhoto_onlyIncludesOnePhoto() throws Exception {
+        String uriString = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+        byte[] mockPhotoBytes = new byte[]{};
+        Context mockContext = mock(Context.class);
+        Uri mockUri = mock(Uri.class);
+        member.setPhotoUrl(uriString);
+        member.setNationalIdPhotoUrl(uriString);
+        member.addDirtyField(Member.FIELD_NAME_PHOTO);
+        member.addDirtyField(Member.FIELD_NAME_NATIONAL_ID_PHOTO);
+
+        mockStatic(Uri.class);
+        mockStatic(FileManager.class);
+        when(Uri.parse(uriString)).thenReturn(mockUri);
+        when(FileManager.readFromUri(mockUri,mockContext)).thenReturn(mockPhotoBytes);
+
+        Map<String, RequestBody> firstRequestBody = member.formatPatchRequest(mockContext);
+
+        assertFalse(member.dirty(Member.FIELD_NAME_PHOTO));
+        assertTrue(member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertNotNull(firstRequestBody.get(Member.FIELD_NAME_PHOTO));
+        assertNull(firstRequestBody.get(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+
+        Map<String, RequestBody> secondRequestBody = member.formatPatchRequest(mockContext);
+
+        assertFalse(member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertNotNull(secondRequestBody.get(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertNull(secondRequestBody.get(Member.FIELD_NAME_PHOTO));
+        assertFalse(member.isDirty());
     }
 }

@@ -222,12 +222,22 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
+    public void setMemberPhotoUrlFromPatchResponse(String responsePhotoUrl) {
+        this.mPhotoUrl = responsePhotoUrl;
+        deleteLocalMemberImage();
+    }
+
     public byte[] getNationalIdPhoto() {
         return mNationalIdPhoto;
     }
 
     public void setNationalIdPhoto(byte[] nationalIdPhoto) {
         this.mNationalIdPhoto = nationalIdPhoto;
+    }
+
+    public void setNationalIdPhotoUrlFromPatchResponse(String responsePhotoUrl) {
+        this.mNationalIdPhotoUrl = responsePhotoUrl;
+        deleteLocalIdImage();
     }
 
     public String getNationalIdPhotoUrl() {
@@ -343,11 +353,17 @@ public class Member extends SyncableModel {
         if (dirty(FIELD_NAME_PHOTO)) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
             requestPartMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+            removeDirtyField(FIELD_NAME_PHOTO);
         }
 
-        if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
-            byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
-            requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+        // only include national ID field in request if member photo is not
+        //  being sent in order to limit the size of the request
+        if (requestPartMap.get(FIELD_NAME_PHOTO) == null) {
+            if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
+                byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
+                requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+                removeDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
+            }
         }
 
         if (dirty(FIELD_NAME_FINGERPRINTS_GUID)) {
@@ -355,6 +371,7 @@ public class Member extends SyncableModel {
                     FIELD_NAME_FINGERPRINTS_GUID,
                     RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
             );
+            removeDirtyField(FIELD_NAME_FINGERPRINTS_GUID);
         }
 
         if (dirty(FIELD_NAME_PHONE_NUMBER)) {
@@ -362,6 +379,7 @@ public class Member extends SyncableModel {
                     FIELD_NAME_PHONE_NUMBER,
                     RequestBody.create(MultipartBody.FORM, getPhoneNumber())
             );
+            removeDirtyField(FIELD_NAME_PHONE_NUMBER);
         }
 
         if (dirty(FIELD_NAME_FULL_NAME)) {
@@ -369,6 +387,7 @@ public class Member extends SyncableModel {
                     FIELD_NAME_FULL_NAME,
                     RequestBody.create(MultipartBody.FORM, getFullName())
             );
+            removeDirtyField(FIELD_NAME_FULL_NAME);
         }
 
         if (dirty(FIELD_NAME_CARD_ID)) {
@@ -376,6 +395,7 @@ public class Member extends SyncableModel {
                     FIELD_NAME_CARD_ID,
                     RequestBody.create(MultipartBody.FORM, getCardId())
             );
+            removeDirtyField(FIELD_NAME_CARD_ID);
         }
 
         return requestPartMap;
@@ -411,11 +431,14 @@ public class Member extends SyncableModel {
         }
     }
 
-    public void deleteLocalImages() {
+    public void deleteLocalMemberImage() {
         if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
             new File(getPhotoUrl()).delete();
             setPhotoUrl(null);
         }
+    }
+
+    public void deleteLocalIdImage() {
         if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
             new File(getNationalIdPhotoUrl()).delete();
             setNationalIdPhotoUrl(null);
