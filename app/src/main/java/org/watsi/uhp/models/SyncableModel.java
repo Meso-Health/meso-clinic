@@ -37,10 +37,14 @@ public abstract class SyncableModel extends AbstractModel {
         return mSynced;
     }
 
-    public void setSynced() {
-        setToken(null);
-        clearDirtyFields();
-        this.mSynced = true;
+    public void setSynced() throws ValidationException {
+        if (isDirty()) {
+            String dirtyField = (String) getDirtyFields().toArray()[0];
+            throw new ValidationException(dirtyField, "Cannot mark dirty model as synced");
+        } else {
+            setToken(null);
+            this.mSynced = true;
+        }
     }
 
     public void setUnsynced(String token) {
@@ -48,11 +52,11 @@ public abstract class SyncableModel extends AbstractModel {
         this.mSynced = false;
     }
 
-    public void setDirtyFields(Set<String> dirtyFields) {
+    private void setDirtyFields(Set<String> dirtyFields) {
         this.mDirtyFields = new Gson().toJson(dirtyFields);
     }
 
-    public Set<String> getDirtyFields() {
+    private Set<String> getDirtyFields() {
         if (this.mDirtyFields == null) {
             return new HashSet<>();
         } else {
@@ -64,14 +68,20 @@ public abstract class SyncableModel extends AbstractModel {
         return getDirtyFields().contains(fieldName);
     }
 
-    public void addDirtyField(String field) {
+    void addDirtyField(String field) {
         Set<String> currentFields = getDirtyFields();
         currentFields.add(field);
         setDirtyFields(currentFields);
     }
 
-    private void clearDirtyFields() {
-        setDirtyFields(new HashSet<String>());
+    void removeDirtyField(String field) {
+        Set<String> currentFields = getDirtyFields();
+        currentFields.remove(field);
+        setDirtyFields(currentFields);
+    }
+
+    public boolean isDirty() {
+        return !getDirtyFields().isEmpty();
     }
 
     public String getTokenAuthHeaderString() {

@@ -14,6 +14,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NotificationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
 
@@ -129,8 +130,12 @@ public class FetchService extends Service {
                 }
             }
 
-            member.setSynced();
-            MemberDao.createOrUpdate(member);
+            try {
+                member.setSynced();
+                MemberDao.createOrUpdate(member);
+            } catch (AbstractModel.ValidationException e) {
+                Rollbar.reportException(e);
+            }
 
             iterator.remove();
         }

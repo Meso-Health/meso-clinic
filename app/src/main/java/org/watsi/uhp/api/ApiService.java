@@ -30,6 +30,7 @@ public class ApiService {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.addNetworkInterceptor(new TokenInterceptor(context));
+            httpClient.retryOnConnectionFailure(false);
             String apiHost = ConfigManager.getApiHost(context);
             if (apiHost == null) {
                 throw new IllegalStateException("API hostname not configured");

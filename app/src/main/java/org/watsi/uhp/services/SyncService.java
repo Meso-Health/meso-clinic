@@ -15,6 +15,7 @@ import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NotificationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -73,8 +74,12 @@ public class SyncService extends Service {
                             .syncIdentificationEvent(tokenAuthorizationString, mProviderId, event);
             Response<IdentificationEvent> response = request.execute();
             if (response.isSuccessful()) {
-                event.setSynced();
-                IdentificationEventDao.update(event);
+                try {
+                    event.setSynced();
+                    IdentificationEventDao.update(event);
+                } catch (AbstractModel.ValidationException e) {
+                    Rollbar.reportException(e);
+                }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
                 reportParams.put("identification_event.id", event.getId().toString());
@@ -100,8 +105,12 @@ public class SyncService extends Service {
                             .syncEncounter(tokenAuthorizationString, mProviderId, encounter);
             Response<Encounter> response = request.execute();
             if (response.isSuccessful()) {
-                encounter.setSynced();
-                EncounterDao.update(encounter);
+                try {
+                    encounter.setSynced();
+                    EncounterDao.update(encounter);
+                } catch (AbstractModel.ValidationException e) {
+                    Rollbar.reportException(e);
+                }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
                 reportParams.put("encounter.id", encounter.getId().toString());
@@ -126,8 +135,27 @@ public class SyncService extends Service {
             );
             Response<Member> response = request.execute();
             if (response.isSuccessful()) {
-                member.deleteLocalImages();
-                member.setSynced();
+                // if we have updated a photo, remove the local version and fetch the remote one
+                if (member.getPhotoUrl() != null &&
+                        !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
+                        !member.dirty(Member.FIELD_NAME_PHOTO)) {
+                    member.setMemberPhotoUrlFromPatchResponse(response.body().getPhotoUrl());
+                    member.fetchAndSetPhotoFromUrl();
+                }
+                if (member.getNationalIdPhotoUrl() != null &&
+                        !member.getNationalIdPhotoUrl().equals(
+                                response.body().getNationalIdPhotoUrl()) &&
+                        !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
+                    member.setNationalIdPhotoUrlFromPatchResponse(
+                            response.body().getNationalIdPhotoUrl());
+                }
+                if (!member.isDirty()) {
+                    try {
+                        member.setSynced();
+                    } catch (AbstractModel.ValidationException e) {
+                        Rollbar.reportException(e);
+                    }
+                }
                 MemberDao.update(member);
             } else {
                 Map<String,String> reportParams = new HashMap<>();

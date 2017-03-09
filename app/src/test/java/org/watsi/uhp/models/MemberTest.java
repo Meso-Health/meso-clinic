@@ -1,8 +1,11 @@
 package org.watsi.uhp.models;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,22 +13,29 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.managers.FileManager;
 
+import java.util.Map;
 import java.util.UUID;
+
+import okhttp3.RequestBody;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, Member.class, Uri.class})
+@PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, FileManager.class,
+        Member.class, Uri.class, MediaStore.Images.Media.class})
 public class MemberTest {
 
     private Member member;
@@ -56,12 +66,44 @@ public class MemberTest {
     }
 
     @Test
-    public void getPhotoBitmap_photoIsNull() throws Exception {
-        assertNull(member.getPhotoBitmap());
+    public void getPhotoBitmap_photoIsNullandPhotoUrlIsNull() throws Exception {
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
+        mockStatic(Uri.class);
+
+        assertNull(member.getPhotoBitmap(mockContentResolver));
+    }
+
+    @Test
+    public void getPhotoBitmap_photoIsNullandPhotoUrlIsNotLocalUrl() throws Exception {
+        member.setPhotoUrl("https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074");
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
+        mockStatic(FileManager.class);
+
+        when(FileManager.isLocal(member.getPhotoUrl())).thenReturn(false);
+
+        assertNull(member.getPhotoBitmap(mockContentResolver));
+    }
+
+    @Test
+    public void getPhotoBitmap_photoIsNullButLocalPhotoUrl() throws Exception {
+        member.setPhotoUrl("content://org.watsi.uhp.fileprovider/captured_image/photo.jpg");
+        Uri mockUri = mock(Uri.class);
+        Bitmap mockBitmap = mock(Bitmap.class);
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
+        mockStatic(MediaStore.Images.Media.class);
+        mockStatic(Uri.class);
+        mockStatic(FileManager.class);
+
+        when(FileManager.isLocal(member.getPhotoUrl())).thenReturn(true);
+        when(Uri.parse(member.getPhotoUrl())).thenReturn(mockUri);
+        when(MediaStore.Images.Media.getBitmap(mockContentResolver, mockUri)).thenReturn(mockBitmap);
+
+        assertEquals(member.getPhotoBitmap(mockContentResolver), mockBitmap);
     }
 
     @Test
     public void getPhotoBitmap_photoIsNotNull() throws Exception {
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
         byte[] photoBytes = new byte[]{};
         member.setPhoto(photoBytes);
         mockStatic(Bitmap.class);
@@ -71,7 +113,7 @@ public class MemberTest {
         when(Bitmap.createBitmap(any(Bitmap.class))).thenReturn(bitmap);
         when(BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length)).thenReturn(bitmap);
 
-        assertEquals(member.getPhotoBitmap(), bitmap);
+        assertEquals(member.getPhotoBitmap(mockContentResolver), bitmap);
     }
 
     @Test
@@ -146,5 +188,36 @@ public class MemberTest {
     public void getFormattedCardId() throws Exception {
         member.setCardId("RWI123456");
         assertEquals(member.getFormattedCardId(), "RWI 123 456");
+    }
+
+    @Test
+    public void formatPatchRequest_dirtyMemberAndNationalIdPhoto_onlyIncludesOnePhoto() throws Exception {
+        String uriString = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+        byte[] mockPhotoBytes = new byte[]{};
+        Context mockContext = mock(Context.class);
+        Uri mockUri = mock(Uri.class);
+        member.setPhotoUrl(uriString);
+        member.setNationalIdPhotoUrl(uriString);
+        member.addDirtyField(Member.FIELD_NAME_PHOTO);
+        member.addDirtyField(Member.FIELD_NAME_NATIONAL_ID_PHOTO);
+
+        mockStatic(Uri.class);
+        mockStatic(FileManager.class);
+        when(Uri.parse(uriString)).thenReturn(mockUri);
+        when(FileManager.readFromUri(mockUri,mockContext)).thenReturn(mockPhotoBytes);
+
+        Map<String, RequestBody> firstRequestBody = member.formatPatchRequest(mockContext);
+
+        assertFalse(member.dirty(Member.FIELD_NAME_PHOTO));
+        assertTrue(member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertNotNull(firstRequestBody.get(Member.FIELD_NAME_PHOTO));
+        assertNull(firstRequestBody.get(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+
+        Map<String, RequestBody> secondRequestBody = member.formatPatchRequest(mockContext);
+
+        assertFalse(member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertNotNull(secondRequestBody.get(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertNull(secondRequestBody.get(Member.FIELD_NAME_PHOTO));
+        assertFalse(member.isDirty());
     }
 }
