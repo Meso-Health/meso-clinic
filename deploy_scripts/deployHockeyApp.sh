@@ -1,13 +1,13 @@
 # Deploys the signed APK to hockeyapp.
 
-if [ $1 == 'sandbox' ]; then
-    echo "Sandbox environment variables set in deployHockeyApp."
-    HOCKEYAPP_ACCESS_TOKEN=${SANDBOX_HOCKEYAPP_ACCESS_TOKEN}
-    HOCKEYAPP_APP_ID=${SANDBOX_HOCKEYAPP_APP_ID}
-else
+if [ $1 == 'production' ]; then
     echo "Production environment variables set in deployHockeyApp."
     HOCKEYAPP_ACCESS_TOKEN=${PRODUCTION_HOCKEYAPP_ACCESS_TOKEN}
     HOCKEYAPP_APP_ID=${PRODUCTION_HOCKEYAPP_APP_ID}
+else
+    echo "Sandbox environment variables set in deployHockeyApp."
+    HOCKEYAPP_ACCESS_TOKEN=${SANDBOX_HOCKEYAPP_ACCESS_TOKEN}
+    HOCKEYAPP_APP_ID=${SANDBOX_HOCKEYAPP_APP_ID}
 fi
 
 GIT_COMPARE_KEY=${CIRCLE_COMPARE_URL##*/}

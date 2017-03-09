@@ -1,6 +1,13 @@
 # Copies the environment variables configured on circle to the application's secret.xml file.
 
-if [ $1 == 'sandbox' ]; then
+if [ $1 == 'production' ]; then
+    ROLLBAR_API_KEY=${ROLLBAR_API_KEY}
+    PROVIDER_ID=${PROVIDER_ID}
+    API_HOST=${PRODUCTION_API_HOST}
+    ROLLBAR_ENV_KEY=${PRODUCTION_ROLLBAR_ENV_KEY}
+    SIMPRINTS_API_KEY=${PRODUCTION_SIMPRINTS_API_KEY}
+    HOCKEYAPP_APP_ID=${PRODUCTION_HOCKEYAPP_APP_ID}
+else
     echo "Sandbox environment variables set in copyEnvVariablesToSecrets"
     ROLLBAR_API_KEY=${ROLLBAR_API_KEY}
     PROVIDER_ID=${PROVIDER_ID}
@@ -8,13 +15,6 @@ if [ $1 == 'sandbox' ]; then
     ROLLBAR_ENV_KEY=${SANDBOX_ROLLBAR_ENV_KEY}
     SIMPRINTS_API_KEY=${SANDBOX_SIMPRINTS_API_KEY}
     HOCKEYAPP_APP_ID=${SANDBOX_HOCKEYAPP_APP_ID}
-else
-    ROLLBAR_API_KEY=${ROLLBAR_API_KEY}
-    PROVIDER_ID=${PROVIDER_ID}
-    API_HOST=${PRODUCTION_API_HOST}
-    ROLLBAR_ENV_KEY=${PRODUCTION_ROLLBAR_ENV_KEY}
-    SIMPRINTS_API_KEY=${PRODUCTION_SIMPRINTS_API_KEY}
-    HOCKEYAPP_APP_ID=${PRODUCTION_HOCKEYAPP_APP_ID}
 fi
 
 SECRET_XML_PATH="app/src/main/res/xml/secret.xml"

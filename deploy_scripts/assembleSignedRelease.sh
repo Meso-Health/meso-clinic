@@ -7,8 +7,8 @@ echo "These are the versionCode and versionName that we are using to build the a
 echo ${VERSION_CODE}
 echo ${VERSION_NAME}
 
-if [ $1 == 'sandbox' ]; then
-  ./gradlew assembleSandboxRelease
-else
+if [ $1 == 'production' ]; then
   ./gradlew assembleProductionRelease
+else
+  ./gradlew assembleSandboxRelease
 fi
