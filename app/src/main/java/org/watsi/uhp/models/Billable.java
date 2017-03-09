@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Billable.TABLE_NAME)
@@ -18,6 +19,7 @@ public class Billable extends AbstractModel {
     public static final String FIELD_NAME_UNIT = "unit";
     public static final String FIELD_NAME_PRICE = "price";
     public static final String FIELD_NAME_NAME = "name";
+    public static final String FIELD_NAME_CREATED_DURING_ENCOUNTER = "created_during_encounter";
 
     public enum TypeEnum {
         @SerializedName("drug") DRUG,
@@ -30,7 +32,7 @@ public class Billable extends AbstractModel {
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
     @Expose
@@ -58,12 +60,21 @@ public class Billable extends AbstractModel {
     @DatabaseField(columnName = FIELD_NAME_PRICE, canBeNull = false)
     private Integer mPrice;
 
+    @Expose
+    @SerializedName(FIELD_NAME_CREATED_DURING_ENCOUNTER)
+    @DatabaseField(columnName = FIELD_NAME_CREATED_DURING_ENCOUNTER, canBeNull = false, defaultValue = "false")
+    private Boolean mCreatedDuringEncounter;
+
     public Billable() {
         super();
     }
 
     public UUID getId() {
         return mId;
+    }
+
+    public void generateId() {
+        this.mId = UUID.randomUUID();
     }
 
     public String getName() {
@@ -106,6 +117,14 @@ public class Billable extends AbstractModel {
         this.mPrice = price;
     }
 
+    public Boolean getCreatedDuringEncounter() {
+        return mCreatedDuringEncounter;
+    }
+
+    public void setCreatedDuringEncounter(Boolean createdDuringEncounter) {
+        this.mCreatedDuringEncounter = createdDuringEncounter;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getName());
@@ -126,5 +145,12 @@ public class Billable extends AbstractModel {
         } else {
             return null;
         }
+    }
+
+    public static String priceDecorator(int price) {
+        DecimalFormat df = new DecimalFormat("#,###,###");
+        String formattedPrice = df.format(price);
+
+        return formattedPrice;
     }
 }

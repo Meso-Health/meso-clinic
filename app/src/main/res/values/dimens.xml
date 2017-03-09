@@ -3,5 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="spinner_horizontal_margin">5dp</dimen>
-    <dimen name="detail_fragment_photo_width">160dp</dimen>
+    <dimen name="item_member_list_photo_height">120dp</dimen>
+    <dimen name="item_member_list_photo_width">90dp</dimen>
+    <dimen name="detail_fragment_photo_height">208dp</dimen>
+    <dimen name="detail_fragment_photo_width">156dp</dimen>
 </resources>

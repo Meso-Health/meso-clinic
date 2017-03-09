@@ -35,9 +35,10 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.member_name);
-            viewHolder.age_and_gender = (TextView) convertView.findViewById(R.id
-                    .member_age_and_gender);
+            viewHolder.age = (TextView) convertView.findViewById(R.id.member_age);
+            viewHolder.gender = (TextView) convertView.findViewById(R.id.member_gender);
             viewHolder.card_id = (TextView) convertView.findViewById(R.id.member_card_id);
+            viewHolder.phone_number = (TextView) convertView.findViewById(R.id.member_phone_number);
             viewHolder.photo = (ImageView) convertView.findViewById(R.id.member_photo);
             if (showClinicNumber) {
                 viewHolder.clinic_number = (TextView) convertView.findViewById(R.id
@@ -53,15 +54,17 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
         if (member != null) {
             viewHolder.name.setText(member.getFullName());
-            viewHolder.age_and_gender.setText(String.valueOf(member.getAge()) + " " + String
-                    .valueOf(member.getGender()));
-            viewHolder.card_id.setText(String.valueOf(member.getFormattedCardId()));
+            viewHolder.age.setText(member.getFormattedAge());
+            viewHolder.gender.setText(member.getFormattedGender());
+            viewHolder.card_id.setText(member.getFormattedCardId());
+            viewHolder.phone_number.setText(member.getFormattedPhoneNumber());
             if (showClinicNumber) {
+                viewHolder.phone_number.setVisibility(View.GONE);
                 viewHolder.clinic_number.setVisibility(View.VISIBLE);
-                viewHolder.clinic_number.setText(member.getLastIdentification().getFormattedClinicNumber());
+                viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
             }
 
-            Bitmap photoBitmap = member.getPhotoBitmap();
+            Bitmap photoBitmap = member.getPhotoBitmap(getContext().getContentResolver());
             if (photoBitmap != null) {
                 viewHolder.photo.setImageBitmap(photoBitmap);
             } else {
@@ -74,8 +77,10 @@ public class MemberAdapter extends ArrayAdapter<Member> {
 
     private static class ViewHolder {
         TextView name;
-        TextView age_and_gender;
+        TextView age;
+        TextView gender;
         TextView card_id;
+        TextView phone_number;
         TextView clinic_number;
         ImageView photo;
     }

@@ -76,16 +76,21 @@ public class IdentificationEvent extends SyncableModel {
 
     @Expose
     @SerializedName(FIELD_NAME_CLINIC_NUMBER)
-    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER)
     private Integer mClinicNumber;
 
     @Expose
     @SerializedName(FIELD_NAME_CLINIC_NUMBER_TYPE)
-    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE)
     private IdentificationEvent.ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
     public IdentificationEvent() {
         super();
+    }
+
+    public IdentificationEvent(String token) {
+        super();
+        setToken(token);
     }
 
     public UUID getId() {
@@ -114,6 +119,14 @@ public class IdentificationEvent extends SyncableModel {
 
     public void setMember(Member member) {
         this.mMember = member;
+    }
+
+    public UUID getThroughMemberId() {
+        return mThroughMemberId;
+    }
+
+    public void setThroughMemberId(UUID throughMemberId) {
+        this.mThroughMemberId = throughMemberId;
     }
 
     public Member getThroughMember() {
@@ -157,7 +170,11 @@ public class IdentificationEvent extends SyncableModel {
     }
 
     public String getFormattedClinicNumber() {
-        return mClinicNumberTypeEnum.toString() + ": " + mClinicNumber.toString();
+        if (mClinicNumberTypeEnum == null) {
+            return null;
+        } else {
+            return mClinicNumberTypeEnum.toString() + ": " + mClinicNumber.toString();
+        }
     }
 
     public IdentificationEvent.ClinicNumberTypeEnum getClinicNumberType() {

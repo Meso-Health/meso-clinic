@@ -10,6 +10,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.List;
 public class DownloadMemberPhotosService extends Service {
 
     private static int SLEEP_TIME = 5 * 60 * 1000; // 5 minutes
+    private static int MAX_FETCH_FAILURE_ATTEMPTS = 5;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -53,19 +55,30 @@ public class DownloadMemberPhotosService extends Service {
         List<Member> membersWithPhotosToFetch = MemberDao.membersWithPhotosToFetch();
         Iterator<Member> iterator = membersWithPhotosToFetch.iterator();
         int photosToFetch = membersWithPhotosToFetch.size();
+        int fetchFailures = 0;
         while (iterator.hasNext()) {
             Log.d("UHP", "members with photos to fetch: " + photosToFetch);
 
             Member member = iterator.next();
             try {
-                member.fetchAndSetPhotoFromUrl();
-                MemberDao.update(member);
+                if (!FileManager.isLocal(member.getPhotoUrl())) {
+                    member.fetchAndSetPhotoFromUrl();
+                    MemberDao.update(member);
+                }
             } catch (IOException | SQLException e) {
                 Rollbar.reportException(e);
+                fetchFailures++;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                }
             }
 
             iterator.remove();
             photosToFetch--;
+            if (fetchFailures == MAX_FETCH_FAILURE_ATTEMPTS) {
+                return;
+            }
         }
     }
 

@@ -13,6 +13,8 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NotificationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
 
@@ -33,17 +35,27 @@ import retrofit2.Response;
 public class FetchService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private int mFacilityId;
+    private static int WAIT_FOR_LOGIN_SLEEP_TIME = 60 * 1000; // 1 minute
+    private int mProviderId;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
-        mFacilityId = ConfigManager.getFacilityId(getApplicationContext());
+        mProviderId = ConfigManager.getProviderId(getApplicationContext());
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true){
+                    if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
+                        try {
+                            Thread.sleep(WAIT_FOR_LOGIN_SLEEP_TIME);
+                            continue;
+                        } catch (InterruptedException e) {
+                            Rollbar.reportException(e);
+                        }
+                    }
+
                     try {
                         fetchNewMemberData();
                         fetchBillables();
@@ -65,7 +77,7 @@ public class FetchService extends Service {
     private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
         String lastModifiedTimestamp = ConfigManager.getMemberLastModified(getApplicationContext());
         Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
-                .members(lastModifiedTimestamp, mFacilityId);
+                .members(lastModifiedTimestamp, mProviderId);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             Log.d("UHP", "updating member data");
@@ -78,7 +90,11 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                // TODO: request failed
+                NotificationManager.requestFailure(
+                        "Failed to fetch members",
+                        request.request(),
+                        response.raw()
+                );
             }
         }
     }
@@ -96,15 +112,31 @@ public class FetchService extends Service {
         while (iterator.hasNext()) {
             Member member = iterator.next();
 
-            Member prevMember = MemberDao.findById(member.getId());
-            if (prevMember != null && prevMember.getPhoto() != null) {
-                if (prevMember.getPhotoUrl().equals(member.getPhotoUrl())) {
-                    member.setPhoto(prevMember.getPhoto());
+            Member persistedMember = MemberDao.findById(member.getId());
+            if (persistedMember != null) {
+                // if the persisted member has not been synced to the back-end, assume it is
+                // the most up-to-date and do not update it with the fetched member attributes
+                if (!persistedMember.isSynced()) {
+                    iterator.remove();
+                    continue;
+                }
+
+                // if the existing member record has a photo and the fetched member record has
+                // the same photo url as the existing record, copy the photo to the new record
+                // so we do not have to re-download it
+                if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
+                        persistedMember.getPhotoUrl().equals(member.getPhotoUrl())) {
+                    member.setPhoto(persistedMember.getPhoto());
                 }
             }
-            MemberDao.createOrUpdate(member);
 
-            // free up memory so we don't keep all member photos in memory
+            try {
+                member.setSynced();
+                MemberDao.createOrUpdate(member);
+            } catch (AbstractModel.ValidationException e) {
+                Rollbar.reportException(e);
+            }
+
             iterator.remove();
         }
     }
@@ -112,7 +144,7 @@ public class FetchService extends Service {
     private void fetchBillables() throws IOException, SQLException {
         String lastModifiedTimestamp = ConfigManager.getBillablesLastModified(getApplicationContext());
         Call<List<Billable>> request = ApiService.requestBuilder(getApplicationContext())
-                .billables(lastModifiedTimestamp, mFacilityId);
+                .billables(lastModifiedTimestamp, mProviderId);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             Log.d("UHP", "updating billables data");
@@ -125,7 +157,11 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                // TODO: request failed
+                NotificationManager.requestFailure(
+                        "Failed to fetch billables",
+                        request.request(),
+                        response.raw()
+                );
             }
         }
 

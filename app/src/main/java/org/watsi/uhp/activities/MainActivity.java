@@ -1,10 +1,11 @@
 package org.watsi.uhp.activities;
 
 import android.app.Activity;
-import android.app.SearchManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,18 +15,16 @@ import android.view.MenuItem;
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.database.LineItemDao;
-import org.watsi.uhp.events.OfflineNotificationEvent;
+import org.watsi.uhp.database.EncounterItemDao;
+import org.watsi.uhp.fragments.DetailFragment;
+import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.LineItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
@@ -33,10 +32,12 @@ import org.watsi.uhp.services.SyncService;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private final Encounter mCurrentEncounter = new Encounter();
+    private UUID mMemberId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,44 +57,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessage(OfflineNotificationEvent event) {
-        if (getActionBar() != null) {
-            if (event.isOffline()) {
-                getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_offline_color)));
-            } else {
-                getActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(), R.color.action_bar_online_color)));
-            }
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            String memberId = intent.getDataString();
-            IdentificationEvent.SearchMethodEnum idMethod = IdentificationEvent.SearchMethodEnum.valueOf(
-                    intent.getExtras().getString(SearchManager.EXTRA_DATA_KEY));
-
-            if (memberId != null) {
-                new NavigationManager(this).setDetailFragment(memberId, idMethod, null);
-            }
-        }
-    }
-
     private void setupApp() {
-        Rollbar.init(this, ConfigManager.getRollbarApiKey(this), "development");
+        Rollbar.init(
+                this,
+                ConfigManager.getRollbarApiKey(this),
+                ConfigManager.getRollbarEnv(this)
+        );
         DatabaseHelper.init(getApplicationContext());
     }
 
@@ -116,16 +85,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(new LogoutListener(this));
+        toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
+        if (!ConfigManager.isProduction(getApplicationContext())) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
+        }
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void setNewEncounter(Member member) {
         try {
-            IdentificationEvent lastIdentification = member.getLastIdentification();
+            IdentificationEvent checkIn = member.currentCheckIn();
             mCurrentEncounter.setMember(member);
-            mCurrentEncounter.setIdentification(lastIdentification);
-            mCurrentEncounter.setLineItems(
-                    LineItemDao.getDefaultLineItems(lastIdentification.getClinicNumberType()));
+            mCurrentEncounter.setIdentificationEvent(checkIn);
+            mCurrentEncounter.setEncounterItems(
+                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
         } catch (SQLException e) {
             Rollbar.reportException(e);
         }
@@ -135,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         return mCurrentEncounter;
     }
 
-    public List<LineItem> getCurrentLineItems() {
-        return (List<LineItem>) mCurrentEncounter.getLineItems();
+    public List<EncounterItem> getCurrentLineItems() {
+        return (List<EncounterItem>) mCurrentEncounter.getEncounterItems();
     }
 
     @Override
@@ -145,18 +118,72 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private class LogoutListener implements Toolbar.OnMenuItemClickListener {
+    @Override
+    public void onBackPressed() {
 
-        private Activity activity;
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-        LogoutListener(Activity activity) {
-            this.activity = activity;
+        if (currentFragment instanceof EncounterFragment) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Are you sure you want to exit?")
+                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            MainActivity.super.onBackPressed();
+                        }
+                    }).create().show();
+        } else {
+            MainActivity.super.onBackPressed();
+        }
+    }
+
+    public void setMemberId(UUID memberId) {
+        this.mMemberId = memberId;
+    }
+
+    private class MenuItemClickListener implements Toolbar.OnMenuItemClickListener {
+
+        private Activity mActivity;
+
+        MenuItemClickListener(Activity activity) {
+            this.mActivity = activity;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            new NavigationManager(activity).logout();
+            switch (item.getItemId()) {
+                case R.id.menu_logout:
+                    new NavigationManager(mActivity).logout();
+                    break;
+                case R.id.menu_member_edit:
+                    IdentificationEvent.SearchMethodEnum searchMethod =
+                            ((DetailFragment) getSupportFragmentManager()
+                                    .findFragmentByTag("detail"))
+                                    .getIdMethod();
+                    new NavigationManager(mActivity)
+                            .setMemberEditFragment(mMemberId, searchMethod, null);
+                    break;
+                case R.id.menu_version:
+                    new NavigationManager(mActivity).setVersionFragment();
+                    break;
+                case R.id.menu_complete_enrollment:
+                    new NavigationManager(mActivity)
+                            .setEnrollmentMemberPhotoFragment(mMemberId);
+                    break;
+            }
             return true;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                new NavigationManager(this).setCurrentPatientsFragment();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

@@ -9,6 +9,8 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.NotificationManager;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.User;
 
 import java.io.IOException;
@@ -28,6 +30,7 @@ public class ApiService {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.addNetworkInterceptor(new TokenInterceptor(context));
+            httpClient.retryOnConnectionFailure(false);
             String apiHost = ConfigManager.getApiHost(context);
             if (apiHost == null) {
                 throw new IllegalStateException("API hostname not configured");
@@ -35,6 +38,7 @@ public class ApiService {
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT)
+                    .registerTypeAdapterFactory(new EncounterTypeAdapterFactory(Encounter.class))
                     .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(apiHost)
@@ -61,6 +65,12 @@ public class ApiService {
                 ConfigManager.setLoggedInUserToken(token, context);
                 User user = response.body().getUser();
                 Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
+            } else {
+                NotificationManager.requestFailure(
+                        "Login failure",
+                        request.request(),
+                        response.raw()
+                );
             }
             return response;
         } catch (IOException | IllegalStateException e) {

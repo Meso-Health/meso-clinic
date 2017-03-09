@@ -10,17 +10,18 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.util.List;
 
-public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
+public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
 
-    public EncounterItemAdapter(Context context, List<LineItem> lineItemList) {
-        super(context, R.layout.item_line_item_list, lineItemList);
+    public EncounterItemAdapter(Context context, List<EncounterItem> encounterItemList) {
+        super(context, R.layout.item_encounter_item_list, encounterItemList);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
 
         if (convertView == null) {
             LayoutInflater layoutInflater = ((Activity) getContext()).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.item_line_item_list, parent, false);
+            convertView = layoutInflater.inflate(R.layout.item_encounter_item_list, parent, false);
 
             viewHolder = new ViewHolder();
             viewHolder.billableName = (TextView) convertView.findViewById(R.id.billable_name);
@@ -43,41 +44,44 @@ public class EncounterItemAdapter extends ArrayAdapter<LineItem> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final LineItem lineItem = getItem(position);
+        final EncounterItem encounterItem = getItem(position);
 
-        if (lineItem != null) {
-            final Billable billable = lineItem.getBillable();
+        if (encounterItem != null) {
+            final Billable billable = encounterItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
             viewHolder.billableDetails.setText(billable.dosageDetails());
             viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    remove(lineItem);
+                    remove(encounterItem);
                 }
             });
 
-            if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
-                    billable.getType().equals(Billable.TypeEnum.LAB)) {
-                viewHolder.billableQuantity.setVisibility(View.GONE);
-            } else {
-                viewHolder.billableQuantity.setVisibility(View.VISIBLE);
+            final ViewHolder vh = viewHolder;
+            viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        String quantity = vh.billableQuantity.getText().toString();
 
-                final ViewHolder vh = viewHolder;
-                viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            String quantity = vh.billableQuantity.getText().toString();
-
-                            if (quantity.equals("")) {
-                                vh.billableQuantity.setText(String.valueOf(lineItem.getQuantity()));
-                            } else {
-                                lineItem.setQuantity(Integer.valueOf(quantity));
-                            }
+                        if (quantity.equals("")) {
+                            vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
+                        } else {
+                            encounterItem.setQuantity(Integer.valueOf(quantity));
                         }
                     }
-                });
+                }
+            });
+            viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
+
+            if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
+                    billable.getType().equals(Billable.TypeEnum.LAB)) {
+
+                viewHolder.billableQuantity.setEnabled(false);
+
+            } else {
+                viewHolder.billableQuantity.setEnabled(true);
             }
         }
 

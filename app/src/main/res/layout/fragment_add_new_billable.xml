@@ -16,20 +16,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
         android:maxLines="1"
-        android:inputType="text"/>
+        android:inputType="text" />
 
     <TextView
         android:id="@+id/price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_new_price"
-        android:layout_below="@id/name_field"/>
+        android:layout_below="@id/name_field" />
     <EditText
         android:id="@+id/price_field"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:layout_below="@id/price"/>
+        android:layout_below="@id/price" />
     <TextView
         android:id="@+id/ugx"
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
         android:text="@string/UGX"
         android:textSize="20dp"
         android:layout_toEndOf="@id/price_field"
-        android:layout_below="@id/price"/>
+        android:layout_below="@id/price" />
 
     <Button
         android:id="@+id/add_billable_button"
@@ -47,6 +47,5 @@
         android:layout_height="wrap_content"
         android:text="@string/add_new_billable"
         android:textAllCaps="true"
-        android:layout_below="@id/price_field"
-        android:visibility="gone" />
+        android:layout_below="@id/price_field" />
 </RelativeLayout>

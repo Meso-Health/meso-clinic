@@ -7,51 +7,57 @@
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
-    <!--hacky method to add box around spinner without rewriting material design styles-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/background_rectangle"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin">
-
-        <Spinner
-            android:id="@+id/category_spinner"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp" />
-    </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
+        android:layout_height="130dp"
+        android:orientation="vertical">
 
+        <!--hacky method to add box around spinner without rewriting material design styles-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@drawable/background_rectangle">
+            android:background="@drawable/background_rectangle"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin">
 
             <Spinner
-                android:id="@+id/billable_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:visibility="gone" />
-
-            <SearchView
-                android:id="@+id/drug_search"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:iconifiedByDefault="false"
-                android:queryHint="@string/search_drug_hint"
-                android:visibility="gone" />
+                android:id="@+id/category_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp" />
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/background_rectangle">
+
+                <Spinner
+                    android:id="@+id/billable_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:visibility="gone" />
+
+                <SearchView
+                    android:id="@+id/drug_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:iconifiedByDefault="false"
+                    android:queryHint="@string/search_drug_hint"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -59,6 +65,7 @@
         android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:gravity="bottom"
         android:textAlignment="gravity"
         android:text="@string/add_billable_prompt"
         android:paddingBottom="5dp"

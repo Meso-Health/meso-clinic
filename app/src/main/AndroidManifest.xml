@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.watsi.uhp">
 
-    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <application
@@ -12,9 +14,6 @@
         android:supportsRtl="true"
         android:launchMode="singleTop"
         android:theme="@style/main_theme">
-        <provider
-            android:name=".providers.MemberContentProvider"
-            android:authorities="org.watsi.uhp.provider.member" />
         <service
             android:name=".services.DownloadMemberPhotosService"
             android:exported="false" />
@@ -24,6 +23,15 @@
         <service
             android:name=".services.SyncService"
             android:exported="false" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="org.watsi.uhp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/image_path" />
+        </provider>
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/main_activity_label"
@@ -31,13 +39,8 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.SEARCH" />
-                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable_member" />
         </activity>
     </application>
 </manifest>

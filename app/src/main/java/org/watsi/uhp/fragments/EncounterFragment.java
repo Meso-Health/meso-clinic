@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,7 +28,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.LineItem;
+import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,7 +47,10 @@ public class EncounterFragment extends Fragment {
     private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.encounter_fragment_label);
+        String currentMemberName = ((MainActivity)getActivity()).getCurrentEncounter().getMember().getFullName();
+        getActivity().setTitle(currentMemberName);
+
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
@@ -97,10 +101,19 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), lineItems);
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), encounterItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
+    }
+
+    private void scrollToBottom() {
+        lineItemsListView.post(new Runnable() {
+            @Override
+            public void run() {
+                lineItemsListView.setSelection(encounterItemAdapter.getCount() - 1);
+            }
+        });
     }
 
     private void setAddBillableLink() {
@@ -141,8 +154,8 @@ public class EncounterFragment extends Fragment {
         );
     }
 
-    public static boolean containsId(List<LineItem> list, UUID id) {
-        for (LineItem item : list) {
+    public static boolean containsId(List<EncounterItem> list, UUID id) {
+        for (EncounterItem item : list) {
             UUID itemId = item.getBillable().getId();
             if (itemId != null && itemId.equals(id)) {
                 return true;
@@ -154,16 +167,16 @@ public class EncounterFragment extends Fragment {
     public void addToLineItemList(UUID billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
-            List<LineItem> lineItems = ((MainActivity) getActivity()).getCurrentLineItems();
+            List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
 
-            if (containsId(lineItems, billableId)) {
+            if (containsId(encounterItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), R.string.already_in_list_items,
                         Toast.LENGTH_SHORT).show();
             } else {
-                LineItem lineItem = new LineItem();
-                lineItem.setBillable(billable);
+                EncounterItem encounterItem = new EncounterItem();
+                encounterItem.setBillable(billable);
 
-                encounterItemAdapter.add(lineItem);
+                encounterItemAdapter.add(encounterItem);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -214,7 +227,7 @@ public class EncounterFragment extends Fragment {
             if (position != 0) {
                 UUID billableId = ((Billable) adapter.getItem(position)).getId();
                 addToLineItemList(billableId);
-                categorySpinner.setSelection(0);
+                scrollToBottom();
             }
         }
 
@@ -235,19 +248,17 @@ public class EncounterFragment extends Fragment {
                     Billable.FIELD_NAME_ID
             };
             MatrixCursor cursor = new MatrixCursor(cursorColumns);
-            if (query.length() > 2) {
-                try {
-                    for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
-                        cursor.addRow(new Object[] {
-                                billable.getId().getMostSignificantBits(),
-                                billable.getName(),
-                                billable.dosageDetails(),
-                                billable.getId().toString()
-                        });
-                    }
-                } catch (SQLException e) {
-                    Rollbar.reportException(e);
+            try {
+                for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
+                    cursor.addRow(new Object[] {
+                            billable.getId().getMostSignificantBits(),
+                            billable.getName(),
+                            billable.dosageDetails(),
+                            billable.getId().toString()
+                    });
                 }
+            } catch (SQLException e) {
+                Rollbar.reportException(e);
             }
 
             return new SimpleCursorAdapter(
@@ -292,8 +303,8 @@ public class EncounterFragment extends Fragment {
             MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
             String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
             addToLineItemList(UUID.fromString(uuidString));
+            scrollToBottom();
             clearDrugSearch();
-            categorySpinner.setSelection(0);
             return true;
         }
     }

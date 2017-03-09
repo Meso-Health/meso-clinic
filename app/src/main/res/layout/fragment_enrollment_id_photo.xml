@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/enrollment_id_photo_fragment"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
+
+    <Button
+        android:id="@+id/photo_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/enrollment_id_photo_btn" />
+
+    <ImageView
+        android:id="@+id/photo"
+        android:contentDescription="@string/enrollment_id_photo_description"
+        android:layout_height="400dp"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/enrollment_next_step_btn" />
+    </RelativeLayout>
+</LinearLayout>
