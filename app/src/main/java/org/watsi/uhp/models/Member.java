@@ -29,7 +29,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -376,18 +375,22 @@ public class Member extends SyncableModel {
         }
 
         if (dirty(FIELD_NAME_FINGERPRINTS_GUID)) {
-            requestPartMap.put(
-                    FIELD_NAME_FINGERPRINTS_GUID,
-                    RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
-            );
+            if (getFingerprintsGuid() != null) {
+                requestPartMap.put(
+                        FIELD_NAME_FINGERPRINTS_GUID,
+                        RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
+                );
+            }
             removeDirtyField(FIELD_NAME_FINGERPRINTS_GUID);
         }
 
         if (dirty(FIELD_NAME_PHONE_NUMBER)) {
-            requestPartMap.put(
-                    FIELD_NAME_PHONE_NUMBER,
-                    RequestBody.create(MultipartBody.FORM, getPhoneNumber())
-            );
+            if (getPhoneNumber() != null) {
+                requestPartMap.put(
+                        FIELD_NAME_PHONE_NUMBER,
+                        RequestBody.create(MultipartBody.FORM, getPhoneNumber())
+                );
+            }
             removeDirtyField(FIELD_NAME_PHONE_NUMBER);
         }
 
