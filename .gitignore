@@ -10,3 +10,5 @@
 .externalNativeBuild
 # contains private config settings
 app/src/main/res/xml/secret.xml
+app/release-key.jks
+.env
