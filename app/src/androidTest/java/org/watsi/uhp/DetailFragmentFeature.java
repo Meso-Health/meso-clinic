@@ -89,7 +89,7 @@ public class DetailFragmentFeature {
         onView(withId(R.id.member_gender_and_age)).check(matches(withText(containsString("Male"))));
 
         // shows correct card Id
-        onView(withId(R.id.member_card_id)).check(matches(withText(containsString("RWI 000 000"))));
+        onView(withId(R.id.member_card_id_detail_fragment)).check(matches(withText(containsString("RWI 000 000"))));
     }
 
     @Test

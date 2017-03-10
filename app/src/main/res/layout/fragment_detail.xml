@@ -36,7 +36,7 @@
             android:layout_below="@id/member_name_detail_fragment" />
 
         <TextView
-            android:id="@+id/member_card_id"
+            android:id="@+id/member_card_id_detail_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/member_gender_and_age" />
@@ -45,7 +45,7 @@
             android:id="@+id/member_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/member_card_id" />
+            android:layout_below="@id/member_card_id_detail_fragment" />
 
         <TextView
             android:id="@+id/member_notification"
