@@ -62,6 +62,10 @@ public class Encounter extends SyncableModel {
         return mId;
     }
 
+    public void setId(UUID id) {
+        this.mId = id;
+    }
+
     public Date getOccurredAt() {
         return mOccurredAt;
     }

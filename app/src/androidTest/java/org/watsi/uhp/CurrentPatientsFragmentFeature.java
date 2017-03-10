@@ -18,6 +18,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.containsString;
 
 @RunWith(AndroidJUnit4.class)
 public class CurrentPatientsFragmentFeature {
@@ -56,7 +57,10 @@ public class CurrentPatientsFragmentFeature {
                 .atPosition(0)
                 .perform(click());
 
-        // check that clinic number fragment opens (checking for fragment title)
-        onView(withText(R.string.encounter_fragment_label)).check(matches(isDisplayed()));
+        // check that the detail fragment opens (checking for fragment title)
+        onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
+
+        // check that the detail fragment button says 'Enter Treatment Information' when selected from current members fragment
+        onView(withText(R.string.detail_create_encounter)).check(matches(isDisplayed()));
     }
 }
