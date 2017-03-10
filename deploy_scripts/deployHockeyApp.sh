@@ -24,12 +24,11 @@ HOCKEYAPP_NOTES="${HOCKEYAPP_NOTES_HEADER_HTML} ${GIT_PRETTY_COMMIT_LOG}"
 
 curl --verbose \
      --fail \
-     --form "status=2" \
-     --form "notify=1" \
-     --form "notes=${HOCKEYAPP_NOTES}" \
-     --form "platform=Android" \
-     --form "notes_type=0" \
      --form "ipa=@${HOCKEYAPP_EXPORT_APK_PATH}" \
-     --form "release_type=2" \
+     --form "notes=${HOCKEYAPP_NOTES}" \
+     --form "notes_type=0" \
+     --form "notify=1" \
+     --form "status=2" \
+     --form "platform=Android" \
      --header "X-HockeyAppToken: ${HOCKEYAPP_ACCESS_TOKEN}" \
      "https://upload.hockeyapp.net/api/2/apps/${HOCKEYAPP_APP_ID}/app_versions/upload"
