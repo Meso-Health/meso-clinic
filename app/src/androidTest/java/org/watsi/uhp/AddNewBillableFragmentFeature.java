@@ -51,7 +51,7 @@ public class AddNewBillableFragmentFeature {
 
         String fullName = "Lil Jon";
         String cardId = "RWI000000";
-        int age = 69;
+        int age = 70;
         UUID memberId = UUID.randomUUID();
 
         member = new Member(fullName, cardId, age, Member.GenderEnum.M);

@@ -36,7 +36,7 @@ public class DetailFragmentFeature {
     public void setup() {
         String fullName = "Lil Jon";
         String cardId = "RWI000000";
-        int age = 69;
+        int age = 70;
         UUID memberId = UUID.randomUUID();
         UUID membersHouseholdId = UUID.randomUUID();
 
@@ -83,7 +83,7 @@ public class DetailFragmentFeature {
         onView(withId(R.id.member_name_detail_fragment)).check(matches(withText(containsString("Lil Jon"))));
 
         // shows correct member age
-        onView(withId(R.id.member_gender_and_age)).check(matches(withText(containsString("69"))));
+        onView(withId(R.id.member_gender_and_age)).check(matches(withText(containsString("70"))));
 
         // shows correct member gender
         onView(withId(R.id.member_gender_and_age)).check(matches(withText(containsString("Male"))));
