@@ -1,7 +1,4 @@
 <resources>
-    <string name="app_name">UHP</string>
-    <string name="main_activity_label">UHP</string>
-
     <!-- Error Messages -->
     <string name="image_capture_failed">Image capture failed</string>
     <string name="generic_error_message">An error has occurred. Contact support.</string>

@@ -30,10 +30,20 @@ android {
         sandbox {
             applicationIdSuffix ".sandbox"
             versionNameSuffix "-sandbox"
+            resValue "string", "app_name", "UHP Sandbox"
+            resValue "string", "main_activity_label", "UHP Sandbox"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_sandbox"
+            ]
         }
         production {
             applicationIdSuffix ".production"
             versionNameSuffix "-production"
+            resValue "string", "app_name", "UHP"
+            resValue "string", "main_activity_label", "UHP"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
         }
     }
 }
