@@ -46,4 +46,5 @@ public class FileManagerTest {
         when(Uri.parse(fileUri)).thenReturn(mockUri);
         when(mockUri.getScheme()).thenReturn("content");
         assertTrue(FileManager.isLocal(fileUri));
-    }}
+    }
+}

@@ -56,6 +56,7 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
+    public static final String FIELD_NAME_PROVIDER_ID = "provider_id";
     public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
@@ -215,6 +216,7 @@ public class Member extends SyncableModel {
     }
 
     public void setGender(GenderEnum gender) {
+        addDirtyField(FIELD_NAME_GENDER);
         this.mGender = gender;
     }
 
@@ -392,12 +394,20 @@ public class Member extends SyncableModel {
         return getId().equals(otherMember.getId());
     }
 
-    public Map<String, RequestBody> formatPatchRequest(Context context) {
+    public Map<String, RequestBody> formatPatchRequest(Context context) throws ValidationException {
+        if (isNew()) {
+            throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform PATCH with new member");
+        }
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
         if (dirty(FIELD_NAME_PHOTO)) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
-            requestPartMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+            if (image != null) {
+                requestPartMap.put(
+                        FIELD_NAME_PHOTO,
+                        RequestBody.create(MediaType.parse("image/jpg"), image)
+                );
+            }
             removeDirtyField(FIELD_NAME_PHOTO);
         }
 
@@ -406,7 +416,12 @@ public class Member extends SyncableModel {
         if (requestPartMap.get(FIELD_NAME_PHOTO) == null) {
             if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
                 byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
-                requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+                if (image != null) {
+                    requestPartMap.put(
+                            FIELD_NAME_NATIONAL_ID_PHOTO,
+                            RequestBody.create(MediaType.parse("image/jpg"), image)
+                    );
+                }
                 removeDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
             }
         }
@@ -432,53 +447,70 @@ public class Member extends SyncableModel {
         }
 
         if (dirty(FIELD_NAME_FULL_NAME)) {
-            requestPartMap.put(
-                    FIELD_NAME_FULL_NAME,
-                    RequestBody.create(MultipartBody.FORM, getFullName())
-            );
+            if (getFullName() != null) {
+                requestPartMap.put(
+                        FIELD_NAME_FULL_NAME,
+                        RequestBody.create(MultipartBody.FORM, getFullName())
+                );
+            }
             removeDirtyField(FIELD_NAME_FULL_NAME);
         }
 
         if (dirty(FIELD_NAME_CARD_ID)) {
-            requestPartMap.put(
-                    FIELD_NAME_CARD_ID,
-                    RequestBody.create(MultipartBody.FORM, getCardId())
-            );
+            if (getCardId() != null) {
+                requestPartMap.put(
+                        FIELD_NAME_CARD_ID,
+                        RequestBody.create(MultipartBody.FORM, getCardId())
+                );
+            }
             removeDirtyField(FIELD_NAME_CARD_ID);
         }
 
         return requestPartMap;
     }
 
-    public Map<String, RequestBody> formatPostRequest(Context context) {
+    public Map<String, RequestBody> formatPostRequest(Context context) throws ValidationException {
+        if (!isNew()) {
+            throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform POST with existing member");
+        }
         Map<String,RequestBody> requestBodyMap = new HashMap<>();
 
         requestBodyMap.put(
-                "provider_id",
+                FIELD_NAME_PROVIDER_ID,
                 RequestBody.create(MultipartBody.FORM,
                         String.valueOf(ConfigManager.getProviderId(context)))
         );
 
-        byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
-        requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
-        removeDirtyField(FIELD_NAME_PHOTO);
+        if (FileManager.isLocal(getPhotoUrl())) {
+            byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+            if (image != null) {
+                requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+            }
+            removeDirtyField(FIELD_NAME_PHOTO);
+        }
 
-        requestBodyMap.put(
-                FIELD_NAME_GENDER,
-                RequestBody.create(MultipartBody.FORM, getGender().toString())
-        );
-        removeDirtyField(FIELD_NAME_PHONE_NUMBER);
+        if (getGender() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_GENDER,
+                    RequestBody.create(MultipartBody.FORM, getGender().toString())
+            );
+        }
+        removeDirtyField(FIELD_NAME_GENDER);
 
-        requestBodyMap.put(
-                FIELD_NAME_FULL_NAME,
-                RequestBody.create(MultipartBody.FORM, getFullName())
-        );
+        if (getFullName() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_FULL_NAME,
+                    RequestBody.create(MultipartBody.FORM, getFullName())
+            );
+        }
         removeDirtyField(FIELD_NAME_FULL_NAME);
 
-        requestBodyMap.put(
-                FIELD_NAME_CARD_ID,
-                RequestBody.create(MultipartBody.FORM, getCardId())
-        );
+        if (getCardId() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_CARD_ID,
+                    RequestBody.create(MultipartBody.FORM, getCardId())
+            );
+        }
         removeDirtyField(FIELD_NAME_CARD_ID);
 
         return requestBodyMap;

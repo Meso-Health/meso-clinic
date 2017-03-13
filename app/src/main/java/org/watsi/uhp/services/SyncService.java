@@ -127,6 +127,7 @@ public class SyncService extends Service {
 
     private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
+
             if (member.isNew()) {
                 enrollMember(member);
             } else {
@@ -136,7 +137,13 @@ public class SyncService extends Service {
     }
 
     private void updateMember(Member member) throws SQLException, IOException {
-        Map<String, RequestBody> multiPartBody = member.formatPatchRequest(getApplicationContext());
+        Map<String, RequestBody> multiPartBody;
+        try {
+            multiPartBody = member.formatPatchRequest(getApplicationContext());
+        } catch (AbstractModel.ValidationException e) {
+            Rollbar.reportException(e);
+            return;
+        }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
                 member.getTokenAuthHeaderString(),
                 member.getId().toString(),
@@ -179,7 +186,13 @@ public class SyncService extends Service {
     }
 
     private void enrollMember(Member member) throws SQLException, IOException {
-        Map<String, RequestBody> multiPartBody = member.formatPostRequest(getApplicationContext());
+        Map<String, RequestBody> multiPartBody;
+        try {
+            multiPartBody = member.formatPostRequest(getApplicationContext());
+        } catch (AbstractModel.ValidationException e) {
+            Rollbar.reportException(e);
+            return;
+        }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).enrollMember(
                 member.getTokenAuthHeaderString(),
                 member.getId().toString(),
