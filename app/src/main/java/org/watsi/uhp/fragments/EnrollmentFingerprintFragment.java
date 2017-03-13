@@ -12,6 +12,7 @@ import com.rollbar.android.Rollbar;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Registration;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
@@ -96,7 +97,7 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
             Intent captureFingerprintIntent = new Intent(Constants.SIMPRINTS_REGISTER_INTENT);
             captureFingerprintIntent.putExtra(
                     Constants.SIMPRINTS_API_KEY,
-                    ConfigManager.getSimprintsApiKey(mFragment.getContext())
+                    BuildConfig.SIMPRINTS_API_KEY
             );
             captureFingerprintIntent.putExtra(
                     Constants.SIMPRINTS_USER_ID,

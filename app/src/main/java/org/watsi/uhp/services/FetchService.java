@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
@@ -41,7 +42,7 @@ public class FetchService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
-        mProviderId = ConfigManager.getProviderId(getApplicationContext());
+        mProviderId = BuildConfig.PROVIDER_ID;
 
         new Thread(new Runnable() {
             @Override

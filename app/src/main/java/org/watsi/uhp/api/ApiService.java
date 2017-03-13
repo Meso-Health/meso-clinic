@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NotificationManager;
@@ -31,7 +32,7 @@ public class ApiService {
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.addNetworkInterceptor(new TokenInterceptor(context));
             httpClient.retryOnConnectionFailure(false);
-            String apiHost = ConfigManager.getApiHost(context);
+            String apiHost = BuildConfig.API_HOST;
             if (apiHost == null) {
                 throw new IllegalStateException("API hostname not configured");
             }
@@ -52,7 +53,7 @@ public class ApiService {
 
     public static retrofit2.Response login(String username, String password, Context context) {
         UhpApi api = new Retrofit.Builder()
-                .baseUrl(ConfigManager.getApiHost(context))
+                .baseUrl(BuildConfig.API_HOST)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(UhpApi.class);

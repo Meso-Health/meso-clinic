@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupApp() {
         Rollbar.init(
                 this,
-                ConfigManager.getRollbarApiKey(this),
-                ConfigManager.getRollbarEnv(this)
+                BuildConfig.ROLLBAR_API_KEY,
+                BuildConfig.ROLLBAR_ENV_KEY
         );
         DatabaseHelper.init(getApplicationContext());
     }
@@ -93,14 +93,14 @@ public class MainActivity extends AppCompatActivity {
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
-        if (!ConfigManager.isProduction(getApplicationContext())) {
+        if (!(BuildConfig.FLAVOR.equals("production"))) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
         }
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void checkForUpdates() {
-        String hockeyAppId = ConfigManager.getHockeyAppId(this);
+        String hockeyAppId = BuildConfig.HOCKEYAPP_APP_ID;
         UpdateManager.register(this, hockeyAppId);
     }
 
