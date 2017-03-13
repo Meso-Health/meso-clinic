@@ -149,32 +149,6 @@ public class MemberTest {
     }
 
     @Test
-    public void equals_returnsTrueIfSameObject() throws Exception {
-        assertTrue(member.equals(member));
-    }
-
-    @Test
-    public void equals_returnsTrueIfSameId() throws Exception {
-        UUID id = UUID.randomUUID();
-        Member member1 = new Member();
-        member1.setId(id);
-        Member member2 = new Member();
-        member2.setId(id);
-
-        assertTrue(member1.equals(member2));
-    }
-
-    @Test
-    public void equals_returnsFalseIfDifferentId() throws Exception {
-        Member member1 = new Member();
-        member1.setId(UUID.randomUUID());
-        Member member2 = new Member();
-        member2.setId(UUID.randomUUID());
-
-        assertFalse(member1.equals(member2));
-    }
-
-    @Test
     public void validPhoneNumber() throws Exception {
         assertFalse(Member.validPhoneNumber(null));
         assertFalse(Member.validPhoneNumber(""));

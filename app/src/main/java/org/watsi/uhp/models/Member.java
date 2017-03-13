@@ -384,16 +384,6 @@ public class Member extends SyncableModel {
         return getAge() >= Member.MINIMUM_NATIONAL_ID_AGE;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Member)) return false;
-
-        Member otherMember = (Member) o;
-
-        return getId().equals(otherMember.getId());
-    }
-
     public Map<String, RequestBody> formatPatchRequest(Context context) throws ValidationException {
         if (isNew()) {
             throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform PATCH with new member");
