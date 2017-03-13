@@ -94,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
         if (!(BuildConfig.FLAVOR.equals("production"))) {
-            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
+            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                    R.color.beige));
         }
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
