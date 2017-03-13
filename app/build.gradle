@@ -46,6 +46,7 @@ android {
             buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("SANDBOX_ROLLBAR_ENV_KEY")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
         }
         production {
             applicationIdSuffix ".production"
@@ -58,7 +59,8 @@ android {
 
             buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("PRODUCTION_ROLLBAR_ENV_KEY")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV ("PRODUCTION_SIMPRINTS_API_KEY")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
         }
     }
 }
