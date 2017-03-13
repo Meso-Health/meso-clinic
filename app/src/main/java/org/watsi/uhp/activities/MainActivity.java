@@ -101,8 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForUpdates() {
-        String hockeyAppId = BuildConfig.HOCKEYAPP_APP_ID;
-        UpdateManager.register(this, hockeyAppId);
+        UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID);
     }
 
     public void setNewEncounter(Member member) {
@@ -198,5 +197,17 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        UpdateManager.unregister();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UpdateManager.unregister();
     }
 }
