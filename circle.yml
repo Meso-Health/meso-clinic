@@ -4,7 +4,6 @@ machine:
 
 test:
   override:
-    - echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><secret></secret>" >> app/src/main/res/xml/secret.xml
     # run unit tests
     - ./gradlew test
     # start the emulator
