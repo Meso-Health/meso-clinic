@@ -57,4 +57,12 @@ public interface UhpApi {
             @Path("memberId") String memberId,
             @PartMap Map<String, RequestBody> params
     );
+
+    @Multipart
+    @POST("members/{memberId}")
+    Call<Member> enrollMember(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("memberId") String memberId,
+            @PartMap Map<String, RequestBody> params
+    );
 }

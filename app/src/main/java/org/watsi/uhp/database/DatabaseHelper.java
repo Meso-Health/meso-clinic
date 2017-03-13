@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private static DatabaseHelper instance;
 
@@ -62,7 +62,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         try {
             switch (oldVersion) {
                 default:
@@ -80,7 +79,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN dirty_fields STRING;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dirty_fields STRING;");
+                case 4:
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN birthdate DATE;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN birthdate_accuracy STRING;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN is_new BOOLEAN;");
             }
+            Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -13,12 +13,26 @@
         Invalid phone number. Phone number must be blank, a 9 digit number, or a 10 digit number starting with 0.
     </string>
     <string name="invalid_member_id">Could not find member with the provided ID.</string>
+    <string name="gender_validation_error">Must select a gender.</string>
 
     <!-- Menu -->
     <string name="menu_member_edit_label">Edit member</string>
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
+    <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
     <string name="menu_version_label">Version</string>
+
+    <!-- General Labels -->
+    <string name="name_label">Name</string>
+    <string name="card_id_label">Card ID</string>
+    <string name="phone_number_label">Phone number</string>
+    <string name="scan_card_btn_label">Scan new card</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="gender_label">Gender</string>
+    <string name="save_btn_label">Save</string>
+    <string name="photo_btn_label">Take photo</string>
+    <string name="photo_description">Photo</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
@@ -44,7 +58,6 @@
 
     <!--DetailFragment-->
     <string name="detail_fragment_label">Is this the right person?</string>
-    <string name="member_photo_content_description">Member photo</string>
     <string name="absentee_notification">Must complete enrollment</string>
     <string name="replace_card_notification">Needs new card</string>
     <string name="approve_identity">Check-in</string>
@@ -98,7 +111,6 @@
     <!--EnrollmentMemberPhotoFragment-->
     <string name="enrollment_member_photo_fragment_label">Member photo</string>
     <string name="enrollment_member_photo_btn">Take member photo</string>
-    <string name="enrollment_member_photo_description">Member photo</string>
 
     <!--EnrollmentIdPhotoFragment-->
     <string name="enrollment_id_photo_fragment_label">National ID photo</string>
@@ -119,12 +131,15 @@
 
     <!--MemberEditFragment-->
     <string name="member_edit_label">Update member information</string>
-    <string name="member_edit_name_label">Name</string>
-    <string name="member_edit_card_id_label">Card ID</string>
-    <string name="member_edit_phone_number_label">Phone number</string>
-    <string name="member_edit_scan_card_btn_label">Scan new card</string>
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
+
+    <!--EnrollNewbornInfoFragment-->
+    <string name="enroll_newborn_info_label">Enroll newborn</string>
+    <string name="enroll_newborn_save_btn">Continue</string>
+
+    <!--EnrollNewbornPhotoFragment-->
+    <string name="enroll_newborn_photo_label">Newborn photo</string>
 
     <!--VersionFragment-->
     <string name="version_label">Version</string>

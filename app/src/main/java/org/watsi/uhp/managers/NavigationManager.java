@@ -15,6 +15,8 @@ import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.EnrollNewbornInfoFragment;
+import org.watsi.uhp.fragments.EnrollNewbornPhotoFragment;
 import org.watsi.uhp.fragments.EnrollmentContactInfoFragment;
 import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
 import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
@@ -25,6 +27,7 @@ import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.fragments.VersionFragment;
 import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.Member;
 
 import java.util.UUID;
 
@@ -36,8 +39,9 @@ public class NavigationManager {
     public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
     public static String MEMBER_ID_BUNDLE_FIELD = "memberId";
     public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMemberId";
-    public static String ONLY_SCAN_BUNDLE_FIELD = "onlyScan";
+    public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
+    public static String MEMBER_BUNDLE_FIELD = "member";
 
     private static String HOME_TAG = "home";
     private static String DETAIL_TAG = "detail";
@@ -96,13 +100,13 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
-    public void setBarcodeFragment(boolean onlyScan,
-                                   UUID memberId,
+    public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
+                                   Member member,
                                    IdentificationEvent.SearchMethodEnum idMethod) {
         Bundle bundle = new Bundle();
-        if (memberId != null) bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        if (member != null) bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         if (idMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
-        bundle.putBoolean(ONLY_SCAN_BUNDLE_FIELD, onlyScan);
+        bundle.putString(SCAN_PURPOSE_BUNDLE_FIELD, scanPurpose.toString());
         setFragment(mFragmentProvider.createFragment(BarcodeFragment.class, bundle));
     }
 
@@ -154,6 +158,19 @@ public class NavigationManager {
         if (searchMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
+    }
+
+    public void setEnrollNewbornInfoFragment(Member parentMember, String scannedCardId) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, parentMember);
+        bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
+        setFragment(mFragmentProvider.createFragment(EnrollNewbornInfoFragment.class, bundle));
+    }
+
+    public void setEnrollNewbornPhotoFragment(Member newborn) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, newborn);
+        setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
     public void setLoginFragment() {

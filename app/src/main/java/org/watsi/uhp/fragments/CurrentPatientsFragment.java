@@ -38,7 +38,8 @@ public class CurrentPatientsFragment extends Fragment {
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setBarcodeFragment(false, null, null);
+                new NavigationManager(getActivity()).setBarcodeFragment(
+                        BarcodeFragment.ScanPurposeEnum.ID, null, null);
                 ((AppCompatActivity) getActivity()).getSupportActionBar()
                         .setDisplayHomeAsUpEnabled(true);
             }

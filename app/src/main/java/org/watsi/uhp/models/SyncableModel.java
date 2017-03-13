@@ -3,6 +3,7 @@ package org.watsi.uhp.models;
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * Abstract class for specifying any fields and behavior that all
  * models that need to be synced to the back-end should share
  */
-public abstract class SyncableModel extends AbstractModel {
+public abstract class SyncableModel extends AbstractModel implements Serializable {
 
     public static final String FIELD_NAME_TOKEN = "token";
     public static final String FIELD_NAME_SYNCED = "synced";

@@ -127,46 +127,88 @@ public class SyncService extends Service {
 
     private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
-            Map<String, RequestBody> multiPartBody = member.formatPatchRequest(getApplicationContext());
-            Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
-                    member.getTokenAuthHeaderString(),
-                    member.getId().toString(),
-                    multiPartBody
-            );
-            Response<Member> response = request.execute();
-            if (response.isSuccessful()) {
-                // if we have updated a photo, remove the local version and fetch the remote one
-                if (member.getPhotoUrl() != null &&
-                        !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
-                        !member.dirty(Member.FIELD_NAME_PHOTO)) {
-                    member.setMemberPhotoUrlFromPatchResponse(response.body().getPhotoUrl());
-                    member.fetchAndSetPhotoFromUrl();
-                }
-                if (member.getNationalIdPhotoUrl() != null &&
-                        !member.getNationalIdPhotoUrl().equals(
-                                response.body().getNationalIdPhotoUrl()) &&
-                        !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
-                    member.setNationalIdPhotoUrlFromPatchResponse(
-                            response.body().getNationalIdPhotoUrl());
-                }
-                if (!member.isDirty()) {
-                    try {
-                        member.setSynced();
-                    } catch (AbstractModel.ValidationException e) {
-                        Rollbar.reportException(e);
-                    }
-                }
-                MemberDao.update(member);
+            if (member.isNew()) {
+                enrollMember(member);
             } else {
-                Map<String,String> reportParams = new HashMap<>();
-                reportParams.put("member.id", member.getId().toString());
-                NotificationManager.requestFailure(
-                        "Failed to sync Member",
-                        request.request(),
-                        response.raw(),
-                        reportParams
-                );
+                updateMember(member);
             }
+        }
+    }
+
+    private void updateMember(Member member) throws SQLException, IOException {
+        Map<String, RequestBody> multiPartBody = member.formatPatchRequest(getApplicationContext());
+        Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
+                member.getTokenAuthHeaderString(),
+                member.getId().toString(),
+                multiPartBody
+        );
+        Response<Member> response = request.execute();
+        if (response.isSuccessful()) {
+            // if we have updated a photo, remove the local version and fetch the remote one
+            if (member.getPhotoUrl() != null &&
+                    !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
+                    !member.dirty(Member.FIELD_NAME_PHOTO)) {
+                member.setMemberPhotoUrlFromResponse(response.body().getPhotoUrl());
+                member.fetchAndSetPhotoFromUrl();
+            }
+            if (member.getNationalIdPhotoUrl() != null &&
+                    !member.getNationalIdPhotoUrl().equals(
+                            response.body().getNationalIdPhotoUrl()) &&
+                    !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
+                member.setNationalIdPhotoUrlFromPatchResponse(
+                        response.body().getNationalIdPhotoUrl());
+            }
+            if (!member.isDirty()) {
+                try {
+                    member.setSynced();
+                } catch (AbstractModel.ValidationException e) {
+                    Rollbar.reportException(e);
+                }
+            }
+            MemberDao.update(member);
+        } else {
+            Map<String,String> reportParams = new HashMap<>();
+            reportParams.put("member.id", member.getId().toString());
+            NotificationManager.requestFailure(
+                    "Failed to sync Member",
+                    request.request(),
+                    response.raw(),
+                    reportParams
+            );
+        }
+    }
+
+    private void enrollMember(Member member) throws SQLException, IOException {
+        Map<String, RequestBody> multiPartBody = member.formatPostRequest(getApplicationContext());
+        Call<Member> request = ApiService.requestBuilder(getApplicationContext()).enrollMember(
+                member.getTokenAuthHeaderString(),
+                member.getId().toString(),
+                multiPartBody
+        );
+        Response<Member> response = request.execute();
+        if (response.isSuccessful()) {
+            // if we have updated a photo, remove the local version and fetch the remote one
+            if (member.getPhotoUrl() != null &&
+                    !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
+                    !member.dirty(Member.FIELD_NAME_PHOTO)) {
+                member.setMemberPhotoUrlFromResponse(response.body().getPhotoUrl());
+                member.fetchAndSetPhotoFromUrl();
+            }
+            try {
+                member.setSynced();
+            } catch (AbstractModel.ValidationException e) {
+                Rollbar.reportException(e);
+            }
+            MemberDao.update(member);
+        } else {
+            Map<String,String> reportParams = new HashMap<>();
+            reportParams.put("member.id", member.getId().toString());
+            NotificationManager.requestFailure(
+                    "Failed to enroll Member",
+                    request.request(),
+                    response.raw(),
+                    reportParams
+            );
         }
     }
 

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
@@ -18,6 +19,7 @@ import com.squareup.leakcanary.LeakCanary;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.managers.ConfigManager;
@@ -163,6 +165,15 @@ public class MainActivity extends AppCompatActivity {
                                     .getIdMethod();
                     new NavigationManager(mActivity)
                             .setMemberEditFragment(mMemberId, searchMethod, null);
+                    break;
+                case R.id.menu_enroll_newborn:
+                    try {
+                        Member member = MemberDao.findById(mMemberId);
+                        new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null);
+                    } catch (SQLException e) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                        Rollbar.reportException(e);
+                    }
                     break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();

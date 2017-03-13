@@ -19,6 +19,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NotificationManager;
 
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -57,11 +59,16 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
+    public static final String FIELD_NAME_BIRTHDATE = "birthdate";
+    public static final String FIELD_NAME_BIRTHDATE_ACCURACY = "birthdate_accuracy";
+    public static final String FIELD_NAME_IS_NEW = "is_new";
 
     public static final int MINIMUM_FINGERPRINT_AGE = 6;
     public static final int MINIMUM_NATIONAL_ID_AGE = 18;
 
     public enum GenderEnum { M, F }
+
+    public enum BirthdateAccuracyEnum { D, M, Y }
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
@@ -120,15 +127,30 @@ public class Member extends SyncableModel {
     private UUID mFingerprintsGuid;
 
     @Expose
+    @SerializedName(FIELD_NAME_BIRTHDATE)
+    @DatabaseField(columnName = FIELD_NAME_BIRTHDATE)
+    private Date mBirthdate;
+
+    @Expose
+    @SerializedName(FIELD_NAME_BIRTHDATE_ACCURACY)
+    @DatabaseField(columnName = FIELD_NAME_BIRTHDATE_ACCURACY)
+    private BirthdateAccuracyEnum mBirthdateAccuracy;
+
+    @Expose
     @SerializedName(FIELD_NAME_PHONE_NUMBER)
     @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
     private String mPhoneNumber;
+
+    @DatabaseField(columnName = FIELD_NAME_IS_NEW, canBeNull = false, defaultValue = "false")
+    private Boolean mIsNew;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
 
     public Member() {
         super();
+        setId(UUID.randomUUID());
+        setIsNew(true);
     }
 
     public void setFullName(String fullName) throws ValidationException {
@@ -221,7 +243,7 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void setMemberPhotoUrlFromPatchResponse(String responsePhotoUrl) {
+    public void setMemberPhotoUrlFromResponse(String responsePhotoUrl) {
         this.mPhotoUrl = responsePhotoUrl;
         deleteLocalMemberImage();
     }
@@ -292,6 +314,30 @@ public class Member extends SyncableModel {
                 throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Invalid phone number");
             }
         }
+    }
+
+    public BirthdateAccuracyEnum getBirthdateAccuracy() {
+        return mBirthdateAccuracy;
+    }
+
+    public void setBirthdateAccuracy(BirthdateAccuracyEnum birthdateAccuracy) {
+        this.mBirthdateAccuracy = birthdateAccuracy;
+    }
+
+    public Date getBirthdate() {
+        return mBirthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.mBirthdate = birthdate;
+    }
+
+    public Boolean isNew() {
+        return mIsNew;
+    }
+
+    public void setIsNew(Boolean isNew) {
+        this.mIsNew = isNew;
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
@@ -404,7 +450,41 @@ public class Member extends SyncableModel {
         return requestPartMap;
     }
 
-    public static boolean validCardId(String cardId) {
+    public Map<String, RequestBody> formatPostRequest(Context context) {
+        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+
+        requestBodyMap.put(
+                "provider_id",
+                RequestBody.create(MultipartBody.FORM,
+                        String.valueOf(ConfigManager.getProviderId(context)))
+        );
+
+        byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+        requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+        removeDirtyField(FIELD_NAME_PHOTO);
+
+        requestBodyMap.put(
+                FIELD_NAME_GENDER,
+                RequestBody.create(MultipartBody.FORM, getGender().toString())
+        );
+        removeDirtyField(FIELD_NAME_PHONE_NUMBER);
+
+        requestBodyMap.put(
+                FIELD_NAME_FULL_NAME,
+                RequestBody.create(MultipartBody.FORM, getFullName())
+        );
+        removeDirtyField(FIELD_NAME_FULL_NAME);
+
+        requestBodyMap.put(
+                FIELD_NAME_CARD_ID,
+                RequestBody.create(MultipartBody.FORM, getCardId())
+        );
+        removeDirtyField(FIELD_NAME_CARD_ID);
+
+        return requestBodyMap;
+    }
+
+        public static boolean validCardId(String cardId) {
         if (cardId == null || cardId.isEmpty()) {
             return false;
         } else {

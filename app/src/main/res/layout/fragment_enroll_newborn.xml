@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="@string/name_label"
-        android:labelFor="@+id/member_name" />
+        android:labelFor="@+id/name" />
 
     <EditText
-        android:id="@+id/member_name"
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
@@ -26,15 +26,25 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="@string/phone_number_label"
-        android:labelFor="@+id/phone_number" />
+        android:text="@string/gender_label"
+        android:labelFor="@+id/gender_group" />
 
-    <EditText
-        android:id="@+id/phone_number"
-        android:layout_width="match_parent"
+    <RadioGroup android:id="@+id/gender_group"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:maxLines="1" />
+        android:orientation="horizontal"
+        android:checkedButton="@+id/radio_opd" >
+        <RadioButton android:id="@+id/male"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/male" />
+        <RadioButton android:id="@+id/female"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/female" />
+    </RadioGroup>
 
     <TextView
         android:layout_width="fill_parent"
@@ -59,6 +69,13 @@
         android:layout_marginTop="5dp"
         android:text="@string/scan_card_btn_label" />
 
+    <DatePicker
+        android:id="@+id/birthdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -68,6 +85,6 @@
             android:id="@+id/save_button"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="@string/member_edit_save" />
+            android:text="@string/enroll_newborn_save_btn" />
     </RelativeLayout>
 </LinearLayout>

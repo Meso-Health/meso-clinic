@@ -27,16 +27,17 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback {
 
     private CameraSource mCameraSource;
     private Button mSearchMemberButton;
     private Toast mErrorToast;
-    private boolean mOnlyScan;
-    private UUID mMemberID = null;
+    private ScanPurposeEnum mScanPurpose;
+    private Member mMember = null;
     private IdentificationEvent.SearchMethodEnum mIdMethod = null;
+
+    public enum ScanPurposeEnum { ID, MEMBER_EDIT, NEWBORN }
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -46,16 +47,16 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
         View view = inflater.inflate(R.layout.fragment_barcode, container, false);
 
-        mOnlyScan = getArguments().getBoolean(NavigationManager.ONLY_SCAN_BUNDLE_FIELD, false);
+        mScanPurpose = ScanPurposeEnum.valueOf(
+                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
 
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
         mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
 
-        if (mOnlyScan) {
+        if (!mScanPurpose.equals(ScanPurposeEnum.ID)) {
             mSearchMemberButton.setVisibility(View.GONE);
-            mMemberID = UUID.fromString(
-                    getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+            mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
             String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
             if (searchMethodString != null) {
                 mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
@@ -119,19 +120,28 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     Barcode barcode = barcodes.valueAt(0);
                     if (barcode != null) {
                         try {
-                            if (mOnlyScan) {
-                                new NavigationManager(activity).setMemberEditFragment(
-                                        mMemberID,
-                                        mIdMethod,
-                                        barcode.displayValue
-                                );
-                            } else {
-                                Member member = MemberDao.findByCardId(barcode.displayValue);
-                                new NavigationManager(activity).setDetailFragment(
-                                        member.getId(),
-                                        IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
-                                        null
-                                );
+                            switch (mScanPurpose) {
+                                case ID:
+                                    Member member = MemberDao.findByCardId(barcode.displayValue);
+                                    new NavigationManager(activity).setDetailFragment(
+                                            member.getId(),
+                                            IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
+                                            null
+                                    );
+                                    break;
+                                case MEMBER_EDIT:
+                                    new NavigationManager(activity).setMemberEditFragment(
+                                            mMember.getId(),
+                                            mIdMethod,
+                                            barcode.displayValue
+                                    );
+                                    break;
+                                case NEWBORN:
+                                    new NavigationManager(activity).setEnrollNewbornInfoFragment(
+                                            mMember,
+                                            barcode.displayValue
+                                    );
+                                    break;
                             }
                         } catch (SQLException e) {
                             displayFailureToast();

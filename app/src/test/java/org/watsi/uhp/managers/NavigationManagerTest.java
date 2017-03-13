@@ -8,11 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
@@ -88,7 +85,7 @@ public class NavigationManagerTest {
         BarcodeFragment fragment = mock(BarcodeFragment.class);
         when(mockFragmentProvider.createFragment(BarcodeFragment.class)).thenReturn(fragment);
 
-        navMgr.setBarcodeFragment(false, null, null);
+        navMgr.setBarcodeFragment(BarcodeFragment.ScanPurposeEnum.ID, null, null);
         addsToBackStackButDoesNotPopBackStack(fragment);
     }
 

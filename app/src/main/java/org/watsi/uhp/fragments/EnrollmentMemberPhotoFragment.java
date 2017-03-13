@@ -37,7 +37,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
 
     @Override
     int getFragmentLayoutId() {
-        return R.layout.fragment_enrollment_member_photo;
+        return R.layout.fragment_capture_photo;
     }
 
     @Override
@@ -70,6 +70,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
 
     @Override
     void setUpFragment(View view) {
+        ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_member_photo_btn);
         try {
             String filename = "member_" + mMember.getId().toString() +
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";

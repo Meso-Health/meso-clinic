@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -67,15 +66,16 @@ public class MemberEditFragment extends Fragment {
             phoneNumView.getText().append(mMember.getPhoneNumber());
         }
 
-        ((Button) view.findViewById(R.id.scan_card)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new NavigationManager(getActivity())
-                        .setBarcodeFragment(true, mMember.getId(), mIdMethod);
+                        .setBarcodeFragment(
+                                BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, mIdMethod);
             }
         });
 
-        ((Button) view.findViewById(R.id.save_button)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveChanges(nameView, cardIdView, phoneNumView);
