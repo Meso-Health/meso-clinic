@@ -4,13 +4,13 @@ machine:
 
 test:
   override:
-    # run unit tests
-    - ./gradlew test
     # start the emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
         background: true
         parallel: true
-    # wait for emulator to boot
+    # run unit tests whilst emulator is booting
+    - ./gradlew test
+    # wait for emulator to finish boot
     - circle-android wait-for-boot
     # unlock the emulator screen
     - sleep 30
