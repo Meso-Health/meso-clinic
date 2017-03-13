@@ -10,18 +10,21 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
-In order to run the application, you must also create a resource file for storing private config settings. Do this by creating an xml file in `app/src/main/res/xml/secret.xml` with the following format:
+In order to run the application, you also need an `.env` file in your root directory for storing private config settings. To link your local file with the remote `.env` file in Dropbox, create a symlink:
 
 ```
-<?xml version="1.0" encoding="utf-8"?>
-<secret>
-    <entry key="ROLLBAR_API_KEY">################################</entry>
-    <entry key="ROLLBAR_ENV_KEY">sandbox</entry>
-    <entry key="API_HOST">https://uhp-sandbox.watsi.org/</entry>
-    <entry key="PROVIDER_ID">#</entry>
-    <entry key="SIMPRINTS_API_KEY">########-####-####-####-############</entry>
-</secret>
+$ ln -s /path/to/watsi/Dropbox/UHP/Android/.env /your/working/dir/for/.env
 ```
+
+The simplest way to load these environment variables into your Android Studio is to launch the app from the Command Line after loading the variables.
+
+```
+$ cd /your/working/dir
+$ source .env
+$ open -a /Applications/Android\ Studio.app ~/Watsi/uhp-android-app
+```
+
+Most of our [release builds] (https://developer.android.com/studio/build/build-variants.html) are automatically created by [Circle CI] (https://circleci.com/) and pushed to devices via [Hockey App] (https://www.hockeyapp.net/). However, if you need to create a release build locally that can be run on the devices without overwriting the existing apps, you'll need to sign the apk with the same release key. To do so,  download the release key file from Dropbox and save it to your `app` directory.
 
 ## Conventions
 
