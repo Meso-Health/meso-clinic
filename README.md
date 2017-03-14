@@ -28,11 +28,11 @@ $ open -a /Applications/Android\ Studio.app ~/Watsi/uhp-android-app
 
 ## Build types
 
-Our application has 2 build types (debug and release) and 2 build flavors (production and sandbox), for a total of 4 build variants (sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 4 [build variants] (https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the variant in the Tool Buttons bar of Android Studio.
+Our application has 2 build types (debug and release) and 2 build flavors (production and sandbox), for a total of 4 build variants (sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 4 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the variant in the Tool Buttons bar of Android Studio.
 
 The debug build types are fast to build and allow you to debug the app on a local phone. They are automatically signed with generic debug keystores. The release build types take longer to build (they are shrunk, optimized, obfuscated, etc.) and are signed with a real keystore.
 
-Most of our release builds are automatically created by [Circle CI] (https://circleci.com/) and pushed to devices via [Hockey App] (https://www.hockeyapp.net/). However, if you need to create a release build locally that can be run on the devices without overwriting the existing apps, you'll need to sign the apk with the same release key. To do so,  download the release key file from Dropbox and save it to your `app` directory.
+Most of our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to devices via [Hockey App](https://www.hockeyapp.net/). However, if you need to create a release build locally that can be run on the devices without overwriting the existing apps, you'll need to sign the apk with the same release key. To do so,  download the release key file from Dropbox and save it to your `app` directory.
 
 ## Conventions
 
