@@ -14,6 +14,7 @@
     </string>
     <string name="invalid_member_id">Could not find member with the provided ID.</string>
     <string name="gender_validation_error">Must select a gender.</string>
+    <string name="birthdate_validation_error">Invalid birthdate.</string>
 
     <!-- Menu -->
     <string name="menu_member_edit_label">Edit member</string>
@@ -26,6 +27,7 @@
     <string name="name_label">Name</string>
     <string name="card_id_label">Card ID</string>
     <string name="phone_number_label">Phone number</string>
+    <string name="birthdate_label">Birthdate</string>
     <string name="scan_card_btn_label">Scan new card</string>
     <string name="male">Male</string>
     <string name="female">Female</string>

@@ -39,6 +39,7 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
+    public static String SOURCE_PARAMS_BUNDLE_FIELD = "sourceParams";
 
     private static String HOME_TAG = "home";
     public static String DETAIL_TAG = "detail";
@@ -99,11 +100,11 @@ public class NavigationManager {
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
                                    Member member,
-                                   IdentificationEvent.SearchMethodEnum idMethod) {
+                                   Bundle sourceParams) {
         Bundle bundle = new Bundle();
-        if (member != null) bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        if (idMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
         bundle.putString(SCAN_PURPOSE_BUNDLE_FIELD, scanPurpose.toString());
+        if (member != null) bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        if (sourceParams != null) bundle.putBundle(SOURCE_PARAMS_BUNDLE_FIELD, sourceParams);
         setFragment(mFragmentProvider.createFragment(BarcodeFragment.class, bundle));
     }
 
@@ -157,10 +158,11 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }
 
-    public void setEnrollNewbornInfoFragment(Member parentMember, String scannedCardId) {
+    public void setEnrollNewbornInfoFragment(Member parentMember, String scannedCardId, Bundle params) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, parentMember);
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
+        if (params != null) bundle.putBundle(SOURCE_PARAMS_BUNDLE_FIELD, params);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornInfoFragment.class, bundle));
     }
 

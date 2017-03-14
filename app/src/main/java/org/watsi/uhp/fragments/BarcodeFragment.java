@@ -34,8 +34,6 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
     private Button mSearchMemberButton;
     private Toast mErrorToast;
     private ScanPurposeEnum mScanPurpose;
-    private Member mMember = null;
-    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
 
     public enum ScanPurposeEnum { ID, MEMBER_EDIT, NEWBORN }
 
@@ -54,14 +52,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
         surfaceView.getHolder().addCallback(this);
         mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
 
-        if (!mScanPurpose.equals(ScanPurposeEnum.ID)) {
-            mSearchMemberButton.setVisibility(View.GONE);
-            mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-            String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-            if (searchMethodString != null) {
-                mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
-            }
-        }
+        if (!mScanPurpose.equals(ScanPurposeEnum.ID)) mSearchMemberButton.setVisibility(View.GONE);
 
         mErrorToast = Toast.makeText(getActivity().getApplicationContext(),
                 R.string.id_not_found_toast, Toast.LENGTH_LONG);
@@ -120,9 +111,10 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     Barcode barcode = barcodes.valueAt(0);
                     if (barcode != null) {
                         try {
+                            Member member;
                             switch (mScanPurpose) {
                                 case ID:
-                                    Member member = MemberDao.findByCardId(barcode.displayValue);
+                                    member = MemberDao.findByCardId(barcode.displayValue);
                                     new NavigationManager(activity).setDetailFragment(
                                             member,
                                             IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
@@ -130,16 +122,34 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                                     );
                                     break;
                                 case MEMBER_EDIT:
+                                    member = (Member) getArguments()
+                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    Bundle extraParams = getArguments()
+                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
+                                    IdentificationEvent.SearchMethodEnum idMethod = null;
+                                    if (extraParams != null) {
+                                        String searchMethodString = extraParams
+                                                .getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+                                        if (searchMethodString != null) {
+                                            idMethod = IdentificationEvent.SearchMethodEnum
+                                                    .valueOf(searchMethodString);
+                                        }
+                                    }
                                     new NavigationManager(activity).setMemberEditFragment(
-                                            mMember,
-                                            mIdMethod,
+                                            member,
+                                            idMethod,
                                             barcode.displayValue
                                     );
                                     break;
                                 case NEWBORN:
+                                    member = (Member) getArguments()
+                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    Bundle sourceParams = getArguments()
+                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
                                     new NavigationManager(activity).setEnrollNewbornInfoFragment(
-                                            mMember,
-                                            barcode.displayValue
+                                            member,
+                                            barcode.displayValue,
+                                            sourceParams
                                     );
                                     break;
                             }

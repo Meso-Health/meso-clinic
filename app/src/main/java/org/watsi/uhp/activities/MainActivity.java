@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             .setMemberEditFragment(member, searchMethod, null);
                     break;
                 case R.id.menu_enroll_newborn:
-                    new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null);
+                    new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null, null);
                     break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();

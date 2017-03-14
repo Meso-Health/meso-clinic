@@ -50,6 +50,22 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:text="@string/birthdate_label"
+        android:labelFor="@+id/birthdate" />
+
+    <DatePicker
+        android:id="@+id/birthdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:layout_marginTop="-10dp"
+        android:layout_marginBottom="-10dp" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:text="@string/card_id_label"
         android:labelFor="@+id/card_id" />
 
@@ -68,13 +84,6 @@
         android:layout_width="match_parent"
         android:layout_marginTop="5dp"
         android:text="@string/scan_card_btn_label" />
-
-    <DatePicker
-        android:id="@+id/birthdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:datePickerMode="spinner"
-        android:calendarViewShown="false"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
