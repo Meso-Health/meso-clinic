@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 public class SyncableModelTest {
 
@@ -25,6 +27,30 @@ public class SyncableModelTest {
         member.setUnsynced(token);
 
         assertEquals(member.getToken(), token);
+    }
+
+    @Test
+    public void setSynced_isDirty() throws Exception {
+        member.setFullName("Foo");
+
+        try {
+            member.setSynced();
+            fail("Should throw validation exception");
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "full_name: Cannot mark dirty model as synced");
+        }
+    }
+
+    @Test
+    public void setSynced_isNotDirty() throws Exception {
+        member.setIsNew(true);
+        member.setUnsynced("fakeToken");
+
+        member.setSynced();
+
+        assertFalse(member.isNew());
+        assertNull(member.getToken());
+        assertTrue(member.isSynced());
     }
 
     @Test

@@ -48,6 +48,7 @@ public abstract class SyncableModel extends AbstractModel implements Serializabl
             throw new ValidationException(dirtyField, "Cannot mark dirty model as synced");
         } else {
             setToken(null);
+            setIsNew(false);
             this.mSynced = true;
         }
     }
