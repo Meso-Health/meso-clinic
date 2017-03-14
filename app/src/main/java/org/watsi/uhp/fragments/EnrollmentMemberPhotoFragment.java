@@ -58,9 +58,9 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 navigationManager.setCurrentPatientsFragment();
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mMember.shouldCaptureNationalIdPhoto()) {
-                navigationManager.setEnrollmentIdPhotoFragment(mMember.getId());
+                navigationManager.setEnrollmentIdPhotoFragment(mMember);
             } else {
-                navigationManager.setEnrollmentContactInfoFragment(mMember.getId());
+                navigationManager.setEnrollmentContactInfoFragment(mMember);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);

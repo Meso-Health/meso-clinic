@@ -29,22 +29,19 @@ import org.watsi.uhp.fragments.VersionFragment;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
-import java.util.UUID;
-
 /**
  * Helper class for managing navigation between fragments
  */
 public class NavigationManager {
 
     public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
-    public static String MEMBER_ID_BUNDLE_FIELD = "memberId";
-    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMemberId";
+    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
 
     private static String HOME_TAG = "home";
-    private static String DETAIL_TAG = "detail";
+    public static String DETAIL_TAG = "detail";
 
     private AppCompatActivity mActivity;
     private FragmentProvider mFragmentProvider;
@@ -85,16 +82,16 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
-    public void setDetailFragment(UUID memberId,
+    public void setDetailFragment(Member member,
                                   IdentificationEvent.SearchMethodEnum idMethod,
-                                  UUID throughMemberId) {
+                                  Member throughMember) {
         Bundle bundle = new Bundle();
-        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         if (idMethod != null) {
             bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
         }
-        if (throughMemberId != null) {
-            bundle.putString(THROUGH_MEMBER_BUNDLE_FIELD, throughMemberId.toString());
+        if (throughMember != null) {
+            bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
         setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false);
@@ -126,35 +123,35 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class));
     }
 
-    public void setEnrollmentContactInfoFragment(UUID memberId) {
+    public void setEnrollmentContactInfoFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
     }
 
-    public void setEnrollmentMemberPhotoFragment(UUID memberId) {
+    public void setEnrollmentMemberPhotoFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
     }
 
-    public void setEnrollmentIdPhotoFragment(UUID memberId) {
+    public void setEnrollmentIdPhotoFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentIdPhotoFragment.class, bundle));
     }
 
-    public void setEnrollmentFingerprintFragment(UUID memberId) {
+    public void setEnrollmentFingerprintFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
     }
 
-    public void setMemberEditFragment(UUID memberId,
+    public void setMemberEditFragment(Member member,
                                       IdentificationEvent.SearchMethodEnum searchMethod,
                                       String scannedCardId) {
         Bundle bundle = new Bundle();
-        bundle.putString(MEMBER_ID_BUNDLE_FIELD, memberId.toString());
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         if (searchMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));

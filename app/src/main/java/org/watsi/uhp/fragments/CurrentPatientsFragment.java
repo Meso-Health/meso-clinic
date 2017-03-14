@@ -55,7 +55,7 @@ public class CurrentPatientsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
-                    new NavigationManager(activity).setDetailFragment(member.getId(), null, null);
+                    new NavigationManager(activity).setDetailFragment(member, null, null);
 
                     ((AppCompatActivity) getActivity()).getSupportActionBar()
                             .setDisplayHomeAsUpEnabled(true);

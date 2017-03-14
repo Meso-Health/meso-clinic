@@ -48,7 +48,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
     void nextStep() {
         try {
             MemberDao.update(mMember);
-            new NavigationManager(getActivity()).setEnrollmentContactInfoFragment(mMember.getId());
+            new NavigationManager(getActivity()).setEnrollmentContactInfoFragment(mMember);
         } catch (SQLException e) {
             Rollbar.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();

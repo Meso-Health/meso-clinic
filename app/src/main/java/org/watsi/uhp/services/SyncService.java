@@ -127,7 +127,6 @@ public class SyncService extends Service {
 
     private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
-
             if (member.isNew()) {
                 enrollMember(member);
             } else {

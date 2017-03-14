@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
@@ -19,7 +18,6 @@ import com.squareup.leakcanary.LeakCanary;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.managers.ConfigManager;
@@ -34,12 +32,10 @@ import org.watsi.uhp.services.SyncService;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private final Encounter mCurrentEncounter = new Encounter();
-    private UUID mMemberId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,10 +136,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setMemberId(UUID memberId) {
-        this.mMemberId = memberId;
-    }
-
     private class MenuItemClickListener implements Toolbar.OnMenuItemClickListener {
 
         private Activity mActivity;
@@ -154,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            Fragment fragment =
+                    getSupportFragmentManager().findFragmentByTag(NavigationManager.DETAIL_TAG);
+            Member member = null;
+            if (fragment != null) {
+                member = ((DetailFragment) fragment).getMember();
+            }
             switch (item.getItemId()) {
                 case R.id.menu_logout:
                     new NavigationManager(mActivity).logout();
@@ -164,23 +162,17 @@ public class MainActivity extends AppCompatActivity {
                                     .findFragmentByTag("detail"))
                                     .getIdMethod();
                     new NavigationManager(mActivity)
-                            .setMemberEditFragment(mMemberId, searchMethod, null);
+                            .setMemberEditFragment(member, searchMethod, null);
                     break;
                 case R.id.menu_enroll_newborn:
-                    try {
-                        Member member = MemberDao.findById(mMemberId);
-                        new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null);
-                    } catch (SQLException e) {
-                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                        Rollbar.reportException(e);
-                    }
+                    new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null);
                     break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();
                     break;
                 case R.id.menu_complete_enrollment:
                     new NavigationManager(mActivity)
-                            .setEnrollmentMemberPhotoFragment(mMemberId);
+                            .setEnrollmentMemberPhotoFragment(member);
                     break;
             }
             return true;

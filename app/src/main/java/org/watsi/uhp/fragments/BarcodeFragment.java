@@ -124,14 +124,14 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                                 case ID:
                                     Member member = MemberDao.findByCardId(barcode.displayValue);
                                     new NavigationManager(activity).setDetailFragment(
-                                            member.getId(),
+                                            member,
                                             IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
                                             null
                                     );
                                     break;
                                 case MEMBER_EDIT:
                                     new NavigationManager(activity).setMemberEditFragment(
-                                            mMember.getId(),
+                                            mMember,
                                             mIdMethod,
                                             barcode.displayValue
                                     );

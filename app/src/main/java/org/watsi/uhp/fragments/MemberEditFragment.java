@@ -21,7 +21,6 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class MemberEditFragment extends Fragment {
 
@@ -34,20 +33,11 @@ public class MemberEditFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
 
-        UUID memberId = UUID.fromString(
-                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
 
         String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
         if (searchMethodString != null) {
             mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
-        }
-
-        try {
-            mMember = MemberDao.findById(memberId);
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-            new NavigationManager(getActivity()).setCurrentPatientsFragment();
-            Toast.makeText(getContext(), R.string.invalid_member_id, Toast.LENGTH_LONG).show();
         }
 
         final EditText nameView = (EditText) view.findViewById(R.id.member_name);
@@ -101,8 +91,7 @@ public class MemberEditFragment extends Fragment {
                         toastMessage = "Failed to update the member information.";
                     }
 
-                    new NavigationManager(getActivity())
-                            .setDetailFragment(mMember.getId(), mIdMethod, null);
+                    new NavigationManager(getActivity()).setDetailFragment(mMember, mIdMethod, null);
                     Toast.makeText(
                             getActivity().getApplicationContext(),
                             toastMessage,

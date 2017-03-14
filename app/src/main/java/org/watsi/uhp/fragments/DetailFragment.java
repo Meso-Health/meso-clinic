@@ -34,7 +34,6 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 public class DetailFragment extends Fragment {
 
@@ -55,21 +54,10 @@ public class DetailFragment extends Fragment {
         if (searchMethodString != null) {
             mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
         }
-        UUID memberId = UUID.fromString(
-                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
 
-        ((MainActivity) getActivity()).setMemberId(memberId);
-        String throughMemberId = getArguments().getString(
-                NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
-
-        try {
-            mMember = MemberDao.findById(memberId);
-            if (throughMemberId != null) {
-                mThroughMember = MemberDao.findById(UUID.fromString(throughMemberId));
-            }
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-        }
+        mThroughMember = (Member) getArguments()
+                .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
         setPatientCard(view);
         setButton(view);
@@ -168,9 +156,9 @@ public class DetailFragment extends Fragment {
                     MainActivity activity = (MainActivity) getActivity();
 
                     new NavigationManager(activity).setDetailFragment(
-                            member.getId(),
+                            member,
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            mMember.getId()
+                            mMember
                     );
                 }
             });
@@ -212,6 +200,8 @@ public class DetailFragment extends Fragment {
     public IdentificationEvent.SearchMethodEnum getIdMethod() {
         return this.mIdMethod;
     }
+
+    public Member getMember() { return this.mMember; }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
