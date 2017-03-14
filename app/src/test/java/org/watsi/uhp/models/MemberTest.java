@@ -60,6 +60,13 @@ public class MemberTest {
     }
 
     @Test
+    public void emptyConstructor_setsIsNewAndId() throws Exception {
+        Member newMember = new Member();
+        assertTrue(newMember.isNew());
+        assertNotNull(newMember.getId());
+    }
+
+    @Test
     public void setPhoneNumber() throws Exception {
         member.setPhoneNumber(null);
         assertEquals(member.getPhoneNumber(), null);
