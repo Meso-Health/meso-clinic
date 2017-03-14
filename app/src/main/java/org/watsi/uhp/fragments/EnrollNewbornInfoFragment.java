@@ -45,8 +45,7 @@ public class EnrollNewbornInfoFragment extends EnrollmentFragment {
 
     @Override
     void nextStep() {
-        Member newborn = new Member();
-        newborn.setHouseholdId(mMember.getHouseholdId());
+        Member newborn = mMember.createNewborn();
 
         Bundle attributeBundle = createBundle();
 

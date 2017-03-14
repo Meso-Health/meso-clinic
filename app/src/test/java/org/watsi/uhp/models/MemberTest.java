@@ -60,13 +60,6 @@ public class MemberTest {
     }
 
     @Test
-    public void emptyConstructor_setsIsNewAndId() throws Exception {
-        Member newMember = new Member();
-        assertTrue(newMember.isNew());
-        assertNotNull(newMember.getId());
-    }
-
-    @Test
     public void setPhoneNumber() throws Exception {
         member.setPhoneNumber(null);
         assertEquals(member.getPhoneNumber(), null);
@@ -301,7 +294,7 @@ public class MemberTest {
         mockStatic(Uri.class);
         mockStatic(FileManager.class);
         when(Uri.parse(uriString)).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri,mockContext)).thenReturn(mockPhotoBytes);
+        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhotoBytes);
 
         Map<String, RequestBody> firstRequestBody = member.formatPatchRequest(mockContext);
 
@@ -352,7 +345,7 @@ public class MemberTest {
         when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
         when(FileManager.isLocal(memberSpy.getPhotoUrl())).thenReturn(true);
 
-        Map<String,RequestBody> requestBodyMap = memberSpy.formatPostRequest(mockContext);
+        Map<String, RequestBody> requestBodyMap = memberSpy.formatPostRequest(mockContext);
 
         Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_GENDER).writeTo(buffer);
@@ -375,5 +368,17 @@ public class MemberTest {
         verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_GENDER);
         verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_FULL_NAME);
         verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_CARD_ID);
+    }
+
+    @Test
+    public void createNewborn() throws Exception {
+        UUID householdId = UUID.randomUUID();
+        member.setHouseholdId(householdId);
+
+        Member newborn = member.createNewborn();
+
+        assertEquals(newborn.getHouseholdId(), householdId);
+        assertTrue(newborn.isNew());
+        assertNotNull(newborn.getId());
     }
 }

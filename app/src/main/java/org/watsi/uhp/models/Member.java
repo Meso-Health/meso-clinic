@@ -151,8 +151,6 @@ public class Member extends SyncableModel {
 
     public Member() {
         super();
-        setId(UUID.randomUUID());
-        setIsNew(true);
     }
 
     public void setFullName(String fullName) throws ValidationException {
@@ -559,5 +557,13 @@ public class Member extends SyncableModel {
             Rollbar.reportException(e);
             return null;
         }
+    }
+
+    public Member createNewborn() {
+        Member newborn = new Member();
+        newborn.setIsNew(true);
+        newborn.setId(UUID.randomUUID());
+        newborn.setHouseholdId(getHouseholdId());
+        return newborn;
     }
 }
