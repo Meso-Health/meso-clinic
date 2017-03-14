@@ -46,6 +46,15 @@ public class SyncableModelTest {
     }
 
     @Test
+    public void clearDirtyFields() throws Exception {
+        member.addDirtyField(Member.FIELD_NAME_FULL_NAME);
+        assertTrue(member.isDirty());
+
+        member.clearDirtyFields();
+        assertFalse(member.isDirty());
+    }
+
+    @Test
     public void getTokenAuthHeaderString() throws Exception {
         member.setToken("foo");
 

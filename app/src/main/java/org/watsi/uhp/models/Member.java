@@ -9,7 +9,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.common.io.ByteStreams;
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
@@ -18,8 +17,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.rollbar.android.Rollbar;
 
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NotificationManager;
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -461,14 +461,42 @@ public class Member extends SyncableModel {
     public Map<String, RequestBody> formatPostRequest(Context context) throws ValidationException {
         if (!isNew()) {
             throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform POST with existing member");
+        } else if (getId() == null) {
+            throw new ValidationException(FIELD_NAME_ID, "Cannot be null");
         }
+
         Map<String,RequestBody> requestBodyMap = new HashMap<>();
 
-        int providerId = ConfigManager.getProviderId(context);
+        requestBodyMap.put(FIELD_NAME_ID, RequestBody.create(MultipartBody.FORM, getId().toString()));
+
         requestBodyMap.put(
-                "provider_assignment",
-                RequestBody.create(MultipartBody.FORM,
-                        new Gson().toJson(new ProviderAssignment(providerId, "birth")))
+                "provider_assignment[provider_id]",
+                RequestBody.create(MultipartBody.FORM, String.valueOf(ConfigManager.getProviderId(context)))
+        );
+
+        requestBodyMap.put(
+                "provider_assignment[start_reason]",
+                RequestBody.create(MultipartBody.FORM, "birth")
+        );
+
+        requestBodyMap.put(
+                "enrolled_at",
+                RequestBody.create(MultipartBody.FORM, Clock.asIso(Calendar.getInstance().getTime()))
+        );
+
+        requestBodyMap.put(
+                Member.FIELD_NAME_BIRTHDATE,
+                RequestBody.create(MultipartBody.FORM, Clock.asIso(getBirthdate()))
+        );
+
+        requestBodyMap.put(
+                Member.FIELD_NAME_BIRTHDATE_ACCURACY,
+                RequestBody.create(MultipartBody.FORM, getBirthdateAccuracy().toString())
+        );
+
+        requestBodyMap.put(
+                Member.FIELD_NAME_HOUSEHOLD_ID,
+                RequestBody.create(MultipartBody.FORM, getHouseholdId().toString())
         );
 
         if (FileManager.isLocal(getPhotoUrl())) {
@@ -476,7 +504,6 @@ public class Member extends SyncableModel {
             if (image != null) {
                 requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
             }
-            removeDirtyField(FIELD_NAME_PHOTO);
         }
 
         if (getGender() != null) {
@@ -485,7 +512,6 @@ public class Member extends SyncableModel {
                     RequestBody.create(MultipartBody.FORM, getGender().toString())
             );
         }
-        removeDirtyField(FIELD_NAME_GENDER);
 
         if (getFullName() != null) {
             requestBodyMap.put(
@@ -493,7 +519,6 @@ public class Member extends SyncableModel {
                     RequestBody.create(MultipartBody.FORM, getFullName())
             );
         }
-        removeDirtyField(FIELD_NAME_FULL_NAME);
 
         if (getCardId() != null) {
             requestBodyMap.put(
@@ -501,12 +526,12 @@ public class Member extends SyncableModel {
                     RequestBody.create(MultipartBody.FORM, getCardId())
             );
         }
-        removeDirtyField(FIELD_NAME_CARD_ID);
 
+        clearDirtyFields();
         return requestBodyMap;
     }
 
-        public static boolean validCardId(String cardId) {
+    public static boolean validCardId(String cardId) {
         if (cardId == null || cardId.isEmpty()) {
             return false;
         } else {
@@ -564,6 +589,8 @@ public class Member extends SyncableModel {
         newborn.setIsNew(true);
         newborn.setId(UUID.randomUUID());
         newborn.setHouseholdId(getHouseholdId());
+        newborn.setAbsentee(false);
+        newborn.setBirthdateAccuracy(BirthdateAccuracyEnum.D);
         return newborn;
     }
 }

@@ -81,6 +81,10 @@ public abstract class SyncableModel extends AbstractModel implements Serializabl
         setDirtyFields(currentFields);
     }
 
+    void clearDirtyFields() {
+        setDirtyFields(new HashSet<String>());
+    }
+
     public boolean isDirty() {
         return !getDirtyFields().isEmpty();
     }

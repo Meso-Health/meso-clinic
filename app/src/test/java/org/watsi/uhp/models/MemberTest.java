@@ -14,10 +14,12 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.UUID;
 
@@ -323,6 +325,18 @@ public class MemberTest {
     }
 
     @Test
+    public void formatPostRequest_nullId() throws Exception {
+        member.setIsNew(true);
+        member.setId(null);
+        try {
+            member.formatPostRequest(mockContext);
+            fail("Should throw validation exception");
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "id: Cannot be null");
+        }
+    }
+
+    @Test
     public void formatPostRequest_newMember() throws Exception {
         String fullName = "Akiiki Monday";
         int providerId = 1;
@@ -334,11 +348,15 @@ public class MemberTest {
         Uri mockUri = mock(Uri.class);
         byte[] mockPhoto = new byte[]{};
         Member memberSpy = spy(Member.class);
+        memberSpy.setId(UUID.randomUUID());
         memberSpy.setGender(Member.GenderEnum.F);
         memberSpy.setFullName(fullName);
         memberSpy.setCardId(cardId);
         memberSpy.setPhotoUrl(photoUrl);
         memberSpy.setIsNew(true);
+        memberSpy.setBirthdate(Calendar.getInstance().getTime());
+        memberSpy.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
+        memberSpy.setHouseholdId(UUID.randomUUID());
 
         when(Uri.parse(memberSpy.getPhotoUrl())).thenReturn(mockUri);
         when(ConfigManager.getProviderId(mockContext)).thenReturn(providerId);
@@ -348,6 +366,10 @@ public class MemberTest {
         Map<String, RequestBody> requestBodyMap = memberSpy.formatPostRequest(mockContext);
 
         Buffer buffer = new Buffer();
+        requestBodyMap.get(Member.FIELD_NAME_ID).writeTo(buffer);
+        assertEquals(buffer.readUtf8(), memberSpy.getId().toString());
+        buffer.clear();
+
         requestBodyMap.get(Member.FIELD_NAME_GENDER).writeTo(buffer);
         assertEquals(buffer.readUtf8(), "F");
         buffer.clear();
@@ -360,14 +382,23 @@ public class MemberTest {
         assertEquals(buffer.readUtf8(), cardId);
         buffer.clear();
 
-        requestBodyMap.get("provider_assignment").writeTo(buffer);
-        assertEquals(buffer.readUtf8(), "{\"provider_id\":1,\"start_reason\":\"birth\"}");
+        requestBodyMap.get("provider_assignment[provider_id]").writeTo(buffer);
+        assertEquals(buffer.readUtf8(), "1");
         buffer.clear();
 
-        verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_PHOTO);
-        verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_GENDER);
-        verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_FULL_NAME);
-        verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_CARD_ID);
+        requestBodyMap.get("provider_assignment[start_reason]").writeTo(buffer);
+        assertEquals(buffer.readUtf8(), "birth");
+        buffer.clear();
+
+        requestBodyMap.get("birthdate_accuracy").writeTo(buffer);
+        assertEquals(buffer.readUtf8(), "D");
+        buffer.clear();
+
+        requestBodyMap.get("birthdate").writeTo(buffer);
+        assertEquals(buffer.readUtf8(), Clock.asIso(memberSpy.getBirthdate()));
+        buffer.clear();
+
+        verify(memberSpy, times(1)).clearDirtyFields();
     }
 
     @Test
@@ -380,5 +411,7 @@ public class MemberTest {
         assertEquals(newborn.getHouseholdId(), householdId);
         assertTrue(newborn.isNew());
         assertNotNull(newborn.getId());
+        assertFalse(newborn.getAbsentee());
+        assertEquals(newborn.getBirthdateAccuracy(), Member.BirthdateAccuracyEnum.D);
     }
 }

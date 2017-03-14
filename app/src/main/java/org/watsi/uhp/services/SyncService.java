@@ -19,6 +19,7 @@ import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.ProviderAssignment;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -194,7 +195,6 @@ public class SyncService extends Service {
         }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).enrollMember(
                 member.getTokenAuthHeaderString(),
-                member.getId().toString(),
                 multiPartBody
         );
         Response<Member> response = request.execute();

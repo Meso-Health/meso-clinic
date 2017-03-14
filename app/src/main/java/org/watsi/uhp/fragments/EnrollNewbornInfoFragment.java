@@ -81,7 +81,6 @@ public class EnrollNewbornInfoFragment extends EnrollmentFragment {
         }
 
         newborn.setBirthdate(birthdate);
-        newborn.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
 
         new NavigationManager(getActivity()).setEnrollNewbornPhotoFragment(newborn);
     }
