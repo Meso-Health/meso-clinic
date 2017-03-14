@@ -45,7 +45,7 @@ deployment:
       - ./deploy_scripts/assembleSignedRelease.sh production
       - ./deploy_scripts/deployHockeyApp.sh production
   master:
-    branch: hockeyapp-test #TODO - replace this with master once done
+    branch: master
     commands:
       - ./deploy_scripts/downloadKeystore.sh
       - ./deploy_scripts/assembleSignedRelease.sh sandbox
