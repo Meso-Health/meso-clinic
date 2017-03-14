@@ -74,6 +74,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     TableUtils.createTable(connectionSource, Encounter.class);
                     TableUtils.createTable(connectionSource, EncounterItem.class);
                     getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
+                    onUpgrade(database, connectionSource, 4, newVersion);
                     break;
                 case 3:
                     getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
