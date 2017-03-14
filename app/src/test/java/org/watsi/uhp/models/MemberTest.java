@@ -367,8 +367,8 @@ public class MemberTest {
         assertEquals(buffer.readUtf8(), cardId);
         buffer.clear();
 
-        requestBodyMap.get(Member.FIELD_NAME_PROVIDER_ID).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), "1");
+        requestBodyMap.get("provider_assignment").writeTo(buffer);
+        assertEquals(buffer.readUtf8(), "{\"provider_id\":1,\"start_reason\":\"birth\"}");
         buffer.clear();
 
         verify(memberSpy, times(1)).removeDirtyField(Member.FIELD_NAME_PHOTO);

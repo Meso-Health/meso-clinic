@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
@@ -465,10 +466,11 @@ public class Member extends SyncableModel {
         }
         Map<String,RequestBody> requestBodyMap = new HashMap<>();
 
+        int providerId = ConfigManager.getProviderId(context);
         requestBodyMap.put(
-                FIELD_NAME_PROVIDER_ID,
+                "provider_assignment",
                 RequestBody.create(MultipartBody.FORM,
-                        String.valueOf(ConfigManager.getProviderId(context)))
+                        new Gson().toJson(new ProviderAssignment(providerId, "birth")))
         );
 
         if (FileManager.isLocal(getPhotoUrl())) {
