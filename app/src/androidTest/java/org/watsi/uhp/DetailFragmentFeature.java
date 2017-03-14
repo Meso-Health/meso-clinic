@@ -40,10 +40,7 @@ public class DetailFragmentFeature {
         UUID memberId = UUID.randomUUID();
         UUID membersHouseholdId = UUID.randomUUID();
 
-        Member member = new Member(fullName, cardId, age, Member.GenderEnum.M);
-        member.setId(memberId);
-        member.setAbsentee(false);
-        member.setHouseholdId(membersHouseholdId);
+        Member member = new MemberFactory(memberId, fullName, cardId, age, Member.GenderEnum.M, false, membersHouseholdId);
 
         try {
             MemberDao.createOrUpdate(member);
@@ -56,10 +53,7 @@ public class DetailFragmentFeature {
         int age2 = 10;
         UUID memberId2 = UUID.randomUUID();
 
-        Member member2 = new Member(fullName2, cardId2, age2, Member.GenderEnum.F);
-        member2.setId(memberId2);
-        member2.setAbsentee(false);
-        member2.setHouseholdId(membersHouseholdId);
+        Member member2 = new MemberFactory(memberId2, fullName2, cardId2, age2, Member.GenderEnum.F, false, membersHouseholdId);
 
         try {
             MemberDao.createOrUpdate(member2);
@@ -73,8 +67,8 @@ public class DetailFragmentFeature {
     }
 
     @After
-    public void deleteCreatedModels() {
-        // TODO: delete created models?
+    public void deleteCreatedFactories() {
+        // TODO: delete created factories?
     }
 
     @Test

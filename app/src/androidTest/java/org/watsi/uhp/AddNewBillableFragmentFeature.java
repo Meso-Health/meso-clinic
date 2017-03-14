@@ -54,9 +54,7 @@ public class AddNewBillableFragmentFeature {
         int age = 70;
         UUID memberId = UUID.randomUUID();
 
-        member = new Member(fullName, cardId, age, Member.GenderEnum.M);
-        member.setId(memberId);
-        member.setAbsentee(false);
+        member = new MemberFactory(memberId, fullName, cardId, age, Member.GenderEnum.M, false);
 
         try {
             MemberDao.createOrUpdate(member);
@@ -67,16 +65,7 @@ public class AddNewBillableFragmentFeature {
         UUID identificationId = UUID.randomUUID();
         Date occurredAt =  new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
 
-        IdentificationEvent identificationEvent = new IdentificationEvent();
-        identificationEvent.setId(identificationId);
-        identificationEvent.setOccurredAt(occurredAt);
-        identificationEvent.setMemberId(memberId);
-        identificationEvent.setSearchMethod(IdentificationEvent.SearchMethodEnum.SCAN_BARCODE);
-        identificationEvent.setPhotoVerified(true);
-        identificationEvent.setClinicNumber(30);
-        identificationEvent.setClinicNumberType(IdentificationEvent.ClinicNumberTypeEnum.OPD);
-        identificationEvent.setAccepted(true);
-        identificationEvent.setMember(member);
+        IdentificationEvent identificationEvent = new IdentificationEventFactory(identificationId, occurredAt, memberId, member, IdentificationEvent.SearchMethodEnum.SCAN_BARCODE, true, 30, IdentificationEvent.ClinicNumberTypeEnum.OPD, true);
 
         try {
             IdentificationEventDao.create(identificationEvent);
@@ -88,8 +77,8 @@ public class AddNewBillableFragmentFeature {
     }
 
     @After
-    public void deleteCreatedModels() {
-        // TODO: delete created models?
+    public void deleteCreatedFactories() {
+        // TODO: delete created factories?
     }
 
     @Test
