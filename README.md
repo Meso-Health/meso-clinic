@@ -10,7 +10,9 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
-In order to run the application, you also need an `.env` file in your root directory for storing private config settings. To link your local file with the remote `.env` file in Dropbox, create a symlink:
+In order to run the application, you also need an `.env` file in your root directory for storing
+private config settings. We can create a symlink of the remote `.env` file in Dropbox so that all
+changes to the file will be synced across all developers.
 
 ```
 $ ln -s /path/to/watsi/Dropbox/UHP/Android/.env /your/working/dir/for/.env
