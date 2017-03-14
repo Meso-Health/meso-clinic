@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,13 +56,12 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
-    public static final String FIELD_NAME_PROVIDER_ID = "provider_id";
     public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
     public static final String FIELD_NAME_BIRTHDATE = "birthdate";
     public static final String FIELD_NAME_BIRTHDATE_ACCURACY = "birthdate_accuracy";
-    public static final String FIELD_NAME_IS_NEW = "is_new";
+    public static final String FIELD_NAME_ENROLLED_AT = "enrolled_at";
 
     public static final int MINIMUM_FINGERPRINT_AGE = 6;
     public static final int MINIMUM_NATIONAL_ID_AGE = 18;
@@ -143,8 +141,10 @@ public class Member extends SyncableModel {
     @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
     private String mPhoneNumber;
 
-    @DatabaseField(columnName = FIELD_NAME_IS_NEW, canBeNull = false, defaultValue = "false")
-    private Boolean mIsNew;
+    @Expose
+    @SerializedName(FIELD_NAME_ENROLLED_AT)
+    @DatabaseField(columnName = FIELD_NAME_ENROLLED_AT)
+    private Date mEnrolledAt;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
@@ -333,12 +333,12 @@ public class Member extends SyncableModel {
         this.mBirthdate = birthdate;
     }
 
-    public Boolean isNew() {
-        return mIsNew;
+    public Date getEnrolledAt() {
+        return mEnrolledAt;
     }
 
-    public void setIsNew(Boolean isNew) {
-        this.mIsNew = isNew;
+    public void setEnrolledAt(Date enrolledAt) {
+        this.mEnrolledAt = enrolledAt;
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
@@ -480,8 +480,8 @@ public class Member extends SyncableModel {
         );
 
         requestBodyMap.put(
-                "enrolled_at",
-                RequestBody.create(MultipartBody.FORM, Clock.asIso(Calendar.getInstance().getTime()))
+                FIELD_NAME_ENROLLED_AT,
+                RequestBody.create(MultipartBody.FORM, Clock.asIso(getEnrolledAt()))
         );
 
         requestBodyMap.put(
@@ -591,6 +591,7 @@ public class Member extends SyncableModel {
         newborn.setHouseholdId(getHouseholdId());
         newborn.setAbsentee(false);
         newborn.setBirthdateAccuracy(BirthdateAccuracyEnum.D);
+        newborn.setEnrolledAt(Clock.getCurrentTime());
         return newborn;
     }
 }

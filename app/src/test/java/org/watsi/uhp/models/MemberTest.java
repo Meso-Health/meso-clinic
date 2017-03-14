@@ -348,15 +348,16 @@ public class MemberTest {
         Uri mockUri = mock(Uri.class);
         byte[] mockPhoto = new byte[]{};
         Member memberSpy = spy(Member.class);
+        memberSpy.setBirthdate(Calendar.getInstance().getTime());
+        memberSpy.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
         memberSpy.setId(UUID.randomUUID());
         memberSpy.setGender(Member.GenderEnum.F);
         memberSpy.setFullName(fullName);
         memberSpy.setCardId(cardId);
         memberSpy.setPhotoUrl(photoUrl);
         memberSpy.setIsNew(true);
-        memberSpy.setBirthdate(Calendar.getInstance().getTime());
-        memberSpy.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
         memberSpy.setHouseholdId(UUID.randomUUID());
+        memberSpy.setEnrolledAt(Calendar.getInstance().getTime());
 
         when(Uri.parse(memberSpy.getPhotoUrl())).thenReturn(mockUri);
         when(ConfigManager.getProviderId(mockContext)).thenReturn(providerId);
@@ -390,12 +391,16 @@ public class MemberTest {
         assertEquals(buffer.readUtf8(), "birth");
         buffer.clear();
 
-        requestBodyMap.get("birthdate_accuracy").writeTo(buffer);
+        requestBodyMap.get(Member.FIELD_NAME_BIRTHDATE_ACCURACY).writeTo(buffer);
         assertEquals(buffer.readUtf8(), "D");
         buffer.clear();
 
-        requestBodyMap.get("birthdate").writeTo(buffer);
+        requestBodyMap.get(Member.FIELD_NAME_BIRTHDATE).writeTo(buffer);
         assertEquals(buffer.readUtf8(), Clock.asIso(memberSpy.getBirthdate()));
+        buffer.clear();
+
+        requestBodyMap.get(Member.FIELD_NAME_ENROLLED_AT).writeTo(buffer);
+        assertEquals(buffer.readUtf8(), Clock.asIso(memberSpy.getEnrolledAt()));
         buffer.clear();
 
         verify(memberSpy, times(1)).clearDirtyFields();
@@ -408,10 +413,11 @@ public class MemberTest {
 
         Member newborn = member.createNewborn();
 
-        assertEquals(newborn.getHouseholdId(), householdId);
         assertTrue(newborn.isNew());
         assertNotNull(newborn.getId());
+        assertEquals(newborn.getHouseholdId(), householdId);
         assertFalse(newborn.getAbsentee());
         assertEquals(newborn.getBirthdateAccuracy(), Member.BirthdateAccuracyEnum.D);
+        assertNotNull(newborn.getEnrolledAt());
     }
 }

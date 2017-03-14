@@ -84,6 +84,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN birthdate DATE;");
                     getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN birthdate_accuracy STRING;");
                     getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN is_new BOOLEAN;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN enrolled_at DATE;");
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN is_new BOOLEAN;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN is_new BOOLEAN;");
             }
             Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         } catch (SQLException e) {

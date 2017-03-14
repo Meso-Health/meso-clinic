@@ -16,6 +16,7 @@ public abstract class SyncableModel extends AbstractModel implements Serializabl
     public static final String FIELD_NAME_TOKEN = "token";
     public static final String FIELD_NAME_SYNCED = "synced";
     public static final String FIELD_NAME_DIRTY_FIELDS = "dirty_fields";
+    public static final String FIELD_NAME_IS_NEW = "is_new";
 
     @DatabaseField(columnName = FIELD_NAME_TOKEN)
     private String mToken;
@@ -25,6 +26,9 @@ public abstract class SyncableModel extends AbstractModel implements Serializabl
 
     @DatabaseField(columnName = FIELD_NAME_DIRTY_FIELDS, defaultValue = "[]", canBeNull = false)
     private String mDirtyFields = "[]";
+
+    @DatabaseField(columnName = FIELD_NAME_IS_NEW, canBeNull = false, defaultValue = "false")
+    private Boolean mIsNew;
 
     public String getToken() {
         return mToken;
@@ -63,6 +67,14 @@ public abstract class SyncableModel extends AbstractModel implements Serializabl
         } else {
             return new Gson().fromJson(this.mDirtyFields, Set.class);
         }
+    }
+
+    public Boolean isNew() {
+        return mIsNew;
+    }
+
+    public void setIsNew(Boolean isNew) {
+        this.mIsNew = isNew;
     }
 
     public boolean dirty(String fieldName) {

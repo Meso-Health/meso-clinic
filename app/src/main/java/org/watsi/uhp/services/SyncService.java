@@ -19,7 +19,6 @@ import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.ProviderAssignment;
 
 import java.io.IOException;
 import java.sql.SQLException;
