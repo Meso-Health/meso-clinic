@@ -23,7 +23,7 @@ The simplest way to load these environment variables into your Android Studio is
 ```
 $ cd /your/working/dir
 $ source .env
-$ open -a /Applications/Android\ Studio.app ~/Watsi/uhp-android-app
+$ open -a /Applications/Android\ Studio.app /your/working/dir
 ```
 
 ## Build types
