@@ -17,6 +17,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
@@ -471,7 +472,7 @@ public class Member extends SyncableModel {
 
         requestBodyMap.put(
                 "provider_assignment[provider_id]",
-                RequestBody.create(MultipartBody.FORM, String.valueOf(ConfigManager.getProviderId(context)))
+                RequestBody.create(MultipartBody.FORM, String.valueOf(BuildConfig.PROVIDER_ID))
         );
 
         requestBodyMap.put(
