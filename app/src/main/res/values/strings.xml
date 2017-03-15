@@ -127,5 +127,14 @@
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
     <!--VersionFragment-->
+    <string name="version_and_sync_label">App Stats</string>
     <string name="version_label">Version</string>
+    <string name="fetch_members_label">Last fetched members</string>
+    <string name="fetch_billables_label">Last fetched billables</string>
+    <string name="fetch_member_pictures_label">Members with photos to fetch</string>
+    <string name="sync_edited_members_label">Unsynced edited members</string>
+    <string name="sync_new_members_label">Unsynced new members</string>
+    <string name="sync_id_events_label">Unsynced identifications</string>
+    <string name="sync_encounters_label">Unsynced encounters</string>
+    <string name="refresh_button">REFRESH</string>
 </resources>
