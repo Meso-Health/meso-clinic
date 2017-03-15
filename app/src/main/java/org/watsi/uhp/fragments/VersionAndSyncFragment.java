@@ -86,12 +86,12 @@ public class VersionAndSyncFragment extends Fragment {
     }
 
     private void setFetchMembersTimestamp() {
-        String lastModifiedTimestamp = ConfigManager.getMemberLastModified(getActivity().getApplicationContext());
+        String lastModifiedTimestamp = ConfigManager.getMembersLastFetched(getActivity().getApplicationContext());
         fetchMembersTimestamp.setText(lastModifiedTimestamp);
     }
 
     private void setFetchBillablesTimestamp() {
-        String lastModifiedTimestamp = ConfigManager.getBillablesLastModified(getActivity().getApplicationContext());
+        String lastModifiedTimestamp = ConfigManager.getBillablesLastFetched(getActivity().getApplicationContext());
         fetchBillablesTimestamp.setText(lastModifiedTimestamp);
     }
 
@@ -102,13 +102,13 @@ public class VersionAndSyncFragment extends Fragment {
     }
 
     private void setSyncEditedMembersQuantity() throws SQLException {
-        List<Member> unsyncedMembers = MemberDao.unsynced();
+        List<Member> unsyncedMembers = MemberDao.getUnsyncedEditedMembers(getContext());
         int numberOfUnsynced = unsyncedMembers.size();
         syncEditedMembersQuantity.setText(Integer.toString(numberOfUnsynced));
     }
 
     private void setSyncNewMembersQuantity() throws SQLException {
-        List<Member> unsyncedMembers = MemberDao.unsynced();
+        List<Member> unsyncedMembers = MemberDao.getUnsyncedNewMembers(getContext());
         int numberOfUnsynced = unsyncedMembers.size();
         syncNewMembersQuantity.setText(Integer.toString(numberOfUnsynced));
     }
