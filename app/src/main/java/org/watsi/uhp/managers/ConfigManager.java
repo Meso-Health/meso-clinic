@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class ConfigManager {
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "members_last_modified";
     private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billables_last_modified";
@@ -19,6 +24,36 @@ public class ConfigManager {
     public static String getMemberLastModified(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(MEMBERS_LAST_MODIFIED_PREF_KEY, null);
+    }
+
+    public static void setMembersLastFetched(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        Date current = Clock.getCurrentTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strCurrent = dateFormat.format(current);
+        editor.putString("members_last_fetched", strCurrent);
+        editor.apply();
+    }
+
+    public static String getMembersLastFetched(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("members_last_fetched", null);
+    }
+
+    public static void setBillablesLastFetched(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        Date current = Clock.getCurrentTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strCurrent = dateFormat.format(current);
+        editor.putString("billables_last_fetched", strCurrent);
+        editor.apply();
+    }
+
+    public static String getBillablesLastFetched(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("billables_last_fetched", null);
     }
 
     public static void setBillablesLastModified(String lastModifiedTimestamp, Context context) {

@@ -85,6 +85,7 @@ public class FetchService extends Service {
             List<Member> members = response.body();
             deleteRemovedMembers(members);
             createOrUpdateMembers(members);
+            ConfigManager.setMembersLastFetched(getApplicationContext());
             ConfigManager.setMemberLastModified(
                     response.headers().get("last-modified"),
                     getApplicationContext()
@@ -152,6 +153,7 @@ public class FetchService extends Service {
             List<Billable> billables = response.body();
             BillableDao.clear();
             BillableDao.create(billables);
+            ConfigManager.setBillablesLastFetched(getApplicationContext());
             ConfigManager.setBillablesLastModified(
                     response.headers().get("last-modified"),
                     getApplicationContext()
