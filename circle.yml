@@ -4,7 +4,6 @@ machine:
 
 test:
   override:
-    - echo "<?xml version=\"1.0\" encoding=\"utf-8\"?><secret></secret>" >> app/src/main/res/xml/secret.xml
     # start the emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
         background: true
@@ -37,3 +36,17 @@ dependencies:
   cache_directories:
     - /usr/local/android-sdk-linux/platforms/android-25
     - /usr/local/android-sdk-linux/build-tools/25.0.2
+
+deployment:
+  production:
+    branch: production
+    commands:
+      - ./deploy_scripts/downloadKeystore.sh
+      - ./deploy_scripts/assembleSignedRelease.sh production
+      - ./deploy_scripts/deployHockeyApp.sh production
+  master:
+    branch: master
+    commands:
+      - ./deploy_scripts/downloadKeystore.sh
+      - ./deploy_scripts/assembleSignedRelease.sh sandbox
+      - ./deploy_scripts/deployHockeyApp.sh sandbox

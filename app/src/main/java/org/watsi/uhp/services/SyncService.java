@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterDao;
@@ -38,7 +39,7 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
-        mProviderId = ConfigManager.getProviderId(getApplicationContext());
+        mProviderId = BuildConfig.PROVIDER_ID;
 
         new Thread(new Runnable() {
             @Override

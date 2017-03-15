@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
@@ -29,6 +30,8 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
+
+import net.hockeyapp.android.UpdateManager;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -53,13 +56,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
+        if (!BuildConfig.DEBUG) {
+            checkForUpdates();
+        }
     }
 
     private void setupApp() {
         Rollbar.init(
                 this,
-                ConfigManager.getRollbarApiKey(this),
-                ConfigManager.getRollbarEnv(this)
+                BuildConfig.ROLLBAR_API_KEY,
+                BuildConfig.ROLLBAR_ENV_KEY
         );
         DatabaseHelper.init(getApplicationContext());
     }
@@ -84,10 +90,15 @@ public class MainActivity extends AppCompatActivity {
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
-        if (!ConfigManager.isProduction(getApplicationContext())) {
-            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.sand));
+        if (!(BuildConfig.FLAVOR.equals("production"))) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                    R.color.beige));
         }
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void checkForUpdates() {
+        UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID);
     }
 
     public void setNewEncounter(Member member) {
@@ -188,5 +199,17 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        UpdateManager.unregister();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UpdateManager.unregister();
     }
 }
