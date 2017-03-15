@@ -44,3 +44,20 @@ Most of our release builds are automatically created by [Circle CI](https://circ
 Tests can be run directly through the Android Studio UI by right-clicking the test file and selecting the 'Run <test>' option (or run the entire test suite by right-clicking the entire test folder).
 
 Tests can also be run from the terminal using the command `./gradlew test` from the project root.
+
+## Deploy to production via hockeyapp
+
+We automatically deploy to our hockeyapp production app from the `production` branch. To deploy to production, first merge your changes into `master` and ensure you get a green build. Then:
+
+1. Check what you are going to deploy at https://github.com/Watsi/uhp-android-app/compare/production
+
+2. Locally, fetch the latest changes and merge `master` into `production`:
+```
+$ git pull --rebase
+$ git co production
+$ git reset --hard origin/production
+$ git merge master
+$ git push origin head
+```
+
+3. Once the [CI on the production branch](https://circleci.com/gh/Watsi/uhp-android-app/tree/production) goes green, the app will automatically be deployed to all phones running the production app.
