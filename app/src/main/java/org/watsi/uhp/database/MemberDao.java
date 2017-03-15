@@ -1,15 +1,23 @@
 package org.watsi.uhp.database;
 
+import android.content.Context;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
+import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -192,5 +200,47 @@ public class MemberDao {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_SYNCED, false);
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
+    }
+
+    public static List<Member> getUnsyncedEditedMembers(Context context) throws SQLException {
+        String strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        Date lastFetchedAt = new Date();
+
+        try {
+            lastFetchedAt = dateFormat.parse(strLastFetchedAt);
+        } catch (ParseException e) {
+            Rollbar.reportException(e);
+        }
+
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .eq(Member.FIELD_NAME_SYNCED, false)
+                .and()
+                .le(Member.FIELD_NAME_ENROLLED_AT, lastFetchedAt)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
+    }
+
+    public static List<Member> getUnsyncedNewMembers(Context context) throws SQLException {
+        String strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        Date lastFetchedAt = new Date();
+
+        try {
+            lastFetchedAt = dateFormat.parse(strLastFetchedAt);
+        } catch (ParseException e) {
+            Rollbar.reportException(e);
+        }
+
+        PreparedQuery<Member> pq = getInstance().getMemberDao()
+                .queryBuilder()
+                .where()
+                .eq(Member.FIELD_NAME_SYNCED, false)
+                .and()
+                .ge(Member.FIELD_NAME_ENROLLED_AT, lastFetchedAt)
+                .prepare();
+        return getInstance().getMemberDao().query(pq);
     }
 }
