@@ -35,13 +35,10 @@ import net.hockeyapp.android.UpdateManager;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
     private final Encounter mCurrentEncounter = new Encounter();
-    private UUID mMemberId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,10 +147,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setMemberId(UUID memberId) {
-        this.mMemberId = memberId;
-    }
-
     private class MenuItemClickListener implements Toolbar.OnMenuItemClickListener {
 
         private Activity mActivity;
@@ -164,6 +157,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            Fragment fragment =
+                    getSupportFragmentManager().findFragmentByTag(NavigationManager.DETAIL_TAG);
+            Member member = null;
+            if (fragment != null) {
+                member = ((DetailFragment) fragment).getMember();
+            }
             switch (item.getItemId()) {
                 case R.id.menu_logout:
                     new NavigationManager(mActivity).logout();
@@ -174,14 +173,17 @@ public class MainActivity extends AppCompatActivity {
                                     .findFragmentByTag("detail"))
                                     .getIdMethod();
                     new NavigationManager(mActivity)
-                            .setMemberEditFragment(mMemberId, searchMethod, null);
+                            .setMemberEditFragment(member, searchMethod, null);
+                    break;
+                case R.id.menu_enroll_newborn:
+                    new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null, null);
                     break;
                 case R.id.menu_version:
                     new NavigationManager(mActivity).setVersionFragment();
                     break;
                 case R.id.menu_complete_enrollment:
                     new NavigationManager(mActivity)
-                            .setEnrollmentMemberPhotoFragment(mMemberId);
+                            .setEnrollmentMemberPhotoFragment(member);
                     break;
             }
             return true;

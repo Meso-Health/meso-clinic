@@ -45,7 +45,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
             mMember.setPhoneNumber(phoneNumber);
             try {
                 MemberDao.update(mMember);
-                new NavigationManager(getActivity()).setEnrollmentFingerprintFragment(mMember.getId());
+                new NavigationManager(getActivity()).setEnrollmentFingerprintFragment(mMember);
             } catch (SQLException e) {
                 Rollbar.reportException(e);
                 Toast.makeText(getContext(), "Failed to save contact information", Toast.LENGTH_LONG).show();

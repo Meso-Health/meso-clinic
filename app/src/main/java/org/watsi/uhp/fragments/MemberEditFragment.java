@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,12 +21,11 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class MemberEditFragment extends Fragment {
 
     private Member mMember;
-    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
+//    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,21 +33,12 @@ public class MemberEditFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
 
-        UUID memberId = UUID.fromString(
-                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
 
-        String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-        if (searchMethodString != null) {
-            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
-        }
-
-        try {
-            mMember = MemberDao.findById(memberId);
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-            new NavigationManager(getActivity()).setCurrentPatientsFragment();
-            Toast.makeText(getContext(), R.string.invalid_member_id, Toast.LENGTH_LONG).show();
-        }
+//        String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+//        if (searchMethodString != null) {
+//            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
+//        }
 
         final EditText nameView = (EditText) view.findViewById(R.id.member_name);
         nameView.getText().append(mMember.getFullName());
@@ -67,15 +56,20 @@ public class MemberEditFragment extends Fragment {
             phoneNumView.getText().append(mMember.getPhoneNumber());
         }
 
-        ((Button) view.findViewById(R.id.scan_card)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                String idMethodString =
+                        getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+                bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
                 new NavigationManager(getActivity())
-                        .setBarcodeFragment(true, mMember.getId(), mIdMethod);
+                        .setBarcodeFragment(
+                                BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, bundle);
             }
         });
 
-        ((Button) view.findViewById(R.id.save_button)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveChanges(nameView, cardIdView, phoneNumView);
@@ -101,8 +95,11 @@ public class MemberEditFragment extends Fragment {
                         toastMessage = "Failed to update the member information.";
                     }
 
-                    new NavigationManager(getActivity())
-                            .setDetailFragment(mMember.getId(), mIdMethod, null);
+                    String idMethodString =
+                            getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+                    IdentificationEvent.SearchMethodEnum idMethod =
+                            IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
+                    new NavigationManager(getActivity()).setDetailFragment(mMember, idMethod, null);
                     Toast.makeText(
                             getActivity().getApplicationContext(),
                             toastMessage,

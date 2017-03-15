@@ -1,5 +1,6 @@
 package org.watsi.uhp.managers;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -22,5 +23,9 @@ public class Clock {
         } else {
             return mStaticTime;
         }
+    }
+
+    public static String asIso(Date date) {
+        return new SimpleDateFormat(ISO_DATE_FORMAT).format(date);
     }
 }

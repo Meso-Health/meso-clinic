@@ -36,7 +36,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
 
     @Override
     int getFragmentLayoutId() {
-        return R.layout.fragment_enrollment_id_photo;
+        return R.layout.fragment_capture_photo;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
     void nextStep() {
         try {
             MemberDao.update(mMember);
-            new NavigationManager(getActivity()).setEnrollmentContactInfoFragment(mMember.getId());
+            new NavigationManager(getActivity()).setEnrollmentContactInfoFragment(mMember);
         } catch (SQLException e) {
             Rollbar.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
@@ -57,6 +57,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
 
     @Override
     void setUpFragment(View view) {
+        ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_id_photo_btn);
         try {
             String filename = "id_" + mMember.getId().toString() +
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";

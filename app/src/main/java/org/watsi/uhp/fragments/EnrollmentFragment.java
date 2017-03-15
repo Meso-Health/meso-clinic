@@ -7,14 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
-
-import java.sql.SQLException;
-import java.util.UUID;
 
 public abstract class EnrollmentFragment extends Fragment {
 
@@ -25,11 +20,7 @@ public abstract class EnrollmentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(getTitleLabelId());
 
-        try {
-            mMember = MemberDao.findById(UUID.fromString(getArguments().getString("memberId")));
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-        }
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
 
         View view = inflater.inflate(getFragmentLayoutId(), container, false);
 
