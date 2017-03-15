@@ -3,18 +3,64 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
+    //building string config fields requires a double-quoted string
+    def ENV = { k -> "\"${System.getenv(k)}\"" }
+
     defaultConfig {
         applicationId "org.watsi.uhp"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 10
-        versionName "1.3.5"
+        versionCode System.getenv("VERSION_CODE") as Integer
+        versionName System.getenv("VERSION_NAME") as String
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
+        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
+    }
+    signingConfigs {
+        config {
+            storeFile file("release-key.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    productFlavors {
+        sandbox {
+            applicationIdSuffix ".sandbox"
+            versionNameSuffix "-sandbox"
+            resValue "string", "app_name", "UHP Sandbox"
+            resValue "string", "main_activity_label", "UHP Sandbox"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_sandbox"
+            ]
+
+            buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
+            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("SANDBOX_ROLLBAR_ENV_KEY")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
+        }
+        production {
+            applicationIdSuffix ".production"
+            versionNameSuffix "-production"
+            resValue "string", "app_name", "UHP"
+            resValue "string", "main_activity_label", "UHP"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
+
+            buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
+            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("PRODUCTION_ROLLBAR_ENV_KEY")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
         }
     }
 }
@@ -33,6 +79,7 @@ dependencies {
     compile 'me.xdrop:fuzzywuzzy:1.1.6'
     compile 'me.philio:pinentryview:1.0.6'
     compile 'com.simprints:LibSimprints:1.0.6'
+    compile 'net.hockeyapp.android:HockeySDK:4.1.2'
     compile 'com.google.guava:guava:20.0'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
