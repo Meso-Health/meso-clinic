@@ -15,7 +15,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
@@ -33,7 +32,6 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -47,7 +45,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, FileManager.class,
-        Member.class, Uri.class, MediaStore.Images.Media.class, File.class, ConfigManager.class})
+        Member.class, Uri.class, MediaStore.Images.Media.class, File.class})
 public class MemberTest {
 
     private Member member;
@@ -339,10 +337,8 @@ public class MemberTest {
     @Test
     public void formatPostRequest_newMember() throws Exception {
         String fullName = "Akiiki Monday";
-        int providerId = 1;
         String cardId = "RWI111111";
         String photoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
-        mockStatic(ConfigManager.class);
         mockStatic(FileManager.class);
         mockStatic(Uri.class);
         Uri mockUri = mock(Uri.class);
@@ -360,7 +356,6 @@ public class MemberTest {
         memberSpy.setEnrolledAt(Calendar.getInstance().getTime());
 
         when(Uri.parse(memberSpy.getPhotoUrl())).thenReturn(mockUri);
-        when(ConfigManager.getProviderId(mockContext)).thenReturn(providerId);
         when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
         when(FileManager.isLocal(memberSpy.getPhotoUrl())).thenReturn(true);
 
