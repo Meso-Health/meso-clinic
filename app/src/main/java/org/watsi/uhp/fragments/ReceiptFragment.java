@@ -18,7 +18,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
@@ -69,7 +68,6 @@ public class ReceiptFragment extends Fragment {
 
                 try {
                     Encounter encounter = activity.getCurrentEncounter();
-                    encounter.setOccurredAt(Clock.getCurrentTime());
                     encounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
                     EncounterDao.create(encounter);
                 } catch (SQLException e) {

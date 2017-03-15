@@ -21,6 +21,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     public void setNewEncounter(Member member) {
         try {
             IdentificationEvent checkIn = member.currentCheckIn();
+            mCurrentEncounter.setOccurredAt(Clock.getCurrentTime());
             mCurrentEncounter.setMember(member);
             mCurrentEncounter.setIdentificationEvent(checkIn);
             mCurrentEncounter.setEncounterItems(

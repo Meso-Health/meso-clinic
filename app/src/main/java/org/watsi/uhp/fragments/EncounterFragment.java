@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
@@ -44,7 +43,6 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private TextView addBillableLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         String currentMemberName = ((MainActivity)getActivity()).getCurrentEncounter().getMember().getFullName();
@@ -57,7 +55,6 @@ public class EncounterFragment extends Fragment {
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
-        addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
@@ -65,7 +62,8 @@ public class EncounterFragment extends Fragment {
         setBillableSearch();
         setLineItemList();
         setContinueToReceiptButton(continueToReceiptButton);
-        setAddBillableLink();
+        setAddBillableLink(view);
+        setBackdateEncounterListener(view);
 
         return view;
     }
@@ -116,11 +114,23 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private void setAddBillableLink() {
-        addBillableLink.setOnClickListener(new View.OnClickListener() {
+    private void setAddBillableLink(View view) {
+        view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new NavigationManager(getActivity()).setAddNewBillableFragment();
+            }
+        });
+    }
+
+    private void setBackdateEncounterListener(View view) {
+        final Fragment fragment = this;
+        view.findViewById(R.id.backdate_encounter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
+                dialog.show(getActivity().getSupportFragmentManager(), "BackdateEncounterDialogFragment");
+                dialog.setTargetFragment(fragment, 0);
             }
         });
     }
