@@ -48,6 +48,10 @@ public class MemberDao {
         return mMemberDao;
     }
 
+    public static void create(Member member) throws SQLException {
+        getInstance().getMemberDao().create(member);
+    }
+
     public static void createOrUpdate(Member member) throws SQLException {
         getInstance().getMemberDao().createOrUpdate(member);
     }

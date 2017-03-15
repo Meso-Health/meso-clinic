@@ -23,16 +23,16 @@ import org.watsi.uhp.managers.NavigationManager;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
+public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
 
-    static final int TAKE_MEMBER_PHOTO_INTENT = 1;
+    static final int TAKE_NEWBORN_PHOTO_INTENT = 4;
 
-    private ImageView mMemberPhotoImageView;
+    private ImageView mNewbornPhotoImageView;
     private Uri mUri;
 
     @Override
     int getTitleLabelId() {
-        return R.string.enrollment_member_photo_fragment_label;
+        return R.string.enroll_newborn_photo_label;
     }
 
     @Override
@@ -42,26 +42,16 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
 
     @Override
     boolean isLastStep() {
-        return !mMember.shouldCaptureFingerprint();
+        return true;
     }
 
     @Override
     void nextStep() {
-        NavigationManager navigationManager = new NavigationManager(getActivity());
-        if (!mMember.shouldCaptureFingerprint()) {
-            mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
-        }
-
         try {
-            MemberDao.update(mMember);
-            if (!mMember.shouldCaptureFingerprint()) {
-                navigationManager.setCurrentPatientsFragment();
-                Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-            } else if (mMember.shouldCaptureNationalIdPhoto()) {
-                navigationManager.setEnrollmentIdPhotoFragment(mMember);
-            } else {
-                navigationManager.setEnrollmentContactInfoFragment(mMember);
-            }
+            mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+            MemberDao.create(mMember);
+            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             Rollbar.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
@@ -72,8 +62,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     void setUpFragment(View view) {
         ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_member_photo_btn);
         try {
-            String filename = "member_" + mMember.getId().toString() +
-                    "_" + Clock.getCurrentTime().getTime() + ".jpg";
+            String filename = "newborn_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
             Rollbar.reportException(e);
@@ -84,23 +73,22 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
         Button capturePhotoBtn =
                 (Button) view.findViewById(R.id.photo_btn);
         capturePhotoBtn.setOnClickListener(
-                new CapturePhotoClickListener(TAKE_MEMBER_PHOTO_INTENT, this, mUri));
+                new CapturePhotoClickListener(TAKE_NEWBORN_PHOTO_INTENT, this, mUri));
 
-        mMemberPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+        mNewbornPhotoImageView = (ImageView) view.findViewById(R.id.photo);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TAKE_MEMBER_PHOTO_INTENT && resultCode == Activity.RESULT_OK) {
+        if (requestCode == TAKE_NEWBORN_PHOTO_INTENT && resultCode == Activity.RESULT_OK) {
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
-                mMemberPhotoImageView.setImageBitmap(bitmap);
+                mNewbornPhotoImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 Rollbar.reportException(e);
             }
 
-            // TODO: potential timing issue if member data syncs before we flag this as un-synced
             mMember.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {
