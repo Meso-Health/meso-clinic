@@ -202,30 +202,24 @@ public class MemberDao {
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
     }
 
-    public static List<Member> getUnsyncedEditedMembers(Context context) throws SQLException {
-        Long strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
-        Date lastFetchedAt = new Date(strLastFetchedAt);
-
+    public static List<Member> getUnsyncedEditedMembers() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()
                 .eq(Member.FIELD_NAME_SYNCED, false)
                 .and()
-                .le(Member.FIELD_NAME_ENROLLED_AT, lastFetchedAt)
+                .eq(Member.FIELD_NAME_IS_NEW, false)
                 .prepare();
         return getInstance().getMemberDao().query(pq);
     }
 
-    public static List<Member> getUnsyncedNewMembers(Context context) throws SQLException {
-        Long strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
-        Date lastFetchedAt = new Date(strLastFetchedAt);
-
+    public static List<Member> getUnsyncedNewMembers() throws SQLException {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()
                 .eq(Member.FIELD_NAME_SYNCED, false)
                 .and()
-                .ge(Member.FIELD_NAME_ENROLLED_AT, lastFetchedAt)
+                .eq(Member.FIELD_NAME_IS_NEW, true)
                 .prepare();
         return getInstance().getMemberDao().query(pq);
     }

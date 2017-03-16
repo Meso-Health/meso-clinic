@@ -114,13 +114,13 @@ public class VersionAndSyncFragment extends Fragment {
     }
 
     private void setSyncEditedMembersQuantity() throws SQLException {
-        List<Member> unsyncedMembers = MemberDao.getUnsyncedEditedMembers(getContext());
+        List<Member> unsyncedMembers = MemberDao.getUnsyncedEditedMembers();
         int numberOfUnsynced = unsyncedMembers.size();
         syncEditedMembersQuantity.setText(Integer.toString(numberOfUnsynced));
     }
 
     private void setSyncNewMembersQuantity() throws SQLException {
-        List<Member> unsyncedMembers = MemberDao.getUnsyncedNewMembers(getContext());
+        List<Member> unsyncedMembers = MemberDao.getUnsyncedNewMembers();
         int numberOfUnsynced = unsyncedMembers.size();
         syncNewMembersQuantity.setText(Integer.toString(numberOfUnsynced));
     }
