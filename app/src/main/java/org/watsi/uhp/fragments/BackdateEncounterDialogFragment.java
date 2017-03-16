@@ -35,6 +35,7 @@ public class BackdateEncounterDialogFragment extends DialogFragment {
                 cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
                         timePicker.getCurrentHour(), timePicker.getCurrentMinute());
                 ((MainActivity) getActivity()).getCurrentEncounter().setOccurredAt(cal.getTime());
+                ((MainActivity) getActivity()).getCurrentEncounter().setBackdatedOccurredAt(true);
                 dismissAllowingStateLoss();
             }
         });
