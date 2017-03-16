@@ -24,11 +24,14 @@ public class BackdateEncounterDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_backdate_encounter, null);
 
         final DatePicker datePicker = (DatePicker) view.findViewById(R.id.date_picker);
-        datePicker.setMaxDate(Calendar.getInstance().getTimeInMillis());
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_MONTH, -1);
+        datePicker.setMaxDate(yesterday.getTimeInMillis());
 
         final TimePicker timePicker = (TimePicker) view.findViewById(R.id.time_picker);
 
-        final Encounter encounter = ((EncounterFragment) getTargetFragment()).getEncounter();
+        final EncounterFragment fragment = (EncounterFragment) getTargetFragment();
+        final Encounter encounter = fragment.getEncounter();
 
         if (encounter.getBackdatedOccurredAt()) {
             Calendar backdate = Calendar.getInstance();
@@ -50,6 +53,7 @@ public class BackdateEncounterDialogFragment extends DialogFragment {
                         timePicker.getCurrentHour(), timePicker.getCurrentMinute());
                 encounter.setOccurredAt(cal.getTime());
                 encounter.setBackdatedOccurredAt(true);
+                fragment.updateBackdateLinkText();
                 dismiss();
             }
         });

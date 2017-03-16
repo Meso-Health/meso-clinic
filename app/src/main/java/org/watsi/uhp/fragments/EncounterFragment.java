@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
@@ -30,8 +33,10 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +49,7 @@ public class EncounterFragment extends Fragment {
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
     private Encounter encounter;
+    private TextView backdateEncounterLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         encounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
@@ -57,6 +63,7 @@ public class EncounterFragment extends Fragment {
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
+        backdateEncounterLink = (TextView) view.findViewById(R.id.backdate_encounter);
         Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
@@ -64,7 +71,7 @@ public class EncounterFragment extends Fragment {
         setLineItemList();
         setContinueToReceiptButton(continueToReceiptButton);
         setAddBillableLink(view);
-        setBackdateEncounterListener(view);
+        setBackdateEncounterListener();
 
         return view;
     }
@@ -128,9 +135,9 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private void setBackdateEncounterListener(View view) {
+    private void setBackdateEncounterListener() {
         final Fragment fragment = this;
-        view.findViewById(R.id.backdate_encounter).setOnClickListener(new View.OnClickListener() {
+        backdateEncounterLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
@@ -321,6 +328,16 @@ public class EncounterFragment extends Fragment {
             scrollToBottom();
             clearDrugSearch();
             return true;
+        }
+    }
+
+    public void updateBackdateLinkText() {
+        if (encounter.getBackdatedOccurredAt()) {
+            Date backdate = encounter.getOccurredAt();
+            String backdateText = new SimpleDateFormat("MMMM d, yyyy").format(backdate);
+            SpannableString content = new SpannableString("Backdated to " + backdateText);
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            backdateEncounterLink.setText(content);
         }
     }
 }
