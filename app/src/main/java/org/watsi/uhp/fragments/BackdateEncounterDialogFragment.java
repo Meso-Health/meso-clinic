@@ -11,7 +11,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
+import org.watsi.uhp.models.Encounter;
 
 import java.util.Calendar;
 
@@ -28,15 +28,29 @@ public class BackdateEncounterDialogFragment extends DialogFragment {
 
         final TimePicker timePicker = (TimePicker) view.findViewById(R.id.time_picker);
 
+        final Encounter encounter = ((EncounterFragment) getTargetFragment()).getEncounter();
+
+        if (encounter.getBackdatedOccurredAt()) {
+            Calendar backdate = Calendar.getInstance();
+            backdate.setTime(encounter.getOccurredAt());
+            datePicker.updateDate(
+                    backdate.get(Calendar.YEAR),
+                    backdate.get(Calendar.MONTH),
+                    backdate.get(Calendar.DAY_OF_MONTH)
+            );
+            timePicker.setCurrentHour(backdate.get(Calendar.HOUR));
+            timePicker.setCurrentMinute(backdate.get(Calendar.MINUTE));
+        }
+
         view.findViewById(R.id.done).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar cal = Calendar.getInstance();
                 cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
                         timePicker.getCurrentHour(), timePicker.getCurrentMinute());
-                ((MainActivity) getActivity()).getCurrentEncounter().setOccurredAt(cal.getTime());
-                ((MainActivity) getActivity()).getCurrentEncounter().setBackdatedOccurredAt(true);
-                dismissAllowingStateLoss();
+                encounter.setOccurredAt(cal.getTime());
+                encounter.setBackdatedOccurredAt(true);
+                dismiss();
             }
         });
 

@@ -18,14 +18,10 @@ import com.squareup.leakcanary.LeakCanary;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
@@ -34,12 +30,7 @@ import org.watsi.uhp.services.SyncService;
 
 import net.hockeyapp.android.UpdateManager;
 
-import java.sql.SQLException;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
-
-    private final Encounter mCurrentEncounter = new Encounter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,26 +93,6 @@ public class MainActivity extends AppCompatActivity {
         UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID);
     }
 
-    public void setNewEncounter(Member member) {
-        try {
-            IdentificationEvent checkIn = member.currentCheckIn();
-            mCurrentEncounter.setOccurredAt(Clock.getCurrentTime());
-            mCurrentEncounter.setMember(member);
-            mCurrentEncounter.setIdentificationEvent(checkIn);
-            mCurrentEncounter.setEncounterItems(
-                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-        }
-    }
-
-    public Encounter getCurrentEncounter() {
-        return mCurrentEncounter;
-    }
-
-    public List<EncounterItem> getCurrentLineItems() {
-        return (List<EncounterItem>) mCurrentEncounter.getEncounterItems();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

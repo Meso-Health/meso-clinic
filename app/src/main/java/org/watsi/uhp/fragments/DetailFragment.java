@@ -24,11 +24,13 @@ import com.rollbar.android.Rollbar;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -121,9 +123,19 @@ public class DetailFragment extends Fragment {
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Encounter encounter = new Encounter();
+                    IdentificationEvent checkIn = mMember.currentCheckIn();
+                    encounter.setOccurredAt(Clock.getCurrentTime());
+                    encounter.setMember(mMember);
+                    encounter.setIdentificationEvent(checkIn);
+                    try {
+                        encounter.setEncounterItems(
+                                EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+                    } catch (SQLException e) {
+                        Rollbar.reportException(e);
+                    }
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.setNewEncounter(mMember);
-                    new NavigationManager(activity).setEncounterFragment();
+                    new NavigationManager(activity).setEncounterFragment(encounter);
                 }
             });
         }

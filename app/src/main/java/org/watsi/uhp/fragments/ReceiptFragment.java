@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.ConfigManager;
@@ -30,13 +29,15 @@ import java.util.List;
 public class ReceiptFragment extends Fragment {
 
     private Button mCreateEncounterButton;
+    private Encounter mEncounter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         getActivity().setTitle(R.string.receipt_fragment_label);
+        mEncounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
 
         View view = inflater.inflate(R.layout.fragment_receipt, container, false);
-        List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<EncounterItem> encounterItems = (List<EncounterItem>) mEncounter.getEncounterItems();
         mCreateEncounterButton = (Button) view.findViewById(R.id.create_encounter);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
@@ -64,27 +65,19 @@ public class ReceiptFragment extends Fragment {
         mCreateEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-
                 try {
-                    Encounter encounter = activity.getCurrentEncounter();
-                    encounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
-                    EncounterDao.create(encounter);
+                    mEncounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
+                    EncounterDao.create(mEncounter);
                 } catch (SQLException e) {
                     Rollbar.reportException(e);
                 }
 
-                new NavigationManager(activity).setCurrentPatientsFragment();
+                new NavigationManager(getActivity()).setCurrentPatientsFragment();
 
-                String toastMessage = activity.getCurrentEncounter()
-                        .getMember()
+                String toastMessage = mEncounter.getMember()
                         .getFullName() + getString(R.string.encounter_submitted);
 
-                Toast.makeText(
-                        activity.getApplicationContext(),
-                        toastMessage,
-                        Toast.LENGTH_LONG
-                ).show();
+                Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
         });
     }

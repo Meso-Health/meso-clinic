@@ -28,7 +28,7 @@ public abstract class SyncableModel extends AbstractModel implements Serializabl
     private String mDirtyFields = "[]";
 
     @DatabaseField(columnName = FIELD_NAME_IS_NEW, canBeNull = false, defaultValue = "false")
-    private Boolean mIsNew;
+    private boolean mIsNew;
 
     public String getToken() {
         return mToken;

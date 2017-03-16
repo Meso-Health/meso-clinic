@@ -54,7 +54,7 @@ public class Encounter extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_BACKDATED_OCCURRED_AT)
     @DatabaseField(columnName = FIELD_NAME_BACKDATED_OCCURRED_AT, canBeNull = false, defaultValue = "false")
-    private Boolean mBackdatedOccurredAt;
+    private boolean mBackdatedOccurredAt;
 
     public Encounter() {
         super();
