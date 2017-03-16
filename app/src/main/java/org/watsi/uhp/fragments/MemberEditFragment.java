@@ -25,7 +25,6 @@ import java.sql.SQLException;
 public class MemberEditFragment extends Fragment {
 
     private Member mMember;
-//    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,11 +33,6 @@ public class MemberEditFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
 
         mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-
-//        String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-//        if (searchMethodString != null) {
-//            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
-//        }
 
         final EditText nameView = (EditText) view.findViewById(R.id.member_name);
         nameView.getText().append(mMember.getFullName());
@@ -97,8 +91,10 @@ public class MemberEditFragment extends Fragment {
 
                     String idMethodString =
                             getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-                    IdentificationEvent.SearchMethodEnum idMethod =
-                            IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
+                    IdentificationEvent.SearchMethodEnum idMethod = null;
+                    if (idMethodString != null) {
+                        idMethod =  IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
+                    }
                     new NavigationManager(getActivity()).setDetailFragment(mMember, idMethod, null);
                     Toast.makeText(
                             getActivity().getApplicationContext(),
