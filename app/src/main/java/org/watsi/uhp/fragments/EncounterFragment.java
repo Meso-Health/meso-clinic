@@ -151,7 +151,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setReceiptFragment(encounter);
+                new NavigationManager(getActivity()).setEncounterFormFragment(encounter);
             }
         });
     }

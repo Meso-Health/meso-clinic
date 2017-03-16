@@ -101,6 +101,9 @@
     <string name="empty_billable_name_field">Please enter name in the blank above</string>
     <string name="empty_billable_price_field">Please enter price in the blank above</string>
 
+    <!--EncounterFormFragment-->
+    <string name="encounter_form_fragment_label">Take photo of form</string>
+
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>

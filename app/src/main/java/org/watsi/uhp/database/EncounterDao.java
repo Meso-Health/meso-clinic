@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
@@ -55,6 +56,13 @@ public class EncounterDao {
 
             encounterItem.setEncounter(encounter);
             EncounterItemDao.create(encounterItem);
+        }
+
+        for (EncounterForm encounterForm : encounter.getEncounterForms()) {
+            encounterForm.setEncounter(encounter);
+            encounterForm.setUnsynced(encounter.getToken());
+            encounterForm.setIsNew(true);
+            EncounterFormDao.create(encounterForm);
         }
     }
 

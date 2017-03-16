@@ -14,6 +14,7 @@ import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
+import org.watsi.uhp.fragments.EncounterFormFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.EnrollNewbornInfoFragment;
 import org.watsi.uhp.fragments.EnrollNewbornPhotoFragment;
@@ -118,6 +119,12 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(EncounterFragment.class, bundle));
+    }
+
+    public void setEncounterFormFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(EncounterFormFragment.class, bundle));
     }
 
     public void setReceiptFragment(Encounter encounter) {
