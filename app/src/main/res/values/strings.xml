@@ -44,6 +44,8 @@
     <string name="login_generic_failure_message">Failed to login</string>
     <string name="login_wrong_password_message">Incorrect password</string>
     <string name="login_progress_message">Logging in…</string>
+    <string name="login_offline_error">Cannot login because phone is offline</string>
+
 
     <!--CurrentPatientsFragment-->
     <string name="identification_button">Look up patient</string>
