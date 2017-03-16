@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.watsi.uhp.R;
-import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
@@ -95,24 +94,6 @@ public class NavigationManagerTest {
         when(mockFragmentProvider.createFragment(SearchMemberFragment.class)).thenReturn(fragment);
 
         navMgr.setSearchMemberFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setEncounterFragment() throws Exception {
-        EncounterFragment fragment = mock(EncounterFragment.class);
-        when(mockFragmentProvider.createFragment(EncounterFragment.class)).thenReturn(fragment);
-
-        navMgr.setEncounterFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setAddNewBillableFragment() throws Exception {
-        AddNewBillableFragment fragment = mock(AddNewBillableFragment.class);
-        when(mockFragmentProvider.createFragment(AddNewBillableFragment.class)).thenReturn(fragment);
-
-        navMgr.setAddNewBillableFragment();
         addsToBackStackButDoesNotPopBackStack(fragment);
     }
 

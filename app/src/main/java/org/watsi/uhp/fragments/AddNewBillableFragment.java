@@ -10,10 +10,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
 public class AddNewBillableFragment extends Fragment {
@@ -62,9 +62,10 @@ public class AddNewBillableFragment extends Fragment {
 
                     KeyboardManager.hideKeyboard(view, getContext());
 
-                    MainActivity activity = (MainActivity) getActivity();
-                    activity.getCurrentLineItems().add(encounterItem);
-                    new NavigationManager(activity).setEncounterFragment();
+                    Encounter encounter = (Encounter) getArguments()
+                            .getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
+                    encounter.getEncounterItems().add(encounterItem);
+                    new NavigationManager(getActivity()).setEncounterFragment(encounter);
                 }
             }
         });

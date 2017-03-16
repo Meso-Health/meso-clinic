@@ -26,6 +26,7 @@ import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.fragments.VersionFragment;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -39,6 +40,7 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
+    public static String ENCOUNTER_BUNDLE_FIELD = "encounter";
     public static String SOURCE_PARAMS_BUNDLE_FIELD = "sourceParams";
 
     private static String HOME_TAG = "home";
@@ -112,16 +114,22 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(SearchMemberFragment.class));
     }
 
-    public void setEncounterFragment() {
-        setFragment(mFragmentProvider.createFragment(EncounterFragment.class));
+    public void setEncounterFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(EncounterFragment.class, bundle));
     }
 
-    public void setReceiptFragment() {
-        setFragment(mFragmentProvider.createFragment(ReceiptFragment.class));
+    public void setReceiptFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(ReceiptFragment.class, bundle));
     }
 
-    public void setAddNewBillableFragment() {
-        setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class));
+    public void setAddNewBillableFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class, bundle));
     }
 
     public void setEnrollmentContactInfoFragment(Member member) {
