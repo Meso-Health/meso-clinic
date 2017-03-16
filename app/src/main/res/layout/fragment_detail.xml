@@ -93,6 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
-        android:layout_below="@id/household_members_label"/>
+        android:layout_below="@id/household_members_label"
+        android:divider="@color/transparent" />
 
 </RelativeLayout>
