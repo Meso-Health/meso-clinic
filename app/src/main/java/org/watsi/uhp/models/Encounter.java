@@ -21,6 +21,7 @@ public class Encounter extends SyncableModel {
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_IDENTIFICATION_EVENT_ID = "identification_event_id";
     public static final String FIELD_NAME_ENCOUNTER_ITEMS = "encounter_items";
+    public static final String FIELD_NAME_BACKDATED_OCCURRED_AT = "backdated_occurred_at";
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
@@ -49,6 +50,11 @@ public class Encounter extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_ENCOUNTER_ITEMS)
     private final List<EncounterItem> mEncounterItems = new ArrayList<>();
+
+    @Expose
+    @SerializedName(FIELD_NAME_BACKDATED_OCCURRED_AT)
+    @DatabaseField(columnName = FIELD_NAME_BACKDATED_OCCURRED_AT, canBeNull = false, defaultValue = "false")
+    private boolean mBackdatedOccurredAt;
 
     public Encounter() {
         super();
@@ -109,5 +115,13 @@ public class Encounter extends SyncableModel {
     public void setEncounterItems(Collection<EncounterItem> encounterItems) {
         this.mEncounterItems.clear();
         this.mEncounterItems.addAll(encounterItems);
+    }
+
+    public Boolean getBackdatedOccurredAt() {
+        return mBackdatedOccurredAt;
+    }
+
+    public void setBackdatedOccurredAt(Boolean backdatedOccurredAt) {
+        this.mBackdatedOccurredAt = backdatedOccurredAt;
     }
 }

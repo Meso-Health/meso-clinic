@@ -19,6 +19,7 @@ import java.io.IOException;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -32,17 +33,13 @@ public class ApiService {
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
             httpClient.addNetworkInterceptor(new TokenInterceptor(context));
             httpClient.retryOnConnectionFailure(false);
-            String apiHost = BuildConfig.API_HOST;
-            if (apiHost == null) {
-                throw new IllegalStateException("API hostname not configured");
-            }
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT)
                     .registerTypeAdapterFactory(new EncounterTypeAdapterFactory(Encounter.class))
                     .create();
             Retrofit builder = new Retrofit.Builder()
-                    .baseUrl(apiHost)
+                    .baseUrl(BuildConfig.API_HOST)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build())
                     .build();
@@ -51,7 +48,7 @@ public class ApiService {
         return instance;
     }
 
-    public static retrofit2.Response login(String username, String password, Context context) {
+    public static Response<AuthenticationToken> login(String username, String password, Context context) {
         UhpApi api = new Retrofit.Builder()
                 .baseUrl(BuildConfig.API_HOST)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -76,7 +73,7 @@ public class ApiService {
             return response;
         } catch (IOException | IllegalStateException e) {
             Rollbar.reportException(e);
+            return null;
         }
-        return null;
     }
 }

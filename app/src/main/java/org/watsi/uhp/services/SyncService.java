@@ -14,7 +14,6 @@ import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;

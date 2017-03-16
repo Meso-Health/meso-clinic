@@ -25,6 +25,8 @@
     <string name="card_id_label">Card ID</string>
     <string name="phone_number_label">Phone number</string>
     <string name="birthdate_label">Birthdate</string>
+    <string name="date_label">Date</string>
+    <string name="time_label">Time</string>
     <string name="scan_card_btn_label">Scan new card</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
@@ -32,6 +34,7 @@
     <string name="save_btn_label">Save</string>
     <string name="photo_btn_label">Take photo</string>
     <string name="photo_description">Photo</string>
+    <string name="cancel">Cancel</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
@@ -41,6 +44,8 @@
     <string name="login_generic_failure_message">Failed to login</string>
     <string name="login_wrong_password_message">Incorrect password</string>
     <string name="login_progress_message">Logging in…</string>
+    <string name="login_offline_error">Cannot login because phone is offline</string>
+
 
     <!--CurrentPatientsFragment-->
     <string name="identification_button">Look up patient</string>
@@ -84,6 +89,7 @@
     <string name="remove_billable_button">X</string>
     <string name="encounter_product_list_label">Items</string>
     <string name="continue_encounter_button">Continue</string>
+    <string name="backdate"><u>Backdate</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!--AddNewBillableFragment-->
