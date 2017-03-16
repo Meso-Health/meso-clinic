@@ -3,5 +3,7 @@
     <style name="main_theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorButtonNormal">@color/white</item>
     </style>
 </resources>
