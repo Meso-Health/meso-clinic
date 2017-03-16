@@ -27,7 +27,11 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class VersionAndSyncFragment extends Fragment {
 
@@ -86,13 +90,21 @@ public class VersionAndSyncFragment extends Fragment {
     }
 
     private void setFetchMembersTimestamp() {
-        String lastModifiedTimestamp = ConfigManager.getMembersLastFetched(getActivity().getApplicationContext());
-        fetchMembersTimestamp.setText(lastModifiedTimestamp);
+        Long lastFetchedTimestamp = ConfigManager.getMembersLastFetched(getActivity().getApplicationContext());
+        Date date = new Date(lastFetchedTimestamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("EAT"));
+
+        fetchMembersTimestamp.setText(sdf.format(date));
     }
 
     private void setFetchBillablesTimestamp() {
-        String lastModifiedTimestamp = ConfigManager.getBillablesLastFetched(getActivity().getApplicationContext());
-        fetchBillablesTimestamp.setText(lastModifiedTimestamp);
+        Long lastFetchedTimestamp = ConfigManager.getBillablesLastFetched(getActivity().getApplicationContext());
+        Date date = new Date(lastFetchedTimestamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("EAT"));
+
+        fetchBillablesTimestamp.setText(sdf.format(date));
     }
 
     private void setFetchMemberPicturesQuantity() throws SQLException {

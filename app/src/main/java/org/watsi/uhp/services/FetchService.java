@@ -170,7 +170,7 @@ public class FetchService extends Service {
 
     }
 
-        @Nullable
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;

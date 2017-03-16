@@ -203,15 +203,8 @@ public class MemberDao {
     }
 
     public static List<Member> getUnsyncedEditedMembers(Context context) throws SQLException {
-        String strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        Date lastFetchedAt = new Date();
-
-        try {
-            lastFetchedAt = dateFormat.parse(strLastFetchedAt);
-        } catch (ParseException e) {
-            Rollbar.reportException(e);
-        }
+        Long strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
+        Date lastFetchedAt = new Date(strLastFetchedAt);
 
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
@@ -224,15 +217,8 @@ public class MemberDao {
     }
 
     public static List<Member> getUnsyncedNewMembers(Context context) throws SQLException {
-        String strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        Date lastFetchedAt = new Date();
-
-        try {
-            lastFetchedAt = dateFormat.parse(strLastFetchedAt);
-        } catch (ParseException e) {
-            Rollbar.reportException(e);
-        }
+        Long strLastFetchedAt = ConfigManager.getMembersLastFetched(context);
+        Date lastFetchedAt = new Date(strLastFetchedAt);
 
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()

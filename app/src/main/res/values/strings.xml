@@ -18,7 +18,7 @@
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
-    <string name="menu_version_label">Version</string>
+    <string name="menu_version_and_sync_label">App Stats</string>
 
     <!-- General Labels -->
     <string name="name_label">Name</string>

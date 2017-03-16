@@ -30,30 +30,26 @@ public class ConfigManager {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         Date current = Clock.getCurrentTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        String strCurrent = dateFormat.format(current);
-        editor.putString("members_last_fetched", strCurrent);
+        editor.putLong("members_last_fetched", current.getTime());
         editor.apply();
     }
 
-    public static String getMembersLastFetched(Context context) {
+    public static Long getMembersLastFetched(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("members_last_fetched", null);
+        return prefs.getLong("members_last_fetched", 0);
     }
 
     public static void setBillablesLastFetched(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         Date current = Clock.getCurrentTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        String strCurrent = dateFormat.format(current);
-        editor.putString("billables_last_fetched", strCurrent);
+        editor.putLong("billables_last_fetched", current.getTime());
         editor.apply();
     }
 
-    public static String getBillablesLastFetched(Context context) {
+    public static Long getBillablesLastFetched(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("billables_last_fetched", null);
+        return prefs.getLong("billables_last_fetched", 0);
     }
 
     public static void setBillablesLastModified(String lastModifiedTimestamp, Context context) {
