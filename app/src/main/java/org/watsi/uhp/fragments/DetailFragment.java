@@ -119,6 +119,7 @@ public class DetailFragment extends Fragment {
                 }
             });
         } else {
+            view.findViewById(R.id.reject_identity).setVisibility(View.GONE);
             confirmButton.setText(R.string.detail_create_encounter);
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
