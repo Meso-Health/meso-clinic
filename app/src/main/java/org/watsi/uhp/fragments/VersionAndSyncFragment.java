@@ -92,8 +92,7 @@ public class VersionAndSyncFragment extends Fragment {
     private void setFetchMembersTimestamp() {
         Long lastFetchedTimestamp = ConfigManager.getMembersLastFetched(getActivity().getApplicationContext());
         Date date = new Date(lastFetchedTimestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("EAT"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
         fetchMembersTimestamp.setText(sdf.format(date));
     }
@@ -101,8 +100,7 @@ public class VersionAndSyncFragment extends Fragment {
     private void setFetchBillablesTimestamp() {
         Long lastFetchedTimestamp = ConfigManager.getBillablesLastFetched(getActivity().getApplicationContext());
         Date date = new Date(lastFetchedTimestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("EAT"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss z");
 
         fetchBillablesTimestamp.setText(sdf.format(date));
     }
