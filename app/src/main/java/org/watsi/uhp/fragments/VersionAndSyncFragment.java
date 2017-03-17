@@ -108,26 +108,26 @@ public class VersionAndSyncFragment extends Fragment {
                 View view = getView();
 
                 ((TextView) view.findViewById(R.id.fetch_member_pictures_quantity))
-                        .setText(formattedQuantity(result[0], "downloading"));
+                        .setText(formattedQuantity(result[0]));
                 ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
-                        .setText(formattedQuantity(result[1], "uploading"));
+                        .setText(formattedQuantity(result[1]));
                 ((TextView) view.findViewById(R.id.sync_new_members_quantity))
-                        .setText(formattedQuantity(result[2], "uploading"));
+                        .setText(formattedQuantity(result[2]));
                 ((TextView) view.findViewById(R.id.sync_id_events_quantity))
-                        .setText(formattedQuantity(result[3], "uploading"));
+                        .setText(formattedQuantity(result[3]));
                 ((TextView) view.findViewById(R.id.sync_encounters_quantity))
-                        .setText(formattedQuantity(result[4], "uploading"));
+                        .setText(formattedQuantity(result[4]));
 
                 spinner.dismiss();
             }
         }.execute();
     }
 
-    private String formattedQuantity(int count, String verb) {
+    private String formattedQuantity(int count) {
         if (count == 0) {
             return getString(R.string.all_synced);
         } else {
-            return count + " " + verb;
+            return count + " pending";
         }
     }
 
