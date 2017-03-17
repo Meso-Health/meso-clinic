@@ -1,15 +1,16 @@
 package org.watsi.uhp.fragments;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rollbar.android.Rollbar;
 
@@ -18,7 +19,6 @@ import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -37,7 +37,6 @@ public class VersionAndSyncFragment extends Fragment {
         getActivity().setTitle(R.string.version_and_sync_label);
 
         View view = inflater.inflate(R.layout.fragment_version_and_sync, container, false);
-        Context context = getContext();
 
         try {
             PackageInfo pInfo = getActivity().getPackageManager()
@@ -47,48 +46,81 @@ public class VersionAndSyncFragment extends Fragment {
             Rollbar.reportException(e);
         }
 
-        ((TextView) view.findViewById(R.id.fetch_members_timestamp))
-                .setText(formatTimestamp(ConfigManager.getMemberLastModified(context)));
-
-        ((TextView) view.findViewById(R.id.fetch_billables_timestamp))
-                .setText(formatTimestamp(ConfigManager.getBillablesLastModified(context)));
-
+        final View finalView = view;
         view.findViewById(R.id.refresh_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setVersionFragment();
-                Toast.makeText(getContext(), "Page Refreshed", Toast.LENGTH_SHORT).show();
+                refreshValues(finalView);
             }
         });
 
-        try {
-            ((TextView) view.findViewById(R.id.fetch_member_pictures_quantity))
-                    .setText(formattedQuantity(MemberDao.membersWithPhotosToFetch().size(), "downloading"));
-
-            List<Member> unsyncedMembers = MemberDao.unsynced();
-            int newMembersCount = 0;
-            int editedMembersCount = 0;
-            for (Member member : unsyncedMembers) {
-                if (member.isNew()) {
-                    newMembersCount++;
-                } else {
-                    editedMembersCount++;
-                }
-            }
-
-            ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
-                    .setText(formattedQuantity(editedMembersCount, "uploading"));
-            ((TextView) view.findViewById(R.id.sync_new_members_quantity))
-                    .setText(formattedQuantity(newMembersCount, "uploading"));
-            ((TextView) view.findViewById(R.id.sync_id_events_quantity))
-                    .setText(formattedQuantity(IdentificationEventDao.unsynced().size(), "uploading"));
-            ((TextView) view.findViewById(R.id.sync_encounters_quantity))
-                    .setText(formattedQuantity(EncounterDao.unsynced().size(), "uploading"));
-        } catch (SQLException | IllegalStateException e) {
-            Rollbar.reportException(e);
-        }
+        Log.d("UHP", "before refresh method");
+        refreshValues(view);
+        Log.d("UHP", "after refresh method");
 
         return view;
+    }
+
+    private void updateTimestamps(View view) {
+        ((TextView) view.findViewById(R.id.fetch_members_timestamp))
+                .setText(formatTimestamp(ConfigManager.getMemberLastModified(getContext())));
+
+        ((TextView) view.findViewById(R.id.fetch_billables_timestamp))
+                .setText(formatTimestamp(ConfigManager.getBillablesLastModified(getContext())));
+    }
+
+    private void refreshValues(View view) {
+        updateTimestamps(view);
+
+        final ProgressDialog spinner = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
+        spinner.setCancelable(false);
+        spinner.setMessage("Loading...");
+        spinner.show();
+
+        new AsyncTask<String, Void, int[]>() {
+            @Override
+            protected int[] doInBackground(String... params) {
+                int[] counts = new int[5];
+                try {
+                    counts[0] = MemberDao.membersWithPhotosToFetch().size();
+                    List<Member> unsyncedMembers = MemberDao.unsynced();
+                    int newMembersCount = 0;
+                    int editedMembersCount = 0;
+                    for (Member member : unsyncedMembers) {
+                        if (member.isNew()) {
+                            newMembersCount++;
+                        } else {
+                            editedMembersCount++;
+                        }
+                    }
+                    counts[1] = newMembersCount;
+                    counts[2] = editedMembersCount;
+                    counts[3] = IdentificationEventDao.unsynced().size();
+                    counts[4] = EncounterDao.unsynced().size();
+                } catch (SQLException | IllegalStateException e) {
+                    Rollbar.reportException(e);
+                }
+                return counts;
+            }
+
+            @Override
+            protected void onPostExecute(int[] result) {
+                View view = getView();
+
+                ((TextView) view.findViewById(R.id.fetch_member_pictures_quantity))
+                        .setText(formattedQuantity(result[0], "downloading"));
+                ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
+                        .setText(formattedQuantity(result[1], "uploading"));
+                ((TextView) view.findViewById(R.id.sync_new_members_quantity))
+                        .setText(formattedQuantity(result[2], "uploading"));
+                ((TextView) view.findViewById(R.id.sync_id_events_quantity))
+                        .setText(formattedQuantity(result[3], "uploading"));
+                ((TextView) view.findViewById(R.id.sync_encounters_quantity))
+                        .setText(formattedQuantity(result[4], "uploading"));
+
+                spinner.dismiss();
+            }
+        }.execute();
     }
 
     private String formattedQuantity(int count, String verb) {
