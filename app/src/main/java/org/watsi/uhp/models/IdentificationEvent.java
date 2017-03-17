@@ -22,6 +22,8 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_ACCEPTED = "accepted";
     public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
+    public static final String FIELD_NAME_DISMISSED = "dismissed";
+    public static final String FIELD_NAME_DISMISSED_REASON = "dismissed_reason";
 
     public enum ClinicNumberTypeEnum {
         @SerializedName("opd") OPD,
@@ -33,6 +35,12 @@ public class IdentificationEvent extends SyncableModel {
         @SerializedName("search_id") SEARCH_ID,
         @SerializedName("search_name") SEARCH_NAME,
         @SerializedName("through_household") THROUGH_HOUSEHOLD
+    }
+
+    public enum DismissedReasonEnum {
+        @SerializedName("accidental_identification") ACCIDENTAL_IDENTIFICATION,
+        @SerializedName("patient_left_before_care") PATIENT_LEFT_BEFORE_CARE,
+        @SerializedName("patient_left_after_care") PATIENT_LEFT_AFTER_CARE,
     }
 
     @Expose
@@ -83,6 +91,16 @@ public class IdentificationEvent extends SyncableModel {
     @SerializedName(FIELD_NAME_CLINIC_NUMBER_TYPE)
     @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE)
     private IdentificationEvent.ClinicNumberTypeEnum mClinicNumberTypeEnum;
+
+    @Expose
+    @SerializedName(FIELD_NAME_DISMISSED)
+    @DatabaseField(columnName = FIELD_NAME_DISMISSED, canBeNull = false, defaultValue = "false")
+    private boolean mDismissed;
+
+    @Expose
+    @SerializedName(FIELD_NAME_DISMISSED_REASON)
+    @DatabaseField(columnName = FIELD_NAME_DISMISSED_REASON)
+    private IdentificationEvent.DismissedReasonEnum mDismissedReason;
 
     public IdentificationEvent() {
         super();
@@ -177,11 +195,37 @@ public class IdentificationEvent extends SyncableModel {
         }
     }
 
-    public IdentificationEvent.ClinicNumberTypeEnum getClinicNumberType() {
+    public ClinicNumberTypeEnum getClinicNumberType() {
         return mClinicNumberTypeEnum;
     }
 
-    public void setClinicNumberType(IdentificationEvent.ClinicNumberTypeEnum numberType) {
+    public void setClinicNumberType(ClinicNumberTypeEnum numberType) {
         this.mClinicNumberTypeEnum = numberType;
+    }
+
+    public boolean getDismissed() {
+        return mDismissed;
+    }
+
+    public void setDismissed(boolean dismissed) {
+        this.mDismissed = dismissed;
+    }
+
+    public DismissedReasonEnum getDismissedReason() {
+        return mDismissedReason;
+    }
+
+    public static String[] getFormattedDismissedReasons() {
+        String[] names = new String[DismissedReasonEnum.values().length];
+
+        for (int i = 0; i < names.length; i++) {
+            names[i] = DismissedReasonEnum.values()[i].name().replaceAll("_", " ").toLowerCase();
+        }
+
+        return names;
+    }
+
+    public void setDismissedReason(DismissedReasonEnum dismissedReason) {
+        this.mDismissedReason = dismissedReason;
     }
 }
