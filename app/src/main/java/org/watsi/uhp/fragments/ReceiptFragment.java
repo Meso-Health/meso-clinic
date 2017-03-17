@@ -48,6 +48,9 @@ public class ReceiptFragment extends Fragment {
         String formattedPrice = Encounter.PRICE_FORMAT.format(mEncounter.price());
         priceTextView.setText(getString(R.string.price_with_currency, formattedPrice));
 
+        ((TextView) view.findViewById(R.id.forms_attached)).setText(
+                getString(R.string.receipt_forms_attached, mEncounter.getEncounterForms().size()));
+
         setCreateEncounterButton();
         return view;
     }
