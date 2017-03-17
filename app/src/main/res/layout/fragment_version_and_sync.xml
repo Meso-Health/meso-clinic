@@ -38,7 +38,7 @@
                     android:id="@+id/version_number"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:textSize="15sp"
                     android:textColor="@color/subtitle"
                     android:textAlignment="viewEnd" />
@@ -123,7 +123,7 @@
                 <TextView
                     android:id="@+id/fetch_member_pictures_label"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/fetch_member_pictures_label"
                     android:textSize="16sp"
@@ -154,7 +154,7 @@
                 <TextView
                     android:id="@+id/sync_edited_members_label"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_edited_members_label"
                     android:textSize="16sp"
@@ -185,7 +185,7 @@
                 <TextView
                     android:id="@+id/sync_new_members_label"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_new_members_label"
                     android:textSize="16sp"
@@ -216,7 +216,7 @@
                 <TextView
                     android:id="@+id/sync_id_events_label"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_id_events_label"
                     android:textSize="16sp"
@@ -247,7 +247,7 @@
                 <TextView
                     android:id="@+id/sync_encounters_label"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_encounters_label"
                     android:textSize="16sp"

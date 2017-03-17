@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.managers.ConfigManager;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -104,11 +106,6 @@ public class IdentificationEvent extends SyncableModel {
 
     public IdentificationEvent() {
         super();
-    }
-
-    public IdentificationEvent(String token) {
-        super();
-        setToken(token);
     }
 
     public UUID getId() {
@@ -219,13 +216,15 @@ public class IdentificationEvent extends SyncableModel {
         String[] names = new String[DismissalReasonEnum.values().length];
 
         for (int i = 0; i < names.length; i++) {
-            names[i] = DismissalReasonEnum.values()[i].name().replaceAll("_", " ").toLowerCase();
+            String dismissalReason = DismissalReasonEnum.values()[i].name().replace("_", " ").toLowerCase();
+            names[i] = dismissalReason.substring(0,1).toUpperCase() + dismissalReason.substring(1);
         }
 
         return names;
     }
 
     public void setDismissalReason(DismissalReasonEnum dismissalReason) {
+        setDismissed(true);
         this.mDismissalReason = dismissalReason;
     }
 }

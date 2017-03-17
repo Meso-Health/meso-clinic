@@ -97,6 +97,7 @@ public class DetailFragment extends Fragment {
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.dismiss_patient_alert)
+                        .setNegativeButton(R.string.cancel, null)
                         .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
                                 DialogInterface
                                 .OnClickListener() {
@@ -207,9 +208,9 @@ public class DetailFragment extends Fragment {
     public void completeIdentification(boolean accepted,
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
-
-        IdentificationEvent idEvent =
-                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setIsNew(true);
+        idEvent.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -236,9 +237,8 @@ public class DetailFragment extends Fragment {
 
     public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason) {
         IdentificationEvent checkIn = mMember.currentCheckIn();
-
-        checkIn.setDismissed(true);
         checkIn.setDismissalReason(dismissReason);
+        checkIn.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
 
         try {
             IdentificationEventDao.update(checkIn);
