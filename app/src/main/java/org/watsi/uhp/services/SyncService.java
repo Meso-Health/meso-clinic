@@ -2,6 +2,7 @@ package org.watsi.uhp.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -11,21 +12,26 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.database.EncounterFormDao;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -47,6 +53,7 @@ public class SyncService extends Service {
                     try {
                         syncIdentificationEvents(IdentificationEventDao.unsynced());
                         syncEncounters(EncounterDao.unsynced());
+                        syncEncounterForms(EncounterFormDao.unsynced());
                         syncMembers(MemberDao.unsynced());
                     } catch (IOException | SQLException | IllegalStateException e) {
                         Rollbar.reportException(e);
@@ -125,6 +132,53 @@ public class SyncService extends Service {
         }
     }
 
+    private void syncEncounterForms(List<EncounterForm> unsyncedEncounterForms) throws SQLException, IOException {
+        for (EncounterForm encounterForm : unsyncedEncounterForms) {
+            String tokenAuthorizationString = encounterForm.getTokenAuthHeaderString();
+            Encounter encounter = encounterForm.getEncounter();
+            if (!encounter.isSynced()) {
+                // do not push encounter form until related encounter is synced
+                return;
+            }
+            String encounterId = encounter.getId().toString();
+
+            byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), getApplicationContext());
+            if (image == null) {
+                Rollbar.reportMessage("No image saved for form for encounter: " + encounter.getId().toString());
+                try {
+                    encounterForm.setSynced();
+                    EncounterFormDao.update(encounterForm);
+                } catch (AbstractModel.ValidationException e) {
+                    Rollbar.reportException(e);
+                }
+                return;
+            }
+            RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), image);
+            Call<Encounter> request =
+                    ApiService.requestBuilder(getApplicationContext())
+                            .syncEncounterForm(tokenAuthorizationString, encounterId, body);
+            Response<Encounter> response = request.execute();
+            if (response.isSuccessful()) {
+                try {
+                    new File(encounterForm.getUrl()).delete();
+                    encounterForm.setSynced();
+                    EncounterFormDao.update(encounterForm);
+                } catch (AbstractModel.ValidationException e) {
+                    Rollbar.reportException(e);
+                }
+            } else {
+                Map<String,String> reportParams = new HashMap<>();
+                reportParams.put("encounter_form.id", encounterForm.getId().toString());
+                reportParams.put("encounter.id", encounterForm.getEncounter().getId().toString());
+                NotificationManager.requestFailure(
+                        "Failed to sync EncounterForm",
+                        request.request(),
+                        response.raw(),
+                        reportParams
+                );
+            }
+        }
+    }
     private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
             if (member.isNew()) {

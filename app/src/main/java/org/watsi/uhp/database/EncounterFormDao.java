@@ -3,10 +3,12 @@ package org.watsi.uhp.database;
 import com.j256.ormlite.dao.Dao;
 
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.EncounterForm;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -40,5 +42,15 @@ public class EncounterFormDao {
     public static void create(EncounterForm encounterForm) throws SQLException {
         encounterForm.setCreatedAt(Clock.getCurrentTime());
         getInstance().getEncounterFormDao().create(encounterForm);
+    }
+
+    public static void update(EncounterForm encounterForm) throws SQLException {
+        getInstance().getEncounterFormDao().update(encounterForm);
+    }
+
+    public static List<EncounterForm> unsynced() throws SQLException {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put(EncounterForm.FIELD_NAME_SYNCED, false);
+        return getInstance().getEncounterFormDao().queryForFieldValues(queryMap);
     }
 }

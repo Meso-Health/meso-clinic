@@ -5,6 +5,7 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
@@ -48,6 +50,14 @@ public interface UhpApi {
             @Header("Authorization") String tokenAuthorization,
             @Path("providerId") int providerId,
             @Body Encounter unsyncedEncounter
+    );
+
+    @Multipart
+    @PATCH("encounters/{encounterId}")
+    Call<Encounter> syncEncounterForm(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("encounterId") String encounterId,
+            @Part("forms[]") RequestBody encounterForm
     );
 
     @Multipart
