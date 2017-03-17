@@ -103,6 +103,8 @@
 
     <!--EncounterFormFragment-->
     <string name="encounter_form_fragment_label">Take photo of form</string>
+    <string name="add_another_label">Add another</string>
+    <string name="finish_btn_label">Finish</string>
 
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>

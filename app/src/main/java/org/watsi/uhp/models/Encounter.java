@@ -52,8 +52,6 @@ public class Encounter extends SyncableModel {
     @SerializedName(FIELD_NAME_ENCOUNTER_ITEMS)
     private final List<EncounterItem> mEncounterItems = new ArrayList<>();
 
-    @Expose
-    @SerializedName(FIELD_NAME_ENCOUNTER_FORMS)
     private final List<EncounterForm> mEncounterForms = new ArrayList<>();
 
     @Expose

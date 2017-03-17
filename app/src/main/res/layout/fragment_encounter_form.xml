@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
+
+    <Button
+        android:id="@+id/photo_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/photo_btn_label" />
+
+    <ImageView
+        android:id="@+id/photo"
+        android:contentDescription="@string/photo_description"
+        android:layout_height="400dp"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="?android:attr/buttonBarButtonStyle"
+        android:gravity="bottom" >
+
+        <Button
+            android:id="@+id/add_another_button"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="android:attr/buttonBarButtonStyle"
+            android:text="@string/add_another_label"
+            android:enabled="false" />
+
+        <Button
+            android:id="@+id/finish_button"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="android:attr/buttonBarButtonStyle"
+            android:text="@string/finish_btn_label" />
+    </LinearLayout>
+</LinearLayout>

@@ -34,6 +34,7 @@ public class EncounterFormFragment extends Fragment {
     private Uri mUri;
     private Encounter mEncounter;
     private EncounterForm mEncounterForm = new EncounterForm();
+    private Button mAddAnotherBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,9 +42,8 @@ public class EncounterFormFragment extends Fragment {
 
         mEncounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
 
-        View view = inflater.inflate(R.layout.fragment_capture_photo, container, false);
+        View view = inflater.inflate(R.layout.fragment_encounter_form, container, false);
 
-        ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.encounter_form_fragment_label);
         try {
             String filename = "encounter_form_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "encounter", getContext());
@@ -58,19 +58,33 @@ public class EncounterFormFragment extends Fragment {
 
         mEncounterFormImageView = (ImageView) view.findViewById(R.id.photo);
 
-        view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mEncounterForm.getUrl() != null) {
-                    mEncounter.addEncounterForm(mEncounterForm);
-                }
-                new NavigationManager(getActivity()).setReceiptFragment(mEncounter);
-            }
-        });
+        mAddAnotherBtn = (Button) view.findViewById(R.id.add_another_button);
+        mAddAnotherBtn.setOnClickListener(new AddPhotoClickListener(false));
+        view.findViewById(R.id.finish_button).setOnClickListener(new AddPhotoClickListener(true));
 
         return view;
     }
 
+    private class AddPhotoClickListener implements View.OnClickListener {
+
+        private boolean finished;
+
+        AddPhotoClickListener(boolean finished) {
+            this.finished = finished;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEncounterForm.getUrl() != null) {
+                mEncounter.addEncounterForm(mEncounterForm);
+            }
+            if (finished) {
+                new NavigationManager(getActivity()).setReceiptFragment(mEncounter);
+            } else {
+                new NavigationManager(getActivity()).setEncounterFormFragment(mEncounter);
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -84,6 +98,7 @@ public class EncounterFormFragment extends Fragment {
             }
 
             mEncounterForm.setUrl(mUri.toString());
+            mAddAnotherBtn.setEnabled(true);
         } else {
             Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
         }
