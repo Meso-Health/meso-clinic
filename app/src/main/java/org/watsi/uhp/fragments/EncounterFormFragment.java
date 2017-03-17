@@ -33,7 +33,7 @@ public class EncounterFormFragment extends Fragment {
     private ImageView mEncounterFormImageView;
     private Uri mUri;
     private Encounter mEncounter;
-    private EncounterForm mEncounterForm = new EncounterForm();
+    private EncounterForm mEncounterForm;
     private Button mAddAnotherBtn;
 
     @Override
@@ -41,6 +41,7 @@ public class EncounterFormFragment extends Fragment {
         getActivity().setTitle(R.string.encounter_form_fragment_label);
 
         mEncounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
+        mEncounterForm = new EncounterForm();
 
         View view = inflater.inflate(R.layout.fragment_encounter_form, container, false);
 
