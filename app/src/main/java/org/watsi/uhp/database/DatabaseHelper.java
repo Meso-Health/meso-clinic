@@ -91,7 +91,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN backdated_occurred_at BOOLEAN NOT NULL DEFAULT 0;");
                 case 6:
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissed BOOLEAN NOT NULL DEFAULT 0;");
-                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissed_reason STRING;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
             }
             Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         } catch (SQLException e) {

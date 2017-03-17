@@ -23,7 +23,7 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
     public static final String FIELD_NAME_DISMISSED = "dismissed";
-    public static final String FIELD_NAME_DISMISSED_REASON = "dismissed_reason";
+    public static final String FIELD_NAME_DISMISSAL_REASON = "dismissal_reason";
 
     public enum ClinicNumberTypeEnum {
         @SerializedName("opd") OPD,
@@ -37,7 +37,7 @@ public class IdentificationEvent extends SyncableModel {
         @SerializedName("through_household") THROUGH_HOUSEHOLD
     }
 
-    public enum DismissedReasonEnum {
+    public enum DismissalReasonEnum {
         @SerializedName("accidental_identification") ACCIDENTAL_IDENTIFICATION,
         @SerializedName("patient_left_before_care") PATIENT_LEFT_BEFORE_CARE,
         @SerializedName("patient_left_after_care") PATIENT_LEFT_AFTER_CARE,
@@ -90,7 +90,7 @@ public class IdentificationEvent extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_CLINIC_NUMBER_TYPE)
     @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE)
-    private IdentificationEvent.ClinicNumberTypeEnum mClinicNumberTypeEnum;
+    private ClinicNumberTypeEnum mClinicNumberTypeEnum;
 
     @Expose
     @SerializedName(FIELD_NAME_DISMISSED)
@@ -98,9 +98,9 @@ public class IdentificationEvent extends SyncableModel {
     private boolean mDismissed;
 
     @Expose
-    @SerializedName(FIELD_NAME_DISMISSED_REASON)
-    @DatabaseField(columnName = FIELD_NAME_DISMISSED_REASON)
-    private IdentificationEvent.DismissedReasonEnum mDismissedReason;
+    @SerializedName(FIELD_NAME_DISMISSAL_REASON)
+    @DatabaseField(columnName = FIELD_NAME_DISMISSAL_REASON)
+    private DismissalReasonEnum mDismissalReason;
 
     public IdentificationEvent() {
         super();
@@ -211,21 +211,21 @@ public class IdentificationEvent extends SyncableModel {
         this.mDismissed = dismissed;
     }
 
-    public DismissedReasonEnum getDismissedReason() {
-        return mDismissedReason;
+    public DismissalReasonEnum getDismissalReason() {
+        return mDismissalReason;
     }
 
-    public static String[] getFormattedDismissedReasons() {
-        String[] names = new String[DismissedReasonEnum.values().length];
+    public static String[] getFormattedDismissalReasons() {
+        String[] names = new String[DismissalReasonEnum.values().length];
 
         for (int i = 0; i < names.length; i++) {
-            names[i] = DismissedReasonEnum.values()[i].name().replaceAll("_", " ").toLowerCase();
+            names[i] = DismissalReasonEnum.values()[i].name().replaceAll("_", " ").toLowerCase();
         }
 
         return names;
     }
 
-    public void setDismissedReason(DismissedReasonEnum dismissedReason) {
-        this.mDismissedReason = dismissedReason;
+    public void setDismissalReason(DismissalReasonEnum dismissalReason) {
+        this.mDismissalReason = dismissalReason;
     }
 }

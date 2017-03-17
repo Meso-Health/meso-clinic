@@ -97,12 +97,12 @@ public class DetailFragment extends Fragment {
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.dismiss_patient_alert)
-                        .setItems(IdentificationEvent.getFormattedDismissedReasons(), new
+                        .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
                                 DialogInterface
                                 .OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dismissIdentification(IdentificationEvent
-                                        .DismissedReasonEnum.values()[which]);
+                                        .DismissalReasonEnum.values()[which]);
                             }
                         }).create().show();
             }
@@ -234,11 +234,11 @@ public class DetailFragment extends Fragment {
                 show();
     }
 
-    public void dismissIdentification(IdentificationEvent.DismissedReasonEnum dismissReason) {
+    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason) {
         IdentificationEvent checkIn = mMember.currentCheckIn();
 
         checkIn.setDismissed(true);
-        checkIn.setDismissedReason(dismissReason);
+        checkIn.setDismissalReason(dismissReason);
 
         try {
             IdentificationEventDao.update(checkIn);
