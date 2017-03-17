@@ -30,43 +30,33 @@ import java.util.List;
 
 public class VersionAndSyncFragment extends Fragment {
 
-    private TextView versionNumber;
-    private TextView fetchMembersTimestamp;
-    private TextView fetchBillablesTimestamp;
-    private TextView fetchMemberPicturesQuantity;
-    private TextView syncEditedMembersQuantity;
-    private TextView syncNewMembersQuantity;
-    private TextView syncIdEventsQuantity;
-    private TextView syncEncountersQuantity;
-    private FloatingActionButton refreshButton;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         getActivity().setTitle(R.string.version_and_sync_label);
 
         View view = inflater.inflate(R.layout.fragment_version_and_sync, container, false);
 
-        versionNumber = (TextView) view.findViewById(R.id.version_number);
-        fetchMembersTimestamp = (TextView) view.findViewById(R.id.fetch_members_timestamp);
-        fetchBillablesTimestamp = (TextView) view.findViewById(R.id.fetch_billables_timestamp);
-        fetchMemberPicturesQuantity = (TextView) view.findViewById(R.id.fetch_member_pictures_quantity);
-        syncEditedMembersQuantity = (TextView) view.findViewById(R.id.sync_edited_members_quantity);
-        syncNewMembersQuantity = (TextView) view.findViewById(R.id.sync_new_members_quantity);
-        syncIdEventsQuantity = (TextView) view.findViewById(R.id.sync_id_events_quantity);
-        syncEncountersQuantity = (TextView) view.findViewById(R.id.sync_encounters_quantity);
-        refreshButton = (FloatingActionButton) view.findViewById(R.id.refresh_button);
+        TextView versionNumber = (TextView) view.findViewById(R.id.version_number);
+        TextView fetchMembersTimestamp = (TextView) view.findViewById(R.id.fetch_members_timestamp);
+        TextView fetchBillablesTimestamp = (TextView) view.findViewById(R.id.fetch_billables_timestamp);
+        TextView fetchMemberPicturesQuantity = (TextView) view.findViewById(R.id.fetch_member_pictures_quantity);
+        TextView syncEditedMembersQuantity = (TextView) view.findViewById(R.id.sync_edited_members_quantity);
+        TextView syncNewMembersQuantity = (TextView) view.findViewById(R.id.sync_new_members_quantity);
+        TextView syncIdEventsQuantity = (TextView) view.findViewById(R.id.sync_id_events_quantity);
+        TextView syncEncountersQuantity = (TextView) view.findViewById(R.id.sync_encounters_quantity);
+        FloatingActionButton refreshButton = (FloatingActionButton) view.findViewById(R.id.refresh_button);
 
-        setVersionNumber();
-        setFetchMembersTimestamp();
-        setFetchBillablesTimestamp();
-        setRefreshButton();
+        setVersionNumber(versionNumber);
+        setFetchMembersTimestamp(fetchMembersTimestamp);
+        setFetchBillablesTimestamp(fetchBillablesTimestamp);
+        setRefreshButton(refreshButton);
 
         try {
-            setFetchMemberPicturesQuantity();
-            setSyncEditedMembersQuantity();
-            setSyncNewMembersQuantity();
-            setSyncIdEventsQuantity();
-            setSyncEncountersQuantity();
+            setFetchMemberPicturesQuantity(fetchMemberPicturesQuantity);
+            setSyncEditedMembersQuantity(syncEditedMembersQuantity);
+            setSyncNewMembersQuantity(syncNewMembersQuantity);
+            setSyncIdEventsQuantity(syncIdEventsQuantity);
+            setSyncEncountersQuantity(syncEncountersQuantity);
         } catch (SQLException | IllegalStateException e) {
             Rollbar.reportException(e);
         }
@@ -74,64 +64,64 @@ public class VersionAndSyncFragment extends Fragment {
         return view;
     }
 
-    private void setVersionNumber() {
+    private void setVersionNumber(TextView textView) {
         try {
             PackageInfo pInfo = getActivity().getPackageManager()
                     .getPackageInfo(getActivity().getPackageName(), 0);
-            versionNumber.setText(pInfo.versionName);
+            textView.setText(pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             Rollbar.reportException(e);
         }
     }
 
-    private void setFetchMembersTimestamp() {
+    private void setFetchMembersTimestamp(TextView textView) {
         Long lastFetchedTimestamp = ConfigManager.getMembersLastFetched(getActivity().getApplicationContext());
         Date date = new Date(lastFetchedTimestamp);
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy   HH:mm:ss z");
 
-        fetchMembersTimestamp.setText(sdf.format(date));
+        textView.setText(sdf.format(date));
     }
 
-    private void setFetchBillablesTimestamp() {
+    private void setFetchBillablesTimestamp(TextView textView) {
         Long lastFetchedTimestamp = ConfigManager.getBillablesLastFetched(getActivity().getApplicationContext());
         Date date = new Date(lastFetchedTimestamp);
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy   HH:mm:ss z");
 
-        fetchBillablesTimestamp.setText(sdf.format(date));
+        textView.setText(sdf.format(date));
     }
 
-    private void setFetchMemberPicturesQuantity() throws SQLException {
+    private void setFetchMemberPicturesQuantity(TextView textView) throws SQLException {
         List<Member> membersWithPhotosToFetch = MemberDao.membersWithPhotosToFetch();
         int photosToFetch = membersWithPhotosToFetch.size();
-        fetchMemberPicturesQuantity.setText(Integer.toString(photosToFetch));
+        textView.setText(Integer.toString(photosToFetch));
     }
 
-    private void setSyncEditedMembersQuantity() throws SQLException {
+    private void setSyncEditedMembersQuantity(TextView textView) throws SQLException {
         List<Member> unsyncedMembers = MemberDao.getUnsyncedEditedMembers();
         int numberOfUnsynced = unsyncedMembers.size();
-        syncEditedMembersQuantity.setText(Integer.toString(numberOfUnsynced));
+        textView.setText(Integer.toString(numberOfUnsynced));
     }
 
-    private void setSyncNewMembersQuantity() throws SQLException {
+    private void setSyncNewMembersQuantity(TextView textView) throws SQLException {
         List<Member> unsyncedMembers = MemberDao.getUnsyncedNewMembers();
         int numberOfUnsynced = unsyncedMembers.size();
-        syncNewMembersQuantity.setText(Integer.toString(numberOfUnsynced));
+        textView.setText(Integer.toString(numberOfUnsynced));
     }
 
-    private void setSyncIdEventsQuantity() throws SQLException {
+    private void setSyncIdEventsQuantity(TextView textView) throws SQLException {
         List<IdentificationEvent> unsyncedIds = IdentificationEventDao.unsynced();
         int numberOfUnsynced = unsyncedIds.size();
-        syncIdEventsQuantity.setText(Integer.toString(numberOfUnsynced));
+        textView.setText(Integer.toString(numberOfUnsynced));
     }
 
-    private void setSyncEncountersQuantity() throws SQLException {
+    private void setSyncEncountersQuantity(TextView textView) throws SQLException {
         List<Encounter> unsyncedEncounters = EncounterDao.unsynced();
         int numberOfUnsynced = unsyncedEncounters.size();
-        syncEncountersQuantity.setText(Integer.toString(numberOfUnsynced));
+        textView.setText(Integer.toString(numberOfUnsynced));
     }
 
-    private void setRefreshButton() {
-        refreshButton.setOnClickListener(new View.OnClickListener() {
+    private void setRefreshButton(FloatingActionButton fab) {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new NavigationManager(getActivity()).setVersionFragment();
