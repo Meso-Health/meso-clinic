@@ -25,7 +25,7 @@ import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
-import org.watsi.uhp.fragments.VersionFragment;
+import org.watsi.uhp.fragments.VersionAndSyncFragment;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -185,7 +185,7 @@ public class NavigationManager {
     }
 
     public void setVersionFragment() {
-        setFragment(new VersionFragment());
+        setFragment(new VersionAndSyncFragment());
     }
 
     public void logout() {
