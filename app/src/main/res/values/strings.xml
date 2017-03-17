@@ -94,7 +94,7 @@
     <string name="remove_billable_button">X</string>
     <string name="encounter_product_list_label">Items</string>
     <string name="continue_encounter_button">Continue</string>
-    <string name="backdate"><u>Backdate</u></string>
+    <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!--AddNewBillableFragment-->
