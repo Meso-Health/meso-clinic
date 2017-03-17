@@ -9,12 +9,18 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.IOException;
+
+import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
@@ -30,7 +36,10 @@ public class NotificationManagerTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockStatic(Rollbar.class);
-        request = new Request.Builder().url("http://uhp-test.watsi.org").build();
+        request = new Request.Builder()
+                .url("http://uhp-test.watsi.org")
+                .post(mock(RequestBody.class))
+                .build();
         response = new Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_2)
