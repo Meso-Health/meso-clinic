@@ -17,6 +17,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
@@ -60,10 +61,18 @@ public interface UhpApi {
     );
 
     @Multipart
+    @PATCH("encounters/{encounterId}")
+    Call<Encounter> syncEncounterForm(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("encounterId") UUID encounterId,
+            @Part("forms[]") RequestBody encounterForm
+    );
+
+    @Multipart
     @PATCH("members/{memberId}")
     Call<Member> syncMember(
             @Header("Authorization") String tokenAuthorization,
-            @Path("memberId") String memberId,
+            @Path("memberId") UUID memberId,
             @PartMap Map<String, RequestBody> params
     );
 

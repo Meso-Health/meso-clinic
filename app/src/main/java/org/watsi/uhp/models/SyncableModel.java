@@ -11,7 +11,7 @@ import java.util.Set;
  * Abstract class for specifying any fields and behavior that all
  * models that need to be synced to the back-end should share
  */
-public abstract class SyncableModel extends AbstractModel implements Serializable {
+public abstract class SyncableModel extends AbstractModel {
 
     public static final String FIELD_NAME_TOKEN = "token";
     public static final String FIELD_NAME_SYNCED = "synced";

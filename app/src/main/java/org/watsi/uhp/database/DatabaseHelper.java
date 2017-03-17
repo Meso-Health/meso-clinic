@@ -11,6 +11,7 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.Member;
@@ -24,7 +25,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static DatabaseHelper instance;
 
@@ -53,6 +54,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, IdentificationEvent.class);
             TableUtils.createTable(connectionSource, Encounter.class);
             TableUtils.createTable(connectionSource, EncounterItem.class);
+            TableUtils.createTable(connectionSource, EncounterForm.class);
             TableUtils.createTable(connectionSource, User.class);
             Log.d("UHP", "onCreate database helper called");
         } catch (SQLException e) {
@@ -92,6 +94,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 case 6:
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissed BOOLEAN NOT NULL DEFAULT 0;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
+                case 7:
+                    TableUtils.createTable(connectionSource, EncounterForm.class);
             }
             Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         } catch (SQLException e) {

@@ -35,6 +35,7 @@
     <string name="photo_btn_label">Take photo</string>
     <string name="photo_description">Photo</string>
     <string name="cancel">Cancel</string>
+    <string name="price_with_currency">%1$s UGX</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
@@ -105,6 +106,11 @@
     <string name="empty_billable_name_field">Please enter name in the blank above</string>
     <string name="empty_billable_price_field">Please enter price in the blank above</string>
 
+    <!--EncounterFormFragment-->
+    <string name="encounter_form_fragment_label">Take photo of form</string>
+    <string name="add_another_label">Add another</string>
+    <string name="finish_btn_label">Finish</string>
+
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
@@ -112,6 +118,7 @@
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
+    <string name="receipt_forms_attached">%1$d forms attached</string>
 
     <!-- Enrollment -->
     <string name="enrollment_complete_btn">Complete enrollment</string>

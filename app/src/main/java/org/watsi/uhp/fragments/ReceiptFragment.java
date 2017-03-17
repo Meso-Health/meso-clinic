@@ -23,7 +23,6 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptFragment extends Fragment {
@@ -46,19 +45,14 @@ public class ReceiptFragment extends Fragment {
 
         TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
 
-        DecimalFormat df = new DecimalFormat("#,###,###");
-        priceTextView.setText(df.format(priceTotal(encounterItems)) + " UGX");
+        String formattedPrice = Encounter.PRICE_FORMAT.format(mEncounter.price());
+        priceTextView.setText(getString(R.string.price_with_currency, formattedPrice));
+
+        ((TextView) view.findViewById(R.id.forms_attached)).setText(
+                getString(R.string.receipt_forms_attached, mEncounter.getEncounterForms().size()));
 
         setCreateEncounterButton();
         return view;
-    }
-
-    private int priceTotal(List<EncounterItem> encounterItems) {
-        int sum = 0;
-        for (EncounterItem item : encounterItems) {
-            sum = sum + (item.getBillable().getPrice() * item.getQuantity());
-        }
-        return sum;
     }
 
     private void setCreateEncounterButton() {
