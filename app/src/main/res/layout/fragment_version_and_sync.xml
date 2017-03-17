@@ -22,8 +22,8 @@
                 android:text="@string/version_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="16dp"
                 android:labelFor="@+id/version_number"/>
 
@@ -32,9 +32,9 @@
                 android:layout_width="match_parent"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="16dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
                 android:layout_height="wrap_content"/>
 
             <View
@@ -49,9 +49,9 @@
                 android:text="@string/fetch_members_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"/>
 
             <TextView
                 android:id="@+id/fetch_members_timestamp"
@@ -59,8 +59,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingBottom="18dp"/>
 
             <View
@@ -75,9 +75,9 @@
                 android:text="@string/fetch_billables_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"/>
 
             <TextView
                 android:id="@+id/fetch_billables_timestamp"
@@ -85,9 +85,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="18dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -101,9 +101,9 @@
                 android:text="@string/fetch_member_pictures_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"/>
 
             <TextView
                 android:id="@+id/fetch_member_pictures_quantity"
@@ -111,9 +111,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="18dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -127,9 +127,9 @@
                 android:text="@string/sync_edited_members_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp" />
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin" />
 
             <TextView
                 android:id="@+id/sync_edited_members_quantity"
@@ -137,9 +137,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="18dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -153,9 +153,9 @@
                 android:text="@string/sync_new_members_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp" />
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin" />
 
             <TextView
                 android:id="@+id/sync_new_members_quantity"
@@ -163,9 +163,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="18dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -179,9 +179,9 @@
                 android:text="@string/sync_id_events_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"/>
 
             <TextView
                 android:id="@+id/sync_id_events_quantity"
@@ -189,9 +189,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="18dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -205,9 +205,9 @@
                 android:text="@string/sync_encounters_label"
                 android:textSize="16sp"
                 android:textColor="@color/title"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp" />
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin" />
 
             <TextView
                 android:id="@+id/sync_encounters_quantity"
@@ -215,9 +215,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textColor="@color/subtitle"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="18dp"/>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"/>
 
         </LinearLayout>
 
