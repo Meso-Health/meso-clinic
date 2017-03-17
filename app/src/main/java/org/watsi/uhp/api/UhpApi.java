@@ -5,7 +5,6 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,7 +64,7 @@ public interface UhpApi {
     @PATCH("encounters/{encounterId}")
     Call<Encounter> syncEncounterForm(
             @Header("Authorization") String tokenAuthorization,
-            @Path("encounterId") String encounterId,
+            @Path("encounterId") UUID encounterId,
             @Part("forms[]") RequestBody encounterForm
     );
 
@@ -73,7 +72,7 @@ public interface UhpApi {
     @PATCH("members/{memberId}")
     Call<Member> syncMember(
             @Header("Authorization") String tokenAuthorization,
-            @Path("memberId") String memberId,
+            @Path("memberId") UUID memberId,
             @PartMap Map<String, RequestBody> params
     );
 

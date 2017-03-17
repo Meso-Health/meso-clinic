@@ -75,4 +75,8 @@ public class EncounterDao {
     public static void update(Encounter encounter) throws SQLException {
         getInstance().getEncounterDao().update(encounter);
     }
+
+    public static Encounter find(UUID id) throws SQLException {
+        return getInstance().getEncounterDao().queryForId(id);
+    }
 }

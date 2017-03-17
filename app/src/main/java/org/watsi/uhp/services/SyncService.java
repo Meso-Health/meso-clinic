@@ -174,12 +174,11 @@ public class SyncService extends Service {
     private void syncEncounterForms(List<EncounterForm> unsyncedEncounterForms) throws SQLException, IOException {
         for (EncounterForm encounterForm : unsyncedEncounterForms) {
             String tokenAuthorizationString = encounterForm.getTokenAuthHeaderString();
-            Encounter encounter = encounterForm.getEncounter();
+            Encounter encounter = EncounterDao.find(encounterForm.getEncounter().getId());
             if (!encounter.isSynced()) {
                 // do not push encounter form until related encounter is synced
                 return;
             }
-            String encounterId = encounter.getId().toString();
 
             byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), getApplicationContext());
             if (image == null) {
@@ -195,7 +194,7 @@ public class SyncService extends Service {
             RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), image);
             Call<Encounter> request =
                     ApiService.requestBuilder(getApplicationContext())
-                            .syncEncounterForm(tokenAuthorizationString, encounterId, body);
+                            .syncEncounterForm(tokenAuthorizationString, encounter.getId(), body);
             Response<Encounter> response = request.execute();
             if (response.isSuccessful()) {
                 try {
@@ -238,7 +237,7 @@ public class SyncService extends Service {
         }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
                 member.getTokenAuthHeaderString(),
-                member.getId().toString(),
+                member.getId(),
                 multiPartBody
         );
         Response<Member> response = request.execute();
