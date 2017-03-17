@@ -2,6 +2,7 @@ package org.watsi.uhp.managers;
 
 import com.rollbar.android.Rollbar;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,12 +13,14 @@ public class NotificationManager {
     public static void requestFailure(String description, Request request, Response response, Map<String,String> params) {
         params.put("Url", request.url().toString());
         params.put("Method", request.method());
-        params.put("Host", request.header("Host"));
-        params.put("X-Request-Id", request.header("X-Request-Id"));
-        params.put("X-Request-Start", request.header("X-Request-Start"));
-        params.put("Content-Length", request.header("Content-Length"));
-        params.put("Content-Type", request.header("Content-Type"));
+        params.put("Content-Type", request.body().contentType().toString());
+        try {
+            params.put("Content-Length", String.valueOf(request.body().contentLength()));
+        } catch (IOException e) {
+            Rollbar.reportException(e);
+        }
         if (response != null) {
+            params.put("X-Request-Id", response.header("X-Request-Id"));
             params.put("response.code", String.valueOf(response.code()));
             params.put("response.message", response.message());
         }
