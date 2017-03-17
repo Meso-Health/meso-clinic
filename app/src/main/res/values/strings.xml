@@ -18,7 +18,7 @@
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
-    <string name="menu_version_label">Version</string>
+    <string name="menu_version_and_sync_label">Status</string>
 
     <!-- General Labels -->
     <string name="name_label">Name</string>
@@ -151,5 +151,14 @@
     <string name="enroll_newborn_photo_label">Newborn photo</string>
 
     <!--VersionFragment-->
+    <string name="version_and_sync_label">Status</string>
     <string name="version_label">Version</string>
+    <string name="fetch_members_label">Members updated at</string>
+    <string name="fetch_billables_label">Pricelist updated at</string>
+    <string name="fetch_member_pictures_label">Member photos</string>
+    <string name="sync_edited_members_label">Edited members</string>
+    <string name="sync_new_members_label">New members</string>
+    <string name="sync_id_events_label">Identifications</string>
+    <string name="sync_encounters_label">Treatment Information</string>
+    <string name="all_synced">All synced</string>
 </resources>

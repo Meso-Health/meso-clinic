@@ -6,4 +6,8 @@
     <color name="alert_red">#ff0000</color>
     <color name="white">#FFFFFF</color>
     <color name="beige">#FCAF63</color>
+
+    <color name="title">#212121</color>
+    <color name="subtitle">#757575</color>
+    <color name="divider">#DADADA</color>
 </resources>

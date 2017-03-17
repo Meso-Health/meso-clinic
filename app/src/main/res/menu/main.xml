@@ -33,7 +33,7 @@
     <item
         android:id="@+id/menu_version"
         android:orderInCategory="104"
-        android:title="@string/menu_version_label"
+        android:title="@string/menu_version_and_sync_label"
         app:showAsAction="never"
         android:visible="true" />
 </menu>
