@@ -168,7 +168,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                new NavigationManager(this).setCurrentPatientsFragment();
+                if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
+                    new NavigationManager(this).setLoginFragment();
+                } else {
+                    new NavigationManager(this).setCurrentPatientsFragment();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
