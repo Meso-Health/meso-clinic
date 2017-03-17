@@ -64,11 +64,17 @@ public class DetailFragment extends Fragment {
         setPatientCard(view);
         setButton(view);
         setHouseholdList(view);
-        setRejectIdentityLink(view);
+        if (mMember.currentCheckIn() == null) {
+            setRejectIdentityLink(view);
+        } else {
+            setDismissPatientLink(view);
+        }
+
         return view;
     }
 
     private void setRejectIdentityLink(View view) {
+        view.findViewById(R.id.reject_identity).setVisibility(View.VISIBLE);
         view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +84,25 @@ public class DetailFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 completeIdentification(false, null, null);
+                            }
+                        }).create().show();
+            }
+        });
+    }
+
+    private void setDismissPatientLink(View view) {
+        view.findViewById(R.id.dismiss_patient).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.dismiss_patient).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.dismiss_patient_alert)
+                        .setItems(IdentificationEvent.getFormattedDismissedReasons(), new
+                                DialogInterface
+                                .OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dismissIdentification(IdentificationEvent
+                                        .DismissedReasonEnum.values()[which]);
                             }
                         }).create().show();
             }
@@ -119,7 +144,6 @@ public class DetailFragment extends Fragment {
                 }
             });
         } else {
-            view.findViewById(R.id.reject_identity).setVisibility(View.GONE);
             confirmButton.setText(R.string.detail_create_encounter);
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -208,6 +232,28 @@ public class DetailFragment extends Fragment {
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public void dismissIdentification(IdentificationEvent.DismissedReasonEnum dismissReason) {
+        IdentificationEvent checkIn = mMember.currentCheckIn();
+
+        checkIn.setDismissed(true);
+        checkIn.setDismissedReason(dismissReason);
+
+        try {
+            IdentificationEventDao.update(checkIn);
+            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            Toast.makeText(getActivity().getApplicationContext(),
+                    mMember.getFullName() + " " + getActivity().getString(R.string.identification_dismissed),
+                    Toast.LENGTH_LONG).
+                    show();
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+            Toast.makeText(getActivity().getApplicationContext(),
+                    getActivity().getString(R.string.identification_dismissed_failure),
+                    Toast.LENGTH_LONG).
+                    show();
+        }
     }
 
     public IdentificationEvent.SearchMethodEnum getIdMethod() {
