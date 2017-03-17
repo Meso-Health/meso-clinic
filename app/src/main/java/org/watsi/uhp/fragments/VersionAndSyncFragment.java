@@ -133,8 +133,12 @@ public class VersionAndSyncFragment extends Fragment {
 
     private String formatTimestamp(String lastModifiedTimestamp) {
         try {
-            Date lastModified = mLastModifiedFormat.parse(lastModifiedTimestamp);
-            return mDisplayDateFormat.format(lastModified);
+            if (lastModifiedTimestamp == null) {
+                return "Never";
+            } else {
+                Date lastModified = mLastModifiedFormat.parse(lastModifiedTimestamp);
+                return mDisplayDateFormat.format(lastModified);
+            }
         } catch (ParseException e) {
             return "Could not parse timestamp";
         }
