@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                     new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null, null);
                     break;
                 case R.id.menu_version:
+                    if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     new NavigationManager(mActivity).setVersionFragment();
                     break;
                 case R.id.menu_complete_enrollment:

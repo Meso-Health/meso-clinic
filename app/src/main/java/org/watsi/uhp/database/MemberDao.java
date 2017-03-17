@@ -1,23 +1,15 @@
 package org.watsi.uhp.database;
 
-import android.content.Context;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
-import com.rollbar.android.Rollbar;
 
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -200,27 +192,5 @@ public class MemberDao {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_SYNCED, false);
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
-    }
-
-    public static List<Member> getUnsyncedEditedMembers() throws SQLException {
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
-                .queryBuilder()
-                .where()
-                .eq(Member.FIELD_NAME_SYNCED, false)
-                .and()
-                .eq(Member.FIELD_NAME_IS_NEW, false)
-                .prepare();
-        return getInstance().getMemberDao().query(pq);
-    }
-
-    public static List<Member> getUnsyncedNewMembers() throws SQLException {
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
-                .queryBuilder()
-                .where()
-                .eq(Member.FIELD_NAME_SYNCED, false)
-                .and()
-                .eq(Member.FIELD_NAME_IS_NEW, true)
-                .prepare();
-        return getInstance().getMemberDao().query(pq);
     }
 }
