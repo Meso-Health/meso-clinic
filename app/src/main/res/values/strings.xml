@@ -35,6 +35,7 @@
     <string name="photo_btn_label">Take photo</string>
     <string name="photo_description">Photo</string>
     <string name="cancel">Cancel</string>
+    <string name="price_with_currency">%1$s UGX</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
