@@ -25,7 +25,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static DatabaseHelper instance;
 
@@ -92,6 +92,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 case 5:
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN backdated_occurred_at BOOLEAN NOT NULL DEFAULT 0;");
                 case 6:
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissed BOOLEAN NOT NULL DEFAULT 0;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
+                case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
             }
             Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);

@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.BuildConfig;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -72,14 +75,21 @@ public class SyncService extends Service {
     private void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
-            String tokenAuthorizationString = event.getTokenAuthHeaderString();
-            if (event.getThroughMember() != null) {
-                event.setThroughMemberId(event.getThroughMember().getId());
+            Response<IdentificationEvent> response;
+            if (event.isNew()) {
+                response = postIdentificationEvent(event);
+            } else {
+                if (!event.getDismissed()) {
+                    // we should only be patching dismissed identification events
+                    Map<String, String> params = new HashMap<>();
+                    params.put("identification_event.id", event.getId().toString());
+                    params.put("identification_event.json", new Gson().toJson(event));
+                    Rollbar.reportMessage(
+                            "Attempted to sync non-dismissed IdentificationEvent", "warning", params);
+                    return;
+                }
+                response = patchIdentificationEvent(event);
             }
-            Call<IdentificationEvent> request =
-                    ApiService.requestBuilder(getApplicationContext())
-                            .syncIdentificationEvent(tokenAuthorizationString, mProviderId, event);
-            Response<IdentificationEvent> response = request.execute();
             if (response.isSuccessful()) {
                 try {
                     event.setSynced();
@@ -93,7 +103,7 @@ public class SyncService extends Service {
                 reportParams.put("member.id", event.getMember().getId().toString());
                 NotificationManager.requestFailure(
                         "Failed to sync IdentificationEvent",
-                        request.request(),
+                        response.raw().request(),
                         response.raw(),
                         reportParams
                 );
@@ -101,7 +111,36 @@ public class SyncService extends Service {
         }
     }
 
-    private void syncEncounters(List<Encounter> unsyncedEncounters) throws SQLException, IOException {
+    private Response<IdentificationEvent> postIdentificationEvent(IdentificationEvent idEvent) throws IOException {
+        String tokenAuthorizationString = idEvent.getTokenAuthHeaderString();
+        if (idEvent.getThroughMember() != null) {
+            idEvent.setThroughMemberId(idEvent.getThroughMember().getId());
+        }
+        Call<IdentificationEvent> request =
+                ApiService.requestBuilder(getApplicationContext())
+                        .postIdentificationEvent(tokenAuthorizationString, mProviderId, idEvent);
+        return request.execute();
+    }
+
+    private Response<IdentificationEvent> patchIdentificationEvent(IdentificationEvent idEvent) throws IOException {
+        String tokenAuthorizationString = idEvent.getTokenAuthHeaderString();
+        // convert to json so serialization is consistent with POST request
+        JsonObject json = new Gson().toJsonTree(idEvent, IdentificationEvent.class).getAsJsonObject();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
+        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
+                RequestBody.create(MultipartBody.FORM,
+                        json.get(IdentificationEvent.FIELD_NAME_DISMISSED).getAsString()));
+        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON,
+                RequestBody.create(MultipartBody.FORM,
+                        json.get(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON).getAsString()));
+        Call<IdentificationEvent> request =
+                ApiService.requestBuilder(getApplicationContext())
+                        .patchIdentificationEvent(
+                                tokenAuthorizationString, idEvent.getId(), requestBodyMap);
+        return request.execute();
+    }
+
+        private void syncEncounters(List<Encounter> unsyncedEncounters) throws SQLException, IOException {
         for (Encounter encounter : unsyncedEncounters) {
             encounter.setMemberId(encounter.getMember().getId());
             encounter.setIdentificationEventId(encounter.getIdentificationEvent().getId());

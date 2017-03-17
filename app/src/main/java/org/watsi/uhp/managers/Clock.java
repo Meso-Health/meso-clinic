@@ -11,7 +11,8 @@ import java.util.Date;
 public class Clock {
 
     private static Date mStaticTime = null;
-    public static String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ";
+    public static String ISO_DATE_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ";
+    public static SimpleDateFormat ISO_DATE_FORMAT = new SimpleDateFormat(ISO_DATE_FORMAT_STRING);
 
     public static void setTime(Date time) {
         mStaticTime = time;
@@ -26,6 +27,6 @@ public class Clock {
     }
 
     public static String asIso(Date date) {
-        return new SimpleDateFormat(ISO_DATE_FORMAT).format(date);
+        return ISO_DATE_FORMAT.format(date);
     }
 }

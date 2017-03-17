@@ -8,6 +8,7 @@ import org.watsi.uhp.models.Member;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -39,10 +40,18 @@ public interface UhpApi {
     );
 
     @POST("providers/{providerId}/identification_events")
-    Call<IdentificationEvent> syncIdentificationEvent(
+    Call<IdentificationEvent> postIdentificationEvent(
             @Header("Authorization") String tokenAuthorization,
             @Path("providerId") int providerId,
             @Body IdentificationEvent unsyncedEvent
+    );
+
+    @Multipart
+    @PATCH("identification_events/{identificationEventId}")
+    Call<IdentificationEvent> patchIdentificationEvent(
+            @Header("Authorization") String tokenAuthorization,
+            @Path("identificationEventId") UUID identificationEventId,
+            @PartMap Map<String, RequestBody> params
     );
 
     @POST("providers/{providerId}/encounters")
