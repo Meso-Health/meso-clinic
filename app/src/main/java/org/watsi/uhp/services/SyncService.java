@@ -86,7 +86,7 @@ public class SyncService extends Service {
                     params.put("identification_event.json", new Gson().toJson(event));
                     Rollbar.reportMessage(
                             "Attempted to sync non-dismissed IdentificationEvent", "warning", params);
-                    return;
+                    continue;
                 }
                 response = patchIdentificationEvent(event);
             }
@@ -177,7 +177,7 @@ public class SyncService extends Service {
             Encounter encounter = EncounterDao.find(encounterForm.getEncounter().getId());
             if (!encounter.isSynced()) {
                 // do not push encounter form until related encounter is synced
-                return;
+                continue;
             }
 
             byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), getApplicationContext());
@@ -189,7 +189,7 @@ public class SyncService extends Service {
                 } catch (AbstractModel.ValidationException e) {
                     Rollbar.reportException(e);
                 }
-                return;
+                continue;
             }
             RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), image);
             Call<Encounter> request =
