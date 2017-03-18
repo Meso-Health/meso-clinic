@@ -49,7 +49,7 @@ Tests can also be run from the terminal using the command `./gradlew test` from 
 
 We automatically deploy to our hockeyapp production app from the `production` branch. To deploy to production, first merge your changes into `master` and ensure you get a green build. Then:
 
-1. Check what you are going to deploy at https://github.com/Watsi/uhp-android-app/compare/production
+1. Check what you are going to deploy at https://github.com/Watsi/uhp-android-app/compare/production...master
 
 2. Locally, fetch the latest changes and merge `master` into `production`:
 ```
