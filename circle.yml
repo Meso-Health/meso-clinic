@@ -16,7 +16,7 @@ test:
     - sleep 30
     - adb shell input keyevent 82
     # run tests against the emulator
-    - ./gradlew connectedAndroidTest
+    - ./gradlew connectedSandboxDebugAndroidTest
 
   post:
       # copy unit and instrument test results to Circle Test results directory
