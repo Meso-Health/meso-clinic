@@ -100,7 +100,6 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 Rollbar.reportException(e);
             }
 
-            // TODO: potential timing issue if member data syncs before we flag this as un-synced
             mMember.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {

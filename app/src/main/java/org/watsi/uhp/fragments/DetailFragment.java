@@ -64,11 +64,17 @@ public class DetailFragment extends Fragment {
         setPatientCard(view);
         setButton(view);
         setHouseholdList(view);
-        setRejectIdentityLink(view);
+        if (mMember.currentCheckIn() == null) {
+            setRejectIdentityLink(view);
+        } else {
+            setDismissPatientLink(view);
+        }
+
         return view;
     }
 
     private void setRejectIdentityLink(View view) {
+        view.findViewById(R.id.reject_identity).setVisibility(View.VISIBLE);
         view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +84,26 @@ public class DetailFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 completeIdentification(false, null, null);
+                            }
+                        }).create().show();
+            }
+        });
+    }
+
+    private void setDismissPatientLink(View view) {
+        view.findViewById(R.id.dismiss_patient).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.dismiss_patient).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.dismiss_patient_alert)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
+                                DialogInterface
+                                .OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dismissIdentification(IdentificationEvent
+                                        .DismissalReasonEnum.values()[which]);
                             }
                         }).create().show();
             }
@@ -182,9 +208,9 @@ public class DetailFragment extends Fragment {
     public void completeIdentification(boolean accepted,
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
-
-        IdentificationEvent idEvent =
-                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setIsNew(true);
+        idEvent.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -207,6 +233,27 @@ public class DetailFragment extends Fragment {
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason) {
+        IdentificationEvent checkIn = mMember.currentCheckIn();
+        checkIn.setDismissalReason(dismissReason);
+        checkIn.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+
+        try {
+            IdentificationEventDao.update(checkIn);
+            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            Toast.makeText(getActivity().getApplicationContext(),
+                    mMember.getFullName() + " " + getActivity().getString(R.string.identification_dismissed),
+                    Toast.LENGTH_LONG).
+                    show();
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+            Toast.makeText(getActivity().getApplicationContext(),
+                    getActivity().getString(R.string.identification_dismissed_failure),
+                    Toast.LENGTH_LONG).
+                    show();
+        }
     }
 
     public IdentificationEvent.SearchMethodEnum getIdMethod() {

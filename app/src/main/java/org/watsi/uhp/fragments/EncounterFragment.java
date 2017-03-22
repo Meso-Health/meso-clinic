@@ -73,6 +73,8 @@ public class EncounterFragment extends Fragment {
         setAddBillableLink(view);
         setBackdateEncounterListener();
 
+        if (encounter.getBackdatedOccurredAt()) updateBackdateLinkText();
+
         return view;
     }
 
@@ -151,7 +153,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setReceiptFragment(encounter);
+                new NavigationManager(getActivity()).setEncounterFormFragment(encounter);
             }
         });
     }
@@ -332,12 +334,10 @@ public class EncounterFragment extends Fragment {
     }
 
     public void updateBackdateLinkText() {
-        if (encounter.getBackdatedOccurredAt()) {
-            Date backdate = encounter.getOccurredAt();
-            String backdateText = new SimpleDateFormat("MMMM d, yyyy").format(backdate);
-            SpannableString content = new SpannableString("Backdated to " + backdateText);
-            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-            backdateEncounterLink.setText(content);
-        }
+        Date backdate = encounter.getOccurredAt();
+        String backdateText = new SimpleDateFormat("MMM d, H:mma").format(backdate);
+        SpannableString content = new SpannableString("Date: " + backdateText);
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        backdateEncounterLink.setText(content);
     }
 }
