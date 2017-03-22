@@ -19,18 +19,27 @@ android {
         buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
     }
     signingConfigs {
-        config {
+        debugConfig {
+            storeFile file("debug-key.jks")
+            storePassword System.getenv("DEBUG_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("DEBUG_KEY_ALIAS")
+            keyPassword System.getenv("DEBUG_KEY_PASSWORD")
+        }
+        releaseConfig {
             storeFile file("release-key.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
+            storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword System.getenv("RELEASE_KEY_PASSWORD")
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debugConfig
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.releaseConfig
         }
     }
     productFlavors {

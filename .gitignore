@@ -9,5 +9,5 @@
 /captures
 .externalNativeBuild
 # contains private config settings
-app/release-key.jks
+app/*.jks
 .env
