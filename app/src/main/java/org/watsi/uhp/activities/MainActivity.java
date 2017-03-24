@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG && !BuildConfig.FLAVOR.equals("development")) {
             checkForUpdates();
         }
     }
@@ -82,9 +82,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
-        if (!(BuildConfig.FLAVOR.equals("production"))) {
+        if (BuildConfig.FLAVOR.equals("sandbox")) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.beige));
+        } else if (!(BuildConfig.FLAVOR.equals("production"))) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                    R.color.gray));
         }
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

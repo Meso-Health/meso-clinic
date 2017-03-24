@@ -45,6 +45,20 @@ android {
         }
     }
     productFlavors {
+        development {
+            applicationIdSuffix ".development"
+            versionNameSuffix "-development"
+            resValue "string", "app_name", "UHP Dev"
+            resValue "string", "main_activity_label", "UHP Dev"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_development"
+            ]
+
+            buildConfigField "String", "API_HOST", ENV("DEVELOPMENT_API_HOST")
+            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("DEVELOPMENT_ROLLBAR_ENV_KEY")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("DEVELOPMENT_SIMPRINTS_API_KEY")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
+        }
         sandbox {
             applicationIdSuffix ".sandbox"
             versionNameSuffix "-sandbox"
