@@ -8,9 +8,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
+import org.watsi.uhp.managers.ReportManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
@@ -68,7 +67,7 @@ public class EnrollNewbornInfoFragment extends EnrollmentFragment {
         try {
             birthdate = mDateFormat.parse(attributeBundle.getString(Member.FIELD_NAME_BIRTHDATE));
         } catch (ParseException e) {
-            Rollbar.reportException(e);
+            ReportManager.handleException(e);
             Toast.makeText(getContext(), R.string.birthdate_validation_error, Toast.LENGTH_LONG).show();
             return;
         }
@@ -124,7 +123,7 @@ public class EnrollNewbornInfoFragment extends EnrollmentFragment {
                         cal.get(Calendar.DAY_OF_MONTH)
                 );
             } catch (ParseException e) {
-                Rollbar.reportException(e);
+                ReportManager.handleException(e);
             }
         } else {
             mDatePicker.updateDate(

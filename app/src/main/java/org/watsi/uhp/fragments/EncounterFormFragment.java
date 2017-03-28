@@ -14,11 +14,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.managers.ReportManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
@@ -49,7 +48,7 @@ public class EncounterFormFragment extends Fragment {
             String filename = "encounter_form_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "encounter", getContext());
         } catch (IOException e) {
-            Rollbar.reportException(e);
+            ReportManager.handleException(e);
             new NavigationManager(getActivity()).setReceiptFragment(mEncounter);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
@@ -95,7 +94,7 @@ public class EncounterFormFragment extends Fragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mEncounterFormImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
-                Rollbar.reportException(e);
+                ReportManager.handleException(e);
             }
 
             mEncounterForm.setUrl(mUri.toString());

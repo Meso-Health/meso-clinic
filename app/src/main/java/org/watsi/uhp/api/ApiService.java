@@ -5,12 +5,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.NotificationManager;
+import org.watsi.uhp.managers.ReportManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.User;
 
@@ -62,9 +61,9 @@ public class ApiService {
                 String token = response.body().getToken();
                 ConfigManager.setLoggedInUserToken(token, context);
                 User user = response.body().getUser();
-                Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
+                ReportManager.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
             } else {
-                NotificationManager.requestFailure(
+                ReportManager.requestFailure(
                         "Login failure",
                         request.request(),
                         response.raw()
@@ -72,7 +71,7 @@ public class ApiService {
             }
             return response;
         } catch (IOException | IllegalStateException e) {
-            Rollbar.reportException(e);
+            ReportManager.handleException(e);
             return null;
         }
     }

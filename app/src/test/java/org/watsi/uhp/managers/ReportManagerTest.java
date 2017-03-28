@@ -9,14 +9,10 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.IOException;
-
-import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.BufferedSink;
 
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
@@ -27,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Rollbar.class, Request.class})
-public class NotificationManagerTest {
+public class ReportManagerTest {
 
     private Request request;
     private Response response;
@@ -49,7 +45,7 @@ public class NotificationManagerTest {
 
     @Test
     public void requestFailure_withResponse() throws Exception {
-        NotificationManager.requestFailure("foo", request, response);
+        ReportManager.requestFailure("foo", request, response);
 
         verifyStatic(times(1));
         Rollbar.reportMessage(anyString(), anyString(), anyMap());
@@ -57,7 +53,7 @@ public class NotificationManagerTest {
 
     @Test
     public void requestFailure_noResponse() throws Exception {
-        NotificationManager.requestFailure("foo", request, null);
+        ReportManager.requestFailure("foo", request, null);
 
         verifyStatic(times(1));
         Rollbar.reportMessage(anyString(), anyString(), anyMap());

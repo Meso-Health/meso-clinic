@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
 import com.google.common.io.ByteStreams;
-import com.rollbar.android.Rollbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,13 +34,13 @@ public class FileManager {
             ByteStreams.copy(iStream, byteStream);
             return byteStream.toByteArray();
         } catch (IOException e) {
-            Rollbar.reportException(e);
+            ReportManager.handleException(e);
         } finally {
             try {
                 if (iStream != null) iStream.close();
                 if (byteStream != null) byteStream.close();
             } catch (IOException e1) {
-                Rollbar.reportException(e1);
+                ReportManager.handleException(e1);
             }
         }
         return null;

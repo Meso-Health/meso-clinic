@@ -7,13 +7,13 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.managers.ReportManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
-import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
@@ -106,7 +106,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                         }
                     }
             }
-            Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
+            ReportManager.reportMessage("Migration run from version " + oldVersion + " to " +
+                    newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
