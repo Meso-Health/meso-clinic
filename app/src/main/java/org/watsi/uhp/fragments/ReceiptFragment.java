@@ -16,7 +16,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -62,7 +62,7 @@ public class ReceiptFragment extends Fragment {
                     mEncounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
                     EncounterDao.create(mEncounter);
                 } catch (SQLException e) {
-                    ReportManager.handleException(e);
+                    ExceptionManager.handleException(e);
                 }
 
                 new NavigationManager(getActivity()).setCurrentPatientsFragment();

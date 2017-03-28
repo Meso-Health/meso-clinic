@@ -19,7 +19,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
@@ -352,7 +352,7 @@ public class Member extends SyncableModel {
         } else {
             Map<String,String> params = new HashMap<>();
             params.put("member.id", getId().toString());
-            ReportManager.requestFailure(
+            ExceptionManager.requestFailure(
                     "Failed to fetch member photo",
                     request,
                     response,
@@ -368,7 +368,7 @@ public class Member extends SyncableModel {
             try {
                 return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
             } catch (IOException e) {
-                ReportManager.handleException(e);
+                ExceptionManager.handleException(e);
             }
         }
         return null;
@@ -578,7 +578,7 @@ public class Member extends SyncableModel {
         try {
             return IdentificationEventDao.openCheckIn(getId());
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
             return null;
         }
     }

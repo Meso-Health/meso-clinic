@@ -14,7 +14,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ReportManager {
+public class ExceptionManager {
     public static void requestFailure(String description, Request request, Response response, Map<String,String> params) {
         params.put("Url", request.url().toString());
         params.put("Method", request.method());
@@ -24,7 +24,7 @@ public class ReportManager {
             try {
                 params.put("Content-Length", String.valueOf(request.body().contentLength()));
             } catch (IOException e) {
-                ReportManager.handleException(e);
+                ExceptionManager.handleException(e);
             }
         }
         if (response != null) {

@@ -24,7 +24,7 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
@@ -167,7 +167,7 @@ public class EncounterFragment extends Fragment {
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
         }
 
         return new ArrayAdapter<>(
@@ -202,7 +202,7 @@ public class EncounterFragment extends Fragment {
                 encounterItemAdapter.add(encounterItem);
             }
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
         }
     }
 
@@ -281,7 +281,7 @@ public class EncounterFragment extends Fragment {
                     });
                 }
             } catch (SQLException e) {
-                ReportManager.handleException(e);
+                ExceptionManager.handleException(e);
             }
 
             return new SimpleCursorAdapter(

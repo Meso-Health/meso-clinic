@@ -211,7 +211,7 @@ public class NavigationManager {
                 }
                 return fragment;
             } catch (InstantiationException | IllegalAccessException e) {
-                ReportManager.handleException(e);
+                ExceptionManager.handleException(e);
                 return null;
             }
         }

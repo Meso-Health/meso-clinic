@@ -15,7 +15,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 
 import java.sql.SQLException;
@@ -58,7 +58,7 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
                     new NavigationManager(getActivity()).setCurrentPatientsFragment();
                     Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
                 } catch (SQLException e) {
-                    ReportManager.handleException(e);
+                    ExceptionManager.handleException(e);
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
                 }
             }
@@ -137,7 +137,7 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
 
     private void showFingerprintScanFailedMessage() {
         mFailedMessageView.setVisibility(View.VISIBLE);
-        ReportManager.reportMessage("Simprints scan failed");
+        ExceptionManager.reportMessage("Simprints scan failed");
     }
 
     private void hideFingerprintMessage() {

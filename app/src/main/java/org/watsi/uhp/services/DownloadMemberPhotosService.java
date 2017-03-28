@@ -8,7 +8,7 @@ import android.util.Log;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
@@ -36,12 +36,12 @@ public class DownloadMemberPhotosService extends Service {
                     try {
                         fetchMemberPhotos();
                     } catch (SQLException | IllegalStateException e) {
-                        ReportManager.handleException(e);
+                        ExceptionManager.handleException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        ReportManager.handleException(e);
+                        ExceptionManager.handleException(e);
                     }
 
                 }
@@ -65,7 +65,7 @@ public class DownloadMemberPhotosService extends Service {
                     MemberDao.update(member);
                 }
             } catch (IOException | SQLException e) {
-                ReportManager.handleException(e);
+                ExceptionManager.handleException(e);
                 fetchFailures++;
                 try {
                     Thread.sleep(1000);

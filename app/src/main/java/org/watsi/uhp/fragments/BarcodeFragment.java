@@ -20,7 +20,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -74,14 +74,14 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    ReportManager.handleException(e);
+                    ExceptionManager.handleException(e);
                 }
             }
 
             setBarcodeProcessor(barcodeDetector);
             mCameraSource.start(holder);
         } catch (IOException | SecurityException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
         }
     }
 
@@ -158,7 +158,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                             try {
                                 Thread.sleep(500);
                             } catch (InterruptedException e1) {
-                                ReportManager.handleException(e1);
+                                ExceptionManager.handleException(e1);
                             }
                         }
                     }

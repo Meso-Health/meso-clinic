@@ -17,7 +17,7 @@ import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -42,7 +42,7 @@ public class VersionAndSyncFragment extends Fragment {
                     .getPackageInfo(getActivity().getPackageName(), 0);
             ((TextView) view.findViewById(R.id.version_number)).setText(pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
         }
 
         final View finalView = view;
@@ -97,7 +97,7 @@ public class VersionAndSyncFragment extends Fragment {
                     counts[3] = IdentificationEventDao.unsynced().size();
                     counts[4] = EncounterDao.unsynced().size();
                 } catch (SQLException | IllegalStateException e) {
-                    ReportManager.handleException(e);
+                    ExceptionManager.handleException(e);
                 }
                 return counts;
             }

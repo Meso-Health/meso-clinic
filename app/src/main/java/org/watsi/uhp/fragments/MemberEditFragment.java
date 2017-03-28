@@ -13,7 +13,7 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -84,7 +84,7 @@ public class MemberEditFragment extends Fragment {
                         mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
                         MemberDao.update(mMember);
                     } catch (SQLException e) {
-                        ReportManager.handleException(e);
+                        ExceptionManager.handleException(e);
                         toastMessage = "Failed to update the member information.";
                     }
 

@@ -16,7 +16,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
@@ -61,7 +61,7 @@ public class CurrentPatientsFragment extends Fragment {
                 }
             });
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 

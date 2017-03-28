@@ -23,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Rollbar.class, Request.class})
-public class ReportManagerTest {
+public class ExceptionManagerTest {
 
     private Request request;
     private Response response;
@@ -45,7 +45,7 @@ public class ReportManagerTest {
 
     @Test
     public void requestFailure_withResponse() throws Exception {
-        ReportManager.requestFailure("foo", request, response);
+        ExceptionManager.requestFailure("foo", request, response);
 
         verifyStatic(times(1));
         Rollbar.reportMessage(anyString(), anyString(), anyMap());
@@ -53,7 +53,7 @@ public class ReportManagerTest {
 
     @Test
     public void requestFailure_noResponse() throws Exception {
-        ReportManager.requestFailure("foo", request, null);
+        ExceptionManager.requestFailure("foo", request, null);
 
         verifyStatic(times(1));
         Rollbar.reportMessage(anyString(), anyString(), anyMap());

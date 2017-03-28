@@ -27,7 +27,7 @@ import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -157,7 +157,7 @@ public class DetailFragment extends Fragment {
                         encounter.setEncounterItems(
                                 EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
                     } catch (SQLException e) {
-                        ReportManager.handleException(e);
+                        ExceptionManager.handleException(e);
                     }
                     MainActivity activity = (MainActivity) getActivity();
                     new NavigationManager(activity).setEncounterFragment(encounter);
@@ -200,7 +200,7 @@ public class DetailFragment extends Fragment {
                 }
             });
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
         }
     }
 
@@ -223,7 +223,7 @@ public class DetailFragment extends Fragment {
         try {
             IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
         }
 
         new NavigationManager(getActivity()).setCurrentPatientsFragment();
@@ -247,7 +247,7 @@ public class DetailFragment extends Fragment {
                     Toast.LENGTH_LONG).
                     show();
         } catch (SQLException e) {
-            ReportManager.handleException(e);
+            ExceptionManager.handleException(e);
             Toast.makeText(getActivity().getApplicationContext(),
                     getActivity().getString(R.string.identification_dismissed_failure),
                     Toast.LENGTH_LONG).

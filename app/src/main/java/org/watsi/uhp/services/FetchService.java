@@ -12,7 +12,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
@@ -54,7 +54,7 @@ public class FetchService extends Service {
                             Thread.sleep(WAIT_FOR_LOGIN_SLEEP_TIME);
                             continue;
                         } catch (InterruptedException e) {
-                            ReportManager.handleException(e);
+                            ExceptionManager.handleException(e);
                         }
                     }
 
@@ -62,12 +62,12 @@ public class FetchService extends Service {
                         fetchNewMemberData();
                         fetchBillables();
                     } catch (IOException | SQLException | IllegalStateException e) {
-                        ReportManager.handleException(e);
+                        ExceptionManager.handleException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        ReportManager.handleException(e);
+                        ExceptionManager.handleException(e);
                     }
 
                 }
@@ -92,7 +92,7 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                ReportManager.requestFailure(
+                ExceptionManager.requestFailure(
                         "Failed to fetch members",
                         request.request(),
                         response.raw()
@@ -125,7 +125,7 @@ public class FetchService extends Service {
         for (UUID toBeDeleted : previousMemberIds) {
             Map<String, String> params = new HashMap<>();
             params.put("member.id", toBeDeleted.toString());
-            ReportManager.reportMessage("Member synced on device but not in backend", "warning",
+            ExceptionManager.reportMessage("Member synced on device but not in backend", "warning",
                     params);
         }
     }
@@ -157,7 +157,7 @@ public class FetchService extends Service {
                 member.setSynced();
                 MemberDao.createOrUpdate(member);
             } catch (AbstractModel.ValidationException e) {
-                ReportManager.handleException(e);
+                ExceptionManager.handleException(e);
             }
 
             iterator.remove();
@@ -180,7 +180,7 @@ public class FetchService extends Service {
             );
         } else {
             if (response.code() != 304) {
-                ReportManager.requestFailure(
+                ExceptionManager.requestFailure(
                         "Failed to fetch billables",
                         request.request(),
                         response.raw()

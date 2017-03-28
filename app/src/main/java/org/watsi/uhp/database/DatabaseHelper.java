@@ -8,7 +8,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
@@ -106,7 +106,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                         }
                     }
             }
-            ReportManager.reportMessage("Migration run from version " + oldVersion + " to " +
+            ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);

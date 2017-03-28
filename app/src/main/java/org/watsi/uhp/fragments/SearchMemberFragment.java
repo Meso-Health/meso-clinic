@@ -16,7 +16,7 @@ import android.widget.TextView;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ReportManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -128,7 +128,7 @@ public class SearchMemberFragment extends Fragment {
                         }
                     });
                 } catch (SQLException e) {
-                    ReportManager.handleException(e);
+                    ExceptionManager.handleException(e);
                 }
             }
         }).start();
