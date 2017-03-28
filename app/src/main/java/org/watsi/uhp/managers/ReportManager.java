@@ -40,18 +40,18 @@ public class ReportManager {
     }
 
     public static void handleException(Throwable e) {
-        if (BuildConfig.FLAVOR.equals("development")) {
-            Log.e("Exception", e.getMessage());
-        } else {
+        if (BuildConfig.REPORT_TO_ROLLBAR) {
             Rollbar.reportException(e);
+        } else {
+            Log.e("Exception", e.getMessage());
         }
     }
 
     public static void reportMessage(String message, String level, Map<String, String> params) {
-        if (BuildConfig.FLAVOR.equals("development")) {
-            Log.i("Message", message);
-        } else {
+        if (BuildConfig.REPORT_TO_ROLLBAR) {
             Rollbar.reportMessage(message, level, params);
+        } else {
+            Log.i("Message", message);
         }
     }
 
@@ -60,10 +60,10 @@ public class ReportManager {
     }
 
     public static void setPersonData(String id, String username, String detail) {
-        if (BuildConfig.FLAVOR.equals("development")) {
-            Log.i("Person Data Set", "id:" + id + ", username:" + username + ", detail:" + detail);
-        } else {
+        if (BuildConfig.REPORT_TO_ROLLBAR) {
             Rollbar.setPersonData(id, username, detail);
+        } else {
+            Log.i("Person Data Set", "id:" + id + ", username:" + username + ", detail:" + detail);
         }
     }
 }

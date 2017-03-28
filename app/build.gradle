@@ -55,9 +55,11 @@ android {
             ]
 
             buildConfigField "String", "API_HOST", ENV("DEVELOPMENT_API_HOST")
-            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("DEVELOPMENT_ROLLBAR_ENV_KEY")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("DEVELOPMENT_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
+            buildConfigField "String", "ROLLBAR_ENV_KEY", "null"
+            buildConfigField "boolean", "CHECK_HOCKEYAPP", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("DEVELOPMENT_SIMPRINTS_API_KEY")
         }
         sandbox {
             applicationIdSuffix ".sandbox"
@@ -69,9 +71,11 @@ android {
             ]
 
             buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
+            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("SANDBOX_ROLLBAR_ENV_KEY")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "CHECK_HOCKEYAPP", "true"
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
         production {
             applicationIdSuffix ".production"
@@ -83,9 +87,11 @@ android {
             ]
 
             buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
+            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("PRODUCTION_ROLLBAR_ENV_KEY")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "CHECK_HOCKEYAPP", "true"
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
         }
     }
 }

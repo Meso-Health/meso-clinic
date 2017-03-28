@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
 
+import net.hockeyapp.android.UpdateManager;
+
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
@@ -27,8 +29,6 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
-
-import net.hockeyapp.android.UpdateManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
-        if (!BuildConfig.DEBUG && !BuildConfig.FLAVOR.equals("development")) {
+        if (BuildConfig.CHECK_HOCKEYAPP) {
             checkForUpdates();
         }
     }
