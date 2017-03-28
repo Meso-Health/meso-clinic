@@ -8,13 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.R;
-import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
@@ -88,7 +84,7 @@ public class NavigationManagerTest {
         BarcodeFragment fragment = mock(BarcodeFragment.class);
         when(mockFragmentProvider.createFragment(BarcodeFragment.class)).thenReturn(fragment);
 
-        navMgr.setBarcodeFragment(false, null, null);
+        navMgr.setBarcodeFragment(BarcodeFragment.ScanPurposeEnum.ID, null, null);
         addsToBackStackButDoesNotPopBackStack(fragment);
     }
 
@@ -98,24 +94,6 @@ public class NavigationManagerTest {
         when(mockFragmentProvider.createFragment(SearchMemberFragment.class)).thenReturn(fragment);
 
         navMgr.setSearchMemberFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setEncounterFragment() throws Exception {
-        EncounterFragment fragment = mock(EncounterFragment.class);
-        when(mockFragmentProvider.createFragment(EncounterFragment.class)).thenReturn(fragment);
-
-        navMgr.setEncounterFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setAddNewBillableFragment() throws Exception {
-        AddNewBillableFragment fragment = mock(AddNewBillableFragment.class);
-        when(mockFragmentProvider.createFragment(AddNewBillableFragment.class)).thenReturn(fragment);
-
-        navMgr.setAddNewBillableFragment();
         addsToBackStackButDoesNotPopBackStack(fragment);
     }
 

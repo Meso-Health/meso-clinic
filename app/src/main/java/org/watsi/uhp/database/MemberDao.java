@@ -48,6 +48,10 @@ public class MemberDao {
         return mMemberDao;
     }
 
+    public static void create(Member member) throws SQLException {
+        getInstance().getMemberDao().create(member);
+    }
+
     public static void createOrUpdate(Member member) throws SQLException {
         getInstance().getMemberDao().createOrUpdate(member);
     }
@@ -119,6 +123,7 @@ public class MemberDao {
                 "   SELECT id, member_id, max(created_at) AS created_at\n" +
                 "   FROM identifications\n" +
                 "   WHERE accepted = 1\n" +
+                "   AND dismissed = 0\n" +
                 "   GROUP BY member_id\n" +
                 ") last_identifications on last_identifications.member_id = members.id\n" +
                 "LEFT OUTER JOIN encounters ON encounters.identification_event_id = last_identifications.id\n" +

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -21,6 +22,10 @@ public class Encounter extends SyncableModel {
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_IDENTIFICATION_EVENT_ID = "identification_event_id";
     public static final String FIELD_NAME_ENCOUNTER_ITEMS = "encounter_items";
+    public static final String FIELD_NAME_ENCOUNTER_FORMS = "encounter_forms";
+    public static final String FIELD_NAME_BACKDATED_OCCURRED_AT = "backdated_occurred_at";
+
+    public static final DecimalFormat PRICE_FORMAT = new DecimalFormat("#,###,###");
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
@@ -49,6 +54,13 @@ public class Encounter extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_ENCOUNTER_ITEMS)
     private final List<EncounterItem> mEncounterItems = new ArrayList<>();
+
+    private final List<EncounterForm> mEncounterForms = new ArrayList<>();
+
+    @Expose
+    @SerializedName(FIELD_NAME_BACKDATED_OCCURRED_AT)
+    @DatabaseField(columnName = FIELD_NAME_BACKDATED_OCCURRED_AT, canBeNull = false, defaultValue = "false")
+    private boolean mBackdatedOccurredAt;
 
     public Encounter() {
         super();
@@ -113,5 +125,30 @@ public class Encounter extends SyncableModel {
     public void setEncounterItems(Collection<EncounterItem> encounterItems) {
         this.mEncounterItems.clear();
         this.mEncounterItems.addAll(encounterItems);
+    }
+
+    public Boolean getBackdatedOccurredAt() {
+        return mBackdatedOccurredAt;
+    }
+
+    public void setBackdatedOccurredAt(Boolean backdatedOccurredAt) {
+        this.mBackdatedOccurredAt = backdatedOccurredAt;
+    }
+
+    public List<EncounterForm> getEncounterForms() {
+        return mEncounterForms;
+    }
+
+    public void addEncounterForm(EncounterForm encounterForm) {
+        encounterForm.setEncounter(this);
+        getEncounterForms().add(encounterForm);
+    }
+
+    public int price() {
+        int sum = 0;
+        for (EncounterItem item : getEncounterItems()) {
+            sum += item.getBillable().getPrice() * item.getQuantity();
+        }
+        return sum;
     }
 }

@@ -3,6 +3,7 @@ package org.watsi.uhp.fragments;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -13,15 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import me.philio.pinentry.PinEntryView;
 import retrofit2.Response;
@@ -33,6 +29,7 @@ public class LoginFragment extends Fragment {
         getActivity().setTitle(R.string.login_fragment_label);
         setHasOptionsMenu(true);
         getActivity().invalidateOptionsMenu();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         final View view = inflater.inflate(R.layout.fragment_login, container, false);
 
@@ -63,27 +60,23 @@ public class LoginFragment extends Fragment {
                         Response response = ApiService.login(username, password, getContext());
                         spinner.dismiss();
                         if (response == null || !response.isSuccessful()) {
-                            StringBuilder sb = new StringBuilder();
+                            String errorMessage;
+
                             if (response == null) {
-                                sb.append(getContext().getString(R.string.login_generic_failure_message));
+                                errorMessage = getContext().getString(R.string.login_offline_error);
+                            } else if (response.code() == 401) {
+                                errorMessage = getContext().getString(R.string.login_wrong_password_message);
                             } else {
-                                if (response.code() == 401) {
-                                    sb.append(getContext().getString(R.string.login_wrong_password_message));
-                                } else {
-                                    Map<String, String> errorParams = new HashMap<>();
-                                    errorParams.put("username", username);
-                                    errorParams.put("http_status_code", String.valueOf(response.code()));
-                                    Rollbar.reportMessage("Login failed", "warning", errorParams);
-                                    sb.append(getContext().getString(R.string.login_generic_failure_message));
-                                }
+                                errorMessage = getContext().getString(R.string.login_generic_failure_message);
                             }
-                            final String errorMessage = sb.toString();
+
+                            final String errorMessageFinal = errorMessage;
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     Toast.makeText(
                                             getActivity().getApplicationContext(),
-                                            errorMessage,
+                                            errorMessageFinal,
                                             Toast.LENGTH_SHORT
                                     ).show();
                                 }

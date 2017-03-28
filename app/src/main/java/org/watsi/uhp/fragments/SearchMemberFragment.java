@@ -122,7 +122,7 @@ public class SearchMemberFragment extends Fragment {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     Member member = (Member) parent.getItemAtPosition(position);
                                     new NavigationManager(getActivity()).setDetailFragment(
-                                            member.getId(), idMethod, null);
+                                            member, idMethod, null);
                                 }
                             });
                             mLoadingPanel.setVisibility(View.GONE);

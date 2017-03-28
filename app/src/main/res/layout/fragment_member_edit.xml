@@ -12,7 +12,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="@string/member_edit_name_label"
+        android:text="@string/name_label"
         android:labelFor="@+id/member_name" />
 
     <EditText
@@ -26,7 +26,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="@string/member_edit_phone_number_label"
+        android:text="@string/phone_number_label"
         android:labelFor="@+id/phone_number" />
 
     <EditText
@@ -40,7 +40,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="@string/member_edit_card_id_label"
+        android:text="@string/card_id_label"
         android:labelFor="@+id/card_id" />
 
     <EditText
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_marginTop="5dp"
-        android:text="@string/member_edit_scan_card_btn_label" />
+        android:text="@string/scan_card_btn_label" />
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.managers.ConfigManager;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -22,6 +24,8 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_ACCEPTED = "accepted";
     public static final String FIELD_NAME_CLINIC_NUMBER = "clinic_number";
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
+    public static final String FIELD_NAME_DISMISSED = "dismissed";
+    public static final String FIELD_NAME_DISMISSAL_REASON = "dismissal_reason";
 
     public enum ClinicNumberTypeEnum {
         @SerializedName("opd") OPD,
@@ -33,6 +37,12 @@ public class IdentificationEvent extends SyncableModel {
         @SerializedName("search_id") SEARCH_ID,
         @SerializedName("search_name") SEARCH_NAME,
         @SerializedName("through_household") THROUGH_HOUSEHOLD
+    }
+
+    public enum DismissalReasonEnum {
+        @SerializedName("accidental_identification") ACCIDENTAL_IDENTIFICATION,
+        @SerializedName("patient_left_before_care") PATIENT_LEFT_BEFORE_CARE,
+        @SerializedName("patient_left_after_care") PATIENT_LEFT_AFTER_CARE,
     }
 
     @Expose
@@ -82,15 +92,20 @@ public class IdentificationEvent extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_CLINIC_NUMBER_TYPE)
     @DatabaseField(columnName = FIELD_NAME_CLINIC_NUMBER_TYPE)
-    private IdentificationEvent.ClinicNumberTypeEnum mClinicNumberTypeEnum;
+    private ClinicNumberTypeEnum mClinicNumberTypeEnum;
+
+    @Expose
+    @SerializedName(FIELD_NAME_DISMISSED)
+    @DatabaseField(columnName = FIELD_NAME_DISMISSED, canBeNull = false, defaultValue = "false")
+    private boolean mDismissed;
+
+    @Expose
+    @SerializedName(FIELD_NAME_DISMISSAL_REASON)
+    @DatabaseField(columnName = FIELD_NAME_DISMISSAL_REASON)
+    private DismissalReasonEnum mDismissalReason;
 
     public IdentificationEvent() {
         super();
-    }
-
-    public IdentificationEvent(String token) {
-        super();
-        setToken(token);
     }
 
     public UUID getId() {
@@ -181,11 +196,39 @@ public class IdentificationEvent extends SyncableModel {
         }
     }
 
-    public IdentificationEvent.ClinicNumberTypeEnum getClinicNumberType() {
+    public ClinicNumberTypeEnum getClinicNumberType() {
         return mClinicNumberTypeEnum;
     }
 
-    public void setClinicNumberType(IdentificationEvent.ClinicNumberTypeEnum numberType) {
+    public void setClinicNumberType(ClinicNumberTypeEnum numberType) {
         this.mClinicNumberTypeEnum = numberType;
+    }
+
+    public boolean getDismissed() {
+        return mDismissed;
+    }
+
+    public void setDismissed(boolean dismissed) {
+        this.mDismissed = dismissed;
+    }
+
+    public DismissalReasonEnum getDismissalReason() {
+        return mDismissalReason;
+    }
+
+    public static String[] getFormattedDismissalReasons() {
+        String[] names = new String[DismissalReasonEnum.values().length];
+
+        for (int i = 0; i < names.length; i++) {
+            String dismissalReason = DismissalReasonEnum.values()[i].name().replace("_", " ").toLowerCase();
+            names[i] = dismissalReason.substring(0,1).toUpperCase() + dismissalReason.substring(1);
+        }
+
+        return names;
+    }
+
+    public void setDismissalReason(DismissalReasonEnum dismissalReason) {
+        setDismissed(true);
+        this.mDismissalReason = dismissalReason;
     }
 }

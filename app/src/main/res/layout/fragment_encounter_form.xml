@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/enrollment_member_photo_fragment"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,26 +12,37 @@
         android:id="@+id/photo_btn"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="@string/enrollment_member_photo_btn" />
+        android:text="@string/photo_btn_label" />
 
     <ImageView
         android:id="@+id/photo"
-        android:contentDescription="@string/enrollment_member_photo_description"
+        android:contentDescription="@string/photo_description"
         android:layout_height="400dp"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom">
+        style="?android:attr/buttonBarButtonStyle"
+        android:gravity="bottom" >
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/add_another_button"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="@string/enrollment_next_step_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="android:attr/buttonBarButtonStyle"
+            android:text="@string/add_another_label"
             android:enabled="false" />
-    </RelativeLayout>
+
+        <Button
+            android:id="@+id/finish_button"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="android:attr/buttonBarButtonStyle"
+            android:text="@string/finish_btn_label" />
+    </LinearLayout>
 </LinearLayout>

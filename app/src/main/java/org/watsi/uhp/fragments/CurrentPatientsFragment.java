@@ -38,7 +38,8 @@ public class CurrentPatientsFragment extends Fragment {
         mNewPatientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setBarcodeFragment(false, null, null);
+                new NavigationManager(getActivity()).setBarcodeFragment(
+                        BarcodeFragment.ScanPurposeEnum.ID, null, null);
                 ((AppCompatActivity) getActivity()).getSupportActionBar()
                         .setDisplayHomeAsUpEnabled(true);
             }
@@ -54,7 +55,7 @@ public class CurrentPatientsFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
                     MainActivity activity = (MainActivity) getActivity();
-                    new NavigationManager(activity).setDetailFragment(member.getId(), null, null);
+                    new NavigationManager(activity).setDetailFragment(member, null, null);
 
                     ((AppCompatActivity) getActivity()).getSupportActionBar()
                             .setDisplayHomeAsUpEnabled(true);
@@ -62,7 +63,7 @@ public class CurrentPatientsFragment extends Fragment {
             });
         } catch (SQLException e) {
             Rollbar.reportException(e);
-            Toast.makeText(getContext(), "Failed to load members", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
         return view;

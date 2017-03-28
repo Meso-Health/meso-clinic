@@ -35,43 +35,50 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin">
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="@drawable/background_rectangle" >
 
-            <RelativeLayout
+            <Spinner
+                android:id="@+id/billable_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/background_rectangle">
+                android:layout_height="40dp"
+                android:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/billable_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:visibility="gone" />
-
-                <SearchView
-                    android:id="@+id/drug_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:iconifiedByDefault="false"
-                    android:queryHint="@string/search_drug_hint"
-                    android:visibility="gone" />
-            </RelativeLayout>
+            <SearchView
+                android:id="@+id/drug_search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:iconifiedByDefault="false"
+                android:queryHint="@string/search_drug_hint"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/add_billable_prompt"
-        android:layout_width="96dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:gravity="bottom"
-        android:textAlignment="gravity"
-        android:text="@string/add_billable_prompt"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:paddingBottom="5dp"
-        android:layout_marginEnd="10dp"
-        android:onClick="onClick"
-        android:clickable="true"/>
+        android:gravity="bottom">
+
+        <TextView
+            android:id="@+id/backdate_encounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="@string/backdate"
+            android:clickable="true"/>
+
+        <TextView
+            android:id="@+id/add_billable_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/add_billable_prompt"
+            android:paddingBottom="5dp"
+            android:clickable="true"/>
+    </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"

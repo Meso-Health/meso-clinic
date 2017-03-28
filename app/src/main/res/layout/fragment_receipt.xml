@@ -39,6 +39,15 @@
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/total"/>
 
+    <TextView
+        android:id="@+id/forms_attached"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:gravity="end"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/total_price"/>
+
     <Button
         android:id="@+id/create_encounter"
         android:layout_width="match_parent"

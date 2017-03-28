@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
@@ -20,8 +21,11 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,7 +45,7 @@ public class FetchService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DatabaseHelper.init(getApplicationContext());
-        mProviderId = ConfigManager.getProviderId(getApplicationContext());
+        mProviderId = BuildConfig.PROVIDER_ID;
 
         new Thread(new Runnable() {
             @Override
@@ -82,7 +86,7 @@ public class FetchService extends Service {
         if (response.isSuccessful()) {
             Log.d("UHP", "updating member data");
             List<Member> members = response.body();
-            deleteRemovedMembers(members);
+            notifyAboutMembersToBeDeleted(members);
             createOrUpdateMembers(members);
             ConfigManager.setMemberLastModified(
                     response.headers().get("last-modified"),
@@ -99,12 +103,32 @@ public class FetchService extends Service {
         }
     }
 
-    private void deleteRemovedMembers(List<Member> members) throws SQLException {
+    /**
+     * This reports to Rollbar the IDs of any members who are marked as synced
+     * locally on the device, but are not in the list of members returned by
+     * the server.
+     *
+     * These members should be safe to delete, but for now we are choosing
+     * the safer route of first creating notifications of their existence
+     * @param members
+     * @throws SQLException
+     */
+    private void notifyAboutMembersToBeDeleted(List<Member> members) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
         for (Member member : members) {
             previousMemberIds.remove(member.getId());
         }
-        MemberDao.deleteById(previousMemberIds);
+        Set<UUID> unsyncedPrevMembers = new HashSet<>();
+        for (UUID prevMemberId : previousMemberIds) {
+            Member member = MemberDao.findById(prevMemberId);
+            if (!member.isSynced()) unsyncedPrevMembers.add(prevMemberId);
+        }
+        previousMemberIds.removeAll(unsyncedPrevMembers);
+        for (UUID toBeDeleted : previousMemberIds) {
+            Map<String, String> params = new HashMap<>();
+            params.put("member.id", toBeDeleted.toString());
+            Rollbar.reportMessage("Member synced on device but not in backend", "warning", params);
+        }
     }
 
     private void createOrUpdateMembers(List<Member> members) throws SQLException {
@@ -167,7 +191,7 @@ public class FetchService extends Service {
 
     }
 
-        @Nullable
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;

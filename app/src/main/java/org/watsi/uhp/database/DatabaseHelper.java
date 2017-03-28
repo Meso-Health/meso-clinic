@@ -11,12 +11,14 @@ import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -24,7 +26,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 9;
 
     private static DatabaseHelper instance;
 
@@ -53,6 +55,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, IdentificationEvent.class);
             TableUtils.createTable(connectionSource, Encounter.class);
             TableUtils.createTable(connectionSource, EncounterItem.class);
+            TableUtils.createTable(connectionSource, EncounterForm.class);
             TableUtils.createTable(connectionSource, User.class);
             Log.d("UHP", "onCreate database helper called");
         } catch (SQLException e) {
@@ -62,7 +65,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         try {
             switch (oldVersion) {
                 default:
@@ -74,13 +76,37 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     TableUtils.createTable(connectionSource, IdentificationEvent.class);
                     TableUtils.createTable(connectionSource, Encounter.class);
                     TableUtils.createTable(connectionSource, EncounterItem.class);
-                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING NOT NULL DEFAULT '[]';");
+                    onUpgrade(database, connectionSource, 4, newVersion);
                     break;
                 case 3:
-                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING;");
-                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN dirty_fields STRING;");
-                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dirty_fields STRING;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN dirty_fields STRING NOT NULL DEFAULT '[]';");
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN dirty_fields STRING NOT NULL DEFAULT '[]';");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dirty_fields STRING NOT NULL DEFAULT '[]';");
+                case 4:
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN birthdate DATE;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN birthdate_accuracy STRING;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN is_new BOOLEAN NOT NULL DEFAULT 0;");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN enrolled_at DATE;");
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN is_new BOOLEAN NOT NULL DEFAULT 0;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN is_new BOOLEAN NOT NULL DEFAULT 0;");
+                case 5:
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN backdated_occurred_at BOOLEAN NOT NULL DEFAULT 0;");
+                case 6:
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissed BOOLEAN NOT NULL DEFAULT 0;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
+                case 7:
+                    TableUtils.createTable(connectionSource, EncounterForm.class);
+                case 8:
+                    List<IdentificationEvent> idEvents = IdentificationEventDao.unsynced();
+                    for (IdentificationEvent idEvent: idEvents) {
+                        if (!idEvent.getDismissed() && !idEvent.isNew()) {
+                            idEvent.setIsNew(true);
+                            IdentificationEventDao.update(idEvent);
+                        }
+                    }
             }
+            Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

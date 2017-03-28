@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/member_photo"
-        android:contentDescription="@string/member_photo_content_description"
+        android:contentDescription="@string/photo_description"
         android:layout_width="@dimen/detail_fragment_photo_width"
         android:layout_height="@dimen/detail_fragment_photo_height"
         android:layout_marginTop="4dp"
@@ -62,7 +62,17 @@
             android:layout_width="wrap_content"
             android:text="@string/reject_identity"
             android:clickable="true"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/dismiss_patient"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/dismiss_patient"
+            android:clickable="true"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <Button

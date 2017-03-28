@@ -24,17 +24,18 @@ import com.rollbar.android.Rollbar;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 public class DetailFragment extends Fragment {
 
@@ -55,30 +56,25 @@ public class DetailFragment extends Fragment {
         if (searchMethodString != null) {
             mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
         }
-        UUID memberId = UUID.fromString(
-                getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
 
-        ((MainActivity) getActivity()).setMemberId(memberId);
-        String throughMemberId = getArguments().getString(
-                NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
-
-        try {
-            mMember = MemberDao.findById(memberId);
-            if (throughMemberId != null) {
-                mThroughMember = MemberDao.findById(UUID.fromString(throughMemberId));
-            }
-        } catch (SQLException e) {
-            Rollbar.reportException(e);
-        }
+        mThroughMember = (Member) getArguments()
+                .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
         setPatientCard(view);
         setButton(view);
         setHouseholdList(view);
-        setRejectIdentityLink(view);
+        if (mMember.currentCheckIn() == null) {
+            setRejectIdentityLink(view);
+        } else {
+            setDismissPatientLink(view);
+        }
+
         return view;
     }
 
     private void setRejectIdentityLink(View view) {
+        view.findViewById(R.id.reject_identity).setVisibility(View.VISIBLE);
         view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,6 +84,26 @@ public class DetailFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 completeIdentification(false, null, null);
+                            }
+                        }).create().show();
+            }
+        });
+    }
+
+    private void setDismissPatientLink(View view) {
+        view.findViewById(R.id.dismiss_patient).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.dismiss_patient).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.dismiss_patient_alert)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
+                                DialogInterface
+                                .OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dismissIdentification(IdentificationEvent
+                                        .DismissalReasonEnum.values()[which]);
                             }
                         }).create().show();
             }
@@ -133,9 +149,19 @@ public class DetailFragment extends Fragment {
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Encounter encounter = new Encounter();
+                    IdentificationEvent checkIn = mMember.currentCheckIn();
+                    encounter.setOccurredAt(Clock.getCurrentTime());
+                    encounter.setMember(mMember);
+                    encounter.setIdentificationEvent(checkIn);
+                    try {
+                        encounter.setEncounterItems(
+                                EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+                    } catch (SQLException e) {
+                        Rollbar.reportException(e);
+                    }
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.setNewEncounter(mMember);
-                    new NavigationManager(activity).setEncounterFragment();
+                    new NavigationManager(activity).setEncounterFragment(encounter);
                 }
             });
         }
@@ -168,9 +194,9 @@ public class DetailFragment extends Fragment {
                     MainActivity activity = (MainActivity) getActivity();
 
                     new NavigationManager(activity).setDetailFragment(
-                            member.getId(),
+                            member,
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            mMember.getId()
+                            mMember
                     );
                 }
             });
@@ -182,9 +208,9 @@ public class DetailFragment extends Fragment {
     public void completeIdentification(boolean accepted,
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
-
-        IdentificationEvent idEvent =
-                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setIsNew(true);
+        idEvent.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -209,14 +235,38 @@ public class DetailFragment extends Fragment {
                 show();
     }
 
+    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason) {
+        IdentificationEvent checkIn = mMember.currentCheckIn();
+        checkIn.setDismissalReason(dismissReason);
+        checkIn.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+
+        try {
+            IdentificationEventDao.update(checkIn);
+            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            Toast.makeText(getActivity().getApplicationContext(),
+                    mMember.getFullName() + " " + getActivity().getString(R.string.identification_dismissed),
+                    Toast.LENGTH_LONG).
+                    show();
+        } catch (SQLException e) {
+            Rollbar.reportException(e);
+            Toast.makeText(getActivity().getApplicationContext(),
+                    getActivity().getString(R.string.identification_dismissed_failure),
+                    Toast.LENGTH_LONG).
+                    show();
+        }
+    }
+
     public IdentificationEvent.SearchMethodEnum getIdMethod() {
         return this.mIdMethod;
     }
+
+    public Member getMember() { return this.mMember; }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.menu_member_edit).setVisible(true);
+        menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }

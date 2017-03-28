@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +24,19 @@ import android.widget.Toast;
 import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,11 +48,12 @@ public class EncounterFragment extends Fragment {
     private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private TextView addBillableLink;
+    private Encounter encounter;
+    private TextView backdateEncounterLink;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        String currentMemberName = ((MainActivity)getActivity()).getCurrentEncounter().getMember().getFullName();
-        getActivity().setTitle(currentMemberName);
+        encounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
+        getActivity().setTitle(encounter.getMember().getFullName());
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -57,17 +62,24 @@ public class EncounterFragment extends Fragment {
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
-        addBillableLink = (TextView) view.findViewById(R.id.add_billable_prompt);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
+        backdateEncounterLink = (TextView) view.findViewById(R.id.backdate_encounter);
         Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
         setContinueToReceiptButton(continueToReceiptButton);
-        setAddBillableLink();
+        setAddBillableLink(view);
+        setBackdateEncounterListener();
+
+        if (encounter.getBackdatedOccurredAt()) updateBackdateLinkText();
 
         return view;
+    }
+
+    protected Encounter getEncounter() {
+        return encounter;
     }
 
     private void setCategorySpinner() {
@@ -101,7 +113,7 @@ public class EncounterFragment extends Fragment {
     }
 
     private void setLineItemList() {
-        List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
+        List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
 
         encounterItemAdapter = new EncounterItemAdapter(getContext(), encounterItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
@@ -116,11 +128,23 @@ public class EncounterFragment extends Fragment {
         });
     }
 
-    private void setAddBillableLink() {
-        addBillableLink.setOnClickListener(new View.OnClickListener() {
+    private void setAddBillableLink(View view) {
+        view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setAddNewBillableFragment();
+                new NavigationManager(getActivity()).setAddNewBillableFragment(encounter);
+            }
+        });
+    }
+
+    private void setBackdateEncounterListener() {
+        final Fragment fragment = this;
+        backdateEncounterLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
+                dialog.setTargetFragment(fragment, 0);
+                dialog.show(getActivity().getSupportFragmentManager(), "BackdateEncounterDialogFragment");
             }
         });
     }
@@ -129,7 +153,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setReceiptFragment();
+                new NavigationManager(getActivity()).setEncounterFormFragment(encounter);
             }
         });
     }
@@ -167,7 +191,7 @@ public class EncounterFragment extends Fragment {
     public void addToLineItemList(UUID billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
-            List<EncounterItem> encounterItems = ((MainActivity) getActivity()).getCurrentLineItems();
+            List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
 
             if (containsId(encounterItems, billableId)) {
                 Toast.makeText(getActivity().getApplicationContext(), R.string.already_in_list_items,
@@ -307,5 +331,13 @@ public class EncounterFragment extends Fragment {
             clearDrugSearch();
             return true;
         }
+    }
+
+    public void updateBackdateLinkText() {
+        Date backdate = encounter.getOccurredAt();
+        String backdateText = new SimpleDateFormat("MMM d, H:mma").format(backdate);
+        SpannableString content = new SpannableString("Date: " + backdateText);
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        backdateEncounterLink.setText(content);
     }
 }

@@ -37,7 +37,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
 
     @Override
     int getFragmentLayoutId() {
-        return R.layout.fragment_enrollment_member_photo;
+        return R.layout.fragment_capture_photo;
     }
 
     @Override
@@ -58,9 +58,9 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 navigationManager.setCurrentPatientsFragment();
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mMember.shouldCaptureNationalIdPhoto()) {
-                navigationManager.setEnrollmentIdPhotoFragment(mMember.getId());
+                navigationManager.setEnrollmentIdPhotoFragment(mMember);
             } else {
-                navigationManager.setEnrollmentContactInfoFragment(mMember.getId());
+                navigationManager.setEnrollmentContactInfoFragment(mMember);
             }
         } catch (SQLException e) {
             Rollbar.reportException(e);
@@ -70,6 +70,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
 
     @Override
     void setUpFragment(View view) {
+        ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_member_photo_btn);
         try {
             String filename = "member_" + mMember.getId().toString() +
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";
@@ -99,7 +100,6 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 Rollbar.reportException(e);
             }
 
-            // TODO: potential timing issue if member data syncs before we flag this as un-synced
             mMember.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {

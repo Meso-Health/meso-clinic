@@ -27,16 +27,15 @@ import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback {
 
     private CameraSource mCameraSource;
     private Button mSearchMemberButton;
     private Toast mErrorToast;
-    private boolean mOnlyScan;
-    private UUID mMemberID = null;
-    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
+    private ScanPurposeEnum mScanPurpose;
+
+    public enum ScanPurposeEnum { ID, MEMBER_EDIT, NEWBORN }
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -46,21 +45,14 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
         View view = inflater.inflate(R.layout.fragment_barcode, container, false);
 
-        mOnlyScan = getArguments().getBoolean(NavigationManager.ONLY_SCAN_BUNDLE_FIELD, false);
+        mScanPurpose = ScanPurposeEnum.valueOf(
+                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
 
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
         mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
 
-        if (mOnlyScan) {
-            mSearchMemberButton.setVisibility(View.GONE);
-            mMemberID = UUID.fromString(
-                    getArguments().getString(NavigationManager.MEMBER_ID_BUNDLE_FIELD));
-            String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-            if (searchMethodString != null) {
-                mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
-            }
-        }
+        if (!mScanPurpose.equals(ScanPurposeEnum.ID)) mSearchMemberButton.setVisibility(View.GONE);
 
         mErrorToast = Toast.makeText(getActivity().getApplicationContext(),
                 R.string.id_not_found_toast, Toast.LENGTH_LONG);
@@ -119,19 +111,47 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                     Barcode barcode = barcodes.valueAt(0);
                     if (barcode != null) {
                         try {
-                            if (mOnlyScan) {
-                                new NavigationManager(activity).setMemberEditFragment(
-                                        mMemberID,
-                                        mIdMethod,
-                                        barcode.displayValue
-                                );
-                            } else {
-                                Member member = MemberDao.findByCardId(barcode.displayValue);
-                                new NavigationManager(activity).setDetailFragment(
-                                        member.getId(),
-                                        IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
-                                        null
-                                );
+                            Member member;
+                            switch (mScanPurpose) {
+                                case ID:
+                                    member = MemberDao.findByCardId(barcode.displayValue);
+                                    new NavigationManager(activity).setDetailFragment(
+                                            member,
+                                            IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
+                                            null
+                                    );
+                                    break;
+                                case MEMBER_EDIT:
+                                    member = (Member) getArguments()
+                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    Bundle extraParams = getArguments()
+                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
+                                    IdentificationEvent.SearchMethodEnum idMethod = null;
+                                    if (extraParams != null) {
+                                        String searchMethodString = extraParams
+                                                .getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+                                        if (searchMethodString != null) {
+                                            idMethod = IdentificationEvent.SearchMethodEnum
+                                                    .valueOf(searchMethodString);
+                                        }
+                                    }
+                                    new NavigationManager(activity).setMemberEditFragment(
+                                            member,
+                                            idMethod,
+                                            barcode.displayValue
+                                    );
+                                    break;
+                                case NEWBORN:
+                                    member = (Member) getArguments()
+                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    Bundle sourceParams = getArguments()
+                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
+                                    new NavigationManager(activity).setEnrollNewbornInfoFragment(
+                                            member,
+                                            barcode.displayValue,
+                                            sourceParams
+                                    );
+                                    break;
                             }
                         } catch (SQLException e) {
                             displayFailureToast();

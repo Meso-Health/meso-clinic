@@ -17,8 +17,10 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.rollbar.android.Rollbar;
 
-import org.watsi.uhp.database.EncounterDao;
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NotificationManager;
 
@@ -28,6 +30,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -57,11 +60,16 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
+    public static final String FIELD_NAME_BIRTHDATE = "birthdate";
+    public static final String FIELD_NAME_BIRTHDATE_ACCURACY = "birthdate_accuracy";
+    public static final String FIELD_NAME_ENROLLED_AT = "enrolled_at";
 
     public static final int MINIMUM_FINGERPRINT_AGE = 6;
     public static final int MINIMUM_NATIONAL_ID_AGE = 18;
 
     public enum GenderEnum { M, F }
+
+    public enum BirthdateAccuracyEnum { D, M, Y }
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
@@ -120,9 +128,24 @@ public class Member extends SyncableModel {
     protected UUID mFingerprintsGuid;
 
     @Expose
+    @SerializedName(FIELD_NAME_BIRTHDATE)
+    @DatabaseField(columnName = FIELD_NAME_BIRTHDATE)
+    private Date mBirthdate;
+
+    @Expose
+    @SerializedName(FIELD_NAME_BIRTHDATE_ACCURACY)
+    @DatabaseField(columnName = FIELD_NAME_BIRTHDATE_ACCURACY)
+    private BirthdateAccuracyEnum mBirthdateAccuracy;
+
+    @Expose
     @SerializedName(FIELD_NAME_PHONE_NUMBER)
     @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
     protected String mPhoneNumber;
+
+    @Expose
+    @SerializedName(FIELD_NAME_ENROLLED_AT)
+    @DatabaseField(columnName = FIELD_NAME_ENROLLED_AT)
+    private Date mEnrolledAt;
 
     @ForeignCollectionField(orderColumnName = IdentificationEvent.FIELD_NAME_CREATED_AT)
     private final Collection<IdentificationEvent> mIdentificationEvents = new ArrayList<>();
@@ -202,6 +225,7 @@ public class Member extends SyncableModel {
     }
 
     public void setGender(GenderEnum gender) {
+        addDirtyField(FIELD_NAME_GENDER);
         this.mGender = gender;
     }
 
@@ -230,7 +254,7 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void setMemberPhotoUrlFromPatchResponse(String responsePhotoUrl) {
+    public void setMemberPhotoUrlFromResponse(String responsePhotoUrl) {
         this.mPhotoUrl = responsePhotoUrl;
         deleteLocalMemberImage();
     }
@@ -303,6 +327,30 @@ public class Member extends SyncableModel {
         }
     }
 
+    public BirthdateAccuracyEnum getBirthdateAccuracy() {
+        return mBirthdateAccuracy;
+    }
+
+    public void setBirthdateAccuracy(BirthdateAccuracyEnum birthdateAccuracy) {
+        this.mBirthdateAccuracy = birthdateAccuracy;
+    }
+
+    public Date getBirthdate() {
+        return mBirthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.mBirthdate = birthdate;
+    }
+
+    public Date getEnrolledAt() {
+        return mEnrolledAt;
+    }
+
+    public void setEnrolledAt(Date enrolledAt) {
+        this.mEnrolledAt = enrolledAt;
+    }
+
     public void fetchAndSetPhotoFromUrl() throws IOException {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         Response response = new OkHttpClient().newCall(request).execute();
@@ -345,22 +393,20 @@ public class Member extends SyncableModel {
         return getAge() >= Member.MINIMUM_NATIONAL_ID_AGE;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Member)) return false;
-
-        Member otherMember = (Member) o;
-
-        return getId().equals(otherMember.getId());
-    }
-
-    public Map<String, RequestBody> formatPatchRequest(Context context) {
+    public Map<String, RequestBody> formatPatchRequest(Context context) throws ValidationException {
+        if (isNew()) {
+            throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform PATCH with new member");
+        }
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
         if (dirty(FIELD_NAME_PHOTO)) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
-            requestPartMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+            if (image != null) {
+                requestPartMap.put(
+                        FIELD_NAME_PHOTO,
+                        RequestBody.create(MediaType.parse("image/jpg"), image)
+                );
+            }
             removeDirtyField(FIELD_NAME_PHOTO);
         }
 
@@ -369,7 +415,12 @@ public class Member extends SyncableModel {
         if (requestPartMap.get(FIELD_NAME_PHOTO) == null) {
             if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
                 byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
-                requestPartMap.put(FIELD_NAME_NATIONAL_ID_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+                if (image != null) {
+                    requestPartMap.put(
+                            FIELD_NAME_NATIONAL_ID_PHOTO,
+                            RequestBody.create(MediaType.parse("image/jpg"), image)
+                    );
+                }
                 removeDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
             }
         }
@@ -395,22 +446,99 @@ public class Member extends SyncableModel {
         }
 
         if (dirty(FIELD_NAME_FULL_NAME)) {
-            requestPartMap.put(
-                    FIELD_NAME_FULL_NAME,
-                    RequestBody.create(MultipartBody.FORM, getFullName())
-            );
+            if (getFullName() != null) {
+                requestPartMap.put(
+                        FIELD_NAME_FULL_NAME,
+                        RequestBody.create(MultipartBody.FORM, getFullName())
+                );
+            }
             removeDirtyField(FIELD_NAME_FULL_NAME);
         }
 
         if (dirty(FIELD_NAME_CARD_ID)) {
-            requestPartMap.put(
-                    FIELD_NAME_CARD_ID,
-                    RequestBody.create(MultipartBody.FORM, getCardId())
-            );
+            if (getCardId() != null) {
+                requestPartMap.put(
+                        FIELD_NAME_CARD_ID,
+                        RequestBody.create(MultipartBody.FORM, getCardId())
+                );
+            }
             removeDirtyField(FIELD_NAME_CARD_ID);
         }
 
         return requestPartMap;
+    }
+
+    public Map<String, RequestBody> formatPostRequest(Context context) throws ValidationException {
+        if (!isNew()) {
+            throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform POST with existing member");
+        } else if (getId() == null) {
+            throw new ValidationException(FIELD_NAME_ID, "Cannot be null");
+        }
+
+        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+
+        requestBodyMap.put(FIELD_NAME_ID, RequestBody.create(MultipartBody.FORM, getId().toString()));
+
+        requestBodyMap.put(
+                "provider_assignment[provider_id]",
+                RequestBody.create(MultipartBody.FORM, String.valueOf(BuildConfig.PROVIDER_ID))
+        );
+
+        requestBodyMap.put(
+                "provider_assignment[start_reason]",
+                RequestBody.create(MultipartBody.FORM, "birth")
+        );
+
+        requestBodyMap.put(
+                FIELD_NAME_ENROLLED_AT,
+                RequestBody.create(MultipartBody.FORM, Clock.asIso(getEnrolledAt()))
+        );
+
+        requestBodyMap.put(
+                Member.FIELD_NAME_BIRTHDATE,
+                RequestBody.create(MultipartBody.FORM, Clock.asIso(getBirthdate()))
+        );
+
+        requestBodyMap.put(
+                Member.FIELD_NAME_BIRTHDATE_ACCURACY,
+                RequestBody.create(MultipartBody.FORM, getBirthdateAccuracy().toString())
+        );
+
+        requestBodyMap.put(
+                Member.FIELD_NAME_HOUSEHOLD_ID,
+                RequestBody.create(MultipartBody.FORM, getHouseholdId().toString())
+        );
+
+        if (FileManager.isLocal(getPhotoUrl())) {
+            byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+            if (image != null) {
+                requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+            }
+        }
+
+        if (getGender() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_GENDER,
+                    RequestBody.create(MultipartBody.FORM, getGender().toString())
+            );
+        }
+
+        if (getFullName() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_FULL_NAME,
+                    RequestBody.create(MultipartBody.FORM, getFullName())
+            );
+        }
+
+        if (getCardId() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_CARD_ID,
+                    RequestBody.create(MultipartBody.FORM, getCardId())
+            );
+        }
+
+        clearDirtyFields();
+        return requestBodyMap;
     }
 
     public static boolean validCardId(String cardId) {
@@ -464,5 +592,16 @@ public class Member extends SyncableModel {
             Rollbar.reportException(e);
             return null;
         }
+    }
+
+    public Member createNewborn() {
+        Member newborn = new Member();
+        newborn.setIsNew(true);
+        newborn.setId(UUID.randomUUID());
+        newborn.setHouseholdId(getHouseholdId());
+        newborn.setAbsentee(false);
+        newborn.setBirthdateAccuracy(BirthdateAccuracyEnum.D);
+        newborn.setEnrolledAt(Clock.getCurrentTime());
+        return newborn;
     }
 }
