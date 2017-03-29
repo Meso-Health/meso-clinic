@@ -54,11 +54,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupApp() {
-        Rollbar.init(
-                this,
-                BuildConfig.ROLLBAR_API_KEY,
-                BuildConfig.ROLLBAR_ENV_KEY
-        );
+        if (BuildConfig.REPORT_TO_ROLLBAR) {
+            Rollbar.init(
+                    this,
+                    BuildConfig.ROLLBAR_API_KEY,
+                    BuildConfig.ROLLBAR_ENV_KEY
+            );
+        }
         DatabaseHelper.init(getApplicationContext());
     }
 
