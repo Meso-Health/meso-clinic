@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+    testBuildType "release"
 
     //building string config fields requires a double-quoted string
     def ENV = { k -> "\"${System.getenv(k)}\"" }
