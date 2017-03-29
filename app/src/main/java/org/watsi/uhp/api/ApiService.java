@@ -11,6 +11,7 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class ApiService {
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT_STRING)
                     .registerTypeAdapterFactory(new EncounterTypeAdapterFactory(Encounter.class))
+                    .registerTypeAdapterFactory(new MemberTypeAdapterFactory(Member.class))
                     .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(BuildConfig.API_HOST)
