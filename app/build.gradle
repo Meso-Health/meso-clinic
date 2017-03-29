@@ -40,6 +40,8 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
             signingConfig signingConfigs.debugConfig
+
+            buildConfigField "boolean", "CHECK_HOCKEYAPP", "false"
         }
         release {
             minifyEnabled false
