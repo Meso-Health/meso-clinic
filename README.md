@@ -47,8 +47,10 @@ In both cases, first start your local server (see [https://github.com/Watsi/uhp-
 ```
 $ cd /your/path/to/uhp_backend
 $ heroku local
-```
 
+# To view logs
+$ tail -f log/development.log
+```
 
 ### Accessing local server from  your device
 
