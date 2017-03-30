@@ -28,11 +28,51 @@ $ open -a /Applications/Android\ Studio.app /your/working/dir
 
 ## Build types
 
-Our application has 2 build types (debug and release) and 2 build flavors (production and sandbox), for a total of 4 build variants (sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 4 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the variant in the Tool Buttons bar of Android Studio.
+Our application has 3 build types (debug and release) and 2 build flavors (development, sandbox, and production), for a total of 6 build variants (developmentDebug, developmentRelease, sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 6 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
 
-The debug build types are fast to build and allow you to debug the app on a local phone. They are automatically signed with generic debug keystores. The release build types take longer to build (they are shrunk, optimized, obfuscated, etc.) and are signed with a real keystore.
+Debug-type build variants are created quickly and allow for usb debugging. They're automatically signed with a default generic keystore provided by Android Studio. We do most of our local development using the "developmentDebug" build variant.
 
-Most of our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to devices via [Hockey App](https://www.hockeyapp.net/). However, if you need to create a release build locally that can be run on the devices without overwriting the existing apps, you'll need to sign the apk with the same release key. To do so,  download the release key file from Dropbox and save it to your `app` directory.
+Release-type build variants take longer to build (since the code is shrunk, optimized, obfuscated, etc.) and require a real keystore to sign. You can download the one stored in our Dropbox to your local `app` directory to use it. The "sandboxRelease" variant is what we use to QA, and the "productionRelease" variant is what we push to users.
+
+
+Most of our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to the Android devices via [Hockey App](https://www.hockeyapp.net/).
+
+### Running development apps against a local server
+
+Apps with the development flavor are set up to hit a local server (`http://localhost:5000`) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
+However, by default, your device doesn't know about your PC's local servers. (Going to `localhost:5000` on your device browser will attempt to access its _own_ server, which doesn't exist. )
+
+In order to access localhost from your Android device, we'll be using
+a command-line tool that comes pre-installed with Android called `adb` (Android Debug Bridge).
+
+First, start your local server (see [https://github.com/Watsi/uhp-backend](https://github.com/Watsi/uhp-backend) for more detailed instructions).
+
+```
+$ cd /your/path/to/uhp_backend
+$ heroku local
+```
+
+Go to the directory where `adb` is located.
+
+```
+$ cd /your/path/to/sdk/platform-tools
+```
+
+
+Check that your device is connected.
+
+```
+$ adb devices
+```
+
+Forward port 5000 on your device to port 5000 on your PC.
+
+```
+$ adb reverse tcp:5000 tcp:5000
+```
+
+And voila, that's it! As long as your phone is connected to your PC over USB, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
+
 
 ## Conventions
 
