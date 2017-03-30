@@ -16,8 +16,7 @@ test:
     - sleep 30
     - adb shell input keyevent 82
     # run instrumentation tests against the emulator
-    - ./deploy_scripts/downloadKeystore.sh
-    - ./gradlew connectedSandboxReleaseAndroidTest
+    - ./gradlew connectedSandboxDebugAndroidTest
 
   post:
       # copy unit and instrument test results to Circle Test results directory

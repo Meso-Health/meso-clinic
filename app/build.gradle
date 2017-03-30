@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
-    testBuildType "release"
 
     //building string config fields requires a double-quoted string
     def ENV = { k -> "\"${System.getenv(k)}\"" }
@@ -22,12 +21,6 @@ android {
         buildConfigField "boolean", "CHECK_HOCKEYAPP", "true"
     }
     signingConfigs {
-        debugConfig {
-            storeFile file("debug-key.jks")
-            storePassword System.getenv("DEBUG_KEYSTORE_PASSWORD")
-            keyAlias System.getenv("DEBUG_KEY_ALIAS")
-            keyPassword System.getenv("DEBUG_KEY_PASSWORD")
-        }
         releaseConfig {
             storeFile file("release-key.jks")
             storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
@@ -39,8 +32,6 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
-            signingConfig signingConfigs.debugConfig
-
             buildConfigField "boolean", "CHECK_HOCKEYAPP", "false"
         }
         release {
