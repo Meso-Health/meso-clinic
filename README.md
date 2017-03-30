@@ -37,20 +37,25 @@ Release-type build variants take longer to build (since the code is shrunk, opti
 
 Most of our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to the Android devices via [Hockey App](https://www.hockeyapp.net/).
 
-### Running development apps against a local server
+## Running development apps against a local server
 
 Apps with the development flavor are set up to hit a local server (`http://localhost:5000`) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
-However, by default, your device doesn't know about your PC's local servers. (Going to `localhost:5000` on your device browser will attempt to access its _own_ server, which doesn't exist. )
+However, by default, emulators and devices don't know about their PC's local servers. (Going to `localhost:5000` on your emulator or device browser will attempt to access its _own_ server, which doesn't exist.)
 
-In order to access localhost from your Android device, we'll be using
-a command-line tool that comes pre-installed with Android called `adb` (Android Debug Bridge).
-
-First, start your local server (see [https://github.com/Watsi/uhp-backend](https://github.com/Watsi/uhp-backend) for more detailed instructions).
+In both cases, first start your local server (see [https://github.com/Watsi/uhp-backend](https://github.com/Watsi/uhp-backend) for more detailed instructions).
 
 ```
 $ cd /your/path/to/uhp_backend
 $ heroku local
 ```
+
+
+### Accessing local server from  your device
+
+To access localhost from your device, we'll be using
+a command-line tool that comes pre-installed with Android called `adb` (Android Debug Bridge).
+
+Connect your device via USB.
 
 Go to the directory where `adb` is located.
 
@@ -71,8 +76,15 @@ Forward port 5000 on your device to port 5000 on your PC.
 $ adb reverse tcp:5000 tcp:5000
 ```
 
-And voila, that's it! As long as your phone is connected to your PC over USB, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
+And voila, that's it! As long as your phone is connected to your PC, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
 
+### Accessing local server from your emulator
+
+Simply change the API config field in `build.gradle` to `10.0.2.2:portno`.
+
+```
+buildConfigField "String", "API_HOST", "\"10.0.2.2:5000\""
+```
 
 ## Conventions
 
