@@ -5,7 +5,7 @@ machine:
 test:
   override:
     # start the emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
+    - emulator -avd circleci-android22 -no-boot-anim -no-audio -no-window:
         background: true
         parallel: true
     # run unit tests whilst emulator is booting
