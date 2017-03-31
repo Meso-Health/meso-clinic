@@ -18,7 +18,7 @@ android {
         buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "boolean", "CHECK_HOCKEYAPP", "true"
+        buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
     }
     signingConfigs {
         releaseConfig {
@@ -32,7 +32,7 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
-            buildConfigField "boolean", "CHECK_HOCKEYAPP", "false"
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
         }
         release {
             minifyEnabled false
@@ -55,7 +55,7 @@ android {
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
             buildConfigField "String", "ROLLBAR_ENV_KEY", "null"
             buildConfigField "String", "ROLLBAR_API_KEY", "null"
-            buildConfigField "boolean", "CHECK_HOCKEYAPP", "false"
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }

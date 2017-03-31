@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
-        if (BuildConfig.CHECK_HOCKEYAPP) {
+        if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) {
             checkForUpdates();
         }
     }
