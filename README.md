@@ -28,14 +28,16 @@ $ open -a /Applications/Android\ Studio.app /your/working/dir
 
 ## Build types
 
-Our application has 3 build types (debug and release) and 2 build flavors (development, sandbox, and production), for a total of 6 build variants (developmentDebug, developmentRelease, sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 6 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
+Our application has 2 build types (debug and release) and 3 build flavors (development, sandbox, 
+and production), for a total of 6 build variants (developmentDebug, developmentRelease, sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 6 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
 
 Debug-type build variants are created quickly and allow for usb debugging. They're automatically signed with a default generic keystore provided by Android Studio. We do most of our local development using the "developmentDebug" build variant.
 
 Release-type build variants take longer to build (since the code is shrunk, optimized, obfuscated, etc.) and require a real keystore to sign. You can download the one stored in our Dropbox to your local `app` directory to use it. The "sandboxRelease" variant is what we use to QA, and the "productionRelease" variant is what we push to users.
 
 
-Most of our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to the Android devices via [Hockey App](https://www.hockeyapp.net/).
+Our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to 
+the Android devices via [Hockey App](https://www.hockeyapp.net/).
 
 ## Running development apps against a local server
 
