@@ -5,13 +5,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
-import org.watsi.uhp.managers.NotificationManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.io.IOException;
@@ -37,6 +37,7 @@ public class ApiService {
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT_STRING)
                     .registerTypeAdapterFactory(new EncounterTypeAdapterFactory(Encounter.class))
+                    .registerTypeAdapterFactory(new MemberTypeAdapterFactory(Member.class))
                     .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(BuildConfig.API_HOST)
@@ -62,9 +63,9 @@ public class ApiService {
                 String token = response.body().getToken();
                 ConfigManager.setLoggedInUserToken(token, context);
                 User user = response.body().getUser();
-                Rollbar.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
+                ExceptionManager.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
             } else {
-                NotificationManager.requestFailure(
+                ExceptionManager.requestFailure(
                         "Login failure",
                         request.request(),
                         response.raw()
@@ -72,7 +73,7 @@ public class ApiService {
             }
             return response;
         } catch (IOException | IllegalStateException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
             return null;
         }
     }

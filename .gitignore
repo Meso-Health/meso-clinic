@@ -4,10 +4,12 @@
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/dictionaries
+/.idea/markdown-navigator
+/.idea/markdown-navigator.xml
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 # contains private config settings
-app/release-key.jks
+app/*.jks
 .env

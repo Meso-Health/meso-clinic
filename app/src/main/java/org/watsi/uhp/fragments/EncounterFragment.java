@@ -21,11 +21,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
@@ -168,7 +167,7 @@ public class EncounterFragment extends Fragment {
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
 
         return new ArrayAdapter<>(
@@ -203,7 +202,7 @@ public class EncounterFragment extends Fragment {
                 encounterItemAdapter.add(encounterItem);
             }
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
     }
 
@@ -282,7 +281,7 @@ public class EncounterFragment extends Fragment {
                     });
                 }
             } catch (SQLException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
             }
 
             return new SimpleCursorAdapter(

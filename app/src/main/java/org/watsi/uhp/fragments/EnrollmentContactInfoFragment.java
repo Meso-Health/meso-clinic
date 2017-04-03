@@ -4,10 +4,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 
@@ -47,7 +46,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
                 MemberDao.update(mMember);
                 new NavigationManager(getActivity()).setEnrollmentFingerprintFragment(mMember);
             } catch (SQLException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
                 Toast.makeText(getContext(), "Failed to save contact information", Toast.LENGTH_LONG).show();
             }
         } catch (AbstractModel.ValidationException e) {

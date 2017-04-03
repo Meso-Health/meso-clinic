@@ -7,8 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
@@ -213,7 +211,7 @@ public class NavigationManager {
                 }
                 return fragment;
             } catch (InstantiationException | IllegalAccessException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
                 return null;
             }
         }

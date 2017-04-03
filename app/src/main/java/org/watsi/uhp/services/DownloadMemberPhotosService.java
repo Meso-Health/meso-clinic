@@ -6,10 +6,9 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
@@ -37,12 +36,12 @@ public class DownloadMemberPhotosService extends Service {
                     try {
                         fetchMemberPhotos();
                     } catch (SQLException | IllegalStateException e) {
-                        Rollbar.reportException(e);
+                        ExceptionManager.handleException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        Rollbar.reportException(e);
+                        ExceptionManager.handleException(e);
                     }
 
                 }
@@ -66,7 +65,7 @@ public class DownloadMemberPhotosService extends Service {
                     MemberDao.update(member);
                 }
             } catch (IOException | SQLException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
                 fetchFailures++;
                 try {
                     Thread.sleep(1000);

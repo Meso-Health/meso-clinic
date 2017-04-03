@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import com.rollbar.android.Rollbar;
 import com.squareup.leakcanary.LeakCanary;
 
+import net.hockeyapp.android.UpdateManager;
+
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
@@ -27,8 +29,6 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
-
-import net.hockeyapp.android.UpdateManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,17 +48,19 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
-        if (!BuildConfig.DEBUG) {
+        if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) {
             checkForUpdates();
         }
     }
 
     private void setupApp() {
-        Rollbar.init(
-                this,
-                BuildConfig.ROLLBAR_API_KEY,
-                BuildConfig.ROLLBAR_ENV_KEY
-        );
+        if (BuildConfig.REPORT_TO_ROLLBAR) {
+            Rollbar.init(
+                    this,
+                    BuildConfig.ROLLBAR_API_KEY,
+                    BuildConfig.ROLLBAR_ENV_KEY
+            );
+        }
         DatabaseHelper.init(getApplicationContext());
     }
 
@@ -82,9 +84,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
-        if (!(BuildConfig.FLAVOR.equals("production"))) {
+        if (BuildConfig.FLAVOR.equals("sandbox")) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.beige));
+        } else if (!(BuildConfig.FLAVOR.equals("production"))) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                    R.color.gray));
         }
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

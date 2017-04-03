@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
@@ -18,8 +17,8 @@ import org.watsi.uhp.database.EncounterFormDao;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
-import org.watsi.uhp.managers.NotificationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
@@ -59,12 +58,12 @@ public class SyncService extends Service {
                         syncEncounterForms(EncounterFormDao.unsynced());
                         syncMembers(MemberDao.unsynced());
                     } catch (IOException | SQLException | IllegalStateException e) {
-                        Rollbar.reportException(e);
+                        ExceptionManager.handleException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        Rollbar.reportException(e);
+                        ExceptionManager.handleException(e);
                     }
                 }
             }
@@ -84,7 +83,7 @@ public class SyncService extends Service {
                     Map<String, String> params = new HashMap<>();
                     params.put("identification_event.id", event.getId().toString());
                     params.put("identification_event.json", new Gson().toJson(event));
-                    Rollbar.reportMessage(
+                    ExceptionManager.reportMessage(
                             "Attempted to sync non-dismissed IdentificationEvent", "warning", params);
                     continue;
                 }
@@ -95,13 +94,13 @@ public class SyncService extends Service {
                     event.setSynced();
                     IdentificationEventDao.update(event);
                 } catch (AbstractModel.ValidationException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
                 reportParams.put("identification_event.id", event.getId().toString());
                 reportParams.put("member.id", event.getMember().getId().toString());
-                NotificationManager.requestFailure(
+                ExceptionManager.requestFailure(
                         "Failed to sync IdentificationEvent",
                         response.raw().request(),
                         response.raw(),
@@ -155,13 +154,13 @@ public class SyncService extends Service {
                     encounter.setSynced();
                     EncounterDao.update(encounter);
                 } catch (AbstractModel.ValidationException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
                 reportParams.put("encounter.id", encounter.getId().toString());
                 reportParams.put("member.id", encounter.getMember().getId().toString());
-                NotificationManager.requestFailure(
+                ExceptionManager.requestFailure(
                         "Failed to sync Encounter",
                         request.request(),
                         response.raw(),
@@ -182,12 +181,13 @@ public class SyncService extends Service {
 
             byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), getApplicationContext());
             if (image == null) {
-                Rollbar.reportMessage("No image saved for form for encounter: " + encounter.getId().toString());
+                ExceptionManager.reportMessage("No image saved for form for encounter: " + encounter
+                        .getId().toString());
                 try {
                     encounterForm.setSynced();
                     EncounterFormDao.update(encounterForm);
                 } catch (AbstractModel.ValidationException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
                 continue;
             }
@@ -202,13 +202,13 @@ public class SyncService extends Service {
                     encounterForm.setSynced();
                     EncounterFormDao.update(encounterForm);
                 } catch (AbstractModel.ValidationException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
                 reportParams.put("encounter_form.id", encounterForm.getId().toString());
                 reportParams.put("encounter.id", encounterForm.getEncounter().getId().toString());
-                NotificationManager.requestFailure(
+                ExceptionManager.requestFailure(
                         "Failed to sync EncounterForm",
                         request.request(),
                         response.raw(),
@@ -232,7 +232,7 @@ public class SyncService extends Service {
         try {
             multiPartBody = member.formatPatchRequest(getApplicationContext());
         } catch (AbstractModel.ValidationException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
             return;
         }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
@@ -260,14 +260,14 @@ public class SyncService extends Service {
                 try {
                     member.setSynced();
                 } catch (AbstractModel.ValidationException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
             }
             MemberDao.update(member);
         } else {
             Map<String,String> reportParams = new HashMap<>();
             reportParams.put("member.id", member.getId().toString());
-            NotificationManager.requestFailure(
+            ExceptionManager.requestFailure(
                     "Failed to sync Member",
                     request.request(),
                     response.raw(),
@@ -281,7 +281,7 @@ public class SyncService extends Service {
         try {
             multiPartBody = member.formatPostRequest(getApplicationContext());
         } catch (AbstractModel.ValidationException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
             return;
         }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).enrollMember(
@@ -300,13 +300,13 @@ public class SyncService extends Service {
             try {
                 member.setSynced();
             } catch (AbstractModel.ValidationException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
             }
             MemberDao.update(member);
         } else {
             Map<String,String> reportParams = new HashMap<>();
             reportParams.put("member.id", member.getId().toString());
-            NotificationManager.requestFailure(
+            ExceptionManager.requestFailure(
                     "Failed to enroll Member",
                     request.request(),
                     response.raw(),
