@@ -26,18 +26,48 @@ $ source .env
 $ open -a /Applications/Android\ Studio.app /your/working/dir
 ```
 
-## Build types
+## Build variants
 
-Our application has 2 build types (debug and release) and 3 build flavors (development, sandbox, 
-and production), for a total of 6 build variants (developmentDebug, developmentRelease, sandboxDebug, sandboxRelease, productionDebug, and productionRelease). You can create any one of these 6 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
+Our application has 2 build types (debug and release) and 4 build flavors (development, sandbox, 
+demo, and production), for a total of 8 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types). You can create any one of these build 
+variants locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
 
-Debug-type build variants are created quickly and allow for usb debugging. They're automatically signed with a default generic keystore provided by Android Studio. We do most of our local development using the "developmentDebug" build variant.
+### Types
 
-Release-type build variants take longer to build (since the code is shrunk, optimized, obfuscated, etc.) and require a real keystore to sign. You can download the one stored in our Dropbox to your local `app` directory to use it. The "sandboxRelease" variant is what we use to QA, and the "productionRelease" variant is what we push to users.
+- **Debug**
+  - created quickly and allows for usb debugging
+  - automatically signed with a default keystore provided by Android Studio
+  - contents can be easily opened and read, so *use for development only*
+- **Release**
+  - code is shrunk, optimized, and obfuscated; takes longer to build
+  - signed with a real keystore; secure
+  - requires all update apks to have the same signature - otherwise, the existing app will be uninstalled and the data will be wiped. to prevent this from happening, _please use the keystore we have in Dropbox to sign all release builds_.
 
+### Flavors
 
-Our release builds are automatically created by [Circle CI](https://circleci.com/) and pushed to 
-the Android devices via [Hockey App](https://www.hockeyapp.net/).
+- **Development**
+  - hits local server as API endpoint
+  - used for development
+- **Sandbox** 
+  - hits sandbox server (which mimics production DB)
+  - used for QA
+- **Demo**
+  - hits demo server (which holds fake data)
+  - used only to demo to funders; should not be touched otherwise
+- **Production** 
+  - hits production server (which holds real patient data)
+
+See the `build.gradle` file for more details on configuration changes between the different flavors.
+
+We do most of our local development with the **developmentDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
+
+###Creating signed Release types locally
+
+There are cases where you may wish to generate a signed release build locally (e.g. to manually upload to HockeyApp for release). To do so:
+
+1. go to Build > Generate Signed APK
+2. use the keystore credentials in the `.env` file to sign the APK
+3. **important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
 
 ## Running development apps against a local server
 
@@ -54,14 +84,14 @@ $ heroku local
 $ tail -f log/development.log
 ```
 
-### Accessing local server from  your device
+### Accessing your local server from your device
 
 To access localhost from your device, we'll be using
 a command-line tool that comes pre-installed with Android called `adb` (Android Debug Bridge).
 
-Connect your device via USB.
+First, connect your device via USB.
 
-Go to the directory where `adb` is located.
+Now go to the directory where `adb` is located.
 
 ```
 $ cd /your/path/to/sdk/platform-tools
@@ -82,18 +112,37 @@ $ adb reverse tcp:5000 tcp:5000
 
 And voila, that's it! As long as your phone is connected to your PC, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
 
-### Accessing local server from your emulator
+### Accessing your local server from your emulator
 
-Simply change the API config field in `build.gradle` to `10.0.2.2:portno`.
+Simply change the `API_HOST` config field in `build.gradle` to `10.0.2.2:portno`. This is the 
+designated IP address for emulators to refer their computer's server.
 
 ```
 buildConfigField "String", "API_HOST", "\"10.0.2.2:5000\""
 ```
 
-## Conventions
+## Continuous Deployment
 
-- http://source.android.com/source/code-style.html
-- http://blog.smartlogic.io/2013-07-09-organizing-your-android-development-code-structure/
+We use Circle CI as our continous integration tool. A green run on `master` automatically creates a signed **sandboxRelease** build and pushes it to Android devices via [Hockey App](https://www.hockeyapp.net/). Similarly, a green run on the `production` branch automatically creates a signed **productionRelease** build and pushes via Hockey App.
+
+
+### Deploy to production via hockeyapp
+
+To deploy to production, first merge your changes into `master` and ensure you get a green build. Then:
+
+1. Check what you are going to deploy at [https://github.com/Watsi/uhp-android-app/compare/production...master](https://github.com/Watsi/uhp-android-app/compare/production...master)
+
+2. Locally, fetch the latest changes and merge `master` into `production`:
+3. 
+```
+$ git pull --rebase
+$ git checkout production
+$ git reset --hard origin/production
+$ git merge master
+$ git push origin head
+```
+
+3. Once the [CI on the production branch](https://circleci.com/gh/Watsi/uhp-android-app/tree/production) goes green, the app will automatically be deployed to all phones running the production app.
 
 ## Testing
 
@@ -101,19 +150,7 @@ Tests can be run directly through the Android Studio UI by right-clicking the te
 
 Tests can also be run from the terminal using the command `./gradlew test` from the project root.
 
-## Deploy to production via hockeyapp
+## Conventions
 
-We automatically deploy to our hockeyapp production app from the `production` branch. To deploy to production, first merge your changes into `master` and ensure you get a green build. Then:
-
-1. Check what you are going to deploy at https://github.com/Watsi/uhp-android-app/compare/production...master
-
-2. Locally, fetch the latest changes and merge `master` into `production`:
-```
-$ git pull --rebase
-$ git co production
-$ git reset --hard origin/production
-$ git merge master
-$ git push origin head
-```
-
-3. Once the [CI on the production branch](https://circleci.com/gh/Watsi/uhp-android-app/tree/production) goes green, the app will automatically be deployed to all phones running the production app.
+- http://source.android.com/source/code-style.html
+- http://blog.smartlogic.io/2013-07-09-organizing-your-android-development-code-structure/
