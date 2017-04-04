@@ -534,7 +534,7 @@ public class Member extends SyncableModel {
         if (cardId == null || cardId.isEmpty()) {
             return false;
         } else {
-            return cardId.matches("RWI[0-9]{6}");
+            return cardId.matches("[A-Z]{3}[0-9]{6}");
         }
     }
 
