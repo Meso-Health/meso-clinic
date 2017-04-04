@@ -7,13 +7,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
+import org.watsi.uhp.fragments.EncounterFormFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.EnrollNewbornInfoFragment;
 import org.watsi.uhp.fragments.EnrollNewbornPhotoFragment;
@@ -25,7 +24,7 @@ import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
-import org.watsi.uhp.fragments.VersionFragment;
+import org.watsi.uhp.fragments.VersionAndSyncFragment;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -120,6 +119,12 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EncounterFragment.class, bundle));
     }
 
+    public void setEncounterFormFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(EncounterFormFragment.class, bundle));
+    }
+
     public void setReceiptFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
@@ -185,7 +190,7 @@ public class NavigationManager {
     }
 
     public void setVersionFragment() {
-        setFragment(new VersionFragment());
+        setFragment(new VersionAndSyncFragment());
     }
 
     public void logout() {
@@ -206,7 +211,7 @@ public class NavigationManager {
                 }
                 return fragment;
             } catch (InstantiationException | IllegalAccessException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
                 return null;
             }
         }

@@ -7,16 +7,18 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.rollbar.android.Rollbar;
 
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -24,7 +26,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 9;
 
     private static DatabaseHelper instance;
 
@@ -53,6 +55,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, IdentificationEvent.class);
             TableUtils.createTable(connectionSource, Encounter.class);
             TableUtils.createTable(connectionSource, EncounterItem.class);
+            TableUtils.createTable(connectionSource, EncounterForm.class);
             TableUtils.createTable(connectionSource, User.class);
             Log.d("UHP", "onCreate database helper called");
         } catch (SQLException e) {
@@ -89,8 +92,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN is_new BOOLEAN NOT NULL DEFAULT 0;");
                 case 5:
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN backdated_occurred_at BOOLEAN NOT NULL DEFAULT 0;");
+                case 6:
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissed BOOLEAN NOT NULL DEFAULT 0;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
+                case 7:
+                    TableUtils.createTable(connectionSource, EncounterForm.class);
+                case 8:
+                    List<IdentificationEvent> idEvents = IdentificationEventDao.unsynced();
+                    for (IdentificationEvent idEvent: idEvents) {
+                        if (!idEvent.getDismissed() && !idEvent.isNew()) {
+                            idEvent.setIsNew(true);
+                            IdentificationEventDao.update(idEvent);
+                        }
+                    }
             }
-            Rollbar.reportMessage("Migration run from version " + oldVersion + " to " + newVersion);
+            ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
+                    newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -3,6 +3,7 @@ package org.watsi.uhp.fragments;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ public class LoginFragment extends Fragment {
         getActivity().setTitle(R.string.login_fragment_label);
         setHasOptionsMenu(true);
         getActivity().invalidateOptionsMenu();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         final View view = inflater.inflate(R.layout.fragment_login, container, false);
 

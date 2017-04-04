@@ -2,12 +2,13 @@ package org.watsi.uhp.models;
 
 import com.j256.ormlite.field.DatabaseField;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Abstract class for specifying any fields and behavior that all models should share
  */
-public abstract class AbstractModel {
+public abstract class AbstractModel implements Serializable {
 
     public static final String FIELD_NAME_CREATED_AT = "created_at";
 

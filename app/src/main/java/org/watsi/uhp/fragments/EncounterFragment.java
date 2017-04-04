@@ -21,11 +21,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
@@ -72,6 +71,8 @@ public class EncounterFragment extends Fragment {
         setContinueToReceiptButton(continueToReceiptButton);
         setAddBillableLink(view);
         setBackdateEncounterListener();
+
+        if (encounter.getBackdatedOccurredAt()) updateBackdateLinkText();
 
         return view;
     }
@@ -151,7 +152,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setReceiptFragment(encounter);
+                new NavigationManager(getActivity()).setEncounterFormFragment(encounter);
             }
         });
     }
@@ -166,7 +167,7 @@ public class EncounterFragment extends Fragment {
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
 
         return new ArrayAdapter<>(
@@ -201,7 +202,7 @@ public class EncounterFragment extends Fragment {
                 encounterItemAdapter.add(encounterItem);
             }
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
     }
 
@@ -280,7 +281,7 @@ public class EncounterFragment extends Fragment {
                     });
                 }
             } catch (SQLException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
             }
 
             return new SimpleCursorAdapter(
@@ -332,12 +333,10 @@ public class EncounterFragment extends Fragment {
     }
 
     public void updateBackdateLinkText() {
-        if (encounter.getBackdatedOccurredAt()) {
-            Date backdate = encounter.getOccurredAt();
-            String backdateText = new SimpleDateFormat("MMMM d, yyyy").format(backdate);
-            SpannableString content = new SpannableString("Backdated to " + backdateText);
-            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-            backdateEncounterLink.setText(content);
-        }
+        Date backdate = encounter.getOccurredAt();
+        String backdateText = new SimpleDateFormat("MMM d, H:mma").format(backdate);
+        SpannableString content = new SpannableString("Date: " + backdateText);
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        backdateEncounterLink.setText(content);
     }
 }

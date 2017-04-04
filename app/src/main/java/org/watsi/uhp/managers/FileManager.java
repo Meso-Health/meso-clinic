@@ -5,7 +5,8 @@ import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
 import com.google.common.io.ByteStreams;
-import com.rollbar.android.Rollbar;
+
+import org.watsi.uhp.BuildConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,7 +18,7 @@ import java.io.InputStream;
  */
 public class FileManager {
 
-    private static String CAPTURE_IMAGE_FILE_PROVIDER = "org.watsi.uhp.fileprovider";
+    private static String CAPTURE_IMAGE_FILE_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
 
     public static Uri getUriFromProvider(String filename, String path, Context context) throws IOException {
         File dir = new File(context.getFilesDir(), "images/" + path);
@@ -35,13 +36,13 @@ public class FileManager {
             ByteStreams.copy(iStream, byteStream);
             return byteStream.toByteArray();
         } catch (IOException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         } finally {
             try {
                 if (iStream != null) iStream.close();
                 if (byteStream != null) byteStream.close();
             } catch (IOException e1) {
-                Rollbar.reportException(e1);
+                ExceptionManager.handleException(e1);
             }
         }
         return null;

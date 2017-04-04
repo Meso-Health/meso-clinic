@@ -11,17 +11,19 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Rollbar.class, Request.class})
-public class NotificationManagerTest {
+public class ExceptionManagerTest {
 
     private Request request;
     private Response response;
@@ -30,7 +32,10 @@ public class NotificationManagerTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockStatic(Rollbar.class);
-        request = new Request.Builder().url("http://uhp-test.watsi.org").build();
+        request = new Request.Builder()
+                .url("http://uhp-test.watsi.org")
+                .post(mock(RequestBody.class))
+                .build();
         response = new Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_2)
@@ -40,7 +45,7 @@ public class NotificationManagerTest {
 
     @Test
     public void requestFailure_withResponse() throws Exception {
-        NotificationManager.requestFailure("foo", request, response);
+        ExceptionManager.requestFailure("foo", request, response);
 
         verifyStatic(times(1));
         Rollbar.reportMessage(anyString(), anyString(), anyMap());
@@ -48,7 +53,7 @@ public class NotificationManagerTest {
 
     @Test
     public void requestFailure_noResponse() throws Exception {
-        NotificationManager.requestFailure("foo", request, null);
+        ExceptionManager.requestFailure("foo", request, null);
 
         verifyStatic(times(1));
         Rollbar.reportMessage(anyString(), anyString(), anyMap());

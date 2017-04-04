@@ -19,8 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
@@ -29,6 +27,7 @@ import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -64,11 +63,17 @@ public class DetailFragment extends Fragment {
         setPatientCard(view);
         setButton(view);
         setHouseholdList(view);
-        setRejectIdentityLink(view);
+        if (mMember.currentCheckIn() == null) {
+            setRejectIdentityLink(view);
+        } else {
+            setDismissPatientLink(view);
+        }
+
         return view;
     }
 
     private void setRejectIdentityLink(View view) {
+        view.findViewById(R.id.reject_identity).setVisibility(View.VISIBLE);
         view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +83,26 @@ public class DetailFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 completeIdentification(false, null, null);
+                            }
+                        }).create().show();
+            }
+        });
+    }
+
+    private void setDismissPatientLink(View view) {
+        view.findViewById(R.id.dismiss_patient).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.dismiss_patient).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.dismiss_patient_alert)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
+                                DialogInterface
+                                .OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dismissIdentification(IdentificationEvent
+                                        .DismissalReasonEnum.values()[which]);
                             }
                         }).create().show();
             }
@@ -132,7 +157,7 @@ public class DetailFragment extends Fragment {
                         encounter.setEncounterItems(
                                 EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
                     } catch (SQLException e) {
-                        Rollbar.reportException(e);
+                        ExceptionManager.handleException(e);
                     }
                     MainActivity activity = (MainActivity) getActivity();
                     new NavigationManager(activity).setEncounterFragment(encounter);
@@ -175,16 +200,16 @@ public class DetailFragment extends Fragment {
                 }
             });
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
     }
 
     public void completeIdentification(boolean accepted,
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) {
-
-        IdentificationEvent idEvent =
-                new IdentificationEvent(ConfigManager.getLoggedInUserToken(getContext()));
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setIsNew(true);
+        idEvent.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -198,7 +223,7 @@ public class DetailFragment extends Fragment {
         try {
             IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
 
         new NavigationManager(getActivity()).setCurrentPatientsFragment();
@@ -207,6 +232,27 @@ public class DetailFragment extends Fragment {
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason) {
+        IdentificationEvent checkIn = mMember.currentCheckIn();
+        checkIn.setDismissalReason(dismissReason);
+        checkIn.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+
+        try {
+            IdentificationEventDao.update(checkIn);
+            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            Toast.makeText(getActivity().getApplicationContext(),
+                    mMember.getFullName() + " " + getActivity().getString(R.string.identification_dismissed),
+                    Toast.LENGTH_LONG).
+                    show();
+        } catch (SQLException e) {
+            ExceptionManager.handleException(e);
+            Toast.makeText(getActivity().getApplicationContext(),
+                    getActivity().getString(R.string.identification_dismissed_failure),
+                    Toast.LENGTH_LONG).
+                    show();
+        }
     }
 
     public IdentificationEvent.SearchMethodEnum getIdMethod() {

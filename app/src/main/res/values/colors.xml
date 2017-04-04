@@ -6,4 +6,9 @@
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="beige">#FCAF63</color>
+    <color name="gray">#868E96</color>
+
+    <color name="title">#212121</color>
+    <color name="subtitle">#757575</color>
+    <color name="divider">#DADADA</color>
 </resources>

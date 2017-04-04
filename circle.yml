@@ -5,7 +5,7 @@ machine:
 test:
   override:
     # start the emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
+    - emulator -avd circleci-android22 -no-boot-anim -no-audio -no-window:
         background: true
         parallel: true
     # run unit tests whilst emulator is booting
@@ -15,8 +15,8 @@ test:
     # unlock the emulator screen
     - sleep 30
     - adb shell input keyevent 82
-    # run tests against the emulator
-    - ./gradlew connectedAndroidTest
+    # run instrumentation tests against the emulator
+    - ./gradlew connectedSandboxDebugAndroidTest
 
   post:
       # copy unit and instrument test results to Circle Test results directory

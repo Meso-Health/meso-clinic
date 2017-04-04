@@ -18,7 +18,7 @@
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
-    <string name="menu_version_label">Version</string>
+    <string name="menu_version_and_sync_label">Status</string>
 
     <!-- General Labels -->
     <string name="name_label">Name</string>
@@ -35,6 +35,7 @@
     <string name="photo_btn_label">Take photo</string>
     <string name="photo_description">Photo</string>
     <string name="cancel">Cancel</string>
+    <string name="price_with_currency">%1$s UGX</string>
 
     <!--LoginFragment-->
     <string name="login_fragment_label">User Login</string>
@@ -68,9 +69,13 @@
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
+    <string name="dismiss_patient"><u>No treatment details</u></string>
+    <string name="dismiss_patient_alert">Why are there no treatment details?</string>
     <string name="household_label">Household Members</string>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">has been reported for suspicious behavior.</string>
+    <string name="identification_dismissed">has been checked out without treatment details.</string>
+    <string name="identification_dismissed_failure">Failed to check out member.</string>
 
     <!--ClinicNumberDialogFragment-->
     <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
@@ -89,7 +94,7 @@
     <string name="remove_billable_button">X</string>
     <string name="encounter_product_list_label">Items</string>
     <string name="continue_encounter_button">Continue</string>
-    <string name="backdate"><u>Backdate</u></string>
+    <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!--AddNewBillableFragment-->
@@ -101,6 +106,11 @@
     <string name="empty_billable_name_field">Please enter name in the blank above</string>
     <string name="empty_billable_price_field">Please enter price in the blank above</string>
 
+    <!--EncounterFormFragment-->
+    <string name="encounter_form_fragment_label">Take photo of form</string>
+    <string name="add_another_label">Add another</string>
+    <string name="finish_btn_label">Finish</string>
+
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
@@ -108,6 +118,7 @@
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
+    <string name="receipt_forms_attached">%1$d forms attached</string>
 
     <!-- Enrollment -->
     <string name="enrollment_complete_btn">Complete enrollment</string>
@@ -147,5 +158,14 @@
     <string name="enroll_newborn_photo_label">Newborn photo</string>
 
     <!--VersionFragment-->
+    <string name="version_and_sync_label">Status</string>
     <string name="version_label">Version</string>
+    <string name="fetch_members_label">Members updated at</string>
+    <string name="fetch_billables_label">Pricelist updated at</string>
+    <string name="fetch_member_pictures_label">Member photos</string>
+    <string name="sync_edited_members_label">Edited members</string>
+    <string name="sync_new_members_label">New members</string>
+    <string name="sync_id_events_label">Identifications</string>
+    <string name="sync_encounters_label">Treatment Information</string>
+    <string name="all_synced">All synced</string>
 </resources>
