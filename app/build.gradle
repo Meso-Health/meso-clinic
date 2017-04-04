@@ -18,6 +18,7 @@ android {
         buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
+        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
         buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
     }
     signingConfigs {
@@ -70,8 +71,20 @@ android {
 
             buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("SANDBOX_ROLLBAR_ENV_KEY")
-            buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+        }
+        demo {
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+            resValue "string", "app_name", "UHP"
+            resValue "string", "main_activity_label", "UHP"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
+            buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
+            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("DEMO_ROLLBAR_ENV_KEY")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("DEMO_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
         production {
@@ -85,7 +98,6 @@ android {
 
             buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("PRODUCTION_ROLLBAR_ENV_KEY")
-            buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
         }

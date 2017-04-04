@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         if (BuildConfig.FLAVOR.equals("sandbox")) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.beige));
-        } else if (!(BuildConfig.FLAVOR.equals("production"))) {
+        } else if (!(BuildConfig.FLAVOR.equals("production") || BuildConfig.FLAVOR.equals("demo"))) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.gray));
         }
