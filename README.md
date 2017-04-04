@@ -41,7 +41,7 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 - **Release**
   - code is shrunk, optimized, and obfuscated; takes longer to build
   - signed with a real keystore; secure
-  - requires all update apks to have the same signature - otherwise, the existing app will be uninstalled and the data will be wiped. to prevent this from happening, _please use the keystore we have in Dropbox to sign all release builds_.
+  - requires all update apks to have the same signature - otherwise, the existing app will be uninstalled and the data will be wiped. to prevent this from happening, _please use the keystore we have in Dropbox to sign all release builds_
 
 ### Flavors
 
@@ -61,9 +61,9 @@ See the `build.gradle` file for more details on configuration changes between th
 
 We do most of our local development with the **developmentDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
 
-###Creating signed Release types locally
+### Creating signed Release types locally
 
-There are cases where you may wish to generate a signed release build locally (e.g. to manually upload to HockeyApp for release). To do so:
+There may be cases where you wish to generate a signed release build locally (e.g. to manually upload to HockeyApp for release). To do so:
 
 1. go to Build > Generate Signed APK
 2. use the keystore credentials in the `.env` file to sign the APK
@@ -133,7 +133,6 @@ To deploy to production, first merge your changes into `master` and ensure you g
 1. Check what you are going to deploy at [https://github.com/Watsi/uhp-android-app/compare/production...master](https://github.com/Watsi/uhp-android-app/compare/production...master)
 
 2. Locally, fetch the latest changes and merge `master` into `production`:
-3. 
 ```
 $ git pull --rebase
 $ git checkout production
