@@ -184,6 +184,8 @@ public class Member extends SyncableModel {
     }
 
     public void setCardId(String cardId) throws ValidationException {
+        //TODO: remove after Skoll Conference
+        cardId = cardId.replaceAll(" ","");
         if (validCardId(cardId)) {
             addDirtyField(FIELD_NAME_CARD_ID);
             this.mCardId = cardId;

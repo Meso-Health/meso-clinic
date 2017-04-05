@@ -61,6 +61,8 @@ public class MemberDao {
     }
 
     public static Member findByCardId(String cardId) throws SQLException {
+        //TODO: remove after Skoll Conference
+        cardId = cardId.replaceAll(" ","");
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);
 
