@@ -1,59 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/detail_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
-
-    <ImageView
-        android:id="@+id/member_photo"
-        android:contentDescription="@string/photo_description"
-        android:layout_width="@dimen/detail_fragment_photo_width"
-        android:layout_height="@dimen/detail_fragment_photo_height"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="10dp"
-        android:adjustViewBounds="true" />
+    android:orientation="vertical"
+    android:paddingTop="10dp" >
 
     <RelativeLayout
         android:id="@+id/member_details"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/detail_fragment_photo_height"
-        android:layout_toEndOf="@id/member_photo" >
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="10dp" >
+
+        <ImageView
+            android:id="@+id/member_photo"
+            android:contentDescription="@string/photo_description"
+            android:layout_width="@dimen/detail_fragment_photo_width"
+            android:layout_height="@dimen/detail_fragment_photo_height"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            android:adjustViewBounds="true" />
 
         <TextView
             android:id="@+id/member_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/member_gender_and_age"
+            android:theme="@style/Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/member_photo" />
+
+        <TextView
+            android:id="@+id/member_age_and_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/member_photo"
             android:layout_below="@id/member_name" />
 
         <TextView
             android:id="@+id/member_card_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/member_gender_and_age" />
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_below="@id/member_age_and_gender" />
 
         <TextView
             android:id="@+id/member_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/member_photo"
             android:layout_below="@id/member_card_id" />
 
         <TextView
             android:id="@+id/member_notification"
             android:textStyle="bold"
-            android:textColor="@color/alert_red"
+            android:textColor="@color/alertRed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:layout_toEndOf="@id/member_photo"
             android:layout_below="@id/member_phone_number" />
 
         <TextView
@@ -62,6 +67,7 @@
             android:layout_width="wrap_content"
             android:text="@string/reject_identity"
             android:clickable="true"
+            android:layout_toEndOf="@id/member_photo"
             android:layout_alignParentBottom="true"
             android:visibility="gone" />
 
@@ -71,6 +77,7 @@
             android:layout_width="wrap_content"
             android:text="@string/dismiss_patient"
             android:clickable="true"
+            android:layout_toEndOf="@id/member_photo"
             android:layout_alignParentBottom="true"
             android:visibility="gone" />
     </RelativeLayout>
@@ -80,30 +87,32 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="@string/approve_identity"
-        android:layout_below="@id/member_photo"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="10dp"/>
 
     <View
         android:id="@+id/detail_fragment_divider"
         android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:background="@color/colorPrimary"
-        android:layout_below="@id/approve_identity" />
+        android:layout_height="1dip"
+        android:background="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/household_members_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
-        android:text="@string/household_label"
-        android:layout_below="@id/detail_fragment_divider"/>
+        android:paddingLeft="18dp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:text="@string/household_label" />
 
     <ListView
         android:id="@+id/household_members"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
-        android:layout_below="@id/household_members_label"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         android:divider="@color/transparent" />
 
-</RelativeLayout>
+</LinearLayout>
