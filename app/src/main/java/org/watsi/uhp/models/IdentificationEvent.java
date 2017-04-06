@@ -5,10 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.watsi.uhp.managers.ConfigManager;
-
 import java.util.Date;
 import java.util.UUID;
+
+import static org.watsi.uhp.models.IdentificationEvent.ClinicNumberTypeEnum.DELIVERY;
 
 @DatabaseTable(tableName = IdentificationEvent.TABLE_NAME)
 public class IdentificationEvent extends SyncableModel {
@@ -187,8 +187,10 @@ public class IdentificationEvent extends SyncableModel {
     public String getFormattedClinicNumber() {
         if (mClinicNumberTypeEnum == null) {
             return null;
+        } else if (mClinicNumberTypeEnum == DELIVERY) {
+            return "D" + mClinicNumber.toString();
         } else {
-            return mClinicNumberTypeEnum.toString() + ": " + mClinicNumber.toString();
+            return mClinicNumber.toString();
         }
     }
 

@@ -9,44 +9,38 @@
     app:cardElevation="2dp" >
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/item_member_list_photo_height" >
 
         <ImageView
             android:id="@+id/member_photo"
             android:contentDescription="@string/photo_description"
             android:adjustViewBounds="true"
-            android:layout_margin="10dp"
             android:layout_width="@dimen/item_member_list_photo_width"
-            android:layout_height="@dimen/item_member_list_photo_height" />
+            android:layout_height="@dimen/item_member_list_photo_height"
+            android:layout_marginEnd="12dp" />
 
         <TextView
             android:id="@+id/member_name"
+            android:theme="@style/Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/member_photo"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="10dp" />
 
         <TextView
-            android:id="@+id/member_age"
+            android:id="@+id/member_age_and_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/member_photo"
             android:layout_below="@id/member_name" />
 
         <TextView
-            android:id="@+id/member_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/member_photo"
-            android:layout_below="@id/member_age" />
-
-        <TextView
             android:id="@+id/member_card_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/member_photo"
-            android:layout_below="@id/member_gender" />
+            android:layout_below="@id/member_age_and_gender" />
 
         <TextView
             android:id="@+id/member_phone_number"
@@ -57,12 +51,24 @@
 
         <TextView
             android:id="@+id/member_clinic_number"
+            android:background="@drawable/clinic_number_rectangle"
+            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp" />
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_above="@+id/empty_view"
+            android:visibility="gone" />
 
+        <!--Adding a margin under an element with alignParentBottom = true
+        currently does not work in Android. This is a workaround:
+        http://stackoverflow.com/questions/13441723/android-align-parent-bottom-bottom-margin-->
+
+        <Space
+            android:id="@+id/empty_view"
+            android:layout_height="10dp"
+            android:layout_width="wrap_content"
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_alignParentBottom="true" />
+        
     </RelativeLayout>
 </android.support.v7.widget.CardView>
