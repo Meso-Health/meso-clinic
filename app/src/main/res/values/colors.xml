@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#329af0</color>
-    <color name="colorPrimaryDark">#1b6ec2</color>
-    <color name="alert_red">#ff0000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="transparent">#00000000</color>
+    <color name="colorPrimary">#329AF0</color>
+    <color name="colorPrimaryDark">#1B6EC2</color>
     <color name="beige">#FCAF63</color>
     <color name="gray">#868E96</color>
 
+    <color name="alertRed">#FF0000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+
     <color name="title">#212121</color>
-    <color name="subtitle">#757575</color>
+    <color name="text">#747474</color>
     <color name="divider">#DADADA</color>
 </resources>

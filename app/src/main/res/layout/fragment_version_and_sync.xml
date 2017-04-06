@@ -40,7 +40,6 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textSize="15sp"
-                    android:textColor="@color/subtitle"
                     android:textAlignment="viewEnd" />
             </LinearLayout>
 
@@ -72,7 +71,6 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textSize="15sp"
-                    android:textColor="@color/subtitle"
                     android:textAlignment="viewEnd" />
             </LinearLayout>
 
@@ -104,7 +102,6 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textSize="15sp"
-                    android:textColor="@color/subtitle"
                     android:textAlignment="viewEnd" />
             </LinearLayout>
 
@@ -135,8 +132,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/subtitle" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <View
@@ -166,8 +162,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/subtitle" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <View
@@ -197,8 +192,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/subtitle" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <View
@@ -228,8 +222,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/subtitle" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <View
@@ -259,8 +252,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/subtitle" />
+                    android:textSize="15sp" />
             </LinearLayout>
         </LinearLayout>
 
