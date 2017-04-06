@@ -9,7 +9,7 @@
         android:layout_width="40dp"
         android:layout_height="50dp"
         android:text="@string/default_billable_quantity"
-        android:background="@drawable/background_rectangle"
+        android:background="@drawable/spinner_rectangle"
         android:gravity="center"
         android:inputType="number"
         android:selectAllOnFocus="true"

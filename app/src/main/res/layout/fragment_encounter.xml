@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@drawable/background_rectangle"
+            android:background="@drawable/spinner_rectangle"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin">
@@ -36,7 +36,7 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:background="@drawable/background_rectangle" >
+            android:background="@drawable/spinner_rectangle" >
 
             <Spinner
                 android:id="@+id/billable_spinner"
@@ -82,7 +82,7 @@
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="2dip"
+        android:layout_height="1dip"
         android:background="@color/colorPrimary" />
 
     <TextView
