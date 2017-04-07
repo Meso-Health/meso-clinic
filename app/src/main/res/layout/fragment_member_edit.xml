@@ -3,8 +3,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="10dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="10dp"
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
@@ -56,7 +58,6 @@
         android:id="@+id/scan_card"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
         android:text="@string/scan_card_btn_label" />
 
     <RelativeLayout
