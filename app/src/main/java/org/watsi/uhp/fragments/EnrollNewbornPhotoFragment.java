@@ -10,13 +10,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
 
@@ -53,7 +52,7 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
             new NavigationManager(getActivity()).setCurrentPatientsFragment();
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }
     }
@@ -65,7 +64,7 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
             String filename = "newborn_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
             new NavigationManager(getActivity()).setCurrentPatientsFragment();
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
@@ -86,7 +85,7 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mNewbornPhotoImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
             }
 
             mMember.setPhotoUrl(mUri.toString());

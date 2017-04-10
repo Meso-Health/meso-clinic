@@ -12,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -43,7 +42,7 @@ public class VersionAndSyncFragment extends Fragment {
                     .getPackageInfo(getActivity().getPackageName(), 0);
             ((TextView) view.findViewById(R.id.version_number)).setText(pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
         }
 
         final View finalView = view;
@@ -98,7 +97,7 @@ public class VersionAndSyncFragment extends Fragment {
                     counts[3] = IdentificationEventDao.unsynced().size();
                     counts[4] = EncounterDao.unsynced().size();
                 } catch (SQLException | IllegalStateException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
                 return counts;
             }

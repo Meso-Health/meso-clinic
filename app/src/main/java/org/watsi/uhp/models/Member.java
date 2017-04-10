@@ -15,14 +15,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
-import org.watsi.uhp.managers.NotificationManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -195,6 +193,8 @@ public class Member extends SyncableModel {
     }
 
     public void setCardId(String cardId) throws ValidationException {
+        //TODO: remove after Skoll Conference
+        cardId = cardId.replaceAll(" ","");
         if (validCardId(cardId)) {
             addDirtyField(FIELD_NAME_CARD_ID);
             this.mCardId = cardId;
@@ -363,7 +363,7 @@ public class Member extends SyncableModel {
         } else {
             Map<String,String> params = new HashMap<>();
             params.put("member.id", getId().toString());
-            NotificationManager.requestFailure(
+            ExceptionManager.requestFailure(
                     "Failed to fetch member photo",
                     request,
                     response,
@@ -379,7 +379,7 @@ public class Member extends SyncableModel {
             try {
                 return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
             } catch (IOException e) {
-                Rollbar.reportException(e);
+                ExceptionManager.handleException(e);
             }
         }
         return null;
@@ -545,7 +545,7 @@ public class Member extends SyncableModel {
         if (cardId == null || cardId.isEmpty()) {
             return false;
         } else {
-            return cardId.matches("RWI[0-9]{6}");
+            return cardId.matches("[A-Z]{3}[0-9]{6}");
         }
     }
 
@@ -589,7 +589,7 @@ public class Member extends SyncableModel {
         try {
             return IdentificationEventDao.openCheckIn(getId());
         } catch (SQLException e) {
-            Rollbar.reportException(e);
+            ExceptionManager.handleException(e);
             return null;
         }
     }

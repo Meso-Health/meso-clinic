@@ -13,11 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -129,7 +128,7 @@ public class SearchMemberFragment extends Fragment {
                         }
                     });
                 } catch (SQLException e) {
-                    Rollbar.reportException(e);
+                    ExceptionManager.handleException(e);
                 }
             }
         }).start();
