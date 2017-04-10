@@ -10,9 +10,9 @@
         android:id="@+id/member_details"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/detail_fragment_photo_height"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="10dp" >
+        android:layout_marginBottom="@dimen/fragment_vertical_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin" >
 
         <ImageView
             android:id="@+id/member_photo"
@@ -87,8 +87,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="@string/approve_identity"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:layout_marginBottom="10dp"/>
 
     <View
@@ -102,8 +102,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
-        android:paddingLeft="18dp"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:text="@string/household_label" />
 
     <ListView
@@ -111,8 +111,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:divider="@color/transparent" />
 
 </LinearLayout>

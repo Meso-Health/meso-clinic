@@ -113,8 +113,8 @@
 
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>
-    <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
-    <string name="total"><b>Total</b></string>
+    <string name="receipt_check_prompt">Does this look correct?</string>
+    <string name="total">Total</string>
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>

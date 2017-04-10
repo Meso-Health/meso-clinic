@@ -47,7 +47,12 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
 
             viewHolder.billableQuantity.setText(String.valueOf(encounterItemQuantity(encounterItem)));
             viewHolder.billableName.setText(billable.getName());
-            viewHolder.billableDetails.setText(billable.dosageDetails());
+            if (billable.dosageDetails() == null) {
+                viewHolder.billableDetails.setVisibility(View.GONE);
+            } else {
+                viewHolder.billableDetails.setText(billable.dosageDetails());
+                viewHolder.billableDetails.setVisibility(View.VISIBLE);
+            }
 
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
                 viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(billable.getPrice()));

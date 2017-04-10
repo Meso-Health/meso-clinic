@@ -11,4 +11,8 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/title</item>
     </style>
+
+    <style name="LargeLabel" parent="android:Widget.TextView">
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

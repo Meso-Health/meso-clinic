@@ -3,14 +3,15 @@
     android:id="@+id/member_search_fragment"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <SearchView
         android:id="@+id/member_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
-        android:queryHint="@string/search_member_hint"/>
+        android:queryHint="@string/search_member_hint"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin" />
 
     <RelativeLayout
         android:id="@+id/loading_panel"
@@ -31,16 +32,18 @@
         android:layout_height="wrap_content"
         android:text="@string/member_no_search_results_text"
         android:textAlignment="center"
-        android:paddingTop="16dp"
-        android:textSize="18sp"
-        android:visibility="gone"/>
+        android:layout_marginTop="@dimen/label_vertical_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:theme="@style/LargeLabel"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/member_search_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:divider="@color/transparent" />
 
 </LinearLayout>

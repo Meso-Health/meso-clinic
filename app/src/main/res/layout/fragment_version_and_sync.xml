@@ -14,14 +14,14 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin" >
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -30,8 +30,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/version_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title"
+                    android:theme="@style/Title"
                     android:labelFor="@+id/version_number"/>
 
                 <TextView
@@ -51,8 +50,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -61,8 +60,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/fetch_members_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title"
+                    android:theme="@style/Title"
                     android:labelFor="@+id/version_number"/>
 
                 <TextView
@@ -82,8 +80,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -92,8 +90,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/fetch_billables_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title"
+                    android:theme="@style/Title"
                     android:labelFor="@+id/version_number"/>
 
                 <TextView
@@ -113,8 +110,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -123,8 +120,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/fetch_member_pictures_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title" />
+                    android:theme="@style/Title" />
 
                 <TextView
                     android:id="@+id/fetch_member_pictures_quantity"
@@ -143,8 +139,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -153,8 +149,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_edited_members_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title" />
+                    android:theme="@style/Title" />
 
                 <TextView
                     android:id="@+id/sync_edited_members_quantity"
@@ -173,8 +168,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -183,8 +178,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_new_members_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title" />
+                    android:theme="@style/Title" />
 
                 <TextView
                     android:id="@+id/sync_new_members_quantity"
@@ -203,8 +197,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -213,8 +207,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_id_events_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title" />
+                    android:theme="@style/Title" />
 
                 <TextView
                     android:id="@+id/sync_id_events_quantity"
@@ -233,8 +226,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_padding"
+                android:layout_marginBottom="@dimen/list_item_vertical_padding"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -243,8 +236,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_encounters_label"
-                    android:textSize="16sp"
-                    android:textColor="@color/title" />
+                    android:theme="@style/Title" />
 
                 <TextView
                     android:id="@+id/sync_encounters_quantity"
@@ -265,8 +257,8 @@
         app:fabSize="normal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:src="@drawable/ic_autorenew_white_24dp"
         android:clickable="true"
         app:backgroundTint="@color/beige"/>

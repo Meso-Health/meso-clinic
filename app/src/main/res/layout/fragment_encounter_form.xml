@@ -3,8 +3,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/fragment_vertical_margin"
+    android:layout_marginBottom="@dimen/fragment_vertical_margin"
+    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+    android:layout_marginRight="@dimen/fragment_horizontal_margin"
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
@@ -17,15 +19,15 @@
     <ImageView
         android:id="@+id/photo"
         android:contentDescription="@string/photo_description"
-        android:layout_height="400dp"
+        android:layout_height="360dp"
         android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="?android:attr/buttonBarButtonStyle"
         android:gravity="bottom" >
 
         <Button
@@ -33,7 +35,6 @@
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"
-            style="android:attr/buttonBarButtonStyle"
             android:text="@string/add_another_label"
             android:enabled="false" />
 
@@ -42,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"
-            style="android:attr/buttonBarButtonStyle"
             android:text="@string/finish_btn_label" />
     </LinearLayout>
 </LinearLayout>
