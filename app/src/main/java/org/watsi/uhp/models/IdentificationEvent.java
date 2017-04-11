@@ -8,8 +8,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.watsi.uhp.models.IdentificationEvent.ClinicNumberTypeEnum.DELIVERY;
-
 @DatabaseTable(tableName = IdentificationEvent.TABLE_NAME)
 public class IdentificationEvent extends SyncableModel {
 
@@ -187,7 +185,7 @@ public class IdentificationEvent extends SyncableModel {
     public String getFormattedClinicNumber() {
         if (mClinicNumberTypeEnum == null) {
             return null;
-        } else if (mClinicNumberTypeEnum == DELIVERY) {
+        } else if (mClinicNumberTypeEnum == ClinicNumberTypeEnum.DELIVERY) {
             return "D" + mClinicNumber.toString();
         } else {
             return mClinicNumber.toString();
