@@ -179,6 +179,21 @@ public class MemberTest {
     }
 
     @Test
+    public void getFormattedAgeAndGender() {
+        member.setAge(0);
+        member.setGender(Member.GenderEnum.F);
+        assertEquals(member.getFormattedAgeAndGender(), "0 years / F");
+
+        member.setAge(1);
+        member.setGender(Member.GenderEnum.M);
+        assertEquals(member.getFormattedAgeAndGender(), "1 year / M");
+
+        member.setAge(52);
+        member.setGender(Member.GenderEnum.F);
+        assertEquals(member.getFormattedAgeAndGender(), "52 years / F");
+    }
+
+    @Test
     public void deleteLocalMemberImage_nullPhotoUrl() throws Exception {
         Member memberSpy = spy(Member.class);
         memberSpy.setPhotoUrl(null);
