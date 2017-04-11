@@ -28,8 +28,8 @@ $ open -a /Applications/Android\ Studio.app /your/working/dir
 
 ## Build variants
 
-Our application has 2 build types (debug and release) and 4 build flavors (development, sandbox, 
-demo, and production), for a total of 8 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types). You can create any one of these build 
+Our application has 2 build types (debug and release) and 5 build flavors (development, spec, sandbox,
+demo, and production), for a total of 10 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types). You can create any one of these build
 variants locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
 
 ### Types
@@ -48,6 +48,10 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 - **Development**
   - hits local server as API endpoint
   - used for development
+- **Spec**
+  - hits local server as API endpoint
+  - used for running tests
+  - this is the flavour used by circleci
 - **Sandbox** 
   - hits sandbox server (which mimics production DB)
   - used for QA
@@ -71,7 +75,7 @@ There may be cases where you wish to generate a signed release build locally (e.
 
 ## Running development apps against a local server
 
-Apps with the development flavor are set up to hit a local server (`http://localhost:5000`) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
+Apps with the development/spec flavor are set up to hit a local server (`http://localhost:5000` for development and `http://localhost:6000` for spec) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
 However, by default, emulators and devices don't know about their PC's local servers. (Going to `localhost:5000` on your emulator or device browser will attempt to access its _own_ server, which doesn't exist.)
 
 In both cases, first start your local server (see [https://github.com/Watsi/uhp-backend](https://github.com/Watsi/uhp-backend) for more detailed instructions).
@@ -104,10 +108,16 @@ Check that your device is connected.
 $ adb devices
 ```
 
-Forward port 5000 on your device to port 5000 on your PC.
+Forward port number (depending on flavour) on your device to port number on your PC.
 
+For Development:
 ```
 $ adb reverse tcp:5000 tcp:5000
+```
+
+For Spec:
+```
+$ adb reverse tcp:6000 tcp:6000
 ```
 
 And voila, that's it! As long as your phone is connected to your PC, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
@@ -117,8 +127,14 @@ And voila, that's it! As long as your phone is connected to your PC, it will be 
 Simply change the `API_HOST` config field in `build.gradle` to `10.0.2.2:portno`. This is the 
 designated IP address for emulators to refer their computer's server.
 
+For Development:
 ```
 buildConfigField "String", "API_HOST", "\"10.0.2.2:5000\""
+```
+
+For Spec:
+```
+buildConfigField "String", "API_HOST", "\"10.0.2.2:6000\""
 ```
 
 ## Continuous Deployment
