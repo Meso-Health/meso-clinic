@@ -48,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new NavigationManager(this).setLoginFragment();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) {
             checkForUpdates();
         }
@@ -97,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkForUpdates() {
         UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
