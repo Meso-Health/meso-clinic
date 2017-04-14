@@ -27,8 +27,10 @@ public class MemberTypeAdapterFactory extends CustomizedTypeAdapterFactory<Membe
     protected void afterRead(JsonElement deserialized) {
         if (BuildConfig.USING_LOCAL_SERVER) {
             JsonObject jsonObject = deserialized.getAsJsonObject();
-            String photoUrl = jsonObject.remove(Member.FIELD_NAME_PHOTO_URL).getAsString();
-            jsonObject.addProperty(Member.FIELD_NAME_PHOTO_URL, BuildConfig.API_HOST + photoUrl);
+            if (jsonObject.get(Member.FIELD_NAME_PHOTO_URL) != null) {
+                String photoUrl = jsonObject.remove(Member.FIELD_NAME_PHOTO_URL).getAsString();
+                jsonObject.addProperty(Member.FIELD_NAME_PHOTO_URL, BuildConfig.API_HOST + photoUrl);
+            }
         }
     }
 }
