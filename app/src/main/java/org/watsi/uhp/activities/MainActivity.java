@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (currentFragment instanceof EncounterFragment) {
             new AlertDialog.Builder(this)
-                    .setTitle("Are you sure you want to exit?")
+                    .setTitle(R.string.exit_encounter_alert)
                     .setNegativeButton(android.R.string.no, null)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
@@ -148,7 +148,14 @@ public class MainActivity extends AppCompatActivity {
             }
             switch (item.getItemId()) {
                 case R.id.menu_logout:
-                    new NavigationManager(mActivity).logout();
+                    new AlertDialog.Builder(mActivity)
+                        .setTitle(R.string.log_out_alert)
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                new NavigationManager(mActivity).logout();
+                            }
+                        }).create().show();
                     break;
                 case R.id.menu_member_edit:
                     IdentificationEvent.SearchMethodEnum searchMethod =
