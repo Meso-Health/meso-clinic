@@ -51,6 +51,7 @@
         android:id="@+id/login_button"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:theme="@style/SecondaryButton"
         android:text="@string/login_button_text"
         android:enabled="false" />
 </LinearLayout>

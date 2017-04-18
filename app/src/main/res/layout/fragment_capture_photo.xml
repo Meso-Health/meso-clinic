@@ -15,6 +15,7 @@
         android:id="@+id/photo_btn"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:theme="@style/SecondaryButton"
         android:text="@string/photo_btn_label" />
 
     <ImageView
@@ -35,6 +36,7 @@
             android:id="@+id/save_button"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:theme="@style/PrimaryButton"
             android:text="@string/save_btn_label" />
     </RelativeLayout>
 </LinearLayout>
