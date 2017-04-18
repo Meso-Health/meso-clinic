@@ -18,6 +18,7 @@
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
+    <string name="log_out_alert">Are you sure you want to log out?</string>
     <string name="menu_version_and_sync_label">Status</string>
 
     <!-- General Labels -->
@@ -92,6 +93,7 @@
     <string name="clinic_number_button">Submit</string>
 
     <!--EncounterFragment-->
+    <string name="exit_encounter_alert">Are you sure you want to exit?</string>
     <string name="current_patients_fragment_label">Select a patient</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a</string>
