@@ -153,7 +153,7 @@
     <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
 
     <!--MemberEditFragment-->
-    <string name="member_edit_label">Update member information</string>
+    <string name="member_edit_label">Update member</string>
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
