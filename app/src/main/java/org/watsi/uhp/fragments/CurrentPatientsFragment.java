@@ -54,9 +54,8 @@ public class CurrentPatientsFragment extends Fragment {
             if (currentPatientsCount == 0) {
                 currentPatientsLabel.setVisibility(View.GONE);
             } else {
-                currentPatientsLabel.setText(String.valueOf(currentPatientsCount) + " " +
-                        getActivity().getResources().getQuantityString(R.plurals.current_patients_label,
-                                currentPatientsCount));
+                currentPatientsLabel.setText(getActivity().getResources().getQuantityString(
+                        R.plurals.current_patients_label, currentPatientsCount, currentPatientsCount));
             }
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

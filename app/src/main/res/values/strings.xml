@@ -52,8 +52,8 @@
     <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
     <plurals name="current_patients_label" >
-        <item quantity="one">Current Patient</item>
-        <item quantity="other">Current Patients</item>
+        <item quantity="one">%d Current Patient</item>
+        <item quantity="other">%d Current Patients</item>
     </plurals>
 
     <!--BarcodeFragment-->
@@ -76,8 +76,8 @@
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
     <plurals name="household_label" >
-        <item quantity="one">Household Member</item>
-        <item quantity="other">Household Members</item>
+        <item quantity="one">%d Household Member</item>
+        <item quantity="other">%d Household Members</item>
     </plurals>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">has been reported for suspicious behavior.</string>
@@ -125,7 +125,10 @@
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
-    <string name="receipt_forms_attached">%1$d forms attached</string>
+    <plurals name="forms_attached_label" >
+        <item quantity="one">%d form attached</item>
+        <item quantity="other">%d forms attached</item>
+    </plurals>
 
     <!-- Enrollment -->
     <string name="enrollment_complete_btn">Complete enrollment</string>
