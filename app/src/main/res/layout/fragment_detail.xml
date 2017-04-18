@@ -103,8 +103,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:text="@string/household_label" />
+        android:layout_marginRight="@dimen/fragment_horizontal_margin" />
 
     <ListView
         android:id="@+id/household_members"

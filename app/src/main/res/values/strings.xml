@@ -51,6 +51,10 @@
     <!--CurrentPatientsFragment-->
     <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
+    <plurals name="current_patients_label" >
+        <item quantity="one">Current Patient</item>
+        <item quantity="other">Current Patients</item>
+    </plurals>
 
     <!--BarcodeFragment-->
     <string name="barcode_fragment_label">Scan ID</string>
@@ -71,7 +75,10 @@
     <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
-    <string name="household_label">Household Members</string>
+    <plurals name="household_label" >
+        <item quantity="one">Household Member</item>
+        <item quantity="other">Household Members</item>
+    </plurals>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">has been reported for suspicious behavior.</string>
     <string name="identification_dismissed">has been checked out without treatment details.</string>
