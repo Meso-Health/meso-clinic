@@ -22,7 +22,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
+public class EnrollmentMemberPhotoFragment extends FormFragment {
 
     static final int TAKE_MEMBER_PHOTO_INTENT = 1;
 
@@ -40,8 +40,8 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
-        return !mMember.shouldCaptureFingerprint();
+    public boolean isFirstStep() {
+        return true;
     }
 
     @Override
@@ -86,6 +86,10 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 new CapturePhotoClickListener(TAKE_MEMBER_PHOTO_INTENT, this, mUri));
 
         mMemberPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+
+        if (!mMember.shouldCaptureFingerprint()) {
+            mSaveBtn.setText(R.string.enrollment_complete_btn);
+        }
     }
 
     @Override

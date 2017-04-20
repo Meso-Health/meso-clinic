@@ -11,7 +11,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
-public abstract class EnrollmentFragment extends Fragment {
+public abstract class FormFragment extends Fragment {
 
     protected Member mMember;
     protected Button mSaveBtn;
@@ -25,9 +25,6 @@ public abstract class EnrollmentFragment extends Fragment {
         View view = inflater.inflate(getFragmentLayoutId(), container, false);
 
         mSaveBtn = (Button) view.findViewById(R.id.save_button);
-        if (isLastStep()) {
-            mSaveBtn.setText(R.string.enrollment_complete_btn);
-        }
 
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +40,7 @@ public abstract class EnrollmentFragment extends Fragment {
 
     abstract int getTitleLabelId();
     abstract int getFragmentLayoutId();
-    abstract boolean isLastStep();
+    public abstract boolean isFirstStep();
     abstract void nextStep();
     abstract void setUpFragment(View view);
 }

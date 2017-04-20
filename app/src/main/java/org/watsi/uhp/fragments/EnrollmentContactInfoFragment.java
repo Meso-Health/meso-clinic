@@ -12,7 +12,7 @@ import org.watsi.uhp.models.AbstractModel;
 
 import java.sql.SQLException;
 
-public class EnrollmentContactInfoFragment extends EnrollmentFragment {
+public class EnrollmentContactInfoFragment extends FormFragment {
 
     private EditText mPhoneNumberView;
 
@@ -27,7 +27,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
+    public boolean isFirstStep() {
         return false;
     }
 

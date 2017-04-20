@@ -21,7 +21,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.DetailFragment;
-import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-        if (currentFragment instanceof EncounterFragment) {
+        if (currentFragment instanceof FormFragment && ((FormFragment) currentFragment).isFirstStep()) {
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.exit_encounter_alert)
+                    .setTitle(R.string.exit_form_alert)
                     .setNegativeButton(android.R.string.no, null)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
@@ -183,10 +183,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        final Activity activity = this;
+
         switch (item.getItemId()) {
             case android.R.id.home:
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
                 if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
                     new NavigationManager(this).setLoginFragment();
+                } else if (currentFragment instanceof FormFragment) {
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.exit_form_alert)
+                            .setNegativeButton(android.R.string.no, null)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    new NavigationManager(activity).setCurrentPatientsFragment();
+                                }
+                            }).create().show();
                 } else {
                     new NavigationManager(this).setCurrentPatientsFragment();
                 }

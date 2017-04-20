@@ -22,7 +22,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
+public class EnrollNewbornPhotoFragment extends FormFragment {
 
     static final int TAKE_NEWBORN_PHOTO_INTENT = 4;
 
@@ -40,8 +40,8 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
-        return true;
+    public boolean isFirstStep() {
+        return false;
     }
 
     @Override

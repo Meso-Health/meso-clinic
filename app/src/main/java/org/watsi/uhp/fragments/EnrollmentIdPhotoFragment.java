@@ -21,7 +21,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
+public class EnrollmentIdPhotoFragment extends FormFragment {
 
     static final int TAKE_ID_PHOTO_INTENT = 2;
 
@@ -39,7 +39,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
+    public boolean isFirstStep() {
         return false;
     }
 

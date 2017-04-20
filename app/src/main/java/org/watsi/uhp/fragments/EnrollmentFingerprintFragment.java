@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EnrollmentFingerprintFragment extends EnrollmentFragment {
+public class EnrollmentFingerprintFragment extends FormFragment {
 
     private static int SIMPRINTS_ENROLLMENT_INTENT = 3;
 
@@ -41,8 +41,8 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
-        return true;
+    public boolean isFirstStep() {
+        return false;
     }
 
     @Override

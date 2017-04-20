@@ -2,11 +2,8 @@ package org.watsi.uhp.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,62 +14,32 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
-public class MemberEditFragment extends Fragment {
+public class MemberEditFragment extends FormFragment {
 
-    private Member mMember;
+    private EditText nameView;
+    private EditText cardIdView;
+    private EditText phoneNumView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.member_edit_label);
-
-        View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
-
-        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-
-        final EditText nameView = (EditText) view.findViewById(R.id.member_name);
-        nameView.getText().append(mMember.getFullName());
-        final EditText cardIdView = (EditText) view.findViewById(R.id.card_id);
-
-        String mScannedCardId = getArguments().getString(
-                NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);
-        if (mScannedCardId != null) {
-            cardIdView.getText().append(mScannedCardId);
-        } else if (mMember.getCardId() != null) {
-            cardIdView.getText().append(mMember.getCardId());
-        }
-        final EditText phoneNumView = (EditText) view.findViewById(R.id.phone_number);
-        if (mMember.getPhoneNumber() != null) {
-            phoneNumView.getText().append(mMember.getPhoneNumber());
-        }
-
-        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                String idMethodString =
-                        getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-                bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
-                new NavigationManager(getActivity())
-                        .setBarcodeFragment(
-                                BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, bundle);
-            }
-        });
-
-        view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveChanges(nameView, cardIdView, phoneNumView);
-            }
-        });
-
-        return view;
+    int getTitleLabelId() {
+        return R.string.member_edit_label;
     }
 
-    public void saveChanges(EditText nameView, EditText cardIdView, EditText phoneNumView) {
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_member_edit;
+    }
+
+    @Override
+    public boolean isFirstStep() {
+        return true;
+    }
+
+    @Override
+    void nextStep() {
         if (valid(nameView, cardIdView, phoneNumView)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.member_edit_confirmation);
@@ -110,6 +77,39 @@ public class MemberEditFragment extends Fragment {
             });
             builder.show();
         }
+    }
+
+    @Override
+    void setUpFragment(View view) {
+        nameView = (EditText) view.findViewById(R.id.member_name);
+        nameView.getText().append(mMember.getFullName());
+
+        cardIdView = (EditText) view.findViewById(R.id.card_id);
+        String mScannedCardId = getArguments().getString(
+                NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);
+        if (mScannedCardId != null) {
+            cardIdView.getText().append(mScannedCardId);
+        } else if (mMember.getCardId() != null) {
+            cardIdView.getText().append(mMember.getCardId());
+        }
+
+        phoneNumView = (EditText) view.findViewById(R.id.phone_number);
+        if (mMember.getPhoneNumber() != null) {
+            phoneNumView.getText().append(mMember.getPhoneNumber());
+        }
+
+        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                String idMethodString =
+                        getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+                bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
+                new NavigationManager(getActivity())
+                        .setBarcodeFragment(
+                                BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, bundle);
+            }
+        });
     }
 
     private boolean valid(EditText nameView, EditText cardIdView, EditText phoneNumView) {
