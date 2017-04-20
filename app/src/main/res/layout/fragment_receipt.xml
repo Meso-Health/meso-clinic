@@ -3,55 +3,61 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:layout_marginTop="@dimen/fragment_vertical_margin" >
 
     <TextView
         android:id="@+id/receipt_prompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/receipt_check_prompt"
-        android:textSize="15sp"/>
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:text="@string/receipt_check_prompt" />
 
     <ListView
         android:id="@+id/receipt_items"
         android:layout_width="match_parent"
-        android:layout_height="385dp"
-        android:layout_below="@id/receipt_prompt"/>
+        android:layout_height="390dp"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:layout_below="@id/receipt_prompt" />
 
     <TextView
         android:id="@+id/total"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:layout_below="@id/receipt_items"
         android:text="@string/total"
-        android:textSize="20sp"
-        android:layout_below="@id/receipt_items"/>
+        android:theme="@style/Title" />
 
     <TextView
         android:id="@+id/total_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:layout_below="@id/receipt_items"
-        android:gravity="end"
-        android:textAlignment="gravity"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/total"/>
+        android:layout_toEndOf="@+id/total"
+        android:gravity="end"
+        android:theme="@style/Title" />
 
     <TextView
         android:id="@+id/forms_attached"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:gravity="end"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:layout_below="@id/total_price"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/total_price"/>
+        android:gravity="end" />
 
     <Button
         android:id="@+id/create_encounter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/PrimaryButton"
         android:text="@string/save_encounter_button"
         android:layout_alignParentBottom="true"/>
 </RelativeLayout>

@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
@@ -31,6 +32,7 @@ public class CurrentPatientsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_current_patients, container, false);
         Button mNewPatientButton = (Button) view.findViewById(R.id.identification_button);
+        TextView currentPatientsLabel = (TextView) view.findViewById(R.id.current_patients_label);
         ListView listView = (ListView) view.findViewById(R.id.current_patients);
         listView.setEmptyView(view.findViewById(R.id.current_patients_empty_text));
 
@@ -47,7 +49,14 @@ public class CurrentPatientsFragment extends Fragment {
         try {
             List<Member> currentPatients = MemberDao.getCheckedInMembers();
             ListAdapter adapter = new MemberAdapter(getContext(), currentPatients, true);
+            int currentPatientsCount = currentPatients.size();
 
+            if (currentPatientsCount == 0) {
+                currentPatientsLabel.setVisibility(View.GONE);
+            } else {
+                currentPatientsLabel.setText(getActivity().getResources().getQuantityString(
+                        R.plurals.current_patients_label, currentPatientsCount, currentPatientsCount));
+            }
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
