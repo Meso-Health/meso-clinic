@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
-    //building string config fields requires a double-quoted string
+    // building string config fields requires a double-quoted string
     def ENV = { k -> "\"${System.getenv(k)}\"" }
 
     defaultConfig {
@@ -31,8 +31,6 @@ android {
     }
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
         }
         release {
@@ -47,6 +45,8 @@ android {
             versionNameSuffix "-development"
             resValue "string", "app_name", "UHP Dev"
             resValue "string", "main_activity_label", "UHP Dev"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#868E96" // gray
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_development"
             ]
@@ -65,6 +65,8 @@ android {
             versionNameSuffix "-sandbox"
             resValue "string", "app_name", "UHP Sandbox"
             resValue "string", "main_activity_label", "UHP Sandbox"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#FCAF63" // beige
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
@@ -79,6 +81,8 @@ android {
             versionNameSuffix "-demo"
             resValue "string", "app_name", "UHP"
             resValue "string", "main_activity_label", "UHP"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#868E96" // gray
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -92,6 +96,8 @@ android {
             versionNameSuffix "-production"
             resValue "string", "app_name", "UHP"
             resValue "string", "main_activity_label", "UHP"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]

@@ -14,9 +14,8 @@ import com.simprints.libsimprints.Registration;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.models.SyncableModel;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.NavigationManager;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -53,12 +52,12 @@ public class EnrollmentFingerprintFragment extends EnrollmentFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+                    mMember.setUnsynced(getSessionManager().getToken());
                     MemberDao.update(mMember);
-                    new NavigationManager(getActivity()).setCurrentPatientsFragment();
+                    getNavigationManager().setCurrentPatientsFragment();
                     Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-                } catch (SQLException e) {
-                    ExceptionManager.handleException(e);
+                } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+                    ExceptionManager.reportException(e);
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
                 }
             }

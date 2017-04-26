@@ -3,6 +3,7 @@ package org.watsi.uhp.fragments;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -13,10 +14,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.rollbar.android.Rollbar;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.SyncableModel;
 
 public class ClinicNumberDialogFragment extends DialogFragment {
 
@@ -24,6 +29,7 @@ public class ClinicNumberDialogFragment extends DialogFragment {
     private EditText mClinicNumberView;
     private Button mSubmitButton;
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -37,12 +43,20 @@ public class ClinicNumberDialogFragment extends DialogFragment {
                         RadioButton selectedRadioButton = (RadioButton) ((AlertDialog)dialog)
                                 .findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
                         IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
-                                IdentificationEvent.ClinicNumberTypeEnum.valueOf(selectedRadioButton
-                                        .getText().toString().toUpperCase());
+                                IdentificationEvent.ClinicNumberTypeEnum.valueOf(
+                                        selectedRadioButton.getText().toString().toUpperCase());
                         int clinicNumber = Integer.valueOf(mClinicNumberView.getText().toString());
 
-                        ((DetailFragment) getTargetFragment()).completeIdentification(
-                                true, clinicNumberType, clinicNumber);
+                        try {
+                            ((DetailFragment) getTargetFragment()).completeIdentification(
+                                    true, clinicNumberType, clinicNumber);
+                        } catch (SyncableModel.UnauthenticatedException e) {
+                            Rollbar.reportException(e);
+                            Toast.makeText(getActivity(),
+                                    "Failed to save identification, contact support.",
+                                    Toast.LENGTH_LONG).
+                                    show();
+                        }
                     }
                 });
 
@@ -52,10 +66,11 @@ public class ClinicNumberDialogFragment extends DialogFragment {
 
             @Override
             public void onShow(DialogInterface dialog) {
-                mClinicNumberRadioGroup = (RadioGroup) ((AlertDialog)dialog).findViewById(R.id
-                        .radio_group_clinic_number);
-                mClinicNumberView = (EditText) ((AlertDialog)dialog).findViewById(R.id.clinic_number_field);
-                mSubmitButton = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                mClinicNumberRadioGroup = (RadioGroup) ((AlertDialog) dialog).findViewById(
+                        R.id.radio_group_clinic_number);
+                mClinicNumberView = (EditText) ((AlertDialog) dialog).findViewById(
+                        R.id.clinic_number_field);
+                mSubmitButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
                 mSubmitButton.setEnabled(false);
                 setTextChangedListener();

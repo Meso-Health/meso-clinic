@@ -1,19 +1,21 @@
 package org.watsi.uhp.activities;
 
-import android.app.Activity;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.rollbar.android.Rollbar;
-import com.squareup.leakcanary.LeakCanary;
 
 import net.hockeyapp.android.UpdateManager;
 
@@ -22,61 +24,70 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.IOException;
+
+public class ClinicActivity extends AppCompatActivity {
+
+    private SessionManager mSessionManager;
+    private NavigationManager mNavigationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Rollbar.init(
+                this,
+                BuildConfig.ROLLBAR_API_KEY,
+                BuildConfig.ROLLBAR_ENV_KEY
+        );
+        super.onCreate(savedInstanceState);
+
         setupApp();
         startServices();
+    }
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    /**
+     * This method gets called after onResume and will get called after both onCreate and
+     * after onActivityResult which will ensure we force setUserAsLoggedIn when necessary
+     */
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
 
-        setUpLeakCanary();
-        setupToolbar();
-
-        if (ConfigManager.getLoggedInUserToken(getApplicationContext()) != null) {
-            new NavigationManager(this).setCurrentPatientsFragment();
-        } else {
-            new NavigationManager(this).setLoginFragment();
-        }
+        new LoginTask(this).execute();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) {
-            checkForUpdates();
-        }
+        if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) checkForUpdates();
     }
 
     private void setupApp() {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
-            Rollbar.init(
-                    this,
-                    BuildConfig.ROLLBAR_API_KEY,
-                    BuildConfig.ROLLBAR_ENV_KEY
-            );
-        }
         DatabaseHelper.init(getApplicationContext());
+        ExceptionManager.init(getApplication());
+
+        setContentView(R.layout.activity_clinic);
+        setupToolbar();
+        mSessionManager = new SessionManager(new PreferencesManager(this), AccountManager.get(this));
+        mNavigationManager = new NavigationManager(this);
     }
 
-    private void setUpLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this.getApplication());
+    public SessionManager getSessionManager() {
+        return mSessionManager;
+    }
+
+    public NavigationManager getNavigationManager() {
+        return mNavigationManager;
     }
 
     private void startServices() {
@@ -90,14 +101,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new MenuItemClickListener(this));
-        if (BuildConfig.FLAVOR.equals("sandbox")) {
-            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
-                    R.color.beige));
-        } else if (!(BuildConfig.FLAVOR.equals("production") || BuildConfig.FLAVOR.equals("demo"))) {
-            toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
-                    R.color.gray));
-        }
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void checkForUpdates() {
@@ -112,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
 
         if (currentFragment instanceof EncounterFragment) {
             new AlertDialog.Builder(this)
@@ -122,19 +125,19 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface arg0, int arg1) {
-                            MainActivity.super.onBackPressed();
+                            ClinicActivity.super.onBackPressed();
                         }
                     }).create().show();
         } else {
-            MainActivity.super.onBackPressed();
+            ClinicActivity.super.onBackPressed();
         }
     }
 
     private class MenuItemClickListener implements Toolbar.OnMenuItemClickListener {
 
-        private Activity mActivity;
+        private ClinicActivity mActivity;
 
-        MenuItemClickListener(Activity activity) {
+        MenuItemClickListener(ClinicActivity activity) {
             this.mActivity = activity;
         }
 
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
-                                new NavigationManager(mActivity).logout();
+                                mSessionManager.logout(mActivity);
                             }
                         }).create().show();
                     break;
@@ -162,19 +165,16 @@ public class MainActivity extends AppCompatActivity {
                             ((DetailFragment) getSupportFragmentManager()
                                     .findFragmentByTag("detail"))
                                     .getIdMethod();
-                    new NavigationManager(mActivity)
-                            .setMemberEditFragment(member, searchMethod, null);
+                    getNavigationManager().setMemberEditFragment(member, searchMethod, null);
                     break;
                 case R.id.menu_enroll_newborn:
-                    new NavigationManager(mActivity).setEnrollNewbornInfoFragment(member, null, null);
+                    getNavigationManager().setEnrollNewbornInfoFragment(member, null, null);
                     break;
                 case R.id.menu_version:
-                    if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                    new NavigationManager(mActivity).setVersionFragment();
+                    getNavigationManager().setVersionFragment();
                     break;
                 case R.id.menu_complete_enrollment:
-                    new NavigationManager(mActivity)
-                            .setEnrollmentMemberPhotoFragment(member);
+                    getNavigationManager().setEnrollmentMemberPhotoFragment(member);
                     break;
             }
             return true;
@@ -185,11 +185,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
-                    new NavigationManager(this).setLoginFragment();
-                } else {
-                    new NavigationManager(this).setCurrentPatientsFragment();
-                }
+                getNavigationManager().setCurrentPatientsFragment();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -206,5 +202,40 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         UpdateManager.unregister();
+    }
+
+    private class LoginTask extends AsyncTask<Void, Void, String> {
+
+        private final ClinicActivity mClinicActivity;
+
+        LoginTask(ClinicActivity clinicActivity) {
+            this.mClinicActivity = clinicActivity;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            AccountManagerFuture<Bundle> tokenFuture = mSessionManager.fetchToken();
+            if (tokenFuture == null) return null;
+            try {
+                Bundle bundle = tokenFuture.getResult();
+                if (bundle != null) return bundle.getString(AccountManager.KEY_AUTHTOKEN);
+            } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+                ExceptionManager.reportException(e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String token) {
+            if (token == null) {
+                startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
+            } else {
+                Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container);
+                if (currentFragment == null) {
+                    getNavigationManager().setCurrentPatientsFragment();
+                }
+            }
+        }
     }
 }

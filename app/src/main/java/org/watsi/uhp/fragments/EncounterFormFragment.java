@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,11 @@ import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 
-public class EncounterFormFragment extends Fragment {
+public class EncounterFormFragment extends BaseFragment {
 
     static final int ENCOUNTER_FORM_PHOTO_INTENT = 6;
 
@@ -48,8 +48,8 @@ public class EncounterFormFragment extends Fragment {
             String filename = "encounter_form_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "encounter", getContext());
         } catch (IOException e) {
-            ExceptionManager.handleException(e);
-            new NavigationManager(getActivity()).setReceiptFragment(mEncounter);
+            ExceptionManager.reportException(e);
+            getNavigationManager().setReceiptFragment(mEncounter);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
@@ -75,13 +75,19 @@ public class EncounterFormFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            if (mEncounterForm.getUrl() != null) {
-                mEncounter.addEncounterForm(mEncounterForm);
-            }
-            if (finished) {
-                new NavigationManager(getActivity()).setReceiptFragment(mEncounter);
-            } else {
-                new NavigationManager(getActivity()).setEncounterFormFragment(mEncounter);
+            try {
+                if (mEncounterForm.getUrl() != null) {
+                    mEncounter.addEncounterForm(mEncounterForm);
+                    mEncounterForm.setUnsynced(getSessionManager().getToken());
+                }
+                if (finished) {
+                    getNavigationManager().setReceiptFragment(mEncounter);
+                } else {
+                    getNavigationManager().setEncounterFormFragment(mEncounter);
+                }
+            } catch (SyncableModel.UnauthenticatedException e) {
+                ExceptionManager.reportException(e);
+                Toast.makeText(getContext(), "Failed to save data, contact support.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -94,7 +100,7 @@ public class EncounterFormFragment extends Fragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mEncounterFormImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
 
             mEncounterForm.setUrl(mUri.toString());

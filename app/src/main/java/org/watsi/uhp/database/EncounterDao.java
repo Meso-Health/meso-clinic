@@ -60,7 +60,6 @@ public class EncounterDao {
 
         for (EncounterForm encounterForm : encounter.getEncounterForms()) {
             encounterForm.setEncounter(encounter);
-            encounterForm.setUnsynced(encounter.getToken());
             encounterForm.setIsNew(true);
             EncounterFormDao.create(encounterForm);
         }

@@ -1,8 +1,10 @@
 package org.watsi.uhp.managers;
 
+import android.app.Application;
 import android.util.Log;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.watsi.uhp.BuildConfig;
 
@@ -15,6 +17,24 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ExceptionManager {
+    public static void init(Application application) {
+        if (BuildConfig.REPORT_TO_ROLLBAR) {
+            Rollbar.init(
+                    application,
+                    BuildConfig.ROLLBAR_API_KEY,
+                    BuildConfig.ROLLBAR_ENV_KEY
+            );
+        }
+
+        if (LeakCanary.isInAnalyzerProcess(application)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(application);
+    }
+
+
     public static void requestFailure(String description, Request request, Response response, Map<String,String> params) {
         params.put("Url", request.url().toString());
         params.put("Method", request.method());
@@ -24,7 +44,7 @@ public class ExceptionManager {
             try {
                 params.put("Content-Length", String.valueOf(request.body().contentLength()));
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
         }
         if (response != null) {
@@ -39,7 +59,7 @@ public class ExceptionManager {
         requestFailure(description, request, response, new HashMap<String,String>());
     }
 
-    public static void handleException(Throwable e) {
+    public static void reportException(Throwable e) {
         if (BuildConfig.REPORT_TO_ROLLBAR) {
             Rollbar.reportException(e);
         } else {
@@ -59,11 +79,11 @@ public class ExceptionManager {
         reportMessage(message, "info", null);
     }
 
-    public static void setPersonData(String id, String username, String detail) {
+    public static void setPersonData(String id, String username) {
         if (BuildConfig.REPORT_TO_ROLLBAR) {
-            Rollbar.setPersonData(id, username, detail);
+            Rollbar.setPersonData(id, username, null);
         } else {
-            Log.i("Person Data Set", "id:" + id + ", username:" + username + ", detail:" + detail);
+            Log.i("User logged in", "id:" + id + ", username:" + username);
         }
     }
 }

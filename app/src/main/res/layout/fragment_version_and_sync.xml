@@ -261,6 +261,6 @@
         android:layout_marginBottom="@dimen/fab_margin"
         android:src="@drawable/ic_autorenew_white_24dp"
         android:clickable="true"
-        app:backgroundTint="@color/beige"/>
+        app:backgroundTint="@color/colorPrimary"/>
 
 </RelativeLayout>

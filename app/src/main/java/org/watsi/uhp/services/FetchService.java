@@ -4,14 +4,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
@@ -37,37 +36,29 @@ import retrofit2.Response;
 public class FetchService extends Service {
 
     private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private static int WAIT_FOR_LOGIN_SLEEP_TIME = 60 * 1000; // 1 minute
     private int mProviderId;
+    private PreferencesManager mPreferencesManager;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        DatabaseHelper.init(getApplicationContext());
+        mPreferencesManager = new PreferencesManager(this);
+        DatabaseHelper.init(this);
         mProviderId = BuildConfig.PROVIDER_ID;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true){
-                    if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
-                        try {
-                            Thread.sleep(WAIT_FOR_LOGIN_SLEEP_TIME);
-                            continue;
-                        } catch (InterruptedException e) {
-                            ExceptionManager.handleException(e);
-                        }
-                    }
-
                     try {
                         fetchNewMemberData();
                         fetchBillables();
                     } catch (IOException | SQLException | IllegalStateException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
 
                 }
@@ -77,19 +68,15 @@ public class FetchService extends Service {
     }
 
     private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
-        String lastModifiedTimestamp = ConfigManager.getMemberLastModified(getApplicationContext());
+        String lastModifiedTimestamp = mPreferencesManager.getMemberLastModified();
         Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
                 .members(lastModifiedTimestamp, mProviderId);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
-            Log.d("UHP", "updating member data");
             List<Member> members = response.body();
             notifyAboutMembersToBeDeleted(members);
             createOrUpdateMembers(members);
-            ConfigManager.setMemberLastModified(
-                    response.headers().get("last-modified"),
-                    getApplicationContext()
-            );
+            mPreferencesManager.setMemberLastModified(response.headers().get("last-modified"));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -157,7 +144,7 @@ public class FetchService extends Service {
                 member.setSynced();
                 MemberDao.createOrUpdate(member);
             } catch (AbstractModel.ValidationException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
 
             iterator.remove();
@@ -165,19 +152,15 @@ public class FetchService extends Service {
     }
 
     private void fetchBillables() throws IOException, SQLException {
-        String lastModifiedTimestamp = ConfigManager.getBillablesLastModified(getApplicationContext());
+        String lastModifiedTimestamp = mPreferencesManager.getBillablesLastModified();
         Call<List<Billable>> request = ApiService.requestBuilder(getApplicationContext())
                 .billables(lastModifiedTimestamp, mProviderId);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
-            Log.d("UHP", "updating billables data");
             List<Billable> billables = response.body();
             BillableDao.clear();
             BillableDao.create(billables);
-            ConfigManager.setBillablesLastModified(
-                    response.headers().get("last-modified"),
-                    getApplicationContext()
-            );
+            mPreferencesManager.setBillablesLastModified(response.headers().get("last-modified"));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(

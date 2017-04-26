@@ -1,9 +1,6 @@
 package org.watsi.uhp.api;
 
-import android.content.Context;
-import android.preference.PreferenceManager;
-
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.SessionManager;
 
 import java.io.IOException;
 
@@ -16,10 +13,10 @@ import okhttp3.Response;
  */
 public class TokenInterceptor implements Interceptor {
 
-    private final Context context;
+    private final SessionManager mSessionManager;
 
-    TokenInterceptor(Context context) {
-        this.context = context;
+    TokenInterceptor(SessionManager sessionManager) {
+        this.mSessionManager = sessionManager;
     }
 
     @Override
@@ -29,12 +26,10 @@ public class TokenInterceptor implements Interceptor {
         String method = request.method();
 
         if (method.equals("GET")) {
-            String authToken = PreferenceManager
-                    .getDefaultSharedPreferences(context)
-                    .getString(ConfigManager.TOKEN_PREFERENCES_KEY, null);
+            String authToken = mSessionManager.getToken();
             Request requestWithAuth = chain.request()
                     .newBuilder()
-                    .header("Authorization", "Token " + authToken)
+                    .header(UhpApi.AUTHORIZATION_HEADER, "Token " + authToken)
                     .build();
             return chain.proceed(requestWithAuth);
         } else {

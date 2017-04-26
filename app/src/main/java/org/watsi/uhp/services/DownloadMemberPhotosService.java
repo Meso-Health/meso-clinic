@@ -36,12 +36,12 @@ public class DownloadMemberPhotosService extends Service {
                     try {
                         fetchMemberPhotos();
                     } catch (SQLException | IllegalStateException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
 
                 }
@@ -65,7 +65,7 @@ public class DownloadMemberPhotosService extends Service {
                     MemberDao.update(member);
                 }
             } catch (IOException | SQLException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
                 fetchFailures++;
                 try {
                     Thread.sleep(1000);

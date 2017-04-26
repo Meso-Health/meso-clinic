@@ -1,18 +1,19 @@
 package org.watsi.uhp.api;
 
+import android.accounts.AccountManager;
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.PreferencesManager;
+import org.watsi.uhp.managers.SessionManager;
+import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.User;
 
 import java.io.IOException;
 
@@ -29,9 +30,11 @@ public class ApiService {
 
     public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
+            AccountManager accountManager = AccountManager.get(context);
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor());
-            httpClient.addNetworkInterceptor(new TokenInterceptor(context));
+            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor(accountManager));
+            httpClient.addNetworkInterceptor(new TokenInterceptor(
+                    new SessionManager(new PreferencesManager(context), accountManager)));
             httpClient.retryOnConnectionFailure(false);
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
@@ -49,7 +52,7 @@ public class ApiService {
         return instance;
     }
 
-    public static Response<AuthenticationToken> login(String username, String password, Context context) {
+    public static Response<AuthenticationToken> authenticate(String username, String password) {
         UhpApi api = new Retrofit.Builder()
                 .baseUrl(BuildConfig.API_HOST)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -57,23 +60,9 @@ public class ApiService {
                 .create(UhpApi.class);
         Call<AuthenticationToken> request = api.getAuthToken(Credentials.basic(username, password));
         try {
-            retrofit2.Response<AuthenticationToken> response = request.execute();
-            if (response.isSuccessful()) {
-                Log.d("UHP", "got auth token");
-                String token = response.body().getToken();
-                ConfigManager.setLoggedInUserToken(token, context);
-                User user = response.body().getUser();
-                ExceptionManager.setPersonData(String.valueOf(user.getId()), user.getUsername(), null);
-            } else {
-                ExceptionManager.requestFailure(
-                        "Login failure",
-                        request.request(),
-                        response.raw()
-                );
-            }
-            return response;
-        } catch (IOException | IllegalStateException e) {
-            ExceptionManager.handleException(e);
+            return request.execute();
+        } catch (IOException e) {
+            ExceptionManager.reportException(e);
             return null;
         }
     }

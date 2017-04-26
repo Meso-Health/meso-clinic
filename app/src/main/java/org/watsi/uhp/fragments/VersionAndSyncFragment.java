@@ -5,8 +5,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
@@ -26,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class VersionAndSyncFragment extends Fragment {
+public class VersionAndSyncFragment extends BaseFragment {
 
     private SimpleDateFormat mLastModifiedFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
     private SimpleDateFormat mDisplayDateFormat = new SimpleDateFormat("hh:mm:ss a  yyyy/M/d");
@@ -42,7 +40,7 @@ public class VersionAndSyncFragment extends Fragment {
                     .getPackageInfo(getActivity().getPackageName(), 0);
             ((TextView) view.findViewById(R.id.version_number)).setText(pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         }
 
         final View finalView = view;
@@ -53,19 +51,18 @@ public class VersionAndSyncFragment extends Fragment {
             }
         });
 
-        Log.d("UHP", "before refresh method");
         refreshValues(view);
-        Log.d("UHP", "after refresh method");
 
         return view;
     }
 
     private void updateTimestamps(View view) {
+        PreferencesManager preferencesManager = new PreferencesManager(getContext());
         ((TextView) view.findViewById(R.id.fetch_members_timestamp))
-                .setText(formatTimestamp(ConfigManager.getMemberLastModified(getContext())));
+                .setText(formatTimestamp(preferencesManager.getMemberLastModified()));
 
         ((TextView) view.findViewById(R.id.fetch_billables_timestamp))
-                .setText(formatTimestamp(ConfigManager.getBillablesLastModified(getContext())));
+                .setText(formatTimestamp(preferencesManager.getBillablesLastModified()));
     }
 
     private void refreshValues(View view) {
@@ -97,7 +94,7 @@ public class VersionAndSyncFragment extends Fragment {
                     counts[3] = IdentificationEventDao.unsynced().size();
                     counts[4] = EncounterDao.unsynced().size();
                 } catch (SQLException | IllegalStateException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
                 return counts;
             }
@@ -106,16 +103,18 @@ public class VersionAndSyncFragment extends Fragment {
             protected void onPostExecute(int[] result) {
                 View view = getView();
 
-                ((TextView) view.findViewById(R.id.fetch_member_pictures_quantity))
-                        .setText(formattedQuantity(result[0]));
-                ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
-                        .setText(formattedQuantity(result[1]));
-                ((TextView) view.findViewById(R.id.sync_new_members_quantity))
-                        .setText(formattedQuantity(result[2]));
-                ((TextView) view.findViewById(R.id.sync_id_events_quantity))
-                        .setText(formattedQuantity(result[3]));
-                ((TextView) view.findViewById(R.id.sync_encounters_quantity))
-                        .setText(formattedQuantity(result[4]));
+                if (view != null) {
+                    ((TextView) view.findViewById(R.id.fetch_member_pictures_quantity))
+                            .setText(formattedQuantity(result[0]));
+                    ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
+                            .setText(formattedQuantity(result[1]));
+                    ((TextView) view.findViewById(R.id.sync_new_members_quantity))
+                            .setText(formattedQuantity(result[2]));
+                    ((TextView) view.findViewById(R.id.sync_id_events_quantity))
+                            .setText(formattedQuantity(result[3]));
+                    ((TextView) view.findViewById(R.id.sync_encounters_quantity))
+                            .setText(formattedQuantity(result[4]));
+                }
 
                 spinner.dismiss();
             }

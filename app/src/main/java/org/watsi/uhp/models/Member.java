@@ -374,7 +374,7 @@ public class Member extends SyncableModel {
             try {
                 return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
         }
         return null;
@@ -584,7 +584,7 @@ public class Member extends SyncableModel {
         try {
             return IdentificationEventDao.openCheckIn(getId());
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             return null;
         }
     }

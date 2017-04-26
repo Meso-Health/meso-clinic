@@ -36,13 +36,13 @@ public class FileManager {
             ByteStreams.copy(iStream, byteStream);
             return byteStream.toByteArray();
         } catch (IOException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         } finally {
             try {
                 if (iStream != null) iStream.close();
                 if (byteStream != null) byteStream.close();
             } catch (IOException e1) {
-                ExceptionManager.handleException(e1);
+                ExceptionManager.reportException(e1);
             }
         }
         return null;

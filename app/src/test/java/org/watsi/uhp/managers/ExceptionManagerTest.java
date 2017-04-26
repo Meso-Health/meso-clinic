@@ -1,13 +1,17 @@
 package org.watsi.uhp.managers;
 
+import android.util.Log;
+
 import com.rollbar.android.Rollbar;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.BuildConfig;
 
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -22,8 +26,11 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Rollbar.class, Request.class})
+@PrepareForTest({Rollbar.class, Request.class, BuildConfig.class, Log.class})
 public class ExceptionManagerTest {
+
+    @Mock
+    Throwable mockThrowable;
 
     private Request request;
     private Response response;
@@ -32,6 +39,8 @@ public class ExceptionManagerTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockStatic(Rollbar.class);
+        mockStatic(BuildConfig.class);
+        mockStatic(Log.class);
         request = new Request.Builder()
                 .url("http://uhp-test.watsi.org")
                 .post(mock(RequestBody.class))

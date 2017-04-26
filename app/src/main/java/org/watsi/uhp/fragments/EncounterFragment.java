@@ -39,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class EncounterFragment extends Fragment {
+public class EncounterFragment extends BaseFragment {
 
     private Spinner categorySpinner;
     private Spinner billableSpinner;
@@ -131,7 +131,7 @@ public class EncounterFragment extends Fragment {
         view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setAddNewBillableFragment(encounter);
+                getNavigationManager().setAddNewBillableFragment(encounter);
             }
         });
     }
@@ -152,7 +152,7 @@ public class EncounterFragment extends Fragment {
         continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setEncounterFormFragment(encounter);
+                getNavigationManager().setEncounterFormFragment(encounter);
             }
         });
     }
@@ -167,7 +167,7 @@ public class EncounterFragment extends Fragment {
         try {
             billables.addAll(BillableDao.getBillablesByCategory(category));
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         }
 
         return new ArrayAdapter<>(
@@ -202,7 +202,7 @@ public class EncounterFragment extends Fragment {
                 encounterItemAdapter.add(encounterItem);
             }
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         }
     }
 
@@ -281,7 +281,7 @@ public class EncounterFragment extends Fragment {
                     });
                 }
             } catch (SQLException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
 
             return new SimpleCursorAdapter(

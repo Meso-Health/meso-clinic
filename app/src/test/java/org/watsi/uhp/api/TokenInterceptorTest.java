@@ -1,7 +1,5 @@
 package org.watsi.uhp.api;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import org.junit.Before;
@@ -11,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.managers.ConfigManager;
+import org.watsi.uhp.managers.SessionManager;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -30,17 +28,11 @@ public class TokenInterceptorTest {
     private TokenInterceptor tokenInterceptor;
 
     @Mock
-    Context mockContext;
-
-    @Mock
-    SharedPreferences mockSharedPreferences;
-
+    SessionManager mockSessionManager;
     @Mock
     Interceptor.Chain mockChain;
-
     @Mock
     Request.Builder mockBuilder;
-
     @Mock
     Request mockRequest;
 
@@ -48,15 +40,12 @@ public class TokenInterceptorTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockStatic(PreferenceManager.class);
-        tokenInterceptor = new TokenInterceptor(mockContext);
-        when(PreferenceManager.getDefaultSharedPreferences(mockContext))
-                .thenReturn(mockSharedPreferences);
+        tokenInterceptor = new TokenInterceptor(mockSessionManager);
     }
 
     @Test
     public void getRequest_storedTokenIsNull_addsEmptyTokenAuthHeader() throws Exception {
-        when(mockSharedPreferences.getString(ConfigManager.TOKEN_PREFERENCES_KEY, null))
-                .thenReturn(null);
+        when(mockSessionManager.getToken()).thenReturn(null);
         when(mockChain.request()).thenReturn(mockRequest);
         when(mockRequest.method()).thenReturn("GET");
         when(mockRequest.newBuilder()).thenReturn(mockBuilder);
@@ -69,14 +58,11 @@ public class TokenInterceptorTest {
         verify(mockChain).proceed(mockRequest);
     }
 
-
-
     @Test
     public void getRequest_storedTokenIsNotNull() throws Exception {
         String token = "32do8j3dkndsl8i3fin238fwhefaewf8e";
+        when(mockSessionManager.getToken()).thenReturn(token);
 
-        when(mockSharedPreferences.getString(ConfigManager.TOKEN_PREFERENCES_KEY, null))
-                .thenReturn(token);
         when(mockChain.request()).thenReturn(mockRequest);
         when(mockRequest.method()).thenReturn("GET");
         when(mockRequest.newBuilder()).thenReturn(mockBuilder);

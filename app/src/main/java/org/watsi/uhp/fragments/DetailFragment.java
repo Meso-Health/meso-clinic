@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -20,23 +19,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends BaseFragment {
 
     private Member mMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod = null;
@@ -82,7 +80,15 @@ public class DetailFragment extends Fragment {
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
-                                completeIdentification(false, null, null);
+                                try {
+                                    completeIdentification(false, null, null);
+                                } catch (SyncableModel.UnauthenticatedException e) {
+                                    ExceptionManager.reportException(e);
+                                    Toast.makeText(getActivity().getApplicationContext(),
+                                            "Failed to save identification, contact support.",
+                                            Toast.LENGTH_LONG).
+                                            show();
+                                }
                             }
                         }).create().show();
             }
@@ -101,8 +107,16 @@ public class DetailFragment extends Fragment {
                                 DialogInterface
                                 .OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                dismissIdentification(IdentificationEvent
-                                        .DismissalReasonEnum.values()[which]);
+                                try {
+                                    dismissIdentification(IdentificationEvent
+                                            .DismissalReasonEnum.values()[which]);
+                                } catch (SyncableModel.UnauthenticatedException e) {
+                                    ExceptionManager.reportException(e);
+                                    Toast.makeText(getActivity().getApplicationContext(),
+                                            "Failed to dismiss member, contact support.",
+                                            Toast.LENGTH_LONG).
+                                            show();
+                                }
                             }
                         }).create().show();
             }
@@ -157,10 +171,9 @@ public class DetailFragment extends Fragment {
                         encounter.setEncounterItems(
                                 EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
                     } catch (SQLException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
-                    MainActivity activity = (MainActivity) getActivity();
-                    new NavigationManager(activity).setEncounterFragment(encounter);
+                    getNavigationManager().setEncounterFragment(encounter);
                 }
             });
         }
@@ -190,9 +203,7 @@ public class DetailFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
-                    MainActivity activity = (MainActivity) getActivity();
-
-                    new NavigationManager(activity).setDetailFragment(
+                    getNavigationManager().setDetailFragment(
                             member,
                             IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
                             mMember
@@ -200,16 +211,16 @@ public class DetailFragment extends Fragment {
                 }
             });
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         }
     }
 
     public void completeIdentification(boolean accepted,
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
-                                       Integer clinicNumber) {
+                                       Integer clinicNumber) throws SyncableModel.UnauthenticatedException {
         IdentificationEvent idEvent = new IdentificationEvent();
         idEvent.setIsNew(true);
-        idEvent.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+        idEvent.setUnsynced(getSessionManager().getToken());
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -223,10 +234,10 @@ public class DetailFragment extends Fragment {
         try {
             IdentificationEventDao.create(idEvent);
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         }
 
-        new NavigationManager(getActivity()).setCurrentPatientsFragment();
+        getNavigationManager().setCurrentPatientsFragment();
         int messageStringId = accepted ? R.string.identification_approved : R.string.identification_rejected;
         Toast.makeText(getActivity().getApplicationContext(),
                 mMember.getFullName() + " " + getActivity().getString(messageStringId),
@@ -234,20 +245,21 @@ public class DetailFragment extends Fragment {
                 show();
     }
 
-    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason) {
+    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
+            throws SyncableModel.UnauthenticatedException {
         IdentificationEvent checkIn = mMember.currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
-        checkIn.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+        checkIn.setUnsynced(getSessionManager().getToken());
 
         try {
             IdentificationEventDao.update(checkIn);
-            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getActivity().getApplicationContext(),
                     mMember.getFullName() + " " + getActivity().getString(R.string.identification_dismissed),
                     Toast.LENGTH_LONG).
                     show();
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             Toast.makeText(getActivity().getApplicationContext(),
                     getActivity().getString(R.string.identification_dismissed_failure),
                     Toast.LENGTH_LONG).

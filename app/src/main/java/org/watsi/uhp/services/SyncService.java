@@ -58,12 +58,12 @@ public class SyncService extends Service {
                         syncEncounterForms(EncounterFormDao.unsynced());
                         syncMembers(MemberDao.unsynced());
                     } catch (IOException | SQLException | IllegalStateException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
                     try {
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
-                        ExceptionManager.handleException(e);
+                        ExceptionManager.reportException(e);
                     }
                 }
             }
@@ -94,7 +94,7 @@ public class SyncService extends Service {
                     event.setSynced();
                     IdentificationEventDao.update(event);
                 } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
@@ -154,7 +154,7 @@ public class SyncService extends Service {
                     encounter.setSynced();
                     EncounterDao.update(encounter);
                 } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
@@ -187,7 +187,7 @@ public class SyncService extends Service {
                     encounterForm.setSynced();
                     EncounterFormDao.update(encounterForm);
                 } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
                 continue;
             }
@@ -202,7 +202,7 @@ public class SyncService extends Service {
                     encounterForm.setSynced();
                     EncounterFormDao.update(encounterForm);
                 } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
             } else {
                 Map<String,String> reportParams = new HashMap<>();
@@ -232,7 +232,7 @@ public class SyncService extends Service {
         try {
             multiPartBody = member.formatPatchRequest(getApplicationContext());
         } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             return;
         }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
@@ -260,7 +260,7 @@ public class SyncService extends Service {
                 try {
                     member.setSynced();
                 } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
             }
             MemberDao.update(member);
@@ -281,7 +281,7 @@ public class SyncService extends Service {
         try {
             multiPartBody = member.formatPostRequest(getApplicationContext());
         } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             return;
         }
         Call<Member> request = ApiService.requestBuilder(getApplicationContext()).enrollMember(
@@ -300,7 +300,7 @@ public class SyncService extends Service {
             try {
                 member.setSynced();
             } catch (AbstractModel.ValidationException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
             MemberDao.update(member);
         } else {

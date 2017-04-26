@@ -48,7 +48,7 @@
                 android:resource="@xml/image_path" />
         </provider>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.ClinicActivity"
             android:label="@string/main_activity_label"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop" >
@@ -56,6 +56,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.AuthenticationActivity"
+            android:label="@string/main_activity_label"
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTop" >
         </activity>
     </application>
 </manifest>
