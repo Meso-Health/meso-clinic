@@ -33,7 +33,7 @@ public class FetchService extends AbstractSyncJobService {
         PreferencesManager preferencesManager = new PreferencesManager(this);
 
         try {
-            fetchNewMemberData(preferencesManager);
+            fetchMembers(preferencesManager);
             fetchBillables(preferencesManager);
             return true;
         } catch (IOException | SQLException | IllegalStateException e) {
@@ -42,11 +42,10 @@ public class FetchService extends AbstractSyncJobService {
         }
     }
 
-    protected void fetchNewMemberData(PreferencesManager preferencesManager)
+    protected void fetchMembers(PreferencesManager preferencesManager)
             throws IOException, SQLException, IllegalStateException {
-        String lastModifiedTimestamp = preferencesManager.getMemberLastModified();
         Call<List<Member>> request = ApiService.requestBuilder(this)
-                .members(lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
+                .members(preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             List<Member> members = response.body();
@@ -71,12 +70,12 @@ public class FetchService extends AbstractSyncJobService {
      *
      * These members should be safe to delete, but for now we are choosing
      * the safer route of first creating notifications of their existence
-     * @param members Most recent list of members returned by server
+     * @param fetchedMembers Most recent list of members returned by server
      * @throws SQLException Error querying data from the db
      */
-    protected void notifyAboutMembersToBeDeleted(List<Member> members) throws SQLException {
+    protected void notifyAboutMembersToBeDeleted(List<Member> fetchedMembers) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
-        for (Member member : members) {
+        for (Member member : fetchedMembers) {
             previousMemberIds.remove(member.getId());
         }
         Set<UUID> unsyncedPrevMembers = new HashSet<>();
@@ -88,17 +87,17 @@ public class FetchService extends AbstractSyncJobService {
         for (UUID toBeDeleted : previousMemberIds) {
             Map<String, String> params = new HashMap<>();
             params.put("member.id", toBeDeleted.toString());
-            ExceptionManager.reportMessage("Member synced on device but not in backend", "warning",
-                    params);
+            ExceptionManager.reportMessage(
+                    "Member synced on device but not in backend", "warning", params);
         }
     }
 
-    protected void createOrUpdateMembers(List<Member> members) throws SQLException {
-        Iterator<Member> iterator = members.iterator();
+    protected void createOrUpdateMembers(List<Member> fetchedMembers) throws SQLException {
+        Iterator<Member> iterator = fetchedMembers.iterator();
         while (iterator.hasNext()) {
-            Member member = iterator.next();
+            Member fetchedMember = iterator.next();
 
-            Member persistedMember = MemberDao.findById(member.getId());
+            Member persistedMember = MemberDao.findById(fetchedMember.getId());
             if (persistedMember != null) {
                 // if the persisted member has not been synced to the back-end, assume it is
                 // the most up-to-date and do not update it with the fetched member attributes
@@ -111,14 +110,14 @@ public class FetchService extends AbstractSyncJobService {
                 // the same photo url as the existing record, copy the photo to the new record
                 // so we do not have to re-download it
                 if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
-                        persistedMember.getPhotoUrl().equals(member.getPhotoUrl())) {
-                    member.setPhoto(persistedMember.getPhoto());
+                        persistedMember.getPhotoUrl().equals(fetchedMember.getPhotoUrl())) {
+                    fetchedMember.setPhoto(persistedMember.getPhoto());
                 }
             }
 
             try {
-                member.setSynced();
-                MemberDao.createOrUpdate(member);
+                fetchedMember.setSynced();
+                MemberDao.createOrUpdate(fetchedMember);
             } catch (AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
