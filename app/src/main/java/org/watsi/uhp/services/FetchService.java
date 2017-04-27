@@ -1,14 +1,8 @@
 package org.watsi.uhp.services;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -30,47 +24,30 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 /**
- * Service class that continuously polls the UHP API
- * to refresh the locally-stored member data
+ * Service class that polls the UHP API and updates the device with updated member and billables data
  */
-public class FetchService extends Service {
+public class FetchService extends AbstractSyncJobService {
 
-    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private int mProviderId;
     private PreferencesManager mPreferencesManager;
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public boolean performSync() {
         mPreferencesManager = new PreferencesManager(this);
-        DatabaseHelper.init(this);
-        mProviderId = BuildConfig.PROVIDER_ID;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        fetchNewMemberData();
-                        fetchBillables();
-                    } catch (IOException | SQLException | IllegalStateException e) {
-                        ExceptionManager.reportException(e);
-                    }
-                    try {
-                        Thread.sleep(SLEEP_TIME);
-                    } catch (InterruptedException e) {
-                        ExceptionManager.reportException(e);
-                    }
-
-                }
-            }
-        }).start();
-        return Service.START_REDELIVER_INTENT;
+        try {
+            fetchNewMemberData();
+            fetchBillables();
+            return true;
+        } catch (IOException | SQLException | IllegalStateException e) {
+            ExceptionManager.reportException(e);
+            return false;
+        }
     }
 
     private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
         String lastModifiedTimestamp = mPreferencesManager.getMemberLastModified();
         Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
-                .members(lastModifiedTimestamp, mProviderId);
+                .members(lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             List<Member> members = response.body();
@@ -95,8 +72,8 @@ public class FetchService extends Service {
      *
      * These members should be safe to delete, but for now we are choosing
      * the safer route of first creating notifications of their existence
-     * @param members
-     * @throws SQLException
+     * @param members Most recent list of members returned by server
+     * @throws SQLException Error querying data from the db
      */
     private void notifyAboutMembersToBeDeleted(List<Member> members) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
@@ -154,7 +131,7 @@ public class FetchService extends Service {
     private void fetchBillables() throws IOException, SQLException {
         String lastModifiedTimestamp = mPreferencesManager.getBillablesLastModified();
         Call<List<Billable>> request = ApiService.requestBuilder(getApplicationContext())
-                .billables(lastModifiedTimestamp, mProviderId);
+                .billables(lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();
@@ -170,12 +147,5 @@ public class FetchService extends Service {
                 );
             }
         }
-
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

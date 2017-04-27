@@ -1,17 +1,12 @@
 package org.watsi.uhp.services;
 
-import android.app.Service;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
-import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.EncounterFormDao;
 import org.watsi.uhp.database.EncounterItemDao;
@@ -38,40 +33,24 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class SyncService extends Service {
-
-    private static int SLEEP_TIME = 60 * 1000; // every minute
-    private int mProviderId;
+public class SyncService extends AbstractSyncJobService {
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        DatabaseHelper.init(getApplicationContext());
-        mProviderId = BuildConfig.PROVIDER_ID;
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        syncIdentificationEvents(IdentificationEventDao.unsynced());
-                        syncEncounters(EncounterDao.unsynced());
-                        syncEncounterForms(EncounterFormDao.unsynced());
-                        syncMembers(MemberDao.unsynced());
-                    } catch (IOException | SQLException | IllegalStateException e) {
-                        ExceptionManager.reportException(e);
-                    }
-                    try {
-                        Thread.sleep(SLEEP_TIME);
-                    } catch (InterruptedException e) {
-                        ExceptionManager.reportException(e);
-                    }
-                }
-            }
-        }).start();
-        return Service.START_REDELIVER_INTENT;
+    public boolean performSync() {
+        try {
+            syncIdentificationEvents(IdentificationEventDao.unsynced());
+            syncEncounters(EncounterDao.unsynced());
+            syncEncounterForms(EncounterFormDao.unsynced());
+            syncMembers(MemberDao.unsynced());
+            return true;
+        } catch (IOException | SQLException | IllegalStateException e) {
+            ExceptionManager.reportException(e);
+            return false;
+        }
     }
 
-    private void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
+    private void syncIdentificationEvents(
+            List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
             Response<IdentificationEvent> response;
@@ -110,18 +89,21 @@ public class SyncService extends Service {
         }
     }
 
-    private Response<IdentificationEvent> postIdentificationEvent(IdentificationEvent idEvent) throws IOException {
+    private Response<IdentificationEvent> postIdentificationEvent(
+            IdentificationEvent idEvent) throws IOException {
         String tokenAuthorizationString = idEvent.getTokenAuthHeaderString();
         if (idEvent.getThroughMember() != null) {
             idEvent.setThroughMemberId(idEvent.getThroughMember().getId());
         }
         Call<IdentificationEvent> request =
                 ApiService.requestBuilder(getApplicationContext())
-                        .postIdentificationEvent(tokenAuthorizationString, mProviderId, idEvent);
+                        .postIdentificationEvent(
+                                tokenAuthorizationString, BuildConfig.PROVIDER_ID, idEvent);
         return request.execute();
     }
 
-    private Response<IdentificationEvent> patchIdentificationEvent(IdentificationEvent idEvent) throws IOException {
+    private Response<IdentificationEvent> patchIdentificationEvent(
+            IdentificationEvent idEvent) throws IOException {
         String tokenAuthorizationString = idEvent.getTokenAuthHeaderString();
         // convert to json so serialization is consistent with POST request
         JsonObject json = new Gson().toJsonTree(idEvent, IdentificationEvent.class).getAsJsonObject();
@@ -139,7 +121,8 @@ public class SyncService extends Service {
         return request.execute();
     }
 
-        private void syncEncounters(List<Encounter> unsyncedEncounters) throws SQLException, IOException {
+        private void syncEncounters(
+                List<Encounter> unsyncedEncounters) throws SQLException, IOException {
         for (Encounter encounter : unsyncedEncounters) {
             encounter.setMemberId(encounter.getMember().getId());
             encounter.setIdentificationEventId(encounter.getIdentificationEvent().getId());
@@ -147,7 +130,8 @@ public class SyncService extends Service {
             String tokenAuthorizationString = encounter.getTokenAuthHeaderString();
             Call<Encounter> request =
                     ApiService.requestBuilder(getApplicationContext())
-                            .syncEncounter(tokenAuthorizationString, mProviderId, encounter);
+                            .syncEncounter(
+                                    tokenAuthorizationString, BuildConfig.PROVIDER_ID, encounter);
             Response<Encounter> response = request.execute();
             if (response.isSuccessful()) {
                 try {
@@ -313,11 +297,5 @@ public class SyncService extends Service {
                     reportParams
             );
         }
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

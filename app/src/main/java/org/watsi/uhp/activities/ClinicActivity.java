@@ -5,6 +5,9 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.AlertDialog;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -91,9 +94,13 @@ public class ClinicActivity extends AppCompatActivity {
     }
 
     private void startServices() {
-        startService(new Intent(this, SyncService.class));
-        startService(new Intent(this, FetchService.class));
-        startService(new Intent(this, DownloadMemberPhotosService.class));
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(FetchService.buildJobInfo(
+                0, new ComponentName(this, FetchService.class)));
+        jobScheduler.schedule(SyncService.buildJobInfo(
+                1, new ComponentName(this, SyncService.class)));
+        jobScheduler.schedule(DownloadMemberPhotosService.buildJobInfo(
+                2, new ComponentName(this, DownloadMemberPhotosService.class)));
     }
 
     private void setupToolbar() {
