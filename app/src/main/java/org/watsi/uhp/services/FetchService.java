@@ -28,15 +28,13 @@ import retrofit2.Response;
  */
 public class FetchService extends AbstractSyncJobService {
 
-    private PreferencesManager mPreferencesManager;
-
     @Override
     public boolean performSync() {
-        mPreferencesManager = new PreferencesManager(this);
+        PreferencesManager preferencesManager = new PreferencesManager(this);
 
         try {
-            fetchNewMemberData();
-            fetchBillables();
+            fetchNewMemberData(preferencesManager);
+            fetchBillables(preferencesManager);
             return true;
         } catch (IOException | SQLException | IllegalStateException e) {
             ExceptionManager.reportException(e);
@@ -44,16 +42,17 @@ public class FetchService extends AbstractSyncJobService {
         }
     }
 
-    private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
-        String lastModifiedTimestamp = mPreferencesManager.getMemberLastModified();
-        Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
+    protected void fetchNewMemberData(PreferencesManager preferencesManager)
+            throws IOException, SQLException, IllegalStateException {
+        String lastModifiedTimestamp = preferencesManager.getMemberLastModified();
+        Call<List<Member>> request = ApiService.requestBuilder(this)
                 .members(lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             List<Member> members = response.body();
             notifyAboutMembersToBeDeleted(members);
             createOrUpdateMembers(members);
-            mPreferencesManager.setMemberLastModified(response.headers().get("last-modified"));
+            preferencesManager.setMemberLastModified(response.headers().get("last-modified"));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -75,7 +74,7 @@ public class FetchService extends AbstractSyncJobService {
      * @param members Most recent list of members returned by server
      * @throws SQLException Error querying data from the db
      */
-    private void notifyAboutMembersToBeDeleted(List<Member> members) throws SQLException {
+    protected void notifyAboutMembersToBeDeleted(List<Member> members) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
         for (Member member : members) {
             previousMemberIds.remove(member.getId());
@@ -94,7 +93,7 @@ public class FetchService extends AbstractSyncJobService {
         }
     }
 
-    private void createOrUpdateMembers(List<Member> members) throws SQLException {
+    protected void createOrUpdateMembers(List<Member> members) throws SQLException {
         Iterator<Member> iterator = members.iterator();
         while (iterator.hasNext()) {
             Member member = iterator.next();
@@ -128,16 +127,17 @@ public class FetchService extends AbstractSyncJobService {
         }
     }
 
-    private void fetchBillables() throws IOException, SQLException {
-        String lastModifiedTimestamp = mPreferencesManager.getBillablesLastModified();
-        Call<List<Billable>> request = ApiService.requestBuilder(getApplicationContext())
+    protected void fetchBillables(PreferencesManager preferencesManager)
+            throws IOException, SQLException {
+        String lastModifiedTimestamp = preferencesManager.getBillablesLastModified();
+        Call<List<Billable>> request = ApiService.requestBuilder(this)
                 .billables(lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();
             BillableDao.clear();
             BillableDao.create(billables);
-            mPreferencesManager.setBillablesLastModified(response.headers().get("last-modified"));
+            preferencesManager.setBillablesLastModified(response.headers().get("last-modified"));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(

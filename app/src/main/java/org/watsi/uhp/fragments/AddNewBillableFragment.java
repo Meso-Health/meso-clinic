@@ -44,10 +44,10 @@ public class AddNewBillableFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (nameField.getText().toString().length() == 0) {
-                    Toast.makeText(getActivity().getApplicationContext(), R.string.empty_billable_name_field,
+                    Toast.makeText(getActivity(), R.string.empty_billable_name_field,
                             Toast.LENGTH_LONG).show();
                 } else if (priceField.getText().toString().length() == 0) {
-                    Toast.makeText(getActivity().getApplicationContext(), R.string.empty_billable_price_field,
+                    Toast.makeText(getActivity(), R.string.empty_billable_price_field,
                             Toast.LENGTH_LONG).show();
                 } else {
                     Billable billable = new Billable();

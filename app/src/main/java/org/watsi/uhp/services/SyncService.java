@@ -96,9 +96,8 @@ public class SyncService extends AbstractSyncJobService {
             idEvent.setThroughMemberId(idEvent.getThroughMember().getId());
         }
         Call<IdentificationEvent> request =
-                ApiService.requestBuilder(getApplicationContext())
-                        .postIdentificationEvent(
-                                tokenAuthorizationString, BuildConfig.PROVIDER_ID, idEvent);
+                ApiService.requestBuilder(this).postIdentificationEvent(
+                        tokenAuthorizationString, BuildConfig.PROVIDER_ID, idEvent);
         return request.execute();
     }
 
@@ -115,9 +114,8 @@ public class SyncService extends AbstractSyncJobService {
                 RequestBody.create(MultipartBody.FORM,
                         json.get(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON).getAsString()));
         Call<IdentificationEvent> request =
-                ApiService.requestBuilder(getApplicationContext())
-                        .patchIdentificationEvent(
-                                tokenAuthorizationString, idEvent.getId(), requestBodyMap);
+                ApiService.requestBuilder(this).patchIdentificationEvent(
+                        tokenAuthorizationString, idEvent.getId(), requestBodyMap);
         return request.execute();
     }
 
@@ -129,9 +127,8 @@ public class SyncService extends AbstractSyncJobService {
             encounter.setEncounterItems(EncounterItemDao.fromEncounter(encounter));
             String tokenAuthorizationString = encounter.getTokenAuthHeaderString();
             Call<Encounter> request =
-                    ApiService.requestBuilder(getApplicationContext())
-                            .syncEncounter(
-                                    tokenAuthorizationString, BuildConfig.PROVIDER_ID, encounter);
+                    ApiService.requestBuilder(this).syncEncounter(
+                            tokenAuthorizationString, BuildConfig.PROVIDER_ID, encounter);
             Response<Encounter> response = request.execute();
             if (response.isSuccessful()) {
                 try {
@@ -163,7 +160,7 @@ public class SyncService extends AbstractSyncJobService {
                 continue;
             }
 
-            byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), getApplicationContext());
+            byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), this);
             if (image == null) {
                 ExceptionManager.reportMessage("No image saved for form for encounter: " + encounter
                         .getId().toString());
@@ -177,7 +174,7 @@ public class SyncService extends AbstractSyncJobService {
             }
             RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), image);
             Call<Encounter> request =
-                    ApiService.requestBuilder(getApplicationContext())
+                    ApiService.requestBuilder(this)
                             .syncEncounterForm(tokenAuthorizationString, encounter.getId(), body);
             Response<Encounter> response = request.execute();
             if (response.isSuccessful()) {
@@ -214,12 +211,12 @@ public class SyncService extends AbstractSyncJobService {
     private void updateMember(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {
-            multiPartBody = member.formatPatchRequest(getApplicationContext());
+            multiPartBody = member.formatPatchRequest(this);
         } catch (AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e);
             return;
         }
-        Call<Member> request = ApiService.requestBuilder(getApplicationContext()).syncMember(
+        Call<Member> request = ApiService.requestBuilder(this).syncMember(
                 member.getTokenAuthHeaderString(),
                 member.getId(),
                 multiPartBody
@@ -263,12 +260,12 @@ public class SyncService extends AbstractSyncJobService {
     private void enrollMember(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {
-            multiPartBody = member.formatPostRequest(getApplicationContext());
+            multiPartBody = member.formatPostRequest(this);
         } catch (AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e);
             return;
         }
-        Call<Member> request = ApiService.requestBuilder(getApplicationContext()).enrollMember(
+        Call<Member> request = ApiService.requestBuilder(this).enrollMember(
                 member.getTokenAuthHeaderString(),
                 multiPartBody
         );

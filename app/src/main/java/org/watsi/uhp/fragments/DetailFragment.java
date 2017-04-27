@@ -84,7 +84,7 @@ public class DetailFragment extends BaseFragment {
                                     completeIdentification(false, null, null);
                                 } catch (SyncableModel.UnauthenticatedException e) {
                                     ExceptionManager.reportException(e);
-                                    Toast.makeText(getActivity().getApplicationContext(),
+                                    Toast.makeText(getContext(),
                                             "Failed to save identification, contact support.",
                                             Toast.LENGTH_LONG).
                                             show();
@@ -112,7 +112,7 @@ public class DetailFragment extends BaseFragment {
                                             .DismissalReasonEnum.values()[which]);
                                 } catch (SyncableModel.UnauthenticatedException e) {
                                     ExceptionManager.reportException(e);
-                                    Toast.makeText(getActivity().getApplicationContext(),
+                                    Toast.makeText(getContext(),
                                             "Failed to dismiss member, contact support.",
                                             Toast.LENGTH_LONG).
                                             show();
@@ -196,7 +196,7 @@ public class DetailFragment extends BaseFragment {
             ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
-            householdListLabel.setText(getActivity().getResources().getQuantityString(
+            householdListLabel.setText(getResources().getQuantityString(
                     R.plurals.household_label, householdSize, householdSize));
             householdListView.setAdapter(adapter);
             householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -239,8 +239,8 @@ public class DetailFragment extends BaseFragment {
 
         getNavigationManager().setCurrentPatientsFragment();
         int messageStringId = accepted ? R.string.identification_approved : R.string.identification_rejected;
-        Toast.makeText(getActivity().getApplicationContext(),
-                mMember.getFullName() + " " + getActivity().getString(messageStringId),
+        Toast.makeText(getContext(),
+                mMember.getFullName() + " " + getString(messageStringId),
                 Toast.LENGTH_LONG).
                 show();
     }
@@ -254,14 +254,14 @@ public class DetailFragment extends BaseFragment {
         try {
             IdentificationEventDao.update(checkIn);
             getNavigationManager().setCurrentPatientsFragment();
-            Toast.makeText(getActivity().getApplicationContext(),
-                    mMember.getFullName() + " " + getActivity().getString(R.string.identification_dismissed),
+            Toast.makeText(getContext(),
+                    mMember.getFullName() + " " + getString(R.string.identification_dismissed),
                     Toast.LENGTH_LONG).
                     show();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
-            Toast.makeText(getActivity().getApplicationContext(),
-                    getActivity().getString(R.string.identification_dismissed_failure),
+            Toast.makeText(getContext(),
+                    getString(R.string.identification_dismissed_failure),
                     Toast.LENGTH_LONG).
                     show();
         }

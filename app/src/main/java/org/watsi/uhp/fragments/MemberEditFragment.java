@@ -93,11 +93,7 @@ public class MemberEditFragment extends BaseFragment {
                         idMethod =  IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
                     }
                     getNavigationManager().setDetailFragment(mMember, idMethod, null);
-                    Toast.makeText(
-                            getActivity().getApplicationContext(),
-                            toastMessage,
-                            Toast.LENGTH_LONG
-                    ).show();
+                    Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

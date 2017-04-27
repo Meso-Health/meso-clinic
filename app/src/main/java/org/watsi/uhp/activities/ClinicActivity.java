@@ -76,7 +76,7 @@ public class ClinicActivity extends AppCompatActivity {
     }
 
     private void setupApp() {
-        DatabaseHelper.init(getApplicationContext());
+        DatabaseHelper.init(this);
         ExceptionManager.init(getApplication());
 
         setContentView(R.layout.activity_clinic);

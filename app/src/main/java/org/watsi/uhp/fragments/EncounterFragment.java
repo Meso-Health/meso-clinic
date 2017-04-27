@@ -101,7 +101,7 @@ public class EncounterFragment extends BaseFragment {
     private void setBillableSearch() {
         billableSearch.setOnQueryTextListener(new BillableSearchListener());
         billableSearch.setOnSuggestionListener(new SuggestionClickListener());
-        billableSearch.setQueryHint(getActivity().getString(R.string.search_drug_hint));
+        billableSearch.setQueryHint(getString(R.string.search_drug_hint));
     }
     
     private void setBillableSpinner(Billable.TypeEnum category) {
@@ -193,8 +193,7 @@ public class EncounterFragment extends BaseFragment {
             List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
 
             if (containsId(encounterItems, billableId)) {
-                Toast.makeText(getActivity().getApplicationContext(), R.string.already_in_list_items,
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
             } else {
                 EncounterItem encounterItem = new EncounterItem();
                 encounterItem.setBillable(billable);

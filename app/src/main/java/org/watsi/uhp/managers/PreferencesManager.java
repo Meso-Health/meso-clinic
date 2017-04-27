@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 public class PreferencesManager {
 
-    private final static String AUTH_TOKEN_PREF_KEY = "authenticationToken";
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "membersLastModified";
     private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billablesLastModified";
     private final static String USERNAME_PREF_KEY = "username";
