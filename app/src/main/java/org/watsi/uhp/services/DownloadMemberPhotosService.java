@@ -28,7 +28,7 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
         }
     }
 
-    private void fetchMemberPhotos() throws SQLException {
+    protected void fetchMemberPhotos() throws SQLException {
         List<Member> membersWithPhotosToFetch = MemberDao.membersWithPhotosToFetch();
         Iterator<Member> iterator = membersWithPhotosToFetch.iterator();
         int fetchFailures = 0;
