@@ -61,11 +61,8 @@ public class SyncService extends AbstractSyncJobService {
                 reportParams.put("identification_event.id", event.getId().toString());
                 reportParams.put("member.id", event.getMember().getId().toString());
                 ExceptionManager.requestFailure(
-                        "Failed to sync IdentificationEvent",
-                        response.raw().request(),
-                        response.raw(),
-                        reportParams
-                );
+                        "Failed to sync IdentificationEvent", response.raw().request(),
+                        response.raw(), reportParams);
             }
         }
     }
@@ -116,11 +113,8 @@ public class SyncService extends AbstractSyncJobService {
                 reportParams.put("encounter.id", encounter.getId().toString());
                 reportParams.put("member.id", encounter.getMember().getId().toString());
                 ExceptionManager.requestFailure(
-                        "Failed to sync Encounter",
-                        request.request(),
-                        response.raw(),
-                        reportParams
-                );
+                        "Failed to sync Encounter", request.request(),
+                        response.raw(), reportParams);
             }
         }
     }
@@ -165,11 +159,8 @@ public class SyncService extends AbstractSyncJobService {
                 reportParams.put("encounter_form.id", encounterForm.getId().toString());
                 reportParams.put("encounter.id", encounterForm.getEncounter().getId().toString());
                 ExceptionManager.requestFailure(
-                        "Failed to sync EncounterForm",
-                        request.request(),
-                        response.raw(),
-                        reportParams
-                );
+                        "Failed to sync EncounterForm", request.request(),
+                        response.raw(), reportParams);
             }
         }
     }
@@ -193,10 +184,7 @@ public class SyncService extends AbstractSyncJobService {
             return;
         }
         Call<Member> request = ApiService.requestBuilder(this).syncMember(
-                member.getTokenAuthHeaderString(),
-                member.getId(),
-                multiPartBody
-        );
+                member.getTokenAuthHeaderString(), member.getId(), multiPartBody);
         Response<Member> response = request.execute();
         if (response.isSuccessful()) {
             // if we have updated a photo, remove the local version and fetch the remote one
@@ -208,7 +196,7 @@ public class SyncService extends AbstractSyncJobService {
             }
             if (member.getNationalIdPhotoUrl() != null &&
                     !member.getNationalIdPhotoUrl().equals(
-                            response.body().getNationalIdPhotoUrl()) &&
+                        response.body().getNationalIdPhotoUrl()) &&
                     !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
                 member.setNationalIdPhotoUrlFromPatchResponse(
                         response.body().getNationalIdPhotoUrl());
@@ -225,11 +213,7 @@ public class SyncService extends AbstractSyncJobService {
             Map<String,String> reportParams = new HashMap<>();
             reportParams.put("member.id", member.getId().toString());
             ExceptionManager.requestFailure(
-                    "Failed to sync Member",
-                    request.request(),
-                    response.raw(),
-                    reportParams
-            );
+                    "Failed to sync Member", request.request(), response.raw(), reportParams);
         }
     }
 
@@ -242,9 +226,7 @@ public class SyncService extends AbstractSyncJobService {
             return;
         }
         Call<Member> request = ApiService.requestBuilder(this).enrollMember(
-                member.getTokenAuthHeaderString(),
-                multiPartBody
-        );
+                member.getTokenAuthHeaderString(), multiPartBody);
         Response<Member> response = request.execute();
         if (response.isSuccessful()) {
             // if we have updated a photo, remove the local version and fetch the remote one
@@ -264,11 +246,7 @@ public class SyncService extends AbstractSyncJobService {
             Map<String,String> reportParams = new HashMap<>();
             reportParams.put("member.id", member.getId().toString());
             ExceptionManager.requestFailure(
-                    "Failed to enroll Member",
-                    request.request(),
-                    response.raw(),
-                    reportParams
-            );
+                    "Failed to enroll Member", request.request(), response.raw(), reportParams);
         }
     }
 }
