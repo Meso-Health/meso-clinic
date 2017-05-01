@@ -1,10 +1,5 @@
 package org.watsi.uhp.services;
 
-import android.net.Uri;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.EncounterDao;
@@ -13,7 +8,6 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
@@ -28,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -49,25 +42,13 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    private void syncIdentificationEvents(
-            List<IdentificationEvent> unsyncedEvents) throws SQLException, IOException {
+    protected void syncIdentificationEvents(List<IdentificationEvent> unsyncedEvents)
+            throws SQLException, IOException {
         for (IdentificationEvent event : unsyncedEvents) {
             event.setMemberId(event.getMember().getId());
             Response<IdentificationEvent> response;
-            if (event.isNew()) {
-                response = postIdentificationEvent(event);
-            } else {
-                if (!event.getDismissed()) {
-                    // we should only be patching dismissed identification events
-                    Map<String, String> params = new HashMap<>();
-                    params.put("identification_event.id", event.getId().toString());
-                    params.put("identification_event.json", new Gson().toJson(event));
-                    ExceptionManager.reportMessage(
-                            "Attempted to sync non-dismissed IdentificationEvent", "warning", params);
-                    continue;
-                }
-                response = patchIdentificationEvent(event);
-            }
+            response = event.isNew() ?
+                    postIdentificationEvent(event) : patchIdentificationEvent(event);
             if (response.isSuccessful()) {
                 try {
                     event.setSynced();
@@ -89,8 +70,8 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    private Response<IdentificationEvent> postIdentificationEvent(
-            IdentificationEvent idEvent) throws IOException {
+    protected Response<IdentificationEvent> postIdentificationEvent(IdentificationEvent idEvent)
+            throws IOException {
         String tokenAuthorizationString = idEvent.getTokenAuthHeaderString();
         if (idEvent.getThroughMember() != null) {
             idEvent.setThroughMemberId(idEvent.getThroughMember().getId());
@@ -101,26 +82,19 @@ public class SyncService extends AbstractSyncJobService {
         return request.execute();
     }
 
-    private Response<IdentificationEvent> patchIdentificationEvent(
-            IdentificationEvent idEvent) throws IOException {
+    protected Response<IdentificationEvent> patchIdentificationEvent(IdentificationEvent idEvent)
+            throws IOException {
         String tokenAuthorizationString = idEvent.getTokenAuthHeaderString();
-        // convert to json so serialization is consistent with POST request
-        JsonObject json = new Gson().toJsonTree(idEvent, IdentificationEvent.class).getAsJsonObject();
-        Map<String, RequestBody> requestBodyMap = new HashMap<>();
-        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
-                RequestBody.create(MultipartBody.FORM,
-                        json.get(IdentificationEvent.FIELD_NAME_DISMISSED).getAsString()));
-        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON,
-                RequestBody.create(MultipartBody.FORM,
-                        json.get(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON).getAsString()));
+        Map<String, RequestBody> requestBodyMap =
+                idEvent.constructIdentificationEventPatchRequest();
         Call<IdentificationEvent> request =
                 ApiService.requestBuilder(this).patchIdentificationEvent(
                         tokenAuthorizationString, idEvent.getId(), requestBodyMap);
         return request.execute();
     }
 
-        private void syncEncounters(
-                List<Encounter> unsyncedEncounters) throws SQLException, IOException {
+    protected void syncEncounters(List<Encounter> unsyncedEncounters)
+            throws SQLException, IOException {
         for (Encounter encounter : unsyncedEncounters) {
             encounter.setMemberId(encounter.getMember().getId());
             encounter.setIdentificationEventId(encounter.getIdentificationEvent().getId());
@@ -151,7 +125,8 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    private void syncEncounterForms(List<EncounterForm> unsyncedEncounterForms) throws SQLException, IOException {
+    protected void syncEncounterForms(List<EncounterForm> unsyncedEncounterForms)
+            throws SQLException, IOException {
         for (EncounterForm encounterForm : unsyncedEncounterForms) {
             String tokenAuthorizationString = encounterForm.getTokenAuthHeaderString();
             Encounter encounter = EncounterDao.find(encounterForm.getEncounter().getId());
@@ -160,7 +135,7 @@ public class SyncService extends AbstractSyncJobService {
                 continue;
             }
 
-            byte[] image = FileManager.readFromUri(Uri.parse(encounterForm.getUrl()), this);
+            byte[] image = encounterForm.getImage(this);
             if (image == null) {
                 ExceptionManager.reportMessage("No image saved for form for encounter: " + encounter
                         .getId().toString());
@@ -198,7 +173,8 @@ public class SyncService extends AbstractSyncJobService {
             }
         }
     }
-    private void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
+
+    protected void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
             if (member.isNew()) {
                 enrollMember(member);
@@ -208,7 +184,7 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    private void updateMember(Member member) throws SQLException, IOException {
+    protected void updateMember(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {
             multiPartBody = member.formatPatchRequest(this);
@@ -257,7 +233,7 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    private void enrollMember(Member member) throws SQLException, IOException {
+    protected void enrollMember(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {
             multiPartBody = member.formatPostRequest(this);

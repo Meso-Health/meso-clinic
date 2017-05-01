@@ -76,7 +76,6 @@ public class DownloadMemberPhotoServiceTest {
         List<Member> memberList = new ArrayList<>();
         memberList.add(member);
 
-
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
         when(FileManager.isLocal(anyString())).thenReturn(false);
 
