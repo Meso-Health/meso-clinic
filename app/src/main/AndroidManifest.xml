@@ -55,7 +55,9 @@
             android:name=".activities.ClinicActivity"
             android:label="@string/main_activity_label"
             android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -65,7 +67,9 @@
             android:name=".activities.AuthenticationActivity"
             android:label="@string/main_activity_label"
             android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 </manifest>
