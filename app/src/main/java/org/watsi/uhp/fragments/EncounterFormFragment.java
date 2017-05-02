@@ -78,7 +78,7 @@ public class EncounterFormFragment extends BaseFragment {
             try {
                 if (mEncounterForm.getUrl() != null) {
                     mEncounter.addEncounterForm(mEncounterForm);
-                    mEncounterForm.setUnsynced(getSessionManager().getToken());
+                    mEncounterForm.setUnsynced(getAuthenticationToken());
                 }
                 if (finished) {
                     getNavigationManager().setReceiptFragment(mEncounter);

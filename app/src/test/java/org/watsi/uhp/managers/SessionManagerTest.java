@@ -2,10 +2,7 @@ package org.watsi.uhp.managers;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import org.junit.Before;
@@ -16,14 +13,12 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.activities.AuthenticationActivity;
+import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.User;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,7 +41,7 @@ public class SessionManagerTest {
     @Mock
     User mockUser;
 
-    SessionManager sessionManager;
+    private SessionManager sessionManager;
 
     @Before
     public void setup() {
@@ -77,9 +72,7 @@ public class SessionManagerTest {
 
     @Test
     public void fetchToken_storedUsernameIsNull_returnsNull() throws Exception {
-        String username = null;
-
-        when(mockPreferencesManager.getUsername()).thenReturn(username);
+        when(mockPreferencesManager.getUsername()).thenReturn(null);
 
         assertNull(sessionManager.fetchToken());
     }
@@ -99,31 +92,8 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void getToken_nullFutureReturnedFromFetch_returnsNull() throws Exception {
-        SessionManager spySessionManager = spy(sessionManager);
-
-        when(spySessionManager.fetchToken()).thenReturn(null);
-
-        assertNull(spySessionManager.getToken());
-    }
-
-    @Test
-    public void getToken_futureReturnedFromFetch_returnsTokenFromBundle() throws Exception {
-        String token = "token";
-        AccountManagerFuture<Bundle> mockFuture = mock(AccountManagerFuture.class);
-        Bundle mockBundle = mock(Bundle.class);
-        SessionManager spySessionManager = spy(sessionManager);
-
-        doReturn(mockFuture).when(spySessionManager).fetchToken();
-        when(mockFuture.getResult()).thenReturn(mockBundle);
-        when(mockBundle.getString(AccountManager.KEY_AUTHTOKEN)).thenReturn(token);
-
-        assertEquals(spySessionManager.getToken(), token);
-    }
-
-    @Test
     public void logout() throws Exception {
-        FragmentActivity mockActivity = mock(FragmentActivity.class);
+        ClinicActivity mockActivity = mock(ClinicActivity.class);
         Intent mockIntent = mock(Intent.class);
         FragmentManager mockFragmentManager = mock(FragmentManager.class);
 

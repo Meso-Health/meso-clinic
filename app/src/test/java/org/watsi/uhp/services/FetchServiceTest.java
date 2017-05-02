@@ -1,5 +1,9 @@
 package org.watsi.uhp.services;
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.os.Bundle;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +18,7 @@ import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
+import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
 
@@ -48,8 +53,9 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ApiService.class, BillableDao.class, ExceptionManager.class, FetchService.class,
-        Headers.class, MemberDao.class, Request.class, okhttp3.Response.class, Response.class })
+@PrepareForTest({ AccountManager.class, ApiService.class, BillableDao.class, ExceptionManager.class,
+        FetchService.class, Headers.class, MemberDao.class, Request.class, okhttp3.Response.class,
+        Response.class, SessionManager.class })
 public class FetchServiceTest {
 
     @Mock
@@ -70,12 +76,21 @@ public class FetchServiceTest {
     Response<List<Billable>> mockFetchBillablesResponse;
     @Mock
     List<Billable> mockBillablesList;
+    @Mock
+    AccountManager mockAccountManager;
+    @Mock
+    SessionManager mockSessionManager;
+    @Mock
+    AccountManagerFuture<Bundle> mockTokenFuture;
+    @Mock
+    Bundle mockBundle;
 
     private FetchService fetchService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        mockStatic(AccountManager.class);
         mockStatic(ApiService.class);
         mockStatic(BillableDao.class);
         mockStatic(ExceptionManager.class);
@@ -83,27 +98,58 @@ public class FetchServiceTest {
         fetchService = new FetchService();
     }
 
+    private void mockTokenFetch(String token, FetchService service) throws Exception {
+        when(AccountManager.get(service)).thenReturn(mockAccountManager);
+        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
+                .thenReturn(mockSessionManager);
+        when(mockSessionManager.fetchToken()).thenReturn(mockTokenFuture);
+        when(mockTokenFuture.getResult()).thenReturn(mockBundle);
+        when(mockBundle.getString(AccountManager.KEY_AUTHTOKEN)).thenReturn(token);
+    }
+
     @Test
-    public void performSync_fetchDoesNotThrowException() throws Exception {
+    public void performSync_nullAuthToken() throws Exception {
         FetchService spiedFetchService = spy(fetchService);
 
-        doNothing().when(spiedFetchService).fetchMembers(mockPreferencesManager);
-        doNothing().when(spiedFetchService).fetchBillables(mockPreferencesManager);
+        mockTokenFetch(null, spiedFetchService);
         whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
 
         boolean result = spiedFetchService.performSync();
 
         assertTrue(result);
-        verify(spiedFetchService, times(1)).fetchMembers(mockPreferencesManager);
-        verify(spiedFetchService, times(1)).fetchBillables(mockPreferencesManager);
+        verify(spiedFetchService, never()).fetchMembers(anyString(), any(PreferencesManager.class));
+        verify(spiedFetchService, never())
+                .fetchBillables(anyString(), any(PreferencesManager.class));
+        verifyStatic(never());
+        ExceptionManager.reportException(any(Exception.class));
     }
 
     @Test
-    public void performSync_fetchThrowsException() throws Exception {
+    public void performSync_hasAuthToken_fetchDoesNotThrowException() throws Exception {
+        String token = "token";
+        FetchService spiedFetchService = spy(fetchService);
+
+        mockTokenFetch(token, spiedFetchService);
+        doNothing().when(spiedFetchService).fetchMembers(token, mockPreferencesManager);
+        doNothing().when(spiedFetchService).fetchBillables(token, mockPreferencesManager);
+        whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
+
+        boolean result = spiedFetchService.performSync();
+
+        assertTrue(result);
+        verify(spiedFetchService, times(1)).fetchMembers(token, mockPreferencesManager);
+        verify(spiedFetchService, times(1)).fetchBillables(token, mockPreferencesManager);
+    }
+
+    @Test
+    public void performSync_hasAuthToken_fetchThrowsException() throws Exception {
+        String token = "token";
         FetchService spiedFetchService = spy(fetchService);
         SQLException mockException = mock(SQLException.class);
 
-        doThrow(mockException).when(spiedFetchService).fetchMembers(mockPreferencesManager);
+        mockTokenFetch(token, spiedFetchService);
+        doThrow(mockException).when(spiedFetchService)
+                .fetchMembers(token, mockPreferencesManager);
         whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
 
         boolean result = spiedFetchService.performSync();
@@ -113,14 +159,15 @@ public class FetchServiceTest {
         ExceptionManager.reportException(mockException);
     }
 
-    private Response mockMembersApiRequest(FetchService spiedFetchService) throws Exception {
+    private Response mockMembersApiRequest(String token, FetchService spiedFetchService)
+            throws Exception {
         String lastModifiedTimestamp = "foo";
 
         doNothing().when(spiedFetchService).notifyAboutMembersToBeDeleted(anyListOf(Member.class));
         doNothing().when(spiedFetchService).createOrUpdateMembers(anyListOf(Member.class));
         when(mockPreferencesManager.getMemberLastModified()).thenReturn(lastModifiedTimestamp);
         when(ApiService.requestBuilder(spiedFetchService)).thenReturn(mockApi);
-        when(mockApi.members(lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
+        when(mockApi.members(token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
                 .thenReturn(mockFetchMembersCall);
         when(mockFetchMembersCall.execute()).thenReturn(mockFetchMembersResponse);
         doNothing().when(mockPreferencesManager).setMemberLastModified(anyString());
@@ -130,16 +177,17 @@ public class FetchServiceTest {
     @Test
     public void fetchMembers_successfulResponse() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
+        String token = "token";
         String updatedLastModifiedTimestamp = "bar";
 
-        Response mockResponse = mockMembersApiRequest(spiedFetchService);
+        Response mockResponse = mockMembersApiRequest(token, spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(true);
         when(mockResponse.body()).thenReturn(mockMembersList);
         Headers mockHeaders = mock(Headers.class);
         when(mockResponse.headers()).thenReturn(mockHeaders);
         when(mockHeaders.get("last-modified")).thenReturn(updatedLastModifiedTimestamp);
 
-        spiedFetchService.fetchMembers(mockPreferencesManager);
+        spiedFetchService.fetchMembers(token, mockPreferencesManager);
 
         verify(spiedFetchService, times(1)).notifyAboutMembersToBeDeleted(mockMembersList);
         verify(spiedFetchService, times(1)).createOrUpdateMembers(mockMembersList);
@@ -150,13 +198,14 @@ public class FetchServiceTest {
     @Test
     public void fetchMembers_unsuccessfulResponse_304response() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
+        String token = "token";
         int responseCode = 304;
 
-        Response mockResponse = mockMembersApiRequest(spiedFetchService);
+        Response mockResponse = mockMembersApiRequest(token, spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(false);
         when(mockResponse.code()).thenReturn(responseCode);
 
-        spiedFetchService.fetchMembers(mockPreferencesManager);
+        spiedFetchService.fetchMembers(token, mockPreferencesManager);
 
         verify(spiedFetchService, never()).notifyAboutMembersToBeDeleted(anyListOf(Member.class));
         verify(spiedFetchService, never()).createOrUpdateMembers(anyListOf(Member.class));
@@ -169,9 +218,10 @@ public class FetchServiceTest {
     @Test
     public void fetchMembers_unsuccessfulResponse_non304response() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
+        String token = "token";
         int responseCode = 500;
 
-        Response mockResponse = mockMembersApiRequest(spiedFetchService);
+        Response mockResponse = mockMembersApiRequest(token, spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(false);
         when(mockResponse.code()).thenReturn(responseCode);
         Request mockRawRequest = mock(Request.class);
@@ -179,7 +229,7 @@ public class FetchServiceTest {
         when(mockFetchMembersCall.request()).thenReturn(mockRawRequest);
         when(mockResponse.raw()).thenReturn(mockRawResponse);
 
-        spiedFetchService.fetchMembers(mockPreferencesManager);
+        spiedFetchService.fetchMembers(token, mockPreferencesManager);
 
         verify(spiedFetchService, never()).notifyAboutMembersToBeDeleted(anyListOf(Member.class));
         verify(spiedFetchService, never()).createOrUpdateMembers(anyListOf(Member.class));
@@ -295,10 +345,11 @@ public class FetchServiceTest {
 
     private Response mockBillablesApiRequest(FetchService spiedFetchService) throws Exception {
         String lastModifiedTimestamp = "foo";
+        String token = "token";
 
         when(mockPreferencesManager.getBillablesLastModified()).thenReturn(lastModifiedTimestamp);
         when(ApiService.requestBuilder(spiedFetchService)).thenReturn(mockApi);
-        when(mockApi.billables(lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
+        when(mockApi.billables(token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
                 .thenReturn(mockFetchBillablesCall);
         when(mockFetchBillablesCall.execute()).thenReturn(mockFetchBillablesResponse);
         doNothing().when(mockPreferencesManager).setBillablesLastModified(anyString());
@@ -309,6 +360,7 @@ public class FetchServiceTest {
     public void fetchBillables_successfulResponse() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
         String updatedLastModifiedTimestamp = "bar";
+        String token = "token";
 
         Response mockResponse = mockBillablesApiRequest(spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(true);
@@ -317,7 +369,7 @@ public class FetchServiceTest {
         when(mockResponse.headers()).thenReturn(mockHeaders);
         when(mockHeaders.get("last-modified")).thenReturn(updatedLastModifiedTimestamp);
 
-        spiedFetchService.fetchBillables(mockPreferencesManager);
+        spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic();
         BillableDao.clear();
@@ -330,13 +382,14 @@ public class FetchServiceTest {
     @Test
     public void fetchBillablesData_unsuccessfulResponse_304response() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
+        String token = "token";
         int responseCode = 304;
 
         Response mockResponse = mockBillablesApiRequest(spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(false);
         when(mockResponse.code()).thenReturn(responseCode);
 
-        spiedFetchService.fetchBillables(mockPreferencesManager);
+        spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic(never());
         BillableDao.clear();
@@ -351,6 +404,7 @@ public class FetchServiceTest {
     @Test
     public void fetchBillablesData_unsuccessfulResponse_non304response() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
+        String token = "token";
         int responseCode = 500;
 
         Response mockResponse = mockBillablesApiRequest(spiedFetchService);
@@ -361,7 +415,7 @@ public class FetchServiceTest {
         when(mockFetchBillablesCall.request()).thenReturn(mockRawRequest);
         when(mockResponse.raw()).thenReturn(mockRawResponse);
 
-        spiedFetchService.fetchBillables(mockPreferencesManager);
+        spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic(never());
         BillableDao.clear();

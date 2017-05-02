@@ -43,6 +43,7 @@ public class ClinicActivity extends AppCompatActivity {
 
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
+    private String authenticationToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +212,14 @@ public class ClinicActivity extends AppCompatActivity {
         UpdateManager.unregister();
     }
 
+    public void setAuthenticationToken(String token) {
+        this.authenticationToken = token;
+    }
+
+    public String getAuthenticationToken() {
+        return authenticationToken;
+    }
+
     private class LoginTask extends AsyncTask<Void, Void, String> {
 
         private final ClinicActivity mClinicActivity;
@@ -237,6 +246,7 @@ public class ClinicActivity extends AppCompatActivity {
             if (token == null) {
                 startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
             } else {
+                mClinicActivity.setAuthenticationToken(token);
                 Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container);
                 if (currentFragment == null) {

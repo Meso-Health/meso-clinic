@@ -3,17 +3,13 @@ package org.watsi.uhp.managers;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import org.watsi.uhp.activities.AuthenticationActivity;
+import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.models.User;
-
-import java.io.IOException;
 
 public class SessionManager {
 
@@ -55,29 +51,13 @@ public class SessionManager {
     }
 
     /**
-     * Can not be called from the main thread
-     * @return Authentication token string
-     */
-    public String getToken() {
-        AccountManagerFuture<Bundle> fetchTokenResult = fetchToken();
-        if (fetchTokenResult != null) {
-            try {
-                Bundle bundle = fetchTokenResult.getResult();
-                return bundle.getString(AccountManager.KEY_AUTHTOKEN);
-            } catch (OperationCanceledException | IOException | AuthenticatorException e) {
-                ExceptionManager.reportException(e);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Clears the current user and starts the AuthenticationActivity
      * to prompt the new user to login
      * @param activity Context that user is logging out from
      */
-    public void logout(FragmentActivity activity) {
+    public void logout(ClinicActivity activity) {
         mPreferencesManager.clearUsername();
+        activity.setAuthenticationToken(null);
         activity.startActivityForResult(new Intent(activity, AuthenticationActivity.class), 0);
         // clear backstack so new user lands on CurrentPatients fragment
         activity.getSupportFragmentManager()

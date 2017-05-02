@@ -46,7 +46,7 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
     @Override
     void nextStep() {
         try {
-            mMember.setUnsynced(getSessionManager().getToken());
+            mMember.setUnsynced(getAuthenticationToken());
             MemberDao.create(mMember);
             getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();

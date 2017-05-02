@@ -220,7 +220,7 @@ public class DetailFragment extends BaseFragment {
                                        Integer clinicNumber) throws SyncableModel.UnauthenticatedException {
         IdentificationEvent idEvent = new IdentificationEvent();
         idEvent.setIsNew(true);
-        idEvent.setUnsynced(getSessionManager().getToken());
+        idEvent.setUnsynced(getAuthenticationToken());
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -249,7 +249,7 @@ public class DetailFragment extends BaseFragment {
             throws SyncableModel.UnauthenticatedException {
         IdentificationEvent checkIn = mMember.currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
-        checkIn.setUnsynced(getSessionManager().getToken());
+        checkIn.setUnsynced(getAuthenticationToken());
 
         try {
             IdentificationEventDao.update(checkIn);

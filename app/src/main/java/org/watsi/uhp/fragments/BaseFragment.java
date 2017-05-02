@@ -18,6 +18,10 @@ public abstract class BaseFragment extends Fragment {
         return ((ClinicActivity) getActivity()).getNavigationManager();
     }
 
+    protected String getAuthenticationToken() {
+        return ((ClinicActivity) getActivity()).getAuthenticationToken();
+    }
+
     public void onStart() {
         super.onStart();
 

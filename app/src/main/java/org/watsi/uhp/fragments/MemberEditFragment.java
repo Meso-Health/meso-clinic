@@ -79,7 +79,7 @@ public class MemberEditFragment extends BaseFragment {
                 public void onClick(DialogInterface dialog, int which) {
                     String toastMessage = mMember.getFullName() + "'s information has been updated.";
                     try {
-                        mMember.setUnsynced(getSessionManager().getToken());
+                        mMember.setUnsynced(getAuthenticationToken());
                         MemberDao.update(mMember);
                     } catch (SQLException | SyncableModel.UnauthenticatedException e) {
                         ExceptionManager.reportException(e);

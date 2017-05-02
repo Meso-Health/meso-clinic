@@ -9,8 +9,6 @@ import com.google.gson.GsonBuilder;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.PreferencesManager;
-import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
@@ -33,8 +31,6 @@ public class ApiService {
             AccountManager accountManager = AccountManager.get(context);
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addNetworkInterceptor(new UnauthorizedInterceptor(accountManager));
-            httpClient.addNetworkInterceptor(new TokenInterceptor(
-                    new SessionManager(new PreferencesManager(context), accountManager)));
             httpClient.retryOnConnectionFailure(false);
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()

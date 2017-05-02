@@ -1,11 +1,18 @@
 package org.watsi.uhp.services;
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+import android.os.Bundle;
+
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
@@ -31,21 +38,28 @@ public class FetchService extends AbstractSyncJobService {
     @Override
     public boolean performSync() {
         PreferencesManager preferencesManager = new PreferencesManager(this);
-
+        SessionManager sessionManager = new SessionManager(
+                preferencesManager, AccountManager.get(this));
+        AccountManagerFuture<Bundle> tokenFuture = sessionManager.fetchToken();
         try {
-            fetchMembers(preferencesManager);
-            fetchBillables(preferencesManager);
+            Bundle tokenBundle = tokenFuture.getResult();
+            String authToken = tokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
+            if (authToken != null) {
+                fetchMembers(authToken, preferencesManager);
+                fetchBillables(authToken, preferencesManager);
+            }
             return true;
-        } catch (IOException | SQLException | IllegalStateException e) {
+        } catch (OperationCanceledException | IOException | AuthenticatorException |
+                SQLException | IllegalStateException e) {
             ExceptionManager.reportException(e);
             return false;
         }
     }
 
-    protected void fetchMembers(PreferencesManager preferencesManager)
+    protected void fetchMembers(String authToken, PreferencesManager preferencesManager)
             throws IOException, SQLException, IllegalStateException {
-        Call<List<Member>> request = ApiService.requestBuilder(this)
-                .members(preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
+        Call<List<Member>> request = ApiService.requestBuilder(this).members(
+                authToken, preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             List<Member> members = response.body();
@@ -126,11 +140,11 @@ public class FetchService extends AbstractSyncJobService {
         }
     }
 
-    protected void fetchBillables(PreferencesManager preferencesManager)
+    protected void fetchBillables(String authToken, PreferencesManager preferencesManager)
             throws IOException, SQLException {
         String lastModifiedTimestamp = preferencesManager.getBillablesLastModified();
         Call<List<Billable>> request = ApiService.requestBuilder(this)
-                .billables(lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
+                .billables(authToken, lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();

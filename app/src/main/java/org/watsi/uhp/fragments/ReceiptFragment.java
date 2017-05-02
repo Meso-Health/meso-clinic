@@ -60,7 +60,7 @@ public class ReceiptFragment extends BaseFragment {
             public void onClick(View v) {
                 String toastMessage;
                 try {
-                    mEncounter.setUnsynced(getSessionManager().getToken());
+                    mEncounter.setUnsynced(getAuthenticationToken());
                     EncounterDao.create(mEncounter);
 
                     getNavigationManager().setCurrentPatientsFragment();

@@ -47,7 +47,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     void nextStep() {
         try {
             if (!mMember.shouldCaptureFingerprint()) {
-                mMember.setUnsynced(getSessionManager().getToken());
+                mMember.setUnsynced(getAuthenticationToken());
             }
 
             MemberDao.update(mMember);

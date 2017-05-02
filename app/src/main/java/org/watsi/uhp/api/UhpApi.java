@@ -32,12 +32,14 @@ public interface UhpApi {
 
     @GET("providers/{providerId}/members")
     Call<List<Member>> members(
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Header(IF_MODIFIED_SINCE_HEADER) String lastModified,
             @Path("providerId") int providerId
     );
 
     @GET("providers/{providerId}/billables")
     Call<List<Billable>> billables(
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Header(IF_MODIFIED_SINCE_HEADER) String lastModified,
             @Path("providerId") int providerId
     );
