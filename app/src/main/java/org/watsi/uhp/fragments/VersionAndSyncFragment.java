@@ -106,9 +106,9 @@ public class VersionAndSyncFragment extends BaseFragment {
                 if (view != null) {
                     ((TextView) view.findViewById(R.id.fetch_member_pictures_quantity))
                             .setText(formattedQuantity(result[0]));
-                    ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
-                            .setText(formattedQuantity(result[1]));
                     ((TextView) view.findViewById(R.id.sync_new_members_quantity))
+                            .setText(formattedQuantity(result[1]));
+                    ((TextView) view.findViewById(R.id.sync_edited_members_quantity))
                             .setText(formattedQuantity(result[2]));
                     ((TextView) view.findViewById(R.id.sync_id_events_quantity))
                             .setText(formattedQuantity(result[3]));

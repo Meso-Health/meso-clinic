@@ -144,15 +144,15 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:id="@+id/sync_edited_members_label"
+                    android:id="@+id/sync_new_members_label"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="@string/sync_edited_members_label"
+                    android:text="@string/sync_new_members_label"
                     android:theme="@style/Title" />
 
                 <TextView
-                    android:id="@+id/sync_edited_members_quantity"
+                    android:id="@+id/sync_new_members_quantity"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
@@ -173,15 +173,15 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:id="@+id/sync_new_members_label"
+                    android:id="@+id/sync_edited_members_label"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="@string/sync_new_members_label"
+                    android:text="@string/sync_edited_members_label"
                     android:theme="@style/Title" />
 
                 <TextView
-                    android:id="@+id/sync_new_members_quantity"
+                    android:id="@+id/sync_edited_members_quantity"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
