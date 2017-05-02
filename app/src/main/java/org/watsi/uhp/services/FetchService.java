@@ -41,6 +41,7 @@ public class FetchService extends AbstractSyncJobService {
         SessionManager sessionManager = new SessionManager(
                 preferencesManager, AccountManager.get(this));
         AccountManagerFuture<Bundle> tokenFuture = sessionManager.fetchToken();
+        if (tokenFuture == null) return true;
         try {
             Bundle tokenBundle = tokenFuture.getResult();
             String authToken = tokenBundle.getString(AccountManager.KEY_AUTHTOKEN);

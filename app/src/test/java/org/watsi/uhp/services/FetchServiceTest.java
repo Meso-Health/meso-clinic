@@ -98,6 +98,26 @@ public class FetchServiceTest {
         fetchService = new FetchService();
     }
 
+    @Test
+    public void performSync_nullAccountManagerFuture() throws Exception {
+        FetchService spiedFetchService = spy(fetchService);
+
+        when(AccountManager.get(spiedFetchService)).thenReturn(mockAccountManager);
+        whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
+        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
+                .thenReturn(mockSessionManager);
+        when(mockSessionManager.fetchToken()).thenReturn(null);
+
+        boolean result = spiedFetchService.performSync();
+
+        assertTrue(result);
+        verify(spiedFetchService, never()).fetchMembers(anyString(), any(PreferencesManager.class));
+        verify(spiedFetchService, never())
+                .fetchBillables(anyString(), any(PreferencesManager.class));
+        verifyStatic(never());
+        ExceptionManager.reportException(any(Exception.class));
+    }
+
     private void mockTokenFetch(String token, FetchService service) throws Exception {
         when(AccountManager.get(service)).thenReturn(mockAccountManager);
         whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
