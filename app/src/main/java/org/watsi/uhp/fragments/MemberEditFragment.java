@@ -74,7 +74,7 @@ public class MemberEditFragment extends BaseFragment {
         if (valid(nameView, cardIdView, phoneNumView)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.member_edit_confirmation);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String toastMessage = mMember.getFullName() + "'s information has been updated.";
@@ -96,7 +96,7 @@ public class MemberEditFragment extends BaseFragment {
                     Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
