@@ -35,6 +35,13 @@ public abstract class AbstractSyncJobService extends JobService {
                 .build();
     }
 
+    /**
+     * Implement with the logic that performs the data syncing. Method is called within
+     * mSycJobTask and will be performed in a background thread.
+     *
+     * @return True indicates the sync completed successfully and false indicates
+     * the sync process failed so the job should be rescheduled
+     */
     public abstract boolean performSync();
 
     public SyncJobTask getSyncJobTask() {

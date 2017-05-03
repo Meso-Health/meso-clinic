@@ -35,12 +35,15 @@ import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -99,40 +102,11 @@ public class FetchServiceTest {
     }
 
     @Test
-    public void performSync_nullAccountManagerFuture() throws Exception {
-        FetchService spiedFetchService = spy(fetchService);
-
-        when(AccountManager.get(spiedFetchService)).thenReturn(mockAccountManager);
-        whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
-        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
-                .thenReturn(mockSessionManager);
-        when(mockSessionManager.fetchToken()).thenReturn(null);
-
-        boolean result = spiedFetchService.performSync();
-
-        assertTrue(result);
-        verify(spiedFetchService, never()).fetchMembers(anyString(), any(PreferencesManager.class));
-        verify(spiedFetchService, never())
-                .fetchBillables(anyString(), any(PreferencesManager.class));
-        verifyStatic(never());
-        ExceptionManager.reportException(any(Exception.class));
-    }
-
-    private void mockTokenFetch(String token, FetchService service) throws Exception {
-        when(AccountManager.get(service)).thenReturn(mockAccountManager);
-        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
-                .thenReturn(mockSessionManager);
-        when(mockSessionManager.fetchToken()).thenReturn(mockTokenFuture);
-        when(mockTokenFuture.getResult()).thenReturn(mockBundle);
-        when(mockBundle.getString(AccountManager.KEY_AUTHTOKEN)).thenReturn(token);
-    }
-
-    @Test
     public void performSync_nullAuthToken() throws Exception {
         FetchService spiedFetchService = spy(fetchService);
 
-        mockTokenFetch(null, spiedFetchService);
         whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
+        when(spiedFetchService.getAuthenticationToken(mockPreferencesManager)).thenReturn(null);
 
         boolean result = spiedFetchService.performSync();
 
@@ -149,10 +123,10 @@ public class FetchServiceTest {
         String token = "token";
         FetchService spiedFetchService = spy(fetchService);
 
-        mockTokenFetch(token, spiedFetchService);
         doNothing().when(spiedFetchService).fetchMembers(token, mockPreferencesManager);
         doNothing().when(spiedFetchService).fetchBillables(token, mockPreferencesManager);
         whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
+        doReturn(token).when(spiedFetchService).getAuthenticationToken(mockPreferencesManager);
 
         boolean result = spiedFetchService.performSync();
 
@@ -167,16 +141,58 @@ public class FetchServiceTest {
         FetchService spiedFetchService = spy(fetchService);
         SQLException mockException = mock(SQLException.class);
 
-        mockTokenFetch(token, spiedFetchService);
         doThrow(mockException).when(spiedFetchService)
                 .fetchMembers(token, mockPreferencesManager);
         whenNew(PreferencesManager.class).withAnyArguments().thenReturn(mockPreferencesManager);
+        doReturn(token).when(spiedFetchService).getAuthenticationToken(mockPreferencesManager);
 
         boolean result = spiedFetchService.performSync();
 
         assertFalse(result);
         verifyStatic(times(1));
         ExceptionManager.reportException(mockException);
+    }
+
+    @Test
+    public void getAuthenticationToken_nullTokenFuture() throws Exception {
+        when(AccountManager.get(fetchService)).thenReturn(mockAccountManager);
+        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
+                .thenReturn(mockSessionManager);
+        when(mockSessionManager.fetchToken()).thenReturn(null);
+
+        String result = fetchService.getAuthenticationToken(mockPreferencesManager);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void getAuthenticationToken_tokenNotInBundle() throws Exception {
+        when(AccountManager.get(fetchService)).thenReturn(mockAccountManager);
+        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
+                .thenReturn(mockSessionManager);
+        when(mockSessionManager.fetchToken()).thenReturn(mockTokenFuture);
+        when(mockTokenFuture.getResult()).thenReturn(mockBundle);
+        when(mockBundle.getString(AccountManager.KEY_AUTHTOKEN)).thenReturn(null);
+
+        String result = fetchService.getAuthenticationToken(mockPreferencesManager);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void getAuthenticationToken_tokenInBundle() throws Exception {
+        String token = "token";
+
+        when(AccountManager.get(fetchService)).thenReturn(mockAccountManager);
+        whenNew(SessionManager.class).withArguments(mockPreferencesManager, mockAccountManager)
+                .thenReturn(mockSessionManager);
+        when(mockSessionManager.fetchToken()).thenReturn(mockTokenFuture);
+        when(mockTokenFuture.getResult()).thenReturn(mockBundle);
+        when(mockBundle.getString(AccountManager.KEY_AUTHTOKEN)).thenReturn(token);
+
+        String result = fetchService.getAuthenticationToken(mockPreferencesManager);
+
+        assertEquals(result, token);
     }
 
     private Response mockMembersApiRequest(String token, FetchService spiedFetchService)

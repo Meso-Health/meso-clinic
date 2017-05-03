@@ -40,23 +40,32 @@ public class FetchService extends AbstractSyncJobService {
     @Override
     public boolean performSync() {
         PreferencesManager preferencesManager = new PreferencesManager(this);
-        SessionManager sessionManager = new SessionManager(
-                preferencesManager, AccountManager.get(this));
-        AccountManagerFuture<Bundle> tokenFuture = sessionManager.fetchToken();
-        if (tokenFuture == null) return true;
         try {
-            Bundle tokenBundle = tokenFuture.getResult();
-            String authToken = tokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
-            if (authToken != null) {
-                fetchMembers(authToken, preferencesManager);
-                fetchBillables(authToken, preferencesManager);
+            String authenticationToken = getAuthenticationToken(preferencesManager);
+            if (authenticationToken != null) {
+                fetchMembers(authenticationToken, preferencesManager);
+                fetchBillables(authenticationToken, preferencesManager);
             }
             return true;
-        } catch (OperationCanceledException | IOException | AuthenticatorException |
-                SQLException | IllegalStateException e) {
+        } catch (IOException | SQLException | IllegalStateException e) {
             ExceptionManager.reportException(e);
             return false;
         }
+    }
+
+    protected String getAuthenticationToken(PreferencesManager preferencesManager) {
+        SessionManager sessionManager = new SessionManager(
+                preferencesManager, AccountManager.get(this));
+        AccountManagerFuture<Bundle> tokenFuture = sessionManager.fetchToken();
+        try {
+            if (tokenFuture != null) {
+                Bundle tokenBundle = tokenFuture.getResult();
+                return tokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
+            }
+        } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+            ExceptionManager.reportException(e);
+        }
+        return null;
     }
 
     protected void fetchMembers(String authToken, PreferencesManager preferencesManager)
