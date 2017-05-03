@@ -41,6 +41,10 @@ import java.io.IOException;
 
 public class ClinicActivity extends AppCompatActivity {
 
+    private static int FETCH_SERVICE_JOB_ID = 0;
+    private static int SYNC_SERVICE_JOB_ID = 1;
+    private static int DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID = 2;
+
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
     private String authenticationToken;
@@ -97,11 +101,12 @@ public class ClinicActivity extends AppCompatActivity {
     private void startServices() {
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(FetchService.buildJobInfo(
-                0, new ComponentName(this, FetchService.class)));
+                FETCH_SERVICE_JOB_ID, new ComponentName(this, FetchService.class)));
         jobScheduler.schedule(SyncService.buildJobInfo(
-                1, new ComponentName(this, SyncService.class)));
+                SYNC_SERVICE_JOB_ID, new ComponentName(this, SyncService.class)));
         jobScheduler.schedule(DownloadMemberPhotosService.buildJobInfo(
-                2, new ComponentName(this, DownloadMemberPhotosService.class)));
+                DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID,
+                new ComponentName(this, DownloadMemberPhotosService.class)));
     }
 
     private void setupToolbar() {
