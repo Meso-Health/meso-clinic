@@ -35,6 +35,8 @@ import retrofit2.Response;
  */
 public class FetchService extends AbstractSyncJobService {
 
+    private static String LAST_MODIFIED_HEADER = "last-modified";
+
     @Override
     public boolean performSync() {
         PreferencesManager preferencesManager = new PreferencesManager(this);
@@ -67,7 +69,7 @@ public class FetchService extends AbstractSyncJobService {
             List<Member> members = response.body();
             notifyAboutMembersToBeDeleted(members);
             createOrUpdateMembers(members);
-            preferencesManager.setMemberLastModified(response.headers().get("last-modified"));
+            preferencesManager.setMemberLastModified(response.headers().get(LAST_MODIFIED_HEADER));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -153,7 +155,8 @@ public class FetchService extends AbstractSyncJobService {
             List<Billable> billables = response.body();
             BillableDao.clear();
             BillableDao.create(billables);
-            preferencesManager.setBillablesLastModified(response.headers().get("last-modified"));
+            preferencesManager.setBillablesLastModified(
+                    response.headers().get(LAST_MODIFIED_HEADER));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
