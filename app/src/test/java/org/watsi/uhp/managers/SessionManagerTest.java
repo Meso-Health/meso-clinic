@@ -5,6 +5,8 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 
+import com.rollbar.android.Rollbar;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +21,7 @@ import org.watsi.uhp.models.User;
 
 import static junit.framework.Assert.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +30,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ExceptionManager.class, Intent.class, SessionManager.class })
+@PrepareForTest({ ExceptionManager.class, Intent.class, Rollbar.class, SessionManager.class })
 public class SessionManagerTest {
 
     @Mock
@@ -40,12 +43,17 @@ public class SessionManagerTest {
     Account mockAccount;
     @Mock
     User mockUser;
+    @Mock
+    ClinicActivity mockActivity;
+    @Mock
+    FragmentManager mockFragmentManager;
 
     private SessionManager sessionManager;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        mockStatic(Rollbar.class);
         sessionManager = new SessionManager(mockPreferencesManager, mockAccountManager);
     }
 
@@ -93,9 +101,7 @@ public class SessionManagerTest {
 
     @Test
     public void logout() throws Exception {
-        ClinicActivity mockActivity = mock(ClinicActivity.class);
         Intent mockIntent = mock(Intent.class);
-        FragmentManager mockFragmentManager = mock(FragmentManager.class);
 
         whenNew(Intent.class).withArguments(mockActivity, AuthenticationActivity.class)
                 .thenReturn(mockIntent);
@@ -107,5 +113,27 @@ public class SessionManagerTest {
         verify(mockActivity, times(1)).startActivityForResult(mockIntent, 0);
         verify(mockFragmentManager, times(1)).popBackStackImmediate(
                 null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    @Test
+    public void logout_rollbarIsInit_clearsPersonData() throws Exception {
+        when(Rollbar.isInit()).thenReturn(true);
+        when(mockActivity.getSupportFragmentManager()).thenReturn(mockFragmentManager);
+
+        sessionManager.logout(mockActivity);
+
+        verifyStatic();
+        Rollbar.setPersonData(null);
+    }
+
+    @Test
+    public void logout_rollbarIsNotInit_doesNotclearPersonData() throws Exception {
+        when(Rollbar.isInit()).thenReturn(false);
+        when(mockActivity.getSupportFragmentManager()).thenReturn(mockFragmentManager);
+
+        sessionManager.logout(mockActivity);
+
+        verifyStatic(never());
+        Rollbar.setPersonData(null);
     }
 }

@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
+import com.rollbar.android.Rollbar;
+
 import org.watsi.uhp.activities.AuthenticationActivity;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.models.User;
@@ -58,6 +60,7 @@ public class SessionManager {
     public void logout(ClinicActivity activity) {
         mPreferencesManager.clearUsername();
         activity.setAuthenticationToken(null);
+        if (Rollbar.isInit()) Rollbar.setPersonData(null);
         activity.startActivityForResult(new Intent(activity, AuthenticationActivity.class), 0);
         // clear backstack so new user lands on CurrentPatients fragment
         activity.getSupportFragmentManager()
