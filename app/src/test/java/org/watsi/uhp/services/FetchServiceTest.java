@@ -187,7 +187,7 @@ public class FetchServiceTest {
         doNothing().when(spiedFetchService).createOrUpdateMembers(anyListOf(Member.class));
         when(mockPreferencesManager.getMemberLastModified()).thenReturn(lastModifiedTimestamp);
         when(ApiService.requestBuilder(spiedFetchService)).thenReturn(mockApi);
-        when(mockApi.members(token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
+        when(mockApi.members("Token " + token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
                 .thenReturn(mockFetchMembersCall);
         when(mockFetchMembersCall.execute()).thenReturn(mockFetchMembersResponse);
         doNothing().when(mockPreferencesManager).setMemberLastModified(anyString());
@@ -363,13 +363,13 @@ public class FetchServiceTest {
         MemberDao.createOrUpdate(syncedPersistedMemberWithSamePhoto);
     }
 
-    private Response mockBillablesApiRequest(FetchService spiedFetchService) throws Exception {
+    private Response mockBillablesApiRequest(String token, FetchService spiedFetchService)
+            throws Exception {
         String lastModifiedTimestamp = "foo";
-        String token = "token";
 
         when(mockPreferencesManager.getBillablesLastModified()).thenReturn(lastModifiedTimestamp);
         when(ApiService.requestBuilder(spiedFetchService)).thenReturn(mockApi);
-        when(mockApi.billables(token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
+        when(mockApi.billables("Token " + token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
                 .thenReturn(mockFetchBillablesCall);
         when(mockFetchBillablesCall.execute()).thenReturn(mockFetchBillablesResponse);
         doNothing().when(mockPreferencesManager).setBillablesLastModified(anyString());
@@ -382,7 +382,7 @@ public class FetchServiceTest {
         String updatedLastModifiedTimestamp = "bar";
         String token = "token";
 
-        Response mockResponse = mockBillablesApiRequest(spiedFetchService);
+        Response mockResponse = mockBillablesApiRequest(token, spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(true);
         when(mockResponse.body()).thenReturn(mockBillablesList);
         Headers mockHeaders = mock(Headers.class);
@@ -405,7 +405,7 @@ public class FetchServiceTest {
         String token = "token";
         int responseCode = 304;
 
-        Response mockResponse = mockBillablesApiRequest(spiedFetchService);
+        Response mockResponse = mockBillablesApiRequest(token, spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(false);
         when(mockResponse.code()).thenReturn(responseCode);
 
@@ -427,7 +427,7 @@ public class FetchServiceTest {
         String token = "token";
         int responseCode = 500;
 
-        Response mockResponse = mockBillablesApiRequest(spiedFetchService);
+        Response mockResponse = mockBillablesApiRequest(token, spiedFetchService);
         when(mockResponse.isSuccessful()).thenReturn(false);
         when(mockResponse.code()).thenReturn(responseCode);
         Request mockRawRequest = mock(Request.class);

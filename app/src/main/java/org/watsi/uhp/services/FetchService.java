@@ -59,8 +59,9 @@ public class FetchService extends AbstractSyncJobService {
 
     protected void fetchMembers(String authToken, PreferencesManager preferencesManager)
             throws IOException, SQLException, IllegalStateException {
+        String tokenHeader = "Token " + authToken;
         Call<List<Member>> request = ApiService.requestBuilder(this).members(
-                authToken, preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
+                tokenHeader, preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
             List<Member> members = response.body();
@@ -143,9 +144,10 @@ public class FetchService extends AbstractSyncJobService {
 
     protected void fetchBillables(String authToken, PreferencesManager preferencesManager)
             throws IOException, SQLException {
+        String tokenHeader = "Token " + authToken;
         String lastModifiedTimestamp = preferencesManager.getBillablesLastModified();
         Call<List<Billable>> request = ApiService.requestBuilder(this)
-                .billables(authToken, lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
+                .billables(tokenHeader, lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();
