@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.rollbar.android.Rollbar;
+
 import org.watsi.uhp.R;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.KeyboardManager;
@@ -23,6 +25,8 @@ import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.managers.Authenticator;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import me.philio.pinentry.PinEntryView;
 import retrofit2.Response;
@@ -78,7 +82,6 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 ApiService.authenticate(username, password);
         spinner.dismiss();
         if (response == null || !response.isSuccessful()) {
-            // TODO: report to Rollbar if necessary
             String errorMessage;
 
             if (response == null) {
@@ -87,6 +90,10 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 errorMessage = getString(R.string.login_wrong_password_message);
             } else {
                 errorMessage = getString(R.string.login_generic_failure_message);
+                Map<String,String> warningDetails = new HashMap<>();
+                warningDetails.put("response.code", String.valueOf(response.code()));
+                warningDetails.put("response.message", response.message());
+                Rollbar.reportMessage("Unexpected login failure", "warning", warningDetails);
             }
 
             final String errorMessageFinal = errorMessage;
