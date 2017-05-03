@@ -29,9 +29,9 @@ public class ApiService {
     public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
             AccountManager accountManager = AccountManager.get(context);
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addNetworkInterceptor(new UnauthorizedInterceptor(accountManager));
-            httpClient.retryOnConnectionFailure(false);
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                    .addNetworkInterceptor(new UnauthorizedInterceptor(accountManager))
+                    .retryOnConnectionFailure(false);
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT_STRING)

@@ -81,9 +81,13 @@ public class ApiServiceTest {
 
         when(AccountManager.get(mockContext)).thenReturn(mockAccountManager);
         whenNew(OkHttpClient.Builder.class).withNoArguments().thenReturn(mockHttpClientBuilder);
-        when(mockHttpClientBuilder.build()).thenReturn(mockHttpClient);
         whenNew(UnauthorizedInterceptor.class).withArguments(mockAccountManager)
                 .thenReturn(mockInterceptor);
+        when(mockHttpClientBuilder.addNetworkInterceptor(mockInterceptor))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.retryOnConnectionFailure(false))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.build()).thenReturn(mockHttpClient);
         whenNew(GsonBuilder.class).withNoArguments().thenReturn(mockGsonBuilder);
         whenNew(EncounterTypeAdapterFactory.class).withArguments(Encounter.class)
                 .thenReturn(mockEncounterTypeAdapterFactory);
