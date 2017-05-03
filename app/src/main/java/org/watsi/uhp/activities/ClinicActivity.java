@@ -18,8 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.rollbar.android.Rollbar;
-
 import net.hockeyapp.android.UpdateManager;
 
 import org.watsi.uhp.BuildConfig;
@@ -51,11 +49,7 @@ public class ClinicActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Rollbar.init(
-                this,
-                BuildConfig.ROLLBAR_API_KEY,
-                BuildConfig.ROLLBAR_ENV_KEY
-        );
+        ExceptionManager.init(getApplication());
         super.onCreate(savedInstanceState);
 
         setupApp();
@@ -82,7 +76,6 @@ public class ClinicActivity extends AppCompatActivity {
 
     private void setupApp() {
         DatabaseHelper.init(this);
-        ExceptionManager.init(getApplication());
 
         setContentView(R.layout.activity_clinic);
         setupToolbar();

@@ -18,12 +18,8 @@ import okhttp3.Response;
 
 public class ExceptionManager {
     public static void init(Application application) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
-            Rollbar.init(
-                    application,
-                    BuildConfig.ROLLBAR_API_KEY,
-                    BuildConfig.ROLLBAR_ENV_KEY
-            );
+        if (BuildConfig.REPORT_TO_ROLLBAR && !Rollbar.isInit()) {
+            Rollbar.init(application, BuildConfig.ROLLBAR_API_KEY, BuildConfig.ROLLBAR_ENV_KEY);
         }
 
         if (LeakCanary.isInAnalyzerProcess(application)) {
@@ -34,13 +30,15 @@ public class ExceptionManager {
         LeakCanary.install(application);
     }
 
-
-    public static void requestFailure(String description, Request request, Response response, Map<String,String> params) {
+    public static void requestFailure(
+            String description, Request request, Response response, Map<String,String> params) {
         params.put("Url", request.url().toString());
         params.put("Method", request.method());
         RequestBody body = request.body();
         if (body != null) {
-            if (body.contentType() != null) params.put("Content-Type", request.body().contentType().toString());
+            if (body.contentType() != null) {
+                params.put("Content-Type", request.body().contentType().toString());
+            }
             try {
                 params.put("Content-Length", String.valueOf(request.body().contentLength()));
             } catch (IOException e) {
@@ -52,7 +50,11 @@ public class ExceptionManager {
             params.put("response.code", String.valueOf(response.code()));
             params.put("response.message", response.message());
         }
-        Rollbar.reportMessage(description, "warning", params);
+        if (Rollbar.isInit()) {
+            Rollbar.reportMessage(description, "warning", params);
+        } else {
+            Log.i("Message", description + " - " + params.toString());
+        }
     }
 
     public static void requestFailure(String description, Request request, Response response) {
@@ -60,7 +62,7 @@ public class ExceptionManager {
     }
 
     public static void reportException(Throwable e) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
+        if (Rollbar.isInit()) {
             Rollbar.reportException(e);
         } else {
             Log.e("Exception", e.getMessage());
@@ -68,7 +70,7 @@ public class ExceptionManager {
     }
 
     public static void reportMessage(String message, String level, Map<String, String> params) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
+        if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, level, params);
         } else {
             Log.i("Message", message);
@@ -79,8 +81,8 @@ public class ExceptionManager {
         reportMessage(message, "info", null);
     }
 
-    public static void setPersonData(String id, String username) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
+    static void setPersonData(String id, String username) {
+        if (Rollbar.isInit()) {
             Rollbar.setPersonData(id, username, null);
         } else {
             Log.i("User logged in", "id:" + id + ", username:" + username);
