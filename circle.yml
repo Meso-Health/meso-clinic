@@ -2,6 +2,14 @@ machine:
   environment:
     ADB_INSTALL_TIMEOUT: "10"
 
+
+checkout:
+  post:
+    # download outside repos necessary to run test suite from SSH keys specified in project settings (including uhp-backend)
+    - git submodule sync
+    # use submodules
+    - git submodule update --init
+
 test:
   override:
     # start the emulator
@@ -24,13 +32,6 @@ test:
       - find . -type f -regex ".*/app/build/test-results/*/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
       - find . -type f -regex ".*/app/build/outputs/androidTest-results/connected/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
 
-checkout:
-  post:
-    # download outside repos necessary to run test suite from SSH keys specified in project settings (including uhp-backend)
-    - git submodule sync
-    # use submodules
-    - git submodule update --init
-
 dependencies:
   # in order for Circle CI to run, we need to pre-fetch, accept and cache the android sdk license
   # ref: https://discuss.circleci.com/t/android-7-1-25-build-problem/7546/8
@@ -43,6 +44,9 @@ dependencies:
   cache_directories:
     - /usr/local/android-sdk-linux/platforms/android-25
     - /usr/local/android-sdk-linux/build-tools/25.0.2
+
+  override:
+    -
 
 deployment:
   production:
