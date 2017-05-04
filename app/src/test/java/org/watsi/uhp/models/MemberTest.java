@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import okhttp3.RequestBody;
 import okio.Buffer;
+import retrofit2.Response;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -32,6 +33,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -41,17 +43,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, FileManager.class,
-        Member.class, Uri.class, MediaStore.Images.Media.class, File.class})
+        Member.class, Uri.class, MediaStore.Images.Media.class, File.class, Response.class})
 public class MemberTest {
 
     private Member member;
 
     @Mock
-    private Context mockContext;
+    Context mockContext;
+    @Mock
+    Response<Member> mockSyncResponse;
 
     @Before
     public void setup() {
@@ -193,50 +198,29 @@ public class MemberTest {
         assertEquals(member.getFormattedAgeAndGender(), "52 years / F");
     }
 
-    @Test
-    public void deleteLocalMemberImage_nullPhotoUrl() throws Exception {
-        Member memberSpy = spy(Member.class);
-        memberSpy.setPhotoUrl(null);
-        File mockFile = mock(File.class);
-
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-
-        memberSpy.deleteLocalMemberImage();
-
-        verify(mockFile, never()).delete();
-    }
 
     @Test
-    public void deleteLocalMemberImage_remotePhotoUrl() throws Exception {
-        Member memberSpy = spy(Member.class);
-        memberSpy.setPhotoUrl("https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074");
-        File mockFile = mock(File.class);
+    public void updatePhotoFromSyncResponse() throws Exception {
+        String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+        String remoteUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
+        member.setPhotoUrl(localPhotoUrl);
+        member.setId(UUID.randomUUID());
+        Member memberSpy = spy(member);
+
         mockStatic(FileManager.class);
+        Member mockResponseMember = mock(Member.class);
+        when(mockSyncResponse.body()).thenReturn(mockResponseMember);
+        when(mockResponseMember.getPhotoUrl()).thenReturn(remoteUrl);
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
 
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-        when(FileManager.isLocal(memberSpy.getPhotoUrl())).thenReturn(false);
+        memberSpy.updatePhotoFromSyncResponse(mockSyncResponse);
 
-        memberSpy.deleteLocalMemberImage();
-
-        verify(mockFile, never()).delete();
-        verify(memberSpy, never()).setPhotoUrl(null);
+        assertEquals(memberSpy.getPhotoUrl(), remoteUrl);
+        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl();
+        verifyStatic();
+        FileManager.deletePhoto(localPhotoUrl);
     }
 
-    @Test
-    public void deleteLocalMemberImage_localPhotoUrl() throws Exception {
-        Member memberSpy = spy(Member.class);
-        memberSpy.setPhotoUrl("content://org.watsi.uhp.fileprovider/captured_image/photo.jpg");
-        File mockFile = mock(File.class);
-        mockStatic(FileManager.class);
-
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-        when(FileManager.isLocal(memberSpy.getPhotoUrl())).thenReturn(true);
-
-        memberSpy.deleteLocalMemberImage();
-
-        verify(mockFile).delete();
-        verify(memberSpy, times(1)).setPhotoUrl(null);
-    }
 
     @Test
     public void deleteLocalIdImage_nullPhotoUrl() throws Exception {
@@ -259,7 +243,7 @@ public class MemberTest {
         mockStatic(FileManager.class);
 
         whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-        when(FileManager.isLocal(memberSpy.getNationalIdPhotoUrl())).thenReturn(false);
+        when(FileManager.isLocal(anyString())).thenReturn(false);
 
         memberSpy.deleteLocalIdImage();
 

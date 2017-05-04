@@ -38,7 +38,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -249,9 +249,27 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void setMemberPhotoUrlFromResponse(String responsePhotoUrl) {
-        this.mPhotoUrl = responsePhotoUrl;
-        deleteLocalMemberImage();
+    public void updatePhotoFromSyncResponse(Response<Member> response) {
+        String photoUrl = response.body().getPhotoUrl();
+
+        if (photoUrl != null && !photoUrl.equals(getPhotoUrl())) {
+            FileManager.deletePhoto(getPhotoUrl());
+            try {
+                fetchAndSetPhotoFromUrl();
+            } catch (IOException e) {
+                ExceptionManager.reportException(e);
+            }
+            this.mPhotoUrl = photoUrl;
+        }
+    }
+
+    public void updateNationalIdPhotoFromSyncResponse(Response<Member> response) {
+        String nationalIdPhotoUrl= response.body().getNationalIdPhotoUrl();
+
+        if (nationalIdPhotoUrl != null && !nationalIdPhotoUrl.equals(getNationalIdPhotoUrl())) {
+            FileManager.deletePhoto(getNationalIdPhotoUrl());
+            this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
+        }
     }
 
     public byte[] getNationalIdPhoto() {
@@ -348,7 +366,7 @@ public class Member extends SyncableModel {
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
         Request request = new Request.Builder().url(getPhotoUrl()).build();
-        Response response = new OkHttpClient().newCall(request).execute();
+        okhttp3.Response response = new OkHttpClient().newCall(request).execute();
 
         if (response.isSuccessful()) {
             InputStream is = response.body().byteStream();
@@ -563,13 +581,6 @@ public class Member extends SyncableModel {
                     getPhoneNumber().substring(6,9);
         } else {
             return null;
-        }
-    }
-
-    public void deleteLocalMemberImage() {
-        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
-            new File(getPhotoUrl()).delete();
-            setPhotoUrl(null);
         }
     }
 

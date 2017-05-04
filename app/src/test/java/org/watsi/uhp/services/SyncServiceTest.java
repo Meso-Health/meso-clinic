@@ -396,7 +396,6 @@ public class SyncServiceTest {
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
 
-
         syncService.syncEncounterForms(encounterFormsList);
 
         verify(mockApi, never()).syncEncounterForm(
@@ -482,12 +481,12 @@ public class SyncServiceTest {
         List<Member> membersList = new ArrayList<>();
         membersList.add(mockNewMember);
         membersList.add(mockExistingMember);
-        doNothing().when(spiedService).enrollMember(any(Member.class));
+        doNothing().when(spiedService).enrollNewborn(any(Member.class));
         doNothing().when(spiedService).updateMember(any(Member.class));
 
         spiedService.syncMembers(membersList);
 
-        verify(spiedService, times(1)).enrollMember(mockNewMember);
+        verify(spiedService, times(1)).enrollNewborn(mockNewMember);
         verify(spiedService, times(1)).updateMember(mockExistingMember);
     }
 
@@ -534,7 +533,7 @@ public class SyncServiceTest {
 
         syncService.updateMember(mockMember);
 
-        verify(mockMember, times(1)).setMemberPhotoUrlFromResponse(remotePhotoUrl);
+        verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
         verify(mockMember, times(1)).fetchAndSetPhotoFromUrl();
         verifyStatic();
         MemberDao.update(mockMember);
@@ -587,7 +586,7 @@ public class SyncServiceTest {
     }
 
     @Test
-    public void enrollMember_fails() throws Exception {
+    public void enrollNewborn_fails() throws Exception {
         Member mockMember = mockMember();
 
         when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
@@ -598,7 +597,7 @@ public class SyncServiceTest {
         when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
         when(mockMemberSyncResponse.isSuccessful()).thenReturn(false);
 
-        syncService.enrollMember(mockMember);
+        syncService.enrollNewborn(mockMember);
 
         verify(mockMember, never()).setSynced();
         verifyStatic(never());
@@ -610,7 +609,7 @@ public class SyncServiceTest {
     }
 
     @Test
-    public void enrollMember_succeeds_updatedMemberPhoto() throws Exception {
+    public void enrollNewborn_succeeds_updatedMemberPhoto() throws Exception {
         String localPhotoUrl = "localUrl";
         String remotePhotoUrl = "remoteUrl";
         Member mockMember = mockMember();
@@ -628,9 +627,9 @@ public class SyncServiceTest {
         when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
 
-        syncService.enrollMember(mockMember);
+        syncService.enrollNewborn(mockMember);
 
-        verify(mockMember, times(1)).setMemberPhotoUrlFromResponse(remotePhotoUrl);
+        verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
         verify(mockMember, times(1)).fetchAndSetPhotoFromUrl();
         verify(mockMember, times(1)).setSynced();
         verifyStatic();

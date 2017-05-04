@@ -168,7 +168,7 @@ public class SyncService extends AbstractSyncJobService {
     protected void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
             if (member.isNew()) {
-                enrollMember(member);
+                enrollNewborn(member);
             } else {
                 updateMember(member);
             }
@@ -186,14 +186,11 @@ public class SyncService extends AbstractSyncJobService {
         Call<Member> request = ApiService.requestBuilder(this).syncMember(
                 member.getTokenAuthHeaderString(), member.getId(), multiPartBody);
         Response<Member> response = request.execute();
+
         if (response.isSuccessful()) {
-            // if we have updated a photo, remove the local version and fetch the remote one
-            if (member.getPhotoUrl() != null &&
-                    !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
-                    !member.dirty(Member.FIELD_NAME_PHOTO)) {
-                member.setMemberPhotoUrlFromResponse(response.body().getPhotoUrl());
-                member.fetchAndSetPhotoFromUrl();
-            }
+            member.updatePhotoFromSyncResponse(response);
+            member.updateNationalIdPhotoFromSyncResponse(response);
+
             if (member.getNationalIdPhotoUrl() != null &&
                     !member.getNationalIdPhotoUrl().equals(
                         response.body().getNationalIdPhotoUrl()) &&
@@ -201,6 +198,7 @@ public class SyncService extends AbstractSyncJobService {
                 member.setNationalIdPhotoUrlFromPatchResponse(
                         response.body().getNationalIdPhotoUrl());
             }
+
             if (!member.isDirty()) {
                 try {
                     member.setSynced();
@@ -217,7 +215,7 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    protected void enrollMember(Member member) throws SQLException, IOException {
+    protected void enrollNewborn(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {
             multiPartBody = member.formatPostRequest(this);
@@ -229,13 +227,7 @@ public class SyncService extends AbstractSyncJobService {
                 member.getTokenAuthHeaderString(), multiPartBody);
         Response<Member> response = request.execute();
         if (response.isSuccessful()) {
-            // if we have updated a photo, remove the local version and fetch the remote one
-            if (member.getPhotoUrl() != null &&
-                    !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
-                    !member.dirty(Member.FIELD_NAME_PHOTO)) {
-                member.setMemberPhotoUrlFromResponse(response.body().getPhotoUrl());
-                member.fetchAndSetPhotoFromUrl();
-            }
+            member.updatePhotoFromSyncResponse(response);
             try {
                 member.setSynced();
             } catch (AbstractModel.ValidationException e) {
