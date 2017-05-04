@@ -13,7 +13,8 @@ android {
         targetSdkVersion 22
         versionCode System.getenv("VERSION_CODE") as Integer
         versionName System.getenv("VERSION_NAME") as String
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
 
         buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
