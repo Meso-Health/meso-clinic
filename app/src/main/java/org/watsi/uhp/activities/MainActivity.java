@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (BuildConfig.FLAVOR.equals("spec")) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.pale_pink));
-        }   else if (!(BuildConfig.FLAVOR.equals("production") || BuildConfig.FLAVOR.equals("demo"))) {
+        } else if (!(BuildConfig.FLAVOR.equals("production") || BuildConfig.FLAVOR.equals("demo"))) {
             toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                     R.color.gray));
         }

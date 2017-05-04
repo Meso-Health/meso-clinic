@@ -51,7 +51,7 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 - **Spec**
   - hits local server as API endpoint
   - used for running tests
-  - this is the flavour used by circleci
+  - this is the flavor used by circleci
 - **Sandbox** 
   - hits sandbox server (which mimics production DB)
   - used for QA
@@ -108,7 +108,7 @@ Check that your device is connected.
 $ adb devices
 ```
 
-Forward port number (depending on flavour) on your device to port number on your PC.
+Forward port number (depending on flavor) on your device to port number on your PC.
 
 For Development:
 ```
