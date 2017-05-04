@@ -14,10 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
@@ -93,7 +92,10 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 Map<String,String> warningDetails = new HashMap<>();
                 warningDetails.put("response.code", String.valueOf(response.code()));
                 warningDetails.put("response.message", response.message());
-                Rollbar.reportMessage("Unexpected login failure", "warning", warningDetails);
+                ExceptionManager.reportMessage(
+                        "Unexpected login failure",
+                        ExceptionManager.MESSAGE_LEVEL_WARNING,
+                        warningDetails);
             }
 
             final String errorMessageFinal = errorMessage;

@@ -17,6 +17,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ExceptionManager {
+
+    public static String MESSAGE_LEVEL_WARNING = "warning";
+    public static String MESSAGE_LEVEL_INFO = "info";
+
     public static void init(Application application) {
         if (BuildConfig.REPORT_TO_ROLLBAR && !Rollbar.isInit()) {
             Rollbar.init(application, BuildConfig.ROLLBAR_API_KEY, BuildConfig.ROLLBAR_ENV_KEY);
@@ -51,7 +55,7 @@ public class ExceptionManager {
             params.put("response.message", response.message());
         }
         if (Rollbar.isInit()) {
-            Rollbar.reportMessage(description, "warning", params);
+            Rollbar.reportMessage(description, MESSAGE_LEVEL_WARNING, params);
         } else {
             Log.i("Message", description + " - " + params.toString());
         }
@@ -78,7 +82,7 @@ public class ExceptionManager {
     }
 
     public static void reportMessage(String message) {
-        reportMessage(message, "info", null);
+        reportMessage(message, MESSAGE_LEVEL_INFO, null);
     }
 
     static void setPersonData(String id, String username) {

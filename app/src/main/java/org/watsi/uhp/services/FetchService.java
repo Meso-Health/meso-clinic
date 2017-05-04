@@ -115,7 +115,8 @@ public class FetchService extends AbstractSyncJobService {
             Map<String, String> params = new HashMap<>();
             params.put("member.id", toBeDeleted.toString());
             ExceptionManager.reportMessage(
-                    "Member synced on device but not in backend", "warning", params);
+                    "Member synced on device but not in backend",
+                    ExceptionManager.MESSAGE_LEVEL_WARNING, params);
         }
     }
 
