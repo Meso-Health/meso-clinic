@@ -4,8 +4,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/fragment_vertical_margin"
+    android:layout_marginBottom="@dimen/fragment_vertical_margin"
+    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+    android:layout_marginRight="@dimen/fragment_horizontal_margin"
     android:focusable="true"
     android:focusableInTouchMode="true" >
 
@@ -13,6 +15,7 @@
         android:id="@+id/enrollment_fingerprint_capture_btn"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:theme="@style/SecondaryButton"
         android:text="@string/enrollment_fingerprint_button" />
 
     <TextView
@@ -40,6 +43,7 @@
             android:id="@+id/save_button"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:theme="@style/PrimaryButton"
             android:text="@string/enrollment_complete_btn" />
     </RelativeLayout>
 </LinearLayout>

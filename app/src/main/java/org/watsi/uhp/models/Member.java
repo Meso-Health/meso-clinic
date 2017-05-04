@@ -231,10 +231,14 @@ public class Member extends SyncableModel {
 
     public String getFormattedGender() {
         if (getGender() == GenderEnum.M) {
-            return "Male";
+            return "M";
         } else {
-            return "Female";
+            return "F";
         }
+    }
+
+    public String getFormattedAgeAndGender() {
+        return getFormattedAge() + " / " + getFormattedGender();
     }
 
     public byte[] getPhoto() {

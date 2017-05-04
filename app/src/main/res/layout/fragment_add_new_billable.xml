@@ -3,7 +3,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp">
+    android:layout_marginTop="@dimen/fragment_vertical_margin"
+    android:layout_marginBottom="@dimen/fragment_vertical_margin"
+    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+    android:layout_marginRight="@dimen/fragment_horizontal_margin" >
 
     <TextView
         android:id="@+id/name"
@@ -22,6 +25,7 @@
         android:id="@+id/price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/form_item_vertical_margin"
         android:text="@string/add_new_price"
         android:layout_below="@id/name_field" />
     <EditText
@@ -37,7 +41,7 @@
         android:layout_gravity="end"
         android:textAlignment="gravity"
         android:text="@string/UGX"
-        android:textSize="20dp"
+        android:theme="@style/LargeLabel"
         android:layout_toEndOf="@id/price_field"
         android:layout_below="@id/price" />
 
@@ -45,6 +49,8 @@
         android:id="@+id/add_billable_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/form_item_vertical_margin"
+        android:theme="@style/PrimaryButton"
         android:text="@string/add_new_billable"
         android:textAllCaps="true"
         android:layout_below="@id/price_field" />
