@@ -1,6 +1,7 @@
 package org.watsi.uhp.services;
 
 import android.net.Uri;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -43,7 +45,9 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyMapOf;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -63,6 +67,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
         IdentificationEventDao.class, MediaType.class, MemberDao.class, okhttp3.Response.class,
         RequestBody.class, Response.class, SyncService.class, Uri.class })
 public class SyncServiceTest {
+    private final String REMOTE_PHOTO_URL = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+    private final String LOCAL_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
 
     @Mock
     UhpApi mockApi;
@@ -514,13 +520,11 @@ public class SyncServiceTest {
 
     @Test
     public void updateMember_success_photoUrlUpdated() throws Exception {
-        String localPhotoUrl = "localUrl";
-        String remotePhotoUrl = "remoteUrl";
         Member mockMember = mockMember();
         Member responseMember = mockMember();
 
-        when(mockMember.getPhotoUrl()).thenReturn(localPhotoUrl);
-        when(responseMember.getPhotoUrl()).thenReturn(remotePhotoUrl);
+        when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
+        when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
         when(mockMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(false);
         when(mockMember.formatPatchRequest(syncService)).thenReturn(mockRequestBodyMap);
         when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
@@ -534,20 +538,17 @@ public class SyncServiceTest {
         syncService.updateMember(mockMember);
 
         verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
-        verify(mockMember, times(1)).fetchAndSetPhotoFromUrl();
         verifyStatic();
         MemberDao.update(mockMember);
     }
 
     @Test
     public void updateMember_success_nationalIdUrlUpdated() throws Exception {
-        String localPhotoUrl = "localUrl";
-        String remotePhotoUrl = "remoteUrl";
         Member mockMember = mockMember();
         Member responseMember = mockMember();
 
-        when(mockMember.getNationalIdPhotoUrl()).thenReturn(localPhotoUrl);
-        when(responseMember.getNationalIdPhotoUrl()).thenReturn(remotePhotoUrl);
+        when(mockMember.getNationalIdPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
+        when(responseMember.getNationalIdPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
         when(mockMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)).thenReturn(false);
         when(mockMember.formatPatchRequest(syncService)).thenReturn(mockRequestBodyMap);
         when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
@@ -560,7 +561,7 @@ public class SyncServiceTest {
 
         syncService.updateMember(mockMember);
 
-        verify(mockMember, times(1)).setNationalIdPhotoUrlFromPatchResponse(remotePhotoUrl);
+        verify(mockMember, times(1)).setNationalIdPhotoUrlFromPatchResponse(REMOTE_PHOTO_URL);
         verifyStatic();
         MemberDao.update(mockMember);
     }
@@ -585,8 +586,21 @@ public class SyncServiceTest {
         MemberDao.update(mockMember);
     }
 
+    // enrollNewborn
     @Test
-    public void enrollNewborn_fails() throws Exception {
+    public void enrollNewborn_notNewMember_fails() throws Exception {
+        Member mockMember = mockMember();
+        mockMember.setIsNew(false);
+
+        when(mockMember.formatPostRequest(any(SyncService.class))).thenThrow(AbstractModel.ValidationException.class);
+        syncService.enrollNewborn(mockMember);
+
+        verifyStatic();
+        ExceptionManager.reportException(any(AbstractModel.ValidationException.class));
+    }
+
+    @Test
+    public void enrollNewborn_fails_badResponse() throws Exception {
         Member mockMember = mockMember();
 
         when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
@@ -609,14 +623,42 @@ public class SyncServiceTest {
     }
 
     @Test
-    public void enrollNewborn_succeeds_updatedMemberPhoto() throws Exception {
-        String localPhotoUrl = "localUrl";
-        String remotePhotoUrl = "remoteUrl";
+    public void enrollNewborn_fails_setSyncedFailed() throws Exception {
         Member mockMember = mockMember();
         Member responseMember = mockMember();
 
-        when(mockMember.getPhotoUrl()).thenReturn(localPhotoUrl);
-        when(responseMember.getPhotoUrl()).thenReturn(remotePhotoUrl);
+        when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
+        when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
+
+        doThrow(AbstractModel.ValidationException.class).when(mockMember).setSynced();
+        when(mockMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(false);
+        when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
+        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
+        when(mockApi.enrollMember(
+                mockMember.getTokenAuthHeaderString(), mockRequestBodyMap))
+                .thenReturn(mockMemberCall);
+        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
+        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
+        when(mockMemberSyncResponse.body()).thenReturn(responseMember);
+
+
+        syncService.enrollNewborn(mockMember);
+
+        verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
+        verify(mockMember, times(1)).setSynced();
+        verifyStatic(times(1));
+        ExceptionManager.reportException(any(AbstractModel.ValidationException.class));
+        MemberDao.update(mockMember);
+    }
+
+    @Test
+    public void enrollNewborn_succeeds_updatedMemberPhoto() throws Exception {
+        Member mockMember = mockMember();
+        Member responseMember = mockMember();
+
+        when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
+        when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
+
         when(mockMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(false);
         when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
         when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
@@ -630,7 +672,6 @@ public class SyncServiceTest {
         syncService.enrollNewborn(mockMember);
 
         verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
-        verify(mockMember, times(1)).fetchAndSetPhotoFromUrl();
         verify(mockMember, times(1)).setSynced();
         verifyStatic();
         MemberDao.update(mockMember);

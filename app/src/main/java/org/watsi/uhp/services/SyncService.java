@@ -193,7 +193,7 @@ public class SyncService extends AbstractSyncJobService {
 
             if (member.getNationalIdPhotoUrl() != null &&
                     !member.getNationalIdPhotoUrl().equals(
-                        response.body().getNationalIdPhotoUrl()) &&
+                            response.body().getNationalIdPhotoUrl()) &&
                     !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
                 member.setNationalIdPhotoUrlFromPatchResponse(
                         response.body().getNationalIdPhotoUrl());
@@ -208,7 +208,7 @@ public class SyncService extends AbstractSyncJobService {
             }
             MemberDao.update(member);
         } else {
-            Map<String,String> reportParams = new HashMap<>();
+            Map<String, String> reportParams = new HashMap<>();
             reportParams.put("member.id", member.getId().toString());
             ExceptionManager.requestFailure(
                     "Failed to sync Member", request.request(), response.raw(), reportParams);

@@ -3,6 +3,7 @@ package org.watsi.uhp.managers;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 
@@ -57,15 +58,12 @@ public class FileManager {
     }
 
     public static void deletePhoto(String url) {
-        if (isLocal(url)) {
-            boolean deletedSuccessfully = new File(url).delete();
-            if (!deletedSuccessfully) {
-                Map<String, String> messageParams = new HashMap<>();
-                messageParams.put("url", url);
-                ExceptionManager.reportMessage("Failed to delete photo.",
-                        ExceptionManager.MESSAGE_LEVEL_WARNING, messageParams);
-            }
-        }
+        if (!isLocal(url) || !(new File(url).delete())) {
+            Map<String, String> messageParams = new HashMap<>();
+            messageParams.put("url", url);
+            ExceptionManager.reportMessage("Failed to delete photo.",
+                    ExceptionManager.MESSAGE_LEVEL_WARNING, messageParams);
 
+        }
     }
 }
