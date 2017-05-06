@@ -264,25 +264,12 @@ public class Member extends SyncableModel {
     }
 
     public void updateNationalIdPhotoFromSyncResponse(Response<Member> response) {
-        String nationalIdPhotoUrl= response.body().getNationalIdPhotoUrl();
+        String nationalIdPhotoUrl = response.body().getNationalIdPhotoUrl();
 
-        if (nationalIdPhotoUrl != null && !nationalIdPhotoUrl.equals(getNationalIdPhotoUrl())) {
+        if (nationalIdPhotoUrl != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
             FileManager.deletePhoto(getNationalIdPhotoUrl());
             this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
         }
-    }
-
-    public byte[] getNationalIdPhoto() {
-        return mNationalIdPhoto;
-    }
-
-    public void setNationalIdPhoto(byte[] nationalIdPhoto) {
-        this.mNationalIdPhoto = nationalIdPhoto;
-    }
-
-    public void setNationalIdPhotoUrlFromPatchResponse(String responsePhotoUrl) {
-        this.mNationalIdPhotoUrl = responsePhotoUrl;
-        deleteLocalIdImage();
     }
 
     public String getNationalIdPhotoUrl() {
@@ -581,13 +568,6 @@ public class Member extends SyncableModel {
                     getPhoneNumber().substring(6,9);
         } else {
             return null;
-        }
-    }
-
-    public void deleteLocalIdImage() {
-        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
-            new File(getNationalIdPhotoUrl()).delete();
-            setNationalIdPhotoUrl(null);
         }
     }
 

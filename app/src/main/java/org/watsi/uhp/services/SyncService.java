@@ -175,6 +175,7 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
+    // TODO: Refactor updateMember and enrollNewborn, since there's so much shared code.
     protected void updateMember(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {
@@ -190,14 +191,6 @@ public class SyncService extends AbstractSyncJobService {
         if (response.isSuccessful()) {
             member.updatePhotoFromSyncResponse(response);
             member.updateNationalIdPhotoFromSyncResponse(response);
-
-            if (member.getNationalIdPhotoUrl() != null &&
-                    !member.getNationalIdPhotoUrl().equals(
-                            response.body().getNationalIdPhotoUrl()) &&
-                    !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
-                member.setNationalIdPhotoUrlFromPatchResponse(
-                        response.body().getNationalIdPhotoUrl());
-            }
 
             if (!member.isDirty()) {
                 try {
@@ -215,6 +208,7 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
+    // TODO: Refactor updateMember and enrollNewborn, since there's so much shared code.
     protected void enrollNewborn(Member member) throws SQLException, IOException {
         Map<String, RequestBody> multiPartBody;
         try {

@@ -561,7 +561,7 @@ public class SyncServiceTest {
 
         syncService.updateMember(mockMember);
 
-        verify(mockMember, times(1)).setNationalIdPhotoUrlFromPatchResponse(REMOTE_PHOTO_URL);
+        verify(mockMember, times(1)).updateNationalIdPhotoFromSyncResponse(mockMemberSyncResponse);
         verifyStatic();
         MemberDao.update(mockMember);
     }
@@ -631,7 +631,6 @@ public class SyncServiceTest {
         when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
 
         doThrow(AbstractModel.ValidationException.class).when(mockMember).setSynced();
-        when(mockMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(false);
         when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
         when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
         when(mockApi.enrollMember(
@@ -659,7 +658,6 @@ public class SyncServiceTest {
         when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
         when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
 
-        when(mockMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(false);
         when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
         when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
         when(mockApi.enrollMember(

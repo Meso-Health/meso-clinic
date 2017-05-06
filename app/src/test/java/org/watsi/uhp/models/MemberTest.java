@@ -36,7 +36,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,12 +43,13 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, FileManager.class,
         Member.class, Uri.class, MediaStore.Images.Media.class, File.class, Response.class})
 public class MemberTest {
+    private final String REMOTE_PHOTO_URL = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+    private final String LOCAL_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
 
     private Member member;
 
@@ -94,7 +94,7 @@ public class MemberTest {
 
     @Test
     public void getPhotoBitmap_photoIsNullandPhotoUrlIsNotLocalUrl() throws Exception {
-        member.setPhotoUrl("https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074");
+        member.setPhotoUrl(REMOTE_PHOTO_URL);
         ContentResolver mockContentResolver = mock(ContentResolver.class);
         mockStatic(FileManager.class);
 
@@ -105,7 +105,7 @@ public class MemberTest {
 
     @Test
     public void getPhotoBitmap_photoIsNullButLocalPhotoUrl() throws Exception {
-        member.setPhotoUrl("content://org.watsi.uhp.fileprovider/captured_image/photo.jpg");
+        member.setPhotoUrl(LOCAL_PHOTO_URL);
         Uri mockUri = mock(Uri.class);
         Bitmap mockBitmap = mock(Bitmap.class);
         ContentResolver mockContentResolver = mock(ContentResolver.class);
@@ -201,8 +201,8 @@ public class MemberTest {
 
     @Test
     public void updatePhotoFromSyncResponse() throws Exception {
-        String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
-        String remoteUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
+        String localPhotoUrl = LOCAL_PHOTO_URL;
+        String remoteUrl = REMOTE_PHOTO_URL;
         member.setPhotoUrl(localPhotoUrl);
         member.setId(UUID.randomUUID());
         Member memberSpy = spy(member);
@@ -221,52 +221,6 @@ public class MemberTest {
         FileManager.deletePhoto(localPhotoUrl);
     }
 
-
-    @Test
-    public void deleteLocalIdImage_nullPhotoUrl() throws Exception {
-        Member memberSpy = spy(Member.class);
-        memberSpy.setNationalIdPhoto(null);
-        File mockFile = mock(File.class);
-
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-
-        memberSpy.deleteLocalIdImage();
-
-        verify(mockFile, never()).delete();
-    }
-
-    @Test
-    public void deleteLocalIdImage_remotePhotoUrl() throws Exception {
-        Member memberSpy = spy(Member.class);
-        memberSpy.setNationalIdPhotoUrl("https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074");
-        File mockFile = mock(File.class);
-        mockStatic(FileManager.class);
-
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-        when(FileManager.isLocal(anyString())).thenReturn(false);
-
-        memberSpy.deleteLocalIdImage();
-
-        verify(mockFile, never()).delete();
-        verify(memberSpy, never()).setNationalIdPhotoUrl(null);
-    }
-
-    @Test
-    public void deleteLocalIdImage_localPhotoUrl() throws Exception {
-        Member memberSpy = spy(Member.class);
-        memberSpy.setNationalIdPhotoUrl("content://org.watsi.uhp.fileprovider/captured_image/photo.jpg");
-        File mockFile = mock(File.class);
-        mockStatic(FileManager.class);
-
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
-        when(FileManager.isLocal(memberSpy.getNationalIdPhotoUrl())).thenReturn(true);
-
-        memberSpy.deleteLocalIdImage();
-
-        verify(mockFile).delete();
-        verify(memberSpy, times(1)).setNationalIdPhotoUrl(null);
-    }
-
     @Test
     public void formatPatchRequest_newMember() throws Exception {
         member.setIsNew(true);
@@ -280,7 +234,7 @@ public class MemberTest {
 
     @Test
     public void formatPatchRequest_dirtyMemberAndNationalIdPhoto_onlyIncludesOnePhoto() throws Exception {
-        String uriString = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+        String uriString = LOCAL_PHOTO_URL;
         byte[] mockPhotoBytes = new byte[]{};
         Context mockContext = mock(Context.class);
         Uri mockUri = mock(Uri.class);
@@ -337,7 +291,7 @@ public class MemberTest {
     public void formatPostRequest_newMember() throws Exception {
         String fullName = "Akiiki Monday";
         String cardId = "RWI111111";
-        String photoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+        String photoUrl = LOCAL_PHOTO_URL;
         mockStatic(FileManager.class);
         mockStatic(Uri.class);
         Uri mockUri = mock(Uri.class);
