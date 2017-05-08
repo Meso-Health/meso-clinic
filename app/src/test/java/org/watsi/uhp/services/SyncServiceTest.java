@@ -1,7 +1,6 @@
 package org.watsi.uhp.services;
 
 import android.net.Uri;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
