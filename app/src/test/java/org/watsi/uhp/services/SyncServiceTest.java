@@ -20,7 +20,6 @@ import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -41,13 +40,12 @@ import retrofit2.Response;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyMapOf;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -67,9 +65,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
         IdentificationEventDao.class, MediaType.class, MemberDao.class, okhttp3.Response.class,
         RequestBody.class, Response.class, SyncService.class, Uri.class })
 public class SyncServiceTest {
-    private final String REMOTE_PHOTO_URL = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
-    private final String LOCAL_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
-
     @Mock
     UhpApi mockApi;
     @Mock
@@ -591,5 +586,28 @@ public class SyncServiceTest {
                 any(okhttp3.Response.class), anyMapOf(String.class, String.class));
     }
 
-    // LEFT TODO: Test if response is unsuccessful.
+    @Test
+    public void sendSyncMemberRequest_unsuccessfulResponse_fails() throws Exception {
+        Member mockMember = mock(Member.class);
+        SyncService spiedService = spy(syncService);
+
+        doReturn(false).when(mockMember).isNew();
+        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
+        when(mockMember.formatPatchRequest(spiedService)).thenReturn(mockRequestBodyMap);
+        when(mockMember.getId()).thenReturn(UUID.randomUUID());
+        when(mockApi.syncMember(
+                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
+                .thenReturn(mockMemberCall);
+        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
+        when(mockMemberSyncResponse.isSuccessful()).thenReturn(false);
+
+        Response<Member> response = spiedService.sendSyncMemberRequest(mockMember);
+
+        assertNull(response);
+        verify(mockApi, times(1)).syncMember(mockMember.getTokenAuthHeaderString(),  mockMember.getId(), mockRequestBodyMap);
+        verifyStatic();
+        ExceptionManager.requestFailure(
+                anyString(), any(Request.class),
+                any(okhttp3.Response.class), anyMapOf(String.class, String.class));
+    }
 }

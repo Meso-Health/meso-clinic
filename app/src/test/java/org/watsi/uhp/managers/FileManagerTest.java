@@ -28,8 +28,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ExceptionManager.class, File.class, FileManager.class, Uri.class})
 public class FileManagerTest {
-    private final String LOCAL_PHOTO_URL = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
-    private final String REMOTE_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
+    private final String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+    private final String remotePhotoUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
 
     @Mock
     private Context mockContext;
@@ -45,7 +45,7 @@ public class FileManagerTest {
         Uri mockUri = mock(Uri.class);
         mockStatic(Uri.class);
 
-        String url = LOCAL_PHOTO_URL;
+        String url = localPhotoUrl;
         when(Uri.parse(url)).thenReturn(mockUri);
         when(mockUri.getScheme()).thenReturn("content");
 
@@ -57,7 +57,7 @@ public class FileManagerTest {
         Uri mockUri = mock(Uri.class);
         mockStatic(Uri.class);
 
-        String url = REMOTE_PHOTO_URL;
+        String url = remotePhotoUrl;
         when(Uri.parse(url)).thenReturn(mockUri);
         when(mockUri.getScheme()).thenReturn("https");
 
@@ -68,11 +68,11 @@ public class FileManagerTest {
     public void deletePhoto_localFileUrlDeleteReturnsTrue_succsdfdsfseeds() throws Exception {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(true);
-        whenNew(File.class).withArguments(LOCAL_PHOTO_URL).thenReturn(mockFile);
+        whenNew(File.class).withArguments(localPhotoUrl).thenReturn(mockFile);
 
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
 
-        FileManager.deletePhoto(LOCAL_PHOTO_URL);
+        FileManager.deletePhoto(localPhotoUrl);
 
         verifyStatic(never());
         ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
@@ -82,11 +82,11 @@ public class FileManagerTest {
     public void deletePhoto_localFileDeleteReturnsFalse_fails() throws Exception {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(false);
-        whenNew(File.class).withArguments(LOCAL_PHOTO_URL).thenReturn(mockFile);
+        whenNew(File.class).withArguments(localPhotoUrl).thenReturn(mockFile);
 
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
 
-        FileManager.deletePhoto(LOCAL_PHOTO_URL);
+        FileManager.deletePhoto(localPhotoUrl);
 
         verifyStatic();
         ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
@@ -96,7 +96,7 @@ public class FileManagerTest {
     public void deletePhoto_remoteFileUrl_fails() throws Exception {
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(false);
 
-        FileManager.deletePhoto(LOCAL_PHOTO_URL);
+        FileManager.deletePhoto(localPhotoUrl);
 
         verifyStatic();
         ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
