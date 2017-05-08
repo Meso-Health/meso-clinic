@@ -22,7 +22,6 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
