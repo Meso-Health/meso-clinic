@@ -249,10 +249,11 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void updatePhotoFromSyncResponse(Response<Member> response) {
+    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response) {
         String photoUrl = response.body().getPhotoUrl();
+        String nationalIdPhotoUrl = response.body().getNationalIdPhotoUrl();
 
-        if (photoUrl != null && !photoUrl.equals(getPhotoUrl())) {
+        if (photoUrl != null && FileManager.isLocal(getPhotoUrl())) {
             FileManager.deletePhoto(getPhotoUrl());
             try {
                 fetchAndSetPhotoFromUrl();
@@ -261,12 +262,8 @@ public class Member extends SyncableModel {
             }
             this.mPhotoUrl = photoUrl;
         }
-    }
 
-    public void updateNationalIdPhotoFromSyncResponse(Response<Member> response) {
-        String nationalIdPhotoUrl = response.body().getNationalIdPhotoUrl();
-
-        if (nationalIdPhotoUrl != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
+        if (nationalIdPhotoUrl != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
             FileManager.deletePhoto(getNationalIdPhotoUrl());
             this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
         }

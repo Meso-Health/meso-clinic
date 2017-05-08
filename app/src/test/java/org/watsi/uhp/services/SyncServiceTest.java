@@ -478,7 +478,7 @@ public class SyncServiceTest {
     }
 
     @Test
-    public void syncMembers() throws Exception {
+    public void syncMembers_twoMembers_succeeds() throws Exception {
         SyncService spiedService = spy(syncService);
         Member mockNewMember = mock(Member.class);
         when(mockNewMember.isNew()).thenReturn(true);
@@ -487,191 +487,109 @@ public class SyncServiceTest {
         List<Member> membersList = new ArrayList<>();
         membersList.add(mockNewMember);
         membersList.add(mockExistingMember);
-        doNothing().when(spiedService).enrollNewborn(any(Member.class));
-        doNothing().when(spiedService).updateMember(any(Member.class));
+
+        doNothing().when(spiedService).syncMember(any(Member.class));
 
         spiedService.syncMembers(membersList);
 
-        verify(spiedService, times(1)).enrollNewborn(mockNewMember);
-        verify(spiedService, times(1)).updateMember(mockExistingMember);
+        verify(spiedService, times(1)).syncMember(mockNewMember);
+        verify(spiedService, times(1)).syncMember(mockExistingMember);
     }
 
     @Test
-    public void updateMember_fails() throws Exception {
-        Member mockMember = mockMember();
+    public void syncMember_dirtyMember_succeeds() throws Exception {
+        Member mockMember = mock(Member.class);
+        SyncService spiedService = spy(syncService);
 
-        when(mockMember.formatPatchRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.syncMember(
-                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(false);
-
-        syncService.updateMember(mockMember);
-
-        verifyStatic(never());
-        MemberDao.update(mockMember);
-        verifyStatic();
-        ExceptionManager.requestFailure(
-                anyString(), any(Request.class),
-                any(okhttp3.Response.class), anyMapOf(String.class, String.class));
-    }
-
-    @Test
-    public void updateMember_success_photoUrlUpdated() throws Exception {
-        Member mockMember = mockMember();
-        Member responseMember = mockMember();
-
-        when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
-        when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
-        when(mockMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(false);
-        when(mockMember.formatPatchRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.syncMember(
-                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-        when(mockMemberSyncResponse.body()).thenReturn(responseMember);
-
-        syncService.updateMember(mockMember);
-
-        verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
-        verifyStatic();
-        MemberDao.update(mockMember);
-    }
-
-    @Test
-    public void updateMember_success_nationalIdUrlUpdated() throws Exception {
-        Member mockMember = mockMember();
-        Member responseMember = mockMember();
-
-        when(mockMember.getNationalIdPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
-        when(responseMember.getNationalIdPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
-        when(mockMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)).thenReturn(false);
-        when(mockMember.formatPatchRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.syncMember(
-                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-        when(mockMemberSyncResponse.body()).thenReturn(responseMember);
-
-        syncService.updateMember(mockMember);
-
-        verify(mockMember, times(1)).updateNationalIdPhotoFromSyncResponse(mockMemberSyncResponse);
-        verifyStatic();
-        MemberDao.update(mockMember);
-    }
-
-    @Test
-    public void updateMember_success_memberModelIsNotDirty() throws Exception {
-        Member mockMember = mockMember();
-
+        doReturn(mockMemberSyncResponse).when(spiedService).sendSyncMemberRequest(mockMember);
         when(mockMember.isDirty()).thenReturn(false);
-        when(mockMember.formatPatchRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.syncMember(
-                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-
-        syncService.updateMember(mockMember);
+        doNothing().when(mockMember).updatePhotosFromSuccessfulSyncResponse(mockMemberSyncResponse);
+        spiedService.syncMember(mockMember);
 
         verify(mockMember, times(1)).setSynced();
         verifyStatic();
         MemberDao.update(mockMember);
     }
 
-    // enrollNewborn
     @Test
-    public void enrollNewborn_notNewMember_fails() throws Exception {
-        Member mockMember = mockMember();
-        mockMember.setIsNew(false);
+    public void syncMember_nonDirtyMember_succeeds() throws Exception {
+        Member mockMember = mock(Member.class);
+        SyncService spiedService = spy(syncService);
 
-        when(mockMember.formatPostRequest(any(SyncService.class))).thenThrow(AbstractModel.ValidationException.class);
-        syncService.enrollNewborn(mockMember);
+        doReturn(mockMemberSyncResponse).when(spiedService).sendSyncMemberRequest(mockMember);
+        when(mockMember.isDirty()).thenReturn(true);
+        doNothing().when(mockMember).updatePhotosFromSuccessfulSyncResponse(mockMemberSyncResponse);
+        spiedService.syncMember(mockMember);
+
+        verify(mockMember, never()).setSynced();
 
         verifyStatic();
-        ExceptionManager.reportException(any(AbstractModel.ValidationException.class));
+        MemberDao.update(mockMember);
     }
 
     @Test
-    public void enrollNewborn_fails_badResponse() throws Exception {
-        Member mockMember = mockMember();
+    public void syncMember_nullResponse_succeeds() throws Exception {
+        Member mockMember = mock(Member.class);
+        SyncService spiedService = spy(syncService);
 
-        when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.enrollMember(
-                mockMember.getTokenAuthHeaderString(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(false);
+        doReturn(null).when(spiedService).sendSyncMemberRequest(mockMember);
+        spiedService.syncMember(mockMember);
 
-        syncService.enrollNewborn(mockMember);
-
+        verify(mockMember, never()).isDirty();
+        verify(mockMember, never()).updatePhotosFromSuccessfulSyncResponse(null);
         verify(mockMember, never()).setSynced();
         verifyStatic(never());
         MemberDao.update(mockMember);
-        verifyStatic();
+    }
+
+    @Test
+    public void sendSyncMemberRequest_newMember_succeeds() throws Exception {
+        Member mockMember = mock(Member.class);
+        SyncService spiedService = spy(syncService);
+
+        doReturn(true).when(mockMember).isNew();
+        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
+        when(mockMember.formatPostRequest(spiedService)).thenReturn(mockRequestBodyMap);
+        when(mockApi.enrollMember(
+                mockMember.getTokenAuthHeaderString(), mockRequestBodyMap))
+                .thenReturn(mockMemberCall);
+        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
+        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
+
+        Response<Member> response = spiedService.sendSyncMemberRequest(mockMember);
+
+        assertTrue(response.isSuccessful());
+        verifyStatic(never());
+        ExceptionManager.reportException(any(Exception.class));
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class),
                 any(okhttp3.Response.class), anyMapOf(String.class, String.class));
     }
 
     @Test
-    public void enrollNewborn_fails_setSyncedFailed() throws Exception {
-        Member mockMember = mockMember();
-        Member responseMember = mockMember();
+    public void sendSyncMemberRequest_existingMember_succeeds() throws Exception {
+        Member mockMember = mock(Member.class);
+        SyncService spiedService = spy(syncService);
 
-        when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
-        when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
-
-        doThrow(AbstractModel.ValidationException.class).when(mockMember).setSynced();
-        when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.enrollMember(
-                mockMember.getTokenAuthHeaderString(), mockRequestBodyMap))
+        doReturn(false).when(mockMember).isNew();
+        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
+        when(mockMember.formatPatchRequest(spiedService)).thenReturn(mockRequestBodyMap);
+        when(mockApi.syncMember(
+                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
                 .thenReturn(mockMemberCall);
         when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
         when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-        when(mockMemberSyncResponse.body()).thenReturn(responseMember);
 
+        Response<Member> response = spiedService.sendSyncMemberRequest(mockMember);
 
-        syncService.enrollNewborn(mockMember);
-
-        verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
-        verify(mockMember, times(1)).setSynced();
-        verifyStatic(times(1));
-        ExceptionManager.reportException(any(AbstractModel.ValidationException.class));
-        MemberDao.update(mockMember);
+        assertTrue(response.isSuccessful());
+        verify(mockApi, times(1)).syncMember(mockMember.getTokenAuthHeaderString(),  mockMember.getId(), mockRequestBodyMap);
+        verifyStatic(never());
+        ExceptionManager.reportException(any(Exception.class));
+        ExceptionManager.requestFailure(
+                anyString(), any(Request.class),
+                any(okhttp3.Response.class), anyMapOf(String.class, String.class));
     }
 
-    @Test
-    public void enrollNewborn_succeeds_updatedMemberPhoto() throws Exception {
-        Member mockMember = mockMember();
-        Member responseMember = mockMember();
-
-        when(mockMember.getPhotoUrl()).thenReturn(LOCAL_PHOTO_URL);
-        when(responseMember.getPhotoUrl()).thenReturn(REMOTE_PHOTO_URL);
-
-        when(mockMember.formatPostRequest(syncService)).thenReturn(mockRequestBodyMap);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.enrollMember(
-                mockMember.getTokenAuthHeaderString(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-        when(mockMemberSyncResponse.body()).thenReturn(responseMember);
-
-        syncService.enrollNewborn(mockMember);
-
-        verify(mockMember, times(1)).updatePhotoFromSyncResponse(mockMemberSyncResponse);
-        verify(mockMember, times(1)).setSynced();
-        verifyStatic();
-        MemberDao.update(mockMember);
-    }
+    // LEFT TODO: Test if response is unsuccessful.
 }

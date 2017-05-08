@@ -28,8 +28,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ExceptionManager.class, File.class, FileManager.class, Uri.class})
 public class FileManagerTest {
+    private final String LOCAL_PHOTO_URL = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
     private final String REMOTE_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
-    private final String LOCAL_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
 
     @Mock
     private Context mockContext;
@@ -41,7 +41,19 @@ public class FileManagerTest {
     }
 
     @Test
-    public void isLocal() throws Exception {
+    public void isLocal_returnsTrue() throws Exception {
+        Uri mockUri = mock(Uri.class);
+        mockStatic(Uri.class);
+
+        String url = LOCAL_PHOTO_URL;
+        when(Uri.parse(url)).thenReturn(mockUri);
+        when(mockUri.getScheme()).thenReturn("content");
+
+        assertTrue(FileManager.isLocal(url));
+    }
+
+    @Test
+    public void isLocal_returnsFalse() throws Exception {
         Uri mockUri = mock(Uri.class);
         mockStatic(Uri.class);
 
@@ -50,15 +62,10 @@ public class FileManagerTest {
         when(mockUri.getScheme()).thenReturn("https");
 
         assertFalse(FileManager.isLocal(url));
-
-        String fileUri = LOCAL_PHOTO_URL;
-        when(Uri.parse(fileUri)).thenReturn(mockUri);
-        when(mockUri.getScheme()).thenReturn("content");
-        assertTrue(FileManager.isLocal(fileUri));
     }
 
     @Test
-    public void deletePhoto_localFileUrlDeleteReturnsTrue_succeeds() throws Exception {
+    public void deletePhoto_localFileUrlDeleteReturnsTrue_succsdfdsfseeds() throws Exception {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(true);
         whenNew(File.class).withArguments(LOCAL_PHOTO_URL).thenReturn(mockFile);

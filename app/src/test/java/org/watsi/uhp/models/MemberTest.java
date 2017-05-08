@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
@@ -36,6 +37,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,8 +50,10 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 @PrepareForTest({EncounterDao.class, Bitmap.class, BitmapFactory.class, FileManager.class,
         Member.class, Uri.class, MediaStore.Images.Media.class, File.class, Response.class})
 public class MemberTest {
-    private final String REMOTE_PHOTO_URL = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
-    private final String LOCAL_PHOTO_URL = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
+    private final String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
+    private final String remotePhotoUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
+    private final String localNationalPhotoIdUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/bar-3bf77f20d8119074";
+    private final String remoteNationalPhotoIdUrl = "content://org.watsi.uhp.fileprovider/captured_image/national_id.jpg";
 
     private Member member;
 
@@ -94,7 +98,7 @@ public class MemberTest {
 
     @Test
     public void getPhotoBitmap_photoIsNullandPhotoUrlIsNotLocalUrl() throws Exception {
-        member.setPhotoUrl(REMOTE_PHOTO_URL);
+        member.setPhotoUrl(remotePhotoUrl);
         ContentResolver mockContentResolver = mock(ContentResolver.class);
         mockStatic(FileManager.class);
 
@@ -105,7 +109,7 @@ public class MemberTest {
 
     @Test
     public void getPhotoBitmap_photoIsNullButLocalPhotoUrl() throws Exception {
-        member.setPhotoUrl(LOCAL_PHOTO_URL);
+        member.setPhotoUrl(localPhotoUrl);
         Uri mockUri = mock(Uri.class);
         Bitmap mockBitmap = mock(Bitmap.class);
         ContentResolver mockContentResolver = mock(ContentResolver.class);
@@ -200,24 +204,74 @@ public class MemberTest {
 
 
     @Test
-    public void updatePhotoFromSyncResponse() throws Exception {
-        String localPhotoUrl = LOCAL_PHOTO_URL;
-        String remoteUrl = REMOTE_PHOTO_URL;
+    public void updatePhotosFromSuccessfulSyncResponse_onlyLocalPhoto_succeeds() throws Exception {
         member.setPhotoUrl(localPhotoUrl);
         member.setId(UUID.randomUUID());
         Member memberSpy = spy(member);
 
         mockStatic(FileManager.class);
+        PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
+
         Member mockResponseMember = mock(Member.class);
         when(mockSyncResponse.body()).thenReturn(mockResponseMember);
-        when(mockResponseMember.getPhotoUrl()).thenReturn(remoteUrl);
+        when(mockResponseMember.getPhotoUrl()).thenReturn(remotePhotoUrl);
         doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
 
-        memberSpy.updatePhotoFromSyncResponse(mockSyncResponse);
+        memberSpy.updatePhotosFromSuccessfulSyncResponse(mockSyncResponse);
 
-        assertEquals(memberSpy.getPhotoUrl(), remoteUrl);
+        assertEquals(memberSpy.getPhotoUrl(), remotePhotoUrl);
+        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl();
+        verifyStatic(times(1));
+        FileManager.deletePhoto(localPhotoUrl);
+    }
+
+    @Test
+    public void updatePhotosFromSuccessfulSyncResponse_localAndNationalPhoto_succeeds() throws Exception {
+        member.setPhotoUrl(localPhotoUrl);
+        member.setNationalIdPhotoUrl(localNationalPhotoIdUrl);
+        member.setId(UUID.randomUUID());
+        Member memberSpy = spy(member);
+
+        mockStatic(FileManager.class);
+        PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
+
+        Member mockResponseMember = mock(Member.class);
+        when(mockSyncResponse.body()).thenReturn(mockResponseMember);
+        when(mockResponseMember.getPhotoUrl()).thenReturn(remotePhotoUrl);
+        when(mockResponseMember.getNationalIdPhotoUrl()).thenReturn(remoteNationalPhotoIdUrl);
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
+
+        memberSpy.updatePhotosFromSuccessfulSyncResponse(mockSyncResponse);
+
+        assertEquals(memberSpy.getPhotoUrl(), remotePhotoUrl);
+        assertEquals(memberSpy.getNationalIdPhotoUrl(), remoteNationalPhotoIdUrl);
         verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl();
         verifyStatic();
+        FileManager.deletePhoto(localPhotoUrl);
+        FileManager.deletePhoto(localNationalPhotoIdUrl);
+    }
+
+    @Test
+    public void updatePhotosFromSuccessfulSyncResponse_onlyNationalPhoto_succeeds() throws Exception {
+        member.setNationalIdPhotoUrl(localNationalPhotoIdUrl);
+        member.setId(UUID.randomUUID());
+        Member memberSpy = spy(member);
+
+        mockStatic(FileManager.class);
+        PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
+
+        Member mockResponseMember = mock(Member.class);
+        when(mockSyncResponse.body()).thenReturn(mockResponseMember);
+        when(mockResponseMember.getNationalIdPhotoUrl()).thenReturn(remoteNationalPhotoIdUrl);
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
+
+        memberSpy.updatePhotosFromSuccessfulSyncResponse(mockSyncResponse);
+
+        assertEquals(memberSpy.getNationalIdPhotoUrl(), remoteNationalPhotoIdUrl);
+        verify(memberSpy, never()).fetchAndSetPhotoFromUrl();
+        verifyStatic();
+        FileManager.deletePhoto(localNationalPhotoIdUrl);
+        verifyStatic(never());
         FileManager.deletePhoto(localPhotoUrl);
     }
 
@@ -234,7 +288,7 @@ public class MemberTest {
 
     @Test
     public void formatPatchRequest_dirtyMemberAndNationalIdPhoto_onlyIncludesOnePhoto() throws Exception {
-        String uriString = LOCAL_PHOTO_URL;
+        String uriString = localPhotoUrl;
         byte[] mockPhotoBytes = new byte[]{};
         Context mockContext = mock(Context.class);
         Uri mockUri = mock(Uri.class);
@@ -291,7 +345,7 @@ public class MemberTest {
     public void formatPostRequest_newMember() throws Exception {
         String fullName = "Akiiki Monday";
         String cardId = "RWI111111";
-        String photoUrl = LOCAL_PHOTO_URL;
+        String photoUrl = localPhotoUrl;
         mockStatic(FileManager.class);
         mockStatic(Uri.class);
         Uri mockUri = mock(Uri.class);

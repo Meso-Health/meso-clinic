@@ -3,7 +3,6 @@ package org.watsi.uhp.managers;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 
