@@ -68,8 +68,6 @@ public class MemberTest {
     private Member member;
 
     @Mock
-    Context mockContext;
-    @Mock
     Response<Member> mockSyncResponse;
     @Mock
     UhpApi mockApi;
@@ -80,7 +78,7 @@ public class MemberTest {
     @Mock
     Call<Member> mockMemberCall;
     @Mock
-    Context context;
+    Context mockContext;
 
     @Before
     public void setup() {
@@ -451,14 +449,14 @@ public class MemberTest {
         member.setId(UUID.randomUUID());
         Member memberSpy = spy(member);
 
-        doReturn(mockMemberCall).when(memberSpy).createSyncMemberRequest(context);
+        doReturn(mockMemberCall).when(memberSpy).createSyncMemberRequest(mockContext);
         doReturn(mockMemberSyncResponse).when(mockMemberCall).execute();
         doNothing().when(memberSpy).updatePhotosFromSuccessfulSyncResponse(any(Response.class));
         doReturn(true).when(memberSpy).isDirty();
         doReturn(true).when(mockMemberSyncResponse).isSuccessful();
         doReturn(true).when(memberSpy).isNew();
 
-        memberSpy.syncMember(context);
+        memberSpy.syncMember(mockContext);
 
         verify(memberSpy, times(1)).updatePhotosFromSuccessfulSyncResponse(any(Response.class));
         verify(memberSpy, never()).setSynced();
@@ -475,14 +473,14 @@ public class MemberTest {
         member.setId(UUID.randomUUID());
         Member memberSpy = spy(member);
 
-        doReturn(mockMemberCall).when(memberSpy).createSyncMemberRequest(context);
+        doReturn(mockMemberCall).when(memberSpy).createSyncMemberRequest(mockContext);
         doReturn(mockMemberSyncResponse).when(mockMemberCall).execute();
         doNothing().when(memberSpy).updatePhotosFromSuccessfulSyncResponse(any(Response.class));
         doReturn(false).when(memberSpy).isDirty();
         doReturn(true).when(mockMemberSyncResponse).isSuccessful();
         doReturn(true).when(memberSpy).isNew();
 
-        memberSpy.syncMember(context);
+        memberSpy.syncMember(mockContext);
 
         verify(memberSpy, times(1)).updatePhotosFromSuccessfulSyncResponse(any(Response.class));
         verify(memberSpy, times(1)).setSynced();
@@ -499,12 +497,12 @@ public class MemberTest {
         member.setId(UUID.randomUUID());
         Member memberSpy = spy(member);
 
-        doReturn(mockMemberCall).when(memberSpy).createSyncMemberRequest(context);
+        doReturn(mockMemberCall).when(memberSpy).createSyncMemberRequest(mockContext);
         doReturn(mockMemberSyncResponse).when(mockMemberCall).execute();
         doReturn(false).when(mockMemberSyncResponse).isSuccessful();
         doReturn(true).when(memberSpy).isNew();
 
-        memberSpy.syncMember(context);
+        memberSpy.syncMember(mockContext);
 
         verify(memberSpy, never()).updatePhotosFromSuccessfulSyncResponse(any(Response.class));
         verify(memberSpy, never()).setSynced();
@@ -525,14 +523,14 @@ public class MemberTest {
         Member memberSpy = spy(member);
 
         doReturn(true).when(memberSpy).isNew();
-        when(ApiService.requestBuilder(context)).thenReturn(mockApi);
-        doReturn(mockRequestBodyMap).when(memberSpy).formatPostRequest(context);
+        when(ApiService.requestBuilder(mockContext)).thenReturn(mockApi);
+        doReturn(mockRequestBodyMap).when(memberSpy).formatPostRequest(mockContext);
         when(mockApi.enrollMember(
                 memberSpy.getTokenAuthHeaderString(), mockRequestBodyMap))
                 .thenReturn(mockMemberCall);
         when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
 
-        memberSpy.createSyncMemberRequest(context);
+        memberSpy.createSyncMemberRequest(mockContext);
 
         verifyStatic(never());
         ExceptionManager.reportException(any(Exception.class));
@@ -540,7 +538,7 @@ public class MemberTest {
                 anyString(), any(Request.class),
                 any(okhttp3.Response.class), anyMapOf(String.class, String.class));
         verify(mockApi, times(1)).enrollMember(memberSpy.getTokenAuthHeaderString(), mockRequestBodyMap);
-        verify(memberSpy, times(1)).formatPostRequest(context);
+        verify(memberSpy, times(1)).formatPostRequest(mockContext);
     }
 
     @Test
@@ -549,14 +547,14 @@ public class MemberTest {
         Member memberSpy = spy(member);
 
         doReturn(false).when(memberSpy).isNew();
-        when(ApiService.requestBuilder(context)).thenReturn(mockApi);
-        doReturn(mockRequestBodyMap).when(memberSpy).formatPatchRequest(context);
+        when(ApiService.requestBuilder(mockContext)).thenReturn(mockApi);
+        doReturn(mockRequestBodyMap).when(memberSpy).formatPatchRequest(mockContext);
         when(mockApi.syncMember(
                 memberSpy.getTokenAuthHeaderString(), memberSpy.getId(), mockRequestBodyMap))
                 .thenReturn(mockMemberCall);
         when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
 
-        memberSpy.createSyncMemberRequest(context);
+        memberSpy.createSyncMemberRequest(mockContext);
 
         verifyStatic(never());
         ExceptionManager.reportException(any(Exception.class));
@@ -564,6 +562,6 @@ public class MemberTest {
                 anyString(), any(Request.class),
                 any(okhttp3.Response.class), anyMapOf(String.class, String.class));
         verify(mockApi, times(1)).syncMember(memberSpy.getTokenAuthHeaderString(), memberSpy.getId(), mockRequestBodyMap);
-        verify(memberSpy, times(1)).formatPatchRequest(context);
+        verify(memberSpy, times(1)).formatPatchRequest(mockContext);
     }
 }
