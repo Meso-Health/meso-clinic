@@ -37,21 +37,18 @@ public class LoginFragmentFeature extends ActivityTest {
     }
 
     @Test
+    /**
+     * logging in clinic user that is loaded in test seed data on the uhp rails backend side, make sure you are running the rails server locally and have raked the seed data
+     */
     public void logsUserIn_loginFragment() {
-        // logging in clinic user that is loaded in test seed data on the uhp rails backend side, make sure you are running the server locally and have raked the seed data
-
-        // type user's name in login username field
         onView(withId(R.id.login_username)).perform(typeText(USERNAME));
 
-        // type user's password in password field
         onView(allOf(supportsInputMethods(), withParent(withId(R.id.login_password)))).perform(typeText(PASSWORD));
 
-        // click Login button
         onView(withId(R.id.login_button)).perform(click());
 
         waitForUIToUpdate();
 
-        // expect to log in
         onView(withText("Select a patient")).check(matches(isDisplayed()));
     }
 }
