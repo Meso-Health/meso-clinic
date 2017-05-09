@@ -152,15 +152,6 @@ public class Member extends SyncableModel {
         super();
     }
 
-    // for testing:
-//    public Member(String fullName, String cardId, int age, GenderEnum genderEnum) {
-//        super();
-//        mFullName = fullName;
-//        mCardId = cardId;
-//        mAge = age;
-//        mGender = genderEnum;
-//    }
-
     public void setFullName(String fullName) throws ValidationException {
         if (fullName == null || fullName.isEmpty()) {
             throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");

@@ -2,14 +2,6 @@ machine:
   environment:
     ADB_INSTALL_TIMEOUT: "10"
 
-
-checkout:
-  post:
-    # download outside repos necessary to run test suite from SSH keys specified in project settings (including uhp-backend)
-    - git submodule sync
-    # use submodules
-    - git submodule update --init
-
 test:
   override:
     # start the emulator
@@ -44,9 +36,6 @@ dependencies:
   cache_directories:
     - /usr/local/android-sdk-linux/platforms/android-25
     - /usr/local/android-sdk-linux/build-tools/25.0.2
-
-  override:
-    -
 
 deployment:
   production:
