@@ -169,7 +169,7 @@ public class SyncService extends AbstractSyncJobService {
         for (Member member : unsyncedMembers) {
             try {
                 member.syncMember(this);
-            } catch (SQLException | IOException e) {
+            } catch (SQLException | IOException | AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
         }

@@ -251,7 +251,7 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void syncMember(Context context) throws SQLException, IOException {
+    public void syncMember(Context context) throws SQLException, IOException, AbstractModel.ValidationException {
         Call<Member> request = createSyncMemberRequest(context);
         Response<Member> response = request.execute();
         if (response.isSuccessful()) {
@@ -272,25 +272,20 @@ public class Member extends SyncableModel {
         }
     }
 
-    protected Call<Member> createSyncMemberRequest(Context context) throws SQLException, IOException {
+    protected Call<Member> createSyncMemberRequest(Context context) throws SQLException, IOException, AbstractModel.ValidationException {
         Map<String, RequestBody> multiPartBody;
         Call<Member> request;
 
-        try {
-            if (isNew()) {
-                multiPartBody = formatPostRequest(context);
-                request = ApiService.requestBuilder(context).enrollMember(
-                        getTokenAuthHeaderString(), multiPartBody);
-            } else {
-                multiPartBody = formatPatchRequest(context);
-                request = ApiService.requestBuilder(context).syncMember(
-                        getTokenAuthHeaderString(), getId(), multiPartBody);
-            }
-            return request;
-        } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-            return null;
+        if (isNew()) {
+            multiPartBody = formatPostRequest(context);
+            request = ApiService.requestBuilder(context).enrollMember(
+                    getTokenAuthHeaderString(), multiPartBody);
+        } else {
+            multiPartBody = formatPatchRequest(context);
+            request = ApiService.requestBuilder(context).syncMember(
+                    getTokenAuthHeaderString(), getId(), multiPartBody);
         }
+        return request;
     }
 
     public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response) {
