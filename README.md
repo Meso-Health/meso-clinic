@@ -75,7 +75,7 @@ There may be cases where you wish to generate a signed release build locally (e.
 
 ## Running development apps against a local server
 
-Apps with the development/spec flavor are set up to hit a local server (`http://localhost:5000` for development and `http://localhost:6000` for spec) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
+Apps with the development/spec flavor are set up to hit a local server (`http://localhost:5000` for development and `http://localhost:8000` for spec) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
 However, by default, emulators and devices don't know about their PC's local servers. (Going to `localhost:5000` on your emulator or device browser will attempt to access its _own_ server, which doesn't exist.)
 
 In both cases, first start your local server (see [https://github.com/Watsi/uhp-backend](https://github.com/Watsi/uhp-backend) for more detailed instructions).
@@ -117,24 +117,24 @@ $ adb reverse tcp:5000 tcp:5000
 
 For Spec:
 ```
-$ adb reverse tcp:6000 tcp:6000
+$ adb reverse tcp:8000 tcp:8000
 ```
 
 And voila, that's it! As long as your phone is connected to your PC, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
 
 ### Accessing your local server from your emulator
 
-Simply change the `API_HOST` config field in `build.gradle` to `10.0.2.2:portno`. This is the 
+Simply change the `API_HOST` config field in `build.gradle` to `http://10.0.2.2:portno`. This is the
 designated IP address for emulators to refer their computer's server.
 
 For Development:
 ```
-buildConfigField "String", "API_HOST", "\"10.0.2.2:5000\""
+buildConfigField "String", "API_HOST", "\"http://10.0.2.2:5000\""
 ```
 
 For Spec:
 ```
-buildConfigField "String", "API_HOST", "\"10.0.2.2:6000\""
+buildConfigField "String", "API_HOST", "\"http://10.0.2.2:8000\""
 ```
 
 ## Continuous Deployment
