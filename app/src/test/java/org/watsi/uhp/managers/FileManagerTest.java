@@ -93,13 +93,10 @@ public class FileManagerTest {
         ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
     }
 
-    @Test
+    @Test(expected=FileManager.FileDeletionException.class)
     public void deleteLocalPhoto_remoteFileUrl_fails() throws Exception {
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(false);
 
         FileManager.deleteLocalPhoto(localPhotoUrl);
-
-        verifyStatic();
-        ExceptionManager.reportException(any(FileManager.FileDeletionException.class));
     }
 }
