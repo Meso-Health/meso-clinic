@@ -23,8 +23,8 @@ test:
     # unlock the emulator screen
     - sleep 30
     - adb shell input keyevent 82
-    # run instrumentation tests against the emulator
-    - ./gradlew connectedSpecDebugAndroidTest
+    # run instrumentation tests against the emulator -> commented out because we are not running instrumentation tests on circle for now
+#    - ./gradlew connectedSpecDebugAndroidTest
 
   post:
       # copy unit and instrument test results to Circle Test results directory
