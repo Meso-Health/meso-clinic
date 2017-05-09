@@ -110,10 +110,10 @@ public class DetailFragment extends Fragment {
     }
 
     private void setPatientCard(View detailView) {
-        ((TextView) detailView.findViewById(R.id.member_name)).setText(mMember.getFullName());
+        ((TextView) detailView.findViewById(R.id.member_name_detail_fragment)).setText(mMember.getFullName());
         ((TextView) detailView.findViewById(R.id.member_age_and_gender))
                 .setText(mMember.getFormattedAgeAndGender());
-        ((TextView) detailView.findViewById(R.id.member_card_id)).setText(mMember.getFormattedCardId());
+        ((TextView) detailView.findViewById(R.id.member_card_id_detail_fragment)).setText(mMember.getFormattedCardId());
         ((TextView) detailView.findViewById(R.id.member_phone_number)).setText(mMember.getFormattedPhoneNumber());
 
         Bitmap photoBitmap = mMember.getPhotoBitmap(getContext().getContentResolver());
