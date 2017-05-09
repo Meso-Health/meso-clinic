@@ -99,7 +99,8 @@ public class SearchMemberFragment extends Fragment {
                     final List<Member> matchingMembers;
                     final IdentificationEvent.SearchMethodEnum idMethod;
                     if (containsNumber(query)) {
-                        matchingMembers = MemberDao.withCardIdLike(query);
+                        String strippedQuery = query.replaceAll(" ","");
+                        matchingMembers = MemberDao.withCardIdLike(strippedQuery);
                         idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_ID;
                     } else {
                         matchingMembers = MemberDao.fuzzySearchMembers(query, 20, 60);
