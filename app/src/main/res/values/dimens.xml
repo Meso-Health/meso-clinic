@@ -1,10 +1,16 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="spinner_horizontal_margin">5dp</dimen>
-    <dimen name="item_member_list_photo_height">120dp</dimen>
+    <dimen name="fragment_horizontal_margin">16dp</dimen>
+    <dimen name="fragment_vertical_margin">10dp</dimen>
+
+    <dimen name="label_vertical_margin">16dp</dimen>
+    <dimen name="spinner_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="form_item_vertical_margin">5dp</dimen>
+    <dimen name="list_item_vertical_padding">16dp</dimen>
+    <dimen name="dialog_padding">16dp</dimen>
+
     <dimen name="item_member_list_photo_width">90dp</dimen>
+    <dimen name="item_member_list_photo_height">120dp</dimen>
     <dimen name="detail_fragment_photo_height">208dp</dimen>
     <dimen name="detail_fragment_photo_width">156dp</dimen>
 </resources>

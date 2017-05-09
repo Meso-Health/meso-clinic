@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
@@ -50,7 +49,12 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
             final Billable billable = encounterItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
-            viewHolder.billableDetails.setText(billable.dosageDetails());
+            if (billable.dosageDetails() == null) {
+                viewHolder.billableDetails.setVisibility(View.GONE);
+            } else {
+                viewHolder.billableDetails.setText(billable.dosageDetails());
+                viewHolder.billableDetails.setVisibility(View.VISIBLE);
+            }
             viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

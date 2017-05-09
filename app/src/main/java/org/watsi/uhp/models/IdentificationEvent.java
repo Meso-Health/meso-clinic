@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.watsi.uhp.managers.ConfigManager;
-
 import java.util.Date;
 import java.util.UUID;
 
@@ -187,8 +185,10 @@ public class IdentificationEvent extends SyncableModel {
     public String getFormattedClinicNumber() {
         if (mClinicNumberTypeEnum == null) {
             return null;
+        } else if (mClinicNumberTypeEnum == ClinicNumberTypeEnum.DELIVERY) {
+            return "D" + mClinicNumber.toString();
         } else {
-            return mClinicNumberTypeEnum.toString() + ": " + mClinicNumber.toString();
+            return mClinicNumber.toString();
         }
     }
 

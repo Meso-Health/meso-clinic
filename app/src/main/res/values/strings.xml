@@ -54,6 +54,10 @@
     <!--CurrentPatientsFragment-->
     <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
+    <plurals name="current_patients_label" >
+        <item quantity="one">%d Current Patient</item>
+        <item quantity="other">%d Current Patients</item>
+    </plurals>
 
     <!--BarcodeFragment-->
     <string name="barcode_fragment_label">Scan ID</string>
@@ -74,7 +78,10 @@
     <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
-    <string name="household_label">Household Members</string>
+    <plurals name="household_label" >
+        <item quantity="one">%d Household Member</item>
+        <item quantity="other">%d Household Members</item>
+    </plurals>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">has been reported for suspicious behavior.</string>
     <string name="identification_dismissed">has been checked out without treatment details.</string>
@@ -116,12 +123,15 @@
 
     <!--ReceiptFragment-->
     <string name="receipt_fragment_label">Review receipt</string>
-    <string name="receipt_check_prompt"><b>Does this look correct?</b></string>
-    <string name="total"><b>Total</b></string>
+    <string name="receipt_check_prompt">Does this look correct?</string>
+    <string name="total">Total</string>
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
-    <string name="receipt_forms_attached">%1$d forms attached</string>
+    <plurals name="forms_attached_label" >
+        <item quantity="one">%d form attached</item>
+        <item quantity="other">%d forms attached</item>
+    </plurals>
 
     <!-- Enrollment -->
     <string name="enrollment_complete_btn">Complete enrollment</string>
@@ -149,7 +159,7 @@
     <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
 
     <!--MemberEditFragment-->
-    <string name="member_edit_label">Update member information</string>
+    <string name="member_edit_label">Update member</string>
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 

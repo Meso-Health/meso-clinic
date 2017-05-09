@@ -16,6 +16,17 @@ public class IdentificationEventTest {
     }
 
     @Test
+    public void getFormattedClinicNumber() throws Exception {
+        identificationEvent.setClinicNumber(50);
+        identificationEvent.setClinicNumberType(IdentificationEvent.ClinicNumberTypeEnum.OPD);
+        assertEquals(identificationEvent.getFormattedClinicNumber(), "50");
+
+        identificationEvent.setClinicNumber(50);
+        identificationEvent.setClinicNumberType(IdentificationEvent.ClinicNumberTypeEnum.DELIVERY);
+        assertEquals(identificationEvent.getFormattedClinicNumber(), "D50");
+    }
+
+    @Test
     public void getFormattedDismissalReasons() throws Exception {
         String[] formattedDismissalReasons = IdentificationEvent.getFormattedDismissalReasons();
 
