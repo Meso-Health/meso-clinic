@@ -1,10 +1,12 @@
 package org.watsi.uhp;
 
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.managers.NavigationManager;
@@ -20,6 +22,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
+@RunWith(AndroidJUnit4.class)
 public class LoginFragmentFeature extends ActivityTest {
 
     private static final String USERNAME = "klinik";
