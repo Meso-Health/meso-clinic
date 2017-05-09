@@ -14,8 +14,8 @@ import com.simprints.libsimprints.Registration;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.SyncableModel;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 import java.util.UUID;

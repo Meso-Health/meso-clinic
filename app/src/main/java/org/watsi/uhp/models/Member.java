@@ -17,7 +17,9 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
+import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
@@ -37,6 +39,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import retrofit2.Call;
 import retrofit2.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
@@ -248,23 +251,68 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response) {
-        String photoUrl = response.body().getPhotoUrl();
-        String nationalIdPhotoUrl = response.body().getNationalIdPhotoUrl();
+    public void syncMember(Context context) throws SQLException, IOException {
+        Call<Member> request = createSyncMemberRequest(context);
+        Response<Member> response = request.execute();
+        if (response.isSuccessful()) {
+            updatePhotosFromSuccessfulSyncResponse(response);
+            try {
+                if (!isDirty()) {
+                    setSynced();
+                }
+            } catch (AbstractModel.ValidationException e) {
+                ExceptionManager.reportException(e);
+            }
+            MemberDao.update(this);
+        } else {
+            Map<String, String> reportParams = new HashMap<>();
+            reportParams.put("member.id", getId().toString());
+            ExceptionManager.requestFailure(
+                    isNew() ? "Failed to enroll Member" : "Failed to sync Member", request.request(), response.raw(), reportParams);
+        }
+    }
 
-        if (photoUrl != null && FileManager.isLocal(getPhotoUrl())) {
-            FileManager.deletePhoto(getPhotoUrl());
+    protected Call<Member> createSyncMemberRequest(Context context) throws SQLException, IOException {
+        Map<String, RequestBody> multiPartBody;
+        Call<Member> request;
+
+        try {
+            if (isNew()) {
+                multiPartBody = formatPostRequest(context);
+                request = ApiService.requestBuilder(context).enrollMember(
+                        getTokenAuthHeaderString(), multiPartBody);
+            } else {
+                multiPartBody = formatPatchRequest(context);
+                request = ApiService.requestBuilder(context).syncMember(
+                        getTokenAuthHeaderString(), getId(), multiPartBody);
+            }
+            return request;
+        } catch (AbstractModel.ValidationException e) {
+            ExceptionManager.reportException(e);
+            return null;
+        }
+    }
+
+    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response) {
+        String photoUrlFromResponse = response.body().getPhotoUrl();
+        String nationalIdPhotoUrlFromResponse = response.body().getNationalIdPhotoUrl();
+
+        if (photoUrlFromResponse != null) {
             try {
                 fetchAndSetPhotoFromUrl();
+                if (FileManager.isLocal(getPhotoUrl())) {
+                    FileManager.deleteLocalPhoto(getPhotoUrl());
+                }
             } catch (IOException e) {
                 ExceptionManager.reportException(e);
             }
-            this.mPhotoUrl = photoUrl;
+
+            this.mPhotoUrl = photoUrlFromResponse;
         }
 
-        if (nationalIdPhotoUrl != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
-            FileManager.deletePhoto(getNationalIdPhotoUrl());
-            this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
+        if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
+            FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+            this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
         }
     }
 

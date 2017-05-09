@@ -39,7 +39,6 @@ import retrofit2.Response;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
@@ -84,10 +83,6 @@ public class SyncServiceTest {
     Call<Encounter> mockEncounterCall;
     @Mock
     Response<Encounter> mockEncounterSyncResponse;
-    @Mock
-    Call<Member> mockMemberCall;
-    @Mock
-    Response<Member> mockMemberSyncResponse;
     @Mock
     HashMap<String, RequestBody> mockRequestBodyMap;
 
@@ -482,131 +477,12 @@ public class SyncServiceTest {
         membersList.add(mockNewMember);
         membersList.add(mockExistingMember);
 
-        doNothing().when(spiedService).syncMember(any(Member.class));
+        doNothing().when(mockNewMember).syncMember(spiedService);
+        doNothing().when(mockExistingMember).syncMember(spiedService);
 
         spiedService.syncMembers(membersList);
 
-        verify(spiedService, times(1)).syncMember(mockNewMember);
-        verify(spiedService, times(1)).syncMember(mockExistingMember);
-    }
-
-    @Test
-    public void syncMember_dirtyMember_succeeds() throws Exception {
-        Member mockMember = mock(Member.class);
-        SyncService spiedService = spy(syncService);
-
-        doReturn(mockMemberSyncResponse).when(spiedService).sendSyncMemberRequest(mockMember);
-        when(mockMember.isDirty()).thenReturn(false);
-        doNothing().when(mockMember).updatePhotosFromSuccessfulSyncResponse(mockMemberSyncResponse);
-        spiedService.syncMember(mockMember);
-
-        verify(mockMember, times(1)).setSynced();
-        verifyStatic();
-        MemberDao.update(mockMember);
-    }
-
-    @Test
-    public void syncMember_nonDirtyMember_succeeds() throws Exception {
-        Member mockMember = mock(Member.class);
-        SyncService spiedService = spy(syncService);
-
-        doReturn(mockMemberSyncResponse).when(spiedService).sendSyncMemberRequest(mockMember);
-        when(mockMember.isDirty()).thenReturn(true);
-        doNothing().when(mockMember).updatePhotosFromSuccessfulSyncResponse(mockMemberSyncResponse);
-        spiedService.syncMember(mockMember);
-
-        verify(mockMember, never()).setSynced();
-
-        verifyStatic();
-        MemberDao.update(mockMember);
-    }
-
-    @Test
-    public void syncMember_nullResponse_succeeds() throws Exception {
-        Member mockMember = mock(Member.class);
-        SyncService spiedService = spy(syncService);
-
-        doReturn(null).when(spiedService).sendSyncMemberRequest(mockMember);
-        spiedService.syncMember(mockMember);
-
-        verify(mockMember, never()).isDirty();
-        verify(mockMember, never()).updatePhotosFromSuccessfulSyncResponse(null);
-        verify(mockMember, never()).setSynced();
-        verifyStatic(never());
-        MemberDao.update(mockMember);
-    }
-
-    @Test
-    public void sendSyncMemberRequest_newMember_succeeds() throws Exception {
-        Member mockMember = mock(Member.class);
-        SyncService spiedService = spy(syncService);
-
-        doReturn(true).when(mockMember).isNew();
-        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
-        when(mockMember.formatPostRequest(spiedService)).thenReturn(mockRequestBodyMap);
-        when(mockApi.enrollMember(
-                mockMember.getTokenAuthHeaderString(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-
-        Response<Member> response = spiedService.sendSyncMemberRequest(mockMember);
-
-        assertTrue(response.isSuccessful());
-        verifyStatic(never());
-        ExceptionManager.reportException(any(Exception.class));
-        ExceptionManager.requestFailure(
-                anyString(), any(Request.class),
-                any(okhttp3.Response.class), anyMapOf(String.class, String.class));
-    }
-
-    @Test
-    public void sendSyncMemberRequest_existingMember_succeeds() throws Exception {
-        Member mockMember = mock(Member.class);
-        SyncService spiedService = spy(syncService);
-
-        doReturn(false).when(mockMember).isNew();
-        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
-        when(mockMember.formatPatchRequest(spiedService)).thenReturn(mockRequestBodyMap);
-        when(mockApi.syncMember(
-                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
-
-        Response<Member> response = spiedService.sendSyncMemberRequest(mockMember);
-
-        assertTrue(response.isSuccessful());
-        verify(mockApi, times(1)).syncMember(mockMember.getTokenAuthHeaderString(),  mockMember.getId(), mockRequestBodyMap);
-        verifyStatic(never());
-        ExceptionManager.reportException(any(Exception.class));
-        ExceptionManager.requestFailure(
-                anyString(), any(Request.class),
-                any(okhttp3.Response.class), anyMapOf(String.class, String.class));
-    }
-
-    @Test
-    public void sendSyncMemberRequest_unsuccessfulResponse_fails() throws Exception {
-        Member mockMember = mock(Member.class);
-        SyncService spiedService = spy(syncService);
-
-        doReturn(false).when(mockMember).isNew();
-        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
-        when(mockMember.formatPatchRequest(spiedService)).thenReturn(mockRequestBodyMap);
-        when(mockMember.getId()).thenReturn(UUID.randomUUID());
-        when(mockApi.syncMember(
-                mockMember.getTokenAuthHeaderString(), mockMember.getId(), mockRequestBodyMap))
-                .thenReturn(mockMemberCall);
-        when(mockMemberCall.execute()).thenReturn(mockMemberSyncResponse);
-        when(mockMemberSyncResponse.isSuccessful()).thenReturn(false);
-
-        Response<Member> response = spiedService.sendSyncMemberRequest(mockMember);
-
-        assertNull(response);
-        verify(mockApi, times(1)).syncMember(mockMember.getTokenAuthHeaderString(),  mockMember.getId(), mockRequestBodyMap);
-        verifyStatic();
-        ExceptionManager.requestFailure(
-                anyString(), any(Request.class),
-                any(okhttp3.Response.class), anyMapOf(String.class, String.class));
+        verify(mockNewMember, times(1)).syncMember(spiedService);
+        verify(mockExistingMember, times(1)).syncMember(spiedService);
     }
 }

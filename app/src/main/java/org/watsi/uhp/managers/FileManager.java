@@ -56,13 +56,23 @@ public class FileManager {
         return scheme.equals("content");
     }
 
-    public static void deletePhoto(String url) {
-        if (!isLocal(url) || !(new File(url).delete())) {
-            Map<String, String> messageParams = new HashMap<>();
-            messageParams.put("url", url);
-            ExceptionManager.reportMessage("Failed to delete photo.",
-                    ExceptionManager.MESSAGE_LEVEL_WARNING, messageParams);
+    public static void deleteLocalPhoto(String url) {
+        if (isLocal(url)) {
+            if (!(new File(url).delete())) {
+                Map<String, String> messageParams = new HashMap<>();
+                messageParams.put("url", url);
+                ExceptionManager.reportMessage("Failed to delete photo.",
+                        ExceptionManager.MESSAGE_LEVEL_WARNING, messageParams);
+            }
+        } else {
+            ExceptionManager.reportException(
+                    new FileDeletionException("Failed to delete photo with url: " + url));
+        }
+    }
 
+    public static class FileDeletionException extends Exception {
+        public FileDeletionException(String reason) {
+            super(reason);
         }
     }
 }

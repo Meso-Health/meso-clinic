@@ -15,6 +15,7 @@ import java.io.File;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -41,7 +42,7 @@ public class FileManagerTest {
     }
 
     @Test
-    public void isLocal_returnsTrue() throws Exception {
+    public void isLocal_localUrl_returnsTrue() throws Exception {
         Uri mockUri = mock(Uri.class);
         mockStatic(Uri.class);
 
@@ -53,7 +54,7 @@ public class FileManagerTest {
     }
 
     @Test
-    public void isLocal_returnsFalse() throws Exception {
+    public void isLocal_remoteUrl_returnsFalse() throws Exception {
         Uri mockUri = mock(Uri.class);
         mockStatic(Uri.class);
 
@@ -65,40 +66,40 @@ public class FileManagerTest {
     }
 
     @Test
-    public void deletePhoto_localFileUrlDeleteReturnsTrue_succsdfdsfseeds() throws Exception {
+    public void deleteLocalPhoto_localFileUrlDeleteReturnsTrue_succeeds() throws Exception {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(true);
         whenNew(File.class).withArguments(localPhotoUrl).thenReturn(mockFile);
 
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
 
-        FileManager.deletePhoto(localPhotoUrl);
+        FileManager.deleteLocalPhoto(localPhotoUrl);
 
         verifyStatic(never());
         ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
     }
 
     @Test
-    public void deletePhoto_localFileDeleteReturnsFalse_fails() throws Exception {
+    public void deleteLocalPhoto_localFileDeleteReturnsFalse_fails() throws Exception {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(false);
         whenNew(File.class).withArguments(localPhotoUrl).thenReturn(mockFile);
 
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
 
-        FileManager.deletePhoto(localPhotoUrl);
+        FileManager.deleteLocalPhoto(localPhotoUrl);
 
         verifyStatic();
         ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
     }
 
     @Test
-    public void deletePhoto_remoteFileUrl_fails() throws Exception {
+    public void deleteLocalPhoto_remoteFileUrl_fails() throws Exception {
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(false);
 
-        FileManager.deletePhoto(localPhotoUrl);
+        FileManager.deleteLocalPhoto(localPhotoUrl);
 
         verifyStatic();
-        ExceptionManager.reportMessage(anyString(), anyString(), anyMap());
+        ExceptionManager.reportException(any(FileManager.FileDeletionException.class));
     }
 }

@@ -165,58 +165,13 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    protected void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
+    protected void syncMembers(List<Member> unsyncedMembers) {
         for (Member member : unsyncedMembers) {
-            syncMember(member);
-        }
-    }
-
-    protected void syncMember(Member member) throws SQLException, IOException {
-        Response<Member> response = sendSyncMemberRequest(member);
-        if (response != null) {
-            member.updatePhotosFromSuccessfulSyncResponse(response);
             try {
-                if (!member.isDirty()) {
-                    member.setSynced();
-                }
-            } catch (AbstractModel.ValidationException e) {
+                member.syncMember(this);
+            } catch (Exception e) {
                 ExceptionManager.reportException(e);
             }
-            MemberDao.update(member);
-        }
-    }
-
-    protected Response<Member> sendSyncMemberRequest(Member member) throws SQLException, IOException {
-        Map<String, RequestBody> multiPartBody;
-        Call<Member> request;
-        Response<Member> response;
-
-        boolean memberIsNew = member.isNew();
-        try {
-            if (memberIsNew) {
-                multiPartBody = member.formatPostRequest(this);
-                request = ApiService.requestBuilder(this).enrollMember(
-                        member.getTokenAuthHeaderString(), multiPartBody);
-            } else {
-                multiPartBody = member.formatPatchRequest(this);
-                request = ApiService.requestBuilder(this).syncMember(
-                        member.getTokenAuthHeaderString(), member.getId(), multiPartBody);
-            }
-        } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-            return null;
-        }
-
-        response = request.execute();
-        // Only reason I put the following logic here is I want access to the request, and memberIsNew to report the correct exception.
-        if (response.isSuccessful()) {
-            return response;
-        } else {
-            Map<String, String> reportParams = new HashMap<>();
-            reportParams.put("member.id", member.getId().toString());
-            ExceptionManager.requestFailure(
-                    memberIsNew ? "Failed to enroll Member" : "Failed to sync Member", request.request(), response.raw(), reportParams);
-            return null;
         }
     }
 }
