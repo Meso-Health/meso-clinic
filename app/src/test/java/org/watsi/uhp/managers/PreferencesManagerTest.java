@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.models.AuthenticationToken;
-import org.watsi.uhp.models.User;
 
 import java.util.Calendar;
 

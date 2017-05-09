@@ -165,88 +165,13 @@ public class SyncService extends AbstractSyncJobService {
         }
     }
 
-    protected void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
+    protected void syncMembers(List<Member> unsyncedMembers) {
         for (Member member : unsyncedMembers) {
-            if (member.isNew()) {
-                enrollMember(member);
-            } else {
-                updateMember(member);
-            }
-        }
-    }
-
-    protected void updateMember(Member member) throws SQLException, IOException {
-        Map<String, RequestBody> multiPartBody;
-        try {
-            multiPartBody = member.formatPatchRequest(this);
-        } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-            return;
-        }
-        Call<Member> request = ApiService.requestBuilder(this).syncMember(
-                member.getTokenAuthHeaderString(), member.getId(), multiPartBody);
-        Response<Member> response = request.execute();
-        if (response.isSuccessful()) {
-            // if we have updated a photo, remove the local version and fetch the remote one
-            if (member.getPhotoUrl() != null &&
-                    !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
-                    !member.dirty(Member.FIELD_NAME_PHOTO)) {
-                member.setMemberPhotoUrlFromResponse(response.body().getPhotoUrl());
-                member.fetchAndSetPhotoFromUrl();
-            }
-            if (member.getNationalIdPhotoUrl() != null &&
-                    !member.getNationalIdPhotoUrl().equals(
-                        response.body().getNationalIdPhotoUrl()) &&
-                    !member.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)) {
-                member.setNationalIdPhotoUrlFromPatchResponse(
-                        response.body().getNationalIdPhotoUrl());
-            }
-            if (!member.isDirty()) {
-                try {
-                    member.setSynced();
-                } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.reportException(e);
-                }
-            }
-            MemberDao.update(member);
-        } else {
-            Map<String,String> reportParams = new HashMap<>();
-            reportParams.put("member.id", member.getId().toString());
-            ExceptionManager.requestFailure(
-                    "Failed to sync Member", request.request(), response.raw(), reportParams);
-        }
-    }
-
-    protected void enrollMember(Member member) throws SQLException, IOException {
-        Map<String, RequestBody> multiPartBody;
-        try {
-            multiPartBody = member.formatPostRequest(this);
-        } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-            return;
-        }
-        Call<Member> request = ApiService.requestBuilder(this).enrollMember(
-                member.getTokenAuthHeaderString(), multiPartBody);
-        Response<Member> response = request.execute();
-        if (response.isSuccessful()) {
-            // if we have updated a photo, remove the local version and fetch the remote one
-            if (member.getPhotoUrl() != null &&
-                    !member.getPhotoUrl().equals(response.body().getPhotoUrl()) &&
-                    !member.dirty(Member.FIELD_NAME_PHOTO)) {
-                member.setMemberPhotoUrlFromResponse(response.body().getPhotoUrl());
-                member.fetchAndSetPhotoFromUrl();
-            }
             try {
-                member.setSynced();
-            } catch (AbstractModel.ValidationException e) {
+                member.syncMember(this);
+            } catch (SQLException | IOException | AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
-            MemberDao.update(member);
-        } else {
-            Map<String,String> reportParams = new HashMap<>();
-            reportParams.put("member.id", member.getId().toString());
-            ExceptionManager.requestFailure(
-                    "Failed to enroll Member", request.request(), response.raw(), reportParams);
         }
     }
 }

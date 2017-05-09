@@ -16,12 +16,12 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.Authenticator;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AuthenticationToken;
-import org.watsi.uhp.managers.Authenticator;
 
 import java.util.Arrays;
 import java.util.HashMap;

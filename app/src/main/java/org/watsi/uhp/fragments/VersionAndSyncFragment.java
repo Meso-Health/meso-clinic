@@ -14,8 +14,8 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
