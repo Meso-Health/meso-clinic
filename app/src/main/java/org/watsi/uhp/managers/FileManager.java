@@ -56,7 +56,7 @@ public class FileManager {
         return scheme.equals("content");
     }
 
-    public static void deleteLocalPhoto(String url) {
+    public static void deleteLocalPhoto(String url) throws FileDeletionException {
         if (isLocal(url)) {
             if (!(new File(url).delete())) {
                 Map<String, String> messageParams = new HashMap<>();
@@ -65,8 +65,7 @@ public class FileManager {
                         ExceptionManager.MESSAGE_LEVEL_WARNING, messageParams);
             }
         } else {
-            ExceptionManager.reportException(
-                    new FileDeletionException("Failed to delete photo with url: " + url));
+            throw new FileDeletionException("Failed to delete photo with url: " + url);
         }
     }
 

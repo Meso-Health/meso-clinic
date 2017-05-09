@@ -303,7 +303,8 @@ public class Member extends SyncableModel {
                 if (FileManager.isLocal(getPhotoUrl())) {
                     FileManager.deleteLocalPhoto(getPhotoUrl());
                 }
-            } catch (IOException e) {
+            } catch (IOException | FileManager.FileDeletionException e) {
+                // TODO: Bug: If an exception is thrown, a photo might be stuck on the phone forever.
                 ExceptionManager.reportException(e);
             }
 
@@ -311,8 +312,12 @@ public class Member extends SyncableModel {
         }
 
         if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
-            FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
-            this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
+            try {
+                FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+                this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
+            } catch (FileManager.FileDeletionException e) {
+                ExceptionManager.reportException(e);
+            }
         }
     }
 
