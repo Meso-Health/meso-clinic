@@ -24,7 +24,7 @@
             android:adjustViewBounds="true" />
 
         <TextView
-            android:id="@+id/member_name"
+            android:id="@+id/member_name_detail_fragment"
             android:theme="@style/Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,11 +34,11 @@
             android:id="@+id/member_age_and_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/member_photo"
-            android:layout_below="@id/member_name" />
+            android:layout_below="@id/member_name_detail_fragment"
+            android:layout_toEndOf="@id/member_photo" />
 
         <TextView
-            android:id="@+id/member_card_id"
+            android:id="@+id/member_card_id_detail_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/member_photo"
@@ -48,8 +48,8 @@
             android:id="@+id/member_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/member_photo"
-            android:layout_below="@id/member_card_id" />
+            android:layout_below="@id/member_card_id_detail_fragment"
+            android:layout_toEndOf="@id/member_photo" />
 
         <TextView
             android:id="@+id/member_notification"
