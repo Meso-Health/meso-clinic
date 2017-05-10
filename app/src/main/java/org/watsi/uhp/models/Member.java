@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
@@ -17,12 +16,13 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
+import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -38,7 +38,8 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -249,22 +250,53 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void setMemberPhotoUrlFromResponse(String responsePhotoUrl) {
-        this.mPhotoUrl = responsePhotoUrl;
-        deleteLocalMemberImage();
+    public void syncMember(Context context)throws SQLException, IOException,
+            AbstractModel.ValidationException, FileManager.FileDeletionException {
+        Call<Member> request = createSyncMemberRequest(context);
+        Response<Member> response = request.execute();
+        if (response.isSuccessful()) {
+            updatePhotosFromSuccessfulSyncResponse(response);
+            if (!isDirty()) setSynced();
+            MemberDao.update(this);
+        } else {
+            Map<String, String> reportParams = new HashMap<>();
+            reportParams.put("member.id", getId().toString());
+            ExceptionManager.requestFailure(
+                    isNew() ? "Failed to enroll Member" : "Failed to sync Member", request.request(), response.raw(), reportParams);
+        }
     }
 
-    public byte[] getNationalIdPhoto() {
-        return mNationalIdPhoto;
+    protected Call<Member> createSyncMemberRequest(Context context) throws SQLException, IOException, AbstractModel.ValidationException {
+        Map<String, RequestBody> multiPartBody;
+        Call<Member> request;
+
+        if (isNew()) {
+            multiPartBody = formatPostRequest(context);
+            request = ApiService.requestBuilder(context).enrollMember(
+                    getTokenAuthHeaderString(), multiPartBody);
+        } else {
+            multiPartBody = formatPatchRequest(context);
+            request = ApiService.requestBuilder(context).syncMember(
+                    getTokenAuthHeaderString(), getId(), multiPartBody);
+        }
+        return request;
     }
 
-    public void setNationalIdPhoto(byte[] nationalIdPhoto) {
-        this.mNationalIdPhoto = nationalIdPhoto;
-    }
+    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response)
+            throws IOException, FileManager.FileDeletionException {
+        String photoUrlFromResponse = response.body().getPhotoUrl();
+        String nationalIdPhotoUrlFromResponse = response.body().getNationalIdPhotoUrl();
 
-    public void setNationalIdPhotoUrlFromPatchResponse(String responsePhotoUrl) {
-        this.mNationalIdPhotoUrl = responsePhotoUrl;
-        deleteLocalIdImage();
+        if (photoUrlFromResponse != null) {
+            if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
+            this.mPhotoUrl = photoUrlFromResponse;
+            fetchAndSetPhotoFromUrl();
+        }
+
+        if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
+            FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+            this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
+        }
     }
 
     public String getNationalIdPhotoUrl() {
@@ -347,23 +379,26 @@ public class Member extends SyncableModel {
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
+        if (FileManager.isLocal(getPhotoUrl())) return;
         Request request = new Request.Builder().url(getPhotoUrl()).build();
-        Response response = new OkHttpClient().newCall(request).execute();
+        okhttp3.Response response = new OkHttpClient().newCall(request).execute();
 
-        if (response.isSuccessful()) {
-            InputStream is = response.body().byteStream();
-            setPhoto(ByteStreams.toByteArray(is));
-            is.close();
-            Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
-        } else {
-            Map<String,String> params = new HashMap<>();
-            params.put("member.id", getId().toString());
-            ExceptionManager.requestFailure(
-                    "Failed to fetch member photo",
-                    request,
-                    response,
-                    params
-            );
+        try {
+            if (response.isSuccessful()) {
+                InputStream is = response.body().byteStream();
+                setPhoto(ByteStreams.toByteArray(is));
+            } else {
+                Map<String,String> params = new HashMap<>();
+                params.put("member.id", getId().toString());
+                ExceptionManager.requestFailure(
+                        "Failed to fetch member photo",
+                        request,
+                        response,
+                        params
+                );
+            }
+        } finally {
+            response.close();
         }
     }
 
@@ -374,7 +409,7 @@ public class Member extends SyncableModel {
             try {
                 return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
         }
         return null;
@@ -566,25 +601,11 @@ public class Member extends SyncableModel {
         }
     }
 
-    public void deleteLocalMemberImage() {
-        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
-            new File(getPhotoUrl()).delete();
-            setPhotoUrl(null);
-        }
-    }
-
-    public void deleteLocalIdImage() {
-        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
-            new File(getNationalIdPhotoUrl()).delete();
-            setNationalIdPhotoUrl(null);
-        }
-    }
-
     public IdentificationEvent currentCheckIn() {
         try {
             return IdentificationEventDao.openCheckIn(getId());
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             return null;
         }
     }

@@ -2,6 +2,7 @@ package org.watsi.uhp.models;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -16,17 +17,28 @@ public class SyncableModelTest {
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         member = new Member();
     }
 
     @Test
-    public void setUnsynced_setsToken() throws Exception {
+    public void setUnsynced_nullToken_throwsUnauthenticatedException() throws Exception {
+        try {
+            member.setUnsynced(null);
+            fail("Should throw validation exception");
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "User is not authenticated");
+        }
+    }
+
+    @Test
+    public void setUnsynced_validToken_setsTokenAndMarksAsUnsynced() throws Exception {
         String token = "foo";
-        member.setToken(token);
 
         member.setUnsynced(token);
 
         assertEquals(member.getToken(), token);
+        assertFalse(member.isSynced());
     }
 
     @Test
@@ -44,7 +56,7 @@ public class SyncableModelTest {
     @Test
     public void setSynced_isNotDirty() throws Exception {
         member.setIsNew(true);
-        member.setUnsynced("fakeToken");
+        member.setUnsynced("foo");
 
         member.setSynced();
 

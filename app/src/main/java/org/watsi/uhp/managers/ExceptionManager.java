@@ -1,8 +1,10 @@
 package org.watsi.uhp.managers;
 
+import android.app.Application;
 import android.util.Log;
 
 import com.rollbar.android.Rollbar;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.watsi.uhp.BuildConfig;
 
@@ -15,16 +17,36 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ExceptionManager {
-    public static void requestFailure(String description, Request request, Response response, Map<String,String> params) {
+
+    public static String MESSAGE_LEVEL_WARNING = "warning";
+    public static String MESSAGE_LEVEL_INFO = "info";
+
+    public static void init(Application application) {
+        if (BuildConfig.REPORT_TO_ROLLBAR && !Rollbar.isInit()) {
+            Rollbar.init(application, BuildConfig.ROLLBAR_API_KEY, BuildConfig.ROLLBAR_ENV_KEY);
+        }
+
+        if (LeakCanary.isInAnalyzerProcess(application)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(application);
+    }
+
+    public static void requestFailure(
+            String description, Request request, Response response, Map<String,String> params) {
         params.put("Url", request.url().toString());
         params.put("Method", request.method());
         RequestBody body = request.body();
         if (body != null) {
-            if (body.contentType() != null) params.put("Content-Type", request.body().contentType().toString());
+            if (body.contentType() != null) {
+                params.put("Content-Type", request.body().contentType().toString());
+            }
             try {
                 params.put("Content-Length", String.valueOf(request.body().contentLength()));
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
         }
         if (response != null) {
@@ -32,15 +54,19 @@ public class ExceptionManager {
             params.put("response.code", String.valueOf(response.code()));
             params.put("response.message", response.message());
         }
-        Rollbar.reportMessage(description, "warning", params);
+        if (Rollbar.isInit()) {
+            Rollbar.reportMessage(description, MESSAGE_LEVEL_WARNING, params);
+        } else {
+            Log.i("Message", description + " - " + params.toString());
+        }
     }
 
     public static void requestFailure(String description, Request request, Response response) {
         requestFailure(description, request, response, new HashMap<String,String>());
     }
 
-    public static void handleException(Throwable e) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
+    public static void reportException(Throwable e) {
+        if (Rollbar.isInit()) {
             Rollbar.reportException(e);
         } else {
             Log.e("Exception", e.getMessage());
@@ -48,7 +74,7 @@ public class ExceptionManager {
     }
 
     public static void reportMessage(String message, String level, Map<String, String> params) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
+        if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, level, params);
         } else {
             Log.i("Message", message);
@@ -56,14 +82,14 @@ public class ExceptionManager {
     }
 
     public static void reportMessage(String message) {
-        reportMessage(message, "info", null);
+        reportMessage(message, MESSAGE_LEVEL_INFO, null);
     }
 
-    public static void setPersonData(String id, String username, String detail) {
-        if (BuildConfig.REPORT_TO_ROLLBAR) {
-            Rollbar.setPersonData(id, username, detail);
+    static void setPersonData(String id, String username) {
+        if (Rollbar.isInit()) {
+            Rollbar.setPersonData(id, username, null);
         } else {
-            Log.i("Person Data Set", "id:" + id + ", username:" + username + ", detail:" + detail);
+            Log.i("User logged in", "id:" + id + ", username:" + username);
         }
     }
 }

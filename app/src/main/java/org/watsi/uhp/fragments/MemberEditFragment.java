@@ -2,7 +2,6 @@ package org.watsi.uhp.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +11,16 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 
-public class MemberEditFragment extends Fragment {
+public class MemberEditFragment extends BaseFragment {
 
     private Member mMember;
 
@@ -56,9 +55,8 @@ public class MemberEditFragment extends Fragment {
                 String idMethodString =
                         getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
                 bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
-                new NavigationManager(getActivity())
-                        .setBarcodeFragment(
-                                BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, bundle);
+                getNavigationManager().setBarcodeFragment(
+                    BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, bundle);
             }
         });
 
@@ -76,15 +74,15 @@ public class MemberEditFragment extends Fragment {
         if (valid(nameView, cardIdView, phoneNumView)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.member_edit_confirmation);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String toastMessage = mMember.getFullName() + "'s information has been updated.";
                     try {
-                        mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
+                        mMember.setUnsynced(getAuthenticationToken());
                         MemberDao.update(mMember);
-                    } catch (SQLException e) {
-                        ExceptionManager.handleException(e);
+                    } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+                        ExceptionManager.reportException(e);
                         toastMessage = "Failed to update the member information.";
                     }
 
@@ -94,15 +92,11 @@ public class MemberEditFragment extends Fragment {
                     if (idMethodString != null) {
                         idMethod =  IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
                     }
-                    new NavigationManager(getActivity()).setDetailFragment(mMember, idMethod, null);
-                    Toast.makeText(
-                            getActivity().getApplicationContext(),
-                            toastMessage,
-                            Toast.LENGTH_LONG
-                    ).show();
+                    getNavigationManager().setDetailFragment(mMember, idMethod, null);
+                    Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();

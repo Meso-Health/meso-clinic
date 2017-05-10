@@ -1,5 +1,6 @@
 package org.watsi.uhp.api;
 
+import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -23,24 +24,29 @@ import retrofit2.http.Path;
 
 public interface UhpApi {
 
+    String AUTHORIZATION_HEADER = "Authorization";
+    String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
+
     @POST("authentication_token")
-    Call<AuthenticationToken> getAuthToken(@Header("Authorization") String authorization);
+    Call<AuthenticationToken> getAuthToken(@Header(AUTHORIZATION_HEADER) String authorization);
 
     @GET("providers/{providerId}/members")
     Call<List<Member>> members(
-            @Header("If-Modified-Since") String lastModified,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
+            @Header(IF_MODIFIED_SINCE_HEADER) String lastModified,
             @Path("providerId") int providerId
     );
 
     @GET("providers/{providerId}/billables")
     Call<List<Billable>> billables(
-            @Header("If-Modified-Since") String lastModified,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
+            @Header(IF_MODIFIED_SINCE_HEADER) String lastModified,
             @Path("providerId") int providerId
     );
 
     @POST("providers/{providerId}/identification_events")
     Call<IdentificationEvent> postIdentificationEvent(
-            @Header("Authorization") String tokenAuthorization,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("providerId") int providerId,
             @Body IdentificationEvent unsyncedEvent
     );
@@ -48,14 +54,14 @@ public interface UhpApi {
     @Multipart
     @PATCH("identification_events/{identificationEventId}")
     Call<IdentificationEvent> patchIdentificationEvent(
-            @Header("Authorization") String tokenAuthorization,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("identificationEventId") UUID identificationEventId,
             @PartMap Map<String, RequestBody> params
     );
 
     @POST("providers/{providerId}/encounters")
     Call<Encounter> syncEncounter(
-            @Header("Authorization") String tokenAuthorization,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("providerId") int providerId,
             @Body Encounter unsyncedEncounter
     );
@@ -63,7 +69,7 @@ public interface UhpApi {
     @Multipart
     @PATCH("encounters/{encounterId}")
     Call<Encounter> syncEncounterForm(
-            @Header("Authorization") String tokenAuthorization,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("encounterId") UUID encounterId,
             @Part("forms[]") RequestBody encounterForm
     );
@@ -71,7 +77,7 @@ public interface UhpApi {
     @Multipart
     @PATCH("members/{memberId}")
     Call<Member> syncMember(
-            @Header("Authorization") String tokenAuthorization,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("memberId") UUID memberId,
             @PartMap Map<String, RequestBody> params
     );
@@ -79,7 +85,7 @@ public interface UhpApi {
     @Multipart
     @POST("members")
     Call<Member> enrollMember(
-            @Header("Authorization") String tokenAuthorization,
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @PartMap Map<String, RequestBody> params
     );
 }

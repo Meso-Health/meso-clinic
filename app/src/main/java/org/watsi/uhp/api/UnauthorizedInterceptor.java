@@ -1,5 +1,9 @@
 package org.watsi.uhp.api;
 
+import android.accounts.AccountManager;
+
+import org.watsi.uhp.managers.Authenticator;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -12,12 +16,19 @@ import okhttp3.Response;
  */
 class UnauthorizedInterceptor implements Interceptor {
 
+    private final AccountManager mAccountManager;
+
+    public UnauthorizedInterceptor(AccountManager accountManager)  {
+        this.mAccountManager = accountManager;
+    }
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         Response response = chain.proceed(request);
         if (response.code() == 401) {
-            // TODO: should prompt login and halt requests
+            String token = request.header(UhpApi.AUTHORIZATION_HEADER);
+            mAccountManager.invalidateAuthToken(Authenticator.ACCOUNT_TYPE, token);
         }
         return response;
     }

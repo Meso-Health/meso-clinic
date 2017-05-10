@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +17,13 @@ import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class SearchMemberFragment extends Fragment {
+public class SearchMemberFragment extends BaseFragment {
 
     private SearchView mMemberSearch;
     private ListView mSearchList;
@@ -120,15 +118,14 @@ public class SearchMemberFragment extends Fragment {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     Member member = (Member) parent.getItemAtPosition(position);
-                                    new NavigationManager(getActivity()).setDetailFragment(
-                                            member, idMethod, null);
+                                    getNavigationManager().setDetailFragment(member, idMethod, null);
                                 }
                             });
                             mLoadingPanel.setVisibility(View.GONE);
                         }
                     });
                 } catch (SQLException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
             }
         }).start();
