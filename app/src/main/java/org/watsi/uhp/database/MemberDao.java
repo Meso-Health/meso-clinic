@@ -82,6 +82,7 @@ public class MemberDao {
     }
 
     public static List<Member> withCardIdLike(String query) throws SQLException {
+        query = query.replaceAll(" ","");
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()
