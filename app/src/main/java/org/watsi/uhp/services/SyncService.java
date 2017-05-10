@@ -8,6 +8,7 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
@@ -169,7 +170,8 @@ public class SyncService extends AbstractSyncJobService {
         for (Member member : unsyncedMembers) {
             try {
                 member.syncMember(this);
-            } catch (SQLException | IOException | AbstractModel.ValidationException e) {
+            } catch (SQLException | IOException | AbstractModel.ValidationException |
+                    FileManager.FileDeletionException e) {
                 ExceptionManager.reportException(e);
             }
         }

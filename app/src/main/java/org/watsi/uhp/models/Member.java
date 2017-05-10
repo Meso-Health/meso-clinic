@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
@@ -251,18 +250,13 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void syncMember(Context context) throws SQLException, IOException, AbstractModel.ValidationException {
+    public void syncMember(Context context)throws SQLException, IOException,
+            AbstractModel.ValidationException, FileManager.FileDeletionException {
         Call<Member> request = createSyncMemberRequest(context);
         Response<Member> response = request.execute();
         if (response.isSuccessful()) {
             updatePhotosFromSuccessfulSyncResponse(response);
-            try {
-                if (!isDirty()) {
-                    setSynced();
-                }
-            } catch (AbstractModel.ValidationException e) {
-                ExceptionManager.reportException(e);
-            }
+            if (!isDirty()) setSynced();
             MemberDao.update(this);
         } else {
             Map<String, String> reportParams = new HashMap<>();
@@ -288,31 +282,20 @@ public class Member extends SyncableModel {
         return request;
     }
 
-    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response) {
+    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response)
+            throws IOException, FileManager.FileDeletionException {
         String photoUrlFromResponse = response.body().getPhotoUrl();
         String nationalIdPhotoUrlFromResponse = response.body().getNationalIdPhotoUrl();
 
         if (photoUrlFromResponse != null) {
-            try {
-                fetchAndSetPhotoFromUrl();
-                if (FileManager.isLocal(getPhotoUrl())) {
-                    FileManager.deleteLocalPhoto(getPhotoUrl());
-                }
-            } catch (IOException | FileManager.FileDeletionException e) {
-                // TODO: Bug: If an exception is thrown, a photo might be stuck on the phone forever.
-                ExceptionManager.reportException(e);
-            }
-
+            if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
             this.mPhotoUrl = photoUrlFromResponse;
+            fetchAndSetPhotoFromUrl();
         }
 
         if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
-            try {
-                FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
-                this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
-            } catch (FileManager.FileDeletionException e) {
-                ExceptionManager.reportException(e);
-            }
+            FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+            this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
         }
     }
 
@@ -396,23 +379,26 @@ public class Member extends SyncableModel {
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
+        if (FileManager.isLocal(getPhotoUrl())) return;
         Request request = new Request.Builder().url(getPhotoUrl()).build();
         okhttp3.Response response = new OkHttpClient().newCall(request).execute();
 
-        if (response.isSuccessful()) {
-            InputStream is = response.body().byteStream();
-            setPhoto(ByteStreams.toByteArray(is));
-            is.close();
-            Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
-        } else {
-            Map<String,String> params = new HashMap<>();
-            params.put("member.id", getId().toString());
-            ExceptionManager.requestFailure(
-                    "Failed to fetch member photo",
-                    request,
-                    response,
-                    params
-            );
+        try {
+            if (response.isSuccessful()) {
+                InputStream is = response.body().byteStream();
+                setPhoto(ByteStreams.toByteArray(is));
+            } else {
+                Map<String,String> params = new HashMap<>();
+                params.put("member.id", getId().toString());
+                ExceptionManager.requestFailure(
+                        "Failed to fetch member photo",
+                        request,
+                        response,
+                        params
+                );
+            }
+        } finally {
+            response.close();
         }
     }
 
