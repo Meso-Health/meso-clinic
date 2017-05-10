@@ -73,58 +73,58 @@ public class Member extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true)
-    private UUID mId;
+    protected UUID mId;
 
     @Expose
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID)
-    private String mCardId;
+    protected String mCardId;
 
     @Expose
     @SerializedName(FIELD_NAME_FULL_NAME)
     @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false)
-    private String mFullName;
+    protected String mFullName;
 
     @Expose
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
-    private int mAge;
+    protected int mAge;
 
     @Expose
     @SerializedName(FIELD_NAME_GENDER)
     @DatabaseField(columnName = FIELD_NAME_GENDER)
-    private GenderEnum mGender;
+    protected GenderEnum mGender;
 
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
-    private byte[] mPhoto;
+    protected byte[] mPhoto;
 
     @Expose
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
-    private String mPhotoUrl;
+    protected String mPhotoUrl;
 
     @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO, dataType = DataType.BYTE_ARRAY)
-    private byte[] mNationalIdPhoto;
+    protected byte[] mNationalIdPhoto;
 
     @Expose
     @SerializedName(FIELD_NAME_NATIONAL_ID_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO_URL)
-    private String mNationalIdPhotoUrl;
+    protected String mNationalIdPhotoUrl;
 
     @Expose
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
-    private UUID mHouseholdId;
+    protected UUID mHouseholdId;
 
     @Expose
     @SerializedName(FIELD_NAME_ABSENTEE)
     @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
-    private Boolean mAbsentee;
+    protected Boolean mAbsentee;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
     @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_GUID)
-    private UUID mFingerprintsGuid;
+    protected UUID mFingerprintsGuid;
 
     @Expose
     @SerializedName(FIELD_NAME_BIRTHDATE)
@@ -139,7 +139,7 @@ public class Member extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_PHONE_NUMBER)
     @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
-    private String mPhoneNumber;
+    protected String mPhoneNumber;
 
     @Expose
     @SerializedName(FIELD_NAME_ENROLLED_AT)
