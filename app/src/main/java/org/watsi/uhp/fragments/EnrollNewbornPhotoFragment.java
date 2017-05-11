@@ -58,7 +58,6 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
 
     @Override
     void setUpFragment(View view) {
-        ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_member_photo_btn);
         try {
             String filename = "newborn_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
@@ -68,12 +67,13 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
-        Button capturePhotoBtn =
-                (Button) view.findViewById(R.id.photo_btn);
+        Button capturePhotoBtn = ((Button) view.findViewById(R.id.photo_btn));
+        capturePhotoBtn.setText(R.string.enrollment_member_photo_btn);
         capturePhotoBtn.setOnClickListener(
                 new CapturePhotoClickListener(TAKE_NEWBORN_PHOTO_INTENT, this, mUri));
 
         mNewbornPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+        mSaveBtn.setEnabled(false);
     }
 
     @Override
@@ -83,14 +83,14 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mNewbornPhotoImageView.setImageBitmap(bitmap);
+                mMember.setPhotoUrl(mUri.toString());
+                mSaveBtn.setEnabled(true);
+                return;
             } catch (IOException e) {
                 ExceptionManager.reportException(e);
             }
-
-            mMember.setPhotoUrl(mUri.toString());
-            mSaveBtn.setEnabled(true);
-        } else {
-            Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
         }
+        mSaveBtn.setEnabled(true);
+        Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
     }
 }
