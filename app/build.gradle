@@ -32,6 +32,7 @@ android {
     buildTypes {
         debug {
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
+            versionNameSuffix '-debug'
         }
         release {
             minifyEnabled false
