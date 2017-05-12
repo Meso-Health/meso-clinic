@@ -1,18 +1,18 @@
 package org.watsi.uhp.services;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+import android.os.Bundle;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.PreferencesManager;
+import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
@@ -31,65 +31,54 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 /**
- * Service class that continuously polls the UHP API
- * to refresh the locally-stored member data
+ * Service class that polls the UHP API and updates the device with updated member and billables data
  */
-public class FetchService extends Service {
+public class FetchService extends AbstractSyncJobService {
 
-    private static int SLEEP_TIME = 10 * 60 * 1000; // 10 minutes
-    private static int WAIT_FOR_LOGIN_SLEEP_TIME = 60 * 1000; // 1 minute
-    private int mProviderId;
+    private static String LAST_MODIFIED_HEADER = "last-modified";
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        DatabaseHelper.init(getApplicationContext());
-        mProviderId = BuildConfig.PROVIDER_ID;
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    if (ConfigManager.getLoggedInUserToken(getApplicationContext()) == null) {
-                        try {
-                            Thread.sleep(WAIT_FOR_LOGIN_SLEEP_TIME);
-                            continue;
-                        } catch (InterruptedException e) {
-                            ExceptionManager.handleException(e);
-                        }
-                    }
-
-                    try {
-                        fetchNewMemberData();
-                        fetchBillables();
-                    } catch (IOException | SQLException | IllegalStateException e) {
-                        ExceptionManager.handleException(e);
-                    }
-                    try {
-                        Thread.sleep(SLEEP_TIME);
-                    } catch (InterruptedException e) {
-                        ExceptionManager.handleException(e);
-                    }
-
-                }
+    public boolean performSync() {
+        PreferencesManager preferencesManager = new PreferencesManager(this);
+        try {
+            String authenticationToken = getAuthenticationToken(preferencesManager);
+            if (authenticationToken != null) {
+                fetchMembers(authenticationToken, preferencesManager);
+                fetchBillables(authenticationToken, preferencesManager);
             }
-        }).start();
-        return Service.START_REDELIVER_INTENT;
+            return true;
+        } catch (IOException | SQLException | IllegalStateException e) {
+            ExceptionManager.reportException(e);
+            return false;
+        }
     }
 
-    private void fetchNewMemberData() throws IOException, SQLException, IllegalStateException {
-        String lastModifiedTimestamp = ConfigManager.getMemberLastModified(getApplicationContext());
-        Call<List<Member>> request = ApiService.requestBuilder(getApplicationContext())
-                .members(lastModifiedTimestamp, mProviderId);
+    protected String getAuthenticationToken(PreferencesManager preferencesManager) {
+        SessionManager sessionManager = new SessionManager(
+                preferencesManager, AccountManager.get(this));
+        AccountManagerFuture<Bundle> tokenFuture = sessionManager.fetchToken();
+        try {
+            if (tokenFuture != null) {
+                Bundle tokenBundle = tokenFuture.getResult();
+                return tokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
+            }
+        } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+            ExceptionManager.reportException(e);
+        }
+        return null;
+    }
+
+    protected void fetchMembers(String authToken, PreferencesManager preferencesManager)
+            throws IOException, SQLException, IllegalStateException {
+        String tokenHeader = "Token " + authToken;
+        Call<List<Member>> request = ApiService.requestBuilder(this).members(
+                tokenHeader, preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
-            Log.d("UHP", "updating member data");
             List<Member> members = response.body();
             notifyAboutMembersToBeDeleted(members);
             createOrUpdateMembers(members);
-            ConfigManager.setMemberLastModified(
-                    response.headers().get("last-modified"),
-                    getApplicationContext()
-            );
+            preferencesManager.setMemberLastModified(response.headers().get(LAST_MODIFIED_HEADER));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -108,12 +97,12 @@ public class FetchService extends Service {
      *
      * These members should be safe to delete, but for now we are choosing
      * the safer route of first creating notifications of their existence
-     * @param members
-     * @throws SQLException
+     * @param fetchedMembers Most recent list of members returned by server
+     * @throws SQLException Error querying data from the db
      */
-    private void notifyAboutMembersToBeDeleted(List<Member> members) throws SQLException {
+    protected void notifyAboutMembersToBeDeleted(List<Member> fetchedMembers) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
-        for (Member member : members) {
+        for (Member member : fetchedMembers) {
             previousMemberIds.remove(member.getId());
         }
         Set<UUID> unsyncedPrevMembers = new HashSet<>();
@@ -125,17 +114,18 @@ public class FetchService extends Service {
         for (UUID toBeDeleted : previousMemberIds) {
             Map<String, String> params = new HashMap<>();
             params.put("member.id", toBeDeleted.toString());
-            ExceptionManager.reportMessage("Member synced on device but not in backend", "warning",
-                    params);
+            ExceptionManager.reportMessage(
+                    "Member synced on device but not in backend",
+                    ExceptionManager.MESSAGE_LEVEL_WARNING, params);
         }
     }
 
-    private void createOrUpdateMembers(List<Member> members) throws SQLException {
-        Iterator<Member> iterator = members.iterator();
+    protected void createOrUpdateMembers(List<Member> fetchedMembers) throws SQLException {
+        Iterator<Member> iterator = fetchedMembers.iterator();
         while (iterator.hasNext()) {
-            Member member = iterator.next();
+            Member fetchedMember = iterator.next();
 
-            Member persistedMember = MemberDao.findById(member.getId());
+            Member persistedMember = MemberDao.findById(fetchedMember.getId());
             if (persistedMember != null) {
                 // if the persisted member has not been synced to the back-end, assume it is
                 // the most up-to-date and do not update it with the fetched member attributes
@@ -148,36 +138,35 @@ public class FetchService extends Service {
                 // the same photo url as the existing record, copy the photo to the new record
                 // so we do not have to re-download it
                 if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
-                        persistedMember.getPhotoUrl().equals(member.getPhotoUrl())) {
-                    member.setPhoto(persistedMember.getPhoto());
+                        persistedMember.getPhotoUrl().equals(fetchedMember.getPhotoUrl())) {
+                    fetchedMember.setPhoto(persistedMember.getPhoto());
                 }
             }
 
             try {
-                member.setSynced();
-                MemberDao.createOrUpdate(member);
+                fetchedMember.setSynced();
+                MemberDao.createOrUpdate(fetchedMember);
             } catch (AbstractModel.ValidationException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
 
             iterator.remove();
         }
     }
 
-    private void fetchBillables() throws IOException, SQLException {
-        String lastModifiedTimestamp = ConfigManager.getBillablesLastModified(getApplicationContext());
-        Call<List<Billable>> request = ApiService.requestBuilder(getApplicationContext())
-                .billables(lastModifiedTimestamp, mProviderId);
+    protected void fetchBillables(String authToken, PreferencesManager preferencesManager)
+            throws IOException, SQLException {
+        String tokenHeader = "Token " + authToken;
+        String lastModifiedTimestamp = preferencesManager.getBillablesLastModified();
+        Call<List<Billable>> request = ApiService.requestBuilder(this)
+                .billables(tokenHeader, lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
-            Log.d("UHP", "updating billables data");
             List<Billable> billables = response.body();
             BillableDao.clear();
             BillableDao.create(billables);
-            ConfigManager.setBillablesLastModified(
-                    response.headers().get("last-modified"),
-                    getApplicationContext()
-            );
+            preferencesManager.setBillablesLastModified(
+                    response.headers().get(LAST_MODIFIED_HEADER));
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -187,12 +176,5 @@ public class FetchService extends Service {
                 );
             }
         }
-
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

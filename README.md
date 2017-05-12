@@ -63,7 +63,7 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 
 See the `build.gradle` file for more details on configuration changes between the different flavors.
 
-We do most of our local development with the **developmentDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
+We do most of our local development with the **developmentDebug** build variant, run tests with the **specDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
 
 ### Creating signed Release types locally
 
@@ -73,7 +73,7 @@ There may be cases where you wish to generate a signed release build locally (e.
 2. use the keystore credentials in the `.env` file to sign the APK
 3. **important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
 
-## Running development apps against a local server
+## Running app against a local server
 
 Apps with the development/spec flavor are set up to hit a local server (`http://localhost:5000` for development and `http://localhost:8000` for spec) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
 However, by default, emulators and devices don't know about their PC's local servers. (Going to `localhost:5000` on your emulator or device browser will attempt to access its _own_ server, which doesn't exist.)
@@ -82,8 +82,19 @@ In both cases, first start your local server (see [https://github.com/Watsi/uhp-
 
 ```
 $ cd /your/path/to/uhp_backend
-$ heroku local
+```
 
+To run local server for development:
+```
+$ heroku local
+```
+
+To run local server for running tests:
+```
+$ rails server -e android-test -p 8000
+```
+
+```
 # To view logs
 $ tail -f log/development.log
 ```
@@ -164,6 +175,21 @@ $ git push origin head
 Tests can be run directly through the Android Studio UI by right-clicking the test file and selecting the 'Run <test>' option (or run the entire test suite by right-clicking the entire test folder).
 
 Tests can also be run from the terminal using the command `./gradlew test` from the project root.
+
+### To run end-to-end feature tests locally:
+
+In your local UHP Backend folder:
+
+```
+# Setup android-test db with seed data:
+$ RAILS_ENV=android-test rails db:setup
+
+# Run the android-test server on port 8000:
+$ rails server -e android-test -p 8000
+
+```
+
+Then, back on the android side you can run your test locally either in Android Studio or in terminal, with either an emulator or a real connected device
 
 ## Conventions
 

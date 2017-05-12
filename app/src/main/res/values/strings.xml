@@ -38,8 +38,8 @@
     <string name="cancel">Cancel</string>
     <string name="price_with_currency">%1$s UGX</string>
 
-    <!--LoginFragment-->
-    <string name="login_fragment_label">User Login</string>
+    <!-- AuthenticationActivity -->
+    <string name="authentication_activity_label">User Login</string>
     <string name="login_username_label">Username</string>
     <string name="login_password_label">Password</string>
     <string name="login_button_text">Login</string>
@@ -49,7 +49,7 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
 
-    <!--CurrentPatientsFragment-->
+    <!-- CurrentPatientsFragment -->
     <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
     <plurals name="current_patients_label" >
@@ -57,16 +57,16 @@
         <item quantity="other">%d Current Patients</item>
     </plurals>
 
-    <!--BarcodeFragment-->
+    <!-- BarcodeFragment -->
     <string name="barcode_fragment_label">Scan ID</string>
     <string name="search_member_hint">Search patient name or ID</string>
     <string name="id_not_found_toast">Card not found. Try searching by name.</string>
 
-    <!--SearchMemberFragment-->
+    <!-- SearchMemberFragment -->
     <string name="member_search_fragment_label">Search</string>
     <string name="member_no_search_results_text">No search results. Please try again.</string>
 
-    <!--DetailFragment-->
+    <!-- DetailFragment -->
     <string name="detail_fragment_label">Is this the right person?</string>
     <string name="absentee_notification">Must complete enrollment</string>
     <string name="replace_card_notification">Needs new card</string>
@@ -85,14 +85,14 @@
     <string name="identification_dismissed">has been checked out without treatment details.</string>
     <string name="identification_dismissed_failure">Failed to check out member.</string>
 
-    <!--ClinicNumberDialogFragment-->
+    <!-- ClinicNumberDialogFragment -->
     <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
     <string name="radio_opd">OPD</string>
     <string name="radio_delivery">Delivery</string>
     <string name="clinic_number">Number</string>
     <string name="clinic_number_button">Submit</string>
 
-    <!--EncounterFragment-->
+    <!-- EncounterFragment -->
     <string name="exit_encounter_alert">Are you sure you want to exit?</string>
     <string name="current_patients_fragment_label">Select a patient</string>
     <string name="prompt_category">Select a category&#8230;</string>
@@ -106,7 +106,7 @@
     <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
-    <!--AddNewBillableFragment-->
+    <!-- AddNewBillableFragment -->
     <string name="add_new_billable_fragment_label">Add new item</string>
     <string name="add_new_name">Name</string>
     <string name="add_new_price">Price</string>
@@ -115,12 +115,12 @@
     <string name="empty_billable_name_field">Please enter name in the blank above</string>
     <string name="empty_billable_price_field">Please enter price in the blank above</string>
 
-    <!--EncounterFormFragment-->
+    <!-- EncounterFormFragment -->
     <string name="encounter_form_fragment_label">Take photo of form</string>
     <string name="add_another_label">Add another</string>
     <string name="finish_btn_label">Finish</string>
 
-    <!--ReceiptFragment-->
+    <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">Review receipt</string>
     <string name="receipt_check_prompt">Does this look correct?</string>
     <string name="total">Total</string>
@@ -136,20 +136,20 @@
     <string name="enrollment_complete_btn">Complete enrollment</string>
     <string name="enrollment_next_step_btn">Continue</string>
 
-    <!--EnrollmentMemberPhotoFragment-->
+    <!-- EnrollmentMemberPhotoFragment -->
     <string name="enrollment_member_photo_fragment_label">Member photo</string>
     <string name="enrollment_member_photo_btn">Take member photo</string>
 
-    <!--EnrollmentIdPhotoFragment-->
+    <!-- EnrollmentIdPhotoFragment -->
     <string name="enrollment_id_photo_fragment_label">National ID photo</string>
     <string name="enrollment_id_photo_btn">Take national ID photo</string>
     <string name="enrollment_id_photo_description">ID photo</string>
 
-    <!--EnrollmentContactInfoFragment-->
+    <!-- EnrollmentContactInfoFragment -->
     <string name="enrollment_contact_info_label">Contact information</string>
     <string name="enrollment_contact_info_phone_number_label">Phone number</string>
 
-    <!--EnrollmentFingerprintFragment-->
+    <!-- EnrollmentFingerprintFragment -->
     <string name="enrollment_fingerprint_label">Fingerprint</string>
     <string name="enrollment_fingerprint_button">Capture fingerprint</string>
     <string name="enrollment_fingerprint_simprints_not_installed">Simprints app is not installed</string>
@@ -157,19 +157,19 @@
     <string name="enrollment_fingerprint_simprints_failed">Scan failed</string>
     <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
 
-    <!--MemberEditFragment-->
+    <!-- MemberEditFragment -->
     <string name="member_edit_label">Update member</string>
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
-    <!--EnrollNewbornInfoFragment-->
+    <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_info_label">Enroll newborn</string>
     <string name="enroll_newborn_save_btn">Continue</string>
 
-    <!--EnrollNewbornPhotoFragment-->
+    <!-- EnrollNewbornPhotoFragment -->
     <string name="enroll_newborn_photo_label">Newborn photo</string>
 
-    <!--VersionFragment-->
+    <!-- VersionAndSyncFragment -->
     <string name="version_and_sync_label">Status</string>
     <string name="version_label">Version</string>
     <string name="fetch_members_label">Members updated at</string>

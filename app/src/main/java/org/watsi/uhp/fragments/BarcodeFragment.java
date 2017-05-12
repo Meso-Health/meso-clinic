@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.MainActivity;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -28,7 +26,7 @@ import org.watsi.uhp.models.Member;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback {
+public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callback {
 
     private CameraSource mCameraSource;
     private Button mSearchMemberButton;
@@ -54,8 +52,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
         if (!mScanPurpose.equals(ScanPurposeEnum.ID)) mSearchMemberButton.setVisibility(View.GONE);
 
-        mErrorToast = Toast.makeText(getActivity().getApplicationContext(),
-                R.string.id_not_found_toast, Toast.LENGTH_LONG);
+        mErrorToast = Toast.makeText(getActivity(), R.string.id_not_found_toast, Toast.LENGTH_LONG);
 
         setupSearchMemberButton();
         return view;
@@ -74,14 +71,14 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    ExceptionManager.handleException(e);
+                    ExceptionManager.reportException(e);
                 }
             }
 
             setBarcodeProcessor(barcodeDetector);
             mCameraSource.start(holder);
         } catch (IOException | SecurityException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
         }
     }
 
@@ -96,8 +93,6 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
     }
 
     private void setBarcodeProcessor(BarcodeDetector barcodeDetector) {
-        final MainActivity activity = (MainActivity) getActivity();
-
          barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
@@ -115,7 +110,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                             switch (mScanPurpose) {
                                 case ID:
                                     member = MemberDao.findByCardId(barcode.displayValue);
-                                    new NavigationManager(activity).setDetailFragment(
+                                    getNavigationManager().setDetailFragment(
                                             member,
                                             IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
                                             null
@@ -135,7 +130,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                                                     .valueOf(searchMethodString);
                                         }
                                     }
-                                    new NavigationManager(activity).setMemberEditFragment(
+                                    getNavigationManager().setMemberEditFragment(
                                             member,
                                             idMethod,
                                             barcode.displayValue
@@ -146,7 +141,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     Bundle sourceParams = getArguments()
                                             .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
-                                    new NavigationManager(activity).setEnrollNewbornInfoFragment(
+                                    getNavigationManager().setEnrollNewbornInfoFragment(
                                             member,
                                             barcode.displayValue,
                                             sourceParams
@@ -158,7 +153,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
                             try {
                                 Thread.sleep(500);
                             } catch (InterruptedException e1) {
-                                ExceptionManager.handleException(e1);
+                                ExceptionManager.reportException(e1);
                             }
                         }
                     }
@@ -168,7 +163,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
 
         Log.d("UHP", "camera source started");
         mCameraSource = new CameraSource
-                .Builder(activity.getBaseContext(), barcodeDetector)
+                .Builder(getContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedFps(15.0f)
                 .setAutoFocusEnabled(true)
@@ -179,7 +174,7 @@ public class BarcodeFragment extends Fragment implements SurfaceHolder.Callback 
         mSearchMemberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity()).setSearchMemberFragment();
+                getNavigationManager().setSearchMemberFragment();
             }
         });
     }

@@ -1,9 +1,14 @@
 package org.watsi.uhp.models;
 
+import android.content.Context;
+import android.net.Uri;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.watsi.uhp.managers.FileManager;
 
 import java.util.UUID;
 
@@ -64,5 +69,9 @@ public class EncounterForm extends SyncableModel {
 
     public void setUrl(String url) {
         this.mUrl = url;
+    }
+
+    public byte[] getImage(Context context) {
+        return FileManager.readFromUri(Uri.parse(getUrl()), context);
     }
 }

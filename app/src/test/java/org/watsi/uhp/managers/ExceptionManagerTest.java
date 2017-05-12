@@ -1,61 +1,89 @@
 package org.watsi.uhp.managers;
 
+import android.util.Log;
+
 import com.rollbar.android.Rollbar;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import okhttp3.Protocol;
+import java.util.Map;
+
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Rollbar.class, Request.class})
+@PrepareForTest({ HttpUrl.class, Log.class, MediaType.class, Request.class, Response.class,
+        Rollbar.class })
 public class ExceptionManagerTest {
 
-    private Request request;
-    private Response response;
+    @Mock
+    Request mockRequest;
+    @Mock
+    Response mockResponse;
+    @Mock
+    Map<String, String> mockParamsMap;
+    @Mock
+    HttpUrl mockUrl;
+    @Mock
+    RequestBody mockRequestBody;
+    @Mock
+    MediaType mockMediaType;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        mockStatic(Log.class);
         mockStatic(Rollbar.class);
-        request = new Request.Builder()
-                .url("http://uhp-test.watsi.org")
-                .post(mock(RequestBody.class))
-                .build();
-        response = new Response.Builder()
-                .request(request)
-                .protocol(Protocol.HTTP_2)
-                .code(400)
-                .build();
     }
 
     @Test
-    public void requestFailure_withResponse() throws Exception {
-        ExceptionManager.requestFailure("foo", request, response);
+    public void requestFailure() throws Exception {
+        String description = "foo";
+        String url = "http://uhp.org";
+        String method = "GET";
+        String contentType = "text/plain";
+        long contentLength = 42L;
+        String requestId = "bar";
+        int responseCode = 500;
+        String responseMessage = "oops";
 
-        verifyStatic(times(1));
-        Rollbar.reportMessage(anyString(), anyString(), anyMap());
-    }
+        when(mockRequest.url()).thenReturn(mockUrl);
+        when(mockUrl.toString()).thenReturn(url);
+        when(mockRequest.method()).thenReturn(method);
+        when(mockRequest.body()).thenReturn(mockRequestBody);
+        when(mockRequestBody.contentType()).thenReturn(mockMediaType);
+        when(mockMediaType.toString()).thenReturn(contentType);
+        when(mockRequestBody.contentLength()).thenReturn(contentLength);
+        when(mockResponse.code()).thenReturn(responseCode);
+        when(mockResponse.message()).thenReturn(responseMessage);
+        when(mockResponse.header("X-Request-Id")).thenReturn(requestId);
+        when(Rollbar.isInit()).thenReturn(true);
 
-    @Test
-    public void requestFailure_noResponse() throws Exception {
-        ExceptionManager.requestFailure("foo", request, null);
+        ExceptionManager.requestFailure(description, mockRequest, mockResponse, mockParamsMap);
 
-        verifyStatic(times(1));
-        Rollbar.reportMessage(anyString(), anyString(), anyMap());
+        verifyStatic();
+        Rollbar.reportMessage(description, "warning", mockParamsMap);
+        verify(mockParamsMap, times(1)).put("Url", url);
+        verify(mockParamsMap, times(1)).put("Method", method);
+        verify(mockParamsMap, times(1)).put("Content-Type", contentType);
+        verify(mockParamsMap, times(1)).put("Content-Length", String.valueOf(contentLength));
+        verify(mockParamsMap, times(1)).put("X-Request-Id", requestId);
+        verify(mockParamsMap, times(1)).put("response.code", String.valueOf(responseCode));
+        verify(mockParamsMap, times(1)).put("response.message", responseMessage);
     }
 }

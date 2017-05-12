@@ -1,12 +1,18 @@
 package org.watsi.uhp.models;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 @DatabaseTable(tableName = IdentificationEvent.TABLE_NAME)
 public class IdentificationEvent extends SyncableModel {
@@ -230,5 +236,17 @@ public class IdentificationEvent extends SyncableModel {
     public void setDismissalReason(DismissalReasonEnum dismissalReason) {
         setDismissed(true);
         this.mDismissalReason = dismissalReason;
+    }
+
+    public Map<String, RequestBody> constructIdentificationEventPatchRequest() {
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
+        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
+                RequestBody.create(
+                        MultipartBody.FORM, String.valueOf(getDismissed())));
+        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON,
+                RequestBody.create(
+                        MultipartBody.FORM,
+                        new Gson().toJsonTree(getDismissalReason()).getAsString()));
+        return requestBodyMap;
     }
 }

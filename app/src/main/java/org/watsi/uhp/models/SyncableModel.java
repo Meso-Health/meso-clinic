@@ -3,7 +3,6 @@ package org.watsi.uhp.models;
 import com.google.gson.Gson;
 import com.j256.ormlite.field.DatabaseField;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,9 +52,13 @@ public abstract class SyncableModel extends AbstractModel {
         }
     }
 
-    public void setUnsynced(String token) {
-        setToken(token);
-        this.mSynced = false;
+    public void setUnsynced(String token) throws UnauthenticatedException {
+        if (token == null) {
+            throw new UnauthenticatedException();
+        } else {
+            setToken(token);
+            this.mSynced = false;
+        }
     }
 
     private void setDirtyFields(Set<String> dirtyFields) {
@@ -104,5 +107,11 @@ public abstract class SyncableModel extends AbstractModel {
 
     public String getTokenAuthHeaderString() {
         return "Token " + getToken();
+    }
+
+    public static class UnauthenticatedException extends Exception {
+        public UnauthenticatedException() {
+            super("User is not authenticated");
+        }
     }
 }
