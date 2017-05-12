@@ -11,7 +11,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Handles re-authenticating to the back-end if an
+ * Handles invalidating the current account's auth token if an
  * unauthorized response is returned
  */
 class UnauthorizedInterceptor implements Interceptor {
