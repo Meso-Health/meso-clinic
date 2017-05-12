@@ -1,8 +1,6 @@
-package org.watsi.uhp.api;
+package org.watsi.uhp.models;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.watsi.uhp.models.User;
 
 public class AuthenticationToken {
 

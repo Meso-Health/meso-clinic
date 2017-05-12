@@ -14,10 +14,9 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,23 +45,22 @@ public class EnrollmentMemberPhotoFragment extends FormFragment {
 
     @Override
     void nextStep() {
-        NavigationManager navigationManager = new NavigationManager(getActivity());
-        if (!mMember.shouldCaptureFingerprint()) {
-            mMember.setUnsynced(ConfigManager.getLoggedInUserToken(getContext()));
-        }
-
         try {
+            if (!mMember.shouldCaptureFingerprint()) {
+                mMember.setUnsynced(getAuthenticationToken());
+            }
+
             MemberDao.update(mMember);
             if (!mMember.shouldCaptureFingerprint()) {
-                navigationManager.setCurrentPatientsFragment();
+                getNavigationManager().setCurrentPatientsFragment();
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mMember.shouldCaptureNationalIdPhoto()) {
-                navigationManager.setEnrollmentIdPhotoFragment(mMember);
+                getNavigationManager().setEnrollmentIdPhotoFragment(mMember);
             } else {
-                navigationManager.setEnrollmentContactInfoFragment(mMember);
+                getNavigationManager().setEnrollmentContactInfoFragment(mMember);
             }
-        } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+        } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+            ExceptionManager.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }
     }
@@ -75,8 +73,8 @@ public class EnrollmentMemberPhotoFragment extends FormFragment {
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
-            ExceptionManager.handleException(e);
-            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            ExceptionManager.reportException(e);
+            getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
@@ -100,7 +98,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mMemberPhotoImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
 
             mMember.setPhotoUrl(mUri.toString());

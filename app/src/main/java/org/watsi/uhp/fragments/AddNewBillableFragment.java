@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
-public class AddNewBillableFragment extends Fragment {
+public class AddNewBillableFragment extends BaseFragment {
 
     private EditText nameField;
     private EditText priceField;
@@ -45,10 +44,10 @@ public class AddNewBillableFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (nameField.getText().toString().length() == 0) {
-                    Toast.makeText(getActivity().getApplicationContext(), R.string.empty_billable_name_field,
+                    Toast.makeText(getActivity(), R.string.empty_billable_name_field,
                             Toast.LENGTH_LONG).show();
                 } else if (priceField.getText().toString().length() == 0) {
-                    Toast.makeText(getActivity().getApplicationContext(), R.string.empty_billable_price_field,
+                    Toast.makeText(getActivity(), R.string.empty_billable_price_field,
                             Toast.LENGTH_LONG).show();
                 } else {
                     Billable billable = new Billable();
@@ -65,7 +64,7 @@ public class AddNewBillableFragment extends Fragment {
                     Encounter encounter = (Encounter) getArguments()
                             .getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
                     encounter.getEncounterItems().add(encounterItem);
-                    new NavigationManager(getActivity()).setEncounterFragment(encounter);
+                    getNavigationManager().setEncounterFragment(encounter);
                 }
             }
         });

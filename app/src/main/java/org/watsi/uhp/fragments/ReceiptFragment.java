@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +14,16 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.managers.ConfigManager;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class ReceiptFragment extends Fragment {
+public class ReceiptFragment extends BaseFragment {
 
     private Button mCreateEncounterButton;
     private Encounter mEncounter;
@@ -59,17 +58,20 @@ public class ReceiptFragment extends Fragment {
         mCreateEncounterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String toastMessage;
                 try {
-                    mEncounter.setToken(ConfigManager.getLoggedInUserToken(getContext()));
+                    mEncounter.setUnsynced(getAuthenticationToken());
                     EncounterDao.create(mEncounter);
-                } catch (SQLException e) {
-                    ExceptionManager.handleException(e);
+
+                    getNavigationManager().setCurrentPatientsFragment();
+
+                    toastMessage = mEncounter.getMember()
+                            .getFullName() + getString(R.string.encounter_submitted);
+                } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+                    toastMessage = "Failed to save data, contact support.";
+                    ExceptionManager.reportException(e);
                 }
 
-                new NavigationManager(getActivity()).setCurrentPatientsFragment();
-
-                String toastMessage = mEncounter.getMember()
-                        .getFullName() + getString(R.string.encounter_submitted);
 
                 Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
             }

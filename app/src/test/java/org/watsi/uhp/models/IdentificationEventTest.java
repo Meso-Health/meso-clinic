@@ -3,6 +3,11 @@ package org.watsi.uhp.models;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
+
+import okhttp3.RequestBody;
+import okio.Buffer;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -45,5 +50,29 @@ public class IdentificationEventTest {
 
         assertEquals(identificationEvent.getDismissalReason(), reason);
         assertTrue(identificationEvent.getDismissed());
+    }
+
+    @Test
+    public void constructIdentificationEventPatchRequest() throws Exception {
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setDismissed(true);
+        idEvent.setDismissalReason(
+                IdentificationEvent.DismissalReasonEnum.ACCIDENTAL_IDENTIFICATION);
+
+        Map<String, RequestBody> requestBodyMap =
+                idEvent.constructIdentificationEventPatchRequest();
+
+        assertTrue(requestBodyMap.containsKey(IdentificationEvent.FIELD_NAME_DISMISSED));
+        assertTrue(requestBodyMap.containsKey(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON));
+        Buffer buffer = new Buffer();
+        RequestBody dismissedRequestBody =
+                requestBodyMap.get(IdentificationEvent.FIELD_NAME_DISMISSED);
+        dismissedRequestBody.writeTo(buffer);
+        assertEquals(buffer.readUtf8(), "true");
+        buffer.clear();
+        RequestBody dismissalReasonRequestBody =
+                requestBodyMap.get(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON);
+        dismissalReasonRequestBody.writeTo(buffer);
+        assertEquals(buffer.readUtf8(), "accidental_identification");
     }
 }

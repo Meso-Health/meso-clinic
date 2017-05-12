@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
@@ -17,12 +16,13 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
+import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -38,7 +38,8 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -72,58 +73,58 @@ public class Member extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_ID)
     @DatabaseField(columnName = FIELD_NAME_ID, id = true)
-    private UUID mId;
+    protected UUID mId;
 
     @Expose
     @SerializedName(FIELD_NAME_CARD_ID)
     @DatabaseField(columnName = FIELD_NAME_CARD_ID)
-    private String mCardId;
+    protected String mCardId;
 
     @Expose
     @SerializedName(FIELD_NAME_FULL_NAME)
     @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false)
-    private String mFullName;
+    protected String mFullName;
 
     @Expose
     @SerializedName(FIELD_NAME_AGE)
     @DatabaseField(columnName = FIELD_NAME_AGE)
-    private int mAge;
+    protected int mAge;
 
     @Expose
     @SerializedName(FIELD_NAME_GENDER)
     @DatabaseField(columnName = FIELD_NAME_GENDER)
-    private GenderEnum mGender;
+    protected GenderEnum mGender;
 
     @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
-    private byte[] mPhoto;
+    protected byte[] mPhoto;
 
     @Expose
     @SerializedName(FIELD_NAME_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
-    private String mPhotoUrl;
+    protected String mPhotoUrl;
 
     @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO, dataType = DataType.BYTE_ARRAY)
-    private byte[] mNationalIdPhoto;
+    protected byte[] mNationalIdPhoto;
 
     @Expose
     @SerializedName(FIELD_NAME_NATIONAL_ID_PHOTO_URL)
     @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO_URL)
-    private String mNationalIdPhotoUrl;
+    protected String mNationalIdPhotoUrl;
 
     @Expose
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
-    private UUID mHouseholdId;
+    protected UUID mHouseholdId;
 
     @Expose
     @SerializedName(FIELD_NAME_ABSENTEE)
     @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
-    private Boolean mAbsentee;
+    protected Boolean mAbsentee;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
     @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_GUID)
-    private UUID mFingerprintsGuid;
+    protected UUID mFingerprintsGuid;
 
     @Expose
     @SerializedName(FIELD_NAME_BIRTHDATE)
@@ -138,7 +139,7 @@ public class Member extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_PHONE_NUMBER)
     @DatabaseField(columnName = FIELD_NAME_PHONE_NUMBER)
-    private String mPhoneNumber;
+    protected String mPhoneNumber;
 
     @Expose
     @SerializedName(FIELD_NAME_ENROLLED_AT)
@@ -249,22 +250,53 @@ public class Member extends SyncableModel {
         this.mPhotoUrl = photoUrl;
     }
 
-    public void setMemberPhotoUrlFromResponse(String responsePhotoUrl) {
-        this.mPhotoUrl = responsePhotoUrl;
-        deleteLocalMemberImage();
+    public void syncMember(Context context)throws SQLException, IOException,
+            AbstractModel.ValidationException, FileManager.FileDeletionException {
+        Call<Member> request = createSyncMemberRequest(context);
+        Response<Member> response = request.execute();
+        if (response.isSuccessful()) {
+            updatePhotosFromSuccessfulSyncResponse(response);
+            if (!isDirty()) setSynced();
+            MemberDao.update(this);
+        } else {
+            Map<String, String> reportParams = new HashMap<>();
+            reportParams.put("member.id", getId().toString());
+            ExceptionManager.requestFailure(
+                    isNew() ? "Failed to enroll Member" : "Failed to sync Member", request.request(), response.raw(), reportParams);
+        }
     }
 
-    public byte[] getNationalIdPhoto() {
-        return mNationalIdPhoto;
+    protected Call<Member> createSyncMemberRequest(Context context) throws SQLException, IOException, AbstractModel.ValidationException {
+        Map<String, RequestBody> multiPartBody;
+        Call<Member> request;
+
+        if (isNew()) {
+            multiPartBody = formatPostRequest(context);
+            request = ApiService.requestBuilder(context).enrollMember(
+                    getTokenAuthHeaderString(), multiPartBody);
+        } else {
+            multiPartBody = formatPatchRequest(context);
+            request = ApiService.requestBuilder(context).syncMember(
+                    getTokenAuthHeaderString(), getId(), multiPartBody);
+        }
+        return request;
     }
 
-    public void setNationalIdPhoto(byte[] nationalIdPhoto) {
-        this.mNationalIdPhoto = nationalIdPhoto;
-    }
+    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response)
+            throws IOException, FileManager.FileDeletionException {
+        String photoUrlFromResponse = response.body().getPhotoUrl();
+        String nationalIdPhotoUrlFromResponse = response.body().getNationalIdPhotoUrl();
 
-    public void setNationalIdPhotoUrlFromPatchResponse(String responsePhotoUrl) {
-        this.mNationalIdPhotoUrl = responsePhotoUrl;
-        deleteLocalIdImage();
+        if (photoUrlFromResponse != null) {
+            if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
+            this.mPhotoUrl = photoUrlFromResponse;
+            fetchAndSetPhotoFromUrl();
+        }
+
+        if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
+            FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+            this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
+        }
     }
 
     public String getNationalIdPhotoUrl() {
@@ -347,23 +379,26 @@ public class Member extends SyncableModel {
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
+        if (FileManager.isLocal(getPhotoUrl())) return;
         Request request = new Request.Builder().url(getPhotoUrl()).build();
-        Response response = new OkHttpClient().newCall(request).execute();
+        okhttp3.Response response = new OkHttpClient().newCall(request).execute();
 
-        if (response.isSuccessful()) {
-            InputStream is = response.body().byteStream();
-            setPhoto(ByteStreams.toByteArray(is));
-            is.close();
-            Log.d("UHP", "finished fetching photo at: " + getPhotoUrl());
-        } else {
-            Map<String,String> params = new HashMap<>();
-            params.put("member.id", getId().toString());
-            ExceptionManager.requestFailure(
-                    "Failed to fetch member photo",
-                    request,
-                    response,
-                    params
-            );
+        try {
+            if (response.isSuccessful()) {
+                InputStream is = response.body().byteStream();
+                setPhoto(ByteStreams.toByteArray(is));
+            } else {
+                Map<String,String> params = new HashMap<>();
+                params.put("member.id", getId().toString());
+                ExceptionManager.requestFailure(
+                        "Failed to fetch member photo",
+                        request,
+                        response,
+                        params
+                );
+            }
+        } finally {
+            response.close();
         }
     }
 
@@ -374,7 +409,7 @@ public class Member extends SyncableModel {
             try {
                 return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
         }
         return null;
@@ -566,25 +601,11 @@ public class Member extends SyncableModel {
         }
     }
 
-    public void deleteLocalMemberImage() {
-        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
-            new File(getPhotoUrl()).delete();
-            setPhotoUrl(null);
-        }
-    }
-
-    public void deleteLocalIdImage() {
-        if (getNationalIdPhotoUrl() != null && FileManager.isLocal(getNationalIdPhotoUrl())) {
-            new File(getNationalIdPhotoUrl()).delete();
-            setNationalIdPhotoUrl(null);
-        }
-    }
-
     public IdentificationEvent currentCheckIn() {
         try {
             return IdentificationEventDao.openCheckIn(getId());
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             return null;
         }
     }

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
-    //building string config fields requires a double-quoted string
+    // building string config fields requires a double-quoted string
     def ENV = { k -> "\"${System.getenv(k)}\"" }
 
     defaultConfig {
@@ -31,9 +31,8 @@ android {
     }
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
+            versionNameSuffix '-debug'
         }
         release {
             minifyEnabled false
@@ -47,6 +46,8 @@ android {
             versionNameSuffix "-development"
             resValue "string", "app_name", "UHP Dev"
             resValue "string", "main_activity_label", "UHP Dev"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#868E96" // gray
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_development"
             ]
@@ -65,6 +66,8 @@ android {
             versionNameSuffix "-sandbox"
             resValue "string", "app_name", "UHP Sandbox"
             resValue "string", "main_activity_label", "UHP Sandbox"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#FCAF63" // beige
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
@@ -74,11 +77,33 @@ android {
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
+        spec {
+            applicationIdSuffix ".spec"
+            versionNameSuffix "-spec"
+            resValue "string", "app_name", "UHP Spec"
+            resValue "string", "main_activity_label", "UHP Spec"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#F4C2C2" // pink
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_spec"
+            ]
+
+            buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
+            buildConfigField "String", "API_HOST", ENV("SPEC_API_HOST")
+            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
+            buildConfigField "String", "ROLLBAR_ENV_KEY", "null"
+            buildConfigField "String", "ROLLBAR_API_KEY", "null"
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
+            buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+        }
         demo {
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
             resValue "string", "app_name", "UHP"
             resValue "string", "main_activity_label", "UHP"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#868E96" // gray
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -92,6 +117,8 @@ android {
             versionNameSuffix "-production"
             resValue "string", "app_name", "UHP"
             resValue "string", "main_activity_label", "UHP"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -100,6 +127,16 @@ android {
             buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("PRODUCTION_ROLLBAR_ENV_KEY")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
+        }
+    }
+
+    sourceSets {
+        String sharedTestDir = 'src/sharedTest/java'
+        test {
+            java.srcDir sharedTestDir
+        }
+        androidTest {
+            java.srcDir sharedTestDir
         }
     }
 }

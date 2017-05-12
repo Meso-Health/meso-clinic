@@ -1,11 +1,10 @@
 package org.watsi.uhp.managers;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
@@ -20,7 +19,6 @@ import org.watsi.uhp.fragments.EnrollmentContactInfoFragment;
 import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
 import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
 import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
-import org.watsi.uhp.fragments.LoginFragment;
 import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
@@ -45,15 +43,15 @@ public class NavigationManager {
     private static String HOME_TAG = "home";
     public static String DETAIL_TAG = "detail";
 
-    private AppCompatActivity mActivity;
+    private FragmentActivity mActivity;
     private FragmentProvider mFragmentProvider;
 
-    public NavigationManager(Activity activity, FragmentProvider fragmentProvider) {
-        this.mActivity = (AppCompatActivity) activity;
+    public NavigationManager(FragmentActivity activity, FragmentProvider fragmentProvider) {
+        this.mActivity = activity;
         this.mFragmentProvider = fragmentProvider;
     }
 
-    public NavigationManager(Activity activity) {
+    public NavigationManager(FragmentActivity activity) {
         this(activity, new FragmentProvider());
     }
 
@@ -185,17 +183,8 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
-    public void setLoginFragment() {
-        setFragment(new LoginFragment(), null, false, false);
-    }
-
     public void setVersionFragment() {
         setFragment(new VersionAndSyncFragment());
-    }
-
-    public void logout() {
-        ConfigManager.setLoggedInUserToken(null, mActivity.getApplicationContext());
-        setLoginFragment();
     }
 
     public static class FragmentProvider {
@@ -211,7 +200,7 @@ public class NavigationManager {
                 }
                 return fragment;
             } catch (InstantiationException | IllegalAccessException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
                 return null;
             }
         }

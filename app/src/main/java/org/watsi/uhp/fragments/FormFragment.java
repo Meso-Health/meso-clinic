@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
-public abstract class FormFragment extends Fragment {
+public abstract class FormFragment extends BaseFragment {
 
     protected Member mMember;
     protected Button mSaveBtn;

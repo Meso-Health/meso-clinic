@@ -67,7 +67,7 @@ public class EnrollNewbornInfoFragment extends FormFragment {
         try {
             birthdate = mDateFormat.parse(attributeBundle.getString(Member.FIELD_NAME_BIRTHDATE));
         } catch (ParseException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             Toast.makeText(getContext(), R.string.birthdate_validation_error, Toast.LENGTH_LONG).show();
             return;
         }
@@ -81,7 +81,7 @@ public class EnrollNewbornInfoFragment extends FormFragment {
 
         newborn.setBirthdate(birthdate);
 
-        new NavigationManager(getActivity()).setEnrollNewbornPhotoFragment(newborn);
+        getNavigationManager().setEnrollNewbornPhotoFragment(newborn);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class EnrollNewbornInfoFragment extends FormFragment {
                         cal.get(Calendar.DAY_OF_MONTH)
                 );
             } catch (ParseException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
         } else {
             mDatePicker.updateDate(
@@ -136,9 +136,8 @@ public class EnrollNewbornInfoFragment extends FormFragment {
         view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NavigationManager(getActivity())
-                        .setBarcodeFragment(
-                                BarcodeFragment.ScanPurposeEnum.NEWBORN, mMember, createBundle());
+                getNavigationManager().setBarcodeFragment(
+                        BarcodeFragment.ScanPurposeEnum.NEWBORN, mMember, createBundle());
             }
         });
 

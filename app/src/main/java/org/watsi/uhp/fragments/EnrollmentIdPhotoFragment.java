@@ -16,7 +16,6 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
-import org.watsi.uhp.managers.NavigationManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,9 +46,9 @@ public class EnrollmentIdPhotoFragment extends FormFragment {
     void nextStep() {
         try {
             MemberDao.update(mMember);
-            new NavigationManager(getActivity()).setEnrollmentContactInfoFragment(mMember);
+            getNavigationManager().setEnrollmentContactInfoFragment(mMember);
         } catch (SQLException e) {
-            ExceptionManager.handleException(e);
+            ExceptionManager.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }
     }
@@ -62,8 +61,8 @@ public class EnrollmentIdPhotoFragment extends FormFragment {
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
-            ExceptionManager.handleException(e);
-            new NavigationManager(getActivity()).setCurrentPatientsFragment();
+            ExceptionManager.reportException(e);
+            getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
@@ -83,7 +82,7 @@ public class EnrollmentIdPhotoFragment extends FormFragment {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mIdPhotoImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
-                ExceptionManager.handleException(e);
+                ExceptionManager.reportException(e);
             }
 
             // TODO: potential timing issue if member data syncs before we flag this as un-synced
