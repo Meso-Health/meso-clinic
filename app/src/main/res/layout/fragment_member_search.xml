@@ -44,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
         android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
         android:divider="@color/transparent" />
 
 </LinearLayout>
