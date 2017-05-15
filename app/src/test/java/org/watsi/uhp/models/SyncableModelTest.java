@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.BuildConfig;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -27,6 +26,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -186,16 +186,6 @@ public class SyncableModelTest {
     }
 
     @Test
-    public void saveChanges_nullToken_throwsUnauthenticatedException() throws Exception {
-        try {
-            member.saveChanges(null);
-            fail("Should throw unauthenticated exception");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "Current user is not authenticated");
-        }
-    }
-
-    @Test
     public void saveChanges_withToken_setsToken() throws Exception {
         doReturn(new HashSet<>()).when(memberSpy).changedFields();
 
@@ -249,35 +239,41 @@ public class SyncableModelTest {
     }
 
     @Test
-    public void update_callsUpdateFromApiResponse() throws Exception {
-        memberSpy.updateFromSync();
+    public void handleUpdateFromSync_callsUpdateFromApiResponse() throws Exception {
+        doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
 
-        verify(memberSpy, times(1)).handleUpdate();
+        memberSpy.updateFromSync(mockResponse);
+
+        verify(memberSpy, times(1)).handleUpdateFromSync(mockResponse);
     }
 
     @Test
-    public void updateFromSync_clearsDirtyFields() throws Exception {
-        memberSpy.updateFromSync();
+    public void handleUpdateFromSync_clearsDirtyFields() throws Exception {
+        doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
+
+        memberSpy.updateFromSync(mockResponse);
 
         verify(memberSpy, times(1)).clearDirtyFields();
         assertTrue(memberSpy.getDirtyFields().size() == 0);
     }
 
     @Test
-    public void updateFromSync_persistsTheModel() throws Exception {
-        memberSpy.updateFromSync();
+    public void handleUpdateFromSync_persistsTheModel() throws Exception {
+        doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
+
+        memberSpy.updateFromSync(mockResponse);
 
         verify(mockDao, times(1)).createOrUpdate(memberSpy);
     }
 
     @Test
-    public void sync_nullToken_throwsUnauthenticatedException() throws Exception {
+    public void sync_nullToken_throwsSyncException() throws Exception {
         member.setToken(null);
         try {
             member.sync(mockContext);
-            fail("Should throw unauthenticated exception");
+            fail("Should throw sync exception");
         } catch (Exception e) {
-            assertEquals(e.getMessage(), "Current user is not authenticated");
+            assertEquals(e.getMessage(), "Model is not in a syncable state");
         }
     }
 
@@ -289,9 +285,9 @@ public class SyncableModelTest {
 
         try {
             memberSpy.sync(mockContext);
-            fail("Should throw unauthenticated exception");
+            fail("Should throw sync exception");
         } catch (Exception e) {
-            assertEquals(e.getMessage(), "Model does not have any fields that need to be synced");
+            assertEquals(e.getMessage(), "Model is not in a syncable state");
         }
     }
 
@@ -301,9 +297,7 @@ public class SyncableModelTest {
 
         when(memberSpy.isDirty()).thenReturn(true);
         doReturn(true).when(memberSpy).isNew();
-        when(memberSpy.postApiCall(
-                mockContext, memberSpy.getToken(), BuildConfig.PROVIDER_ID, memberSpy))
-                .thenReturn(mockCall);
+        doReturn(mockCall).when(memberSpy).postApiCall(mockContext);
         when(mockCall.execute()).thenReturn(mockResponse);
 
         Response<Member> response = memberSpy.sync(mockContext);
@@ -318,9 +312,7 @@ public class SyncableModelTest {
 
         when(memberSpy.isDirty()).thenReturn(true);
         doReturn(false).when(memberSpy).isNew();
-        when(memberSpy.patchRequestBody(mockContext)).thenReturn(mockParams);
-        when(memberSpy.patchApiCall(mockContext, memberSpy.getToken(), id, mockParams))
-                .thenReturn(mockCall);
+        doReturn(mockCall).when(memberSpy).patchApiCall(mockContext);
         when(mockCall.execute()).thenReturn(mockResponse);
 
         Response<Member> response = memberSpy.sync(mockContext);

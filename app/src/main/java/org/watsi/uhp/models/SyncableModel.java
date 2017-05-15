@@ -10,19 +10,19 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.PreparedQuery;
 
-import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.DatabaseHelper;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -82,8 +82,12 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         }
     }
 
-    protected Dao<T,UUID> getDao() throws SQLException {
-        return (Dao<T, UUID>) DatabaseHelper.getHelper().getDao(this.getClass());
+    protected static <K> Dao<K,UUID> getDao(Class<K> clazz) throws SQLException {
+        return (Dao<K, UUID>) DatabaseHelper.getHelper().getDao(clazz);
+    }
+
+    Dao<T, UUID> getDao() throws SQLException {
+        return (Dao<T, UUID>) getDao(getClass());
     }
 
     public Boolean isNew() throws SQLException {
@@ -111,6 +115,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         if (isNew()) {
             return diffFields(null);
         } else {
+            getDao().queryForId(getId());
             return diffFields(getDao().queryForId(getId()));
         }
     }
@@ -134,10 +139,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return diffSet;
     }
 
-    public void saveChanges(String token) throws SQLException, UnauthenticatedException {
-        if (token == null) {
-            throw new UnauthenticatedException();
-        }
+    public void saveChanges(String token) throws SQLException {
         setToken(token);
         if (this.mId == null) this.mId = UUID.randomUUID();
         setDirtyFields(changedFields());
@@ -145,42 +147,44 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         persistAssociations();
     }
 
-    public void updateFromSync() throws SQLException {
-        handleUpdate();
+    public void updateFromSync(Response<T> response) throws SQLException {
+        handleUpdateFromSync(response);
         clearDirtyFields();
         getDao().createOrUpdate((T) this);
     }
 
-    public Response<T> sync(Context context)
-            throws UnauthenticatedException, SyncException, SQLException, IOException {
-        if (getToken() == null) {
-            throw new UnauthenticatedException();
-        }
-        if (!isDirty()) {
+    public Response<T> sync(Context context) throws SyncException, SQLException, IOException {
+        if (!isDirty() || getToken() == null) {
             throw new SyncException();
         }
         if (isNew()) {
-            return postApiCall(context, getToken(), BuildConfig.PROVIDER_ID, this).execute();
+            return postApiCall(context).execute();
         } else {
-            return patchApiCall(context, getToken(), getId(), patchRequestBody(context)).execute();
+            return patchApiCall(context).execute();
         }
+    }
+
+    public static <K> List<K> unsynced(Class<K> clazz) throws SQLException {
+        Dao<K, UUID> dao = DatabaseHelper.getHelper().getDao(clazz);
+        PreparedQuery<K> preparedQuery = dao.queryBuilder().where()
+                .not().eq(SyncableModel.FIELD_NAME_DIRTY_FIELDS, "[]").and()
+                .isNotNull(SyncableModel.FIELD_NAME_DIRTY_FIELDS)
+                .prepare();
+        return dao.query(preparedQuery);
     }
 
     protected Set<String> diffIgnoreFields() {
         return SYNCABLE_DIFF_IGNORE_FIELDS;
     }
 
-    public abstract void handleUpdate();
-    protected abstract Map<String, RequestBody> patchRequestBody(Context context);
-    protected abstract Call<T> postApiCall(
-            Context context, String token, int providerId, SyncableModel<T> model);
-    protected abstract Call<T> patchApiCall(
-            Context context, String token, UUID id, Map<String, RequestBody> params);
-    protected abstract void persistAssociations();
+    public abstract void handleUpdateFromSync(Response<T> response);
+    protected abstract Call<T> postApiCall(Context context) throws SQLException;
+    protected abstract Call<T> patchApiCall(Context context) throws SQLException;
+    protected abstract void persistAssociations() throws SQLException;
 
-    private static class SyncException extends Exception {
+    public static class SyncException extends Exception {
         SyncException() {
-            super("Model does not have any fields that need to be synced");
+            super("Model is not in a syncable state");
         }
     }
 

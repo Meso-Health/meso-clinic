@@ -48,14 +48,6 @@ public class MemberDao {
         return mMemberDao;
     }
 
-    public static void create(Member member) throws SQLException {
-        getInstance().getMemberDao().create(member);
-    }
-
-    public static void createOrUpdate(Member member) throws SQLException {
-        getInstance().getMemberDao().createOrUpdate(member);
-    }
-
     public static Member findById(UUID id) throws SQLException {
         return getInstance().getMemberDao().queryForId(id);
     }
@@ -75,10 +67,6 @@ public class MemberDao {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_FULL_NAME, new SelectArg(name));
         return getInstance().getMemberDao().queryForFieldValues(queryMap);
-    }
-
-    public static void update(Member member) throws SQLException {
-        getInstance().getMemberDao().update(member);
     }
 
     public static List<Member> withCardIdLike(String query) throws SQLException {
@@ -183,17 +171,5 @@ public class MemberDao {
             ids.add(m.getId());
         }
         return ids;
-    }
-
-    public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
-        for (UUID id : memberIdsToDelete) {
-            getInstance().getMemberDao().deleteById(id);
-        }
-    }
-
-    public static List<Member> unsynced() throws SQLException {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(Member.FIELD_NAME_SYNCED, false);
-        return getInstance().getMemberDao().queryForFieldValues(queryMap);
     }
 }

@@ -4,13 +4,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -39,21 +35,6 @@ public class IdentificationEventDao {
         }
 
         return mIdentificationDao;
-    }
-
-    public static void create(IdentificationEvent identificationEvent) throws SQLException {
-        identificationEvent.setCreatedAt(Clock.getCurrentTime());
-        getInstance().getIdentificationDao().create(identificationEvent);
-    }
-
-    public static List<IdentificationEvent> unsynced() throws SQLException {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(IdentificationEvent.FIELD_NAME_SYNCED, false);
-        return getInstance().getIdentificationDao().queryForFieldValues(queryMap);
-    }
-
-    public static void update(IdentificationEvent identificationEvent) throws SQLException {
-        getInstance().getIdentificationDao().update(identificationEvent);
     }
 
     public static IdentificationEvent openCheckIn(UUID memberId) throws SQLException {

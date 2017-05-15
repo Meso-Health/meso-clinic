@@ -1,16 +1,27 @@
 package org.watsi.uhp.models;
 
+import android.content.Context;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.BuildConfig;
+import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.database.EncounterItemDao;
+
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 @DatabaseTable(tableName = Encounter.TABLE_NAME)
 public class Encounter extends SyncableModel {
@@ -76,6 +87,42 @@ public class Encounter extends SyncableModel {
 
     public void setId(UUID id) {
         this.mId = id;
+    }
+
+    @Override
+    public void handleUpdateFromSync(Response response) {
+        // no-op
+    }
+
+    @Override
+    protected Call postApiCall(Context context) throws SQLException {
+        setMemberId(getMember().getId());
+        setIdentificationEventId(getIdentificationEvent().getId());
+        setEncounterItems(EncounterItemDao.fromEncounter(this));
+        return ApiService.requestBuilder(context).syncEncounter(
+                getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, this);
+    }
+
+    @Override
+    protected void persistAssociations() throws SQLException {
+        for (EncounterItem encounterItem : getEncounterItems()) {
+            Billable billable = encounterItem.getBillable();
+            if (billable.getId() == null) {
+                billable.generateId();
+                BillableDao.create(billable);
+            }
+            encounterItem.setEncounter(this);
+            EncounterItemDao.create(encounterItem);
+        }
+        for (EncounterForm encounterForm : getEncounterForms()) {
+            encounterForm.saveChanges(getToken());
+        }
+    }
+
+    @Override
+    protected Call patchApiCall(Context context) throws SQLException {
+        // no-op
+        return null;
     }
 
     public Date getOccurredAt() {
