@@ -18,7 +18,7 @@
             android:id="@+id/current_patients_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp" />
+            android:layout_marginBottom="@dimen/text_view_vertical_margin" />
 
         <ListView
             android:id="@+id/current_patients"
