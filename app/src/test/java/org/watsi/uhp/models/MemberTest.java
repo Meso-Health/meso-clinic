@@ -26,6 +26,7 @@ import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -434,68 +435,141 @@ public class MemberTest {
         }
     }
 
+    private Member mockNewborn() throws Exception {
+        Member newborn = new Member();
+        newborn.setId(UUID.randomUUID());
+        newborn.setFullName("Akiiki Monday");
+        newborn.setCardId("RWI111111");
+        newborn.setBirthdate(Calendar.getInstance().getTime());
+        newborn.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
+        newborn.setGender(Member.GenderEnum.F);
+        newborn.setIsNew(true);
+        newborn.setHouseholdId(UUID.randomUUID());
+        newborn.setEnrolledAt(Calendar.getInstance().getTime());
+        return newborn;
+    }
+
     @Test
-    public void formatPostRequest_newMember() throws Exception {
-        String fullName = "Akiiki Monday";
-        String cardId = "RWI111111";
-        Uri mockUri = mock(Uri.class);
-        byte[] mockPhoto = new byte[]{};
-        Member memberSpy = spy(Member.class);
-        memberSpy.setBirthdate(Calendar.getInstance().getTime());
-        memberSpy.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
-        memberSpy.setId(UUID.randomUUID());
-        memberSpy.setGender(Member.GenderEnum.F);
-        memberSpy.setFullName(fullName);
-        memberSpy.setCardId(cardId);
-        memberSpy.setPhotoUrl(localPhotoUrl);
-        memberSpy.setIsNew(true);
-        memberSpy.setHouseholdId(UUID.randomUUID());
-        memberSpy.setEnrolledAt(Calendar.getInstance().getTime());
+    public void formatPostRequest_validMember_includesId() throws Exception {
+        Member newborn = mockNewborn();
 
-        when(Uri.parse(memberSpy.getPhotoUrl())).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
-        when(FileManager.isLocal(memberSpy.getPhotoUrl())).thenReturn(true);
-
-        Map<String, RequestBody> requestBodyMap = memberSpy.formatPostRequest(mockContext);
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
 
         Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_ID).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), memberSpy.getId().toString());
-        buffer.clear();
+        assertEquals(buffer.readUtf8(), newborn.getId().toString());
+    }
 
+    @Test
+    public void formatPostRequest_validMember_includesGender() throws Exception {
+        Member newborn = mockNewborn();
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_GENDER).writeTo(buffer);
         assertEquals(buffer.readUtf8(), "F");
         buffer.clear();
+    }
 
+    @Test
+    public void formatPostRequest_validMember_includesName() throws Exception {
+        Member newborn = mockNewborn();
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_FULL_NAME).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), fullName);
-        buffer.clear();
+        assertEquals(buffer.readUtf8(), newborn.getFullName());
+    }
 
+    @Test
+    public void formatPostRequest_validMember_includesCardId() throws Exception {
+        Member newborn = mockNewborn();
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_CARD_ID).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), cardId);
-        buffer.clear();
+        assertEquals(buffer.readUtf8(), newborn.getCardId());
+    }
 
+    @Test
+    public void formatPostRequest_validMember_includesProviderDetails() throws Exception {
+        Member newborn = mockNewborn();
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
         requestBodyMap.get("provider_assignment[provider_id]").writeTo(buffer);
         assertEquals(buffer.readUtf8(), "1");
         buffer.clear();
 
         requestBodyMap.get("provider_assignment[start_reason]").writeTo(buffer);
         assertEquals(buffer.readUtf8(), "birth");
-        buffer.clear();
+    }
 
+    @Test
+    public void formatPostRequest_validMember_includesBirthdayInfo() throws Exception {
+        Member newborn = mockNewborn();
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_BIRTHDATE_ACCURACY).writeTo(buffer);
         assertEquals(buffer.readUtf8(), "D");
         buffer.clear();
 
         requestBodyMap.get(Member.FIELD_NAME_BIRTHDATE).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), Clock.asIso(memberSpy.getBirthdate()));
-        buffer.clear();
+        assertEquals(buffer.readUtf8(), Clock.asIso(newborn.getBirthdate()));
+    }
 
+    @Test
+    public void formatPostRequest_validMember_includesEnrolledAt() throws Exception {
+        Member newborn = mockNewborn();
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_ENROLLED_AT).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), Clock.asIso(memberSpy.getEnrolledAt()));
-        buffer.clear();
+        assertEquals(buffer.readUtf8(), Clock.asIso(newborn.getEnrolledAt()));
+    }
 
-        verify(memberSpy, times(1)).clearDirtyFields();
+    @Test
+    public void formatPostRequest_validMember_clearsDirtyFields() throws Exception {
+        Member newborn = spy(mockNewborn());
+
+        newborn.formatPostRequest(mockContext);
+
+        verify(newborn, times(1)).clearDirtyFields();
+    }
+
+    @Test
+    public void formatPostRequest_validMemberNullPhotoUrl_doesNotIncludePhoto() throws Exception {
+        Member newborn = spy(mockNewborn());
+        newborn.setPhotoUrl(null);
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        assertFalse(requestBodyMap.containsKey(Member.FIELD_NAME_PHOTO));
+    }
+
+    @Test
+    public void formatPostRequest_validMemberHasPhotoUrl_includesPhoto() throws Exception {
+        Member newborn = spy(mockNewborn());
+        newborn.setPhotoUrl(localPhotoUrl);
+        Uri mockUri = mock(Uri.class);
+        byte[] mockPhoto = new byte[]{(byte)0xe0};
+
+        when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
+        when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
+        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
+
+        Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
+
+        Buffer buffer = new Buffer();
+        requestBodyMap.get(Member.FIELD_NAME_PHOTO).writeTo(buffer);
+        assertTrue(Arrays.equals(buffer.readByteArray(), mockPhoto));
     }
 
     @Test
