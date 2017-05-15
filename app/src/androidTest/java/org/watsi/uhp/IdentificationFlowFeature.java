@@ -66,6 +66,7 @@ public class IdentificationFlowFeature extends LoginFeature {
 
         checkingInPatient_idFlow(NAME_OF_MEMBER);
 
+        // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
         try {
             IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
         } catch (java.sql.SQLException e) {
@@ -102,6 +103,7 @@ public class IdentificationFlowFeature extends LoginFeature {
 
         checkingInPatient_idFlow(NAME_OF_MEMBER);
 
+        // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
         try {
             IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
         } catch (java.sql.SQLException e) {
