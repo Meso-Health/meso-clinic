@@ -40,7 +40,7 @@ public class LoginFeature extends ActivityTest {
 
     @Test
     public void logInAndLogOut_loginFlow() {
-        logsUserIn();
+        logsUserIn(USERNAME, PASSWORD);
         logsUserOut();
     }
 
@@ -48,16 +48,16 @@ public class LoginFeature extends ActivityTest {
      * logging in clinic user that is loaded in test seed data on the uhp rails backend side,
      * make sure you are running the rails server locally and have raked the seed data
      */
-    public void logsUserIn() {
-        onView(withId(R.id.login_username)).perform(typeText(USERNAME));
+    public static void logsUserIn(String username, String password) {
+        onView(withId(R.id.login_username)).perform(typeText(username));
         onView(allOf(supportsInputMethods(), withParent(withId(R.id.login_password))))
-                .perform(typeText(PASSWORD));
+                .perform(typeText(password));
         onView(withId(R.id.login_button)).perform(click());
         waitForUIToUpdate();
         onView(withText("Select a patient")).check(matches(isDisplayed()));
     }
 
-    public void logsUserOut() {
+    public static void logsUserOut() {
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(withText("Logout")).perform(click());
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());

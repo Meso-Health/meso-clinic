@@ -4,10 +4,13 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.EditText;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
+import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.ExceptionManager;
 
@@ -27,22 +30,39 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
-public class IdentificationFlowFeature extends LoginFeature {
+public class IdentificationFlowFeature extends ActivityTest {
 
-    private static final String OPD_NUMBER = "30";
-    private static final String NOT_NAME_OF_MEMBER = "I am not a member";
-    private static final String NAME_OF_MEMBER = "Lil Jon";
-    private static final String NOT_ID_OF_MEMBER = "JWI000000";
-    private static final String ID_OF_MEMBER = "RWI 000 000";
+    private final String USERNAME = "klinik";
+    private final String PASSWORD = "123456";
+    private final String OPD_NUMBER = "30";
+    private final String NOT_NAME_OF_MEMBER = "I am not a member";
+    private final String NAME_OF_MEMBER = "Lil Jon";
+    private final String NOT_ID_OF_MEMBER = "JWI000000";
+    private final String ID_OF_MEMBER = "RWI 000 000";
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
             new ActivityTestRule<>(ClinicActivity.class, false, true);
 
+    @Before
+    public void start() {
+        LoginFeature.logsUserIn(USERNAME, PASSWORD);
+    }
+
+    @After
+    public void end() {
+        // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
+        try {
+            IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
+        } catch (java.sql.SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+
+        LoginFeature.logsUserOut();
+    }
+
     @Test
     public void identificationByNameSearch_idFlow() {
-        logsUserIn();
-
         onView(withId(R.id.identification_button)).perform(click());
         onView(withId(R.id.search_member)).perform(click());
 
@@ -65,21 +85,10 @@ public class IdentificationFlowFeature extends LoginFeature {
         onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
 
         checkingInPatient_idFlow(NAME_OF_MEMBER);
-
-        // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
-        try {
-            IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
-        } catch (java.sql.SQLException e) {
-            ExceptionManager.reportException(e);
-        }
-
-        logsUserOut();
     }
 
     @Test
     public void identificationByIdSearch_idFlow() {
-        logsUserIn();
-
         onView(withId(R.id.identification_button)).perform(click());
         onView(withId(R.id.search_member)).perform(click());
 
@@ -102,15 +111,6 @@ public class IdentificationFlowFeature extends LoginFeature {
         onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
 
         checkingInPatient_idFlow(NAME_OF_MEMBER);
-
-        // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
-        try {
-            IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
-        } catch (java.sql.SQLException e) {
-            ExceptionManager.reportException(e);
-        }
-
-        logsUserOut();
     }
 
     public void checkingInPatient_idFlow(String name) {
