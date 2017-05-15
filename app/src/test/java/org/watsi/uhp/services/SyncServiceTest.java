@@ -7,37 +7,30 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.BuildConfig;
-import org.watsi.uhp.api.ApiService;
-import org.watsi.uhp.api.UhpApi;
 import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.database.EncounterFormDao;
 import org.watsi.uhp.database.EncounterItemDao;
-import org.watsi.uhp.database.IdentificationEventDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.SyncableModel;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import retrofit2.Call;
 import retrofit2.Response;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -52,19 +45,15 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ApiService.class, EncounterDao.class, EncounterFormDao.class,
-        EncounterItemDao.class, ExceptionManager.class, File.class, FileManager.class,
-        IdentificationEventDao.class, MediaType.class, MemberDao.class, okhttp3.Response.class,
-        RequestBody.class, Response.class, SyncService.class, Uri.class })
+@PrepareForTest({ Encounter.class, EncounterDao.class, EncounterItemDao.class,
+        ExceptionManager.class, File.class, FileManager.class, IdentificationEvent.class,
+        MediaType.class, Member.class, okhttp3.Response.class, RequestBody.class, Response.class,
+        SyncableModel.class, SyncService.class, Uri.class })
 public class SyncServiceTest {
-    @Mock
-    UhpApi mockApi;
     @Mock
     List<IdentificationEvent> mockIdentificationEventsList;
     @Mock
@@ -76,30 +65,26 @@ public class SyncServiceTest {
     @Mock
     okhttp3.Response mockRawResponse;
     @Mock
-    Call<IdentificationEvent> mockIdentificationEventCall;
-    @Mock
     Response<IdentificationEvent> mockIdentificationEventSyncResponse;
-    @Mock
-    Call<Encounter> mockEncounterCall;
     @Mock
     Response<Encounter> mockEncounterSyncResponse;
     @Mock
-    HashMap<String, RequestBody> mockRequestBodyMap;
+    Response<Member> mockMemberSyncResponse;
 
     private SyncService syncService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        mockStatic(ApiService.class);
         mockStatic(ExceptionManager.class);
+        mockStatic(Encounter.class);
         mockStatic(EncounterDao.class);
-        mockStatic(EncounterFormDao.class);
         mockStatic(EncounterItemDao.class);
         mockStatic(FileManager.class);
-        mockStatic(IdentificationEventDao.class);
+        mockStatic(IdentificationEvent.class);
         mockStatic(MediaType.class);
-        mockStatic(MemberDao.class);
+        mockStatic(Member.class);
+        mockStatic(SyncableModel.class);
         mockStatic(Uri.class);
         syncService = new SyncService();
     }
@@ -108,10 +93,14 @@ public class SyncServiceTest {
     public void performSync_fetchDoesNotThrowException() throws Exception {
         SyncService spiedSyncService = spy(syncService);
 
-        when(IdentificationEventDao.unsynced()).thenReturn(mockIdentificationEventsList);
-        when(EncounterDao.unsynced()).thenReturn(mockEncountersList);
-        when(EncounterFormDao.unsynced()).thenReturn(mockEncounterFormsList);
-        when(MemberDao.unsynced()).thenReturn(mockMembersList);
+        PowerMockito.when(SyncableModel.class, "unsynced", IdentificationEvent.class)
+                .thenReturn(mockIdentificationEventsList);
+        PowerMockito.when(SyncableModel.class, "unsynced", Encounter.class)
+                .thenReturn(mockEncountersList);
+        PowerMockito.when(SyncableModel.class, "unsynced", EncounterForm.class)
+                .thenReturn(mockEncounterFormsList);
+        PowerMockito.when(SyncableModel.class, "unsynced", Member.class)
+                .thenReturn(mockMembersList);
         doNothing().when(spiedSyncService).syncIdentificationEvents(
                 anyListOf(IdentificationEvent.class));
         doNothing().when(spiedSyncService).syncEncounters(anyListOf(Encounter.class));
@@ -132,7 +121,8 @@ public class SyncServiceTest {
         SyncService spiedSyncService = spy(SyncService.class);
         SQLException mockException = mock(SQLException.class);
 
-        when(IdentificationEventDao.unsynced()).thenReturn(mockIdentificationEventsList);
+        when(IdentificationEvent.unsynced(IdentificationEvent.class))
+                .thenReturn(mockIdentificationEventsList);
         doThrow(mockException).when(spiedSyncService)
                 .syncIdentificationEvents(mockIdentificationEventsList);
 
@@ -146,168 +136,61 @@ public class SyncServiceTest {
     private Member mockMember() {
         Member mockMember = mock(Member.class);
         when(mockMember.getId()).thenReturn(UUID.randomUUID());
-        when(mockMember.getTokenAuthHeaderString()).thenReturn("Token foo");
         return mockMember;
     }
 
-    private IdentificationEvent mockIdentificationEvent(boolean isNew) {
+    private IdentificationEvent mockIdentificationEvent() throws Exception {
         IdentificationEvent mockIdentificationEvent = mock(IdentificationEvent.class);
-        when(mockIdentificationEvent.getTokenAuthHeaderString()).thenReturn("Token foo");
         when(mockIdentificationEvent.getId()).thenReturn(UUID.randomUUID());
-        when(mockIdentificationEvent.isNew()).thenReturn(isNew);
         Member mockMember = mockMember();
         when(mockIdentificationEvent.getMember()).thenReturn(mockMember);
         return mockIdentificationEvent;
     }
 
     @Test
-    public void syncIdentificationEvents_newEvent_succeeds() throws Exception {
-        SyncService spiedService = spy(syncService);
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(true);
+    public void syncIdentificationEvents_succeeds() throws Exception {
+        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent();
         List<IdentificationEvent> identificationEventList = new ArrayList<>();
         identificationEventList.add(mockIdentificationEvent);
 
-        doReturn(mockIdentificationEventSyncResponse).when(spiedService)
-                .postIdentificationEvent(mockIdentificationEvent);
+        when(mockIdentificationEvent.sync(syncService))
+                .thenReturn(mockIdentificationEventSyncResponse);
         when(mockIdentificationEventSyncResponse.isSuccessful()).thenReturn(true);
 
-        spiedService.syncIdentificationEvents(identificationEventList);
+        syncService.syncIdentificationEvents(identificationEventList);
 
-        verify(mockIdentificationEvent, times(1)).setSynced();
-        verifyStatic();
-        IdentificationEventDao.update(mockIdentificationEvent);
+        verify(mockIdentificationEvent, times(1)).setMemberId(any(UUID.class));
+        verify(mockIdentificationEvent, times(1))
+                .updateFromSync(mockIdentificationEventSyncResponse);
     }
 
     @Test
-    public void syncIdentificationEvents_newEvent_fails() throws Exception {
-        SyncService spiedService = spy(syncService);
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(true);
+    public void syncIdentificationEvents_fails() throws Exception {
+        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent();
         List<IdentificationEvent> identificationEventList = new ArrayList<>();
         identificationEventList.add(mockIdentificationEvent);
 
-        doReturn(mockIdentificationEventSyncResponse).when(spiedService)
-                .postIdentificationEvent(mockIdentificationEvent);
+        when(mockIdentificationEvent.sync(syncService))
+                .thenReturn(mockIdentificationEventSyncResponse);
         when(mockIdentificationEventSyncResponse.isSuccessful()).thenReturn(false);
         when(mockIdentificationEventSyncResponse.raw()).thenReturn(mockRawResponse);
 
-        spiedService.syncIdentificationEvents(identificationEventList);
+        syncService.syncIdentificationEvents(identificationEventList);
 
-        verify(mockIdentificationEvent, never()).setSynced();
-        verifyStatic(never());
-        IdentificationEventDao.update(mockIdentificationEvent);
+        verify(mockIdentificationEvent, never())
+                .updateFromSync(mockIdentificationEventSyncResponse);
         verifyStatic();
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class),
                 anyMapOf(String.class, String.class));
     }
 
-    @Test
-    public void syncIdentificationEvents_updatedEvent_succeeds() throws Exception {
-        SyncService spiedService = spy(syncService);
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(false);
-        List<IdentificationEvent> identificationEventList = new ArrayList<>();
-        identificationEventList.add(mockIdentificationEvent);
-
-        doReturn(mockIdentificationEventSyncResponse).when(spiedService)
-                .patchIdentificationEvent(mockIdentificationEvent);
-        when(mockIdentificationEventSyncResponse.isSuccessful()).thenReturn(true);
-
-        spiedService.syncIdentificationEvents(identificationEventList);
-
-        verify(mockIdentificationEvent, times(1)).setSynced();
-        verifyStatic();
-        IdentificationEventDao.update(mockIdentificationEvent);
-    }
-
-    @Test
-    public void syncIdentificationEvents_updatedEvent_fails() throws Exception {
-        SyncService spiedService = spy(syncService);
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(false);
-        List<IdentificationEvent> identificationEventList = new ArrayList<>();
-        identificationEventList.add(mockIdentificationEvent);
-
-        doReturn(mockIdentificationEventSyncResponse).when(spiedService)
-                .patchIdentificationEvent(mockIdentificationEvent);
-        when(mockIdentificationEventSyncResponse.isSuccessful()).thenReturn(false);
-        when(mockIdentificationEventSyncResponse.raw()).thenReturn(mockRawResponse);
-
-        spiedService.syncIdentificationEvents(identificationEventList);
-
-        verify(mockIdentificationEvent, never()).setSynced();
-        verifyStatic(never());
-        IdentificationEventDao.update(mockIdentificationEvent);
-        verifyStatic();
-        ExceptionManager.requestFailure(
-                anyString(), any(Request.class), any(okhttp3.Response.class),
-                anyMapOf(String.class, String.class));
-    }
-
-    @Test
-    public void postIdentificationEvent_noThroughMember() throws Exception {
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(true);
-
-        when(mockIdentificationEvent.getThroughMember()).thenReturn(null);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.postIdentificationEvent(
-                mockIdentificationEvent.getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID,
-                mockIdentificationEvent)).thenReturn(mockIdentificationEventCall);
-        when(mockIdentificationEventCall.execute()).thenReturn(mockIdentificationEventSyncResponse);
-
-        Response response = syncService.postIdentificationEvent(mockIdentificationEvent);
-
-        assertEquals(response, mockIdentificationEventSyncResponse);
-        verify(mockIdentificationEventCall, times(1)).execute();
-        verify(mockIdentificationEvent, never()).setThroughMemberId(any(UUID.class));
-    }
-
-    @Test
-    public void postIdentificationEvent_hasThroughMember() throws Exception {
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(true);
-        Member mockThroughMember = mockMember();
-
-        when(mockIdentificationEvent.getThroughMember()).thenReturn(mockThroughMember);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.postIdentificationEvent(
-                mockIdentificationEvent.getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID,
-                mockIdentificationEvent)).thenReturn(mockIdentificationEventCall);
-        when(mockIdentificationEventCall.execute()).thenReturn(mockIdentificationEventSyncResponse);
-
-        Response response = syncService.postIdentificationEvent(mockIdentificationEvent);
-
-        assertEquals(response, mockIdentificationEventSyncResponse);
-        verify(mockIdentificationEventCall, times(1)).execute();
-        verify(mockIdentificationEvent, times(1)).setThroughMemberId(mockThroughMember.getId());
-    }
-
-    @Test
-    public void patchIdentificationEvent() throws Exception {
-        SyncService spiedService = spy(syncService);
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(false);
-
-        doReturn(mockRequestBodyMap).when(mockIdentificationEvent)
-                .constructIdentificationEventPatchRequest();
-        when(ApiService.requestBuilder(spiedService)).thenReturn(mockApi);
-        when(mockApi.patchIdentificationEvent(
-                anyString(), any(UUID.class), anyMapOf(String.class, RequestBody.class)))
-                .thenReturn(mockIdentificationEventCall);
-        when(mockIdentificationEventCall.execute()).thenReturn(mockIdentificationEventSyncResponse);
-
-        Response<IdentificationEvent> response =
-                spiedService.patchIdentificationEvent(mockIdentificationEvent);
-
-        assertEquals(response, mockIdentificationEventSyncResponse);
-        verify(mockApi, times(1)).patchIdentificationEvent(
-                mockIdentificationEvent.getTokenAuthHeaderString(), mockIdentificationEvent.getId(),
-                mockRequestBodyMap);
-    }
-
-    private Encounter mockEncounter() {
+    private Encounter mockEncounter() throws Exception {
         Encounter mockEncounter = mock(Encounter.class);
         when(mockEncounter.getId()).thenReturn(UUID.randomUUID());
-        when(mockEncounter.getTokenAuthHeaderString()).thenReturn("Token foo");
         Member mockMember = mockMember();
         when(mockEncounter.getMember()).thenReturn(mockMember);
-        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent(true);
+        IdentificationEvent mockIdentificationEvent = mockIdentificationEvent();
         when(mockEncounter.getIdentificationEvent()).thenReturn(mockIdentificationEvent);
         return mockEncounter;
     }
@@ -318,18 +201,12 @@ public class SyncServiceTest {
         List<Encounter> encountersList = new ArrayList<>();
         encountersList.add(mockEncounter);
 
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.syncEncounter(
-                mockEncounter.getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, mockEncounter))
-                .thenReturn(mockEncounterCall);
-        when(mockEncounterCall.execute()).thenReturn(mockEncounterSyncResponse);
+        when(mockEncounter.sync(syncService)).thenReturn(mockEncounterSyncResponse);
         when(mockEncounterSyncResponse.isSuccessful()).thenReturn(true);
 
         syncService.syncEncounters(encountersList);
 
-        verify(mockEncounter, times(1)).setSynced();
-        verifyStatic();
-        EncounterDao.update(mockEncounter);
+        verify(mockEncounter, times(1)).updateFromSync(mockEncounterSyncResponse);
     }
 
     @Test
@@ -338,18 +215,13 @@ public class SyncServiceTest {
         List<Encounter> encountersList = new ArrayList<>();
         encountersList.add(mockEncounter);
 
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(mockApi.syncEncounter(
-                mockEncounter.getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, mockEncounter))
-                .thenReturn(mockEncounterCall);
-        when(mockEncounterCall.execute()).thenReturn(mockEncounterSyncResponse);
+        when(mockEncounter.sync(syncService)).thenReturn(mockEncounterSyncResponse);
         when(mockEncounterSyncResponse.isSuccessful()).thenReturn(false);
+        when(mockEncounterSyncResponse.raw()).thenReturn(mockRawResponse);
 
         syncService.syncEncounters(encountersList);
 
-        verify(mockEncounter, never()).setSynced();
-        verifyStatic(never());
-        EncounterDao.update(mockEncounter);
+        verify(mockEncounter, never()).updateFromSync(any(Response.class));
         verifyStatic();
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class),
@@ -359,8 +231,6 @@ public class SyncServiceTest {
     private EncounterForm mockEncounterForm(boolean encounterSynced) throws Exception {
         EncounterForm mockEncounterForm = mock(EncounterForm.class);
         when(mockEncounterForm.getId()).thenReturn(UUID.randomUUID());
-        when(mockEncounterForm.getTokenAuthHeaderString()).thenReturn("Token foo");
-        when(mockEncounterForm.getUrl()).thenReturn("foo");
         Encounter mockEncounter = mockEncounter();
         when(mockEncounter.isSynced()).thenReturn(encounterSynced);
         when(EncounterDao.find(mockEncounter.getId())).thenReturn(mockEncounter);
@@ -377,12 +247,10 @@ public class SyncServiceTest {
 
         when(EncounterDao.find(mockEncounter.getId())).thenReturn(mockEncounter);
         when(mockEncounterForm(false).getEncounter().isSynced()).thenReturn(false);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
 
         syncService.syncEncounterForms(encounterFormsList);
 
-        verify(mockApi, never()).syncEncounterForm(
-                anyString(), any(UUID.class), any(RequestBody.class));
+        verify(mockEncounterForm, never()).sync(syncService);
     }
 
     @Test
@@ -393,11 +261,8 @@ public class SyncServiceTest {
 
         syncService.syncEncounterForms(encounterFormsList);
 
-        verify(mockApi, never()).syncEncounterForm(
-                anyString(), any(UUID.class), any(RequestBody.class));
-        verify(mockEncounterForm, times(1)).setSynced();
-        verifyStatic();
-        EncounterFormDao.update(mockEncounterForm);
+        verify(mockEncounterForm, never()).sync(syncService);
+        verify(mockEncounterForm, times(1)).destroy();
     }
 
     @Test
@@ -406,29 +271,14 @@ public class SyncServiceTest {
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
         byte[] image = new byte[]{(byte)0xe0};
-        MediaType mockImageMediaType = mock(MediaType.class);
-        RequestBody mockRequestBody = mock(RequestBody.class);
-        File mockFile = mock(File.class);
-        mockStatic(RequestBody.class);
 
         when(mockEncounterForm.getImage(syncService)).thenReturn(image);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(MediaType.parse("image/jpg")).thenReturn(mockImageMediaType);
-        when(RequestBody.create(mockImageMediaType, image)).thenReturn(mockRequestBody);
-        when(mockApi.syncEncounterForm(
-                mockEncounterForm.getTokenAuthHeaderString(),
-                mockEncounterForm.getEncounter().getId(),
-                mockRequestBody)).thenReturn(mockEncounterCall);
-        when(mockEncounterCall.execute()).thenReturn(mockEncounterSyncResponse);
+        when(mockEncounterForm.sync(syncService)).thenReturn(mockEncounterSyncResponse);
         when(mockEncounterSyncResponse.isSuccessful()).thenReturn(true);
-        whenNew(File.class).withArguments(mockEncounterForm.getUrl()).thenReturn(mockFile);
 
         syncService.syncEncounterForms(encounterFormsList);
 
-        verify(mockFile, times(1)).delete();
-        verify(mockEncounterForm, times(1)).setSynced();
-        verifyStatic();
-        EncounterFormDao.update(mockEncounterForm);
+        verify(mockEncounterForm, times(1)).updateFromSync(mockEncounterSyncResponse);
     }
 
     @Test
@@ -437,29 +287,15 @@ public class SyncServiceTest {
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
         byte[] image = new byte[]{(byte)0xe0};
-        MediaType mockImageMediaType = mock(MediaType.class);
-        RequestBody mockRequestBody = mock(RequestBody.class);
-        File mockFile = mock(File.class);
-        mockStatic(RequestBody.class);
 
         when(mockEncounterForm.getImage(syncService)).thenReturn(image);
-        when(ApiService.requestBuilder(syncService)).thenReturn(mockApi);
-        when(MediaType.parse("image/jpg")).thenReturn(mockImageMediaType);
-        when(RequestBody.create(mockImageMediaType, image)).thenReturn(mockRequestBody);
-        when(mockApi.syncEncounterForm(
-                mockEncounterForm.getTokenAuthHeaderString(),
-                mockEncounterForm.getEncounter().getId(),
-                mockRequestBody)).thenReturn(mockEncounterCall);
-        when(mockEncounterCall.execute()).thenReturn(mockEncounterSyncResponse);
+        when(mockEncounterForm.sync(syncService)).thenReturn(mockEncounterSyncResponse);
         when(mockEncounterSyncResponse.isSuccessful()).thenReturn(false);
-        whenNew(File.class).withAnyArguments().thenReturn(mockFile);
+        when(mockEncounterSyncResponse.raw()).thenReturn(mockRawResponse);
 
         syncService.syncEncounterForms(encounterFormsList);
 
-        verify(mockFile, never()).delete();
-        verify(mockEncounterForm, never()).setSynced();
-        verifyStatic(never());
-        EncounterFormDao.update(mockEncounterForm);
+        verify(mockEncounterForm, never()).updateFromSync(any(Response.class));
         verifyStatic();
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class),
@@ -467,22 +303,35 @@ public class SyncServiceTest {
     }
 
     @Test
-    public void syncMembers_twoMembers_succeeds() throws Exception {
-        SyncService spiedService = spy(syncService);
-        Member mockNewMember = mock(Member.class);
-        when(mockNewMember.isNew()).thenReturn(true);
-        Member mockExistingMember = mock(Member.class);
-        when(mockExistingMember.isNew()).thenReturn(false);
+    public void syncMembers_succeeds() throws Exception {
+        Member mockMember = mockMember();
         List<Member> membersList = new ArrayList<>();
-        membersList.add(mockNewMember);
-        membersList.add(mockExistingMember);
+        membersList.add(mockMember);
 
-        doNothing().when(mockNewMember).syncMember(spiedService);
-        doNothing().when(mockExistingMember).syncMember(spiedService);
+        when(mockMember.sync(syncService)).thenReturn(mockMemberSyncResponse);
+        when(mockMemberSyncResponse.isSuccessful()).thenReturn(true);
 
-        spiedService.syncMembers(membersList);
+        syncService.syncMembers(membersList);
 
-        verify(mockNewMember, times(1)).syncMember(spiedService);
-        verify(mockExistingMember, times(1)).syncMember(spiedService);
+        verify(mockMember, times(1)).updateFromSync(mockMemberSyncResponse);
+    }
+
+    @Test
+    public void syncMembers_fails() throws Exception {
+        Member mockMember = mockMember();
+        List<Member> membersList = new ArrayList<>();
+        membersList.add(mockMember);
+
+        when(mockMember.sync(syncService)).thenReturn(mockMemberSyncResponse);
+        when(mockMemberSyncResponse.isSuccessful()).thenReturn(false);
+        when(mockMemberSyncResponse.raw()).thenReturn(mockRawResponse);
+
+        syncService.syncMembers(membersList);
+
+        verify(mockMember, never()).updateFromSync(mockMemberSyncResponse);
+        verifyStatic();
+        ExceptionManager.requestFailure(
+                anyString(), any(Request.class), any(okhttp3.Response.class),
+                anyMapOf(String.class, String.class));
     }
 }

@@ -13,7 +13,6 @@ import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
 
@@ -124,32 +123,7 @@ public class FetchService extends AbstractSyncJobService {
         Iterator<Member> iterator = fetchedMembers.iterator();
         while (iterator.hasNext()) {
             Member fetchedMember = iterator.next();
-
-            Member persistedMember = MemberDao.findById(fetchedMember.getId());
-            if (persistedMember != null) {
-                // if the persisted member has not been synced to the back-end, assume it is
-                // the most up-to-date and do not update it with the fetched member attributes
-                if (!persistedMember.isSynced()) {
-                    iterator.remove();
-                    continue;
-                }
-
-                // if the existing member record has a photo and the fetched member record has
-                // the same photo url as the existing record, copy the photo to the new record
-                // so we do not have to re-download it
-                if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
-                        persistedMember.getPhotoUrl().equals(fetchedMember.getPhotoUrl())) {
-                    fetchedMember.setPhoto(persistedMember.getPhoto());
-                }
-            }
-
-            try {
-                fetchedMember.setSynced();
-                MemberDao.createOrUpdate(fetchedMember);
-            } catch (AbstractModel.ValidationException e) {
-                ExceptionManager.reportException(e);
-            }
-
+            fetchedMember.updateFromFetch();
             iterator.remove();
         }
     }
