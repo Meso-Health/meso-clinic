@@ -101,7 +101,7 @@ public class IdentificationFlowFeature extends ActivityTest {
 
         // asserts that when you look up id in system with spaces, member found
         onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText("RWI000000"), pressImeActionButton());
+        onView(isAssignableFrom(EditText.class)).perform(typeText(ID_OF_MEMBER), pressImeActionButton());
         waitForUIToUpdate();
         onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
 
