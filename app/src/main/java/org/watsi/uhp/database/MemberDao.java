@@ -53,8 +53,6 @@ public class MemberDao {
     }
 
     public static Member findByCardId(String cardId) throws SQLException {
-        //TODO: remove after Skoll Conference
-        cardId = cardId.replaceAll(" ","");
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);
 
@@ -70,6 +68,7 @@ public class MemberDao {
     }
 
     public static List<Member> withCardIdLike(String query) throws SQLException {
+        query = query.replaceAll(" ","");
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()

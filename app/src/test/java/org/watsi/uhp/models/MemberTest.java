@@ -567,6 +567,7 @@ public class MemberTest {
         assertFalse(requestBodyMap.containsKey(Member.FIELD_NAME_PHOTO));
     }
 
+
     @Test
     public void formatPostRequest_validMemberHasPhotoUrl_includesPhoto() throws Exception {
         Member newborn = spy(mockNewborn());

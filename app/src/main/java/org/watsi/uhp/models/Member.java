@@ -243,8 +243,6 @@ public class Member extends SyncableModel {
     }
 
     public void setCardId(String cardId) throws ValidationException {
-        //TODO: remove after Skoll Conference
-        cardId = cardId.replaceAll(" ","");
         if (validCardId(cardId)) {
             this.mCardId = cardId;
         } else {
@@ -526,7 +524,7 @@ public class Member extends SyncableModel {
                 RequestBody.create(MultipartBody.FORM, getHouseholdId().toString())
         );
 
-        if (FileManager.isLocal(getPhotoUrl())) {
+        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
             if (image != null) {
                 requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));

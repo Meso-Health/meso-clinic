@@ -1,16 +1,36 @@
 <resources>
+    <!-- left and right margins on all fragments -->
     <dimen name="fragment_horizontal_margin">16dp</dimen>
+
+    <!-- top and bottom margins on all fragments -->
     <dimen name="fragment_vertical_margin">10dp</dimen>
 
-    <dimen name="label_vertical_margin">16dp</dimen>
-    <dimen name="spinner_vertical_margin">16dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="form_item_vertical_margin">5dp</dimen>
-    <dimen name="list_item_vertical_padding">16dp</dimen>
+    <!-- top, bottom, left, and right padding for all dialogs -->
     <dimen name="dialog_padding">16dp</dimen>
 
+    <!-- margin for floating action buttons -->
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- margin above and below spinners -->
+    <dimen name="spinner_vertical_margin">16dp</dimen>
+
+    <!-- margin above and below large text labels -->
+    <dimen name="label_vertical_margin">16dp</dimen>
+
+    <!-- margin between each input item on a form -->
+    <dimen name="form_item_vertical_margin">5dp</dimen>
+
+    <!-- margin under small text labels -->
+    <dimen name="text_view_vertical_margin">5dp</dimen>
+
+    <!-- padding for each item in a list view -->
+    <dimen name="list_item_vertical_padding">16dp</dimen>
+
+    <!-- dimensions for photo on member card -->
     <dimen name="item_member_list_photo_width">90dp</dimen>
     <dimen name="item_member_list_photo_height">120dp</dimen>
+
+    <!-- dimensions for photo on detail view-->
     <dimen name="detail_fragment_photo_height">208dp</dimen>
     <dimen name="detail_fragment_photo_width">156dp</dimen>
 </resources>
