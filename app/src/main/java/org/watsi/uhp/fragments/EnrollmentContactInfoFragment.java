@@ -5,7 +5,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 
@@ -42,7 +41,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
             if (phoneNumber.isEmpty()) phoneNumber = null;
             mMember.setPhoneNumber(phoneNumber);
             try {
-                MemberDao.update(mMember);
+                mMember.saveChanges(getAuthenticationToken());
                 getNavigationManager().setEnrollmentFingerprintFragment(mMember);
             } catch (SQLException e) {
                 ExceptionManager.reportException(e);

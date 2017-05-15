@@ -10,13 +10,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 
@@ -79,9 +77,8 @@ public class MemberEditFragment extends BaseFragment {
                 public void onClick(DialogInterface dialog, int which) {
                     String toastMessage = mMember.getFullName() + "'s information has been updated.";
                     try {
-                        mMember.setUnsynced(getAuthenticationToken());
-                        MemberDao.update(mMember);
-                    } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+                        mMember.saveChanges(getAuthenticationToken());
+                    } catch (SQLException e) {
                         ExceptionManager.reportException(e);
                         toastMessage = "Failed to update the member information.";
                     }

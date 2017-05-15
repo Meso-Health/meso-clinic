@@ -13,12 +13,10 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
-import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -60,14 +58,13 @@ public class ReceiptFragment extends BaseFragment {
             public void onClick(View v) {
                 String toastMessage;
                 try {
-                    mEncounter.setUnsynced(getAuthenticationToken());
-                    EncounterDao.create(mEncounter);
+                    mEncounter.saveChanges(getAuthenticationToken());
 
                     getNavigationManager().setCurrentPatientsFragment();
 
                     toastMessage = mEncounter.getMember()
                             .getFullName() + getString(R.string.encounter_submitted);
-                } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+                } catch (SQLException e) {
                     toastMessage = "Failed to save data, contact support.";
                     ExceptionManager.reportException(e);
                 }

@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
+import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -79,7 +79,7 @@ public class VersionAndSyncFragment extends BaseFragment {
                 int[] counts = new int[5];
                 try {
                     counts[0] = MemberDao.membersWithPhotosToFetch().size();
-                    List<Member> unsyncedMembers = MemberDao.unsynced();
+                    List<Member> unsyncedMembers = Member.unsynced(Member.class);
                     int newMembersCount = 0;
                     int editedMembersCount = 0;
                     for (Member member : unsyncedMembers) {
@@ -91,8 +91,8 @@ public class VersionAndSyncFragment extends BaseFragment {
                     }
                     counts[1] = newMembersCount;
                     counts[2] = editedMembersCount;
-                    counts[3] = IdentificationEventDao.unsynced().size();
-                    counts[4] = EncounterDao.unsynced().size();
+                    counts[3] = IdentificationEvent.unsynced(IdentificationEvent.class).size();
+                    counts[4] = Encounter.unsynced(Encounter.class).size();
                 } catch (SQLException | IllegalStateException e) {
                     ExceptionManager.reportException(e);
                 }

@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -45,7 +44,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
     @Override
     void nextStep() {
         try {
-            MemberDao.update(mMember);
+            mMember.saveChanges(getAuthenticationToken());
             getNavigationManager().setEnrollmentContactInfoFragment(mMember);
         } catch (SQLException e) {
             ExceptionManager.reportException(e);

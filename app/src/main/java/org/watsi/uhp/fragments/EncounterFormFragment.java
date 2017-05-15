@@ -21,7 +21,6 @@ import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
-import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 
@@ -75,19 +74,13 @@ public class EncounterFormFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            try {
-                if (mEncounterForm.getUrl() != null) {
-                    mEncounter.addEncounterForm(mEncounterForm);
-                    mEncounterForm.setUnsynced(getAuthenticationToken());
-                }
-                if (finished) {
-                    getNavigationManager().setReceiptFragment(mEncounter);
-                } else {
-                    getNavigationManager().setEncounterFormFragment(mEncounter);
-                }
-            } catch (SyncableModel.UnauthenticatedException e) {
-                ExceptionManager.reportException(e);
-                Toast.makeText(getContext(), "Failed to save data, contact support.", Toast.LENGTH_LONG).show();
+            if (mEncounterForm.getUrl() != null) {
+                mEncounter.addEncounterForm(mEncounterForm);
+            }
+            if (finished) {
+                getNavigationManager().setReceiptFragment(mEncounter);
+            } else {
+                getNavigationManager().setEncounterFormFragment(mEncounter);
             }
         }
     }

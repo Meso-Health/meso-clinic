@@ -21,7 +21,6 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.EncounterItemDao;
-import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -219,8 +218,6 @@ public class DetailFragment extends BaseFragment {
                                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
                                        Integer clinicNumber) throws SyncableModel.UnauthenticatedException {
         IdentificationEvent idEvent = new IdentificationEvent();
-        idEvent.setIsNew(true);
-        idEvent.setUnsynced(getAuthenticationToken());
         idEvent.setMember(mMember);
         idEvent.setSearchMethod(mIdMethod);
         idEvent.setThroughMember(mThroughMember);
@@ -232,7 +229,7 @@ public class DetailFragment extends BaseFragment {
             idEvent.setPhotoVerified(false);
         }
         try {
-            IdentificationEventDao.create(idEvent);
+            idEvent.saveChanges(getAuthenticationToken());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
@@ -249,10 +246,9 @@ public class DetailFragment extends BaseFragment {
             throws SyncableModel.UnauthenticatedException {
         IdentificationEvent checkIn = mMember.currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
-        checkIn.setUnsynced(getAuthenticationToken());
 
         try {
-            IdentificationEventDao.update(checkIn);
+            checkIn.saveChanges(getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(),
                     mMember.getFullName() + " " + getString(R.string.identification_dismissed),
