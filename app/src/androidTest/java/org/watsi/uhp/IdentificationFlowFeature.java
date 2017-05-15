@@ -1,17 +1,18 @@
 package org.watsi.uhp;
 
-import android.database.SQLException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.EditText;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
+import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.ExceptionManager;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -37,20 +38,11 @@ public class IdentificationFlowFeature extends LoginFeature {
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
             new ActivityTestRule<>(ClinicActivity.class, false, true);
-    private ClinicActivity clinicActivity;
-
-    @Before
-    public void setup() {
-        logsUserIn();
-    }
-
-    @After
-    public void teardown() {
-        logsUserOut();
-    }
 
     @Test
     public void identificationByNameSearch_idFlow() {
+        logsUserIn();
+
         onView(withId(R.id.identification_button)).perform(click());
         onView(withId(R.id.search_member)).perform(click());
 
@@ -73,10 +65,20 @@ public class IdentificationFlowFeature extends LoginFeature {
         onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
 
         checkingInPatient_idFlow(NAME_OF_MEMBER);
+
+        try {
+            IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
+        } catch (java.sql.SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+
+        logsUserOut();
     }
 
     @Test
     public void identificationByIdSearch_idFlow() {
+        logsUserIn();
+
         onView(withId(R.id.identification_button)).perform(click());
         onView(withId(R.id.search_member)).perform(click());
 
@@ -99,24 +101,14 @@ public class IdentificationFlowFeature extends LoginFeature {
         onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
 
         checkingInPatient_idFlow(NAME_OF_MEMBER);
-    }
 
-    @Test
-    public void identificationByBarcodeScan_idFlow() {
-        onView(withId(R.id.identification_button)).perform(click());
-        onView(withId(R.id.search_member)).perform(click());
+        try {
+            IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
+        } catch (java.sql.SQLException e) {
+            ExceptionManager.reportException(e);
+        }
 
-        // asserts that when you click 'LOOK UP PATIENT', camera opens
-        onView(withId(R.id.barcode_preview_surface)).check(matches(isDisplayed()));
-
-        // asserts that when you scan invalid barcode, error message displays
-        onView(withText(R.string.id_not_found_toast)).check(matches(isDisplayed()));
-
-        // asserts that when you scan valid barcode, member's detail fragment appears
-        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
-        onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
-
-        checkingInPatient_idFlow("placeholder");
+        logsUserOut();
     }
 
     public void checkingInPatient_idFlow(String name) {
