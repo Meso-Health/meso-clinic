@@ -63,12 +63,12 @@ public class EncounterFragment extends BaseFragment {
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         backdateEncounterLink = (TextView) view.findViewById(R.id.backdate_encounter);
-        Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
+        Button continueButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setContinueToReceiptButton(continueToReceiptButton);
+        setContinueButton(continueButton);
         setAddBillableLink(view);
         setBackdateEncounterListener();
 
@@ -148,8 +148,8 @@ public class EncounterFragment extends BaseFragment {
         });
     }
 
-    private void setContinueToReceiptButton(Button continueToReceiptButton) {
-        continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
+    private void setContinueButton(Button continueButton) {
+        continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationManager().setEncounterFormFragment(encounter);
