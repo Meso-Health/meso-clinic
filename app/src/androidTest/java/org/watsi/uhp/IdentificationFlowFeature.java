@@ -14,6 +14,7 @@ import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.ExceptionManager;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -50,13 +51,9 @@ public class IdentificationFlowFeature extends ActivityTest {
     }
 
     @After
-    public void end_idFlow() {
+    public void end_idFlow() throws SQLException {
         // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
-        try {
-            IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
-        } catch (java.sql.SQLException e) {
-            ExceptionManager.reportException(e);
-        }
+        IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
 
         LoginFeature.logsUserOut();
     }
