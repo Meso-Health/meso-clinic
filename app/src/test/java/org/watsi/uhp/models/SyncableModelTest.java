@@ -26,6 +26,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -239,7 +240,8 @@ public class SyncableModelTest {
     }
 
     @Test
-    public void handleUpdateFromSync_callsUpdateFromApiResponse() throws Exception {
+    public void updateFromSync_callsUpdateFromApiResponse() throws Exception {
+        doReturn(new HashSet<String>()).when(memberSpy).diffFields(any(Member.class));
         doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
 
         memberSpy.updateFromSync(mockResponse);
@@ -248,17 +250,20 @@ public class SyncableModelTest {
     }
 
     @Test
-    public void handleUpdateFromSync_clearsDirtyFields() throws Exception {
+    public void updateFromSync_resetsDirtyFields() throws Exception {
+        Set<String> diffFields = new HashSet<>();
+
+        doReturn(diffFields).when(memberSpy).diffFields(any(Member.class));
         doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
 
         memberSpy.updateFromSync(mockResponse);
 
-        verify(memberSpy, times(1)).clearDirtyFields();
-        assertTrue(memberSpy.getDirtyFields().size() == 0);
+        verify(memberSpy, times(1)).setDirtyFields(diffFields);
     }
 
     @Test
-    public void handleUpdateFromSync_persistsTheModel() throws Exception {
+    public void updateFromSync_persistsTheModel() throws Exception {
+        doReturn(new HashSet<String>()).when(memberSpy).diffFields(any(Member.class));
         doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
 
         memberSpy.updateFromSync(mockResponse);

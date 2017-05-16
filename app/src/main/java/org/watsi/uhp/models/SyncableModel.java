@@ -70,7 +70,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return !isNew() && getDirtyFields().isEmpty();
     }
 
-    private void setDirtyFields(Set<String> dirtyFields) {
+    protected void setDirtyFields(Set<String> dirtyFields) {
         this.mDirtyFields = new Gson().toJson(dirtyFields);
     }
 
@@ -149,7 +149,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     public void updateFromSync(Response<T> response) throws SQLException {
         handleUpdateFromSync(response);
-        clearDirtyFields();
+        setDirtyFields(diffFields(response.body()));
         getDao().createOrUpdate((T) this);
     }
 
