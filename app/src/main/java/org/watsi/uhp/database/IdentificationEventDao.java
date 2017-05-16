@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -77,6 +78,12 @@ public class IdentificationEventDao {
             return null;
         } else {
             return getInstance().getIdentificationDao().queryForId(UUID.fromString(result));
+        }
+    }
+
+    public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
+        for (UUID id : memberIdsToDelete) {
+            getInstance().getIdentificationDao().deleteById(id);
         }
     }
 }
