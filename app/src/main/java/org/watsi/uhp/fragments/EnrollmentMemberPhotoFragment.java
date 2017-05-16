@@ -44,8 +44,8 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     @Override
     void nextStep() {
         try {
-            mMember.saveChanges(getAuthenticationToken());
-            if (!mMember.shouldCaptureFingerprint()) {
+            if (isLastStep()) {
+                mMember.saveChanges(getAuthenticationToken());
                 getNavigationManager().setCurrentPatientsFragment();
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mMember.shouldCaptureNationalIdPhoto()) {

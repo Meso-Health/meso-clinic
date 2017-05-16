@@ -17,7 +17,6 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
 
@@ -43,13 +42,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
 
     @Override
     void nextStep() {
-        try {
-            mMember.saveChanges(getAuthenticationToken());
-            getNavigationManager().setEnrollmentContactInfoFragment(mMember);
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
-        }
+        getNavigationManager().setEnrollmentContactInfoFragment(mMember);
     }
 
     @Override
