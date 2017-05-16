@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.dao.Dao;
@@ -35,9 +35,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_TOKEN = "token";
     public static final String FIELD_NAME_DIRTY_FIELDS = "dirty_fields";
-
-    protected static final Set<String> SYNCABLE_DIFF_IGNORE_FIELDS = Sets.newHashSet(new String[]{
-            "mToken","mDirtyFields"});
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
@@ -121,7 +118,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     Set<String> diffFields(T refModel) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         Map<String, Object> selfMap = gson.fromJson(gson.toJson(this), Map.class);
         Map<String, Object> refMap;
         if (refModel == null) {
@@ -135,7 +132,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         diffSet.addAll(diff.entriesDiffering().keySet());
         diffSet.addAll(diff.entriesOnlyOnLeft().keySet());
         diffSet.addAll(diff.entriesOnlyOnRight().keySet());
-        diffSet.removeAll(diffIgnoreFields());
         return diffSet;
     }
 
@@ -171,10 +167,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
                 .isNotNull(SyncableModel.FIELD_NAME_DIRTY_FIELDS)
                 .prepare();
         return dao.query(preparedQuery);
-    }
-
-    protected Set<String> diffIgnoreFields() {
-        return SYNCABLE_DIFF_IGNORE_FIELDS;
     }
 
     public abstract void handleUpdateFromSync(Response<T> response);

@@ -67,9 +67,6 @@ public class Member extends SyncableModel {
     public static final int MINIMUM_FINGERPRINT_AGE = 6;
     public static final int MINIMUM_NATIONAL_ID_AGE = 18;
 
-    private static final Set<String> DIFF_IGNORE_FIELDS = Sets.newHashSet(new String[]{
-            "mIdentificationEvents"});
-
     public enum GenderEnum { M, F }
 
     public enum BirthdateAccuracyEnum { D, M, Y }
@@ -162,13 +159,6 @@ public class Member extends SyncableModel {
 
     public String getFullName() {
         return this.mFullName;
-    }
-
-    @Override
-    protected Set<String> diffIgnoreFields() {
-        Set<String> ignoreFields = DIFF_IGNORE_FIELDS;
-        ignoreFields.addAll(SyncableModel.SYNCABLE_DIFF_IGNORE_FIELDS);
-        return ignoreFields;
     }
 
     @Override

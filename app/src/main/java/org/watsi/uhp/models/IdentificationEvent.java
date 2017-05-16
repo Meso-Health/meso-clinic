@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import okhttp3.MultipartBody;
@@ -243,11 +242,6 @@ public class IdentificationEvent extends SyncableModel {
                         MultipartBody.FORM,
                         new Gson().toJsonTree(getDismissalReason()).getAsString()));
         return requestBodyMap;
-    }
-
-    @Override
-    protected Set<String> diffIgnoreFields() {
-        return null;
     }
 
     @Override

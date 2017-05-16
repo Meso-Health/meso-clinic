@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import okhttp3.OkHttpClient;
@@ -139,13 +138,6 @@ public class MemberTest {
         } catch (Exception e) {
             assertEquals(e.getMessage(), "phone_number: Invalid phone number");
         }
-    }
-
-    @Test
-    public void diffIgnoreFields() throws Exception {
-        Set<String> ignoreFields = member.diffIgnoreFields();
-
-        assertEquals(ignoreFields.toString(), "[mToken, mDirtyFields, mIdentificationEvents]");
     }
 
     @Test

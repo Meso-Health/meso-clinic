@@ -28,7 +28,6 @@ public class Encounter extends SyncableModel {
 
     public static final String TABLE_NAME = "encounters";
 
-    public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_OCCURRED_AT = "occurred_at";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_IDENTIFICATION_EVENT_ID = "identification_event_id";
@@ -37,11 +36,6 @@ public class Encounter extends SyncableModel {
     public static final String FIELD_NAME_BACKDATED_OCCURRED_AT = "backdated_occurred_at";
 
     public static final DecimalFormat PRICE_FORMAT = new DecimalFormat("#,###,###");
-
-    @Expose
-    @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private UUID mId;
 
     @Expose
     @SerializedName(FIELD_NAME_OCCURRED_AT)
@@ -79,14 +73,6 @@ public class Encounter extends SyncableModel {
 
     public Encounter(List<EncounterItem> encounterItems) {
         setEncounterItems(encounterItems);
-    }
-
-    public UUID getId() {
-        return mId;
-    }
-
-    public void setId(UUID id) {
-        this.mId = id;
     }
 
     @Override
