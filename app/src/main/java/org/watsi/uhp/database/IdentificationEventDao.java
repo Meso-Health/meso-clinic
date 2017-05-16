@@ -7,6 +7,7 @@ import com.j256.ormlite.dao.RawRowMapper;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -58,6 +59,12 @@ public class IdentificationEventDao {
             return null;
         } else {
             return getInstance().getIdentificationDao().queryForId(UUID.fromString(result));
+        }
+    }
+
+    public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
+        for (UUID id : memberIdsToDelete) {
+            getInstance().getIdentificationDao().deleteById(id);
         }
     }
 }
