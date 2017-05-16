@@ -15,6 +15,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EnrollmentFingerprintFragment extends FormFragment {
+public class EnrollmentFingerprintFragment extends FormFragment<Member> {
 
     private static int SIMPRINTS_ENROLLMENT_INTENT = 3;
 
@@ -52,8 +53,8 @@ public class EnrollmentFingerprintFragment extends FormFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mMember.setUnsynced(getAuthenticationToken());
-                    MemberDao.update(mMember);
+                    mSyncableModel.setUnsynced(getAuthenticationToken());
+                    MemberDao.update(mSyncableModel);
                     getNavigationManager().setCurrentPatientsFragment();
                     Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
                 } catch (SQLException | SyncableModel.UnauthenticatedException e) {
@@ -77,16 +78,16 @@ public class EnrollmentFingerprintFragment extends FormFragment {
         mFailedMessageView = view.findViewById(R.id.enrollment_fingerprint_failed_message);
 
         Button fingerprintBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_capture_btn);
-        fingerprintBtn.setOnClickListener(new CaptureThumbprintClickListener(mMember.getId(), this));
+        fingerprintBtn.setOnClickListener(new CaptureThumbprintClickListener(mSyncableModel.getId(), this));
     }
 
     private static class CaptureThumbprintClickListener implements View.OnClickListener {
 
-        private UUID mMemberId;
+        private UUID mSyncableModelId;
         private EnrollmentFingerprintFragment mFragment;
 
         CaptureThumbprintClickListener(UUID memberId, EnrollmentFingerprintFragment fragment) {
-            this.mMemberId = memberId;
+            this.mSyncableModelId = memberId;
             this.mFragment = fragment;
         }
 
@@ -100,7 +101,7 @@ public class EnrollmentFingerprintFragment extends FormFragment {
             );
             captureFingerprintIntent.putExtra(
                     Constants.SIMPRINTS_USER_ID,
-                    mMemberId.toString()
+                    mSyncableModelId.toString()
             );
             PackageManager packageManager = mFragment.getActivity().getPackageManager();
             if (captureFingerprintIntent.resolveActivity(packageManager) != null) {
@@ -129,7 +130,7 @@ public class EnrollmentFingerprintFragment extends FormFragment {
         if (registration == null || registration.getGuid() == null) {
             showFingerprintScanFailedMessage();
         } else {
-            mMember.setFingerprintsGuid(UUID.fromString(registration.getGuid()));
+            mSyncableModel.setFingerprintsGuid(UUID.fromString(registration.getGuid()));
             mSuccessMessageView.setVisibility(View.VISIBLE);
         }
     }

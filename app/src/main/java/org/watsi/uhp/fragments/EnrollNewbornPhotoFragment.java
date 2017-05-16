@@ -16,12 +16,13 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollNewbornPhotoFragment extends FormFragment {
+public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_NEWBORN_PHOTO_INTENT = 4;
 
@@ -46,8 +47,8 @@ public class EnrollNewbornPhotoFragment extends FormFragment {
     @Override
     void nextStep() {
         try {
-            mMember.setUnsynced(getAuthenticationToken());
-            MemberDao.create(mMember);
+            mSyncableModel.setUnsynced(getAuthenticationToken());
+            MemberDao.create(mSyncableModel);
             getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException | SyncableModel.UnauthenticatedException e) {
@@ -87,7 +88,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment {
                 ExceptionManager.reportException(e);
             }
 
-            mMember.setPhotoUrl(mUri.toString());
+            mSyncableModel.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {
             Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();

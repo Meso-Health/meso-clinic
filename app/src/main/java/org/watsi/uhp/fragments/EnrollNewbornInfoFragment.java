@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class EnrollNewbornInfoFragment extends FormFragment {
+public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
     private EditText mNameView;
     private EditText mCardIdView;
@@ -44,7 +44,7 @@ public class EnrollNewbornInfoFragment extends FormFragment {
 
     @Override
     void nextStep() {
-        Member newborn = mMember.createNewborn();
+        Member newborn = mSyncableModel.createNewborn();
 
         Bundle attributeBundle = createBundle();
 
@@ -137,7 +137,7 @@ public class EnrollNewbornInfoFragment extends FormFragment {
             @Override
             public void onClick(View v) {
                 getNavigationManager().setBarcodeFragment(
-                        BarcodeFragment.ScanPurposeEnum.NEWBORN, mMember, createBundle());
+                        BarcodeFragment.ScanPurposeEnum.NEWBORN, mSyncableModel, createBundle());
             }
         });
 

@@ -8,18 +8,18 @@ import android.widget.Button;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.SyncableModel;
 
-public abstract class FormFragment extends BaseFragment {
+public abstract class FormFragment<T extends SyncableModel> extends BaseFragment {
 
-    protected Member mMember;
+    protected T mSyncableModel;
     protected Button mSaveBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(getTitleLabelId());
 
-        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+        mSyncableModel = (T) getArguments().getSerializable(NavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
 
         View view = inflater.inflate(getFragmentLayoutId(), container, false);
 
@@ -38,8 +38,12 @@ public abstract class FormFragment extends BaseFragment {
     }
 
     abstract int getTitleLabelId();
+
     abstract int getFragmentLayoutId();
+
     public abstract boolean isFirstStep();
+
     abstract void nextStep();
+
     abstract void setUpFragment(View view);
 }
