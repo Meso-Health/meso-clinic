@@ -26,8 +26,8 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 public class LoginFeature extends ActivityTest {
 
-    private static final String USERNAME = "klinik";
-    private static final String PASSWORD = "123456";
+    private final String username = "klinik";
+    private final String password = "123456";
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
@@ -40,7 +40,7 @@ public class LoginFeature extends ActivityTest {
 
     @Test
     public void logInAndLogOut_loginFlow() {
-        logsUserIn(USERNAME, PASSWORD);
+        logsUserIn(username, password);
         logsUserOut();
     }
 

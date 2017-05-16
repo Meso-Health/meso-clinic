@@ -32,25 +32,25 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class IdentificationFlowFeature extends ActivityTest {
 
-    private final String USERNAME = "klinik";
-    private final String PASSWORD = "123456";
-    private final String OPD_NUMBER = "30";
-    private final String NOT_NAME_OF_MEMBER = "I am not a member";
-    private final String NAME_OF_MEMBER = "Lil Jon";
-    private final String NOT_ID_OF_MEMBER = "JWI000000";
-    private final String ID_OF_MEMBER = "RWI 000 000";
+    private final String username = "klinik";
+    private final String password = "123456";
+    private final String opdNumber = "30";
+    private final String notNameOfMember = "I am not a member";
+    private final String nameOfMember = "Lil Jon";
+    private final String notCardIdOfMember = "JWI000000";
+    private final String cardIdOfMember = "RWI 000 000";
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
             new ActivityTestRule<>(ClinicActivity.class, false, true);
 
     @Before
-    public void start() {
-        LoginFeature.logsUserIn(USERNAME, PASSWORD);
+    public void start_idFlow() {
+        LoginFeature.logsUserIn(username, password);
     }
 
     @After
-    public void end() {
+    public void end_idFlow() {
         // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
         try {
             IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
@@ -68,23 +68,23 @@ public class IdentificationFlowFeature extends ActivityTest {
 
         // asserts that when you look up name not in system, no results found
         onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(NOT_NAME_OF_MEMBER), pressImeActionButton());
+        onView(isAssignableFrom(EditText.class)).perform(typeText(notNameOfMember), pressImeActionButton());
         onView(withText(R.string.member_no_search_results_text)).check(matches(isDisplayed()));
         onView(withId(R.id.member_search)).perform(click());
         onView(isAssignableFrom(EditText.class)).perform(clearText());
 
         // asserts that when you look up name that belongs to member, member found
         onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(NAME_OF_MEMBER), pressImeActionButton());
+        onView(isAssignableFrom(EditText.class)).perform(typeText(nameOfMember), pressImeActionButton());
         waitForUIToUpdate();
-        onView(withText(ID_OF_MEMBER)).check(matches(isDisplayed()));
+        onView(withText(cardIdOfMember)).check(matches(isDisplayed()));
 
         // asserts that when you click on member found, their detail fragment displays with correct information
-        onView(withText(ID_OF_MEMBER)).perform(click());
+        onView(withText(cardIdOfMember)).perform(click());
         onView(withText("Is this the right person?")).check(matches(isDisplayed()));
-        onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
+        onView(withText(nameOfMember)).check(matches(isDisplayed()));
 
-        checkingInPatient_idFlow(NAME_OF_MEMBER);
+        checkingInPatient_idFlow(nameOfMember);
     }
 
     @Test
@@ -94,23 +94,23 @@ public class IdentificationFlowFeature extends ActivityTest {
 
         // asserts that when you look up id not in system, no results found
         onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(NOT_ID_OF_MEMBER), pressImeActionButton());
+        onView(isAssignableFrom(EditText.class)).perform(typeText(notCardIdOfMember), pressImeActionButton());
         onView(withText(R.string.member_no_search_results_text)).check(matches(isDisplayed()));
         onView(withId(R.id.member_search)).perform(click());
         onView(isAssignableFrom(EditText.class)).perform(clearText());
 
         // asserts that when you look up id in system with spaces, member found
         onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(ID_OF_MEMBER), pressImeActionButton());
+        onView(isAssignableFrom(EditText.class)).perform(typeText(cardIdOfMember), pressImeActionButton());
         waitForUIToUpdate();
-        onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
+        onView(withText(nameOfMember)).check(matches(isDisplayed()));
 
         // asserts that when you click on member found, their detail fragment displays with correct information
-        onView(withText(NAME_OF_MEMBER)).perform(click());
+        onView(withText(nameOfMember)).perform(click());
         onView(withText("Is this the right person?")).check(matches(isDisplayed()));
-        onView(withText(NAME_OF_MEMBER)).check(matches(isDisplayed()));
+        onView(withText(nameOfMember)).check(matches(isDisplayed()));
 
-        checkingInPatient_idFlow(NAME_OF_MEMBER);
+        checkingInPatient_idFlow(nameOfMember);
     }
 
     public void checkingInPatient_idFlow(String name) {
@@ -119,7 +119,7 @@ public class IdentificationFlowFeature extends ActivityTest {
         onView(withText("Enter the patient's clinic number")).check(matches(isDisplayed()));
 
         // asserts that when you enter OPD number and click 'SUBMIT', current patients fragment displays with patient that you just checked in
-        onView(withId(R.id.clinic_number_field)).perform(typeText(OPD_NUMBER));
+        onView(withId(R.id.clinic_number_field)).perform(typeText(opdNumber));
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
         onView(withText("Select a patient")).check(matches(isDisplayed()));
         onView(withText(name)).check(matches(isDisplayed()));
