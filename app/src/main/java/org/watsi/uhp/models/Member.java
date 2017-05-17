@@ -187,7 +187,7 @@ public class Member extends SyncableModel {
         Member persistedMember = MemberDao.findById(getId());
         if (persistedMember != null) {
             // if the persisted member has not been synced to the back-end, assume it is
-            // the most up-to-date and do not handleUpdateFromSync it with the fetched member attributes
+            // the most up-to-date and do not update it with the fetched member attributes
             if (!persistedMember.isSynced()) {
                 return;
             }
