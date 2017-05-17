@@ -40,7 +40,7 @@ public class MemberEditFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         if (valid(nameView, cardIdView, phoneNumView)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.member_edit_confirmation);

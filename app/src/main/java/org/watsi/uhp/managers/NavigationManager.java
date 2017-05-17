@@ -37,7 +37,6 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
-    public static String ENCOUNTER_BUNDLE_FIELD = "encounter";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
     public static String SOURCE_PARAMS_BUNDLE_FIELD = "sourceParams";
 
@@ -114,25 +113,25 @@ public class NavigationManager {
 
     public void setEncounterFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(EncounterFragment.class, bundle));
     }
 
     public void setEncounterFormFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(EncounterFormFragment.class, bundle));
     }
 
     public void setReceiptFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(ReceiptFragment.class, bundle));
     }
 
     public void setAddNewBillableFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class, bundle));
     }
 

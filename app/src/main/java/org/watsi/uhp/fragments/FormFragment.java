@@ -21,16 +21,19 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
 
         mSyncableModel = (T) getArguments().getSerializable(NavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
 
-        View view = inflater.inflate(getFragmentLayoutId(), container, false);
+        final View view = inflater.inflate(getFragmentLayoutId(), container, false);
+
 
         mSaveBtn = (Button) view.findViewById(R.id.save_button);
 
-        mSaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextStep();
-            }
-        });
+        if (mSaveBtn != null) {
+            mSaveBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    nextStep(view);
+                }
+            });
+        }
 
         setUpFragment(view);
 
@@ -43,7 +46,7 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
 
     public abstract boolean isFirstStep();
 
-    abstract void nextStep();
+    abstract void nextStep(View view);
 
     abstract void setUpFragment(View view);
 }

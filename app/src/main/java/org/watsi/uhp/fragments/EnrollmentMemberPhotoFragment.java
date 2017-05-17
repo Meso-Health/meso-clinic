@@ -45,7 +45,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
             if (!mSyncableModel.shouldCaptureFingerprint()) {
                 mSyncableModel.setUnsynced(getAuthenticationToken());

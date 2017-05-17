@@ -52,6 +52,7 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
     <!-- CurrentPatientsFragment -->
+    <string name="current_patients_fragment_label">Select a patient</string>
     <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
     <plurals name="current_patients_label" >
@@ -95,7 +96,7 @@
     <string name="clinic_number_button">Submit</string>
 
     <!-- EncounterFragment -->
-    <string name="current_patients_fragment_label">Select a patient</string>
+    <string name="encounter_fragment_label">Enter line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a</string>
     <string name="search_drug_hint">Search drugs</string>

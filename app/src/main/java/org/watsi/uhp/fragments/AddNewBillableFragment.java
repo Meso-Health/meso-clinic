@@ -1,10 +1,6 @@
 package org.watsi.uhp.fragments;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,58 +11,58 @@ import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
-public class AddNewBillableFragment extends BaseFragment {
+public class AddNewBillableFragment extends FormFragment<Encounter> {
 
     private EditText nameField;
     private EditText priceField;
-    private Button addBillableButton;
-    private View view;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        getActivity().setTitle(R.string.add_new_billable_fragment_label);
-
-        view = inflater.inflate(R.layout.fragment_add_new_billable, container, false);
-
-        nameField = (EditText) view.findViewById(R.id.name_field);
-        priceField = (EditText) view.findViewById(R.id.price_field);
-        addBillableButton = (Button) view.findViewById(R.id.add_billable_button);
-
-        KeyboardManager.focusAndForceShowKeyboard(nameField, getContext());
-
-        setAddBillableButton();
-
-        return view;
+    int getTitleLabelId() {
+        return R.string.add_new_billable_fragment_label;
     }
 
-    private void setAddBillableButton() {
-        addBillableButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (nameField.getText().toString().length() == 0) {
-                    Toast.makeText(getActivity(), R.string.empty_billable_name_field,
-                            Toast.LENGTH_LONG).show();
-                } else if (priceField.getText().toString().length() == 0) {
-                    Toast.makeText(getActivity(), R.string.empty_billable_price_field,
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Billable billable = new Billable();
-                    billable.setName(nameField.getText().toString());
-                    billable.setPrice(Integer.parseInt(priceField.getText().toString()));
-                    billable.setType(Billable.TypeEnum.UNSPECIFIED);
-                    billable.setCreatedDuringEncounter(true);
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_add_new_billable;
+    }
 
-                    EncounterItem encounterItem = new EncounterItem();
-                    encounterItem.setBillable(billable);
+    @Override
+    public boolean isFirstStep() {
+        return false;
+    }
 
-                    KeyboardManager.hideKeyboard(view, getContext());
+    @Override
+    void nextStep(View view) {
+        if (nameField.getText().toString().length() == 0) {
+            Toast.makeText(getActivity(), R.string.empty_billable_name_field,
+                    Toast.LENGTH_LONG).show();
+        } else if (priceField.getText().toString().length() == 0) {
+            Toast.makeText(getActivity(), R.string.empty_billable_price_field,
+                    Toast.LENGTH_LONG).show();
+        } else {
+            Billable billable = new Billable();
+            billable.setName(nameField.getText().toString());
+            billable.setPrice(Integer.parseInt(priceField.getText().toString()));
+            billable.setType(Billable.TypeEnum.UNSPECIFIED);
+            billable.setCreatedDuringEncounter(true);
 
-                    Encounter encounter = (Encounter) getArguments()
-                            .getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
-                    encounter.getEncounterItems().add(encounterItem);
-                    getNavigationManager().setEncounterFragment(encounter);
-                }
-            }
-        });
+            EncounterItem encounterItem = new EncounterItem();
+            encounterItem.setBillable(billable);
+
+            KeyboardManager.hideKeyboard(view, getContext());
+
+            Encounter encounter = (Encounter) getArguments()
+                    .getSerializable(NavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
+            encounter.getEncounterItems().add(encounterItem);
+            getNavigationManager().setEncounterFragment(encounter);
+        }
+    }
+
+    @Override
+    void setUpFragment(View view) {
+        nameField = (EditText) view.findViewById(R.id.name_field);
+        priceField = (EditText) view.findViewById(R.id.price_field);
+
+        KeyboardManager.focusAndForceShowKeyboard(nameField, getContext());
     }
 }

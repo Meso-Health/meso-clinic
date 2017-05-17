@@ -2,18 +2,13 @@ package org.watsi.uhp.fragments;
 
 import android.app.SearchManager;
 import android.database.MatrixCursor;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -26,7 +21,6 @@ import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -39,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class EncounterFragment extends BaseFragment {
+public class EncounterFragment extends FormFragment<Encounter> {
 
     private Spinner categorySpinner;
     private Spinner billableSpinner;
@@ -47,38 +41,49 @@ public class EncounterFragment extends BaseFragment {
     private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private Encounter encounter;
     private TextView backdateEncounterLink;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        encounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
-        getActivity().setTitle(encounter.getMember().getFullName());
+    @Override
+    int getTitleLabelId() {
+        return R.string.encounter_fragment_label;
+    }
 
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_encounter;
+    }
+
+    @Override
+    public boolean isFirstStep() {
+        return true;
+    }
+
+    @Override
+    void nextStep(View view) {
+        getNavigationManager().setEncounterFormFragment(mSyncableModel);
+    }
+
+    @Override
+    void setUpFragment(View view) {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
-        final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         backdateEncounterLink = (TextView) view.findViewById(R.id.backdate_encounter);
-        Button continueButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setContinueButton(continueButton);
         setAddBillableLink(view);
         setBackdateEncounterListener();
 
-        if (encounter.getBackdatedOccurredAt()) updateBackdateLinkText();
-
-        return view;
+        if (mSyncableModel.getBackdatedOccurredAt()) updateBackdateLinkText();
     }
 
     protected Encounter getEncounter() {
-        return encounter;
+        return mSyncableModel;
     }
 
     private void setCategorySpinner() {
@@ -112,7 +117,7 @@ public class EncounterFragment extends BaseFragment {
     }
 
     private void setLineItemList() {
-        List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
+        List<EncounterItem> encounterItems = (List<EncounterItem>) mSyncableModel.getEncounterItems();
 
         encounterItemAdapter = new EncounterItemAdapter(getContext(), encounterItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
@@ -131,7 +136,7 @@ public class EncounterFragment extends BaseFragment {
         view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationManager().setAddNewBillableFragment(encounter);
+                getNavigationManager().setAddNewBillableFragment(mSyncableModel);
             }
         });
     }
@@ -144,15 +149,6 @@ public class EncounterFragment extends BaseFragment {
                 BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
                 dialog.setTargetFragment(fragment, 0);
                 dialog.show(getActivity().getSupportFragmentManager(), "BackdateEncounterDialogFragment");
-            }
-        });
-    }
-
-    private void setContinueButton(Button continueButton) {
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationManager().setEncounterFormFragment(encounter);
             }
         });
     }
@@ -190,7 +186,7 @@ public class EncounterFragment extends BaseFragment {
     public void addToLineItemList(UUID billableId) {
         try {
             Billable billable = BillableDao.findById(billableId);
-            List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
+            List<EncounterItem> encounterItems = (List<EncounterItem>) mSyncableModel.getEncounterItems();
 
             if (containsId(encounterItems, billableId)) {
                 Toast.makeText(getContext(), R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
@@ -332,7 +328,7 @@ public class EncounterFragment extends BaseFragment {
     }
 
     public void updateBackdateLinkText() {
-        Date backdate = encounter.getOccurredAt();
+        Date backdate = mSyncableModel.getOccurredAt();
         String backdateText = new SimpleDateFormat("MMM d, H:mma").format(backdate);
         SpannableString content = new SpannableString("Date: " + backdateText);
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);

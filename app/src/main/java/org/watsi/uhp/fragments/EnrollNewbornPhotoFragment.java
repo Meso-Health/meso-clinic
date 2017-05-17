@@ -45,7 +45,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
             mSyncableModel.setUnsynced(getAuthenticationToken());
             MemberDao.create(mSyncableModel);

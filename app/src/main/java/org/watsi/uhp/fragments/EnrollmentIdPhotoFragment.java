@@ -44,7 +44,7 @@ public class EnrollmentIdPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
             MemberDao.update(mSyncableModel);
             getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
