@@ -112,7 +112,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         if (isNew()) {
             return diffFields(null);
         } else {
-            getDao().queryForId(getId());
             return diffFields(getDao().queryForId(getId()));
         }
     }
