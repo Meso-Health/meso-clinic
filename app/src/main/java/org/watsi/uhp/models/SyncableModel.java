@@ -161,7 +161,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     public static <K> List<K> unsynced(Class<K> clazz) throws SQLException {
-        Dao<K, UUID> dao = DatabaseHelper.getHelper().getDao(clazz);
+        Dao<K, UUID> dao = getDao(clazz);
         PreparedQuery<K> preparedQuery = dao.queryBuilder().where()
                 .not().eq(SyncableModel.FIELD_NAME_DIRTY_FIELDS, "[]").and()
                 .isNotNull(SyncableModel.FIELD_NAME_DIRTY_FIELDS)
