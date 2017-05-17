@@ -29,7 +29,7 @@ import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.presenters.EncounterPresenter;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -49,10 +49,14 @@ public class EncounterFragment extends BaseFragment {
     private EncounterItemAdapter encounterItemAdapter;
     private Encounter encounter;
     private TextView backdateEncounterLink;
+    private EncounterPresenter encounterPresenter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         encounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
         getActivity().setTitle(encounter.getMember().getFullName());
+
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(encounter.getEncounterItems()));
+        encounterPresenter = new EncounterPresenter(encounter, encounterItemAdapter);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -112,9 +116,6 @@ public class EncounterFragment extends BaseFragment {
     }
 
     private void setLineItemList() {
-        List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
-
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), encounterItems);
         lineItemsListView.setAdapter(encounterItemAdapter);
     }
 
@@ -177,34 +178,6 @@ public class EncounterFragment extends BaseFragment {
         );
     }
 
-    public static boolean containsId(List<EncounterItem> list, UUID id) {
-        for (EncounterItem item : list) {
-            UUID itemId = item.getBillable().getId();
-            if (itemId != null && itemId.equals(id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void addToLineItemList(UUID billableId) {
-        try {
-            Billable billable = BillableDao.findById(billableId);
-            List<EncounterItem> encounterItems = (List<EncounterItem>) encounter.getEncounterItems();
-
-            if (containsId(encounterItems, billableId)) {
-                Toast.makeText(getContext(), R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
-            } else {
-                EncounterItem encounterItem = new EncounterItem();
-                encounterItem.setBillable(billable);
-
-                encounterItemAdapter.add(encounterItem);
-            }
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
-    }
-
     public void clearDrugSearch() {
         billableSearch.clearFocus();
         billableSearch.setQuery("", false);
@@ -247,9 +220,14 @@ public class EncounterFragment extends BaseFragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position != 0) {
-                UUID billableId = ((Billable) adapter.getItem(position)).getId();
-                addToLineItemList(billableId);
-                scrollToBottom();
+                Billable billable = ((Billable) adapter.getItem(position));
+                try {
+                    encounterPresenter.addToEncounterItemList(billable);
+                    scrollToBottom();
+                } catch (Encounter.DuplicateBillableException e) {
+                    // TODO: make toast message more descriptive
+                    Toast.makeText(getContext(), R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
@@ -324,9 +302,17 @@ public class EncounterFragment extends BaseFragment {
         public boolean onSuggestionClick(int position) {
             MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
             String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
-            addToLineItemList(UUID.fromString(uuidString));
-            scrollToBottom();
-            clearDrugSearch();
+            try {
+                Billable billable = BillableDao.findById(UUID.fromString(uuidString));
+                encounterPresenter.addToEncounterItemList(billable);
+                scrollToBottom();
+                clearDrugSearch();
+            } catch (Encounter.DuplicateBillableException e) {
+                // TODO: make toast message more descriptive
+                Toast.makeText(getContext(), R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
+            } catch (SQLException e) {
+                Toast.makeText(getContext(), "Call Katrina", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
     }
