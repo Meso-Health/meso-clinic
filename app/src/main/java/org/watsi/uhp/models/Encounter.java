@@ -118,7 +118,7 @@ public class Encounter extends SyncableModel {
         this.mIdentificationEvent = identificationEvent;
     }
 
-    public Collection<EncounterItem> getEncounterItems() {
+    public List<EncounterItem> getEncounterItems() {
         return mEncounterItems;
     }
 
@@ -150,5 +150,29 @@ public class Encounter extends SyncableModel {
             sum += item.getBillable().getPrice() * item.getQuantity();
         }
         return sum;
+    }
+
+    public void addEncounterItem(EncounterItem encounterItem) throws DuplicateBillableException {
+        if (containsBillable(encounterItem.getBillable())) {
+            throw new DuplicateBillableException();
+        } else {
+            getEncounterItems().add(encounterItem);
+        }
+    }
+
+    public boolean containsBillable(Billable billable) {
+        for (EncounterItem item : getEncounterItems()) {
+            UUID billableId = item.getBillable().getId();
+            if (billableId != null && billableId.equals(billable.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static class DuplicateBillableException extends Exception {
+        public DuplicateBillableException() {
+            super("Cannot add two encounter items with same billable");
+        }
     }
 }
