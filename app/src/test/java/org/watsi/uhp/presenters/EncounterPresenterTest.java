@@ -18,9 +18,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class EncounterPresenterTest {
 
     private EncounterPresenter encounterPresenter;
-
-    @Mock
-    Encounter encounter;
+    private Encounter encounter;
 
     @Mock
     EncounterItemAdapter encounterItemAdapter;
@@ -28,6 +26,7 @@ public class EncounterPresenterTest {
     @Before
     public void setup() {
         initMocks(this);
+        encounter = new Encounter();
         encounterPresenter = new EncounterPresenter(encounter, encounterItemAdapter);
     }
 
