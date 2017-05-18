@@ -13,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.api.UhpApi;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
@@ -29,11 +30,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ApiService.class, EncounterForm.class, File.class, FileManager.class,
-        MediaType.class, RequestBody.class, Uri.class })
+@PrepareForTest({ ApiService.class, EncounterForm.class, FileManager.class, MediaType.class,
+        RequestBody.class, Uri.class })
 public class EncounterFormTest {
 
     @Mock
@@ -52,6 +54,7 @@ public class EncounterFormTest {
     @Before
     public void setup() {
         mockStatic(ApiService.class);
+        mockStatic(FileManager.class);
         mockStatic(MediaType.class);
         mockStatic(RequestBody.class);
         encounterForm = new EncounterForm();
@@ -78,13 +81,11 @@ public class EncounterFormTest {
     public void handleUpdateFromSync_deletesLocalFile() throws Exception {
         String url = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
         encounterForm.setUrl(url);
-        File mockFile = mock(File.class);
-
-        whenNew(File.class).withArguments(url).thenReturn(mockFile);
 
         encounterForm.handleUpdateFromSync(null);
 
-        verify(mockFile, times(1)).delete();
+        verifyStatic();
+        FileManager.deleteLocalPhoto(encounterForm.getUrl());
     }
 
     @Test

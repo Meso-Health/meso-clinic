@@ -9,6 +9,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
@@ -75,7 +76,11 @@ public class EncounterForm extends SyncableModel {
 
     @Override
     public void handleUpdateFromSync(Response response) {
-        new File(getUrl()).delete();
+        try {
+            FileManager.deleteLocalPhoto(getUrl());
+        } catch (FileManager.FileDeletionException e) {
+            ExceptionManager.reportException(e);
+        }
     }
 
     @Override
