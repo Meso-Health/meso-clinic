@@ -5,8 +5,9 @@ import android.widget.EditText;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.Member;
 
-public class EnrollmentContactInfoFragment extends EnrollmentFragment {
+public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
     private EditText mPhoneNumberView;
 
@@ -21,7 +22,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
+    public boolean isFirstStep() {
         return false;
     }
 
@@ -31,12 +32,12 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
             String phoneNumber = mPhoneNumberView.getText().toString();
             if (phoneNumber.isEmpty()) phoneNumber = null;
-            mMember.setPhoneNumber(phoneNumber);
-            getNavigationManager().setEnrollmentFingerprintFragment(mMember);
+            mSyncableModel.setPhoneNumber(phoneNumber);
+            getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel);
         } catch (AbstractModel.ValidationException e) {
             String errorMessage = getString(R.string.phone_number_validation_error);
             mPhoneNumberView.setError(errorMessage);

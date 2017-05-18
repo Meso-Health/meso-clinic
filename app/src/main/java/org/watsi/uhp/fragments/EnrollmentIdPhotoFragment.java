@@ -15,10 +15,12 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
-public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
+public class EnrollmentIdPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_ID_PHOTO_INTENT = 2;
 
@@ -36,20 +38,26 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
+    public boolean isFirstStep() {
         return false;
     }
 
     @Override
-    void nextStep() {
-        getNavigationManager().setEnrollmentContactInfoFragment(mMember);
+    void nextStep(View view) {
+        try {
+            mSyncableModel.saveChanges(getAuthenticationToken());
+            getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     void setUpFragment(View view) {
         ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_id_photo_btn);
         try {
-            String filename = "id_" + mMember.getId().toString() +
+            String filename = "id_" + mSyncableModel.getId().toString() +
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
@@ -78,7 +86,7 @@ public class EnrollmentIdPhotoFragment extends EnrollmentFragment {
             }
 
             // TODO: potential timing issue if member data syncs before we flag this as un-synced
-            mMember.setNationalIdPhotoUrl(mUri.toString());
+            mSyncableModel.setNationalIdPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {
             Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();

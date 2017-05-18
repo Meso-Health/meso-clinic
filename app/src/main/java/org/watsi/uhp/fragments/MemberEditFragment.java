@@ -3,9 +3,7 @@ package org.watsi.uhp.fragments;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,66 +16,38 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
-public class MemberEditFragment extends BaseFragment {
+public class MemberEditFragment extends FormFragment<Member> {
 
-    private Member mMember;
+    private EditText nameView;
+    private EditText cardIdView;
+    private EditText phoneNumView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.member_edit_label);
-
-        View view = inflater.inflate(R.layout.fragment_member_edit, container, false);
-
-        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-
-        final EditText nameView = (EditText) view.findViewById(R.id.member_name);
-        nameView.getText().append(mMember.getFullName());
-        final EditText cardIdView = (EditText) view.findViewById(R.id.card_id);
-
-        String mScannedCardId = getArguments().getString(
-                NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);
-        if (mScannedCardId != null) {
-            cardIdView.getText().append(mScannedCardId);
-        } else if (mMember.getCardId() != null) {
-            cardIdView.getText().append(mMember.getCardId());
-        }
-        final EditText phoneNumView = (EditText) view.findViewById(R.id.phone_number);
-        if (mMember.getPhoneNumber() != null) {
-            phoneNumView.getText().append(mMember.getPhoneNumber());
-        }
-
-        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                String idMethodString =
-                        getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-                bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
-                getNavigationManager().setBarcodeFragment(
-                    BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mMember, bundle);
-            }
-        });
-
-        view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveChanges(nameView, cardIdView, phoneNumView);
-            }
-        });
-
-        return view;
+    int getTitleLabelId() {
+        return R.string.member_edit_label;
     }
 
-    public void saveChanges(EditText nameView, EditText cardIdView, EditText phoneNumView) {
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_member_edit;
+    }
+
+    @Override
+    public boolean isFirstStep() {
+        return true;
+    }
+
+    @Override
+    void nextStep(View view) {
         if (valid(nameView, cardIdView, phoneNumView)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.member_edit_confirmation);
             builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String toastMessage = mMember.getFullName() + "'s information has been updated.";
+                    String toastMessage = mSyncableModel.getFullName() + "'s information has been updated.";
                     try {
-                        mMember.saveChanges(getAuthenticationToken());
+                        mSyncableModel.saveChanges(getAuthenticationToken());
                     } catch (SQLException e) {
                         ExceptionManager.reportException(e);
                         toastMessage = "Failed to update the member information.";
@@ -89,7 +59,7 @@ public class MemberEditFragment extends BaseFragment {
                     if (idMethodString != null) {
                         idMethod =  IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
                     }
-                    getNavigationManager().setDetailFragment(mMember, idMethod, null);
+                    getNavigationManager().setDetailFragment(mSyncableModel, idMethod, null);
                     Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
@@ -103,18 +73,50 @@ public class MemberEditFragment extends BaseFragment {
         }
     }
 
+    @Override
+    void setUpFragment(View view) {
+        nameView = (EditText) view.findViewById(R.id.member_name);
+        nameView.getText().append(mSyncableModel.getFullName());
+
+        cardIdView = (EditText) view.findViewById(R.id.card_id);
+        String mScannedCardId = getArguments().getString(
+                NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);
+        if (mScannedCardId != null) {
+            cardIdView.getText().append(mScannedCardId);
+        } else if (mSyncableModel.getCardId() != null) {
+            cardIdView.getText().append(mSyncableModel.getCardId());
+        }
+
+        phoneNumView = (EditText) view.findViewById(R.id.phone_number);
+        if (mSyncableModel.getPhoneNumber() != null) {
+            phoneNumView.getText().append(mSyncableModel.getPhoneNumber());
+        }
+
+        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                String idMethodString =
+                        getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+                bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
+                getNavigationManager().setBarcodeFragment(
+                        BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mSyncableModel, bundle);
+            }
+        });
+    }
+
     private boolean valid(EditText nameView, EditText cardIdView, EditText phoneNumView) {
         boolean valid = true;
 
         try {
-            mMember.setFullName(nameView.getText().toString());
+            mSyncableModel.setFullName(nameView.getText().toString());
         } catch (AbstractModel.ValidationException e) {
             nameView.setError(getString(R.string.name_validation_error));
             valid = false;
         }
 
         try {
-            mMember.setCardId(cardIdView.getText().toString());
+            mSyncableModel.setCardId(cardIdView.getText().toString());
         } catch (AbstractModel.ValidationException e) {
             cardIdView.setError(getString(R.string.card_id_validation_error));
             valid = false;
@@ -123,7 +125,7 @@ public class MemberEditFragment extends BaseFragment {
         try {
             String updatedPhoneNumber = phoneNumView.getText().toString();
             if (updatedPhoneNumber.isEmpty()) updatedPhoneNumber = null;
-            mMember.setPhoneNumber(updatedPhoneNumber);
+            mSyncableModel.setPhoneNumber(updatedPhoneNumber);
         } catch (AbstractModel.ValidationException e) {
             phoneNumView.setError(getString(R.string.phone_number_validation_error));
             valid = false;

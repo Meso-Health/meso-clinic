@@ -15,11 +15,12 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
+public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_MEMBER_PHOTO_INTENT = 1;
 
@@ -37,21 +38,21 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
-        return !mMember.shouldCaptureFingerprint();
+    public boolean isFirstStep() {
+        return true;
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
-            if (isLastStep()) {
-                mMember.saveChanges(getAuthenticationToken());
+            if (!mSyncableModel.shouldCaptureFingerprint()) {
+                mSyncableModel.saveChanges(getAuthenticationToken());
                 getNavigationManager().setCurrentPatientsFragment();
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-            } else if (mMember.shouldCaptureNationalIdPhoto()) {
-                getNavigationManager().setEnrollmentIdPhotoFragment(mMember);
+            } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
+                getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel);
             } else {
-                getNavigationManager().setEnrollmentContactInfoFragment(mMember);
+                getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
             }
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
@@ -63,7 +64,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
     void setUpFragment(View view) {
         ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_member_photo_btn);
         try {
-            String filename = "member_" + mMember.getId().toString() +
+            String filename = "member_" + mSyncableModel.getId().toString() +
                     "_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
@@ -78,6 +79,10 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 new CapturePhotoClickListener(TAKE_MEMBER_PHOTO_INTENT, this, mUri));
 
         mMemberPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+
+        if (!mSyncableModel.shouldCaptureFingerprint()) {
+            mSaveBtn.setText(R.string.enrollment_complete_btn);
+        }
     }
 
     @Override
@@ -91,7 +96,7 @@ public class EnrollmentMemberPhotoFragment extends EnrollmentFragment {
                 ExceptionManager.reportException(e);
             }
 
-            mMember.setPhotoUrl(mUri.toString());
+            mSyncableModel.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {
             Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();

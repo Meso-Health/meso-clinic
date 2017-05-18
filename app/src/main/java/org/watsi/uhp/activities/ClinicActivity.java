@@ -24,7 +24,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.DetailFragment;
-import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
@@ -124,9 +124,10 @@ public class ClinicActivity extends AppCompatActivity {
         Fragment currentFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_container);
 
-        if (currentFragment instanceof EncounterFragment) {
+        if (currentFragment instanceof FormFragment &&
+                ((FormFragment) currentFragment).isFirstStep()) {
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.exit_encounter_alert)
+                    .setTitle(R.string.exit_form_alert)
                     .setNegativeButton(android.R.string.no, null)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
@@ -191,7 +192,20 @@ public class ClinicActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getNavigationManager().setCurrentPatientsFragment();
+                Fragment currentFragment =
+                        getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (currentFragment instanceof FormFragment) {
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.exit_form_alert)
+                            .setNegativeButton(android.R.string.no, null)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    getNavigationManager().setCurrentPatientsFragment();
+                                }
+                            }).create().show();
+                } else {
+                    getNavigationManager().setCurrentPatientsFragment();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -15,11 +15,12 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
+public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_NEWBORN_PHOTO_INTENT = 4;
 
@@ -37,14 +38,14 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
-        return true;
+    public boolean isFirstStep() {
+        return false;
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
-            mMember.saveChanges(getAuthenticationToken());
+            mSyncableModel.saveChanges(getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
@@ -80,7 +81,7 @@ public class EnrollNewbornPhotoFragment extends EnrollmentFragment {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mNewbornPhotoImageView.setImageBitmap(bitmap);
-                mMember.setPhotoUrl(mUri.toString());
+                mSyncableModel.setPhotoUrl(mUri.toString());
                 mSaveBtn.setEnabled(true);
                 return;
             } catch (IOException e) {
