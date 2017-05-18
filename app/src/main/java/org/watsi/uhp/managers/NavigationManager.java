@@ -19,6 +19,7 @@ import org.watsi.uhp.fragments.EnrollmentContactInfoFragment;
 import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
 import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
 import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
+import org.watsi.uhp.fragments.FingerprintIdentificationFragment;
 import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
@@ -109,6 +110,10 @@ public class NavigationManager {
 
     public void setSearchMemberFragment() {
         setFragment(mFragmentProvider.createFragment(SearchMemberFragment.class));
+    }
+
+    public void setFingerprintIdentificationFragment() {
+        setFragment(mFragmentProvider.createFragment(FingerprintIdentificationFragment.class));
     }
 
     public void setEncounterFragment(Encounter encounter) {

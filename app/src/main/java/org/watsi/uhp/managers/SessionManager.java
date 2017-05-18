@@ -38,6 +38,10 @@ public class SessionManager {
         ExceptionManager.setPersonData(String.valueOf(user.getId()), user.getUsername());
     }
 
+    public String getCurrentLoggedInUsername() {
+        return mPreferencesManager.getUsername();
+    }
+
     /**
      * Returns a future that resolves to a Bundle containing the logged-in users's
      * authentication token if one is stored or an Intent to launch an activity
