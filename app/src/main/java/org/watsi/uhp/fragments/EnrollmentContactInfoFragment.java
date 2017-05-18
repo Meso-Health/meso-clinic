@@ -8,10 +8,11 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
-public class EnrollmentContactInfoFragment extends EnrollmentFragment {
+public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
     private EditText mPhoneNumberView;
 
@@ -26,7 +27,7 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
+    public boolean isFirstStep() {
         return false;
     }
 
@@ -36,14 +37,14 @@ public class EnrollmentContactInfoFragment extends EnrollmentFragment {
     }
 
     @Override
-    void nextStep() {
+    void nextStep(View view) {
         try {
             String phoneNumber = mPhoneNumberView.getText().toString();
             if (phoneNumber.isEmpty()) phoneNumber = null;
-            mMember.setPhoneNumber(phoneNumber);
+            mSyncableModel.setPhoneNumber(phoneNumber);
             try {
-                MemberDao.update(mMember);
-                getNavigationManager().setEnrollmentFingerprintFragment(mMember);
+                MemberDao.update(mSyncableModel);
+                getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel);
             } catch (SQLException e) {
                 ExceptionManager.reportException(e);
                 Toast.makeText(getContext(), "Failed to save contact information", Toast.LENGTH_LONG).show();

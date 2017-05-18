@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class EnrollNewbornInfoFragment extends EnrollmentFragment {
+public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
     private EditText mNameView;
     private EditText mCardIdView;
@@ -38,13 +38,13 @@ public class EnrollNewbornInfoFragment extends EnrollmentFragment {
     }
 
     @Override
-    boolean isLastStep() {
-        return false;
+    public boolean isFirstStep() {
+        return true;
     }
 
     @Override
-    void nextStep() {
-        Member newborn = mMember.createNewborn();
+    void nextStep(View view) {
+        Member newborn = mSyncableModel.createNewborn();
 
         Bundle attributeBundle = createBundle();
 
@@ -137,7 +137,7 @@ public class EnrollNewbornInfoFragment extends EnrollmentFragment {
             @Override
             public void onClick(View v) {
                 getNavigationManager().setBarcodeFragment(
-                        BarcodeFragment.ScanPurposeEnum.NEWBORN, mMember, createBundle());
+                        BarcodeFragment.ScanPurposeEnum.NEWBORN, mSyncableModel, createBundle());
             }
         });
 
