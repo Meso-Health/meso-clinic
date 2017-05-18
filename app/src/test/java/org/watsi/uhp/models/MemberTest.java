@@ -46,7 +46,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
@@ -72,7 +71,6 @@ public class MemberTest {
     private final String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
     private final String remotePhotoUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
     private final String localNationalIdPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/national_id.jpg";
-    private final String remoteNationalIdPhotoUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/bar-3bf77f20d8119074";
 
     private Member member;
 
@@ -121,23 +119,28 @@ public class MemberTest {
     }
 
     @Test
-    public void setPhoneNumber() throws Exception {
+    public void setPhoneNumber_isNull_setsPhoneNumberToNull() throws Exception {
         member.setPhoneNumber(null);
-        assertEquals(member.getPhoneNumber(), null);
 
+        assertEquals(member.getPhoneNumber(), null);
+    }
+
+    @Test
+    public void setPhoneNumber_isValid_setsPhoneNumber() throws Exception {
         mockStatic(Member.class);
         when(Member.validPhoneNumber(anyString())).thenReturn(true);
 
         member.setPhoneNumber("0777555555");
-        assertEquals(member.getPhoneNumber(), "0777555555");
 
+        assertEquals(member.getPhoneNumber(), "0777555555");
+    }
+
+    @Test(expected=AbstractModel.ValidationException.class)
+    public void setPhoneNumber_isInvalid_throwsException() throws Exception {
+        mockStatic(Member.class);
         when(Member.validPhoneNumber(anyString())).thenReturn(false);
-        try {
-            member.setPhoneNumber("");
-            fail("Should throw validation exception");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "phone_number: Invalid phone number");
-        }
+
+        member.setPhoneNumber("");
     }
 
     @Test
@@ -660,7 +663,7 @@ public class MemberTest {
 
         Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_PHONE_NUMBER).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), phoneNumber.toString());
+        assertEquals(buffer.readUtf8(), phoneNumber);
     }
 
     @Test
@@ -675,7 +678,7 @@ public class MemberTest {
 
         Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_FULL_NAME).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), fullName.toString());
+        assertEquals(buffer.readUtf8(), fullName);
     }
 
     @Test
@@ -690,7 +693,7 @@ public class MemberTest {
 
         Buffer buffer = new Buffer();
         requestBodyMap.get(Member.FIELD_NAME_CARD_ID).writeTo(buffer);
-        assertEquals(buffer.readUtf8(), cardId.toString());
+        assertEquals(buffer.readUtf8(), cardId);
     }
 
     @Test

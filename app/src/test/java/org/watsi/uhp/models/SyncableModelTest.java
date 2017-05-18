@@ -25,7 +25,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -271,29 +270,20 @@ public class SyncableModelTest {
         verify(mockDao, times(1)).createOrUpdate(memberSpy);
     }
 
-    @Test
+    @Test(expected=SyncableModel.SyncException.class)
     public void sync_nullToken_throwsSyncException() throws Exception {
         member.setToken(null);
-        try {
-            member.sync(mockContext);
-            fail("Should throw sync exception");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "Model is not in a syncable state");
-        }
+
+        member.sync(mockContext);
     }
 
-    @Test
+    @Test(expected=SyncableModel.SyncException.class)
     public void sync_isNotDirty_throwsSyncException() throws Exception {
         memberSpy.setToken(token);
 
         when(memberSpy.isDirty()).thenReturn(false);
 
-        try {
-            memberSpy.sync(mockContext);
-            fail("Should throw sync exception");
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "Model is not in a syncable state");
-        }
+        memberSpy.sync(mockContext);
     }
 
     @Test
