@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -51,10 +50,8 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
 
             KeyboardManager.hideKeyboard(view, getContext());
 
-            Encounter encounter = (Encounter) getArguments()
-                    .getSerializable(NavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
-            encounter.getEncounterItems().add(encounterItem);
-            getNavigationManager().setEncounterFragment(encounter);
+            mSyncableModel.getEncounterItems().add(encounterItem);
+            getNavigationManager().setEncounterFragment(mSyncableModel);
         }
     }
 
