@@ -63,10 +63,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         this.mToken = token;
     }
 
-    public boolean isSynced() throws SQLException {
-        return !isNew() && getDirtyFields().isEmpty();
-    }
-
     protected void setDirtyFields(Set<String> dirtyFields) {
         this.mDirtyFields = new Gson().toJson(dirtyFields);
     }
@@ -85,6 +81,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     Dao<T, UUID> getDao() throws SQLException {
         return (Dao<T, UUID>) getDao(getClass());
+    }
+
+    public boolean isSynced() throws SQLException {
+        return !isNew() && getDirtyFields().isEmpty();
     }
 
     public Boolean isNew() throws SQLException {
@@ -162,8 +162,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     public static <K> List<K> unsynced(Class<K> clazz) throws SQLException {
         Dao<K, UUID> dao = getDao(clazz);
         PreparedQuery<K> preparedQuery = dao.queryBuilder().where()
-                .not().eq(SyncableModel.FIELD_NAME_DIRTY_FIELDS, "[]").and()
-                .isNotNull(SyncableModel.FIELD_NAME_DIRTY_FIELDS)
+                .not().eq(SyncableModel.FIELD_NAME_DIRTY_FIELDS, "[]")
                 .prepare();
         return dao.query(preparedQuery);
     }

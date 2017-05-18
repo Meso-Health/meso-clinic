@@ -279,7 +279,6 @@ public class FetchServiceTest {
         Member mockedMember = mock(Member.class);
         when(mockedMember.getId()).thenReturn(UUID.randomUUID());
         when(mockedMember.isSynced()).thenReturn(synced);
-//        doNothing().when(mockedMember).setSynced();
         return mockedMember;
     }
 
