@@ -32,10 +32,8 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,8 +73,6 @@ public class EncounterFragment extends BaseFragment {
         setContinueToReceiptButton(continueToReceiptButton);
         setAddBillableLink(view);
         setBackdateEncounterListener();
-
-        if (encounter.getBackdatedOccurredAt()) updateBackdateLinkText();
 
         return view;
     }
@@ -318,10 +314,8 @@ public class EncounterFragment extends BaseFragment {
     }
 
     public void updateBackdateLinkText() {
-        Date backdate = encounter.getOccurredAt();
-        String backdateText = new SimpleDateFormat("MMM d, H:mma").format(backdate);
-        SpannableString content = new SpannableString("Date: " + backdateText);
-        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-        backdateEncounterLink.setText(content);
+        SpannableString newText = new SpannableString(encounterPresenter.newDateLinkText(encounter));
+        newText.setSpan(new UnderlineSpan(), 0, newText.length(), 0);
+        backdateEncounterLink.setText(newText);
     }
 }

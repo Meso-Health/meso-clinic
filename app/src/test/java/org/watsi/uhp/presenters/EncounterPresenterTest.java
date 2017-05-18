@@ -8,8 +8,13 @@ import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,6 +33,9 @@ public class EncounterPresenterTest {
         initMocks(this);
         encounter = new Encounter();
         encounterPresenter = new EncounterPresenter(encounter, encounterItemAdapter);
+
+        Date occurredAt = Calendar.getInstance().getTime();
+        encounter.setOccurredAt(occurredAt);
     }
 
     @Test
@@ -41,5 +49,10 @@ public class EncounterPresenterTest {
 
         assertEquals(encounterItem.getBillable(), billable);
         verify(encounterItemAdapter, times(1)).add(encounterItem);
+    }
+
+    @Test
+    public void newDateLinkText() throws Exception {
+        assertThat(encounterPresenter.newDateLinkText(encounter), containsString(encounterPresenter.dateFormatter(encounter.getOccurredAt())));
     }
 }
