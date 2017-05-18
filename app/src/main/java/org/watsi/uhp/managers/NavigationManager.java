@@ -38,7 +38,7 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
-    public static String ENCOUNTER_BUNDLE_FIELD = "encounter";
+    public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
     public static String SOURCE_PARAMS_BUNDLE_FIELD = "sourceParams";
 
     private static String HOME_TAG = "home";
@@ -118,49 +118,49 @@ public class NavigationManager {
 
     public void setEncounterFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(EncounterFragment.class, bundle));
     }
 
     public void setEncounterFormFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(EncounterFormFragment.class, bundle));
     }
 
     public void setReceiptFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(ReceiptFragment.class, bundle));
     }
 
     public void setAddNewBillableFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ENCOUNTER_BUNDLE_FIELD, encounter);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class, bundle));
     }
 
     public void setEnrollmentContactInfoFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
     }
 
     public void setEnrollmentMemberPhotoFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
     }
 
     public void setEnrollmentIdPhotoFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentIdPhotoFragment.class, bundle));
     }
 
     public void setEnrollmentFingerprintFragment(Member member) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
     }
 
@@ -168,7 +168,7 @@ public class NavigationManager {
                                       IdentificationEvent.SearchMethodEnum searchMethod,
                                       String scannedCardId) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         if (searchMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
@@ -176,7 +176,7 @@ public class NavigationManager {
 
     public void setEnrollNewbornInfoFragment(Member parentMember, String scannedCardId, Bundle params) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, parentMember);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, parentMember);
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         if (params != null) bundle.putBundle(SOURCE_PARAMS_BUNDLE_FIELD, params);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornInfoFragment.class, bundle));
@@ -184,7 +184,7 @@ public class NavigationManager {
 
     public void setEnrollNewbornPhotoFragment(Member newborn) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, newborn);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, newborn);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 

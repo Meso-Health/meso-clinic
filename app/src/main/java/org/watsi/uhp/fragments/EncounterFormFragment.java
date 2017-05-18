@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -18,38 +15,49 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 
-public class EncounterFormFragment extends BaseFragment {
+public class EncounterFormFragment extends FormFragment<Encounter> {
 
     static final int ENCOUNTER_FORM_PHOTO_INTENT = 6;
 
     private ImageView mEncounterFormImageView;
     private Uri mUri;
-    private Encounter mEncounter;
     private EncounterForm mEncounterForm;
     private Button mAddAnotherBtn;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.encounter_form_fragment_label);
+    int getTitleLabelId() {
+        return R.string.encounter_form_fragment_label;
+    }
 
-        mEncounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_encounter_form;
+    }
+
+    @Override
+    public boolean isFirstStep() {
+        return false;
+    }
+
+    @Override
+    void nextStep(View view) {}
+
+    @Override
+    void setUpFragment(View view) {
         mEncounterForm = new EncounterForm();
-
-        View view = inflater.inflate(R.layout.fragment_encounter_form, container, false);
 
         try {
             String filename = "encounter_form_" + Clock.getCurrentTime().getTime() + ".jpg";
             mUri = FileManager.getUriFromProvider(filename, "encounter", getContext());
         } catch (IOException e) {
             ExceptionManager.reportException(e);
-            getNavigationManager().setReceiptFragment(mEncounter);
+            getNavigationManager().setReceiptFragment(mSyncableModel);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
@@ -61,8 +69,6 @@ public class EncounterFormFragment extends BaseFragment {
         mAddAnotherBtn = (Button) view.findViewById(R.id.add_another_button);
         mAddAnotherBtn.setOnClickListener(new AddPhotoClickListener(false));
         view.findViewById(R.id.finish_button).setOnClickListener(new AddPhotoClickListener(true));
-
-        return view;
     }
 
     private class AddPhotoClickListener implements View.OnClickListener {
@@ -77,13 +83,13 @@ public class EncounterFormFragment extends BaseFragment {
         public void onClick(View v) {
             try {
                 if (mEncounterForm.getUrl() != null) {
-                    mEncounter.addEncounterForm(mEncounterForm);
+                    mSyncableModel.addEncounterForm(mEncounterForm);
                     mEncounterForm.setUnsynced(getAuthenticationToken());
                 }
                 if (finished) {
-                    getNavigationManager().setReceiptFragment(mEncounter);
+                    getNavigationManager().setReceiptFragment(mSyncableModel);
                 } else {
-                    getNavigationManager().setEncounterFormFragment(mEncounter);
+                    getNavigationManager().setEncounterFormFragment(mSyncableModel);
                 }
             } catch (SyncableModel.UnauthenticatedException e) {
                 ExceptionManager.reportException(e);
