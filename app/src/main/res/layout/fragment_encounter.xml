@@ -105,7 +105,7 @@
         android:gravity="bottom">
 
         <Button
-            android:id="@+id/save_encounter"
+            android:id="@+id/save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/PrimaryButton"

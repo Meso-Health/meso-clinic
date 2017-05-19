@@ -13,6 +13,9 @@
     <string name="gender_validation_error">Must select a gender.</string>
     <string name="birthdate_validation_error">Invalid birthdate.</string>
 
+    <!-- Confirmation Messages -->
+    <string name="exit_form_alert">Are you sure you want to exit?</string>
+
     <!-- Menu -->
     <string name="menu_member_edit_label">Edit member</string>
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
@@ -48,8 +51,8 @@
     <string name="login_progress_message">Logging in…</string>
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
-
     <!-- CurrentPatientsFragment -->
+    <string name="current_patients_fragment_label">Select a patient</string>
     <string name="identification_button">Look up patient</string>
     <string name="current_patients_empty_text">There are no checked-in patients.</string>
     <plurals name="current_patients_label" >
@@ -93,8 +96,7 @@
     <string name="clinic_number_button">Submit</string>
 
     <!-- EncounterFragment -->
-    <string name="exit_encounter_alert">Are you sure you want to exit?</string>
-    <string name="current_patients_fragment_label">Select a patient</string>
+    <string name="encounter_fragment_label">Enter line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a</string>
     <string name="search_drug_hint">Search drugs</string>

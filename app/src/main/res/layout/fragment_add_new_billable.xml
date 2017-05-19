@@ -46,7 +46,7 @@
         android:layout_below="@id/price" />
 
     <Button
-        android:id="@+id/add_billable_button"
+        android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/form_item_vertical_margin"

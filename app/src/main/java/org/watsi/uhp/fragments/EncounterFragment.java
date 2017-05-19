@@ -2,13 +2,10 @@ package org.watsi.uhp.fragments;
 
 import android.app.SearchManager;
 import android.database.MatrixCursor;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,7 +22,6 @@ import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
@@ -34,7 +30,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class EncounterFragment extends BaseFragment {
+public class EncounterFragment extends FormFragment<Encounter> {
 
     private Spinner categorySpinner;
     private Spinner billableSpinner;
@@ -42,40 +38,51 @@ public class EncounterFragment extends BaseFragment {
     private SimpleCursorAdapter billableCursorAdapter;
     private ListView lineItemsListView;
     private EncounterItemAdapter encounterItemAdapter;
-    private Encounter encounter;
     private TextView backdateEncounterLink;
     private EncounterPresenter encounterPresenter;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        encounter = (Encounter) getArguments().getSerializable(NavigationManager.ENCOUNTER_BUNDLE_FIELD);
-        getActivity().setTitle(encounter.getMember().getFullName());
+    @Override
+    int getTitleLabelId() {
+        return R.string.encounter_fragment_label;
+    }
 
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(encounter.getEncounterItems()));
+    @Override
+    int getFragmentLayoutId() {
+        return R.layout.fragment_encounter;
+    }
+
+    @Override
+    public boolean isFirstStep() {
+        return true;
+    }
+
+    @Override
+    void nextStep(View view) {
+        getNavigationManager().setEncounterFormFragment(mSyncableModel);
+    }
+
+    @Override
+    void setUpFragment(View view) {
+        encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(mSyncableModel.getEncounterItems()));
+        encounterPresenter = new EncounterPresenter(mSyncableModel, view, encounterItemAdapter);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
-        final View view = inflater.inflate(R.layout.fragment_encounter, container, false);
-        encounterPresenter = new EncounterPresenter(encounter, view, encounterItemAdapter);
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
         billableSearch = (SearchView) view.findViewById(R.id.drug_search);
         lineItemsListView = (ListView) view.findViewById(R.id.line_items_list);
         backdateEncounterLink = (TextView) view.findViewById(R.id.backdate_encounter);
-        Button continueToReceiptButton = (Button) view.findViewById(R.id.save_encounter);
 
         setCategorySpinner();
         setBillableSearch();
         setLineItemList();
-        setContinueToReceiptButton(continueToReceiptButton);
         setAddBillableLink(view);
         setBackdateEncounterListener();
-
-        return view;
     }
 
     protected Encounter getEncounter() {
-        return encounter;
+        return mSyncableModel;
     }
 
     private void setCategorySpinner() {
@@ -122,7 +129,7 @@ public class EncounterFragment extends BaseFragment {
         view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationManager().setAddNewBillableFragment(encounter);
+                getNavigationManager().setAddNewBillableFragment(mSyncableModel);
             }
         });
     }
@@ -135,15 +142,6 @@ public class EncounterFragment extends BaseFragment {
                 BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
                 dialog.setTargetFragment(fragment, 0);
                 dialog.show(getActivity().getSupportFragmentManager(), "BackdateEncounterDialogFragment");
-            }
-        });
-    }
-
-    private void setContinueToReceiptButton(Button continueToReceiptButton) {
-        continueToReceiptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationManager().setEncounterFormFragment(encounter);
             }
         });
     }
@@ -297,7 +295,7 @@ public class EncounterFragment extends BaseFragment {
     }
 
     public void updateBackdateLinkText() {
-        SpannableString newText = new SpannableString(encounterPresenter.newDateLinkText(encounter));
+        SpannableString newText = new SpannableString(encounterPresenter.newDateLinkText(mSyncableModel));
         newText.setSpan(new UnderlineSpan(), 0, newText.length(), 0);
         backdateEncounterLink.setText(newText);
     }
