@@ -1,15 +1,17 @@
 package org.watsi.uhp.presenters;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.Spinner;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
-import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -28,7 +30,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(BillableDao.class)
 public class EncounterPresenterTest {
 
     private EncounterPresenter encounterPresenter;
@@ -46,6 +52,7 @@ public class EncounterPresenterTest {
     @Before
     public void setup() {
         initMocks(this);
+        mockStatic(BillableDao.class);
         encounter = new Encounter();
         encounterPresenter = new EncounterPresenter(encounter, view, encounterItemAdapter);
 
@@ -83,5 +90,31 @@ public class EncounterPresenterTest {
         List<String> categoriesList = encounterPresenter.getCategoriesList("foo");
 
         assertEquals(categoriesList.toString(), "[foo, DRUG, SERVICE, LAB, SUPPLY, VACCINE]");
+    }
+
+    @Test
+    public void promptBillable() throws Exception {
+        assertEquals(encounterPresenter.promptBillable("FOO").getClass(), Billable.class);
+        assertEquals(encounterPresenter.promptBillable("FOO").toString(), "Select a foo...");
+    }
+
+    @Test
+    public void getBillablesList() throws Exception {
+        List<Billable> billables = new ArrayList<>();
+        Billable fakeLab1 = new Billable();
+        Billable fakeLab2 = new Billable();
+        Billable fakeLab3 = new Billable();
+        fakeLab1.setName("fake lab 1");
+        fakeLab2.setName("fake lab 2");
+        fakeLab3.setName("fake lab 3");
+        billables.add(fakeLab1);
+        billables.add(fakeLab2);
+        billables.add(fakeLab3);
+
+        when(BillableDao.getBillablesByCategory(Billable.TypeEnum.LAB)).thenReturn(billables);
+
+        List<Billable> billablesList = encounterPresenter.getBillablesList("LAB");
+
+        assertEquals(billablesList.toString(), "[Select a lab..., fake lab 1, fake lab 2, fake lab 3]");
     }
 }

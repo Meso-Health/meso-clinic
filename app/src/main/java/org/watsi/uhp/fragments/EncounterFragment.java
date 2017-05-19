@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -33,8 +32,6 @@ import org.watsi.uhp.presenters.EncounterPresenter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class EncounterFragment extends BaseFragment {
@@ -153,21 +150,10 @@ public class EncounterFragment extends BaseFragment {
 
     private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
-        List<Billable> billables = new ArrayList<>();
-        Billable placeholderBillable = new Billable();
-        placeholderBillable.setName(getContext().getString(R.string.prompt_billable) + " " +
-                category.toString().toLowerCase() + "...");
-        billables.add(placeholderBillable);
-        try {
-            billables.addAll(BillableDao.getBillablesByCategory(category));
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
-
         return new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                billables
+                encounterPresenter.getBillablesList(category.toString())
         );
     }
 

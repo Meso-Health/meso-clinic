@@ -1,8 +1,6 @@
 package org.watsi.uhp.presenters;
 
-import android.content.Context;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.Spinner;
 
 import org.watsi.uhp.R;
@@ -16,10 +14,8 @@ import org.watsi.uhp.models.EncounterItem;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class EncounterPresenter {
 
@@ -66,5 +62,26 @@ public class EncounterPresenter {
         }
 
         return categories;
+    }
+
+    public Billable promptBillable(String category) {
+        Billable placeholderBillable = new Billable();
+        String promptText = "Select a " + category.toLowerCase() + "...";
+        placeholderBillable.setName(promptText);
+
+        return placeholderBillable;
+    }
+
+    public List<Billable> getBillablesList(String category) {
+        List<Billable> billables = new ArrayList<>();
+        billables.add(promptBillable(category));
+
+        try {
+            billables.addAll(BillableDao.getBillablesByCategory(Billable.TypeEnum.valueOf(category)));
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+
+        return billables;
     }
 }
