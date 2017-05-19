@@ -52,6 +52,15 @@ public class MemberDao {
         return getInstance().getMemberDao().queryForId(id);
     }
 
+    public static Member findByFingerprintsGuid(UUID fingerprintsGuid) throws SQLException {
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put(Member.FIELD_NAME_FINGERPRINTS_GUID, fingerprintsGuid);
+
+        List<Member> results = getInstance().getMemberDao().queryForFieldValues(queryMap);
+        if (results.size() == 0) { throw new SQLException("Record not found."); }
+        return results.get(0);
+    }
+
     public static Member findByCardId(String cardId) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);

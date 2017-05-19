@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,13 @@ import com.simprints.libsimprints.SimHelper;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
+import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.Member;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -36,6 +42,7 @@ public class FingerprintIdentificationFragment extends BaseFragment {
             public void onClick(View v) {
                 SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, getSessionManager().getCurrentLoggedInUsername());
                 Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString());
+
                 startActivityForResult(
                         fingerprintIdentificationIntent,
                         SIMPRINTS_IDENTIFICATION_INTENT
@@ -54,15 +61,23 @@ public class FingerprintIdentificationFragment extends BaseFragment {
                     getContext(),
                     "result not OK",
                     Toast.LENGTH_LONG).show();
-        } else {
+        } else if (requestCode == SIMPRINTS_IDENTIFICATION_INTENT){
             ArrayList<Identification> identifications =
                     data.getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+            String result = "";
             for (Identification id : identifications) {
-                id.getGuid();
-                id.getConfidence();
-                id.getTier();
+                String memberName = "unknown";
+                try {
+                    Member member = MemberDao.findByFingerprintsGuid(UUID.fromString(id.getGuid()));
+                    memberName = member.getFullName();
+                } catch (SQLException e) {
+                    ExceptionManager.reportException(e);
+                }
+                result = result + " " + memberName +  " confidence:" + id.getConfidence() +  " tier: " + id.getTier();
+                result = result + "\n";
+                Log.i("UHP", "Guid is: " + id.getGuid());
             }
-            mResults.setText(identifications.toString());
+            mResults.setText(result);
         }
     }
 }
