@@ -54,11 +54,11 @@ public class EncounterFragment extends BaseFragment {
         getActivity().setTitle(encounter.getMember().getFullName());
 
         encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(encounter.getEncounterItems()));
-        encounterPresenter = new EncounterPresenter(encounter, encounterItemAdapter);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.fragment_encounter, container, false);
+        final View view = inflater.inflate(R.layout.fragment_encounter, container, false);
+        encounterPresenter = new EncounterPresenter(encounter, view, encounterItemAdapter);
 
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         billableSpinner = (Spinner) view.findViewById(R.id.billable_spinner);
@@ -82,15 +82,12 @@ public class EncounterFragment extends BaseFragment {
     }
 
     private void setCategorySpinner() {
-        ArrayList<Object> categories = new ArrayList<>();
-        categories.add(getContext().getString(R.string.prompt_category));
-        categories.addAll(Arrays.asList(Billable.TypeEnum.values()));
-        categories.remove(Billable.TypeEnum.UNSPECIFIED);
+        String prompt = getString(R.string.prompt_category);
 
         ArrayAdapter categoryAdapter = new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                categories
+                encounterPresenter.getCategoriesList(prompt)
         );
 
         categorySpinner.setAdapter(categoryAdapter);
@@ -186,8 +183,8 @@ public class EncounterFragment extends BaseFragment {
             billableSpinner.setVisibility(View.GONE);
 
             if (position != 0) {
-                Billable.TypeEnum selectedCategory = (Billable.TypeEnum) parent
-                        .getItemAtPosition(position);
+                String categoryString = (String) parent.getItemAtPosition(position);
+                Billable.TypeEnum selectedCategory = Billable.TypeEnum.valueOf(categoryString);
                 if (selectedCategory.equals(Billable.TypeEnum.DRUG)) {
                     billableSearch.setVisibility(View.VISIBLE);
                     KeyboardManager.focusAndForceShowKeyboard(billableSearch, getContext());
