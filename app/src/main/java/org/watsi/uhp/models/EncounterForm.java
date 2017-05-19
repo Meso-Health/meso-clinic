@@ -12,14 +12,12 @@ import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Response;
 
 @DatabaseTable(tableName = EncounterForm.TABLE_NAME)
 public class EncounterForm extends SyncableModel {
@@ -29,14 +27,14 @@ public class EncounterForm extends SyncableModel {
     public static final String FIELD_NAME_ENCOUNTER_ID = "encounter_id";
     public static final String FIELD_NAME_URL = "url";
 
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName(FIELD_NAME_ENCOUNTER_ID)
     private UUID mEncounterId;
 
     @DatabaseField(columnName = FIELD_NAME_ENCOUNTER_ID, foreign = true, canBeNull = false)
     private Encounter mEncounter;
 
-    @Expose
+    @Expose(deserialize = false)
     @SerializedName(FIELD_NAME_URL)
     @DatabaseField(columnName = FIELD_NAME_URL, canBeNull = false)
     private String mUrl;
@@ -75,9 +73,15 @@ public class EncounterForm extends SyncableModel {
     }
 
     @Override
-    public void handleUpdateFromSync(Response response) {
+    public void handleUpdateFromSync(SyncableModel responseModel) {
         try {
             FileManager.deleteLocalPhoto(getUrl());
+            // set the ID, URL and encounter ID from the model onto the response so that they do
+            //  not get marked as dirty fields when the models are diffed in the sync logic
+            EncounterForm response = (EncounterForm) responseModel;
+            response.setId(getId());
+            response.setUrl(getUrl());
+            response.setEncounterId(getEncounterId());
         } catch (FileManager.FileDeletionException e) {
             ExceptionManager.reportException(e);
         }
@@ -87,7 +91,7 @@ public class EncounterForm extends SyncableModel {
     protected Call postApiCall(Context context) throws SQLException {
         RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), getImage(context));
         return ApiService.requestBuilder(context).syncEncounterForm(
-                getTokenAuthHeaderString(), getId(), body);
+                getTokenAuthHeaderString(), getEncounter().getId(), body);
     }
 
     @Override

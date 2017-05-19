@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 
 import retrofit2.Call;
-import retrofit2.Response;
 
 @DatabaseTable(tableName = Encounter.TABLE_NAME)
 public class Encounter extends SyncableModel {
@@ -76,8 +75,11 @@ public class Encounter extends SyncableModel {
     }
 
     @Override
-    public void handleUpdateFromSync(Response response) {
-        // no-op
+    public void handleUpdateFromSync(SyncableModel response) {
+        // set the encounter items on the response so that encounter_items is not still marked
+        //  as a dirty field when the models are diffed in the sync logic
+        Encounter responseEncounter = (Encounter) response;
+        responseEncounter.setEncounterItems(getEncounterItems());
     }
 
     @Override

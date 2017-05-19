@@ -155,7 +155,7 @@ public class MemberTest {
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(false);
 
-        memberSpy.handleUpdateFromSync(mockMemberSyncResponse);
+        memberSpy.handleUpdateFromSync(responseMember);
 
         verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl();
         assertEquals(memberSpy.getPhotoUrl(), remotePhotoUrl);
@@ -173,7 +173,7 @@ public class MemberTest {
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(true);
 
-        memberSpy.handleUpdateFromSync(mockMemberSyncResponse);
+        memberSpy.handleUpdateFromSync(responseMember);
 
         verifyStatic();
         FileManager.deleteLocalPhoto(previousPhotoUrl);
@@ -190,7 +190,7 @@ public class MemberTest {
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(true);
 
-        memberSpy.handleUpdateFromSync(mockMemberSyncResponse);
+        memberSpy.handleUpdateFromSync(responseMember);
 
         assertEquals(memberSpy.getNationalIdPhotoUrl(), remotePhotoUrl);
         verifyStatic();
@@ -586,7 +586,7 @@ public class MemberTest {
         editedMember.setPhotoUrl(localPhotoUrl);
         byte[] mockPhoto = new byte[]{(byte)0xe0};
 
-        when(editedMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_PHOTO_URL)).thenReturn(true);
         when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
         when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
         when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
@@ -605,8 +605,8 @@ public class MemberTest {
         Member editedMember = spy(member);
         byte[] mockPhoto = new byte[]{(byte)0xe0};
 
-        when(editedMember.dirty(Member.FIELD_NAME_PHOTO)).thenReturn(true);
-        when(editedMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_PHOTO_URL)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO_URL)).thenReturn(true);
         when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
         when(FileManager.isLocal(localNationalIdPhotoUrl)).thenReturn(true);
         when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
@@ -619,12 +619,13 @@ public class MemberTest {
     }
 
     @Test
-    public void formatPatchRequest_clearPhotoDirtyNationalId_IncludesNationalIdPhoto() throws Exception {
+    public void formatPatchRequest_cleanPhotoDirtyNationalId_IncludesNationalIdPhoto() throws Exception {
         member.setNationalIdPhotoUrl(localNationalIdPhotoUrl);
         Member editedMember = spy(member);
         byte[] mockPhoto = new byte[]{(byte)0xe0};
 
-        when(editedMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_PHOTO_URL)).thenReturn(false);
+        when(editedMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO_URL)).thenReturn(true);
         when(FileManager.isLocal(localNationalIdPhotoUrl)).thenReturn(true);
         when(Uri.parse(localNationalIdPhotoUrl)).thenReturn(mockUri);
         when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);

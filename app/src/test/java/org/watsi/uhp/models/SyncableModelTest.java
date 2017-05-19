@@ -46,6 +46,8 @@ public class SyncableModelTest {
     Map<String, RequestBody> mockParams;
     @Mock
     Response<Member> mockResponse;
+    @Mock
+    Member mockResponseMember;
 
     // SyncableModel is an abstract class so testing with an implementation
     private Member member = new Member();
@@ -59,6 +61,7 @@ public class SyncableModelTest {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
+        when(mockResponse.body()).thenReturn(mockResponseMember);
         doReturn(mockDao).when(memberSpy).getDao();
     }
 
@@ -240,20 +243,20 @@ public class SyncableModelTest {
 
     @Test
     public void updateFromSync_callsUpdateFromApiResponse() throws Exception {
-        doReturn(new HashSet<String>()).when(memberSpy).diffFields(any(Member.class));
-        doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
+        doReturn(new HashSet<String>()).when(memberSpy).diffFields(mockResponseMember);
+        doNothing().when(memberSpy).handleUpdateFromSync(mockResponseMember);
 
         memberSpy.updateFromSync(mockResponse);
 
-        verify(memberSpy, times(1)).handleUpdateFromSync(mockResponse);
+        verify(memberSpy, times(1)).handleUpdateFromSync(mockResponseMember);
     }
 
     @Test
     public void updateFromSync_resetsDirtyFields() throws Exception {
         Set<String> diffFields = new HashSet<>();
 
-        doReturn(diffFields).when(memberSpy).diffFields(any(Member.class));
-        doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
+        doReturn(diffFields).when(memberSpy).diffFields(mockResponseMember);
+        doNothing().when(memberSpy).handleUpdateFromSync(mockResponseMember);
 
         memberSpy.updateFromSync(mockResponse);
 
@@ -263,7 +266,7 @@ public class SyncableModelTest {
     @Test
     public void updateFromSync_persistsTheModel() throws Exception {
         doReturn(new HashSet<String>()).when(memberSpy).diffFields(any(Member.class));
-        doNothing().when(memberSpy).handleUpdateFromSync(mockResponse);
+        doNothing().when(memberSpy).handleUpdateFromSync(mockResponseMember);
 
         memberSpy.updateFromSync(mockResponse);
 

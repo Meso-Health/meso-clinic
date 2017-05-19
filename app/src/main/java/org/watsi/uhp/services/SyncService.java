@@ -86,13 +86,13 @@ public class SyncService extends AbstractSyncJobService {
 
             byte[] image = encounterForm.getImage(this);
             if (image == null) {
-                ExceptionManager.reportMessage("Null image for form on encounter: " + encounter
-                        .getId().toString());
+                ExceptionManager.reportMessage("Null image for form on encounter: " +
+                        encounter.getId().toString());
                 encounterForm.destroy();
                 continue;
             }
             try {
-                Response<Encounter> response = encounterForm.sync(this);
+                Response<EncounterForm> response = encounterForm.sync(this);
                 if (response.isSuccessful()) {
                     encounterForm.updateFromSync(response);
                 } else {

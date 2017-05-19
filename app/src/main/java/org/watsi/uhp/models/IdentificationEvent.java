@@ -20,7 +20,6 @@ import java.util.UUID;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Response;
 
 @DatabaseTable(tableName = IdentificationEvent.TABLE_NAME)
 public class IdentificationEvent extends SyncableModel {
@@ -245,7 +244,7 @@ public class IdentificationEvent extends SyncableModel {
     }
 
     @Override
-    public void handleUpdateFromSync(Response response) {
+    public void handleUpdateFromSync(SyncableModel responseModel) {
         // no-op
     }
 

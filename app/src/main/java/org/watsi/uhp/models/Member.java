@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -32,7 +31,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import okhttp3.MediaType;
@@ -41,7 +39,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
@@ -162,21 +159,24 @@ public class Member extends SyncableModel {
     }
 
     @Override
-    public void handleUpdateFromSync(Response response) {
-        Member memberResponse = (Member) response.body();
+    public void handleUpdateFromSync(SyncableModel response) {
+        Member memberResponse = (Member) response;
         String photoUrlFromResponse = memberResponse.getPhotoUrl();
         String nationalIdPhotoUrlFromResponse = memberResponse.getNationalIdPhotoUrl();
 
         try {
             if (photoUrlFromResponse != null) {
                 if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
-                this.mPhotoUrl = photoUrlFromResponse;
+                setPhotoUrl(photoUrlFromResponse);
                 fetchAndSetPhotoFromUrl();
+                // set the photo field on the response so the field does not get marked as
+                //  dirty when the models are diffed in the sync logic
+                memberResponse.setPhoto(getPhoto());
             }
 
             if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
                 FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
-                this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
+                setNationalIdPhotoUrl(nationalIdPhotoUrlFromResponse);
             }
         } catch (IOException | FileManager.FileDeletionException e) {
             ExceptionManager.reportException(e);
@@ -416,7 +416,7 @@ public class Member extends SyncableModel {
     public Map<String, RequestBody> formatPatchRequest(Context context) {
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        if (dirty(FIELD_NAME_PHOTO)) {
+        if (dirty(FIELD_NAME_PHOTO_URL)) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
             if (image != null) {
                 requestPartMap.put(
@@ -429,7 +429,7 @@ public class Member extends SyncableModel {
         // only include national ID field in request if member photo is not
         //  being sent in order to limit the size of the request
         if (requestPartMap.get(FIELD_NAME_PHOTO) == null) {
-            if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
+            if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO_URL)) {
                 byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
                 if (image != null) {
                     requestPartMap.put(
