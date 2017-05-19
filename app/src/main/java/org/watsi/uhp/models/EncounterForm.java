@@ -8,23 +8,26 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 @DatabaseTable(tableName = EncounterForm.TABLE_NAME)
 public class EncounterForm extends SyncableModel {
 
     public static final String TABLE_NAME = "encounter_forms";
 
-    public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_ENCOUNTER_ID = "encounter_id";
     public static final String FIELD_NAME_URL = "url";
-
-    @Expose
-    @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private UUID mId;
 
     @Expose
     @SerializedName(FIELD_NAME_ENCOUNTER_ID)
@@ -40,10 +43,6 @@ public class EncounterForm extends SyncableModel {
 
     public EncounterForm() {
         super();
-    }
-
-    public UUID getId() {
-        return mId;
     }
 
     public UUID getEncounterId() {
@@ -73,5 +72,36 @@ public class EncounterForm extends SyncableModel {
 
     public byte[] getImage(Context context) {
         return FileManager.readFromUri(Uri.parse(getUrl()), context);
+    }
+
+    @Override
+    public void handleUpdateFromSync(Response response) {
+        try {
+            FileManager.deleteLocalPhoto(getUrl());
+        } catch (FileManager.FileDeletionException e) {
+            ExceptionManager.reportException(e);
+        }
+    }
+
+    @Override
+    protected Call postApiCall(Context context) throws SQLException {
+        RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), getImage(context));
+        return ApiService.requestBuilder(context).syncEncounterForm(
+                getTokenAuthHeaderString(), getId(), body);
+    }
+
+    @Override
+    protected void persistAssociations() {
+        // no-op
+    }
+
+    @Override
+    protected Call patchApiCall(Context context) throws SQLException  {
+        // no-op
+        return null;
+    }
+
+    public void destroy() throws SQLException {
+        getDao().deleteById(getId());
     }
 }

@@ -82,8 +82,7 @@ public class DownloadMemberPhotoServiceTest {
         service.fetchMemberPhotos();
 
         verify(member, times(1)).fetchAndSetPhotoFromUrl();
-        verifyStatic();
-        MemberDao.update(member);
+        verify(member, times(1)).updateFromFetch();
     }
 
     @Test
@@ -98,7 +97,5 @@ public class DownloadMemberPhotoServiceTest {
         service.fetchMemberPhotos();
 
         verify(member, never()).fetchAndSetPhotoFromUrl();
-        verifyStatic(never());
-        MemberDao.update(member);
     }
 }

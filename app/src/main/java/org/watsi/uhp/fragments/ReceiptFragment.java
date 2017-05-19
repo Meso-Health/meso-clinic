@@ -9,11 +9,9 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
-import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -39,18 +37,15 @@ public class ReceiptFragment extends FormFragment<Encounter> {
     void nextStep(View view) {
         String toastMessage;
         try {
-            mSyncableModel.setUnsynced(getAuthenticationToken());
-            EncounterDao.create(mSyncableModel);
-
+            mSyncableModel.saveChanges(getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
 
             toastMessage = mSyncableModel.getMember()
                     .getFullName() + getString(R.string.encounter_submitted);
-        } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+        } catch (SQLException e) {
             toastMessage = "Failed to save data, contact support.";
             ExceptionManager.reportException(e);
         }
-
 
         Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
@@ -68,7 +63,7 @@ public class ReceiptFragment extends FormFragment<Encounter> {
         String formattedPrice = Encounter.PRICE_FORMAT.format(mSyncableModel.price());
         priceTextView.setText(getString(R.string.price_with_currency, formattedPrice));
 
-        int numFormsAttached =  mSyncableModel.getEncounterForms().size();
+        int numFormsAttached = mSyncableModel.getEncounterForms().size();
         ((TextView) view.findViewById(R.id.forms_attached)).setText(getActivity().getResources()
                 .getQuantityString(R.plurals.forms_attached_label, numFormsAttached, numFormsAttached));
     }

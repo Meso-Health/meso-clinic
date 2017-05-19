@@ -11,13 +11,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,11 +45,10 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     @Override
     void nextStep(View view) {
         try {
-            mSyncableModel.setUnsynced(getAuthenticationToken());
-            MemberDao.create(mSyncableModel);
+            mSyncableModel.saveChanges(getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-        } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+        } catch (SQLException e) {
             ExceptionManager.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }

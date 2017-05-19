@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 
 import static junit.framework.Assert.assertEquals;
@@ -27,7 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ExceptionManager.class, AbstractSyncJobService.class })
+@PrepareForTest({ AbstractSyncJobService.class, DatabaseHelper.class, ExceptionManager.class })
 public class AbstractSyncJobServiceTest {
 
     @Mock
@@ -47,11 +48,23 @@ public class AbstractSyncJobServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        mockStatic(DatabaseHelper.class);
         fetchService = new FetchService();
     }
 
     @Test
-    public void onStartJob() throws Exception {
+    public void onStartJob_initializesDatabaseHelper() throws Exception {
+        whenNew(SyncJobTask.class).withArguments(fetchService, mockJobParameters)
+                .thenReturn(mockSyncJobTask);
+
+        fetchService.onStartJob(mockJobParameters);
+
+        verifyStatic();
+        DatabaseHelper.init(fetchService);
+    }
+
+    @Test
+    public void onStartJob_executesSyncJobTask() throws Exception {
         whenNew(SyncJobTask.class).withArguments(fetchService, mockJobParameters)
                 .thenReturn(mockSyncJobTask);
 

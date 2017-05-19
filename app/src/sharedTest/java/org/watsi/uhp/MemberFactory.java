@@ -9,7 +9,7 @@ public class MemberFactory extends Member {
     // Member without household that does not use any setters:
     public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum, boolean absentee) {
         super();
-        mId = id;
+        setId(id);
         mFullName = fullName;
         mCardId = cardId;
         mAge = age;
@@ -20,7 +20,7 @@ public class MemberFactory extends Member {
     // Member with household that does not use any setters:
     public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum, boolean absentee, UUID householdId) {
         super();
-        mId = id;
+        setId(id);
         mFullName = fullName;
         mCardId = cardId;
         mAge = age;

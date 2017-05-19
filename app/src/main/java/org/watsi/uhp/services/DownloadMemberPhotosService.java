@@ -37,9 +37,9 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
             try {
                 if (!FileManager.isLocal(member.getPhotoUrl())) {
                     member.fetchAndSetPhotoFromUrl();
-                    MemberDao.update(member);
+                    member.updateFromFetch();
                 }
-            } catch (IOException | SQLException e) {
+            } catch (IOException e) {
                 ExceptionManager.reportException(e);
                 fetchFailures++;
                 try {

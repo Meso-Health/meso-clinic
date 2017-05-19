@@ -12,8 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Helper class for dealing with files stored locally
@@ -58,15 +56,9 @@ public class FileManager {
 
     public static void deleteLocalPhoto(String url) throws FileDeletionException {
         if (isLocal(url)) {
-            if (!(new File(url).delete())) {
-                Map<String, String> messageParams = new HashMap<>();
-                messageParams.put("url", url);
-                ExceptionManager.reportMessage("Failed to delete photo.",
-                        ExceptionManager.MESSAGE_LEVEL_WARNING, messageParams);
-            }
-        } else {
-            throw new FileDeletionException("Failed to delete photo with url: " + url);
+            if (new File(url).delete()) return;
         }
+        throw new FileDeletionException("Failed to delete photo with url: " + url);
     }
 
     public static class FileDeletionException extends Exception {
