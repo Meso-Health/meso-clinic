@@ -57,7 +57,7 @@ public class FileManager {
     public static void deleteLocalPhoto(String url) throws FileDeletionException {
         if (isLocal(url)) {
             File file = new File(url);
-            if (!file.exists() || file.delete()) return;
+            if (file.exists() && file.delete()) return;
         }
         throw new FileDeletionException("Failed to delete photo with url: " + url);
     }

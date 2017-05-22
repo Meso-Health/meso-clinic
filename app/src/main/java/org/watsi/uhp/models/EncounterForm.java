@@ -76,15 +76,16 @@ public class EncounterForm extends SyncableModel {
     public void handleUpdateFromSync(SyncableModel responseModel) {
         try {
             FileManager.deleteLocalPhoto(getUrl());
-            // set the ID, URL and encounter ID from the model onto the response so that they do
-            //  not get marked as dirty fields when the models are diffed in the sync logic
-            EncounterForm response = (EncounterForm) responseModel;
-            response.setId(getId());
-            response.setUrl(getUrl());
-            response.setEncounterId(getEncounterId());
         } catch (FileManager.FileDeletionException e) {
             ExceptionManager.reportException(e);
         }
+
+        // set the ID, URL and encounter ID from the model onto the response so that they do
+        //  not get marked as dirty fields when the models are diffed in the sync logic
+        EncounterForm response = (EncounterForm) responseModel;
+        response.setId(getId());
+        response.setUrl(getUrl());
+        response.setEncounterId(getEncounterId());
     }
 
     @Override

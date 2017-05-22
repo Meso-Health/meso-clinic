@@ -76,7 +76,8 @@ public class FileManagerTest {
         verify(mockFile, times(1)).delete();
     }
 
-    public void deleteLocalPhoto_localFileDoesNotExist_doesNotDeleteOrThrowException() throws Exception {
+    @Test(expected=FileManager.FileDeletionException.class)
+    public void deleteLocalPhoto_localFileDoesNotExist_throwExceptions() throws Exception {
         whenNew(File.class).withArguments(localPhotoUrl).thenReturn(mockFile);
         PowerMockito.stub(PowerMockito.method(FileManager.class, "isLocal")).toReturn(true);
         when(mockFile.exists()).thenReturn(false);

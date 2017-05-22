@@ -166,7 +166,11 @@ public class Member extends SyncableModel {
 
         try {
             if (photoUrlFromResponse != null) {
-                if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
+                try {
+                    if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
+                } catch (FileManager.FileDeletionException e) {
+                    ExceptionManager.reportException(e);
+                }
                 setPhotoUrl(photoUrlFromResponse);
                 fetchAndSetPhotoFromUrl();
                 // set the photo field on the response so the field does not get marked as
@@ -175,10 +179,14 @@ public class Member extends SyncableModel {
             }
 
             if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
-                FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+                try {
+                    FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+                } catch (FileManager.FileDeletionException e) {
+                    ExceptionManager.reportException(e);
+                }
                 setNationalIdPhotoUrl(nationalIdPhotoUrlFromResponse);
             }
-        } catch (IOException | FileManager.FileDeletionException e) {
+        } catch (IOException e) {
             ExceptionManager.reportException(e);
         }
     }
