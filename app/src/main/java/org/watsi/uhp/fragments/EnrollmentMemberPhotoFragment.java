@@ -11,13 +11,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -48,11 +46,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
     void nextStep(View view) {
         try {
             if (!mSyncableModel.shouldCaptureFingerprint()) {
-                mSyncableModel.setUnsynced(getAuthenticationToken());
-            }
-
-            MemberDao.update(mSyncableModel);
-            if (!mSyncableModel.shouldCaptureFingerprint()) {
+                mSyncableModel.saveChanges(getAuthenticationToken());
                 getNavigationManager().setCurrentPatientsFragment();
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
@@ -60,7 +54,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
             } else {
                 getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
             }
-        } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+        } catch (SQLException e) {
             ExceptionManager.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }

@@ -2,15 +2,10 @@ package org.watsi.uhp.fragments;
 
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
-
-import java.sql.SQLException;
 
 public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
@@ -42,13 +37,7 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
             String phoneNumber = mPhoneNumberView.getText().toString();
             if (phoneNumber.isEmpty()) phoneNumber = null;
             mSyncableModel.setPhoneNumber(phoneNumber);
-            try {
-                MemberDao.update(mSyncableModel);
-                getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel);
-            } catch (SQLException e) {
-                ExceptionManager.reportException(e);
-                Toast.makeText(getContext(), "Failed to save contact information", Toast.LENGTH_LONG).show();
-            }
+            getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel);
         } catch (AbstractModel.ValidationException e) {
             String errorMessage = getString(R.string.phone_number_validation_error);
             mPhoneNumberView.setError(errorMessage);

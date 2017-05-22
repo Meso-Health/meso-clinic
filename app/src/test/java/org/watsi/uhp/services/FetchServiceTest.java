@@ -279,7 +279,6 @@ public class FetchServiceTest {
         Member mockedMember = mock(Member.class);
         when(mockedMember.getId()).thenReturn(UUID.randomUUID());
         when(mockedMember.isSynced()).thenReturn(synced);
-        doNothing().when(mockedMember).setSynced();
         return mockedMember;
     }
 
@@ -311,72 +310,14 @@ public class FetchServiceTest {
     }
 
     @Test
-    public void createOrUpdateMembers_unPersistedMember_syncsAndCreates() throws Exception {
-        Member unPersistedMember = mockMember(false);
+    public void createOrUpdateMembers_callsUpdateFromFetch() throws Exception {
+        Member mockMember = mockMember(false);
         List<Member> fetchedMembers = new ArrayList<>();
-        fetchedMembers.add(unPersistedMember);
+        fetchedMembers.add(mockMember);
 
         fetchService.createOrUpdateMembers(fetchedMembers);
 
-        verify(unPersistedMember, times(1)).setSynced();
-        verify(unPersistedMember, never()).setPhoto(any(byte[].class));
-        verifyStatic();
-        MemberDao.createOrUpdate(unPersistedMember);
-    }
-
-    @Test
-    public void createOrUpdateMembers_unSyncedPersistedMember_doesNotSyncOrUpdate() throws Exception {
-        Member unSyncedPersistedMember = mockMember(false);
-        List<Member> fetchedMembers = new ArrayList<>();
-        fetchedMembers.add(unSyncedPersistedMember);
-
-        when(MemberDao.findById(unSyncedPersistedMember.getId()))
-                .thenReturn(unSyncedPersistedMember);
-
-        fetchService.createOrUpdateMembers(fetchedMembers);
-
-        verify(unSyncedPersistedMember, never()).setSynced();
-        verify(unSyncedPersistedMember, never()).setPhoto(any(byte[].class));
-        verifyStatic(never());
-        MemberDao.createOrUpdate(unSyncedPersistedMember);
-    }
-
-    @Test
-    public void createOrUpdateMembers_syncedPersistedMemberWithNewPhoto_syncsAndUpdatesButDoesNotCopyPhoto() throws Exception {
-        Member syncedPersistedMemberWithNewPhoto = mockMember(true);
-        List<Member> fetchedMembers = new ArrayList<>();
-        fetchedMembers.add(syncedPersistedMemberWithNewPhoto);
-
-        when(MemberDao.findById(syncedPersistedMemberWithNewPhoto.getId()))
-                .thenReturn(syncedPersistedMemberWithNewPhoto);
-
-        fetchService.createOrUpdateMembers(fetchedMembers);
-
-        verify(syncedPersistedMemberWithNewPhoto, times(1)).setSynced();
-        verify(syncedPersistedMemberWithNewPhoto, never()).setPhoto(any(byte[].class));
-        verifyStatic();
-        MemberDao.createOrUpdate(syncedPersistedMemberWithNewPhoto);
-    }
-
-    @Test
-    public void createOrUpdateMembers_syncedPersistedMemberWithSamePhoto_syncsAndUpdatesAndCopiesPhoto() throws Exception {
-        Member syncedPersistedMemberWithSamePhoto = mockMember(true);
-        List<Member> fetchedMembers = new ArrayList<>();
-        fetchedMembers.add(syncedPersistedMemberWithSamePhoto);
-        byte[] photo = new byte[]{(byte)0xe0};
-
-        when(syncedPersistedMemberWithSamePhoto.getPhoto()).thenReturn(photo);
-        when(syncedPersistedMemberWithSamePhoto.getPhotoUrl()).thenReturn("foo");
-
-        when(MemberDao.findById(syncedPersistedMemberWithSamePhoto.getId()))
-                .thenReturn(syncedPersistedMemberWithSamePhoto);
-
-        fetchService.createOrUpdateMembers(fetchedMembers);
-
-        verify(syncedPersistedMemberWithSamePhoto, times(1)).setSynced();
-        verify(syncedPersistedMemberWithSamePhoto, times(1)).setPhoto(photo);
-        verifyStatic();
-        MemberDao.createOrUpdate(syncedPersistedMemberWithSamePhoto);
+        verify(mockMember, times(1)).updateFromFetch();
     }
 
     private Response mockBillablesApiRequest(String token, FetchService spiedFetchService)
