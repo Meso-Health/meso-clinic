@@ -39,14 +39,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Response;
 
 @DatabaseTable(tableName = Member.TABLE_NAME)
 public class Member extends SyncableModel {
 
     public static final String TABLE_NAME = "members";
 
-    public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_CARD_ID = "card_id";
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
@@ -69,11 +67,6 @@ public class Member extends SyncableModel {
     public enum GenderEnum { M, F }
 
     public enum BirthdateAccuracyEnum { D, M, Y }
-
-    @Expose
-    @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, id = true)
-    protected UUID mId;
 
     @Expose
     @SerializedName(FIELD_NAME_CARD_ID)
@@ -157,7 +150,6 @@ public class Member extends SyncableModel {
         if (fullName == null || fullName.isEmpty()) {
             throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
         } else {
-            addDirtyField(FIELD_NAME_FULL_NAME);
             this.mFullName = fullName;
         }
     }
@@ -166,10 +158,74 @@ public class Member extends SyncableModel {
         return this.mFullName;
     }
 
-    public void setId(UUID id) { this.mId = id; }
+    @Override
+    public void handleUpdateFromSync(SyncableModel response) {
+        Member memberResponse = (Member) response;
+        String photoUrlFromResponse = memberResponse.getPhotoUrl();
+        String nationalIdPhotoUrlFromResponse = memberResponse.getNationalIdPhotoUrl();
 
-    public UUID getId() {
-        return mId;
+        try {
+            if (photoUrlFromResponse != null) {
+                try {
+                    if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
+                } catch (FileManager.FileDeletionException e) {
+                    ExceptionManager.reportException(e);
+                }
+                setPhotoUrl(photoUrlFromResponse);
+                fetchAndSetPhotoFromUrl();
+                // set the photo field on the response so the field does not get marked as
+                //  dirty when the models are diffed in the sync logic
+                memberResponse.setPhoto(getPhoto());
+            }
+
+            if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
+                try {
+                    FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
+                } catch (FileManager.FileDeletionException e) {
+                    ExceptionManager.reportException(e);
+                }
+                setNationalIdPhotoUrl(nationalIdPhotoUrlFromResponse);
+            }
+        } catch (IOException e) {
+            ExceptionManager.reportException(e);
+        }
+    }
+
+    public void updateFromFetch() throws SQLException {
+        Member persistedMember = MemberDao.findById(getId());
+        if (persistedMember != null) {
+            // if the persisted member has not been synced to the back-end, assume it is
+            // the most up-to-date and do not update it with the fetched member attributes
+            if (!persistedMember.isSynced()) {
+                return;
+            }
+
+            // if the existing member record has a photo and the fetched member record has
+            // the same photo url as the existing record, copy the photo to the new record
+            // so we do not have to re-download it
+            if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
+                    persistedMember.getPhotoUrl().equals(getPhotoUrl())) {
+                setPhoto(persistedMember.getPhoto());
+            }
+        }
+        getDao().createOrUpdate(this);
+    }
+
+    @Override
+    protected Call postApiCall(Context context) throws SQLException {
+        return ApiService.requestBuilder(context).enrollMember(
+                getTokenAuthHeaderString(), formatPostRequest(context));
+    }
+
+    @Override
+    protected void persistAssociations() {
+        // no-op
+    }
+
+    @Override
+    protected Call patchApiCall(Context context) throws SQLException {
+        return ApiService.requestBuilder(context).syncMember(
+                getTokenAuthHeaderString(), getId(), formatPatchRequest(context));
     }
 
     public String getCardId() {
@@ -186,7 +242,6 @@ public class Member extends SyncableModel {
 
     public void setCardId(String cardId) throws ValidationException {
         if (validCardId(cardId)) {
-            addDirtyField(FIELD_NAME_CARD_ID);
             this.mCardId = cardId;
         } else {
             throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
@@ -198,7 +253,6 @@ public class Member extends SyncableModel {
     }
 
     public void setAge(int age) {
-        addDirtyField(FIELD_NAME_AGE);
         this.mAge = age;
     }
 
@@ -215,7 +269,6 @@ public class Member extends SyncableModel {
     }
 
     public void setGender(GenderEnum gender) {
-        addDirtyField(FIELD_NAME_GENDER);
         this.mGender = gender;
     }
 
@@ -244,57 +297,7 @@ public class Member extends SyncableModel {
     }
 
     public void setPhotoUrl(String photoUrl) {
-        addDirtyField(FIELD_NAME_PHOTO);
         this.mPhotoUrl = photoUrl;
-    }
-
-    public void syncMember(Context context)throws SQLException, IOException,
-            AbstractModel.ValidationException, FileManager.FileDeletionException {
-        Call<Member> request = createSyncMemberRequest(context);
-        Response<Member> response = request.execute();
-        if (response.isSuccessful()) {
-            updatePhotosFromSuccessfulSyncResponse(response);
-            if (!isDirty()) setSynced();
-            MemberDao.update(this);
-        } else {
-            Map<String, String> reportParams = new HashMap<>();
-            reportParams.put("member.id", getId().toString());
-            ExceptionManager.requestFailure(
-                    isNew() ? "Failed to enroll Member" : "Failed to sync Member", request.request(), response.raw(), reportParams);
-        }
-    }
-
-    protected Call<Member> createSyncMemberRequest(Context context) throws SQLException, IOException, AbstractModel.ValidationException {
-        Map<String, RequestBody> multiPartBody;
-        Call<Member> request;
-
-        if (isNew()) {
-            multiPartBody = formatPostRequest(context);
-            request = ApiService.requestBuilder(context).enrollMember(
-                    getTokenAuthHeaderString(), multiPartBody);
-        } else {
-            multiPartBody = formatPatchRequest(context);
-            request = ApiService.requestBuilder(context).syncMember(
-                    getTokenAuthHeaderString(), getId(), multiPartBody);
-        }
-        return request;
-    }
-
-    public void updatePhotosFromSuccessfulSyncResponse(Response<Member> response)
-            throws IOException, FileManager.FileDeletionException {
-        String photoUrlFromResponse = response.body().getPhotoUrl();
-        String nationalIdPhotoUrlFromResponse = response.body().getNationalIdPhotoUrl();
-
-        if (photoUrlFromResponse != null) {
-            if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
-            this.mPhotoUrl = photoUrlFromResponse;
-            fetchAndSetPhotoFromUrl();
-        }
-
-        if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
-            FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
-            this.mNationalIdPhotoUrl = nationalIdPhotoUrlFromResponse;
-        }
     }
 
     public String getNationalIdPhotoUrl() {
@@ -302,7 +305,6 @@ public class Member extends SyncableModel {
     }
 
     public void setNationalIdPhotoUrl(String nationalIdPhotoUrl) {
-        addDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
         this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
     }
 
@@ -331,7 +333,6 @@ public class Member extends SyncableModel {
     }
 
     public void setFingerprintsGuid(UUID fingerprintsGuid) {
-        addDirtyField(FIELD_NAME_FINGERPRINTS_GUID);
         this.mFingerprintsGuid = fingerprintsGuid;
     }
 
@@ -344,7 +345,6 @@ public class Member extends SyncableModel {
             this.mPhoneNumber = null;
         } else {
             if (Member.validPhoneNumber(phoneNumber)) {
-                addDirtyField(FIELD_NAME_PHONE_NUMBER);
                 this.mPhoneNumber = phoneNumber;
             } else {
                 throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Invalid phone number");
@@ -421,13 +421,10 @@ public class Member extends SyncableModel {
         return getAge() >= Member.MINIMUM_NATIONAL_ID_AGE;
     }
 
-    public Map<String, RequestBody> formatPatchRequest(Context context) throws ValidationException {
-        if (isNew()) {
-            throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform PATCH with new member");
-        }
+    public Map<String, RequestBody> formatPatchRequest(Context context) {
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        if (dirty(FIELD_NAME_PHOTO)) {
+        if (dirty(FIELD_NAME_PHOTO_URL)) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
             if (image != null) {
                 requestPartMap.put(
@@ -435,13 +432,12 @@ public class Member extends SyncableModel {
                         RequestBody.create(MediaType.parse("image/jpg"), image)
                 );
             }
-            removeDirtyField(FIELD_NAME_PHOTO);
         }
 
         // only include national ID field in request if member photo is not
         //  being sent in order to limit the size of the request
         if (requestPartMap.get(FIELD_NAME_PHOTO) == null) {
-            if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO)) {
+            if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO_URL)) {
                 byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
                 if (image != null) {
                     requestPartMap.put(
@@ -449,7 +445,6 @@ public class Member extends SyncableModel {
                             RequestBody.create(MediaType.parse("image/jpg"), image)
                     );
                 }
-                removeDirtyField(FIELD_NAME_NATIONAL_ID_PHOTO);
             }
         }
 
@@ -460,7 +455,6 @@ public class Member extends SyncableModel {
                         RequestBody.create(MultipartBody.FORM, getFingerprintsGuid().toString())
                 );
             }
-            removeDirtyField(FIELD_NAME_FINGERPRINTS_GUID);
         }
 
         if (dirty(FIELD_NAME_PHONE_NUMBER)) {
@@ -470,7 +464,6 @@ public class Member extends SyncableModel {
                         RequestBody.create(MultipartBody.FORM, getPhoneNumber())
                 );
             }
-            removeDirtyField(FIELD_NAME_PHONE_NUMBER);
         }
 
         if (dirty(FIELD_NAME_FULL_NAME)) {
@@ -480,7 +473,6 @@ public class Member extends SyncableModel {
                         RequestBody.create(MultipartBody.FORM, getFullName())
                 );
             }
-            removeDirtyField(FIELD_NAME_FULL_NAME);
         }
 
         if (dirty(FIELD_NAME_CARD_ID)) {
@@ -490,19 +482,12 @@ public class Member extends SyncableModel {
                         RequestBody.create(MultipartBody.FORM, getCardId())
                 );
             }
-            removeDirtyField(FIELD_NAME_CARD_ID);
         }
 
         return requestPartMap;
     }
 
-    public Map<String, RequestBody> formatPostRequest(Context context) throws ValidationException {
-        if (!isNew()) {
-            throw new ValidationException(FIELD_NAME_IS_NEW, "Cannot perform POST with existing member");
-        } else if (getId() == null) {
-            throw new ValidationException(FIELD_NAME_ID, "Cannot be null");
-        }
-
+    public Map<String, RequestBody> formatPostRequest(Context context) {
         Map<String,RequestBody> requestBodyMap = new HashMap<>();
 
         requestBodyMap.put(FIELD_NAME_ID, RequestBody.create(MultipartBody.FORM, getId().toString()));
@@ -610,8 +595,6 @@ public class Member extends SyncableModel {
 
     public Member createNewborn() {
         Member newborn = new Member();
-        newborn.setIsNew(true);
-        newborn.setId(UUID.randomUUID());
         newborn.setHouseholdId(getHouseholdId());
         newborn.setAbsentee(false);
         newborn.setBirthdateAccuracy(BirthdateAccuracyEnum.D);

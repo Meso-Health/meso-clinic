@@ -37,9 +37,9 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
             try {
                 if (!FileManager.isLocal(member.getPhotoUrl())) {
                     member.fetchAndSetPhotoFromUrl();
-                    MemberDao.update(member);
+                    member.updateFromFetch();
                 }
-            } catch (IOException | SQLException e) {
+            } catch (IOException e) {
                 ExceptionManager.reportException(e);
                 fetchFailures++;
                 try {
@@ -51,6 +51,8 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
 
             iterator.remove();
             if (fetchFailures == MAX_FETCH_FAILURE_ATTEMPTS) {
+                ExceptionManager.reportMessage(
+                        "Aborting DownloadMemberPhoto sync due to reaching max fetch failures");
                 return;
             }
         }

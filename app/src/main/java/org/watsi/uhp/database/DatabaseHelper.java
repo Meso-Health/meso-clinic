@@ -97,14 +97,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
-                case 8:
-                    List<IdentificationEvent> idEvents = IdentificationEventDao.unsynced();
-                    for (IdentificationEvent idEvent: idEvents) {
-                        if (!idEvent.getDismissed() && !idEvent.isNew()) {
-                            idEvent.setIsNew(true);
-                            IdentificationEventDao.update(idEvent);
-                        }
-                    }
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);

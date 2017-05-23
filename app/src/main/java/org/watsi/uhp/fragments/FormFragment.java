@@ -8,32 +8,32 @@ import android.widget.Button;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.SyncableModel;
 
-public abstract class EnrollmentFragment extends BaseFragment {
+public abstract class FormFragment<T extends SyncableModel> extends BaseFragment {
 
-    protected Member mMember;
+    protected T mSyncableModel;
     protected Button mSaveBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(getTitleLabelId());
 
-        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+        mSyncableModel = (T) getArguments().getSerializable(NavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
 
-        View view = inflater.inflate(getFragmentLayoutId(), container, false);
+        final View view = inflater.inflate(getFragmentLayoutId(), container, false);
+
 
         mSaveBtn = (Button) view.findViewById(R.id.save_button);
-        if (isLastStep()) {
-            mSaveBtn.setText(R.string.enrollment_complete_btn);
-        }
 
-        mSaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextStep();
-            }
-        });
+        if (mSaveBtn != null) {
+            mSaveBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    nextStep(view);
+                }
+            });
+        }
 
         setUpFragment(view);
 
@@ -41,8 +41,12 @@ public abstract class EnrollmentFragment extends BaseFragment {
     }
 
     abstract int getTitleLabelId();
+
     abstract int getFragmentLayoutId();
-    abstract boolean isLastStep();
-    abstract void nextStep();
+
+    public abstract boolean isFirstStep();
+
+    abstract void nextStep(View view);
+
     abstract void setUpFragment(View view);
 }
