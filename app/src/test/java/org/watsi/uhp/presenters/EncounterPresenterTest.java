@@ -1,11 +1,15 @@
 package org.watsi.uhp.presenters;
 
+import android.content.Context;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -31,10 +35,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(BillableDao.class)
+@PrepareForTest({ BillableDao.class, EncounterPresenter.class })
 public class EncounterPresenterTest {
 
     private EncounterPresenter encounterPresenter;
@@ -47,24 +52,33 @@ public class EncounterPresenterTest {
     Spinner spinner;
 
     @Mock
+    ListView listView;
+
+    @Mock
+    ArrayAdapter mockArrayAdapter;
+
+    @Mock
     EncounterItemAdapter encounterItemAdapter;
+
+    @Mock
+    Context context;
 
     @Before
     public void setup() {
         initMocks(this);
         mockStatic(BillableDao.class);
         encounter = new Encounter();
-        encounterPresenter = new EncounterPresenter(encounter, view, encounterItemAdapter);
+        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter);
 
         Date occurredAt = Calendar.getInstance().getTime();
         encounter.setOccurredAt(occurredAt);
     }
 
     @Test
-    public void getCategorySpinner() throws Exception {
-        when(view.findViewById(R.id.category_spinner)).thenReturn(spinner);
+    public void getLineItemsList() throws Exception {
+        when(view.findViewById(R.id.line_items_list)).thenReturn(listView);
 
-        assertEquals(encounterPresenter.getCategorySpinner(), spinner);
+        assertEquals(encounterPresenter.getLineItemsListView(), listView);
     }
 
     @Test
@@ -83,13 +97,6 @@ public class EncounterPresenterTest {
     @Test
     public void newDateLinkText() throws Exception {
         assertThat(encounterPresenter.newDateLinkText(encounter), containsString(encounterPresenter.dateFormatter(encounter.getOccurredAt())));
-    }
-
-    @Test
-    public void getCategoriesList() throws Exception {
-        List<String> categoriesList = encounterPresenter.getCategoriesList("foo");
-
-        assertEquals(categoriesList.toString(), "[foo, DRUG, SERVICE, LAB, SUPPLY, VACCINE]");
     }
 
     @Test
@@ -117,4 +124,35 @@ public class EncounterPresenterTest {
 
         assertEquals(billablesList.toString(), "[Select a lab..., fake lab 1, fake lab 2, fake lab 3]");
     }
+
+    @Test
+    public void getEncounterItemAdapter() throws Exception {
+        whenNew(ArrayAdapter.class)
+                .withParameterTypes(Context.class, int.class, List.class)
+                .withArguments(Matchers.eq(context), Matchers.eq(android.R.layout.simple_spinner_dropdown_item), Matchers.anyList())
+                .thenReturn(mockArrayAdapter);
+
+        ArrayAdapter<Billable> result = encounterPresenter.getEncounterItemAdapter(Billable.TypeEnum.LAB);
+
+        assertEquals(result, mockArrayAdapter);
+    }
+
+    @Test
+    public void getCategoriesList() throws Exception {
+        List<String> categoriesList = encounterPresenter.getCategoriesList("foo");
+
+        assertEquals(categoriesList.toString(), "[foo, DRUG, SERVICE, LAB, SUPPLY, VACCINE]");
+    }
+
+    @Test
+    public void getCategoriesAdapter() throws Exception {
+        whenNew(ArrayAdapter.class)
+                .withParameterTypes(android.content.Context.class, int.class, java.util.List.class)
+                .withArguments(Matchers.eq(context), Matchers.eq(android.R.layout.simple_spinner_dropdown_item), Matchers.anyList())
+                .thenReturn(mockArrayAdapter);
+
+        ArrayAdapter<String> result = encounterPresenter.getCategoriesAdapter("foo");
+        assertEquals(result, mockArrayAdapter);
+    }
+
 }

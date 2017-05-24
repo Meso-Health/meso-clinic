@@ -1,6 +1,9 @@
 package org.watsi.uhp.presenters;
 
+import android.content.Context;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import org.watsi.uhp.R;
@@ -21,11 +24,13 @@ public class EncounterPresenter {
 
     protected final Encounter mEncounter;
     protected final View mView;
+    protected final Context mContext;
     protected final EncounterItemAdapter mEncounterItemAdapter;
 
-    public EncounterPresenter(Encounter encounter, View view, EncounterItemAdapter encounterItemAdapter) {
+    public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter) {
         mEncounter = encounter;
         mView = view;
+        mContext = context;
         mEncounterItemAdapter = encounterItemAdapter;
     }
 
@@ -52,18 +57,6 @@ public class EncounterPresenter {
         return new SimpleDateFormat("MMM d, H:mma").format(date);
     }
 
-    public List<String> getCategoriesList(String prompt) {
-        List<String> categories = new ArrayList<>();
-        categories.add(prompt);
-        for (Billable.TypeEnum billableType : Billable.TypeEnum.values()) {
-            if (!billableType.equals(Billable.TypeEnum.UNSPECIFIED)) {
-                categories.add(billableType.toString());
-            }
-        }
-
-        return categories;
-    }
-
     public Billable promptBillable(String category) {
         Billable placeholderBillable = new Billable();
         String promptText = "Select a " + category.toLowerCase() + "...";
@@ -83,5 +76,34 @@ public class EncounterPresenter {
         }
 
         return billables;
+    }
+
+    public ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
+        // TODO: check that creation of new adapter each time does not have memory implications
+        return new ArrayAdapter<>(
+                mContext,
+                android.R.layout.simple_spinner_dropdown_item,
+                getBillablesList(category.toString())
+        );
+    }
+
+    public List<String> getCategoriesList(String prompt) {
+        List<String> categories = new ArrayList<>();
+        categories.add(prompt);
+        for (Billable.TypeEnum billableType : Billable.TypeEnum.values()) {
+            if (!billableType.equals(Billable.TypeEnum.UNSPECIFIED)) {
+                categories.add(billableType.toString());
+            }
+        }
+
+        return categories;
+    }
+
+    public ArrayAdapter<String> getCategoriesAdapter(String prompt) {
+        return new ArrayAdapter<>(
+                mContext,
+                android.R.layout.simple_spinner_dropdown_item,
+                getCategoriesList(prompt)
+        );
     }
 }

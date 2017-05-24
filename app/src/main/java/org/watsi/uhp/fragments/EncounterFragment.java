@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -76,7 +75,7 @@ public class EncounterFragment extends FormFragment<Encounter> {
 
         setCategorySpinner();
         setBillableSearch();
-        setLineItemList();
+        lineItemsListView.setAdapter(encounterItemAdapter);
         setAddBillableLink(view);
         setBackdateEncounterListener();
     }
@@ -88,13 +87,7 @@ public class EncounterFragment extends FormFragment<Encounter> {
     private void setCategorySpinner() {
         String prompt = getString(R.string.prompt_category);
 
-        ArrayAdapter categoryAdapter = new ArrayAdapter<>(
-                getContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                encounterPresenter.getCategoriesList(prompt)
-        );
-
-        categorySpinner.setAdapter(categoryAdapter);
+        categorySpinner.setAdapter(encounterPresenter.getCategoriesAdapter(prompt));
         categorySpinner.setTag("category");
         categorySpinner.setOnItemSelectedListener(new CategoryListener());
     }
@@ -106,15 +99,15 @@ public class EncounterFragment extends FormFragment<Encounter> {
     }
     
     private void setBillableSpinner(Billable.TypeEnum category) {
-        ArrayAdapter<Billable> adapter = getEncounterItemAdapter(category);
+        ArrayAdapter<Billable> adapter = encounterPresenter.getEncounterItemAdapter(category);
 
         billableSpinner.setAdapter(adapter);
         billableSpinner.setOnItemSelectedListener(new BillableListener(adapter));
     }
 
-    private void setLineItemList() {
-        lineItemsListView.setAdapter(encounterItemAdapter);
-    }
+//    private void setLineItemList() {
+//        lineItemsListView.setAdapter(encounterItemAdapter);
+//    }
 
     private void scrollToBottom() {
         lineItemsListView.post(new Runnable() {
@@ -146,19 +139,13 @@ public class EncounterFragment extends FormFragment<Encounter> {
         });
     }
 
-    private ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
-        // TODO: check that creation of new adapter each time does not have memory implications
-        return new ArrayAdapter<>(
-                getContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                encounterPresenter.getBillablesList(category.toString())
-        );
-    }
-
+    //todo////////////////////////////////////
     public void clearDrugSearch() {
         billableSearch.clearFocus();
         billableSearch.setQuery("", false);
     }
+    //////////////////////////////////////////
+
 
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
         @Override
