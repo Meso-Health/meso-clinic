@@ -74,6 +74,13 @@ public class EncounterPresenterTest {
         encounter.setOccurredAt(occurredAt);
     }
 
+//    @Test
+//    public void getCategorySpinner() throws Exception {
+//        when(view.findViewById(R.id.category_spinner)).thenReturn(spinner);
+//
+//        assertEquals(encounterPresenter.getCategorySpinner(), spinner);
+//    }
+
     @Test
     public void getLineItemsList() throws Exception {
         when(view.findViewById(R.id.line_items_list)).thenReturn(listView);

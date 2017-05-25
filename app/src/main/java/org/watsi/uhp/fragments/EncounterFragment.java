@@ -24,6 +24,7 @@ import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
+import org.watsi.uhp.runnables.ScrollToBottomRunnable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -62,8 +63,8 @@ public class EncounterFragment extends FormFragment<Encounter> {
 
     @Override
     void setUpFragment(View view) {
+        encounterPresenter = new EncounterPresenter(mSyncableModel, view, getContext(), encounterItemAdapter);
         encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(mSyncableModel.getEncounterItems()));
-        encounterPresenter = new EncounterPresenter(mSyncableModel, view, encounterItemAdapter);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -110,13 +111,29 @@ public class EncounterFragment extends FormFragment<Encounter> {
 //    }
 
     private void scrollToBottom() {
-        lineItemsListView.post(new Runnable() {
-            @Override
-            public void run() {
-                lineItemsListView.setSelection(encounterItemAdapter.getCount() - 1);
-            }
-        });
+        lineItemsListView.post(new ScrollToBottomRunnable(lineItemsListView));
+//        lineItemsListView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                lineItemsListView.getAdapter().getCount()
+//                lineItemsListView.setSelection(encounterItemAdapter.getCount() - 1);
+//            }
+//        });
     }
+
+//    public static class ScrollToBottomRunnable implements Runnable {
+//
+//        private final ListView mListView;
+//
+//        public ScrollToBottomRunnable(ListView listView)  {
+//            this.mListView = listView;
+//        }
+//
+//        @Override
+//        public void run() {
+//            mListView.setSelection(mListView.getAdapter().getCount() - 1);
+//        }
+//    }
 
     private void setAddBillableLink(View view) {
         view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
@@ -139,13 +156,10 @@ public class EncounterFragment extends FormFragment<Encounter> {
         });
     }
 
-    //todo////////////////////////////////////
     public void clearDrugSearch() {
         billableSearch.clearFocus();
         billableSearch.setQuery("", false);
     }
-    //////////////////////////////////////////
-
 
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
         @Override

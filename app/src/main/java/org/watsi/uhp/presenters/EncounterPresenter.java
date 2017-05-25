@@ -38,6 +38,10 @@ public class EncounterPresenter {
         return (Spinner) mView.findViewById(R.id.category_spinner);
     }
 
+    public ListView getLineItemsListView() {
+        return (ListView) mView.findViewById(R.id.line_items_list);
+    }
+
     public void addToEncounterItemList(Billable billable) throws Encounter.DuplicateBillableException {
         EncounterItem encounterItem = new EncounterItem();
         encounterItem.setBillable(billable);
