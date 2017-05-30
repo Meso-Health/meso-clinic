@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +54,13 @@ public class EncounterPresenterTest {
     Spinner spinner;
 
     @Mock
+    SearchView searchView;
+
+    @Mock
     ListView listView;
+
+    @Mock
+    TextView textView;
 
     @Mock
     ArrayAdapter mockArrayAdapter;
@@ -74,18 +82,39 @@ public class EncounterPresenterTest {
         encounter.setOccurredAt(occurredAt);
     }
 
-//    @Test
-//    public void getCategorySpinner() throws Exception {
-//        when(view.findViewById(R.id.category_spinner)).thenReturn(spinner);
-//
-//        assertEquals(encounterPresenter.getCategorySpinner(), spinner);
-//    }
+    @Test
+    public void getCategorySpinner() throws Exception {
+        when(view.findViewById(R.id.category_spinner)).thenReturn(spinner);
+
+        assertEquals(encounterPresenter.getCategorySpinner(), spinner);
+    }
+
+    @Test
+    public void getBillableSpinner() throws Exception {
+        when(view.findViewById(R.id.billable_spinner)).thenReturn(spinner);
+
+        assertEquals(encounterPresenter.getBillableSpinner(), spinner);
+    }
+
+    @Test
+    public void getDrugSearchView() throws Exception {
+        when(view.findViewById(R.id.drug_search)).thenReturn(searchView);
+
+        assertEquals(encounterPresenter.getDrugSearchView(), searchView);
+    }
 
     @Test
     public void getLineItemsList() throws Exception {
         when(view.findViewById(R.id.line_items_list)).thenReturn(listView);
 
         assertEquals(encounterPresenter.getLineItemsListView(), listView);
+    }
+
+    @Test
+    public void getBackdateEncounterLink() throws Exception {
+        when(view.findViewById(R.id.backdate_encounter)).thenReturn(textView);
+
+        assertEquals(encounterPresenter.getBackdateEncounterLink(), textView);
     }
 
     @Test
