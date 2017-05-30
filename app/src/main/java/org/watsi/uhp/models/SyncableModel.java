@@ -143,8 +143,9 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     public void updateFromSync(Response<T> response) throws SQLException {
-        handleUpdateFromSync(response);
-        setDirtyFields(diffFields(response.body()));
+        T responseBody = response.body();
+        handleUpdateFromSync(responseBody);
+        setDirtyFields(diffFields(responseBody));
         getDao().createOrUpdate((T) this);
     }
 
@@ -167,7 +168,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return dao.query(preparedQuery);
     }
 
-    public abstract void handleUpdateFromSync(Response<T> response);
+    public abstract void handleUpdateFromSync(T response);
     protected abstract Call<T> postApiCall(Context context) throws SQLException;
     protected abstract Call<T> patchApiCall(Context context) throws SQLException;
     protected abstract void persistAssociations() throws SQLException;

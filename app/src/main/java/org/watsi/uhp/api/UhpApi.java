@@ -3,6 +3,7 @@ package org.watsi.uhp.api;
 import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -68,7 +69,7 @@ public interface UhpApi {
 
     @Multipart
     @PATCH("encounters/{encounterId}")
-    Call<Encounter> syncEncounterForm(
+    Call<EncounterForm> syncEncounterForm(
             @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("encounterId") UUID encounterId,
             @Part("forms[]") RequestBody encounterForm

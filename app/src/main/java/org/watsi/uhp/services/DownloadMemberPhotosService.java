@@ -51,6 +51,8 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
 
             iterator.remove();
             if (fetchFailures == MAX_FETCH_FAILURE_ATTEMPTS) {
+                ExceptionManager.reportMessage(
+                        "Aborting DownloadMemberPhoto sync due to reaching max fetch failures");
                 return;
             }
         }
