@@ -171,7 +171,7 @@ public class EncounterPresenterTest {
 
         when(BillableDao.getBillablesByCategory(Billable.TypeEnum.LAB)).thenReturn(billables);
 
-        List<Billable> billablesList = encounterPresenter.getBillablesList("LAB");
+        List<Billable> billablesList = encounterPresenter.getBillablesList(Billable.TypeEnum.LAB);
 
         assertEquals(billablesList.toString(), "[Select a lab..., fake lab 1, fake lab 2, fake lab 3]");
     }

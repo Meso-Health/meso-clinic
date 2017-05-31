@@ -29,6 +29,7 @@ public class BillableSelectedEncounterFragmentListener implements AdapterView.On
             Billable billable = (Billable) adapter.getItem(position);
             try {
                 encounterPresenter.addToEncounterItemList(billable);
+                encounterPresenter.scrollToBottom();
             } catch (Encounter.DuplicateBillableException e) {
                 // TODO: make toast message more descriptive
                 Toast.makeText(context, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();

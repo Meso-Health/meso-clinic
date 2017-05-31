@@ -54,7 +54,7 @@ public class EncounterPresenter {
         mEncounterFragment = encounterFragment;
     }
 
-    public Spinner getCategorySpinner() {
+    protected Spinner getCategorySpinner() {
         return (Spinner) mView.findViewById(R.id.category_spinner);
     }
 
@@ -66,7 +66,7 @@ public class EncounterPresenter {
         return (SearchView) mView.findViewById(R.id.drug_search);
     }
 
-    public ListView getLineItemsListView() {
+    protected ListView getLineItemsListView() {
         return (ListView) mView.findViewById(R.id.line_items_list);
     }
 
@@ -74,7 +74,7 @@ public class EncounterPresenter {
         return (TextView) mView.findViewById(R.id.backdate_encounter);
     }
 
-    public TextView getAddBillablePrompt() {
+    protected TextView getAddBillablePrompt() {
         return (TextView) mView.findViewById(R.id.add_billable_prompt);
     }
 
@@ -89,7 +89,7 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setCategorySpinner() {
+    private void setCategorySpinner() {
         String prompt = mContext.getString(R.string.prompt_category);
 
         getCategorySpinner().setAdapter(getCategoriesAdapter(prompt));
@@ -106,7 +106,7 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setBillableSearch() {
+    private void setBillableSearch() {
         getDrugSearchView().setOnQueryTextListener(new BillableSearchEncounterFragmentListener(this));
         getDrugSearchView().setOnSuggestionListener(new SuggestionClickEncounterFragmentListener(this, mContext));
         getDrugSearchView().setQueryHint(mContext.getString(R.string.search_drug_hint));
@@ -155,7 +155,7 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setAddBillableLink() {
+    private void setAddBillableLink() {
         getAddBillablePrompt().setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -166,7 +166,7 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setBackdateEncounterListener() {
+    private void setBackdateEncounterListener() {
         getBackdateEncounterLink().setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -178,13 +178,17 @@ public class EncounterPresenter {
         });
     }
 
+    /////////////////////////////NOT TESTED///////////////////////////////////////
+    public void scrollToBottom() {
+        getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
+    }
+
     public void addToEncounterItemList(Billable billable) throws Encounter.DuplicateBillableException {
         EncounterItem encounterItem = new EncounterItem();
         encounterItem.setBillable(billable);
 
         mEncounter.addEncounterItem(encounterItem);
         mEncounterItemAdapter.add(encounterItem);
-        getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
     }
 
     public String newDateLinkText(Encounter encounter) {
@@ -194,11 +198,11 @@ public class EncounterPresenter {
         return "Date: " + newBackdateText;
     }
 
-    public String dateFormatter(Date date) {
+    protected String dateFormatter(Date date) {
         return new SimpleDateFormat("MMM d, H:mma").format(date);
     }
 
-    public Billable promptBillable(String category) {
+    protected Billable promptBillable(String category) {
         Billable placeholderBillable = new Billable();
         String promptText = "Select a " + category.toLowerCase() + "...";
         placeholderBillable.setName(promptText);
@@ -206,7 +210,7 @@ public class EncounterPresenter {
         return placeholderBillable;
     }
 
-    public List<Billable> getBillablesList(Billable.TypeEnum category) {
+    protected List<Billable> getBillablesList(Billable.TypeEnum category) {
         List<Billable> billables = new ArrayList<>();
         billables.add(promptBillable(category.toString()));
 
@@ -219,7 +223,7 @@ public class EncounterPresenter {
         return billables;
     }
 
-    public ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
+    protected ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
         // TODO: check that creation of new adapter each time does not have memory implications
         return new ArrayAdapter<>(
                 mContext,
@@ -228,7 +232,7 @@ public class EncounterPresenter {
         );
     }
 
-    public List<String> getCategoriesList(String prompt) {
+    protected List<String> getCategoriesList(String prompt) {
         List<String> categories = new ArrayList<>();
         categories.add(prompt);
         for (Billable.TypeEnum billableType : Billable.TypeEnum.values()) {
@@ -240,7 +244,7 @@ public class EncounterPresenter {
         return categories;
     }
 
-    public ArrayAdapter<String> getCategoriesAdapter(String prompt) {
+    protected ArrayAdapter<String> getCategoriesAdapter(String prompt) {
         return new ArrayAdapter<>(
                 mContext,
                 android.R.layout.simple_spinner_dropdown_item,
