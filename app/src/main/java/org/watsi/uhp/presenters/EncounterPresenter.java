@@ -16,6 +16,8 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.fragments.BackdateEncounterDialogFragment;
+import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.listeners.BillableSearchEncounterFragmentListener;
 import org.watsi.uhp.listeners.BillableSelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.CategorySelectedEncounterFragmentListener;
@@ -38,13 +40,18 @@ public class EncounterPresenter {
     protected final View mView;
     protected final Context mContext;
     protected final EncounterItemAdapter mEncounterItemAdapter;
+    protected final Activity mActivity;
+    protected final EncounterFragment mEncounterFragment;
+
     public SimpleCursorAdapter billableCursorAdapter;
 
-    public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter) {
+    public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter, Activity activity, EncounterFragment encounterFragment) {
         mEncounter = encounter;
         mView = view;
         mContext = context;
         mEncounterItemAdapter = encounterItemAdapter;
+        mActivity = activity;
+        mEncounterFragment = encounterFragment;
     }
 
     public Spinner getCategorySpinner() {
@@ -72,21 +79,22 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setUpEncounterPresenter(Activity activity, Context context) {
+    public void setUpEncounterPresenter() {
         getLineItemsListView().setAdapter(mEncounterItemAdapter);
 
-        setCategorySpinner(context);
+        setCategorySpinner();
         setBillableSearch();
-        setAddBillableLink(activity);
+        setAddBillableLink();
+        setBackdateEncounterListener();
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setCategorySpinner(Context context) {
-        String prompt = context.getString(R.string.prompt_category);
+    public void setCategorySpinner() {
+        String prompt = mContext.getString(R.string.prompt_category);
 
         getCategorySpinner().setAdapter(getCategoriesAdapter(prompt));
         getCategorySpinner().setTag("category");
-        getCategorySpinner().setOnItemSelectedListener(new CategorySelectedEncounterFragmentListener(this, context));
+        getCategorySpinner().setOnItemSelectedListener(new CategorySelectedEncounterFragmentListener(this, mContext));
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
@@ -152,12 +160,25 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setAddBillableLink(final Activity activity) {
+    public void setAddBillableLink() {
         getAddBillablePrompt().setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                ((ClinicActivity) activity).getNavigationManager().setAddNewBillableFragment(mEncounter);
+                ((ClinicActivity) mActivity).getNavigationManager().setAddNewBillableFragment(mEncounter);
+            }
+        });
+    }
+
+    /////////////////////////////NOT TESTED///////////////////////////////////////
+    public void setBackdateEncounterListener() {
+        getBackdateEncounterLink().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
+                dialog.setTargetFragment(mEncounterFragment, 0);
+                dialog.show(mEncounterFragment.getActivity().getSupportFragmentManager(), "BackdateEncounterDialogFragment");
             }
         });
     }

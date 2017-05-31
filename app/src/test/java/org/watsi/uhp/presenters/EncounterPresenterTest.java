@@ -1,5 +1,6 @@
 package org.watsi.uhp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -71,12 +73,18 @@ public class EncounterPresenterTest {
     @Mock
     Context context;
 
+    @Mock
+    Activity activity;
+
+    @Mock
+    EncounterFragment encounterFragment;
+
     @Before
     public void setup() {
         initMocks(this);
         mockStatic(BillableDao.class);
         encounter = new Encounter();
-        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter);
+        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter, activity, encounterFragment);
 
         Date occurredAt = Calendar.getInstance().getTime();
         encounter.setOccurredAt(occurredAt);

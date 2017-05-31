@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.View;
@@ -41,29 +40,15 @@ public class EncounterFragment extends FormFragment<Encounter> {
     @Override
     void setUpFragment(View view) {
         encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(mSyncableModel.getEncounterItems()));
-        encounterPresenter = new EncounterPresenter(mSyncableModel, view, getContext(), encounterItemAdapter);
+        encounterPresenter = new EncounterPresenter(mSyncableModel, view, getContext(), encounterItemAdapter, getActivity(), this);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        encounterPresenter.setUpEncounterPresenter(getActivity(), getContext());
-
-        setBackdateEncounterListener();
+        encounterPresenter.setUpEncounterPresenter();
     }
 
     protected Encounter getEncounter() {
         return mSyncableModel;
-    }
-
-    private void setBackdateEncounterListener() {
-        final Fragment fragment = this;
-        encounterPresenter.getBackdateEncounterLink().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BackdateEncounterDialogFragment dialog = new BackdateEncounterDialogFragment();
-                dialog.setTargetFragment(fragment, 0);
-                dialog.show(getActivity().getSupportFragmentManager(), "BackdateEncounterDialogFragment");
-            }
-        });
     }
 
     public void updateBackdateLinkText() {
