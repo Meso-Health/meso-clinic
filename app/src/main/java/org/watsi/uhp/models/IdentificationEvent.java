@@ -1,11 +1,17 @@
 package org.watsi.uhp.models;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.BuildConfig;
+import org.watsi.uhp.api.ApiService;
+
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,13 +19,13 @@ import java.util.UUID;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
 
 @DatabaseTable(tableName = IdentificationEvent.TABLE_NAME)
 public class IdentificationEvent extends SyncableModel {
 
     public static final String TABLE_NAME = "identifications";
 
-    public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_OCCURRED_AT = "occurred_at";
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_THROUGH_MEMBER_ID = "through_member_id";
@@ -48,11 +54,6 @@ public class IdentificationEvent extends SyncableModel {
         @SerializedName("patient_left_before_care") PATIENT_LEFT_BEFORE_CARE,
         @SerializedName("patient_left_after_care") PATIENT_LEFT_AFTER_CARE,
     }
-
-    @Expose
-    @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
-    private UUID mId;
 
     @Expose
     @SerializedName(FIELD_NAME_OCCURRED_AT)
@@ -110,14 +111,6 @@ public class IdentificationEvent extends SyncableModel {
 
     public IdentificationEvent() {
         super();
-    }
-
-    public UUID getId() {
-        return mId;
-    }
-
-    public void setId(UUID id) {
-        this.mId = id;
     }
 
     public Date getOccurredAt() {
@@ -238,7 +231,7 @@ public class IdentificationEvent extends SyncableModel {
         this.mDismissalReason = dismissalReason;
     }
 
-    public Map<String, RequestBody> constructIdentificationEventPatchRequest() {
+    public Map<String, RequestBody> formatPatchRequest() {
         Map<String, RequestBody> requestBodyMap = new HashMap<>();
         requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
                 RequestBody.create(
@@ -248,5 +241,30 @@ public class IdentificationEvent extends SyncableModel {
                         MultipartBody.FORM,
                         new Gson().toJsonTree(getDismissalReason()).getAsString()));
         return requestBodyMap;
+    }
+
+    @Override
+    public void handleUpdateFromSync(SyncableModel responseModel) {
+        // no-op
+    }
+
+    @Override
+    protected Call postApiCall(Context context) throws SQLException {
+        if (getThroughMember() != null) {
+            setThroughMemberId(getThroughMember().getId());
+        }
+        return ApiService.requestBuilder(context).postIdentificationEvent(
+                getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, this);
+    }
+
+    @Override
+    protected Call patchApiCall(Context context) throws SQLException {
+        return ApiService.requestBuilder(context).patchIdentificationEvent(
+                getTokenAuthHeaderString(), getId(), formatPatchRequest());
+    }
+
+    @Override
+    protected void persistAssociations() {
+        // no-op
     }
 }

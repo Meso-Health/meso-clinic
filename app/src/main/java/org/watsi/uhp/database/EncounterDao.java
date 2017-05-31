@@ -2,16 +2,9 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 
-import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterForm;
-import org.watsi.uhp.models.EncounterItem;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -40,39 +33,6 @@ public class EncounterDao {
         }
 
         return mEncounterDao;
-    }
-
-    public static void create(Encounter encounter) throws SQLException {
-        // TODO: put inside transaction
-        encounter.setCreatedAt(Clock.getCurrentTime());
-        getInstance().getEncounterDao().create(encounter);
-
-        for (EncounterItem encounterItem : encounter.getEncounterItems()) {
-            Billable billable = encounterItem.getBillable();
-            if (billable.getId() == null) {
-                billable.generateId();
-                BillableDao.create(billable);
-            }
-
-            encounterItem.setEncounter(encounter);
-            EncounterItemDao.create(encounterItem);
-        }
-
-        for (EncounterForm encounterForm : encounter.getEncounterForms()) {
-            encounterForm.setEncounter(encounter);
-            encounterForm.setIsNew(true);
-            EncounterFormDao.create(encounterForm);
-        }
-    }
-
-    public static List<Encounter> unsynced() throws SQLException {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(Encounter.FIELD_NAME_SYNCED, false);
-        return getInstance().getEncounterDao().queryForFieldValues(queryMap);
-    }
-
-    public static void update(Encounter encounter) throws SQLException {
-        getInstance().getEncounterDao().update(encounter);
     }
 
     public static Encounter find(UUID id) throws SQLException {
