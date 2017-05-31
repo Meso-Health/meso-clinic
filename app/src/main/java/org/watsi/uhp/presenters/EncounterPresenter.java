@@ -24,6 +24,7 @@ import org.watsi.uhp.listeners.BillableSelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.CategorySelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.SuggestionClickEncounterFragmentListener;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -39,20 +40,20 @@ import java.util.UUID;
 public class EncounterPresenter {
 
     protected final Encounter mEncounter;
-    protected final View mView;
-    protected final Context mContext;
-    protected final EncounterItemAdapter mEncounterItemAdapter;
-    protected final Activity mActivity;
-    protected final EncounterFragment mEncounterFragment;
+    private final View mView;
+    private final Context mContext;
+    private final EncounterItemAdapter mEncounterItemAdapter;
+    private final NavigationManager mNavigationManager;
+    private final EncounterFragment mEncounterFragment;
 
     private SimpleCursorAdapter billableCursorAdapter;
 
-    public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter, Activity activity, EncounterFragment encounterFragment) {
+    public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter, NavigationManager navigationManager, EncounterFragment encounterFragment) {
         mEncounter = encounter;
         mView = view;
         mContext = context;
         mEncounterItemAdapter = encounterItemAdapter;
-        mActivity = activity;
+        mNavigationManager = navigationManager;
         mEncounterFragment = encounterFragment;
     }
 
@@ -184,7 +185,7 @@ public class EncounterPresenter {
 
             @Override
             public void onClick(View v) {
-                ((ClinicActivity) mActivity).getNavigationManager().setAddNewBillableFragment(mEncounter);
+                mNavigationManager.setAddNewBillableFragment(mEncounter);
             }
         });
     }

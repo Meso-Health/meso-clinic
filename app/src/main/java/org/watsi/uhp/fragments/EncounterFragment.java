@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
@@ -40,7 +41,7 @@ public class EncounterFragment extends FormFragment<Encounter> {
     @Override
     void setUpFragment(View view) {
         encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(mSyncableModel.getEncounterItems()));
-        encounterPresenter = new EncounterPresenter(mSyncableModel, view, getContext(), encounterItemAdapter, getActivity(), this);
+        encounterPresenter = new EncounterPresenter(mSyncableModel, view, getContext(), encounterItemAdapter, ((ClinicActivity) getActivity()).getNavigationManager(), this);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 

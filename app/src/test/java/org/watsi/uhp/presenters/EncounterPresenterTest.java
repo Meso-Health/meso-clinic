@@ -20,6 +20,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.fragments.EncounterFragment;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -74,7 +75,7 @@ public class EncounterPresenterTest {
     Context context;
 
     @Mock
-    Activity activity;
+    NavigationManager navigationManager;
 
     @Mock
     EncounterFragment encounterFragment;
@@ -84,7 +85,7 @@ public class EncounterPresenterTest {
         initMocks(this);
         mockStatic(BillableDao.class);
         encounter = new Encounter();
-        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter, activity, encounterFragment);
+        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter, navigationManager, encounterFragment);
 
         Date occurredAt = Calendar.getInstance().getTime();
         encounter.setOccurredAt(occurredAt);
