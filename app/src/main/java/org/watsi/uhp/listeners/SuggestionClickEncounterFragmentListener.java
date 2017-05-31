@@ -33,19 +33,7 @@ public class SuggestionClickEncounterFragmentListener implements SearchView.OnSu
 
     @Override
     public boolean onSuggestionClick(int position) {
-        MatrixCursor cursor = (MatrixCursor) encounterPresenter.billableCursorAdapter.getItem(position);
-        String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
-        try {
-            Billable billable = BillableDao.findById(UUID.fromString(uuidString));
-            encounterPresenter.addToEncounterItemList(billable);
-            encounterPresenter.clearDrugSearch();
-            encounterPresenter.scrollToBottom();
-        } catch (Encounter.DuplicateBillableException e) {
-            // TODO: make toast message more descriptive
-            Toast.makeText(context, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
-        } catch (SQLException e) {
-            Toast.makeText(context, "Call Katrina", Toast.LENGTH_SHORT).show();
-        }
+        encounterPresenter.updateEncounterFromOnSuggestionClick(position);
 
         return true;
     }

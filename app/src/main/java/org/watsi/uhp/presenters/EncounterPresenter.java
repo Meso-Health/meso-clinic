@@ -11,6 +11,7 @@ import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class EncounterPresenter {
 
@@ -43,7 +45,7 @@ public class EncounterPresenter {
     protected final Activity mActivity;
     protected final EncounterFragment mEncounterFragment;
 
-    public SimpleCursorAdapter billableCursorAdapter;
+    private SimpleCursorAdapter billableCursorAdapter;
 
     public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter, Activity activity, EncounterFragment encounterFragment) {
         mEncounter = encounter;
@@ -113,45 +115,67 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public SimpleCursorAdapter getBillableCursorAdapter(String query) {
+    public void setBillableCursorAdapter(String query) {
         if (query.length() < 3) {
-            return null;
+            billableCursorAdapter = null;
         } else {
-            String[] cursorColumns = new String[] {
-                    "_id",
-                    SearchManager.SUGGEST_COLUMN_TEXT_1,
-                    SearchManager.SUGGEST_COLUMN_TEXT_2,
-                    Billable.FIELD_NAME_ID
-            };
-            MatrixCursor cursor = new MatrixCursor(cursorColumns);
-            try {
-                for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
-                    cursor.addRow(new Object[] {
-                            billable.getId().getMostSignificantBits(),
-                            billable.getName(),
-                            billable.dosageDetails(),
-                            billable.getId().toString()
-                    });
-                }
-            } catch (SQLException e) {
-                ExceptionManager.reportException(e);
-            }
-
-            return new SimpleCursorAdapter(
-                    mContext,
-                    R.layout.item_billable_search_suggestion,
-                    cursor,
-                    new String[] { SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2 },
-                    new int[] { R.id.text1, R.id.text2 },
-                    0
-            );
+            billableCursorAdapter = createBillableCursorAdapter(query);
         }
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void clearDrugSearch() {
-        getDrugSearchView().clearFocus();
-        getDrugSearchView().setQuery("", false);
+    private SimpleCursorAdapter createBillableCursorAdapter(String query) {
+        String[] cursorColumns = new String[] {
+                "_id",
+                SearchManager.SUGGEST_COLUMN_TEXT_1,
+                SearchManager.SUGGEST_COLUMN_TEXT_2,
+                Billable.FIELD_NAME_ID
+        };
+        MatrixCursor cursor = new MatrixCursor(cursorColumns);
+        try {
+            for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
+                cursor.addRow(new Object[] {
+                        billable.getId().getMostSignificantBits(),
+                        billable.getName(),
+                        billable.dosageDetails(),
+                        billable.getId().toString()
+                });
+            }
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+
+        return new SimpleCursorAdapter(
+                mContext,
+                R.layout.item_billable_search_suggestion,
+                cursor,
+                new String[] { SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2 },
+                new int[] { R.id.text1, R.id.text2 },
+                0
+        );
+    }
+
+    /////////////////////////////NOT TESTED///////////////////////////////////////
+    public void updateBillableSearchSuggestions(String newText) {
+        setBillableCursorAdapter(newText);
+        getDrugSearchView().setSuggestionsAdapter(billableCursorAdapter);
+    }
+
+    /////////////////////////////NOT TESTED///////////////////////////////////////
+    public void updateEncounterFromOnSuggestionClick(int position) {
+        MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
+        String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
+        try {
+            Billable billable = BillableDao.findById(UUID.fromString(uuidString));
+            addToEncounterItemList(billable);
+            clearDrugSearch();
+            scrollToBottom();
+        } catch (Encounter.DuplicateBillableException e) {
+            // TODO: make toast message more descriptive
+            Toast.makeText(mContext, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
+        } catch (SQLException e) {
+            Toast.makeText(mContext, "Call Katrina", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
@@ -181,6 +205,11 @@ public class EncounterPresenter {
     /////////////////////////////NOT TESTED///////////////////////////////////////
     public void scrollToBottom() {
         getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
+    }
+
+    public void clearDrugSearch() {
+        getDrugSearchView().clearFocus();
+        getDrugSearchView().setQuery("", false);
     }
 
     public void addToEncounterItemList(Billable billable) throws Encounter.DuplicateBillableException {

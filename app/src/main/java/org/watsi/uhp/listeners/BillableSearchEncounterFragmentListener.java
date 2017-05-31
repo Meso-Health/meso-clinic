@@ -15,8 +15,7 @@ public class BillableSearchEncounterFragmentListener implements SearchView.OnQue
     @Override
     public boolean onQueryTextChange(String newText) {
         if (!newText.isEmpty()) {
-            encounterPresenter.billableCursorAdapter = encounterPresenter.getBillableCursorAdapter(newText);
-            encounterPresenter.getDrugSearchView().setSuggestionsAdapter(encounterPresenter.billableCursorAdapter);
+            encounterPresenter.updateBillableSearchSuggestions(newText);
         }
         return true;
     }

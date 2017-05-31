@@ -133,6 +133,15 @@ public class EncounterPresenterTest {
     }
 
     @Test
+    public void clearDrugSearch() throws Exception {
+        when(encounterPresenter.getDrugSearchView()).thenReturn(searchView);
+
+        encounterPresenter.clearDrugSearch();
+        assertEquals(encounterPresenter.getDrugSearchView().findFocus(), null);
+        assertEquals(encounterPresenter.getDrugSearchView().getQuery(), null);
+    }
+
+    @Test
     public void addToEncounterItemList() throws Exception {
         Billable billable = mock(Billable.class);
         encounterPresenter.addToEncounterItemList(billable);
