@@ -1,5 +1,6 @@
 package org.watsi.uhp.presenters;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.MatrixCursor;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.listeners.BillableSearchEncounterFragmentListener;
@@ -65,12 +67,17 @@ public class EncounterPresenter {
         return (TextView) mView.findViewById(R.id.backdate_encounter);
     }
 
+    public TextView getAddBillablePrompt() {
+        return (TextView) mView.findViewById(R.id.add_billable_prompt);
+    }
+
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setUpEncounterPresenter(View view, Context context) {
+    public void setUpEncounterPresenter(Activity activity, Context context) {
         getLineItemsListView().setAdapter(mEncounterItemAdapter);
 
         setCategorySpinner(context);
         setBillableSearch();
+        setAddBillableLink(activity);
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
@@ -144,6 +151,16 @@ public class EncounterPresenter {
         getDrugSearchView().setQuery("", false);
     }
 
+    /////////////////////////////NOT TESTED///////////////////////////////////////
+    public void setAddBillableLink(final Activity activity) {
+        getAddBillablePrompt().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ((ClinicActivity) activity).getNavigationManager().setAddNewBillableFragment(mEncounter);
+            }
+        });
+    }
 
     public void addToEncounterItemList(Billable billable) throws Encounter.DuplicateBillableException {
         EncounterItem encounterItem = new EncounterItem();

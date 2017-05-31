@@ -3,7 +3,6 @@ package org.watsi.uhp.listeners;
 import android.content.Context;
 import android.database.MatrixCursor;
 import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;

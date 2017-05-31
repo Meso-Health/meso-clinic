@@ -1,38 +1,20 @@
 package org.watsi.uhp.fragments;
 
-import android.app.SearchManager;
-import android.database.MatrixCursor;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
-import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
-import org.watsi.uhp.runnables.ScrollToBottomRunnable;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class EncounterFragment extends FormFragment<Encounter> {
 
-    private SimpleCursorAdapter billableCursorAdapter;
     private EncounterItemAdapter encounterItemAdapter;
     private EncounterPresenter encounterPresenter;
 
@@ -63,23 +45,13 @@ public class EncounterFragment extends FormFragment<Encounter> {
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        encounterPresenter.setUpEncounterPresenter(view, getContext());
+        encounterPresenter.setUpEncounterPresenter(getActivity(), getContext());
 
-        setAddBillableLink(view);
         setBackdateEncounterListener();
     }
 
     protected Encounter getEncounter() {
         return mSyncableModel;
-    }
-
-    private void setAddBillableLink(View view) {
-        view.findViewById(R.id.add_billable_prompt).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationManager().setAddNewBillableFragment(mSyncableModel);
-            }
-        });
     }
 
     private void setBackdateEncounterListener() {

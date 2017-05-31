@@ -1,7 +1,6 @@
 package org.watsi.uhp.listeners;
 
 import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
 
 import org.watsi.uhp.presenters.EncounterPresenter;
 

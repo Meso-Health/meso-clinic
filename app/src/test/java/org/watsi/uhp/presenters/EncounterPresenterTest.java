@@ -118,6 +118,13 @@ public class EncounterPresenterTest {
     }
 
     @Test
+    public void getAddBillablePrompt() throws Exception {
+        when(view.findViewById(R.id.add_billable_prompt)).thenReturn(textView);
+
+        assertEquals(encounterPresenter.getAddBillablePrompt(), textView);
+    }
+
+    @Test
     public void addToEncounterItemList() throws Exception {
         Billable billable = mock(Billable.class);
         encounterPresenter.addToEncounterItemList(billable);
