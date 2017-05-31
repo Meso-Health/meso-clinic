@@ -38,7 +38,6 @@ public class SuggestionClickEncounterFragmentListener implements SearchView.OnSu
         try {
             Billable billable = BillableDao.findById(UUID.fromString(uuidString));
             encounterPresenter.addToEncounterItemList(billable);
-            encounterPresenter.scrollToBottom();
             encounterPresenter.clearDrugSearch();
         } catch (Encounter.DuplicateBillableException e) {
             // TODO: make toast message more descriptive

@@ -44,7 +44,7 @@ public class EncounterFragment extends FormFragment<Encounter> {
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        encounterPresenter.setUpEncounterPresenter();
+        encounterPresenter.setUp();
     }
 
     protected Encounter getEncounter() {

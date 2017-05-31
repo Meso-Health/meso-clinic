@@ -26,10 +26,9 @@ public class BillableSelectedEncounterFragmentListener implements AdapterView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (position != 0) {
-            Billable billable = ((Billable) adapter.getItem(position));
+            Billable billable = (Billable) adapter.getItem(position);
             try {
                 encounterPresenter.addToEncounterItemList(billable);
-                encounterPresenter.scrollToBottom();
             } catch (Encounter.DuplicateBillableException e) {
                 // TODO: make toast message more descriptive
                 Toast.makeText(context, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();

@@ -79,7 +79,7 @@ public class EncounterPresenter {
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void setUpEncounterPresenter() {
+    public void setUp() {
         getLineItemsListView().setAdapter(mEncounterItemAdapter);
 
         setCategorySpinner();
@@ -103,11 +103,6 @@ public class EncounterPresenter {
 
         getBillableSpinner().setAdapter(adapter);
         getBillableSpinner().setOnItemSelectedListener(new BillableSelectedEncounterFragmentListener(this, adapter, mContext));
-    }
-
-    /////////////////////////////NOT TESTED///////////////////////////////////////
-    public void scrollToBottom() {
-        getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
     }
 
     /////////////////////////////NOT TESTED///////////////////////////////////////
@@ -189,6 +184,7 @@ public class EncounterPresenter {
 
         mEncounter.addEncounterItem(encounterItem);
         mEncounterItemAdapter.add(encounterItem);
+        getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
     }
 
     public String newDateLinkText(Encounter encounter) {
@@ -210,12 +206,12 @@ public class EncounterPresenter {
         return placeholderBillable;
     }
 
-    public List<Billable> getBillablesList(String category) {
+    public List<Billable> getBillablesList(Billable.TypeEnum category) {
         List<Billable> billables = new ArrayList<>();
-        billables.add(promptBillable(category));
+        billables.add(promptBillable(category.toString()));
 
         try {
-            billables.addAll(BillableDao.getBillablesByCategory(Billable.TypeEnum.valueOf(category)));
+            billables.addAll(BillableDao.getBillablesByCategory(category));
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
@@ -228,7 +224,7 @@ public class EncounterPresenter {
         return new ArrayAdapter<>(
                 mContext,
                 android.R.layout.simple_spinner_dropdown_item,
-                getBillablesList(category.toString())
+                getBillablesList(category)
         );
     }
 
