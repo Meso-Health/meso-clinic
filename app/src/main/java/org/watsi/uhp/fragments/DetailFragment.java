@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -19,7 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.simprints.libsimprints.Constants;
+import com.simprints.libsimprints.Identification;
 import com.simprints.libsimprints.SimHelper;
+import com.simprints.libsimprints.Verification;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
@@ -35,7 +39,11 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static android.app.Activity.RESULT_OK;
 
 public class DetailFragment extends BaseFragment {
 
@@ -155,11 +163,19 @@ public class DetailFragment extends BaseFragment {
         Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
         if (mMember.currentCheckIn() == null) {
             // Here is the branching logic
+
+            // If they have fingerprints
             if (mMember.getFingerprintsGuid() != null) {
                 confirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        getNavigationManager().setFingerprintIdentificationFragment(mMember);
+                        SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, getSessionManager().getCurrentLoggedInUsername());
+                        Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), mMember.getFingerprintsGuid().toString());
+
+                        startActivityForResult(
+                                fingerprintIdentificationIntent,
+                                1
+                        );
                     }
                 });
             } else {
@@ -290,6 +306,21 @@ public class DetailFragment extends BaseFragment {
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK || data == null) {
+            Toast.makeText(
+                    getContext(),
+                    "result not OK",
+                    Toast.LENGTH_LONG).show();
+        } else if (requestCode == 1) {
+            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+
+            Toast.makeText(getContext(), "Guid:  " + verification.getGuid() + " Confidence: " + verification.getConfidence() + " Tier: " + verification.getTier(), Toast.LENGTH_LONG).show();
+            openClinicNumberDialog();
         }
     }
 }

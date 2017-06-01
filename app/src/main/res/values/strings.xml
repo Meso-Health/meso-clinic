@@ -172,7 +172,7 @@
 
     <!-- ClinicNumberFormFragment -->
     <!--<string name="member_edit_label">Update member</string>-->
-    <string name="enter_patient_clinic_number_label">Enter the patient's clinic number</string>
+    <string name="enter_patient_clinic_number_label">Enter the patient\'s clinic number</string>
     <string name="clinic_number_save">Complete check in</string>
 
     <!-- EnrollNewbornInfoFragment -->
