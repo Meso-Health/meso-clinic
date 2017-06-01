@@ -12,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rollbar.android.Rollbar;
+
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
@@ -80,7 +82,6 @@ public class EncounterPresenter {
         return (TextView) mView.findViewById(R.id.add_billable_prompt);
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     public void setUp() {
         getLineItemsListView().setAdapter(mEncounterItemAdapter);
 
@@ -90,7 +91,6 @@ public class EncounterPresenter {
         setBackdateEncounterListener();
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     private void setCategorySpinner() {
         String prompt = mContext.getString(R.string.prompt_category);
 
@@ -99,22 +99,23 @@ public class EncounterPresenter {
         getCategorySpinner().setOnItemSelectedListener(new CategorySelectedEncounterFragmentListener(this, mContext));
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     public void setBillableSpinner(Billable.TypeEnum category) {
-        ArrayAdapter<Billable> adapter = getEncounterItemAdapter(category);
-
-        getBillableSpinner().setAdapter(adapter);
-        getBillableSpinner().setOnItemSelectedListener(new BillableSelectedEncounterFragmentListener(this, adapter, mContext));
+        try {
+            ArrayAdapter<Billable> adapter = getEncounterItemAdapter(category);
+            getBillableSpinner().setAdapter(adapter);
+            getBillableSpinner().setOnItemSelectedListener(new BillableSelectedEncounterFragmentListener(this, adapter, mContext));
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            Toast.makeText(mContext, R.string.generic_error_message, Toast.LENGTH_LONG).show();
+        }
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     private void setBillableSearch() {
         getDrugSearchView().setOnQueryTextListener(new BillableSearchEncounterFragmentListener(this));
         getDrugSearchView().setOnSuggestionListener(new SuggestionClickEncounterFragmentListener(this, mContext));
         getDrugSearchView().setQueryHint(mContext.getString(R.string.search_drug_hint));
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     public void setBillableCursorAdapter(String query) {
         if (query.length() < 3) {
             billableCursorAdapter = null;
@@ -123,7 +124,6 @@ public class EncounterPresenter {
         }
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     private SimpleCursorAdapter createBillableCursorAdapter(String query) {
         String[] cursorColumns = new String[] {
                 "_id",
@@ -155,13 +155,11 @@ public class EncounterPresenter {
         );
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     public void updateBillableSearchSuggestions(String newText) {
         setBillableCursorAdapter(newText);
         getDrugSearchView().setSuggestionsAdapter(billableCursorAdapter);
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     public void updateEncounterFromOnSuggestionClick(int position) {
         MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
         String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
@@ -171,14 +169,13 @@ public class EncounterPresenter {
             clearDrugSearch();
             scrollToBottom();
         } catch (Encounter.DuplicateBillableException e) {
-            // TODO: make toast message more descriptive
             Toast.makeText(mContext, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
         } catch (SQLException e) {
-            Toast.makeText(mContext, "Call Katrina", Toast.LENGTH_SHORT).show();
+            ExceptionManager.reportException(e);
+            Toast.makeText(mContext, R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     private void setAddBillableLink() {
         getAddBillablePrompt().setOnClickListener(new View.OnClickListener() {
 
@@ -189,7 +186,6 @@ public class EncounterPresenter {
         });
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     private void setBackdateEncounterListener() {
         getBackdateEncounterLink().setOnClickListener(new View.OnClickListener() {
 
@@ -202,10 +198,11 @@ public class EncounterPresenter {
         });
     }
 
-    /////////////////////////////NOT TESTED///////////////////////////////////////
     public void scrollToBottom() {
         getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
     }
+
+    // BELOW IS TESTED:
 
     public void clearDrugSearch() {
         getDrugSearchView().clearFocus();
@@ -233,20 +230,16 @@ public class EncounterPresenter {
         return placeholderBillable;
     }
 
-    protected List<Billable> getBillablesList(Billable.TypeEnum category) {
+    protected List<Billable> getBillablesList(Billable.TypeEnum category) throws SQLException {
         List<Billable> billables = new ArrayList<>();
         billables.add(promptBillable(category.toString()));
 
-        try {
-            billables.addAll(BillableDao.getBillablesByCategory(category));
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
+        billables.addAll(BillableDao.getBillablesByCategory(category));
 
         return billables;
     }
 
-    protected ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) {
+    protected ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) throws SQLException {
         // TODO: check that creation of new adapter each time does not have memory implications
         return new ArrayAdapter<>(
                 mContext,
