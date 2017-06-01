@@ -1,6 +1,5 @@
 package org.watsi.uhp.presenters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -25,6 +24,7 @@ import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,8 +32,6 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -156,8 +154,14 @@ public class EncounterPresenterTest {
     }
 
     @Test
-    public void newDateLinkText() throws Exception {
-        assertThat(encounterPresenter.newDateLinkText(encounter), containsString(encounterPresenter.dateFormatter(encounter.getOccurredAt())));
+    public void setFormattedBackDate() throws Exception {
+        encounterPresenter.setFormattedBackDate();
+
+        assertNotNull(encounterPresenter.mFormattedBackDate);
+
+        Date date = new SimpleDateFormat("MMM d, H:mma").parse(encounterPresenter.mFormattedBackDate);
+        assertEquals(date.getMonth(), encounter.getOccurredAt().getMonth());
+        assertEquals(date.getDate(), encounter.getOccurredAt().getDate());
     }
 
     @Test

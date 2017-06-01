@@ -1,6 +1,5 @@
 package org.watsi.uhp.presenters;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.MatrixCursor;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.fragments.BackdateEncounterDialogFragment;
@@ -45,6 +43,7 @@ public class EncounterPresenter {
     private final EncounterItemAdapter mEncounterItemAdapter;
     private final NavigationManager mNavigationManager;
     private final EncounterFragment mEncounterFragment;
+    public String mFormattedBackDate;
 
     private SimpleCursorAdapter billableCursorAdapter;
 
@@ -221,15 +220,9 @@ public class EncounterPresenter {
         mEncounterItemAdapter.add(encounterItem);
     }
 
-    public String newDateLinkText(Encounter encounter) {
-        Date backdate = encounter.getOccurredAt();
-        String newBackdateText = dateFormatter(backdate);
-
-        return "Date: " + newBackdateText;
-    }
-
-    protected String dateFormatter(Date date) {
-        return new SimpleDateFormat("MMM d, H:mma").format(date);
+    public void setFormattedBackDate() {
+        Date backdate = mEncounter.getOccurredAt();
+        mFormattedBackDate = new SimpleDateFormat("MMM d, H:mma").format(backdate);
     }
 
     protected Billable promptBillable(String category) {

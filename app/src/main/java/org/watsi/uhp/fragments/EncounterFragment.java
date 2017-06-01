@@ -53,7 +53,8 @@ public class EncounterFragment extends FormFragment<Encounter> {
     }
 
     public void updateBackdateLinkText() {
-        SpannableString newText = new SpannableString(encounterPresenter.newDateLinkText(mSyncableModel));
+        encounterPresenter.setFormattedBackDate();
+        SpannableString newText = new SpannableString("Date: " + encounterPresenter.mFormattedBackDate);
         newText.setSpan(new UnderlineSpan(), 0, newText.length(), 0);
         encounterPresenter.getBackdateEncounterLink().setText(newText);
     }
