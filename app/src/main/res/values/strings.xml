@@ -17,7 +17,7 @@
     <string name="exit_form_alert">Are you sure you want to exit?</string>
 
     <!-- Menu -->
-    <string name="menu_member_edit_label">Edit member</string>
+    <string name="menu_member_edit_label">Edit member details</string>
     <string name="menu_complete_enrollment_label">Complete enrollment</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
@@ -160,7 +160,7 @@
     <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
 
     <!-- MemberEditFragment -->
-    <string name="member_edit_label">Update member</string>
+    <string name="member_edit_label">Edit member details</string>
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
