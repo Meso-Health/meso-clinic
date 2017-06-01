@@ -20,6 +20,8 @@ import org.watsi.uhp.models.Member;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import static org.watsi.uhp.R.string.save_btn_label;
+
 public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_NEWBORN_PHOTO_INTENT = 4;
@@ -66,9 +68,13 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
         }
 
         Button capturePhotoBtn = ((Button) view.findViewById(R.id.photo_btn));
+        Button savePhotoBtn = ((Button) view.findViewById(R.id.save_button));
+
         capturePhotoBtn.setText(R.string.enrollment_member_photo_btn);
         capturePhotoBtn.setOnClickListener(
                 new CapturePhotoClickListener(TAKE_NEWBORN_PHOTO_INTENT, this, mUri));
+
+        savePhotoBtn.setText(save_btn_label);
 
         mNewbornPhotoImageView = (ImageView) view.findViewById(R.id.photo);
         mSaveBtn.setEnabled(false);
