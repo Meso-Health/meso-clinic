@@ -58,6 +58,15 @@ public class EncounterPresenter {
         mEncounterFragment = encounterFragment;
     }
 
+    public void setUp() {
+        getLineItemsListView().setAdapter(mEncounterItemAdapter);
+
+        setCategorySpinner();
+        setBillableSearch();
+        setAddBillableLink();
+        setBackdateEncounterListener();
+    }
+
     protected Spinner getCategorySpinner() {
         return (Spinner) mView.findViewById(R.id.category_spinner);
     }
@@ -80,15 +89,6 @@ public class EncounterPresenter {
 
     protected TextView getAddBillablePrompt() {
         return (TextView) mView.findViewById(R.id.add_billable_prompt);
-    }
-
-    public void setUp() {
-        getLineItemsListView().setAdapter(mEncounterItemAdapter);
-
-        setCategorySpinner();
-        setBillableSearch();
-        setAddBillableLink();
-        setBackdateEncounterListener();
     }
 
     private void setCategorySpinner() {
