@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFormFragment;
@@ -56,6 +57,10 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
+    public FragmentProvider getFragmentProvider() {
+        return mFragmentProvider;
+    }
+
     private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
                              popBackStack) {
 
@@ -98,6 +103,12 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
+    public void setClinicNumberFormFragment(Member member) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false);
+    }
+
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
                                    Member member,
                                    Bundle sourceParams) {
@@ -112,8 +123,12 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(SearchMemberFragment.class));
     }
 
-    public void setFingerprintIdentificationFragment() {
-        setFragment(mFragmentProvider.createFragment(FingerprintIdentificationFragment.class));
+    public void setFingerprintIdentificationFragment(Member member) {
+        Bundle bundle = new Bundle();
+        if (member != null) {
+            bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        }
+        setFragment(mFragmentProvider.createFragment(FingerprintIdentificationFragment.class, bundle));
     }
 
     public void setEncounterFragment(Encounter encounter) {

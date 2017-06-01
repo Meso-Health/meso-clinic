@@ -2,10 +2,14 @@ package org.watsi.uhp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,8 +19,13 @@ import com.simprints.libsimprints.SimHelper;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
+import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -28,6 +37,7 @@ import static android.app.Activity.RESULT_OK;
 public class FingerprintIdentificationFragment extends BaseFragment {
     private static int SIMPRINTS_IDENTIFICATION_INTENT = 1;
 
+    private Member mMember;
     private TextView mResults;
 
     @Override
@@ -36,22 +46,19 @@ public class FingerprintIdentificationFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.fragment_fingerprint_identification, container, false);
         mResults = (TextView) view.findViewById(R.id.fingerprint_identification_results);
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
 
-        view.findViewById(R.id.scan_fingerprints).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, getSessionManager().getCurrentLoggedInUsername());
-                Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString());
+        SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, getSessionManager().getCurrentLoggedInUsername());
+        Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString());
 
-                startActivityForResult(
-                        fingerprintIdentificationIntent,
-                        SIMPRINTS_IDENTIFICATION_INTENT
-                );
-            }
-        });
+        startActivityForResult(
+                fingerprintIdentificationIntent,
+                SIMPRINTS_IDENTIFICATION_INTENT
+        );
+
+
         return view;
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -61,7 +68,11 @@ public class FingerprintIdentificationFragment extends BaseFragment {
                     getContext(),
                     "result not OK",
                     Toast.LENGTH_LONG).show();
-        } else if (requestCode == SIMPRINTS_IDENTIFICATION_INTENT){
+        } else if (requestCode == SIMPRINTS_IDENTIFICATION_INTENT) {
+            // Get rid of progress bar
+            ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.INVISIBLE);
+
             ArrayList<Identification> identifications =
                     data.getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
             String result = "";
@@ -77,7 +88,15 @@ public class FingerprintIdentificationFragment extends BaseFragment {
                 result = result + "\n";
                 Log.i("UHP", "Guid is: " + id.getGuid());
             }
-            mResults.setText(result);
+            Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+
+            DialogFragment clinicNumberDialog = new ClinicNumberDialogFragment();
+            clinicNumberDialog.show(getActivity().getSupportFragmentManager(),
+                    "ClinicNumberDialogFragment");
+
+            getNavigationManager().set
+
+
         }
     }
 }

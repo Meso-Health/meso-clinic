@@ -30,7 +30,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
 
     private CameraSource mCameraSource;
     private Button mSearchMemberButton;
-    private Button mFingerprintIdentificationButton;
     private Toast mErrorToast;
     private ScanPurposeEnum mScanPurpose;
 
@@ -50,14 +49,12 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
         mSearchMemberButton = (Button) view.findViewById(R.id.search_member);
-        mFingerprintIdentificationButton = (Button) view.findViewById(R.id.identify_member_by_fingerprint);
 
         if (!mScanPurpose.equals(ScanPurposeEnum.ID)) mSearchMemberButton.setVisibility(View.GONE);
 
         mErrorToast = Toast.makeText(getActivity(), R.string.id_not_found_toast, Toast.LENGTH_LONG);
 
         setupSearchMemberButton();
-        setupIdentifyMemberByFingerprintsButton();
         return view;
     }
 
@@ -178,15 +175,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
             @Override
             public void onClick(View v) {
                 getNavigationManager().setSearchMemberFragment();
-            }
-        });
-    }
-
-    private void setupIdentifyMemberByFingerprintsButton() {
-        mFingerprintIdentificationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationManager().setFingerprintIdentificationFragment();
             }
         });
     }

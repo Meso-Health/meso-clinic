@@ -1,6 +1,7 @@
 package org.watsi.uhp.models;
 
 import android.content.Context;
+import android.support.v4.app.ServiceCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -108,6 +109,14 @@ public class IdentificationEvent extends SyncableModel {
     @SerializedName(FIELD_NAME_DISMISSAL_REASON)
     @DatabaseField(columnName = FIELD_NAME_DISMISSAL_REASON)
     private DismissalReasonEnum mDismissalReason;
+
+//    @Expose
+//    @SerializedName(FIELD_NAME_FINGERPRINT_CONFIDENCE)
+//    @DatabaseField(columnName = FIELD_NAME_FINGERPRINT_CONFIDENCE)
+//    private float mFingerprintConfidence;
+//
+//    @Expose
+//    @SerializedName(FIED_NAME)
 
     public IdentificationEvent() {
         super();

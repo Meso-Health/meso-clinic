@@ -170,6 +170,11 @@
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
+    <!-- ClinicNumberFormFragment -->
+    <!--<string name="member_edit_label">Update member</string>-->
+    <string name="enter_patient_clinic_number_label">Enter the patient's clinic number</string>
+    <string name="clinic_number_save">Complete check in</string>
+
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_info_label">Enroll newborn</string>
     <string name="enroll_newborn_save_btn">Continue</string>

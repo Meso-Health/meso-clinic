@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/fragment_vertical_margin"
+    android:layout_marginBottom="@dimen/fragment_vertical_margin"
+    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+    android:layout_marginRight="@dimen/fragment_horizontal_margin"
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
+
+
+    <RelativeLayout
+        android:id="@+id/member_details"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/detail_fragment_photo_height"
+        android:layout_marginBottom="@dimen/fragment_vertical_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+
+        <ImageView
+            android:id="@+id/member_photo"
+            android:contentDescription="@string/photo_description"
+            android:layout_width="@dimen/detail_fragment_photo_width"
+            android:layout_height="@dimen/detail_fragment_photo_height"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            android:adjustViewBounds="true" />
+
+        <TextView
+            android:id="@+id/member_name_detail_fragment"
+            android:theme="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/member_photo" />
+
+        <TextView
+            android:id="@+id/member_age_and_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/member_name_detail_fragment"
+            android:layout_toEndOf="@id/member_photo" />
+
+        <TextView
+            android:id="@+id/member_card_id_detail_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_below="@id/member_age_and_gender" />
+
+        <TextView
+            android:id="@+id/member_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/member_card_id_detail_fragment"
+            android:layout_toEndOf="@id/member_photo" />
+
+        <TextView
+            android:id="@+id/member_notification"
+            android:textStyle="bold"
+            android:textColor="@color/alertRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_below="@id/member_phone_number" />
+
+        <TextView
+            android:id="@+id/reject_identity"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/reject_identity"
+            android:clickable="true"
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/dismiss_patient"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/dismiss_patient"
+            android:clickable="true"
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/enter_patient_clinic_number_label" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_clinic_number"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:checkedButton="@+id/radio_opd" >
+
+        <RadioButton
+            android:id="@+id/radio_opd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/radio_opd" />
+        <RadioButton
+            android:id="@+id/radio_delivery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/radio_delivery" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:maxLines="1" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/PrimaryButton"
+            android:text="@string/clinic_number_save" />
+    </RelativeLayout>
+</LinearLayout>

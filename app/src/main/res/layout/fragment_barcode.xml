@@ -20,11 +20,4 @@
         android:layout_height="wrap_content"
         android:theme="@style/PrimaryButton"
         android:text="@string/search_member_hint"/>
-
-    <Button
-        android:id="@+id/identify_member_by_fingerprint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/PrimaryButton"
-        android:text="@string/identify_member_hint"/>
 </LinearLayout>

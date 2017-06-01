@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -18,6 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.simprints.libsimprints.SimHelper;
+
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.EncounterItemDao;
@@ -150,12 +154,22 @@ public class DetailFragment extends BaseFragment {
     private void setButton(View view) {
         Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
         if (mMember.currentCheckIn() == null) {
-            confirmButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openClinicNumberDialog();
-                }
-            });
+            // Here is the branching logic
+            if (mMember.getFingerprintsGuid() != null) {
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getNavigationManager().setFingerprintIdentificationFragment(mMember);
+                    }
+                });
+            } else {
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openClinicNumberDialog();
+                    }
+                });
+            }
         } else {
             confirmButton.setText(R.string.detail_create_encounter);
             confirmButton.setOnClickListener(new View.OnClickListener() {
