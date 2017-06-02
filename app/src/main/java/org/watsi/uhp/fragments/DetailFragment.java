@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
-import com.simprints.libsimprints.Identification;
 import com.simprints.libsimprints.SimHelper;
 import com.simprints.libsimprints.Verification;
 
@@ -37,11 +35,10 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
+import org.watsi.uhp.presenters.DetailPresenter;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,14 +48,18 @@ public class DetailFragment extends BaseFragment {
     private IdentificationEvent.SearchMethodEnum mIdMethod = null;
     private Member mThroughMember = null;
 
+    DetailPresenter detailPresenter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        detailPresenter = new DetailPresenter(view);
+
         getActivity().setTitle(R.string.detail_fragment_label);
         setHasOptionsMenu(true);
         getActivity().invalidateOptionsMenu();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
         if (searchMethodString != null) {
@@ -73,7 +74,7 @@ public class DetailFragment extends BaseFragment {
         setButton(view);
         setHouseholdList(view);
         if (mMember.currentCheckIn() == null) {
-            setRejectIdentityLink(view);
+            setRejectIdentityLink();
         } else {
             setDismissPatientLink(view);
         }
@@ -81,9 +82,9 @@ public class DetailFragment extends BaseFragment {
         return view;
     }
 
-    private void setRejectIdentityLink(View view) {
-        view.findViewById(R.id.reject_identity).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.reject_identity).setOnClickListener(new View.OnClickListener() {
+    private void setRejectIdentityLink() {
+        detailPresenter.getRejectIdentityLink().setVisibility(View.VISIBLE);
+        detailPresenter.getRejectIdentityLink().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
@@ -161,6 +162,12 @@ public class DetailFragment extends BaseFragment {
 
     private void setButton(View view) {
         Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
+        if (mMember.getFingerprintsGuid() != null) {
+            confirmButton.setText(R.string.approve_identity);
+        } else {
+            confirmButton.setText(R.string.approve_identity_without_fingerprints);
+        }
+
         if (mMember.currentCheckIn() == null) {
             // Here is the branching logic
 
@@ -304,6 +311,8 @@ public class DetailFragment extends BaseFragment {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
+        menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
+
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }

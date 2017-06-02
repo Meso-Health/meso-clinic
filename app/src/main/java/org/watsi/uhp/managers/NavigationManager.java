@@ -122,14 +122,6 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(SearchMemberFragment.class));
     }
 
-    public void setFingerprintIdentificationFragment(Member member) {
-        Bundle bundle = new Bundle();
-        if (member != null) {
-            bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        }
-        setFragment(mFragmentProvider.createFragment(FingerprintIdentificationFragment.class, bundle));
-    }
-
     public void setEncounterFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);

@@ -87,7 +87,6 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:theme="@style/PrimaryButton"
-        android:text="@string/approve_identity"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
         android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:layout_marginBottom="@dimen/fragment_vertical_margin"/>

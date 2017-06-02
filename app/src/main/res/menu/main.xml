@@ -24,6 +24,13 @@
         android:visible="false" />
 
     <item
+        android:id="@+id/menu_check_in_without_fingerprints"
+        android:orderInCategory="102"
+        android:title="Check-in without fingerprints"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
         android:id="@+id/menu_logout"
         android:orderInCategory="103"
         android:title="@string/menu_logout_label"
