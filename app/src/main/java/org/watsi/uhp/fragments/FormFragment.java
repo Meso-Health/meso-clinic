@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,4 +50,5 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
     abstract void nextStep(View view);
 
     abstract void setUpFragment(View view);
+
 }

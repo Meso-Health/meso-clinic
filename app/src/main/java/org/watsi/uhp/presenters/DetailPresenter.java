@@ -5,7 +5,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.models.IdentificationEvent;
 
 /**
  * Created by michaelliang on 6/1/17.

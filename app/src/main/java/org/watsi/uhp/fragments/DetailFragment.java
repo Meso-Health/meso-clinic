@@ -189,7 +189,7 @@ public class DetailFragment extends BaseFragment {
                 confirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openClinicNumberDialog();
+                        getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, -1, null);
                     }
                 });
             }
@@ -327,9 +327,11 @@ public class DetailFragment extends BaseFragment {
                     Toast.LENGTH_LONG).show();
         } else if (requestCode == 1) {
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+            String fingerprintTier = verification.getTier().toString();
+            float fingerprintConfidence = verification.getConfidence();
 
             Toast.makeText(getContext(), "Guid:  " + verification.getGuid() + " Confidence: " + verification.getConfidence() + " Tier: " + verification.getTier(), Toast.LENGTH_LONG).show();
-            openClinicNumberDialog();
+            getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, fingerprintConfidence, fingerprintTier);
         }
     }
 }

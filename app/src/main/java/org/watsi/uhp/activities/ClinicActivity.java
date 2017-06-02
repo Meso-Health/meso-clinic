@@ -23,6 +23,7 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -126,17 +127,9 @@ public class ClinicActivity extends AppCompatActivity {
 
         if (currentFragment instanceof FormFragment &&
                 ((FormFragment) currentFragment).isFirstStep()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.exit_form_alert)
-                    .setNegativeButton(android.R.string.no, null)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            ClinicActivity.super.onBackPressed();
-                        }
-                    }).create().show();
-        } else {
-            ClinicActivity.super.onBackPressed();
+            showDialogReturnToPreviousScreen();
+        } else if (currentFragment instanceof ClinicNumberFormFragment) {
+            showDialogReturnToPreviousScreen();
         }
     }
 
@@ -203,6 +196,8 @@ public class ClinicActivity extends AppCompatActivity {
                                     getNavigationManager().setCurrentPatientsFragment();
                                 }
                             }).create().show();
+                } else if (currentFragment instanceof ClinicNumberFormFragment) {
+                    showDialogReturnToPreviousScreen();
                 } else {
                     getNavigationManager().setCurrentPatientsFragment();
                 }
@@ -266,5 +261,17 @@ public class ClinicActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void showDialogReturnToPreviousScreen() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_form_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        ClinicActivity.super.onBackPressed();
+                    }
+                }).create().show();
     }
 }

@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import com.simprints.libsimprints.Verification;
+
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
@@ -34,6 +36,8 @@ import org.watsi.uhp.models.Member;
 public class NavigationManager {
 
     public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
+    public static String VERIFICATION_TIER_BUNDLE_FIELD = "verificationTier";
+    public static String VERIFICATION_CONFIDENCE_BUNDLE_FIELD = "verificationConfidence";
     public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
@@ -61,7 +65,7 @@ public class NavigationManager {
     }
 
     private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
-                             popBackStack) {
+                             popBackStack, int transition) {
 
         FragmentManager fm = mActivity.getSupportFragmentManager();
         if (popBackStack) {
@@ -73,6 +77,8 @@ public class NavigationManager {
 
         FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
+        transaction.setTransition(transition);
+
         if (addToBackstack) {
             transaction.addToBackStack(null);
         }
@@ -80,11 +86,11 @@ public class NavigationManager {
     }
 
     private void setFragment(Fragment fragment) {
-        setFragment(fragment, null, true, false);
+        setFragment(fragment, null, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
+        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true, FragmentTransaction.TRANSIT_NONE);
     }
 
     public void setDetailFragment(Member member,
@@ -99,13 +105,18 @@ public class NavigationManager {
             bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
-        setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false);
+        setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
-    public void setClinicNumberFormFragment(Member member) {
+    public void setClinicNumberFormFragment(Member member, Member throughMember, IdentificationEvent.SearchMethodEnum idMethod, float verificationScore, String verificationTier) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false);
+        bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
+        bundle.putSerializable(ID_METHOD_BUNDLE_FIELD, idMethod);
+        bundle.putSerializable(VERIFICATION_CONFIDENCE_BUNDLE_FIELD, verificationScore);
+        bundle.putSerializable(VERIFICATION_TIER_BUNDLE_FIELD, verificationTier);
+
+        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
