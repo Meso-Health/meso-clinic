@@ -12,8 +12,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.database.BillableDao;

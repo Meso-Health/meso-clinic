@@ -17,8 +17,6 @@ import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.services.FetchService;
-import org.watsi.uhp.services.SyncService;
 
 import java.sql.SQLException;
 import java.text.ParseException;

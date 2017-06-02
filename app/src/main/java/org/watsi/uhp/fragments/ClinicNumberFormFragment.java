@@ -2,27 +2,15 @@ package org.watsi.uhp.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.simprints.libsimprints.Verification;
-
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.presenters.DetailPresenter;
-
-import java.sql.SQLException;
 
 public class ClinicNumberFormFragment extends BaseFragment {
     private Member mMember;
