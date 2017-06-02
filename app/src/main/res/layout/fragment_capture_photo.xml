@@ -37,6 +37,6 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:theme="@style/PrimaryButton"
-            android:text="@string/save_btn_label" />
+            android:text="@string/enrollment_next_step_btn" />
     </RelativeLayout>
 </LinearLayout>
