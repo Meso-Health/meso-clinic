@@ -12,11 +12,13 @@ import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.database.IdentificationEventDao;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.UUID;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -33,93 +35,113 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class IdentificationFlowFeature extends ActivityTest {
 
-    private final String username = "klinik";
-    private final String password = "123456";
-    private final String opdNumber = "30";
-    private final String notNameOfMember = "I am not a member";
-    private final String nameOfMember = "Lil Jon";
-    private final String notCardIdOfMember = "JWI000000";
-    private final String cardIdOfMember = "RWI 000 000";
+    private MemberFactory member;
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
             new ActivityTestRule<>(ClinicActivity.class, false, true);
 
     @Before
-    public void start_idFlow() {
-        LoginFeature.logsUserIn(username, password);
+    public void setUpDB() {
+        member = new MemberFactory(
+                UUID.randomUUID(),
+                "Lil Jon",
+                "RWI000000",
+                5,
+                Member.GenderEnum.M,
+                false
+        );
+
+        try {
+            MemberDao.create(member);
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
     }
 
     @After
-    public void end_idFlow() throws SQLException {
-        // if when trying to delete, it says Identification Event is null, this may mean it is not saving it to the phone properly
-        IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
-
-        LoginFeature.logsUserOut();
+    public void cleanUpDB() throws SQLException {
+        MemberDao.deleteById(member.getId());
+        IdentificationEvent identification = IdentificationEventDao.openCheckIn(member.getId());
+        if (identification != null) IdentificationEventDao.deleteById(identification.getId());
     }
 
-    @Test
-    public void identificationByNameSearch_idFlow() {
-        onView(withId(R.id.identification_button)).perform(click());
-        onView(withId(R.id.search_member)).perform(click());
-
-        // asserts that when you look up name not in system, no results found
+    public void performSearch(String query) {
         onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(notNameOfMember), pressImeActionButton());
-        onView(withText(R.string.member_no_search_results_text)).check(matches(isDisplayed()));
-        onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(clearText());
-
-        // asserts that when you look up name that belongs to member, member found
-        onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(nameOfMember), pressImeActionButton());
-        waitForUIToUpdate();
-        onView(withText(cardIdOfMember)).check(matches(isDisplayed()));
-
-        // asserts that when you click on member found, their detail fragment displays with correct information
-        onView(withText(cardIdOfMember)).perform(click());
-        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
-        onView(withText(nameOfMember)).check(matches(isDisplayed()));
-
-        checkingInPatient_idFlow(nameOfMember);
+        onView(isAssignableFrom(EditText.class)).perform(typeText(query), pressImeActionButton());
+        waitForUIToUpdate(1);
     }
 
-    @Test
-    public void identificationByIdSearch_idFlow() {
-        onView(withId(R.id.identification_button)).perform(click());
-        onView(withId(R.id.search_member)).perform(click());
-
-        // asserts that when you look up id not in system, no results found
-        onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(notCardIdOfMember), pressImeActionButton());
-        onView(withText(R.string.member_no_search_results_text)).check(matches(isDisplayed()));
+    public void clearSearch() {
         onView(withId(R.id.member_search)).perform(click());
         onView(isAssignableFrom(EditText.class)).perform(clearText());
-
-        // asserts that when you look up id in system with spaces, member found
-        onView(withId(R.id.member_search)).perform(click());
-        onView(isAssignableFrom(EditText.class)).perform(typeText(cardIdOfMember), pressImeActionButton());
-        waitForUIToUpdate();
-        onView(withText(nameOfMember)).check(matches(isDisplayed()));
-
-        // asserts that when you click on member found, their detail fragment displays with correct information
-        onView(withText(nameOfMember)).perform(click());
-        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
-        onView(withText(nameOfMember)).check(matches(isDisplayed()));
-
-        checkingInPatient_idFlow(nameOfMember);
     }
 
     public void checkingInPatient_idFlow(String name) {
-        // asserts that when you click 'CHECK-IN', clinic number dialog comes up
+        String opdNumber = "30";
+
+        // when you click 'CHECK-IN', clinic number dialog comes up
         onView(withId(R.id.approve_identity)).perform(click());
         onView(withText("Enter the patient's clinic number")).check(matches(isDisplayed()));
 
-        // asserts that when you enter OPD number and click 'SUBMIT', current patients fragment displays with patient that you just checked in
+        // when you enter OPD number and click 'SUBMIT', current patients fragment displays with
+        // patient that you just checked in
         onView(withId(R.id.clinic_number_field)).perform(typeText(opdNumber));
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
         onView(withText("Select a patient")).check(matches(isDisplayed()));
         onView(withText(name)).check(matches(isDisplayed()));
     }
-}
 
+    @Test
+    public void identificationByNameSearch_idFlow() {
+        String notNameOfMember = "I am not a member";
+
+        onView(withId(R.id.identification_button)).perform(click());
+        onView(withId(R.id.search_member)).perform(click());
+
+        // when you search a name not in the system, no results are found
+        performSearch(notNameOfMember);
+        onView(withText(R.string.member_no_search_results_text)).check(matches(isDisplayed()));
+        clearSearch();
+
+        // when you search a name that belongs to a member, the member is found
+        performSearch(member.getFullName());
+        onView(withText(member.getFormattedCardId())).check(matches(isDisplayed()));
+
+        // when you click on member found, their detail fragment displays with correct information
+        onView(withText(member.getFormattedCardId())).perform(click());
+        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
+        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+
+        checkingInPatient_idFlow(member.getFullName());
+    }
+
+    @Test
+    public void identificationByIdSearch_idFlow() {
+        String notIdOfMember = "JWI000000";
+
+        onView(withId(R.id.identification_button)).perform(click());
+        onView(withId(R.id.search_member)).perform(click());
+
+        // when you look up id not in system, no results found
+        performSearch(notIdOfMember);
+        onView(withText(R.string.member_no_search_results_text)).check(matches(isDisplayed()));
+        clearSearch();
+
+        // when you look up id in system without spaces, member found
+        performSearch(member.getCardId());
+        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+        clearSearch();
+
+        // when you look up id in system with spaces, member found
+        performSearch(member.getFormattedCardId());
+        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+
+        // when you click on member found, their detail fragment displays with correct information
+        onView(withText(member.getFullName())).perform(click());
+        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
+        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+
+        checkingInPatient_idFlow(member.getFullName());
+    }
+}
