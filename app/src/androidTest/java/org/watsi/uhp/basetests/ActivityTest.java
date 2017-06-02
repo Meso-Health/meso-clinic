@@ -1,27 +1,56 @@
 package org.watsi.uhp.basetests;
 
-import org.watsi.uhp.database.IdentificationEventDao;
-import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
+import android.accounts.AccountManager;
+import android.content.Context;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.managers.PreferencesManager;
+import org.watsi.uhp.managers.SessionManager;
+import org.watsi.uhp.models.AuthenticationToken;
+import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
 
-public class ActivityTest {
-    private static final long WAIT_FOR_UI_TO_UPDATE = 1000L;
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
-    protected static void waitForUIToUpdate() {
+public class ActivityTest {
+    @BeforeClass
+    public static void setUp() {
+        Context context = getInstrumentation().getTargetContext();
+
+        login(context);
+        DatabaseHelper.init(context);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        Context context = getInstrumentation().getTargetContext();
+
+        new PreferencesManager(context).clearUsername();
+    }
+
+    private static void login(Context context) {
+        User u = new User();
+        u.setId(1);
+        u.setUsername("klinik");
+        u.setName("test_name");
+        u.setRole("provider");
+
+        AuthenticationToken authToken = new AuthenticationToken();
+        authToken.setToken("test_token");
+        authToken.setExpiresAt("never");
+        authToken.setUser(u);
+
+        new SessionManager(new PreferencesManager(context), AccountManager.get(context))
+                .setUserAsLoggedIn(authToken.getUser(), authToken.getToken());
+    }
+
+    protected static void waitForUIToUpdate(int seconds) {
         try {
-            Thread.sleep(WAIT_FOR_UI_TO_UPDATE);
+            Thread.sleep(seconds * 1000);
         } catch (Exception ignored) {
         }
-    }
-
-    protected static Member getMember(String cardId) throws SQLException {
-        return MemberDao.findByCardId(cardId);
-    }
-
-    protected static IdentificationEvent getIdEvent(Member member) throws SQLException {
-        return IdentificationEventDao.openCheckIn(member.getId());
     }
 }

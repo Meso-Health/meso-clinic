@@ -53,7 +53,7 @@ public class LoginFeature extends ActivityTest {
         onView(allOf(supportsInputMethods(), withParent(withId(R.id.login_password))))
                 .perform(typeText(password));
         onView(withId(R.id.login_button)).perform(click());
-        waitForUIToUpdate();
+        waitForUIToUpdate(1);
         onView(withText("Select a patient")).check(matches(isDisplayed()));
     }
 
