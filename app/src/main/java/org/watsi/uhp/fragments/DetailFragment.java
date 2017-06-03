@@ -189,7 +189,7 @@ public class DetailFragment extends BaseFragment {
                 confirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, -1, null);
+                        completeIdentificationWithoutFingerprints();
                     }
                 });
             }
@@ -213,13 +213,6 @@ public class DetailFragment extends BaseFragment {
                 }
             });
         }
-    }
-
-    private void openClinicNumberDialog() {
-        DialogFragment clinicNumberDialog = new ClinicNumberDialogFragment();
-        clinicNumberDialog.show(getActivity().getSupportFragmentManager(),
-                "ClinicNumberDialogFragment");
-        clinicNumberDialog.setTargetFragment(this, 0);
     }
 
     private void setHouseholdList(View detailView) {
@@ -309,9 +302,12 @@ public class DetailFragment extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        if (mMember.currentCheckIn() == null) {
+            menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
+        }
+
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
-        menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
 
         if (mMember != null && mMember.getAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
@@ -333,5 +329,9 @@ public class DetailFragment extends BaseFragment {
             Toast.makeText(getContext(), "Guid:  " + verification.getGuid() + " Confidence: " + verification.getConfidence() + " Tier: " + verification.getTier(), Toast.LENGTH_LONG).show();
             getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, fingerprintConfidence, fingerprintTier);
         }
+    }
+
+    public void completeIdentificationWithoutFingerprints() {
+        getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, -1, null);
     }
 }

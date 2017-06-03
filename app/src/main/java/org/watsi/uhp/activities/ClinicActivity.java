@@ -178,6 +178,14 @@ public class ClinicActivity extends AppCompatActivity {
                 case R.id.menu_complete_enrollment:
                     getNavigationManager().setEnrollmentMemberPhotoFragment(member);
                     break;
+                case R.id.menu_check_in_without_fingerprints:
+                    if (fragment instanceof DetailFragment) {
+                        ((DetailFragment) fragment).completeIdentificationWithoutFingerprints();
+                    } else {
+                        // Should never get here
+                        // TODO write an exception.
+                    }
+                    break;
             }
             return true;
         }
@@ -187,22 +195,7 @@ public class ClinicActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Fragment currentFragment =
-                        getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                if (currentFragment instanceof FormFragment) {
-                    new AlertDialog.Builder(this)
-                            .setTitle(R.string.exit_form_alert)
-                            .setNegativeButton(android.R.string.no, null)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    getNavigationManager().setCurrentPatientsFragment();
-                                }
-                            }).create().show();
-                } else if (currentFragment instanceof ClinicNumberFormFragment) {
-                    showDialogReturnToPreviousScreen();
-                } else {
-                    getNavigationManager().setCurrentPatientsFragment();
-                }
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
