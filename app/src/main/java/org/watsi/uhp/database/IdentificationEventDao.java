@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
@@ -60,6 +61,11 @@ public class IdentificationEventDao {
         } else {
             return getInstance().getIdentificationEventDao().queryForId(UUID.fromString(result));
         }
+    }
+
+    public static void create(IdentificationEvent idEvent) throws SQLException {
+        idEvent.setCreatedAt(Clock.getCurrentTime());
+        getInstance().getIdentificationEventDao().create(idEvent);
     }
 
     public static void deleteById(UUID id) throws SQLException {

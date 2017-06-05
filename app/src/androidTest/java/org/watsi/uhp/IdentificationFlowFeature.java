@@ -13,12 +13,11 @@ import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
-import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -35,33 +34,19 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class IdentificationFlowFeature extends ActivityTest {
 
-    private MemberFactory member;
+    private Member member;
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
             new ActivityTestRule<>(ClinicActivity.class, false, true);
 
     @Before
-    public void setUpDB() {
-        member = new MemberFactory(
-                UUID.randomUUID(),
-                "Lil Jon",
-                "RWI000000",
-                5,
-                Member.GenderEnum.M,
-                false
-        );
-
-        try {
-            MemberDao.create(member);
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
+    public void setUpTest() throws SQLException, AbstractModel.ValidationException {
+        member = MemberDao.all().get(0);
     }
 
     @After
-    public void cleanUpDB() throws SQLException {
-        MemberDao.deleteById(member.getId());
+    public void cleanUpTest() throws SQLException {
         IdentificationEvent identification = IdentificationEventDao.openCheckIn(member.getId());
         if (identification != null) IdentificationEventDao.deleteById(identification.getId());
     }
@@ -82,13 +67,13 @@ public class IdentificationFlowFeature extends ActivityTest {
 
         // when you click 'CHECK-IN', clinic number dialog comes up
         onView(withId(R.id.approve_identity)).perform(click());
-        onView(withText("Enter the patient's clinic number")).check(matches(isDisplayed()));
+        onView(withText(R.string.clinic_number_prompt)).check(matches(isDisplayed()));
 
         // when you enter OPD number and click 'SUBMIT', current patients fragment displays with
         // patient that you just checked in
         onView(withId(R.id.clinic_number_field)).perform(typeText(opdNumber));
         onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-        onView(withText("Select a patient")).check(matches(isDisplayed()));
+        onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
         onView(withText(name)).check(matches(isDisplayed()));
     }
 
@@ -110,7 +95,7 @@ public class IdentificationFlowFeature extends ActivityTest {
 
         // when you click on member found, their detail fragment displays with correct information
         onView(withText(member.getFormattedCardId())).perform(click());
-        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
+        onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
         checkingInPatient_idFlow(member.getFullName());
@@ -139,7 +124,7 @@ public class IdentificationFlowFeature extends ActivityTest {
 
         // when you click on member found, their detail fragment displays with correct information
         onView(withText(member.getFullName())).perform(click());
-        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
+        onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
         checkingInPatient_idFlow(member.getFullName());

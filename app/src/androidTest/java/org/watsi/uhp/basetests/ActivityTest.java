@@ -5,30 +5,41 @@ import android.content.Context;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.watsi.uhp.BillableFactory;
+import org.watsi.uhp.MemberFactory;
+import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.AuthenticationToken;
+import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
 public class ActivityTest {
+
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws SQLException, AbstractModel.ValidationException {
         Context context = getInstrumentation().getTargetContext();
 
         login(context);
         DatabaseHelper.init(context);
+        loadFixtures();
     }
 
     @AfterClass
     public static void tearDown() throws SQLException {
         Context context = getInstrumentation().getTargetContext();
 
-        new PreferencesManager(context).clearUsername();
+        logout(context);
+        context.deleteDatabase(DatabaseHelper.getHelper().getDatabaseName());
     }
 
     private static void login(Context context) {
@@ -47,10 +58,60 @@ public class ActivityTest {
                 .setUserAsLoggedIn(authToken.getUser(), authToken.getToken());
     }
 
+    private static void logout(Context context) {
+        new PreferencesManager(context).clearUsername();
+    }
+
     protected static void waitForUIToUpdate(int seconds) {
         try {
             Thread.sleep(seconds * 1000);
         } catch (Exception ignored) {
         }
+    }
+
+    private static void loadFixtures() throws SQLException, AbstractModel.ValidationException {
+        MemberDao.create(new MemberFactory(
+                UUID.randomUUID(),
+                "Lil Jon",
+                "RWI000000",
+                5,
+                Member.GenderEnum.M,
+                false
+        ));
+
+        MemberDao.create(new MemberFactory(
+                UUID.randomUUID(),
+                "Big Jon",
+                "RWI000001",
+                50,
+                Member.GenderEnum.M,
+                false
+        ));
+
+        BillableDao.create(new BillableFactory(
+                "Consultation",
+                Billable.TypeEnum.SERVICE,
+                2000
+        ));
+
+        BillableDao.create(new BillableFactory(
+                "Medical Form",
+                Billable.TypeEnum.SERVICE,
+                1000
+        ));
+
+        BillableDao.create(new BillableFactory(
+                "Quinine",
+                Billable.TypeEnum.DRUG,
+                "100ml",
+                "syrup",
+                5000
+        ));
+
+        BillableDao.create(new BillableFactory(
+                "Malaria (BS)",
+                Billable.TypeEnum.LAB,
+                2000
+        ));
     }
 }
