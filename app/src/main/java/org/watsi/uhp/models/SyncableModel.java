@@ -51,7 +51,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return this.mId;
     }
 
-    protected void setId(UUID id) {
+    public void setId(UUID id) {
         this.mId = id;
     }
 
