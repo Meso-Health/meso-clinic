@@ -69,7 +69,7 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
                     if (!hasFocus) {
                         String quantity = vh.billableQuantity.getText().toString();
 
-                        if (quantity.equals("")) {
+                        if (quantity.equals("") || quantity.equals("0")) {
                             vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
                         } else {
                             encounterItem.setQuantity(Integer.valueOf(quantity));
