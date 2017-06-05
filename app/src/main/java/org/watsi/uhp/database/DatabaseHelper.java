@@ -97,8 +97,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
+                case 8:
+                    // Migrating data in place?
+                    // no-op.
                 case 9:
-                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_attempt_detail STRING;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN simprints_result_code INTEGER");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier STRING;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
