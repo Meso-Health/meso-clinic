@@ -40,7 +40,7 @@
     </RadioGroup>
 
     <EditText
-        android:id="@+id/phone_number"
+        android:id="@+id/clinic_number_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="phone"

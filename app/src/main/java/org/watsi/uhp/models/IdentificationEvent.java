@@ -36,6 +36,8 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
     public static final String FIELD_NAME_DISMISSED = "dismissed";
     public static final String FIELD_NAME_DISMISSAL_REASON = "dismissal_reason";
+    public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE = "fingerprints_verification_confidence";
+    public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_ATTEMPT_DETAIL = "fingerprints_verification_attempt_detail";
 
     public enum ClinicNumberTypeEnum {
         @SerializedName("opd") OPD,
@@ -109,13 +111,15 @@ public class IdentificationEvent extends SyncableModel {
     @DatabaseField(columnName = FIELD_NAME_DISMISSAL_REASON)
     private DismissalReasonEnum mDismissalReason;
 
-//    @Expose
-//    @SerializedName(FIELD_NAME_FINGERPRINT_CONFIDENCE)
-//    @DatabaseField(columnName = FIELD_NAME_FINGERPRINT_CONFIDENCE)
-//    private float mFingerprintConfidence;
-//
-//    @Expose
-//    @SerializedName(FIED_NAME)
+    @Expose
+    @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
+    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
+    private float mFingerprintsVerificationConfidence;
+
+    @Expose
+    @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_ATTEMPT_DETAIL)
+    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_ATTEMPT_DETAIL)
+    private String mFingerprintsVerificationAttemptDetail;
 
     public IdentificationEvent() {
         super();
@@ -237,6 +241,22 @@ public class IdentificationEvent extends SyncableModel {
     public void setDismissalReason(DismissalReasonEnum dismissalReason) {
         setDismissed(true);
         this.mDismissalReason = dismissalReason;
+    }
+
+    public void setFingerprintsVerificationConfidence(float confidence) {
+        this.mFingerprintsVerificationConfidence = confidence;
+    }
+
+    public float getFingerprintsVerificationConfidence() {
+        return this.mFingerprintsVerificationConfidence;
+    }
+
+    public void setFingerprintsVerificationAttemptDetail(String detail) {
+        this.mFingerprintsVerificationAttemptDetail = detail;
+    }
+
+    public String getFingerprintsVerificationAttemptDetail() {
+        return this.mFingerprintsVerificationAttemptDetail;
     }
 
     public Map<String, RequestBody> formatPatchRequest() {

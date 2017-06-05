@@ -18,6 +18,7 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -25,7 +26,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static DatabaseHelper instance;
 
@@ -96,6 +97,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
+                case 9:
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_attempt_detail STRING;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
