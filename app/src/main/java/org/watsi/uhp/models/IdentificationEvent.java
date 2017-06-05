@@ -36,8 +36,9 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
     public static final String FIELD_NAME_DISMISSED = "dismissed";
     public static final String FIELD_NAME_DISMISSAL_REASON = "dismissal_reason";
+    public static final String FIELD_NAME_SIMPRINTS_RESULTS_CODE = "simprints_results_code";
     public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE = "fingerprints_verification_confidence";
-    public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_ATTEMPT_DETAIL = "fingerprints_verification_attempt_detail";
+    public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_TIER = "fingerprints_verification_tier";
 
     public enum ClinicNumberTypeEnum {
         @SerializedName("opd") OPD,
@@ -112,13 +113,18 @@ public class IdentificationEvent extends SyncableModel {
     private DismissalReasonEnum mDismissalReason;
 
     @Expose
+    @SerializedName(FIELD_NAME_SIMPRINTS_RESULTS_CODE)
+    @DatabaseField(columnName = FIELD_NAME_SIMPRINTS_RESULTS_CODE)
+    private int mSimprintsResultsCode;
+
+    @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
     @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
     private float mFingerprintsVerificationConfidence;
 
     @Expose
-    @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_ATTEMPT_DETAIL)
-    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_ATTEMPT_DETAIL)
+    @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_TIER)
+    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_TIER)
     private String mFingerprintsVerificationAttemptDetail;
 
     public IdentificationEvent() {
@@ -251,12 +257,20 @@ public class IdentificationEvent extends SyncableModel {
         return this.mFingerprintsVerificationConfidence;
     }
 
-    public void setFingerprintsVerificationAttemptDetail(String detail) {
+    public void setFingerprintsVerificationTier(String detail) {
         this.mFingerprintsVerificationAttemptDetail = detail;
     }
 
-    public String getFingerprintsVerificationAttemptDetail() {
-        return this.mFingerprintsVerificationAttemptDetail;
+    public String getFingerprintsVerificationTier() {
+        return mFingerprintsVerificationAttemptDetail;
+    }
+
+    public void setSimprintsResultsCode(int simprintsResultsCode) {
+        this.mSimprintsResultsCode = simprintsResultsCode;
+    }
+
+    public int getSimprintsResultsCode() {
+        return mSimprintsResultsCode;
     }
 
     public Map<String, RequestBody> formatPatchRequest() {

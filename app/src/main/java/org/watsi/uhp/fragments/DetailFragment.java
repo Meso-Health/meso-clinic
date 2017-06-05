@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
+import com.simprints.libsimprints.RefusalForm;
 import com.simprints.libsimprints.SimHelper;
 import com.simprints.libsimprints.Verification;
 
@@ -178,7 +178,7 @@ public class DetailFragment extends BaseFragment {
                     public void onClick(View v) {
                         SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, getSessionManager().getCurrentLoggedInUsername());
                         Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), mMember.getFingerprintsGuid().toString());
-
+                        // Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString(), mMember.getFingerprintsGuid().toString());
                         startActivityForResult(
                                 fingerprintIdentificationIntent,
                                 1
@@ -316,10 +316,24 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK || data == null) {
+//        if (resultCode == Constants.SIMPRINTS_OK) {
+//
+//        } else {
+//
+//        }
+        if ((resultCode != RESULT_OK) && (data == null)) {
             Toast.makeText(
                     getContext(),
-                    "result not OK",
+                    "result not ok: " + resultCode,
+                    Toast.LENGTH_LONG).show();
+        } else if (data != null) {
+            RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
+            String refusalString = "";
+            // refusalString = refusalString + refusalForm.getExtra().toString();
+            refusalString = refusalString + refusalForm.getReason().toString();
+            Toast.makeText(
+                    getContext(),
+                    "case number 2: " + refusalString,
                     Toast.LENGTH_LONG).show();
         } else if (requestCode == 1) {
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
