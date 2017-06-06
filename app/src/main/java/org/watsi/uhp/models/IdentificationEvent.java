@@ -1,6 +1,7 @@
 package org.watsi.uhp.models;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -295,6 +296,7 @@ public class IdentificationEvent extends SyncableModel {
         if (getThroughMember() != null) {
             setThroughMemberId(getThroughMember().getId());
         }
+        Log.i("UHP", "IdentificationEvent post: " + getMemberId());
         return ApiService.requestBuilder(context).postIdentificationEvent(
                 getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, this);
     }

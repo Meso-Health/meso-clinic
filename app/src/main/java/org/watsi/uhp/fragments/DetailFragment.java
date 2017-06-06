@@ -66,7 +66,6 @@ public class DetailFragment extends BaseFragment {
             mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
         }
         mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-
         mThroughMember = (Member) getArguments()
                 .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
@@ -316,11 +315,6 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == Constants.SIMPRINTS_OK) {
-//
-//        } else {
-//
-//        }
         if ((resultCode != RESULT_OK) && (data == null)) {
             Toast.makeText(
                     getContext(),
@@ -329,7 +323,6 @@ public class DetailFragment extends BaseFragment {
         } else if (data != null) {
             RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
             String refusalString = "";
-            // refusalString = refusalString + refusalForm.getExtra().toString();
             refusalString = refusalString + refusalForm.getReason().toString();
             Toast.makeText(
                     getContext(),

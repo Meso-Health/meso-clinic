@@ -5,6 +5,7 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
@@ -38,6 +39,7 @@ public class FetchService extends AbstractSyncJobService {
 
     @Override
     public boolean performSync() {
+        Log.i("UHP", "FetchService.performSync is called.");
         PreferencesManager preferencesManager = new PreferencesManager(this);
         try {
             String authenticationToken = getAuthenticationToken(preferencesManager);

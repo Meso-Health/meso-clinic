@@ -1,5 +1,7 @@
 package org.watsi.uhp.services;
 
+import android.util.Log;
+
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
@@ -19,6 +21,7 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
 
     @Override
     public boolean performSync() {
+        Log.i("UHP", "DownloadMemberPhotoService.performSync is called.");
         try {
             fetchMemberPhotos();
             return true;

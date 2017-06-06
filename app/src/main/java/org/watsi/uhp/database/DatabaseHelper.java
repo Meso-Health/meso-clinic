@@ -18,7 +18,6 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
