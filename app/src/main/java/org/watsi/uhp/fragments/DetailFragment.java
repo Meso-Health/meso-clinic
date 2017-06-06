@@ -177,7 +177,6 @@ public class DetailFragment extends BaseFragment {
                     public void onClick(View v) {
                         SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, getSessionManager().getCurrentLoggedInUsername());
                         Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), mMember.getFingerprintsGuid().toString());
-                        // Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString(), mMember.getFingerprintsGuid().toString());
                         startActivityForResult(
                                 fingerprintIdentificationIntent,
                                 1
@@ -315,30 +314,23 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((resultCode != RESULT_OK) && (data == null)) {
+        if (resultCode != RESULT_OK){
             Toast.makeText(
                     getContext(),
-                    "result not ok: " + resultCode,
+                    "result not ok. Error code: " + resultCode,
                     Toast.LENGTH_LONG).show();
-        } else if (data != null) {
-            RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
-            String refusalString = "";
-            refusalString = refusalString + refusalForm.getReason().toString();
-            Toast.makeText(
-                    getContext(),
-                    "case number 2: " + refusalString,
-                    Toast.LENGTH_LONG).show();
-        } else if (requestCode == 1) {
+        } else {
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
             String fingerprintTier = verification.getTier().toString();
             float fingerprintConfidence = verification.getConfidence();
 
             Toast.makeText(getContext(), "Guid:  " + verification.getGuid() + " Confidence: " + verification.getConfidence() + " Tier: " + verification.getTier(), Toast.LENGTH_LONG).show();
-            getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, fingerprintConfidence, fingerprintTier);
+            getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, fingerprintConfidence, fingerprintTier, resultCode);
         }
     }
 
     public void completeIdentificationWithoutFingerprints() {
-        getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, -1, null);
+        // TODO, figure out how to deal with non-nullable integers and floats.
+        getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, -1, null, -1);
     }
 }
