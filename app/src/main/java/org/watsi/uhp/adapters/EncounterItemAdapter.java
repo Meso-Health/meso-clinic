@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.models.Billable;
@@ -69,8 +70,11 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
                     if (!hasFocus) {
                         String quantity = vh.billableQuantity.getText().toString();
 
-                        if (quantity.equals("") || quantity.equals("0")) {
+                        if (quantity.equals("")) {
                             vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
+                        } else if (quantity.equals("0")) {
+                            vh.billableQuantity.setText("");
+                            Toast.makeText(getContext(), "Please enter quantity", Toast.LENGTH_SHORT).show();
                         } else {
                             encounterItem.setQuantity(Integer.valueOf(quantity));
                         }
