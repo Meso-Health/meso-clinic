@@ -38,7 +38,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     @Expose
     @SerializedName(FIELD_NAME_ID)
-    @DatabaseField(columnName = FIELD_NAME_ID, generatedId = true)
+    @DatabaseField(columnName = FIELD_NAME_ID, id = true)
     private UUID mId;
 
     @DatabaseField(columnName = FIELD_NAME_TOKEN)
