@@ -65,6 +65,10 @@ public class EncounterPresenter {
         setBillableSearch();
         setAddBillableLink();
         setBackdateEncounterListener();
+
+        if (mEncounter.getBackdatedOccurredAt()) {
+            mEncounterFragment.updateBackdateLinkText();
+        }
     }
 
     protected Spinner getCategorySpinner() {
