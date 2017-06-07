@@ -10,82 +10,136 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.basetests.ActivityTest;
+import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.IdentificationEventDao;
-import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4.class)
 public class EncounterFlowFeature extends ActivityTest {
 
-    private final String username = "klinik";
-    private final String password = "123456";
-    private final String cardId = "RWI000000";
-    private final String nameOfMember = "Lil Jon";
-    private final int opdNumber = 30;
-    private final String drugName = "phenobarbital";
-    private final String defaultBillable1 = "Consultation";
-    private final String defaultBillable2 = "Medical Form";
+    private Member member;
+    private Billable billableDrug;
+    private Billable billableLab;
+    private IdentificationEvent idEvent;
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
-            new ActivityTestRule<>(ClinicActivity.class, false, true);
+            new ActivityTestRule<>(ClinicActivity.class, false, false);
 
     @Before
-    public void start_encounterFlow() throws SQLException {
-        IdentificationEvent idEvent = IdentificationEventFactory.createIdentificationEvent(getMember(cardId), opdNumber);
+    public void setUpTest() throws SQLException, AbstractModel.ValidationException {
+        member = MemberDao.all().get(0);
+        billableDrug = BillableDao.getBillablesByCategory(Billable.TypeEnum.DRUG).get(0);
+        billableLab = BillableDao.getBillablesByCategory(Billable.TypeEnum.LAB).get(0);
+
+        idEvent = new IdentificationEventFactory(
+                member,
+                30
+        );
         IdentificationEventDao.create(idEvent);
 
-        LoginFeature.logsUserIn(username, password);
+        clinicActivityRule.launchActivity(null);
     }
 
     @After
-    public void end_encounterFlow() throws SQLException {
-//        IdentificationEventDao.deleteById(new HashSet<>(Arrays.asList(getIdEvent(getMember("RWI000000")).getId())));
-//
-//        LoginFeature.logsUserOut();
+    public void cleanUpTest() throws SQLException {
+        IdentificationEventDao.deleteById(idEvent.getId());
     }
 
     @Test
     public void createEncounter_encounterFlow() {
-        // asserts that member appears in current members
-        onView(withText(nameOfMember)).check(matches(isDisplayed()));
-        onView(withText(nameOfMember)).perform(click());
+        String defaultBillable1 = "Consultation";
+        String defaultBillable2 = "Medical Form";
 
-        // asserts that
-        onView(withText("Is this the right person?")).check(matches(isDisplayed()));
-        onView(withText("Enter treatment information")).perform(click());
+        // the user can see checked-in members
+        onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
-        onView(withText(nameOfMember)).check(matches(isDisplayed()));
+        // when the user clicks on a checked-in member, their details appear
+        onView(withText(member.getFullName())).perform(click());
+        onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
+
+        // when the user proceeds to enter encounter information, a list of encounter items
+        // appears with the default billables
+        onView(withText(R.string.detail_create_encounter)).perform(click());
+        onView(withText(R.string.encounter_fragment_label)).check(matches(isDisplayed()));
+        onData(CustomMatchers.withEncounterItemName(defaultBillable1))
+                .inAdapterView(withId(R.id.line_items_list))
+                .check(matches(isDisplayed()));
+        onData(CustomMatchers.withEncounterItemName(defaultBillable2))
+                .inAdapterView(withId(R.id.line_items_list))
+                .check(matches(isDisplayed()));
+
+        // TODO: defaults do not appear for delivery
+
+        // the user can add a drug to the list of encounter items by searching by drug name
+        onView(withId(R.id.category_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(Billable.TypeEnum.DRUG.toString())))
+                .perform(click());
+        onView(withId(R.id.drug_search)).perform(typeText(billableDrug.getName()));
+        onView(withText(billableDrug.getName()))
+                .inRoot(withDecorView(not(is(clinicActivityRule.getActivity().getWindow()
+                        .getDecorView()))))
+                .perform(click());
+        onData(CustomMatchers.withEncounterItemName(billableDrug.getName()))
+                .inAdapterView(withId(R.id.line_items_list))
+                .check(matches(isDisplayed()));
+
+        // the user can add non-drugs to the list of encounters items by selecting them from a
+        // drop-down
+        onView(withId(R.id.category_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(Billable.TypeEnum.LAB.toString())))
+                .perform(click());
+        onData(allOf(is(instanceOf(Billable.class)),
+                CustomMatchers.withBillableName(billableLab.getName())))
+                .perform(click());
+        onData(CustomMatchers.withEncounterItemName(billableLab.getName()))
+                .inAdapterView(withId(R.id.line_items_list))
+                .check(matches(isDisplayed()));
+
+        // TODO: the user can change the quantity of drugs to a positive number
+
+        // TODO: the user cannot change the quantity of non-drugs
+
+        // TODO: if the user selects the same billable twice, an error message appears
+
+        // TODO: the user can add a new billable
+
+        // the user can continue to take a form of the encounter
+        onView(withText(R.string.continue_encounter_button)).perform(click());
+        onView(withText(R.string.encounter_form_fragment_label)).check(matches(isDisplayed()));
+        onView(withText(R.string.encounter_form_finish_btn)).perform(click());
+
+        // the user can review all entered encounter line items in the receipt fragment and submit
+        onView(withText(R.string.receipt_fragment_label)).check(matches(isDisplayed()));
         onView(withText(defaultBillable1)).check(matches(isDisplayed()));
         onView(withText(defaultBillable2)).check(matches(isDisplayed()));
-        onView(withText("Select a category...")).perform(click());
-        onView(withText("DRUG")).perform(click());
-        onView(withId(R.id.drug_search)).perform(typeText(drugName));
-        onView(withText("30mg tablet")).perform(click());
+        onView(withText(billableDrug.getName())).check(matches(isDisplayed()));
+        onView(withText(billableLab.getName())).check(matches(isDisplayed()));
+        onView(withText(R.string.save_encounter_button)).perform(click());
 
-        onView(withText("Continue")).perform(click());
-        onView(withText("Take photo of form")).check(matches(isDisplayed()));
-        onView(withText("Finish")).perform(click());
-
-        onView(withText("Review receipt")).check(matches(isDisplayed()));
-        onView(withText(defaultBillable1)).check(matches(isDisplayed()));
-        onView(withText(defaultBillable2)).check(matches(isDisplayed()));
-        onView(withText(drugName)).check(matches(isDisplayed()));
-        onView(withText("Submit")).perform(click());
-
-        onView(withText("There are no checked-in patients.")).check(matches(isDisplayed()));
+        // no checked-in members
+        onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
     }
 }

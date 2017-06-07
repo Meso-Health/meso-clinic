@@ -181,4 +181,9 @@ public class MemberDao {
         }
         return ids;
     }
+
+    //TODO: move to a base Dao class
+    public static List<Member> all() throws SQLException {
+        return getInstance().getMemberDao().queryForAll();
+    }
 }
