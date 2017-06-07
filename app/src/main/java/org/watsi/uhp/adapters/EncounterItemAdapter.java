@@ -19,18 +19,14 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
 
-    private Encounter mEncounter;
-
-    private EncounterItemAdapter(Context context, List<EncounterItem> encounterItemList) {
-        super(context, R.layout.item_encounter_item_list, encounterItemList);
-    }
+    private final Encounter mEncounter;
 
     public EncounterItemAdapter(Context context, Encounter encounter) {
-        this(context, new ArrayList<>(encounter.getEncounterItems()));
+        super(context, R.layout.item_encounter_item_list,
+                new ArrayList<>(encounter.getEncounterItems()));
         this.mEncounter = encounter;
     }
 
