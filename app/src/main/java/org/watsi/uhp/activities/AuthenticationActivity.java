@@ -59,7 +59,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 final String password = passwordView.getText().toString();
                 final ProgressDialog spinner = new ProgressDialog(
                         AuthenticationActivity.this, ProgressDialog.STYLE_SPINNER);
-                spinner.setCancelable(false);
+                spinner.setCancelable(true);
                 spinner.setMessage(getBaseContext().getString(R.string.login_progress_message));
                 spinner.show();
 
@@ -69,7 +69,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                         authenticate(username, password, spinner);
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
 

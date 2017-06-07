@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,7 @@ public class VersionAndSyncFragment extends BaseFragment {
         updateTimestamps(view);
 
         final ProgressDialog spinner = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
-        spinner.setCancelable(false);
+        spinner.setCancelable(true);
         spinner.setMessage("Loading...");
         spinner.show();
 
@@ -118,7 +119,7 @@ public class VersionAndSyncFragment extends BaseFragment {
 
                 spinner.dismiss();
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private String formattedQuantity(int count) {
