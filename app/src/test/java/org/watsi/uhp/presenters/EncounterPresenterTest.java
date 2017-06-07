@@ -128,7 +128,7 @@ public class EncounterPresenterTest {
     }
 
     @Test
-    public void updateBackdateLinkText() throws Exception {
+    public void setup_backdateLinkText() throws Exception {
         encounter.setBackdatedOccurredAt(true);
         encounterPresenter.mFormattedBackDate = encounter.getOccurredAt().toString();
 
