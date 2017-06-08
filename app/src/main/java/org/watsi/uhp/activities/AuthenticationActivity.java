@@ -59,7 +59,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 final String password = passwordView.getText().toString();
                 final ProgressDialog spinner = new ProgressDialog(
                         AuthenticationActivity.this, ProgressDialog.STYLE_SPINNER);
-                spinner.setCancelable(true);
+                spinner.setCancelable(false);
                 spinner.setMessage(getBaseContext().getString(R.string.login_progress_message));
                 spinner.show();
 
@@ -74,6 +74,16 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         });
 
         KeyboardManager.focusAndShowKeyboard(usernameView, this);
+    }
+
+    private static class AuthenticateAsyncTask extends AsyncTask<Void, Void, Void>() {
+        @Override
+        protected Void doInBackground(Void... params) {
+            final String = (String) params[0];
+
+            authenticate(username, password, spinner);
+            return null;
+        }
     }
 
     private void authenticate(String username, String password, ProgressDialog spinner) {

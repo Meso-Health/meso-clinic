@@ -240,10 +240,10 @@ public class ClinicActivity extends AppCompatActivity {
      */
     private class LoginTask extends AsyncTask<Void, Void, String> {
 
-        private final WeakReference<ClinicActivity> mClinicActivity;
+        private final ClinicActivity mClinicActivity;
 
         LoginTask(ClinicActivity clinicActivity) {
-            this.mClinicActivity = new WeakReference<>(clinicActivity);
+            this.mClinicActivity = clinicActivity;
         }
 
         @Override
@@ -262,10 +262,10 @@ public class ClinicActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String token) {
             if (token == null) {
-                startActivityForResult(new Intent(mClinicActivity.get(), AuthenticationActivity.class), 0);
+                startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
             } else {
-                mClinicActivity.get().setAuthenticationToken(token);
-                Fragment currentFragment = mClinicActivity.get().getSupportFragmentManager()
+                mClinicActivity.setAuthenticationToken(token);
+                Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container);
                 if (currentFragment == null) {
                     getNavigationManager().setCurrentPatientsFragment();
