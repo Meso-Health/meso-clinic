@@ -87,7 +87,7 @@ public class DownloadMemberPhotoServiceTest {
         memberList.add(member);
 
         whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
-        // doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
+        doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
         when(FileManager.isLocal(anyString())).thenReturn(false);
 
