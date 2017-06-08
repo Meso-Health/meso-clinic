@@ -118,7 +118,7 @@ public class VersionAndSyncFragment extends BaseFragment {
 
                 spinner.dismiss();
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }.execute();
     }
 
     private String formattedQuantity(int count) {
