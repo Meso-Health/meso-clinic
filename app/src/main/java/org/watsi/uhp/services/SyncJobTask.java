@@ -21,5 +21,6 @@ public class SyncJobTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean successful) {
         mService.jobFinished(mJobParameters, !successful);
+        mService.removeReferenceToAsyncTask();
     }
 }

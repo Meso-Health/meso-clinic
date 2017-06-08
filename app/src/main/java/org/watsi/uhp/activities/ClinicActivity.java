@@ -36,6 +36,7 @@ import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 public class ClinicActivity extends AppCompatActivity {
 
@@ -64,7 +65,7 @@ public class ClinicActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
 
-        new LoginTask(this).execute();
+        new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -232,12 +233,17 @@ public class ClinicActivity extends AppCompatActivity {
         return authenticationToken;
     }
 
+    /** This has potential for a memory leak, according to #1.
+     *  This falls prey to http://blog.nimbledroid.com/2016/05/23/memory-leaks.html #1.
+     *  Solution is: http://blog.nimbledroid.com/2016/09/06/stop-memory-leaks.html with WeakReference.
+     *  https://developer.android.com/reference/java/lang/ref/WeakReference.html
+     */
     private class LoginTask extends AsyncTask<Void, Void, String> {
 
-        private final ClinicActivity mClinicActivity;
+        private final WeakReference<ClinicActivity> mClinicActivity;
 
         LoginTask(ClinicActivity clinicActivity) {
-            this.mClinicActivity = clinicActivity;
+            this.mClinicActivity = new WeakReference<>(clinicActivity);
         }
 
         @Override
@@ -256,10 +262,10 @@ public class ClinicActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String token) {
             if (token == null) {
-                startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
+                startActivityForResult(new Intent(mClinicActivity.get(), AuthenticationActivity.class), 0);
             } else {
-                mClinicActivity.setAuthenticationToken(token);
-                Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
+                mClinicActivity.get().setAuthenticationToken(token);
+                Fragment currentFragment = mClinicActivity.get().getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container);
                 if (currentFragment == null) {
                     getNavigationManager().setCurrentPatientsFragment();

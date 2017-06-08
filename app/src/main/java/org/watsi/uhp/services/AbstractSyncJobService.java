@@ -4,6 +4,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.ComponentName;
+import android.os.AsyncTask;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -18,14 +19,14 @@ public abstract class AbstractSyncJobService extends JobService {
     public boolean onStartJob(JobParameters params) {
         DatabaseHelper.init(this);
         mSyncJobTask = new SyncJobTask(this, params);
-        mSyncJobTask.execute();
-        return false;
+        mSyncJobTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
         ExceptionManager.reportMessage(this.getClass().getSimpleName() + ": called onStopJob");
-        if (getSyncJobTask() != null) getSyncJobTask().cancel(true);
+        removeReferenceToAsyncTask();
         return false;
     }
 
@@ -48,5 +49,21 @@ public abstract class AbstractSyncJobService extends JobService {
 
     public SyncJobTask getSyncJobTask() {
         return mSyncJobTask;
+    }
+
+    /**
+     * This makes sure we clean up any unused threads.
+     */
+    public void removeReferenceToAsyncTask() {
+        if (mSyncJobTask != null) {
+            mSyncJobTask.cancel(true);
+            mSyncJobTask = null;
+        } else {
+            ExceptionManager.reportMessage(
+                    this.getClass().getSimpleName() + ": was not able to cancel task because getSyncJobTask() returned null",
+                    ExceptionManager.MESSAGE_LEVEL_WARNING,
+                    null
+            );
+        }
     }
 }
