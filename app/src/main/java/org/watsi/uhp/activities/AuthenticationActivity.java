@@ -69,21 +69,11 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                         authenticate(username, password, spinner);
                         return null;
                     }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }.execute();
             }
         });
 
         KeyboardManager.focusAndShowKeyboard(usernameView, this);
-    }
-
-    private static class AuthenticateAsyncTask extends AsyncTask<Void, Void, Void>() {
-        @Override
-        protected Void doInBackground(Void... params) {
-            final String = (String) params[0];
-
-            authenticate(username, password, spinner);
-            return null;
-        }
     }
 
     private void authenticate(String username, String password, ProgressDialog spinner) {
