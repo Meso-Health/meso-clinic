@@ -95,7 +95,6 @@ public class VersionAndSyncFragment extends BaseFragment {
                     counts[4] = Encounter.unsynced(Encounter.class).size();
                 } catch (SQLException | IllegalStateException e) {
                     ExceptionManager.reportException(e);
-                    spinner.dismiss();
                 }
                 return counts;
             }
@@ -119,7 +118,7 @@ public class VersionAndSyncFragment extends BaseFragment {
 
                 spinner.dismiss();
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }.execute();
     }
 
     private String formattedQuantity(int count) {

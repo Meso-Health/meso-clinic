@@ -5,7 +5,6 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
