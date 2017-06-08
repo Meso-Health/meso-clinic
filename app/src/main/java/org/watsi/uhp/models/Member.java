@@ -54,7 +54,6 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
-    public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
     public static final String FIELD_NAME_BIRTHDATE = "birthdate";
@@ -108,11 +107,6 @@ public class Member extends SyncableModel {
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
     protected UUID mHouseholdId;
-
-    @Expose
-    @SerializedName(FIELD_NAME_ABSENTEE)
-    @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
-    protected Boolean mAbsentee;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
@@ -316,14 +310,6 @@ public class Member extends SyncableModel {
         return mHouseholdId;
     }
 
-    public void setAbsentee(boolean absentee) {
-        this.mAbsentee = absentee;
-    }
-
-    public Boolean getAbsentee() {
-        return mAbsentee;
-    }
-
     public Collection<IdentificationEvent> getIdentificationEvents() {
         return mIdentificationEvents;
     }
@@ -374,6 +360,10 @@ public class Member extends SyncableModel {
 
     public void setEnrolledAt(Date enrolledAt) {
         this.mEnrolledAt = enrolledAt;
+    }
+
+    public boolean isAbsentee() {
+        return getPhotoUrl() == null || (getAge() >= 6 && getFingerprintsGuid() == null);
     }
 
     public void fetchAndSetPhotoFromUrl() throws IOException {
@@ -596,7 +586,6 @@ public class Member extends SyncableModel {
     public Member createNewborn() {
         Member newborn = new Member();
         newborn.setHouseholdId(getHouseholdId());
-        newborn.setAbsentee(false);
         newborn.setBirthdateAccuracy(BirthdateAccuracyEnum.D);
         newborn.setEnrolledAt(Clock.getCurrentTime());
         return newborn;
