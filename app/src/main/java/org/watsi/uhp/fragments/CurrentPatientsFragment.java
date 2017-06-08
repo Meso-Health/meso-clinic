@@ -36,23 +36,23 @@ public class CurrentPatientsFragment extends BaseFragment {
 
         try {
             List<Member> currentPatients = MemberDao.getCheckedInMembers();
-            ListAdapter adapter = new MemberAdapter(getContext(), currentPatients, true);
-            int currentPatientsCount = currentPatients.size();
 
-            if (currentPatientsCount == 0) {
+            if (currentPatients.isEmpty()) {
                 currentPatientsLabel.setVisibility(View.GONE);
             } else {
                 currentPatientsLabel.setText(getActivity().getResources().getQuantityString(
-                        R.plurals.current_patients_label, currentPatientsCount, currentPatientsCount));
+                        R.plurals.current_patients_label, currentPatients.size(), currentPatients.size()));
+
+                listView.setAdapter(new MemberAdapter(getContext(), currentPatients, true));
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Member member = (Member) parent.getItemAtPosition(position);
+                        getNavigationManager().setDetailFragment(member, null, null);
+                    }
+                });
             }
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Member member = (Member) parent.getItemAtPosition(position);
-                    getNavigationManager().setDetailFragment(member, null, null);
-                }
-            });
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
