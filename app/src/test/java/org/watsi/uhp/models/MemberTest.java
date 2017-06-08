@@ -151,13 +151,14 @@ public class MemberTest {
         Member responseMember = new Member();
         responseMember.setPhotoUrl(remotePhotoUrl);
 
-        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
+        mockPhotoFetch();
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(false);
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl();
+        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl(mockHttpClient);
         assertEquals(memberSpy.getPhotoUrl(), remotePhotoUrl);
     }
 
@@ -169,7 +170,8 @@ public class MemberTest {
         Member responseMember = new Member();
         responseMember.setPhotoUrl(remotePhotoUrl);
 
-        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
+        mockPhotoFetch();
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(true);
 
@@ -284,8 +286,9 @@ public class MemberTest {
         whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
         when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
         when(mockRequestBuilder.url(localPhotoUrl)).thenReturn(mockRequestBuilder);
+        mockPhotoFetch();
 
-        member.fetchAndSetPhotoFromUrl();
+        member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
         verify(mockRequestBuilder, never()).build();
     }
@@ -314,7 +317,7 @@ public class MemberTest {
         PowerMockito.when(mockResponseBody.byteStream()).thenReturn(mockInputStream);
         when(ByteStreams.toByteArray(mockInputStream)).thenReturn(photoBytes);
 
-        member.fetchAndSetPhotoFromUrl();
+        member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
         assertEquals(member.getPhoto(), photoBytes);
         verify(mockResponse, times(1)).close();
@@ -329,7 +332,7 @@ public class MemberTest {
         mockPhotoFetch();
         when(mockResponse.isSuccessful()).thenReturn(false);
 
-        member.fetchAndSetPhotoFromUrl();
+        member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
         assertNull(member.getPhoto());
         verifyStatic();

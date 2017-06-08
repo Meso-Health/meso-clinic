@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Service class to handle downloading member photos
  */
@@ -34,13 +36,14 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
     protected void fetchMemberPhotos() throws SQLException {
         List<Member> membersWithPhotosToFetch = MemberDao.membersWithPhotosToFetch();
         Iterator<Member> iterator = membersWithPhotosToFetch.iterator();
+        OkHttpClient okHttpClient = new OkHttpClient();
         int fetchFailures = 0;
         while (iterator.hasNext()) {
             Log.i("UHP", "DownloadMemberPhotosService iterator");
             Member member = iterator.next();
             try {
                 if (!FileManager.isLocal(member.getPhotoUrl())) {
-                    member.fetchAndSetPhotoFromUrl();
+                    member.fetchAndSetPhotoFromUrl(okHttpClient);
                     member.updateFromFetch();
                 }
             } catch (IOException e) {

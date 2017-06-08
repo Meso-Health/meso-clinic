@@ -172,7 +172,7 @@ public class Member extends SyncableModel {
                     ExceptionManager.reportException(e);
                 }
                 setPhotoUrl(photoUrlFromResponse);
-                fetchAndSetPhotoFromUrl();
+                fetchAndSetPhotoFromUrl(new OkHttpClient());
                 // set the photo field on the response so the field does not get marked as
                 //  dirty when the models are diffed in the sync logic
                 memberResponse.setPhoto(getPhoto());
@@ -376,15 +376,16 @@ public class Member extends SyncableModel {
         this.mEnrolledAt = enrolledAt;
     }
 
-    public void fetchAndSetPhotoFromUrl() throws IOException {
+    public void fetchAndSetPhotoFromUrl(OkHttpClient okHttpClient) throws IOException {
         if (FileManager.isLocal(getPhotoUrl())) return;
         Request request = new Request.Builder().url(getPhotoUrl()).build();
-        okhttp3.Response response = new OkHttpClient().newCall(request).execute();
+        okhttp3.Response response = okHttpClient.newCall(request).execute();
 
         try {
             if (response.isSuccessful()) {
                 InputStream is = response.body().byteStream();
                 setPhoto(ByteStreams.toByteArray(is));
+                is.close();
             } else {
                 Map<String,String> params = new HashMap<>();
                 params.put("member.id", getId().toString());

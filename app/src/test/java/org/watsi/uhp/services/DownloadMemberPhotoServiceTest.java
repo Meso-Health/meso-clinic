@@ -5,6 +5,7 @@ import android.util.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -16,6 +17,8 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -30,12 +33,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ExceptionManager.class, FileManager.class, MemberDao.class, Log.class })
+@PrepareForTest({ ExceptionManager.class, FileManager.class, MemberDao.class, Log.class, DownloadMemberPhotosService.class })
 public class DownloadMemberPhotoServiceTest {
 
     private DownloadMemberPhotosService service;
+
+    @Mock
+    OkHttpClient mockHttpClient;
 
     @Before
     public void setup() {
@@ -79,12 +86,14 @@ public class DownloadMemberPhotoServiceTest {
         List<Member> memberList = new ArrayList<>();
         memberList.add(member);
 
+        whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
+        // doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
         when(FileManager.isLocal(anyString())).thenReturn(false);
 
         service.fetchMemberPhotos();
 
-        verify(member, times(1)).fetchAndSetPhotoFromUrl();
+        verify(member, times(1)).fetchAndSetPhotoFromUrl(mockHttpClient);
         verify(member, times(1)).updateFromFetch();
     }
 
@@ -94,11 +103,13 @@ public class DownloadMemberPhotoServiceTest {
         List<Member> memberList = new ArrayList<>();
         memberList.add(member);
 
+        whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
+        doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
         when(FileManager.isLocal(anyString())).thenReturn(true);
 
         service.fetchMemberPhotos();
 
-        verify(member, never()).fetchAndSetPhotoFromUrl();
+        verify(member, never()).fetchAndSetPhotoFromUrl(mockHttpClient);
     }
 }
