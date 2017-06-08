@@ -4,6 +4,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.ComponentName;
+import android.os.AsyncTask;
 
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -18,8 +19,8 @@ public abstract class AbstractSyncJobService extends JobService {
     public boolean onStartJob(JobParameters params) {
         DatabaseHelper.init(this);
         mSyncJobTask = new SyncJobTask(this, params);
-        mSyncJobTask.execute();
-        return false;
+        mSyncJobTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        return true;
     }
 
     @Override
