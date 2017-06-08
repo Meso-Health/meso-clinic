@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
@@ -92,17 +93,13 @@ public class MemberEditFragment extends FormFragment<Member> {
             phoneNumView.getText().append(mSyncableModel.getPhoneNumber());
         }
 
-        view.findViewById(R.id.scan_card).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                String idMethodString =
-                        getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-                bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD, idMethodString);
-                getNavigationManager().setBarcodeFragment(
-                        BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT, mSyncableModel, bundle);
-            }
-        });
+        Bundle bundle = new Bundle();
+        bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD,
+                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
+
+        view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
+                getNavigationManager(), BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT,
+                mSyncableModel, bundle));
     }
 
     private boolean valid(EditText nameView, EditText cardIdView, EditText phoneNumView) {
