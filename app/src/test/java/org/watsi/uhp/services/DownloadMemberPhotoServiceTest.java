@@ -1,5 +1,7 @@
 package org.watsi.uhp.services;
 
+import android.util.Log;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ExceptionManager.class, FileManager.class, MemberDao.class })
+@PrepareForTest({ ExceptionManager.class, FileManager.class, MemberDao.class, Log.class })
 public class DownloadMemberPhotoServiceTest {
 
     private DownloadMemberPhotosService service;
@@ -41,6 +43,7 @@ public class DownloadMemberPhotoServiceTest {
         mockStatic(ExceptionManager.class);
         mockStatic(FileManager.class);
         mockStatic(MemberDao.class);
+        mockStatic(Log.class);
         service = new DownloadMemberPhotosService();
     }
 
