@@ -144,6 +144,61 @@ public class MemberTest {
     }
 
     @Test
+    public void isAbsentee_isUnder6_hasPhoto_hasNoFingerprints_returnsFalse() throws Exception {
+        member.setAge(5);
+        member.setPhotoUrl(remotePhotoUrl);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), false);
+    }
+
+    @Test
+    public void isAbsentee_isUnder6_hasNoPhoto_hasNoFingerprints_returnsTrue() throws Exception {
+        member.setAge(5);
+        member.setPhotoUrl(null);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasPhoto_hasFingerprints_returnsFalse() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(remotePhotoUrl);
+        member.setFingerprintsGuid(UUID.randomUUID());
+
+        assertEquals(member.isAbsentee(), false);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasNoPhoto_hasFingerprints_returnsTrue() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(null);
+        member.setFingerprintsGuid(UUID.randomUUID());
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasPhoto_hasNoFingerprints_returnsTrue() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(remotePhotoUrl);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasNoPhoto_hasNoFingerprints_returnsTrue() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(null);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+
+    @Test
     public void handleUpdateFromSync_responseHasPhotoUrl_setsAndFetchesPhoto() throws Exception {
         String previousPhotoUrl = "prevUrl";
         member.setPhotoUrl(previousPhotoUrl);
@@ -706,7 +761,6 @@ public class MemberTest {
 
         assertTrue(newborn.isNew());
         assertEquals(newborn.getHouseholdId(), householdId);
-        assertFalse(newborn.getAbsentee());
         assertEquals(newborn.getBirthdateAccuracy(), Member.BirthdateAccuracyEnum.D);
         assertNotNull(newborn.getEnrolledAt());
     }
