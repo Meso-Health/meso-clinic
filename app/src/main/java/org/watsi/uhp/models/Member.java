@@ -385,7 +385,6 @@ public class Member extends SyncableModel {
             if (response.isSuccessful()) {
                 InputStream is = response.body().byteStream();
                 setPhoto(ByteStreams.toByteArray(is));
-                is.close();
             } else {
                 Map<String,String> params = new HashMap<>();
                 params.put("member.id", getId().toString());
