@@ -69,7 +69,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                         authenticate(username, password, spinner);
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
 

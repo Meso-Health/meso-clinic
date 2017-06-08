@@ -36,7 +36,6 @@ import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 
 public class ClinicActivity extends AppCompatActivity {
 
@@ -233,11 +232,6 @@ public class ClinicActivity extends AppCompatActivity {
         return authenticationToken;
     }
 
-    /** This has potential for a memory leak, according to #1.
-     *  This falls prey to http://blog.nimbledroid.com/2016/05/23/memory-leaks.html #1.
-     *  Solution is: http://blog.nimbledroid.com/2016/09/06/stop-memory-leaks.html with WeakReference.
-     *  https://developer.android.com/reference/java/lang/ref/WeakReference.html
-     */
     private class LoginTask extends AsyncTask<Void, Void, String> {
 
         private final ClinicActivity mClinicActivity;
