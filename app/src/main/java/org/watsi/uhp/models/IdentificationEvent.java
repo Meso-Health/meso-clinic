@@ -259,6 +259,9 @@ public class IdentificationEvent extends SyncableModel {
 
     @Override
     protected Call patchApiCall(Context context) throws SQLException {
+        if (getThroughMember() != null) {
+            setThroughMemberId(getThroughMember().getId());
+        }
         return ApiService.requestBuilder(context).patchIdentificationEvent(
                 getTokenAuthHeaderString(), getId(), formatPatchRequest());
     }

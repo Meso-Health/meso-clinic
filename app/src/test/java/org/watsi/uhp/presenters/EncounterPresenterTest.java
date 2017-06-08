@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.R;
@@ -82,11 +83,13 @@ public class EncounterPresenterTest {
     public void setup() {
         initMocks(this);
         mockStatic(BillableDao.class);
+
         encounter = new Encounter();
-        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter, navigationManager, encounterFragment);
 
         Date occurredAt = Calendar.getInstance().getTime();
         encounter.setOccurredAt(occurredAt);
+
+        encounterPresenter = new EncounterPresenter(encounter, view, context, encounterItemAdapter, navigationManager, encounterFragment);
     }
 
     @Test
@@ -122,6 +125,21 @@ public class EncounterPresenterTest {
         when(view.findViewById(R.id.backdate_encounter)).thenReturn(textView);
 
         assertEquals(encounterPresenter.getBackdateEncounterLink(), textView);
+    }
+
+    @Test
+    public void setup_backdateLinkText() throws Exception {
+        encounter.setBackdatedOccurredAt(true);
+        encounterPresenter.mFormattedBackDate = encounter.getOccurredAt().toString();
+
+        when(encounterPresenter.getLineItemsListView()).thenReturn(listView);
+        when(encounterPresenter.getCategorySpinner()).thenReturn(spinner);
+        when(encounterPresenter.getDrugSearchView()).thenReturn(searchView);
+        when(encounterPresenter.getAddBillablePrompt()).thenReturn(textView);
+        when(encounterPresenter.getBackdateEncounterLink()).thenReturn(textView);
+
+        encounterPresenter.setUp();
+        Mockito.verify(encounterFragment, Mockito.times(1)).updateBackdateLinkText();
     }
 
     @Test
