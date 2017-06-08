@@ -39,7 +39,6 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
         OkHttpClient okHttpClient = new OkHttpClient();
         int fetchFailures = 0;
         while (iterator.hasNext()) {
-            Log.i("UHP", "DownloadMemberPhotosService iterator");
             Member member = iterator.next();
             try {
                 if (!FileManager.isLocal(member.getPhotoUrl())) {
