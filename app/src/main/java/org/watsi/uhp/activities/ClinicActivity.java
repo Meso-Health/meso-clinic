@@ -64,7 +64,7 @@ public class ClinicActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
 
-        new LoginTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new LoginTask(this).execute();
     }
 
     @Override
