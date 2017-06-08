@@ -26,7 +26,6 @@ public abstract class AbstractSyncJobService extends JobService {
     @Override
     public boolean onStopJob(JobParameters params) {
         ExceptionManager.reportMessage(this.getClass().getSimpleName() + ": called onStopJob");
-        removeReferenceToAsyncTask();
         return false;
     }
 
@@ -49,21 +48,5 @@ public abstract class AbstractSyncJobService extends JobService {
 
     public SyncJobTask getSyncJobTask() {
         return mSyncJobTask;
-    }
-
-    /**
-     * This makes sure we clean up any unused threads.
-     */
-    public void removeReferenceToAsyncTask() {
-        if (mSyncJobTask != null) {
-            mSyncJobTask.cancel(true);
-            mSyncJobTask = null;
-        } else {
-            ExceptionManager.reportMessage(
-                    this.getClass().getSimpleName() + ": was not able to cancel task because getSyncJobTask() returned null",
-                    ExceptionManager.MESSAGE_LEVEL_WARNING,
-                    null
-            );
-        }
     }
 }
