@@ -4,12 +4,8 @@ machine:
 
 test:
   override:
-    # start the emulator
-    - emulator -avd circleci-android22 -no-boot-anim -no-audio -no-window:
-        background: true
-        parallel: true
-    # run unit tests whilst emulator is booting
-    - ./gradlew test
+    # run unit tests
+    - ./gradlew testSpecDebugUnitTest
 
   post:
       # copy unit and instrument test results to Circle Test results directory

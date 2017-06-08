@@ -21,6 +21,8 @@ import java.util.UUID;
 import retrofit2.Call;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -145,5 +147,37 @@ public class EncounterTest {
 
         encounter.setEncounterItems(encounterItems);
         assertEquals(encounter.price(), 6600);
+    }
+
+    @Test
+    public void addEncounterItem_doesNotContainBillable_addsItem() throws Exception {
+        EncounterItem encounterItem = new EncounterItem();
+
+        encounter.addEncounterItem(encounterItem);
+
+        assertTrue(encounter.getEncounterItems().contains(encounterItem));
+    }
+
+    @Test(expected=Encounter.DuplicateBillableException.class)
+    public void addEncounterItem_alreadyContainsBillable_throwsException() throws Exception {
+        Billable billable = new Billable();
+        billable.generateId();
+        EncounterItem item1 = new EncounterItem();
+        item1.setBillable(billable);
+        EncounterItem item2 = new EncounterItem();
+        item2.setBillable(billable);
+
+        encounter.addEncounterItem(item1);
+        encounter.addEncounterItem(item2);
+    }
+
+    @Test
+    public void removeEncounterItem() throws Exception {
+        EncounterItem item = new EncounterItem();
+
+        encounter.addEncounterItem(item);
+        encounter.removeEncounterItem(item);
+
+        assertFalse(encounter.getEncounterItems().contains(item));
     }
 }

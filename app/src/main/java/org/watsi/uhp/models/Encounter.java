@@ -195,6 +195,10 @@ public class Encounter extends SyncableModel {
         }
     }
 
+    public void removeEncounterItem(EncounterItem encounterItem) {
+        getEncounterItems().remove(encounterItem);
+    }
+
     public boolean containsBillable(Billable billable) {
         for (EncounterItem item : getEncounterItems()) {
             UUID billableId = item.getBillable().getId();
