@@ -36,7 +36,6 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
         Iterator<Member> iterator = membersWithPhotosToFetch.iterator();
         int fetchFailures = 0;
         while (iterator.hasNext()) {
-            Log.i("UHP", "DownloadMemberPhotosService iterator");
             Member member = iterator.next();
             try {
                 if (!FileManager.isLocal(member.getPhotoUrl())) {
