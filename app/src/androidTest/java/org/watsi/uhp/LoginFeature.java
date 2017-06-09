@@ -8,7 +8,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.basetests.ActivityTest;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -24,7 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 @RunWith(AndroidJUnit4.class)
-public class LoginFeature extends ActivityTest {
+public class LoginFeature extends BaseTest {
 
     private final String username = "klinik";
     private final String password = "123456";

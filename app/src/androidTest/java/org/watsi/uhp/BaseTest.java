@@ -1,12 +1,10 @@
-package org.watsi.uhp.basetests;
+package org.watsi.uhp;
 
 import android.accounts.AccountManager;
 import android.content.Context;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.watsi.uhp.BillableFactory;
-import org.watsi.uhp.MemberFactory;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
@@ -23,7 +21,7 @@ import java.util.UUID;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
-public class ActivityTest {
+public class BaseTest {
 
     @BeforeClass
     public static void setUp() throws SQLException, AbstractModel.ValidationException {

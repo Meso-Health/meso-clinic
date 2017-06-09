@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.AbstractModel;
@@ -32,7 +31,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
-public class IdentificationFlowFeature extends ActivityTest {
+public class IdentificationFlowFeature extends BaseTest {
 
     private Member member;
 

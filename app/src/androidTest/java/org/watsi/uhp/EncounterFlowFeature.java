@@ -9,7 +9,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.basetests.ActivityTest;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
@@ -35,7 +34,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4.class)
-public class EncounterFlowFeature extends ActivityTest {
+public class EncounterFlowFeature extends BaseTest {
 
     private Member member;
     private Billable billableDrug;
