@@ -149,6 +149,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         getDao().createOrUpdate((T) this);
     }
 
+    public void delete() throws SQLException {
+        getDao().delete((T) this);
+    }
+
     public Response<T> sync(Context context) throws SyncException, SQLException, IOException {
         if (!isDirty() || getToken() == null) {
             throw new SyncException();

@@ -63,7 +63,7 @@ public class EncounterFlowFeature extends ActivityTest {
 
     @After
     public void cleanUpTest() throws SQLException {
-        IdentificationEventDao.deleteById(idEvent.getId());
+        idEvent.delete();
     }
 
     @Test

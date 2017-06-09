@@ -69,10 +69,6 @@ public class IdentificationEventDao {
         getInstance().getIdentificationEventDao().create(idEvent);
     }
 
-    public static void deleteById(UUID id) throws SQLException {
-        getInstance().getIdentificationEventDao().deleteById(id);
-    }
-
     public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
         for (UUID id : memberIdsToDelete) {
             getInstance().getIdentificationEventDao().deleteById(id);

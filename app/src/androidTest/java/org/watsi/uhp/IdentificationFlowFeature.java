@@ -48,7 +48,7 @@ public class IdentificationFlowFeature extends ActivityTest {
     @After
     public void cleanUpTest() throws SQLException {
         IdentificationEvent identification = IdentificationEventDao.openCheckIn(member.getId());
-        if (identification != null) IdentificationEventDao.deleteById(identification.getId());
+        if (identification != null) identification.delete();
     }
 
     public void performSearch(String query) {

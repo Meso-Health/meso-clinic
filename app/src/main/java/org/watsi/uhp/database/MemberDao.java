@@ -42,10 +42,6 @@ public class MemberDao {
         getInstance().getMemberDao().create(member);
     }
 
-    public static void deleteById(UUID id) throws SQLException {
-        getInstance().getMemberDao().deleteById(id);
-    }
-
     private void setMemberDao(Dao memberDao) {
         this.mMemberDao = memberDao;
     }
