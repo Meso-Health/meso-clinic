@@ -6,11 +6,9 @@ import org.watsi.uhp.models.Member;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class IdentificationEventFactory extends IdentificationEvent {
+class IdentificationEventFactory extends IdentificationEvent {
 
-    public IdentificationEventFactory(Member member, int clinicNumber) {
-        IdentificationEvent idEvent = new IdentificationEvent();
-
+    IdentificationEventFactory(Member member, int clinicNumber) {
         setMember(member);
         setClinicNumber(clinicNumber);
 

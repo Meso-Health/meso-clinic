@@ -4,11 +4,10 @@ import org.watsi.uhp.models.Member;
 
 import java.util.UUID;
 
-public class MemberFactory extends Member {
+class MemberFactory extends Member {
 
-    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum)
+    MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum)
             throws ValidationException {
-        super();
         setId(id);
         setFullName(fullName);
         setCardId(cardId);
@@ -16,9 +15,8 @@ public class MemberFactory extends Member {
         setGender(genderEnum);
     }
 
-    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum,
+    MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum,
                          UUID householdId) throws ValidationException {
-        super();
         setId(id);
         setFullName(fullName);
         setCardId(cardId);
