@@ -1,6 +1,7 @@
 package org.watsi.uhp.services;
 
 import android.net.Uri;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 @PrepareForTest({ Encounter.class, EncounterDao.class, EncounterItemDao.class,
         ExceptionManager.class, File.class, FileManager.class, IdentificationEvent.class,
         MediaType.class, Member.class, okhttp3.Response.class, RequestBody.class, Response.class,
-        SyncableModel.class, SyncService.class, Uri.class })
+        SyncableModel.class, SyncService.class, Uri.class, Log.class })
 public class SyncServiceTest {
     @Mock
     List<IdentificationEvent> mockIdentificationEventsList;
@@ -86,6 +87,7 @@ public class SyncServiceTest {
         mockStatic(Member.class);
         mockStatic(SyncableModel.class);
         mockStatic(Uri.class);
+        mockStatic(Log.class);
         syncService = new SyncService();
     }
 

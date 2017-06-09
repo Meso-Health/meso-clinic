@@ -10,17 +10,24 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.listeners.RemoveEncounterItemListener;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
 
-    public EncounterItemAdapter(Context context, List<EncounterItem> encounterItemList) {
-        super(context, R.layout.item_encounter_item_list, encounterItemList);
+    private final Encounter mEncounter;
+
+    public EncounterItemAdapter(Context context, Encounter encounter) {
+        super(context, R.layout.item_encounter_item_list,
+                new ArrayList<>(encounter.getEncounterItems()));
+        this.mEncounter = encounter;
     }
 
     @Override
@@ -55,12 +62,8 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
                 viewHolder.billableDetails.setText(billable.dosageDetails());
                 viewHolder.billableDetails.setVisibility(View.VISIBLE);
             }
-            viewHolder.removeLineItemBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    remove(encounterItem);
-                }
-            });
+            viewHolder.removeLineItemBtn.setOnClickListener(
+                    new RemoveEncounterItemListener(mEncounter, encounterItem, this));
 
             final ViewHolder vh = viewHolder;
             viewHolder.billableQuantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -69,8 +72,9 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
                     if (!hasFocus) {
                         String quantity = vh.billableQuantity.getText().toString();
 
-                        if (quantity.equals("")) {
+                        if (quantity.equals("") || quantity.equals("0")) {
                             vh.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
+                            Toast.makeText(getContext(), "Please enter nonzero quantity", Toast.LENGTH_SHORT).show();
                         } else {
                             encounterItem.setQuantity(Integer.valueOf(quantity));
                         }

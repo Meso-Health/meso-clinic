@@ -1,5 +1,7 @@
 package org.watsi.uhp.services;
 
+import android.util.Log;
+
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
@@ -10,6 +12,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Service class to handle downloading member photos
  */
@@ -19,6 +23,7 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
 
     @Override
     public boolean performSync() {
+        Log.i("UHP", "DownloadMemberPhotosService.performSync is called");
         try {
             fetchMemberPhotos();
             return true;
@@ -31,12 +36,13 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
     protected void fetchMemberPhotos() throws SQLException {
         List<Member> membersWithPhotosToFetch = MemberDao.membersWithPhotosToFetch();
         Iterator<Member> iterator = membersWithPhotosToFetch.iterator();
+        OkHttpClient okHttpClient = new OkHttpClient();
         int fetchFailures = 0;
         while (iterator.hasNext()) {
             Member member = iterator.next();
             try {
                 if (!FileManager.isLocal(member.getPhotoUrl())) {
-                    member.fetchAndSetPhotoFromUrl();
+                    member.fetchAndSetPhotoFromUrl(okHttpClient);
                     member.updateFromFetch();
                 }
             } catch (IOException e) {

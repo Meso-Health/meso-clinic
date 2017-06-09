@@ -45,7 +45,8 @@ public class IdentificationEventDao {
                 "LEFT OUTER JOIN encounters ON encounters.identification_event_id = identifications.id\n" +
                 "WHERE encounters.identification_event_id IS NULL\n" +
                 "AND identifications.member_id = '" + memberId.toString() + "'\n" +
-                "AND identifications.dismissed = 0";
+                "AND identifications.dismissed = 0 " +
+                "AND identifications.accepted = 1";
 
         GenericRawResults<String> rawResults =
                 getInstance().getIdentificationEventDao().queryRaw(rawQuery,

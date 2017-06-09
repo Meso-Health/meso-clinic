@@ -75,8 +75,7 @@ public class ActivityTest {
                 "Lil Jon",
                 "RWI000000",
                 5,
-                Member.GenderEnum.M,
-                false
+                Member.GenderEnum.M
         ));
 
         MemberDao.create(new MemberFactory(
@@ -84,8 +83,7 @@ public class ActivityTest {
                 "Big Jon",
                 "RWI000001",
                 50,
-                Member.GenderEnum.M,
-                false
+                Member.GenderEnum.M
         ));
 
         BillableDao.create(new BillableFactory(

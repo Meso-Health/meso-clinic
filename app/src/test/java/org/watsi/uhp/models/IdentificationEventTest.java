@@ -141,6 +141,10 @@ public class IdentificationEventTest {
     public void patchApiCall() throws Exception {
         identificationEvent.setId(UUID.randomUUID());
         identificationEvent.setToken("foo");
+        Member throughMember = new Member();
+        UUID throughMemberId = UUID.randomUUID();
+        throughMember.setId(throughMemberId);
+        identificationEvent.setThroughMember(throughMember);
         IdentificationEvent identificationEventSpy = spy(identificationEvent);
 
         when(mockApi.patchIdentificationEvent(
@@ -153,5 +157,6 @@ public class IdentificationEventTest {
         assertEquals(call, mockCall);
         verify(mockApi, times(1)).patchIdentificationEvent(
                 "Token foo", identificationEventSpy.getId(), mockPatchRequestBody);
+        verify(identificationEventSpy, times(1)).setThroughMemberId(throughMemberId);
     }
 }

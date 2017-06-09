@@ -11,11 +11,8 @@ import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
 
-import java.util.ArrayList;
-
 public class EncounterFragment extends FormFragment<Encounter> {
 
-    private EncounterItemAdapter encounterItemAdapter;
     private EncounterPresenter encounterPresenter;
 
     @Override
@@ -40,8 +37,12 @@ public class EncounterFragment extends FormFragment<Encounter> {
 
     @Override
     void setUpFragment(View view) {
-        encounterItemAdapter = new EncounterItemAdapter(getContext(), new ArrayList<>(mSyncableModel.getEncounterItems()));
-        encounterPresenter = new EncounterPresenter(mSyncableModel, view, getContext(), encounterItemAdapter, ((ClinicActivity) getActivity()).getNavigationManager(), this);
+        EncounterItemAdapter encounterItemAdapter =
+                new EncounterItemAdapter(getContext(), mSyncableModel);
+
+        encounterPresenter = new EncounterPresenter(
+                mSyncableModel, view, getContext(), encounterItemAdapter,
+                ((ClinicActivity) getActivity()).getNavigationManager(), this);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
