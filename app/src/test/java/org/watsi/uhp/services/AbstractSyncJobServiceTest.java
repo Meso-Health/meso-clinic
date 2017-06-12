@@ -3,6 +3,7 @@ package org.watsi.uhp.services;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.content.ComponentName;
+import android.os.AsyncTask;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.watsi.uhp.managers.ExceptionManager;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -70,8 +72,8 @@ public class AbstractSyncJobServiceTest {
 
         boolean result = fetchService.onStartJob(mockJobParameters);
 
-        assertFalse(result);
-        verify(mockSyncJobTask, times(1)).execute();
+        assertTrue(result);
+        verify(mockSyncJobTask, times(1)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Test

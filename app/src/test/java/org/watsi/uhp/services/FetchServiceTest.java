@@ -3,6 +3,7 @@ package org.watsi.uhp.services;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +59,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccountManager.class, ApiService.class, BillableDao.class, ExceptionManager.class,
         FetchService.class, Headers.class, MemberDao.class, Request.class, okhttp3.Response.class,
-        Response.class, SessionManager.class })
+        Response.class, SessionManager.class, Log.class })
 public class FetchServiceTest {
 
     @Mock
@@ -98,6 +99,7 @@ public class FetchServiceTest {
         mockStatic(BillableDao.class);
         mockStatic(ExceptionManager.class);
         mockStatic(MemberDao.class);
+        mockStatic(Log.class);
         fetchService = new FetchService();
     }
 

@@ -70,7 +70,7 @@ public class VersionAndSyncFragment extends BaseFragment {
         updateTimestamps(view);
 
         final ProgressDialog spinner = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
-        spinner.setCancelable(false);
+        spinner.setCancelable(true);
         spinner.setMessage("Loading...");
         spinner.show();
 

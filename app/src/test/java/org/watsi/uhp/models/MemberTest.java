@@ -144,6 +144,61 @@ public class MemberTest {
     }
 
     @Test
+    public void isAbsentee_isUnder6_hasPhoto_hasNoFingerprints_returnsFalse() throws Exception {
+        member.setAge(5);
+        member.setPhotoUrl(remotePhotoUrl);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), false);
+    }
+
+    @Test
+    public void isAbsentee_isUnder6_hasNoPhoto_hasNoFingerprints_returnsTrue() throws Exception {
+        member.setAge(5);
+        member.setPhotoUrl(null);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasPhoto_hasFingerprints_returnsFalse() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(remotePhotoUrl);
+        member.setFingerprintsGuid(UUID.randomUUID());
+
+        assertEquals(member.isAbsentee(), false);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasNoPhoto_hasFingerprints_returnsTrue() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(null);
+        member.setFingerprintsGuid(UUID.randomUUID());
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasPhoto_hasNoFingerprints_returnsTrue() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(remotePhotoUrl);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+    @Test
+    public void isAbsentee_isOver6_hasNoPhoto_hasNoFingerprints_returnsTrue() throws Exception {
+        member.setAge(7);
+        member.setPhotoUrl(null);
+        member.setFingerprintsGuid(null);
+
+        assertEquals(member.isAbsentee(), true);
+    }
+
+
+    @Test
     public void handleUpdateFromSync_responseHasPhotoUrl_setsAndFetchesPhoto() throws Exception {
         String previousPhotoUrl = "prevUrl";
         member.setPhotoUrl(previousPhotoUrl);
@@ -151,13 +206,14 @@ public class MemberTest {
         Member responseMember = new Member();
         responseMember.setPhotoUrl(remotePhotoUrl);
 
-        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
+        mockPhotoFetch();
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(false);
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl();
+        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl(mockHttpClient);
         assertEquals(memberSpy.getPhotoUrl(), remotePhotoUrl);
     }
 
@@ -169,7 +225,8 @@ public class MemberTest {
         Member responseMember = new Member();
         responseMember.setPhotoUrl(remotePhotoUrl);
 
-        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl();
+        mockPhotoFetch();
+        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
         when(FileManager.isLocal(previousPhotoUrl)).thenReturn(true);
 
@@ -284,8 +341,9 @@ public class MemberTest {
         whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
         when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
         when(mockRequestBuilder.url(localPhotoUrl)).thenReturn(mockRequestBuilder);
+        mockPhotoFetch();
 
-        member.fetchAndSetPhotoFromUrl();
+        member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
         verify(mockRequestBuilder, never()).build();
     }
@@ -314,7 +372,7 @@ public class MemberTest {
         PowerMockito.when(mockResponseBody.byteStream()).thenReturn(mockInputStream);
         when(ByteStreams.toByteArray(mockInputStream)).thenReturn(photoBytes);
 
-        member.fetchAndSetPhotoFromUrl();
+        member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
         assertEquals(member.getPhoto(), photoBytes);
         verify(mockResponse, times(1)).close();
@@ -329,7 +387,7 @@ public class MemberTest {
         mockPhotoFetch();
         when(mockResponse.isSuccessful()).thenReturn(false);
 
-        member.fetchAndSetPhotoFromUrl();
+        member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
         assertNull(member.getPhoto());
         verifyStatic();
@@ -706,7 +764,6 @@ public class MemberTest {
 
         assertTrue(newborn.isNew());
         assertEquals(newborn.getHouseholdId(), householdId);
-        assertFalse(newborn.getAbsentee());
         assertEquals(newborn.getBirthdateAccuracy(), Member.BirthdateAccuracyEnum.D);
         assertNotNull(newborn.getEnrolledAt());
     }

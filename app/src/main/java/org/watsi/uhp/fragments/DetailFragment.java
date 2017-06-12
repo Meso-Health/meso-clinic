@@ -150,7 +150,7 @@ public class DetailFragment extends BaseFragment {
         }
 
         TextView memberNotification = (TextView) detailView.findViewById(R.id.member_notification);
-        if (mMember.getAbsentee()) {
+        if (mMember.isAbsentee()) {
             memberNotification.setVisibility(View.VISIBLE);
             memberNotification.setText(R.string.absentee_notification);
         } else if (mMember.getCardId() == null) {
@@ -307,7 +307,7 @@ public class DetailFragment extends BaseFragment {
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
 
-        if (mMember != null && mMember.getAbsentee()) {
+        if (mMember != null && mMember.isAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }
     }

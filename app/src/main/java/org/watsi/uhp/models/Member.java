@@ -54,7 +54,6 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
     public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
-    public static final String FIELD_NAME_ABSENTEE = "absentee";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
     public static final String FIELD_NAME_BIRTHDATE = "birthdate";
@@ -108,11 +107,6 @@ public class Member extends SyncableModel {
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
     @DatabaseField(columnName = FIELD_NAME_HOUSEHOLD_ID)
     protected UUID mHouseholdId;
-
-    @Expose
-    @SerializedName(FIELD_NAME_ABSENTEE)
-    @DatabaseField(columnName = FIELD_NAME_ABSENTEE)
-    protected Boolean mAbsentee;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_GUID)
@@ -172,7 +166,7 @@ public class Member extends SyncableModel {
                     ExceptionManager.reportException(e);
                 }
                 setPhotoUrl(photoUrlFromResponse);
-                fetchAndSetPhotoFromUrl();
+                fetchAndSetPhotoFromUrl(new OkHttpClient());
                 // set the photo field on the response so the field does not get marked as
                 //  dirty when the models are diffed in the sync logic
                 memberResponse.setPhoto(getPhoto());
@@ -316,14 +310,6 @@ public class Member extends SyncableModel {
         return mHouseholdId;
     }
 
-    public void setAbsentee(boolean absentee) {
-        this.mAbsentee = absentee;
-    }
-
-    public Boolean getAbsentee() {
-        return mAbsentee;
-    }
-
     public Collection<IdentificationEvent> getIdentificationEvents() {
         return mIdentificationEvents;
     }
@@ -376,10 +362,14 @@ public class Member extends SyncableModel {
         this.mEnrolledAt = enrolledAt;
     }
 
-    public void fetchAndSetPhotoFromUrl() throws IOException {
+    public boolean isAbsentee() {
+        return getPhotoUrl() == null || (getAge() >= 6 && getFingerprintsGuid() == null);
+    }
+
+    public void fetchAndSetPhotoFromUrl(OkHttpClient okHttpClient) throws IOException {
         if (FileManager.isLocal(getPhotoUrl())) return;
         Request request = new Request.Builder().url(getPhotoUrl()).build();
-        okhttp3.Response response = new OkHttpClient().newCall(request).execute();
+        okhttp3.Response response = okHttpClient.newCall(request).execute();
 
         try {
             if (response.isSuccessful()) {
@@ -596,7 +586,6 @@ public class Member extends SyncableModel {
     public Member createNewborn() {
         Member newborn = new Member();
         newborn.setHouseholdId(getHouseholdId());
-        newborn.setAbsentee(false);
         newborn.setBirthdateAccuracy(BirthdateAccuracyEnum.D);
         newborn.setEnrolledAt(Clock.getCurrentTime());
         return newborn;
