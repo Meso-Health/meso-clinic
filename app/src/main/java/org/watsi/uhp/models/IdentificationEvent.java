@@ -37,7 +37,7 @@ public class IdentificationEvent extends SyncableModel {
     public static final String FIELD_NAME_CLINIC_NUMBER_TYPE = "clinic_number_type";
     public static final String FIELD_NAME_DISMISSED = "dismissed";
     public static final String FIELD_NAME_DISMISSAL_REASON = "dismissal_reason";
-    public static final String FIELD_NAME_SIMPRINTS_RESULT_CODE = "simprints_result_code";
+    public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_RESULT_CODE = "fingerprints_verification_result_code";
     public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE = "fingerprints_verification_confidence";
     public static final String FIELD_NAME_FINGERPRINTS_VERIFICATION_TIER = "fingerprints_verification_tier";
 
@@ -114,9 +114,9 @@ public class IdentificationEvent extends SyncableModel {
     private DismissalReasonEnum mDismissalReason;
 
     @Expose
-    @SerializedName(FIELD_NAME_SIMPRINTS_RESULT_CODE)
-    @DatabaseField(columnName = FIELD_NAME_SIMPRINTS_RESULT_CODE)
-    private int mSimprintsResultCode;
+    @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_RESULT_CODE)
+    @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_RESULT_CODE)
+    private int mFingerprintsVerificationResultCode;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
@@ -266,12 +266,12 @@ public class IdentificationEvent extends SyncableModel {
         return mFingerprintsVerificationAttemptDetail;
     }
 
-    public void setSimprintsResultCode(int simprintsResultCode) {
-        this.mSimprintsResultCode = simprintsResultCode;
+    public void setFingerprintsVerificationResultCode(int simprintsResultCode) {
+        this.mFingerprintsVerificationResultCode = simprintsResultCode;
     }
 
-    public int getSimprintsResultCode() {
-        return mSimprintsResultCode;
+    public int getFingerprintsVerificationResultCode() {
+        return mFingerprintsVerificationResultCode;
     }
 
     public Map<String, RequestBody> formatPatchRequest() {

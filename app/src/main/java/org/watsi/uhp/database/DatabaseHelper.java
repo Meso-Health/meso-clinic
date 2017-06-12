@@ -100,7 +100,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     // Migrating data in place?
                     // no-op.
                 case 9:
-                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN simprints_result_code INTEGER");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier INTEGER");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier STRING;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
             }
