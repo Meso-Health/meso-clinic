@@ -41,9 +41,16 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
+// PatientDetailFragment
+
+// A button that does something
+
+// Top right menu item
+
+//
 public class DetailFragment extends BaseFragment {
 
-    private IdentificationEvent mIdentificationEvent;
+    private IdentificationEvent mUnsavedIdentificationEvent;
     private Member mMember;
 
     DetailPresenter detailPresenter;
@@ -53,34 +60,41 @@ public class DetailFragment extends BaseFragment {
 
         detailPresenter = new DetailPresenter(view);
 
-        getActivity().setTitle(R.string.detail_fragment_label);
+        // Prepare fragment stuff
         setHasOptionsMenu(true);
+
+        // Prepare activity
         getActivity().invalidateOptionsMenu();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        getActivity().setTitle(R.string.detail_fragment_label);
 
-        // Getting IdentificationEvent
+        // Argument stuff
+        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
         String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
         IdentificationEvent.SearchMethodEnum idMethod = null;
         if (searchMethodString != null) {
             idMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
         }
-        mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
         Member throughMember = (Member) getArguments()
                 .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
-        mIdentificationEvent = new IdentificationEvent();
-        mIdentificationEvent.setMember(mMember);
-        mIdentificationEvent.setSearchMethod(idMethod);
-        mIdentificationEvent.setThroughMember(throughMember);
-
+        mUnsavedIdentificationEvent = new IdentificationEvent();
+        mUnsavedIdentificationEvent.setMember(mMember);
+        mUnsavedIdentificationEvent.setSearchMethod(idMethod);
+        mUnsavedIdentificationEvent.setThroughMember(throughMember);
+        if (mMember.getPhoto() == null) {
+            mUnsavedIdentificationEvent.setPhotoVerified(false);
+        }
 
         setPatientCard(view);
-        setButton(view);
-        setHouseholdList(view);
+
         if (mMember.currentCheckIn() == null) {
             setRejectIdentityLink();
+            setButtonForTreatmentInfo(view);
         } else {
             setDismissPatientLink(view);
+            setHouseholdList(view);
+            setButtonForCheckIn(view);
         }
 
         return view;
@@ -164,19 +178,14 @@ public class DetailFragment extends BaseFragment {
         }
     }
 
-    private void setButton(View view) {
+    private void setButtonForCheckIn(View view) {
+        // TODO this button shouldn't be approve_identity since it's also used for entering treatment info.
         Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
-        if (mMember.getFingerprintsGuid() != null) {
-            confirmButton.setText(R.string.approve_identity);
-        } else {
-            confirmButton.setText(R.string.approve_identity_without_fingerprints);
-        }
 
         if (mMember.currentCheckIn() == null) {
-            // Here is the branching logic
-
-            // If they have fingerprints
+            // If they have fingerprints on record:
             if (mMember.getFingerprintsGuid() != null) {
+                confirmButton.setText(R.string.approve_identity);
                 confirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -184,11 +193,12 @@ public class DetailFragment extends BaseFragment {
                         Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), mMember.getFingerprintsGuid().toString());
                         startActivityForResult(
                                 fingerprintIdentificationIntent,
-                                1
+                                1 // TODO make this a constant
                         );
                     }
                 });
             } else {
+                confirmButton.setText(R.string.approve_identity_without_fingerprints);
                 confirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -196,26 +206,29 @@ public class DetailFragment extends BaseFragment {
                     }
                 });
             }
-        } else {
-            confirmButton.setText(R.string.detail_create_encounter);
-            confirmButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Encounter encounter = new Encounter();
-                    IdentificationEvent checkIn = mMember.currentCheckIn();
-                    encounter.setOccurredAt(Clock.getCurrentTime());
-                    encounter.setMember(mMember);
-                    encounter.setIdentificationEvent(checkIn);
-                    try {
-                        encounter.setEncounterItems(
-                                EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
-                    } catch (SQLException e) {
-                        ExceptionManager.reportException(e);
-                    }
-                    getNavigationManager().setEncounterFragment(encounter);
-                }
-            });
         }
+    }
+
+    private void setButtonForTreatmentInfo(View view) {
+        Button confirmButton = (Button) view.findViewById(R.id.approve_identity);
+        confirmButton.setText(R.string.detail_create_encounter);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Encounter encounter = new Encounter();
+                IdentificationEvent checkIn = mMember.currentCheckIn();
+                encounter.setOccurredAt(Clock.getCurrentTime());
+                encounter.setMember(mMember);
+                encounter.setIdentificationEvent(checkIn);
+                try {
+                    encounter.setEncounterItems(
+                            EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+                } catch (SQLException e) {
+                    ExceptionManager.reportException(e);
+                }
+                getNavigationManager().setEncounterFragment(encounter);
+            }
+        });
     }
 
     private void setHouseholdList(View detailView) {
@@ -248,16 +261,12 @@ public class DetailFragment extends BaseFragment {
     }
 
     public void completeIdentificationOnReport() throws SyncableModel.UnauthenticatedException {
-        IdentificationEvent idEvent = new IdentificationEvent();
-        idEvent.setClinicNumberType(null);
-        idEvent.setClinicNumber(null);
-        idEvent.setAccepted(false);
-        idEvent.setOccurredAt(Clock.getCurrentTime());
-        if (mMember.getPhoto() == null) {
-            idEvent.setPhotoVerified(false);
-        }
+        mUnsavedIdentificationEvent.setClinicNumberType(null);
+        mUnsavedIdentificationEvent.setClinicNumber(null);
+        mUnsavedIdentificationEvent.setAccepted(false);
+        mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
         try {
-            idEvent.saveChanges(getAuthenticationToken());
+            mUnsavedIdentificationEvent.saveChanges(getAuthenticationToken());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
@@ -267,6 +276,11 @@ public class DetailFragment extends BaseFragment {
                 mMember.getFullName() + " " + R.string.identification_rejected,
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public void completeIdentificationWithoutFingerprints() {
+        // TODO, figure out how to deal with non-nullable integers and floats.
+        getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
     }
 
     public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
@@ -291,7 +305,7 @@ public class DetailFragment extends BaseFragment {
     }
 
     public IdentificationEvent.SearchMethodEnum getIdMethod() {
-        return mIdentificationEvent.getSearchMethod();
+        return mUnsavedIdentificationEvent.getSearchMethod();
     }
 
     public Member getMember() { return this.mMember; }
@@ -299,14 +313,17 @@ public class DetailFragment extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+
+        // These should appear whenever you're in the detail view.
+        menu.findItem(R.id.menu_member_edit).setVisible(true);
+        menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
+
         if (mMember.currentCheckIn() == null) {
             menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
         }
 
-        menu.findItem(R.id.menu_member_edit).setVisible(true);
-        menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
-
-        if (mMember != null && mMember.isAbsentee()) {
+        // This should only appear if member is an absentee.
+        if (mMember.isAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }
     }
@@ -318,7 +335,7 @@ public class DetailFragment extends BaseFragment {
                     getContext(),
                     "result not ok. Error code: " + resultCode,
                     Toast.LENGTH_LONG).show();
-            mIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
         } else {
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
             String fingerprintTier = verification.getTier().toString();
@@ -326,19 +343,11 @@ public class DetailFragment extends BaseFragment {
 
             Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG);
 
-            mIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
-            mIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
 
-            if (mMember.getPhoto() == null) {
-                mIdentificationEvent.setPhotoVerified(false);
-            }
-            getNavigationManager().setClinicNumberFormFragment(mIdentificationEvent);
+            getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
         }
-    }
-
-    public void completeIdentificationWithoutFingerprints() {
-        // TODO, figure out how to deal with non-nullable integers and floats.
-        getNavigationManager().setClinicNumberFormFragment(mIdentificationEvent);
     }
 }

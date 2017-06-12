@@ -32,10 +32,10 @@ public class ClinicNumberFormFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_clinic_number_form, container, false);
 
         // grabbing from NavigationManager the arguments
-        IdentificationEvent identificationEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        IdentificationEvent unsavedIdentificationEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
         // setting the presenter.
-        clinicNumberFormPresenter = new ClinicNumberFormPresenter(view, getContext(), getNavigationManager(), getActivity(), identificationEvent);
+        clinicNumberFormPresenter = new ClinicNumberFormPresenter(view, getContext(), getNavigationManager(), getActivity(), unsavedIdentificationEvent);
 
         return view;
     }

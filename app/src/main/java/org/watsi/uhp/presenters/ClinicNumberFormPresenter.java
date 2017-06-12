@@ -31,7 +31,7 @@ import java.sql.SQLException;
 
 public class ClinicNumberFormPresenter {
     // Logic
-    private IdentificationEvent mIdentificationEvent;
+    private IdentificationEvent mUnsavedIdentificationEvent;
 
     // Activity, context, and view
     private final Activity mActivity;
@@ -45,8 +45,8 @@ public class ClinicNumberFormPresenter {
     private RadioGroup mClinicNumberRadioGroup;
 
 
-    public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, IdentificationEvent idEvent) {
-        mIdentificationEvent = idEvent;
+    public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, IdentificationEvent unsavedIdentificationEvent) {
+        mUnsavedIdentificationEvent = unsavedIdentificationEvent;
 
         // View
         mView = view;
@@ -57,7 +57,6 @@ public class ClinicNumberFormPresenter {
         mNavigationManager = navigationManager;
 
         // Elements in the view
-        // TODO: What happens when we want to start "componenting" views?
         mClinicNumberRadioGroup = (RadioGroup) view.findViewById(R.id.radio_group_clinic_number);
         mClinicNumberView = (EditText) view.findViewById(R.id.clinic_number_field);
         mSubmitButton = (Button) view.findViewById(R.id.clinic_number_save_button);
@@ -87,7 +86,7 @@ public class ClinicNumberFormPresenter {
 
     protected void onClickSubmitButton() {
         // save opd number (database stuff)
-        saveIdentification();
+        saveIdentification(getSelectedClinicNumberType(), getSelectedClinicNumber());
 
         // ui stuff
         displayIdentificationSuccessfulToast();
@@ -144,15 +143,15 @@ public class ClinicNumberFormPresenter {
         return ((ClinicActivity) mActivity).getAuthenticationToken();
     }
 
-    protected void saveIdentification() {
+    protected void saveIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, Integer clinicNumber) {
         // Getting stuff from UI
-        mIdentificationEvent.setClinicNumberType(getSelectedClinicNumberType());
-        mIdentificationEvent.setClinicNumber(getSelectedClinicNumber());
-        mIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
-        mIdentificationEvent.setAccepted(true);
+        mUnsavedIdentificationEvent.setClinicNumberType(clinicNumberType);
+        mUnsavedIdentificationEvent.setClinicNumber(clinicNumber);
+        mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
+        mUnsavedIdentificationEvent.setAccepted(true);
 
         try {
-            mIdentificationEvent.saveChanges(getAuthenticationTokenFromActivity());
+            mUnsavedIdentificationEvent.saveChanges(getAuthenticationTokenFromActivity());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
@@ -165,7 +164,7 @@ public class ClinicNumberFormPresenter {
     // Android UI
     protected void displayIdentificationSuccessfulToast() {
         Toast.makeText(mContext,
-                mIdentificationEvent.getMember().getFullName() + " " + R.string.identification_approved,
+                mUnsavedIdentificationEvent.getMember().getFullName() + " " + R.string.identification_approved,
                 Toast.LENGTH_LONG).
                 show();
     }
