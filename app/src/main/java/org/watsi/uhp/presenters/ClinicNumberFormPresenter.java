@@ -32,9 +32,9 @@ public class ClinicNumberFormPresenter {
     private Member mMember;
     private Member mThroughMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
-    private String mVerificationTier;
-    private float mVerificationConfidence;
-    private int mSimprintsResultCode;
+    private String mFingerprintsVerificationTier;
+    private float mFingerprintsVerificationConfidence;
+    private int mFingerprintsVerificationResultCode;
 
     // Activity, context, and view
     private final Activity mActivity;
@@ -48,13 +48,13 @@ public class ClinicNumberFormPresenter {
     private RadioGroup mClinicNumberRadioGroup;
 
 
-    public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, Member member, Member throughMember, IdentificationEvent.SearchMethodEnum idMethod, String verificationTier, float verificationConfidence, int simprintsResultCode) {
+    public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, Member member, Member throughMember, IdentificationEvent.SearchMethodEnum idMethod, String fingerprintsVerificationTier, float fingerprintsVerificationConfidence, int fingerprintsVerificationResultCode) {
         mMember = member;
         mThroughMember = throughMember;
         mIdMethod = idMethod;
-        mVerificationTier = verificationTier;
-        mVerificationConfidence = verificationConfidence;
-        mSimprintsResultCode = simprintsResultCode;
+        mFingerprintsVerificationTier = fingerprintsVerificationTier;
+        mFingerprintsVerificationConfidence = fingerprintsVerificationConfidence;
+        mFingerprintsVerificationResultCode = fingerprintsVerificationResultCode;
 
         // View
         mView = view;
@@ -83,7 +83,7 @@ public class ClinicNumberFormPresenter {
 
     protected void setListeners() {
         mClinicNumberView.addTextChangedListener(
-                createClinicNumberFormSubmitTextWatcher();
+                createClinicNumberFormSubmitTextWatcher()
         );
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,9 +161,9 @@ public class ClinicNumberFormPresenter {
         idEvent.setClinicNumber(getSelectedClinicNumber());
         idEvent.setOccurredAt(Clock.getCurrentTime());
         idEvent.setAccepted(true);
-        idEvent.setFingerprintsVerificationConfidence(mVerificationConfidence);
-        idEvent.setSimprintsResultCode(mSimprintsResultCode);
-        idEvent.setFingerprintsVerificationTier(mVerificationTier);
+        idEvent.setFingerprintsVerificationConfidence(mFingerprintsVerificationConfidence);
+        idEvent.setFingerprintsVerificationResultCode(mFingerprintsVerificationResultCode);
+        idEvent.setFingerprintsVerificationTier(mFingerprintsVerificationTier);
         if (mMember.getPhoto() == null) {
             idEvent.setPhotoVerified(false);
         }
