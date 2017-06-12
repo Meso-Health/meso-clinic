@@ -43,7 +43,7 @@ public class OfflineTest {
     private static void login(Context context) {
         User u = new User();
         u.setId(1);
-        u.setUsername("klinik");
+        u.setUsername("test");
         u.setName("test_name");
         u.setRole("provider");
 
@@ -53,7 +53,7 @@ public class OfflineTest {
         authToken.setUser(u);
 
         new SessionManager(new PreferencesManager(context), AccountManager.get(context))
-                .setUserAsLoggedIn(authToken.getUser(), authToken.getToken());
+                .setUserAsLoggedIn(authToken.getUser(), "test_password", authToken.getToken());
     }
 
     private static void logout(Context context) {

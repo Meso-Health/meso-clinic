@@ -1,6 +1,5 @@
 package org.watsi.uhp.activities;
 
-import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
@@ -23,7 +22,6 @@ import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AuthenticationToken;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,17 +109,10 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
             });
         } else {
             AuthenticationToken authToken = response.body();
-            Account account = new Account(username, Authenticator.ACCOUNT_TYPE);
             AccountManager accountManager = AccountManager.get(this);
 
-            // create account using AccountManager if it does not already exist
-            Account[] accounts = accountManager.getAccountsByType(Authenticator.ACCOUNT_TYPE);
-            if (!Arrays.asList(accounts).contains(account)) {
-                accountManager.addAccountExplicitly(account, password, null);
-            }
-
             new SessionManager(new PreferencesManager(this), accountManager)
-                    .setUserAsLoggedIn(authToken.getUser(), authToken.getToken());
+                    .setUserAsLoggedIn(authToken.getUser(), password, authToken.getToken());
 
             Bundle result = new Bundle();
             result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
