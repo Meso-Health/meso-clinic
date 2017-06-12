@@ -34,9 +34,7 @@ import org.watsi.uhp.models.Member;
 public class NavigationManager {
 
     public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
-    public static String VERIFICATION_TIER_BUNDLE_FIELD = "verificationTier";
-    public static String VERIFICATION_CONFIDENCE_BUNDLE_FIELD = "verificationConfidence";
-    public static String SIMPRINTS_RESULT_CODE_BUNDLE_FIELD = "simprintsResultCode";
+    public static String IDENTIFICATION_EVENT_BUNDLE_FIELD = "identificationEvent";
     public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
@@ -107,14 +105,9 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
-    public void setClinicNumberFormFragment(Member member, Member throughMember, IdentificationEvent.SearchMethodEnum idMethod, float verificationScore, String verificationTier, int simprintsResultCode) {
+    public void setClinicNumberFormFragment(IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
-        bundle.putSerializable(ID_METHOD_BUNDLE_FIELD, idMethod);
-        bundle.putSerializable(VERIFICATION_CONFIDENCE_BUNDLE_FIELD, verificationScore);
-        bundle.putSerializable(VERIFICATION_TIER_BUNDLE_FIELD, verificationTier);
-        bundle.putSerializable(SIMPRINTS_RESULT_CODE_BUNDLE_FIELD, simprintsResultCode);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
 
         setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
     }

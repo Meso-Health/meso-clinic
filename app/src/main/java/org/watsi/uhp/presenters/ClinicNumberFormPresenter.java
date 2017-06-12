@@ -11,6 +11,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.simprints.libsimprints.Identification;
+
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
@@ -29,12 +31,7 @@ import java.sql.SQLException;
 
 public class ClinicNumberFormPresenter {
     // Logic
-    private Member mMember;
-    private Member mThroughMember;
-    private IdentificationEvent.SearchMethodEnum mIdMethod;
-    private String mFingerprintsVerificationTier;
-    private float mFingerprintsVerificationConfidence;
-    private int mFingerprintsVerificationResultCode;
+    private IdentificationEvent mIdentificationEvent;
 
     // Activity, context, and view
     private final Activity mActivity;
@@ -48,13 +45,8 @@ public class ClinicNumberFormPresenter {
     private RadioGroup mClinicNumberRadioGroup;
 
 
-    public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, Member member, Member throughMember, IdentificationEvent.SearchMethodEnum idMethod, String fingerprintsVerificationTier, float fingerprintsVerificationConfidence, int fingerprintsVerificationResultCode) {
-        mMember = member;
-        mThroughMember = throughMember;
-        mIdMethod = idMethod;
-        mFingerprintsVerificationTier = fingerprintsVerificationTier;
-        mFingerprintsVerificationConfidence = fingerprintsVerificationConfidence;
-        mFingerprintsVerificationResultCode = fingerprintsVerificationResultCode;
+    public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, IdentificationEvent idEvent) {
+        mIdentificationEvent = idEvent;
 
         // View
         mView = view;
@@ -153,22 +145,14 @@ public class ClinicNumberFormPresenter {
     }
 
     protected void saveIdentification() {
-        IdentificationEvent idEvent = new IdentificationEvent();
-        idEvent.setMember(mMember);
-        idEvent.setSearchMethod(mIdMethod);
-        idEvent.setThroughMember(mThroughMember);
-        idEvent.setClinicNumberType(getSelectedClinicNumberType());
-        idEvent.setClinicNumber(getSelectedClinicNumber());
-        idEvent.setOccurredAt(Clock.getCurrentTime());
-        idEvent.setAccepted(true);
-        idEvent.setFingerprintsVerificationConfidence(mFingerprintsVerificationConfidence);
-        idEvent.setFingerprintsVerificationResultCode(mFingerprintsVerificationResultCode);
-        idEvent.setFingerprintsVerificationTier(mFingerprintsVerificationTier);
-        if (mMember.getPhoto() == null) {
-            idEvent.setPhotoVerified(false);
-        }
+        // Getting stuff from UI
+        mIdentificationEvent.setClinicNumberType(getSelectedClinicNumberType());
+        mIdentificationEvent.setClinicNumber(getSelectedClinicNumber());
+        mIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
+        mIdentificationEvent.setAccepted(true);
+
         try {
-            idEvent.saveChanges(getAuthenticationTokenFromActivity());
+            mIdentificationEvent.saveChanges(getAuthenticationTokenFromActivity());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
@@ -181,7 +165,7 @@ public class ClinicNumberFormPresenter {
     // Android UI
     protected void displayIdentificationSuccessfulToast() {
         Toast.makeText(mContext,
-                mMember.getFullName() + " " + R.string.identification_approved,
+                mIdentificationEvent.getMember().getFullName() + " " + R.string.identification_approved,
                 Toast.LENGTH_LONG).
                 show();
     }

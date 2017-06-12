@@ -95,13 +95,6 @@
     <string name="identification_dismissed">has been checked out without treatment details.</string>
     <string name="identification_dismissed_failure">Failed to check out member.</string>
 
-    <!-- ClinicNumberDialogFragment -->
-    <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
-    <string name="radio_opd">OPD</string>
-    <string name="radio_delivery">Delivery</string>
-    <string name="clinic_number">Number</string>
-    <string name="clinic_number_button">Submit</string>
-
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Enter line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
@@ -172,10 +165,11 @@
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
     <!-- ClinicNumberFormFragment -->
-    <!--<string name="member_edit_label">Update member</string>-->
     <string name="enter_patient_clinic_number_label">Enter the patient\'s clinic number</string>
     <string name="clinic_number_form_fragment_label">Patient Number</string>
     <string name="clinic_number_save">Complete check in</string>
+    <string name="radio_opd">OPD</string>
+    <string name="radio_delivery">Delivery</string>
 
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_info_label">Enroll newborn</string>

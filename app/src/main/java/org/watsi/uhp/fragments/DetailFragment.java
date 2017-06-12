@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
-import com.simprints.libsimprints.RefusalForm;
 import com.simprints.libsimprints.SimHelper;
 import com.simprints.libsimprints.Verification;
 
@@ -44,9 +43,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class DetailFragment extends BaseFragment {
 
+    private IdentificationEvent mIdentificationEvent;
     private Member mMember;
-    private IdentificationEvent.SearchMethodEnum mIdMethod = null;
-    private Member mThroughMember = null;
 
     DetailPresenter detailPresenter;
     @Override
@@ -60,14 +58,21 @@ public class DetailFragment extends BaseFragment {
         getActivity().invalidateOptionsMenu();
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-
+        // Getting IdentificationEvent
         String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
+        IdentificationEvent.SearchMethodEnum idMethod = null;
         if (searchMethodString != null) {
-            mIdMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
+            idMethod = IdentificationEvent.SearchMethodEnum.valueOf(searchMethodString);
         }
         mMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-        mThroughMember = (Member) getArguments()
+        Member throughMember = (Member) getArguments()
                 .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
+
+        mIdentificationEvent = new IdentificationEvent();
+        mIdentificationEvent.setMember(mMember);
+        mIdentificationEvent.setSearchMethod(idMethod);
+        mIdentificationEvent.setThroughMember(throughMember);
+
 
         setPatientCard(view);
         setButton(view);
@@ -92,7 +97,7 @@ public class DetailFragment extends BaseFragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 try {
-                                    completeIdentification(false, null, null);
+                                    completeIdentificationOnReport();
                                 } catch (SyncableModel.UnauthenticatedException e) {
                                     ExceptionManager.reportException(e);
                                     Toast.makeText(getContext(),
@@ -242,16 +247,11 @@ public class DetailFragment extends BaseFragment {
         }
     }
 
-    public void completeIdentification(boolean accepted,
-                                       IdentificationEvent.ClinicNumberTypeEnum clinicNumberType,
-                                       Integer clinicNumber) throws SyncableModel.UnauthenticatedException {
+    public void completeIdentificationOnReport() throws SyncableModel.UnauthenticatedException {
         IdentificationEvent idEvent = new IdentificationEvent();
-        idEvent.setMember(mMember);
-        idEvent.setSearchMethod(mIdMethod);
-        idEvent.setThroughMember(mThroughMember);
-        idEvent.setClinicNumberType(clinicNumberType);
-        idEvent.setClinicNumber(clinicNumber);
-        idEvent.setAccepted(accepted);
+        idEvent.setClinicNumberType(null);
+        idEvent.setClinicNumber(null);
+        idEvent.setAccepted(false);
         idEvent.setOccurredAt(Clock.getCurrentTime());
         if (mMember.getPhoto() == null) {
             idEvent.setPhotoVerified(false);
@@ -263,9 +263,8 @@ public class DetailFragment extends BaseFragment {
         }
 
         getNavigationManager().setCurrentPatientsFragment();
-        int messageStringId = accepted ? R.string.identification_approved : R.string.identification_rejected;
         Toast.makeText(getContext(),
-                mMember.getFullName() + " " + getString(messageStringId),
+                mMember.getFullName() + " " + R.string.identification_rejected,
                 Toast.LENGTH_LONG).
                 show();
     }
@@ -292,7 +291,7 @@ public class DetailFragment extends BaseFragment {
     }
 
     public IdentificationEvent.SearchMethodEnum getIdMethod() {
-        return this.mIdMethod;
+        return mIdentificationEvent.getSearchMethod();
     }
 
     public Member getMember() { return this.mMember; }
@@ -319,18 +318,27 @@ public class DetailFragment extends BaseFragment {
                     getContext(),
                     "result not ok. Error code: " + resultCode,
                     Toast.LENGTH_LONG).show();
+            mIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
         } else {
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
             String fingerprintTier = verification.getTier().toString();
             float fingerprintConfidence = verification.getConfidence();
 
-            Toast.makeText(getContext(), "Guid:  " + verification.getGuid() + " Confidence: " + verification.getConfidence() + " Tier: " + verification.getTier(), Toast.LENGTH_LONG).show();
-            getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, fingerprintConfidence, fingerprintTier, resultCode);
+            Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG);
+
+            mIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+            mIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+            mIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
+
+            if (mMember.getPhoto() == null) {
+                mIdentificationEvent.setPhotoVerified(false);
+            }
+            getNavigationManager().setClinicNumberFormFragment(mIdentificationEvent);
         }
     }
 
     public void completeIdentificationWithoutFingerprints() {
         // TODO, figure out how to deal with non-nullable integers and floats.
-        getNavigationManager().setClinicNumberFormFragment(mMember, mThroughMember, mIdMethod, -1, null, -1);
+        getNavigationManager().setClinicNumberFormFragment(mIdentificationEvent);
     }
 }
