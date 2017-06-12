@@ -31,7 +31,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
-public class IdentificationFlowFeature extends BaseTest {
+public class IdentificationFlowFeature extends OfflineTest {
 
     private Member member;
 
@@ -53,7 +53,6 @@ public class IdentificationFlowFeature extends BaseTest {
     public void performSearch(String query) {
         onView(withId(R.id.member_search)).perform(click());
         onView(isAssignableFrom(EditText.class)).perform(typeText(query), pressImeActionButton());
-        waitForUIToUpdate(1);
     }
 
     public void clearSearch() {

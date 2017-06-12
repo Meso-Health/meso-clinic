@@ -23,7 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 @RunWith(AndroidJUnit4.class)
-public class LoginFeature extends BaseTest {
+public class LoginFeature {
 
     private final String username = "klinik";
     private final String password = "123456";
@@ -44,15 +44,14 @@ public class LoginFeature extends BaseTest {
     }
 
     /**
-     * logging in clinic user that is loaded in test seed data on the uhp rails backend side,
-     * make sure you are running the rails server locally and have raked the seed data
+     * Logs in clinic user that is loaded in test seed data on the uhp rails backend.
+     * Make sure you are running the rails test server locally and have created the seed data.
      */
     public static void logsUserIn(String username, String password) {
         onView(withId(R.id.login_username)).perform(typeText(username));
         onView(allOf(supportsInputMethods(), withParent(withId(R.id.login_password))))
                 .perform(typeText(password));
         onView(withId(R.id.login_button)).perform(click());
-        waitForUIToUpdate(1);
         onView(withText("Select a patient")).check(matches(isDisplayed()));
     }
 

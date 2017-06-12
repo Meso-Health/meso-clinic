@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4.class)
-public class EncounterFlowFeature extends BaseTest {
+public class EncounterFlowFeature extends OfflineTest {
 
     private Member member;
     private Billable billableDrug;

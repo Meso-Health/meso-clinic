@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
-public class BaseTest {
+public class OfflineTest {
 
     @BeforeClass
     public static void setUp() throws SQLException, AbstractModel.ValidationException {
@@ -58,13 +58,6 @@ public class BaseTest {
 
     private static void logout(Context context) {
         new PreferencesManager(context).clearUsername();
-    }
-
-    protected static void waitForUIToUpdate(int seconds) {
-        try {
-            Thread.sleep(seconds * 1000);
-        } catch (Exception ignored) {
-        }
     }
 
     private static void loadFixtures() throws SQLException, AbstractModel.ValidationException {
