@@ -49,9 +49,13 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
         mCheckInMemberDetailPresenterFragment = checkInMemberDetailFragment;
         mSessionManager = sessionManager;
-        // Do the IdentificationEvent stuff
+
+        preFillIdentificationEventFields(idMethod, throughMember);
+    }
+
+    private void preFillIdentificationEventFields(IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         mUnsavedIdentificationEvent = new IdentificationEvent();
-        mUnsavedIdentificationEvent.setMember(getMember() );
+        mUnsavedIdentificationEvent.setMember(getMember());
         mUnsavedIdentificationEvent.setSearchMethod(idMethod);
         mUnsavedIdentificationEvent.setThroughMember(throughMember);
         if (getMember().getPhoto() == null) {
@@ -189,7 +193,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void showScanSuccessfulToast() {
-        Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG);
+        Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG).show();
     }
 
     public void completeIdentificationWithoutFingerprints() {
