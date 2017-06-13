@@ -41,7 +41,7 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 - **Release**
   - code is shrunk, optimized, and obfuscated; takes longer to build
   - signed with a real keystore; secure
-  - requires all update apks to have the same signature - otherwise, the existing app will be uninstalled and the data will be wiped. to prevent this from happening, _please use the keystore we have in Dropbox to sign all release builds_
+  - requires all update apks to have the same signature - otherwise, the existing app will be uninstalled and the data will be wiped
 
 ### Flavors
 
@@ -65,13 +65,26 @@ See the `build.gradle` file for more details on configuration changes between th
 
 We do most of our local development with the **developmentDebug** build variant, run tests with the **specDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
 
-### Creating signed Release types locally
+### Release builds
 
-There may be cases where you wish to generate a signed release build locally (e.g. to manually upload to HockeyApp for release). To do so:
+When running or generating release builds, you'll be asked to provide a release key to sign the APK. To ensure that all release builds are signed with the same key, please use the one in Dropbox.
 
-1. go to Build > Generate Signed APK
-2. use the keystore credentials in the `.env` file to sign the APK
-3. **important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
+- Go to Dropbox and search for the `release-key.jks` file.
+- Download it to `/your/working/dir/app`.
+
+To run the release build directly on your phone:
+
+3. Click the play button or go to Run -> Run App.
+
+You also have the option to create an APK and save it to your computer instead of directly 
+installing it on the phone. This may be useful for manually uploading an update to HockeyApp for distribution.
+
+1. Go to Build > Generate Signed APK
+2. Use the keystore credentials (keystore password, key name, and key password) in the `.env` file to fill out the dialog.
+3. **Important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
+4. Choose the flavor and build.
+
+You now have a signed release APK that you can either email or upload to HockeyApp for distribution. 
 
 ## Running app against a local server
 
