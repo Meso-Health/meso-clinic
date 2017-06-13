@@ -98,7 +98,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
     @Override
     protected void setMemberActionLink(View view) {
         memberDetailPresenter.getMemberActionLink().setVisibility(View.VISIBLE);
-        memberDetailPresenter.getMemberActionLink().setText(R.string.reject_identity);
+        memberDetailPresenter.getMemberActionLink().setText(getContext().getString(R.string.reject_identity));
         memberDetailPresenter.getMemberActionLink().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
