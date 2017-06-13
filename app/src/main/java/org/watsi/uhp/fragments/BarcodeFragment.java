@@ -110,11 +110,15 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                             switch (mScanPurpose) {
                                 case ID:
                                     member = MemberDao.findByCardId(barcode.displayValue);
-                                    getNavigationManager().setCheckInMemberDetailFragment(
-                                            member,
-                                            IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
-                                            null
-                                    );
+                                    if (member.currentCheckIn() == null) {
+                                        getNavigationManager().setCheckInMemberDetailFragment(
+                                                member,
+                                                IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
+                                                null
+                                        );
+                                    } else {
+                                        getNavigationManager().setCurrentMemberDetailFragment(member);
+                                    }
                                     break;
                                 case MEMBER_EDIT:
                                     member = (Member) getArguments()

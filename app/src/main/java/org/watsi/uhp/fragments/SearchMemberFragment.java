@@ -118,7 +118,12 @@ public class SearchMemberFragment extends BaseFragment {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     Member member = (Member) parent.getItemAtPosition(position);
-                                    getNavigationManager().setCheckInMemberDetailFragment(member, idMethod, null);
+                                    if (member.currentCheckIn() == null) {
+                                        getNavigationManager().setCheckInMemberDetailFragment(member, idMethod, null);
+                                    } else {
+                                        getNavigationManager().setCurrentMemberDetailFragment(member);
+                                    }
+
                                 }
                             });
                             mLoadingPanel.setVisibility(View.GONE);

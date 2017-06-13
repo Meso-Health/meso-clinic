@@ -185,11 +185,15 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
-                    getNavigationManager().setCheckInMemberDetailFragment(
-                            member,
-                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            getMember()
-                    );
+                    if (member.currentCheckIn() == null) {
+                        getNavigationManager().setCheckInMemberDetailFragment(
+                                member,
+                                IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
+                                getMember()
+                        );
+                    } else {
+                        getNavigationManager().setCurrentMemberDetailFragment(member);
+                    }
                 }
             });
         } catch (SQLException e) {

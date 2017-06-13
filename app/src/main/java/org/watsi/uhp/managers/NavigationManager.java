@@ -107,7 +107,7 @@ public class NavigationManager {
     }
 
     public void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
-        // It depends :)
+        // It depends on whether the person scanned before.
     }
 
     public void setCurrentMemberDetailFragment(Member member) {
