@@ -49,5 +49,4 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
     abstract void nextStep(View view);
 
     abstract void setUpFragment(View view);
-
 }
