@@ -55,9 +55,9 @@ public class MemberEditFragment extends FormFragment<Member> {
 
                     IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                     if (idEvent != null) {
-                        getNavigationManager().setCheckInMemberDetailFragment((Member) mSyncableModel, idEvent);
+                        getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent.getSearchMethod(), idEvent.getThroughMember());
                     } else {
-                        getNavigationManager().setCurrentMemberDetailFragment((Member) mSyncableModel);
+                        getNavigationManager().setMemberDetailFragment(mSyncableModel);
                     }
 
                     Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();

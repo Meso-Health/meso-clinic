@@ -46,6 +46,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         Member throughMember = (Member) getArguments()
                 .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
+        IdentificationEvent idEvent =
         // Do the IdentificationEvent stuff
         mUnsavedIdentificationEvent = new IdentificationEvent();
         mUnsavedIdentificationEvent.setMember(getMember() );
@@ -185,15 +186,11 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
-                    if (member.currentCheckIn() == null) {
-                        getNavigationManager().setCheckInMemberDetailFragment(
-                                member,
-                                IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                                getMember()
-                        );
-                    } else {
-                        getNavigationManager().setCurrentMemberDetailFragment(member);
-                    }
+                    getNavigationManager().setMemberDetailFragment(
+                            member,
+                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
+                            getMember()
+                    );
                 }
             });
         } catch (SQLException e) {

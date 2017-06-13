@@ -58,10 +58,6 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
-    public FragmentProvider getFragmentProvider() {
-        return mFragmentProvider;
-    }
-
     private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
                              popBackStack, int transition) {
 
@@ -91,7 +87,20 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true, FragmentTransaction.TRANSIT_NONE);
     }
 
-    public void setCheckInMemberDetailFragment(Member member,
+    public void setMemberDetailFragment(Member member) {
+        setCurrentMemberDetailFragment(member);
+    }
+
+    public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
+        // Decides whether to show the pre-check in fragment, or the post-check in fragment.
+        if (member.currentCheckIn() == null) {
+            setCheckInMemberDetailFragment(member, idMethod, throughMember);
+        } else {
+            setCurrentMemberDetailFragment(member);
+        }
+    }
+
+    protected void setCheckInMemberDetailFragment(Member member,
                                   IdentificationEvent.SearchMethodEnum idMethod,
                                   Member throughMember) {
         Bundle bundle = new Bundle();
@@ -106,11 +115,7 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
-    public void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
-        // It depends on whether the person scanned before.
-    }
-
-    public void setCurrentMemberDetailFragment(Member member) {
+    protected void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
