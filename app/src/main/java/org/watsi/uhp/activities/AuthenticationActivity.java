@@ -87,14 +87,16 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 errorMessage = getString(R.string.login_wrong_password_message);
             } else {
                 errorMessage = getString(R.string.login_generic_failure_message);
-                Map<String,String> warningDetails = new HashMap<>();
+            }
+
+            Map<String,String> warningDetails = new HashMap<>();
+            warningDetails.put("errorMessage", errorMessage);
+            if (response != null) {
                 warningDetails.put("response.code", String.valueOf(response.code()));
                 warningDetails.put("response.message", response.message());
-                ExceptionManager.reportMessage(
-                        "Unexpected login failure",
-                        ExceptionManager.MESSAGE_LEVEL_WARNING,
-                        warningDetails);
             }
+            ExceptionManager.reportMessage(
+                    "Login Failure", ExceptionManager.MESSAGE_LEVEL_WARNING, warningDetails);
 
             final String errorMessageFinal = errorMessage;
             runOnUiThread(new Runnable() {
