@@ -178,7 +178,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
 
         try {
             List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
-                    getMember() .getHouseholdId(), getMember() .getId());
+                    getMember().getHouseholdId(), getMember() .getId());
             ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
             int householdSize = householdMembers.size() + 1;
 
