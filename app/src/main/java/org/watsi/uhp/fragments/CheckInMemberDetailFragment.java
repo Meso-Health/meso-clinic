@@ -46,7 +46,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         Member throughMember = (Member) getArguments()
                 .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
-        IdentificationEvent idEvent =
         // Do the IdentificationEvent stuff
         mUnsavedIdentificationEvent = new IdentificationEvent();
         mUnsavedIdentificationEvent.setMember(getMember() );
@@ -55,13 +54,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         if (getMember() .getPhoto() == null) {
             mUnsavedIdentificationEvent.setPhotoVerified(false);
         }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
     }
 
     @Override
@@ -93,7 +85,39 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
 
     @Override
     protected void setBottomListView(View view) {
-        setHouseholdList(view);
+        TextView householdListLabel = (TextView) view.findViewById(R.id.household_members_label);
+        ListView householdListView = (ListView) view.findViewById(R.id.household_members);
+
+        try {
+            List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
+                    getMember().getHouseholdId(), getMember() .getId());
+            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
+            int householdSize = householdMembers.size() + 1;
+
+            householdListLabel.setText(getResources().getQuantityString(
+                    R.plurals.household_label, householdSize, householdSize));
+            householdListView.setAdapter(adapter);
+            householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Member member = (Member) parent.getItemAtPosition(position);
+                    getNavigationManager().setMemberDetailFragment(
+                            member,
+                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
+                            getMember()
+                    );
+                }
+            });
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
     }
 
     @Override
@@ -123,7 +147,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         });
     }
 
-    public void completeIdentificationOnReport() throws SyncableModel.UnauthenticatedException {
+    protected void completeIdentificationOnReport() throws SyncableModel.UnauthenticatedException {
         mUnsavedIdentificationEvent.setClinicNumberType(null);
         mUnsavedIdentificationEvent.setClinicNumber(null);
         mUnsavedIdentificationEvent.setAccepted(false);
@@ -167,35 +191,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
     public void completeIdentificationWithoutFingerprints() {
         // TODO, figure out how to deal with non-nullable integers and floats.
         getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
-    }
-
-    private void setHouseholdList(View view) {
-        TextView householdListLabel = (TextView) view.findViewById(R.id.household_members_label);
-        ListView householdListView = (ListView) view.findViewById(R.id.household_members);
-
-        try {
-            List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
-                    getMember().getHouseholdId(), getMember() .getId());
-            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
-            int householdSize = householdMembers.size() + 1;
-
-            householdListLabel.setText(getResources().getQuantityString(
-                    R.plurals.household_label, householdSize, householdSize));
-            householdListView.setAdapter(adapter);
-            householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Member member = (Member) parent.getItemAtPosition(position);
-                    getNavigationManager().setMemberDetailFragment(
-                            member,
-                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            getMember()
-                    );
-                }
-            });
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
     }
 
     public IdentificationEvent getIdEvent() {

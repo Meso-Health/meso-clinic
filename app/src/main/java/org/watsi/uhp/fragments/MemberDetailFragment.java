@@ -58,12 +58,26 @@ public abstract class MemberDetailFragment extends BaseFragment {
 
     protected abstract void setMemberActionLink(View view);
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        // These should appear whenever you're in the detail view.
+        menu.findItem(R.id.menu_member_edit).setVisible(true);
+        menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
+
+        // This should only appear if member is an absentee.
+        if (mMember.isAbsentee()) {
+            menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
+        }
+    }
+
     public Member getMember() {
         return mMember;
     }
 
     // This should stay and be moved to the presenters.
-    private void setPatientCard(View view) {
+    protected void setPatientCard(View view) {
         ((TextView) view.findViewById(R.id.member_name_detail_fragment)).setText(mMember.getFullName());
         ((TextView) view.findViewById(R.id.member_age_and_gender))
                 .setText(mMember.getFormattedAgeAndGender());
@@ -85,20 +99,6 @@ public abstract class MemberDetailFragment extends BaseFragment {
         } else if (mMember.getCardId() == null) {
             memberNotification.setVisibility(View.VISIBLE);
             memberNotification.setText(R.string.replace_card_notification);
-        }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        // These should appear whenever you're in the detail view.
-        menu.findItem(R.id.menu_member_edit).setVisible(true);
-        menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
-
-        // This should only appear if member is an absentee.
-        if (mMember.isAbsentee()) {
-            menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }
     }
 }
