@@ -53,7 +53,7 @@ public class CurrentMemberDetailFragment extends MemberDetailFragment {
 
     @Override
     protected void setBottomListView(View view) {
-
+        // no-op
     }
 
     @Override
