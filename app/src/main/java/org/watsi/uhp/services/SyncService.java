@@ -22,7 +22,7 @@ public class SyncService extends AbstractSyncJobService {
 
     @Override
     public boolean performSync() {
-        Log.i("UHP", "SyncService.performSync is called.");
+        Log.i("UHP", "SyncService.performSync is called");
         try {
             syncIdentificationEvents(IdentificationEvent.unsynced(IdentificationEvent.class));
             syncEncounters(Encounter.unsynced(Encounter.class));

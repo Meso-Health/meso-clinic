@@ -39,7 +39,7 @@ public class FetchService extends AbstractSyncJobService {
 
     @Override
     public boolean performSync() {
-        Log.i("UHP", "FetchService.performSync is called.");
+        Log.i("UHP", "FetchService.performSync is called");
         PreferencesManager preferencesManager = new PreferencesManager(this);
         try {
             String authenticationToken = getAuthenticationToken(preferencesManager);

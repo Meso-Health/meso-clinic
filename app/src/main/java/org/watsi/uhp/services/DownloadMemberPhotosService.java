@@ -23,7 +23,7 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
 
     @Override
     public boolean performSync() {
-        Log.i("UHP", "DownloadMemberPhotoService.performSync is called.");
+        Log.i("UHP", "DownloadMemberPhotosService.performSync is called");
         try {
             fetchMemberPhotos();
             return true;
