@@ -165,7 +165,6 @@ public class ClinicActivity extends AppCompatActivity {
                         }).create().show();
                     break;
                 case R.id.menu_member_edit:
-
                     if (fragment instanceof CheckInMemberDetailFragment) {
                         CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
                         getNavigationManager().setMemberEditFragment(
@@ -175,13 +174,12 @@ public class ClinicActivity extends AppCompatActivity {
                         );
 
                     } else if (fragment instanceof CurrentMemberDetailFragment) {
-                        getNavigationManager().setMemberEditFragment(
+                        getNavigationManager().setMemberEditFragment(member)
                                 member,
                                 null,
                                 null);
                     } else {
-                        // Should never get here
-                        // TODO write an exception
+                        ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
                     }
 
                     break;
@@ -198,8 +196,7 @@ public class ClinicActivity extends AppCompatActivity {
                     if (fragment instanceof CheckInMemberDetailFragment) {
                         ((CheckInMemberDetailFragment) fragment).completeIdentificationWithoutFingerprints();
                     } else {
-                        // Should never get here
-                        // TODO write an exception.
+                        ExceptionManager.reportMessage("CheckInWithoutFingerprints menu button reached from fragment that's not CheckInMemberDetailFragment");
                     }
                     break;
             }
