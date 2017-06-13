@@ -48,7 +48,6 @@ public class VersionAndSyncFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 refreshValues(finalView);
-
             }
         });
 
