@@ -58,7 +58,7 @@ public abstract class MemberDetailFragment extends BaseFragment {
 
     protected abstract void setMemberActionLink(View view);
 
-    protected Member getMember() {
+    public Member getMember() {
         return mMember;
     }
 

@@ -106,18 +106,13 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
-    public void setCurrentMemberDetailFragment(Member member,
-                                               IdentificationEvent.SearchMethodEnum idMethod,
-                                               Member throughMember) {
+    public void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+        // It depends :)
+    }
+
+    public void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        if (idMethod != null) {
-            bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
-        }
-        if (throughMember != null) {
-            bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
-        }
-
         setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
@@ -191,11 +186,11 @@ public class NavigationManager {
     }
 
     public void setMemberEditFragment(Member member,
-                                      IdentificationEvent.SearchMethodEnum searchMethod,
+                                      IdentificationEvent idEvent,
                                       String scannedCardId) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
-        if (searchMethod != null) bundle.putString(ID_METHOD_BUNDLE_FIELD , searchMethod.toString());
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }

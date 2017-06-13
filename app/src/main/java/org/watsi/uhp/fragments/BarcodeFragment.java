@@ -110,7 +110,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                             switch (mScanPurpose) {
                                 case ID:
                                     member = MemberDao.findByCardId(barcode.displayValue);
-                                    getNavigationManager().setDetailFragment(
+                                    getNavigationManager().setCheckInMemberDetailFragment(
                                             member,
                                             IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
                                             null
@@ -119,20 +119,10 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                 case MEMBER_EDIT:
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    Bundle extraParams = getArguments()
-                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
-                                    IdentificationEvent.SearchMethodEnum idMethod = null;
-                                    if (extraParams != null) {
-                                        String searchMethodString = extraParams
-                                                .getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-                                        if (searchMethodString != null) {
-                                            idMethod = IdentificationEvent.SearchMethodEnum
-                                                    .valueOf(searchMethodString);
-                                        }
-                                    }
+
                                     getNavigationManager().setMemberEditFragment(
                                             member,
-                                            idMethod,
+                                            null,
                                             barcode.displayValue
                                     );
                                     break;

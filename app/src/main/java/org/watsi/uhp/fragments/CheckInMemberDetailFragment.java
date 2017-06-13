@@ -168,10 +168,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
     }
 
-    public IdentificationEvent.SearchMethodEnum getIdMethod() {
-        return mUnsavedIdentificationEvent.getSearchMethod();
-    }
-
     private void setHouseholdList(View view) {
         TextView householdListLabel = (TextView) view.findViewById(R.id.household_members_label);
         ListView householdListView = (ListView) view.findViewById(R.id.household_members);
@@ -199,6 +195,10 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
+    }
+
+    public IdentificationEvent getIdEvent() {
+        return mUnsavedIdentificationEvent;
     }
 }
 

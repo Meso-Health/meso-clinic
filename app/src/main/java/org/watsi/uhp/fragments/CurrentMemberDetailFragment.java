@@ -65,8 +65,7 @@ public class CurrentMemberDetailFragment extends MemberDetailFragment {
         memberDetailPresenter.getMemberActionLink().setVisibility(View.VISIBLE);
         memberDetailPresenter.getMemberActionLink().setText(R.string.dismiss_patient);
 
-        view.findViewById(R.id.dismiss_patient).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.dismiss_patient).setOnClickListener(new View.OnClickListener() {
+        memberDetailPresenter.getMemberActionLink().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())

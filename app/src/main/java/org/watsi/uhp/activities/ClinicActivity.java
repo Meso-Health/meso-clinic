@@ -23,14 +23,15 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
-import org.watsi.uhp.fragments.DetailFragment;
+import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.FormFragment;
+import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
@@ -147,9 +148,10 @@ public class ClinicActivity extends AppCompatActivity {
         public boolean onMenuItemClick(MenuItem item) {
             Fragment fragment =
                     getSupportFragmentManager().findFragmentByTag(NavigationManager.DETAIL_TAG);
+
             Member member = null;
-            if (fragment != null) {
-                member = ((DetailFragment) fragment).getMember();
+            if (fragment instanceof MemberDetailFragment) {
+                member = ((MemberDetailFragment) fragment).getMember();
             }
             switch (item.getItemId()) {
                 case R.id.menu_logout:
@@ -163,11 +165,25 @@ public class ClinicActivity extends AppCompatActivity {
                         }).create().show();
                     break;
                 case R.id.menu_member_edit:
-                    IdentificationEvent.SearchMethodEnum searchMethod =
-                            ((DetailFragment) getSupportFragmentManager()
-                                    .findFragmentByTag("detail"))
-                                    .getIdMethod();
-                    getNavigationManager().setMemberEditFragment(member, searchMethod, null);
+
+                    if (fragment instanceof CheckInMemberDetailFragment) {
+                        CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
+                        getNavigationManager().setMemberEditFragment(
+                                member,
+                                checkInMemberDetailFragment.getIdEvent(),
+                                null
+                        );
+
+                    } else if (fragment instanceof CurrentMemberDetailFragment) {
+                        getNavigationManager().setMemberEditFragment(
+                                member,
+                                null,
+                                null);
+                    } else {
+                        // Should never get here
+                        // TODO write an exception
+                    }
+
                     break;
                 case R.id.menu_enroll_newborn:
                     getNavigationManager().setEnrollNewbornInfoFragment(member, null, null);
@@ -179,8 +195,8 @@ public class ClinicActivity extends AppCompatActivity {
                     getNavigationManager().setEnrollmentMemberPhotoFragment(member);
                     break;
                 case R.id.menu_check_in_without_fingerprints:
-                    if (fragment instanceof DetailFragment) {
-                        ((DetailFragment) fragment).completeIdentificationWithoutFingerprints();
+                    if (fragment instanceof CheckInMemberDetailFragment) {
+                        ((CheckInMemberDetailFragment) fragment).completeIdentificationWithoutFingerprints();
                     } else {
                         // Should never get here
                         // TODO write an exception.

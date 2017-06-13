@@ -157,10 +157,9 @@ public class ClinicNumberFormPresenter {
         mNavigationManager.setCurrentPatientsFragment();
     }
 
-    // Android UI
     protected void displayIdentificationSuccessfulToast() {
         Toast.makeText(mContext,
-                mUnsavedIdentificationEvent.getMember().getFullName() + " " + R.string.identification_approved,
+                mUnsavedIdentificationEvent.getMember().getFullName() + " " + mContext.getString(R.string.identification_approved),
                 Toast.LENGTH_LONG).
                 show();
     }

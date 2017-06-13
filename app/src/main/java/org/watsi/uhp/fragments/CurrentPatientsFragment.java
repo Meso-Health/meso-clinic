@@ -55,7 +55,7 @@ public class CurrentPatientsFragment extends BaseFragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Member member = (Member) parent.getItemAtPosition(position);
-                    getNavigationManager().setDetailFragment(member, null, null);
+                    getNavigationManager().setCurrentMemberDetailFragment(member);
                 }
             });
         } catch (SQLException e) {
