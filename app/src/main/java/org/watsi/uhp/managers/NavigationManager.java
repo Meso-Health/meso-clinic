@@ -9,9 +9,10 @@ import android.support.v4.app.FragmentTransaction;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
+import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
-import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.EncounterFormFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.EnrollNewbornInfoFragment;
@@ -90,7 +91,7 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true, FragmentTransaction.TRANSIT_NONE);
     }
 
-    public void setDetailFragment(Member member,
+    public void setCheckInMemberDetailFragment(Member member,
                                   IdentificationEvent.SearchMethodEnum idMethod,
                                   Member throughMember) {
         Bundle bundle = new Bundle();
@@ -102,7 +103,22 @@ public class NavigationManager {
             bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
-        setFragment(mFragmentProvider.createFragment(DetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
+    }
+
+    public void setCurrentMemberDetailFragment(Member member,
+                                               IdentificationEvent.SearchMethodEnum idMethod,
+                                               Member throughMember) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        if (idMethod != null) {
+            bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
+        }
+        if (throughMember != null) {
+            bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
+        }
+
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
     }
 
     public void setClinicNumberFormFragment(IdentificationEvent idEvent) {

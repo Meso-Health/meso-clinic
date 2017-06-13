@@ -11,17 +11,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.simprints.libsimprints.Identification;
-
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
