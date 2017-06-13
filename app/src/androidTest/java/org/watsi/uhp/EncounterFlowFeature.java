@@ -3,7 +3,6 @@ package org.watsi.uhp;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,11 +57,6 @@ public class EncounterFlowFeature extends OfflineTest {
         IdentificationEventDao.create(idEvent);
 
         clinicActivityRule.launchActivity(null);
-    }
-
-    @After
-    public void cleanUpTest() throws SQLException {
-        idEvent.delete();
     }
 
     @Test
