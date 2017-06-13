@@ -11,19 +11,13 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.presenters.ClinicNumberFormPresenter;
 
 public class ClinicNumberFormFragment extends BaseFragment {
-    // Model stuff
     private ClinicNumberFormPresenter clinicNumberFormPresenter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_clinic_number_form, container, false);
-
-        // grabbing from NavigationManager the arguments
         IdentificationEvent unsavedIdentificationEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-
-        // setting the presenter.
         clinicNumberFormPresenter = new ClinicNumberFormPresenter(view, getContext(), getNavigationManager(), getActivity(), unsavedIdentificationEvent);
-
         return view;
     }
 }
