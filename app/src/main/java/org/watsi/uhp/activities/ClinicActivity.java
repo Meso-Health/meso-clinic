@@ -174,7 +174,7 @@ public class ClinicActivity extends AppCompatActivity {
                         );
 
                     } else if (fragment instanceof CurrentMemberDetailFragment) {
-                        getNavigationManager().setMemberEditFragment(member)
+                        getNavigationManager().setMemberEditFragment(
                                 member,
                                 null,
                                 null);
