@@ -296,7 +296,6 @@ public class IdentificationEvent extends SyncableModel {
         if (getThroughMember() != null) {
             setThroughMemberId(getThroughMember().getId());
         }
-        Log.i("UHP", "IdentificationEvent post: " + getMemberId());
         return ApiService.requestBuilder(context).postIdentificationEvent(
                 getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, this);
     }
