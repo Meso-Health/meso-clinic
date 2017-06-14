@@ -50,7 +50,7 @@ class SearchMemberPresenter(
         mProgressDialog.show()
     }
 
-    fun performQuery(query: String): Pair<IdentificationEvent.SearchMethodEnum, List<Member>> {
+    internal fun performQuery(query: String): Pair<IdentificationEvent.SearchMethodEnum, List<Member>> {
         val idMethod: IdentificationEvent.SearchMethodEnum
         val matchingMembers: List<Member>
 
