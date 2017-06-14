@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
+import org.watsi.uhp.listeners.ClinicNumberFormSubmitTextListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
@@ -39,6 +40,7 @@ public class ClinicNumberFormPresenter {
     private EditText mClinicNumberView;
     private Button mSubmitButton;
     private RadioGroup mClinicNumberRadioGroup;
+
 
     public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, IdentificationEvent unsavedIdentificationEvent) {
         mUnsavedIdentificationEvent = unsavedIdentificationEvent;
@@ -67,9 +69,25 @@ public class ClinicNumberFormPresenter {
         KeyboardManager.focusAndShowKeyboard(mClinicNumberView, mContext);
     }
 
+
+    // DB ONLY
+    protected void saveIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, Integer clinicNumber) {
+        // Getting stuff from UI
+        mUnsavedIdentificationEvent.setClinicNumberType(clinicNumberType);
+        mUnsavedIdentificationEvent.setClinicNumber(clinicNumber);
+        mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
+        mUnsavedIdentificationEvent.setAccepted(true);
+
+        try {
+            mUnsavedIdentificationEvent.saveChanges(getAuthenticationTokenFromActivity());
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+    }
+
     protected void setListeners() {
         mClinicNumberView.addTextChangedListener(
-                createClinicNumberFormSubmitTextWatcher()
+             new ClinicNumberFormSubmitTextListener(mClinicNumberView, mSubmitButton)
         );
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,34 +108,6 @@ public class ClinicNumberFormPresenter {
         navigateToCurrentPatientsFragment();
     }
 
-    // Probably method not needed.
-    protected ClinicNumberFormSubmitTextWatcher createClinicNumberFormSubmitTextWatcher() {
-        return new ClinicNumberFormSubmitTextWatcher();
-    }
-
-    // Where should this go...?
-    private class ClinicNumberFormSubmitTextWatcher implements TextWatcher {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // no-op
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int count, int after) {
-                // no-op
-            }
-
-            // This part is worth unit testing.
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (mClinicNumberView.getText().toString().isEmpty()) {
-                    mSubmitButton.setEnabled(false);
-                } else {
-                    mSubmitButton.setEnabled(true);
-                }
-            }
-    }
-
     // UI to value
     protected int getSelectedClinicNumber() {
         return Integer.valueOf(mClinicNumberView.getText().toString());
@@ -132,24 +122,9 @@ public class ClinicNumberFormPresenter {
         return clinicNumberType;
     }
 
-    // Activity
     protected String getAuthenticationTokenFromActivity() {
         // TODO: Feels super hacky, probably should create a base class for all presenters
         return ((ClinicActivity) mActivity).getAuthenticationToken();
-    }
-
-    protected void saveIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, Integer clinicNumber) {
-        // Getting stuff from UI
-        mUnsavedIdentificationEvent.setClinicNumberType(clinicNumberType);
-        mUnsavedIdentificationEvent.setClinicNumber(clinicNumber);
-        mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
-        mUnsavedIdentificationEvent.setAccepted(true);
-
-        try {
-            mUnsavedIdentificationEvent.saveChanges(getAuthenticationTokenFromActivity());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
     }
 
     protected void navigateToCurrentPatientsFragment() {
