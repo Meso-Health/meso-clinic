@@ -65,26 +65,39 @@ See the `build.gradle` file for more details on configuration changes between th
 
 We do most of our local development with the **developmentDebug** build variant, run tests with the **specDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
 
-### Release builds
+### Running vs Building
 
-When running or generating release builds, you'll be asked to provide a release key to sign the APK. To ensure that all release builds are signed with the same key, please use the one in Dropbox.
+There are [many options](https://developer.android.com/studio/run/index.html) for building and running apps in Android Studio.
+
+When you __run__ an app (Selecting `app` next to the play button and then clicking the play button _or_ going to Run -> Run... -> app), Android Studio will automatically do the following:
+1. Generate the apk in app/builds/outputs/apk
+2. Copy the apk to your phone using `adb install path_to_apk` (or something similar)
+3. Open the app on your phone
+
+When you __build__ an app, it will just do the first step. You can then do whatever you wish with the APK.
+
+### Running or Building Release types
+
+When running or building release variants of the app, Android Studio will ask that you provide a specific release key instead of using a random default key like it does for debug variants. This is because all release builds must be signed with the same signature for the device to recognize it as the same app - otherwise, the phone will wipe all the data on the old app before installing the new one. To ensure that all release builds are signed with the same key, please use the one in Dropbox.
 
 - Go to Dropbox and search for the `release-key.jks` file.
 - Download it to `/your/working/dir/app`.
 
-To run the release build directly on your phone:
+To __run__ the release build directly on your phone, follow the steps for running an app above.
 
-3. Click the play button or go to Run -> Run App.
+To only __build__ the APK to your computer, do one of the following:
 
-You also have the option to create an APK and save it to your computer instead of directly 
-installing it on the phone. This may be useful for manually uploading an update to HockeyApp for distribution.
+Option 1
+1. Build > Build APK (this will automatically use the `signingConfigs` specified in the `build.gradle` file).
+2. Go to `app/builds/outputs/apk`.
 
-1. Go to Build > Generate Signed APK
+Option 2
+1. Go to Build > Generate Signed APK (this will pop open a dialog).
 2. Use the keystore credentials (keystore password, key name, and key password) in the `.env` file to fill out the dialog.
 3. **Important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
 4. Choose the flavor and build.
 
-You now have a signed release APK that you can either email or upload to HockeyApp for distribution. 
+You now have a signed release APK that you can email, manually install on individual phones using `adb install`, or upload to HockeyApp for mass distribution.
 
 ## Running app against a local server
 
