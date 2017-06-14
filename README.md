@@ -83,9 +83,9 @@ When running or building release variants of the app, Android Studio will ask th
 - Go to Dropbox and search for the `release-key.jks` file.
 - Download it to `/your/working/dir/app`.
 
-To __run__ the release build directly on your phone, follow the steps for running an app above.
+To __run__ the release build on your phone, follow the steps for running an app above.
 
-To only __build__ the APK to your computer, do one of the following:
+To __build__ the APK to your computer, do one of the following:
 
 Option 1
 1. Build > Build APK (this will automatically use the `signingConfigs` specified in the `build.gradle` file).
