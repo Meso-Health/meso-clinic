@@ -73,6 +73,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     //// Tested above
+    //// Below TBD because of fingerprints
 
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
