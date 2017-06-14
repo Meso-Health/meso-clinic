@@ -107,7 +107,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SIMPRINTS_VERIFICATION_INTENT && resultCode != RESULT_OK) {
-            showScanSuccessfulToast();
+            showScanFailedToast();
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
             String fingerprintTier = verification.getTier().toString();
             float fingerprintConfidence = verification.getConfidence();
@@ -118,7 +118,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
             navigateToClinicNumberForm();
         } else {
-            showScanFailedToast();
+            showScanSuccessfulToast();
             mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
         }
     }
