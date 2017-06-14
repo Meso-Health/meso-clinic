@@ -29,7 +29,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
                 view,
                 getContext(),
                 getMember(),
-                searchMethodString,
                 idMethod,
                 throughMember
         );

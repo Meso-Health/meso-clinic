@@ -40,52 +40,85 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
+    static final int SIMPRINTS_VERIFICATION_INTENT = 1;
+
     private final SessionManager mSessionManager;
     private IdentificationEvent mUnsavedIdentificationEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailPresenterFragment;
+    private Member mThroughMember;
+    private IdentificationEvent.SearchMethodEnum mIdMethod;
 
-    public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, String searchMethodString, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
+    public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         super(view, context, member, navigationManager);
 
         mCheckInMemberDetailPresenterFragment = checkInMemberDetailFragment;
         mSessionManager = sessionManager;
-
-        preFillIdentificationEventFields(idMethod, throughMember);
+        mIdMethod = idMethod;
+        mThroughMember = throughMember;
     }
 
-    private void preFillIdentificationEventFields(IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
+    public void setUp() {
+        super.setUp();
+        preFillIdentificationEventFields();
+    }
+
+    protected void preFillIdentificationEventFields() {
         mUnsavedIdentificationEvent = new IdentificationEvent();
         mUnsavedIdentificationEvent.setMember(getMember());
-        mUnsavedIdentificationEvent.setSearchMethod(idMethod);
-        mUnsavedIdentificationEvent.setThroughMember(throughMember);
+        mUnsavedIdentificationEvent.setSearchMethod(mIdMethod);
+        mUnsavedIdentificationEvent.setThroughMember(mThroughMember);
         if (getMember().getPhoto() == null) {
             mUnsavedIdentificationEvent.setPhotoVerified(false);
         }
     }
 
+    //// Tested above
+
     protected void setMemberActionButton() {
-        Button confirmButton = (Button) getView().findViewById(R.id.member_action_button);
+        Button memberActionButton = getMemberActionButton();
         if (getMember().getFingerprintsGuid() != null) {
-            confirmButton.setText(R.string.approve_identity);
-            confirmButton.setOnClickListener(new View.OnClickListener() {
+            memberActionButton.setText(R.string.check_in);
+            memberActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
                     Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
                     mCheckInMemberDetailPresenterFragment.startActivityForResult(
                             fingerprintIdentificationIntent,
-                            1 // TODO make this a constant
+                            SIMPRINTS_VERIFICATION_INTENT
                     );
                 }
             });
         } else {
-            confirmButton.setText(R.string.approve_identity_without_fingerprints);
-            confirmButton.setOnClickListener(new View.OnClickListener() {
+            memberActionButton.setText(R.string.check_in_without_fingerprints);
+            memberActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     completeIdentificationWithoutFingerprints();
                 }
             });
+        }
+    }
+
+    protected Button getMemberActionButton() {
+         return (Button) getView().findViewById(R.id.member_action_button);
+    }
+
+    public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SIMPRINTS_VERIFICATION_INTENT && resultCode != RESULT_OK) {
+            showScanSuccessfulToast();
+            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+            String fingerprintTier = verification.getTier().toString();
+            float fingerprintConfidence = verification.getConfidence();
+
+            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
+
+            navigateToClinicNumberForm();
+        } else {
+            showScanFailedToast();
+            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
         }
     }
 
@@ -166,23 +199,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         return mUnsavedIdentificationEvent;
     }
 
-    public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            showScanFailedToast();
-            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
-        } else {
-            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
-            String fingerprintTier = verification.getTier().toString();
-            float fingerprintConfidence = verification.getConfidence();
-
-            showScanSuccessfulToast();
-
-            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
-            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
-
-            getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
-        }
+    protected void navigateToClinicNumberForm() {
+        getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
     }
 
     protected void showScanFailedToast() {

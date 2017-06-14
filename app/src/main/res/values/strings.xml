@@ -73,8 +73,8 @@
     <string name="detail_fragment_label">Is this the right person?</string>
     <string name="absentee_notification">Must complete enrollment</string>
     <string name="replace_card_notification">Needs new card</string>
-    <string name="approve_identity">Check-in</string>
-    <string name="approve_identity_without_fingerprints">Check-in without fingerprints</string>
+    <string name="check_in">Check-in</string>
+    <string name="check_in_without_fingerprints">Check-in without fingerprints</string>
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
