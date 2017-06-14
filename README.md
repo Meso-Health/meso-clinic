@@ -97,7 +97,7 @@ Option 2
 3. **Important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
 4. Choose the flavor and build.
 
-You now have a signed release APK that you can email, manually install on individual phones using `adb install`, or upload to HockeyApp for mass distribution.
+You now have a signed release APK that you can email, manually install on individual phones using `adb install`, or upload to HockeyApp for mass distribution. For more detailed instructions and up-to-date info on signing and publishing, see the [official docs](https://developer.android.com/studio/publish/app-signing.html#release-mode).
 
 ## Running app against a local server
 
