@@ -1,10 +1,12 @@
-package org.watsi.uhp;
+package org.watsi.uhp.offline;
 
 import android.accounts.AccountManager;
 import android.content.Context;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.watsi.uhp.BillableFactory;
+import org.watsi.uhp.MemberFactory;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.database.MemberDao;
@@ -21,15 +23,16 @@ import java.util.UUID;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
-public class OfflineTest {
+class BaseTest {
 
     @BeforeClass
     public static void setUp() throws SQLException, AbstractModel.ValidationException {
         Context context = getInstrumentation().getTargetContext();
 
-        login(context);
         DatabaseHelper.init(context);
         loadFixtures();
+
+        login(context);
     }
 
     @AfterClass
@@ -37,7 +40,7 @@ public class OfflineTest {
         Context context = getInstrumentation().getTargetContext();
 
         logout(context);
-        context.deleteDatabase(DatabaseHelper.getHelper().getDatabaseName());
+        DatabaseHelper.getHelper().clearDatabase();
     }
 
     private static void login(Context context) {

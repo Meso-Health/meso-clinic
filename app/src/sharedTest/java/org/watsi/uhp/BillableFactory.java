@@ -2,9 +2,9 @@ package org.watsi.uhp;
 
 import org.watsi.uhp.models.Billable;
 
-class BillableFactory extends Billable {
+public class BillableFactory extends Billable {
 
-    BillableFactory(String name, Billable.TypeEnum type, String unit, String composition,
+    public BillableFactory(String name, Billable.TypeEnum type, String unit, String composition,
                            int price) {
         generateId();
         setName(name);
@@ -15,7 +15,7 @@ class BillableFactory extends Billable {
         setCreatedDuringEncounter(false);
     }
 
-    BillableFactory(String name, Billable.TypeEnum type, int price) {
+    public BillableFactory(String name, Billable.TypeEnum type, int price) {
         generateId();
         setName(name);
         setType(type);

@@ -1,4 +1,4 @@
-package org.watsi.uhp;
+package org.watsi.uhp.offline;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.watsi.uhp.CustomMatchers;
+import org.watsi.uhp.IdentificationEventFactory;
+import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.IdentificationEventDao;
@@ -33,7 +36,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4.class)
-public class EncounterFlowFeature extends OfflineTest {
+public class EncounterFlowFeature extends BaseTest {
 
     private Member member;
     private Billable billableDrug;

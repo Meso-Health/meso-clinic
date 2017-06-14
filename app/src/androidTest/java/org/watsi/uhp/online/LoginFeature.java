@@ -1,4 +1,4 @@
-package org.watsi.uhp;
+package org.watsi.uhp.online;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 
 import static android.support.test.espresso.Espresso.onView;
