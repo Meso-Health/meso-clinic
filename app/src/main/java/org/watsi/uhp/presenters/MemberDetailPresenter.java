@@ -32,7 +32,9 @@ public class MemberDetailPresenter {
     }
 
     public void setUp() {
-        setPatientCard();
+        setPatientCardTextFields();
+        setPatientCardPhoto();
+        setPatientCardNotifications();
         setMemberActionLink();
         setMemberActionButton();
         setBottomListView();
@@ -50,29 +52,51 @@ public class MemberDetailPresenter {
         // no-op
     }
 
-    protected void setPatientCard() {
+    protected void setPatientCardPhoto() {
+        Bitmap photoBitmap = mMember.getPhotoBitmap(mContext.getContentResolver());
+        if (photoBitmap != null) {
+            setPatientCardPhotoBitmap(photoBitmap);
+        } else {
+            setPatientCardPhotoAsDefault();
+        }
+    }
+
+    protected void setPatientCardNotifications() {
+        if (mMember.isAbsentee()) {
+            showAbsenteeNotification();
+        } else if (mMember.getCardId() == null) {
+            showReplaceCardNotification();
+        }
+    }
+
+    // Untested below.
+    protected void setPatientCardTextFields() {
         ((TextView) mView.findViewById(R.id.member_name_detail_fragment)).setText(mMember.getFullName());
-        ((TextView) mView.findViewById(R.id.member_age_and_gender))
-                .setText(mMember.getFormattedAgeAndGender());
+        ((TextView) mView.findViewById(R.id.member_age_and_gender)).setText(mMember.getFormattedAgeAndGender());
         ((TextView) mView.findViewById(R.id.member_card_id_detail_fragment)).setText(mMember.getFormattedCardId());
         ((TextView) mView.findViewById(R.id.member_phone_number)).setText(mMember.getFormattedPhoneNumber());
+    }
 
-        Bitmap photoBitmap = mMember.getPhotoBitmap(mContext.getContentResolver());
+    protected void setPatientCardPhotoBitmap(Bitmap photoBitMap) {
         ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
-        if (photoBitmap != null) {
-            memberPhoto.setImageBitmap(photoBitmap);
-        } else {
-            memberPhoto.setImageResource(R.drawable.portrait_placeholder);
-        }
+        memberPhoto.setImageBitmap(photoBitMap);
+    }
 
+    protected void setPatientCardPhotoAsDefault() {
+        ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
+        memberPhoto.setImageResource(R.drawable.portrait_placeholder);
+    }
+
+    protected void showAbsenteeNotification() {
         TextView memberNotification = (TextView) mView.findViewById(R.id.member_notification);
-        if (mMember.isAbsentee()) {
-            memberNotification.setVisibility(View.VISIBLE);
-            memberNotification.setText(R.string.absentee_notification);
-        } else if (mMember.getCardId() == null) {
-            memberNotification.setVisibility(View.VISIBLE);
-            memberNotification.setText(R.string.replace_card_notification);
-        }
+        memberNotification.setVisibility(View.VISIBLE);
+        memberNotification.setText(R.string.absentee_notification);
+    }
+
+    protected void showReplaceCardNotification() {
+        TextView memberNotification = (TextView) mView.findViewById(R.id.member_notification);
+        memberNotification.setVisibility(View.VISIBLE);
+        memberNotification.setText(R.string.replace_card_notification);
     }
 
     public Member getMember() {
@@ -90,4 +114,5 @@ public class MemberDetailPresenter {
     public NavigationManager getNavigationManager() {
         return mNavigationManager;
     }
+
 }

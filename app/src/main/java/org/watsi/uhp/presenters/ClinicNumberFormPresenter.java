@@ -40,7 +40,6 @@ public class ClinicNumberFormPresenter {
     private Button mSubmitButton;
     private RadioGroup mClinicNumberRadioGroup;
 
-
     public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, IdentificationEvent unsavedIdentificationEvent) {
         mUnsavedIdentificationEvent = unsavedIdentificationEvent;
 
@@ -88,7 +87,7 @@ public class ClinicNumberFormPresenter {
         displayIdentificationSuccessfulToast();
 
         // navigation stuff
-        nagivateToCurrentPatientsFragment();
+        navigateToCurrentPatientsFragment();
     }
 
     // Probably method not needed.
@@ -153,7 +152,7 @@ public class ClinicNumberFormPresenter {
         }
     }
 
-    protected void nagivateToCurrentPatientsFragment() {
+    protected void navigateToCurrentPatientsFragment() {
         mNavigationManager.setCurrentPatientsFragment();
     }
 
