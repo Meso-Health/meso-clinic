@@ -237,5 +237,5 @@ public class EncounterPresenterTest {
         ArrayAdapter<String> result = encounterPresenter.getCategoriesAdapter("foo");
         assertEquals(result, mockArrayAdapter);
     }
-    
+
 }

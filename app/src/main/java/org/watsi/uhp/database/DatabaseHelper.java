@@ -25,7 +25,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 9;
 
     private static DatabaseHelper instance;
 
