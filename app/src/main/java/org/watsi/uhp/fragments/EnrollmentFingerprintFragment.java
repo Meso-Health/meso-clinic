@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Registration;
-import com.simprints.libsimprints.SimHelper;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
@@ -92,11 +91,18 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
         @Override
         public void onClick(View v) {
             mFragment.hideFingerprintMessage();
-            SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mFragment.getSessionManager().getCurrentLoggedInUsername());
-            Intent captureFingerprintIntent = simHelper.register(BuildConfig.PROVIDER_ID.toString());
+            Intent captureFingerprintIntent = new Intent(Constants.SIMPRINTS_REGISTER_INTENT);
 
-            // TODO: Make this a helper method?
-            // This checks whether simprints.id is installed on phone.
+            captureFingerprintIntent.putExtra(
+                    Constants.SIMPRINTS_API_KEY,
+                    BuildConfig.SIMPRINTS_API_KEY
+            );
+
+            captureFingerprintIntent.putExtra(
+                    Constants.SIMPRINTS_USER_ID,
+                    BuildConfig.PROVIDER_ID
+            );
+
             PackageManager packageManager = mFragment.getActivity().getPackageManager();
             if (captureFingerprintIntent.resolveActivity(packageManager) != null) {
                 mFragment.startActivityForResult(
@@ -117,14 +123,14 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
         if (resultCode != RESULT_OK || data == null) {
             showFingerprintScanFailedMessage();
             return;
-        } else if (requestCode == SIMPRINTS_ENROLLMENT_INTENT) {
-            Registration registration = data.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION);
-            if (registration == null || registration.getGuid() == null) {
-                showFingerprintScanFailedMessage();
-            } else {
-                mSyncableModel.setFingerprintsGuid(UUID.fromString(registration.getGuid()));
-                mSuccessMessageView.setVisibility(View.VISIBLE);
-            }
+        }
+
+        Registration registration = data.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION);
+        if (registration == null || registration.getGuid() == null) {
+            showFingerprintScanFailedMessage();
+        } else {
+            mSyncableModel.setFingerprintsGuid(UUID.fromString(registration.getGuid()));
+            mSuccessMessageView.setVisibility(View.VISIBLE);
         }
     }
 

@@ -3,7 +3,6 @@ package org.watsi.uhp.presenters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,11 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.simprints.libsimprints.Constants;
-import com.simprints.libsimprints.SimHelper;
-import com.simprints.libsimprints.Verification;
-
-import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.MemberAdapter;
@@ -33,16 +27,13 @@ import org.watsi.uhp.models.SyncableModel;
 import java.sql.SQLException;
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by michaelliang on 6/13/17.
  */
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
-    static final int SIMPRINTS_VERIFICATION_INTENT = 1;
-
-    private final SessionManager mSessionManager;
+    private final SessionManager mSessionManager; // Need this later on for fingerprints
     private IdentificationEvent mUnsavedIdentificationEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailPresenterFragment;
     private Member mThroughMember;
@@ -77,64 +68,18 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
-        if (getMember().getFingerprintsGuid() != null) {
-            memberActionButton.setText(R.string.check_in);
-            memberActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
-                    mCheckInMemberDetailPresenterFragment.startActivityForResult(
-                            fingerprintIdentificationIntent,
-                            SIMPRINTS_VERIFICATION_INTENT
-                    );
-                }
-            });
-        } else {
-            memberActionButton.setText(R.string.check_in_without_fingerprints);
-            memberActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    completeIdentificationWithoutFingerprints();
-                }
-            });
-        }
+
+        memberActionButton.setText(R.string.check_in);
+        memberActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                completeIdentification();
+            }
+        });
     }
 
     protected Button getMemberActionButton() {
          return (Button) getView().findViewById(R.id.member_action_button);
-    }
-
-    public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
-
-        // Report any errors if necessary.
-        if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
-            ExceptionManager.reportException(new IllegalStateException("Request code in simprints call was from a different intent: " + requestCode));
-        }
-
-        if (resultCode != Constants.SIMPRINTS_OK) {
-            // TODO make this message more useful
-            ExceptionManager.reportException(new IllegalStateException("ResultCode in simprints call is not OK. resultCode: " + resultCode));
-        }
-
-        if (resultCode == Constants.SIMPRINTS_CANCELLED) {
-            showScanFailedToast();
-        } else if (resultCode == Constants.SIMPRINTS_OK) {
-            showScanSuccessfulToast();
-            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
-            String fingerprintTier = verification.getTier().toString();
-            float fingerprintConfidence = verification.getConfidence();
-
-            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
-            navigateToClinicNumberForm();
-        } else {
-            // TODO No toast here?
-            // Reasons that it would reach here is more of a simprints issue.
-            // So we want this to advance to the clinic form.
-            navigateToClinicNumberForm();
-        }
     }
 
     protected void setBottomListView() {
@@ -214,22 +159,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         return mUnsavedIdentificationEvent;
     }
 
-    protected void navigateToClinicNumberForm() {
-        getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
-    }
-
-    protected void showScanFailedToast() {
-        Toast.makeText(
-                getContext(),
-                "Fingerprint Scan Failed",
-                Toast.LENGTH_LONG).show();
-    }
-
-    protected void showScanSuccessfulToast() {
-        Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG).show();
-    }
-
-    public void completeIdentificationWithoutFingerprints() {
+    public void completeIdentification() {
         // TODO, figure out how to deal with non-nullable integers and floats.
         getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
     }

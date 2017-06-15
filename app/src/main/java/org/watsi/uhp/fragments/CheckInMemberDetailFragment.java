@@ -1,10 +1,8 @@
 package org.watsi.uhp.fragments;
 
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 
-import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -38,21 +36,10 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        menu.findItem(R.id.menu_check_in_without_fingerprints).setVisible(true);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        checkInMemberDetailPresenter.handleOnActivityResult(requestCode, resultCode, data);
     }
 
     public IdentificationEvent getIdEvent() {
         return checkInMemberDetailPresenter.getUnsavedIdentificationEvent();
-    }
-
-    public void completeIdentificationWithoutFingerprints() {
-        checkInMemberDetailPresenter.completeIdentificationWithoutFingerprints();
     }
 }
 

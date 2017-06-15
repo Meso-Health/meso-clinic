@@ -9,12 +9,6 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_check_in_without_fingerprints"
-        android:orderInCategory="101"
-        android:title="Check-in without fingerprints"
-        app:showAsAction="never"
-        android:visible="false" />
-    <item
         android:id="@+id/menu_member_edit"
         android:orderInCategory="102"
         android:title="@string/menu_member_edit_label"

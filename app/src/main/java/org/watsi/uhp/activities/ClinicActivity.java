@@ -192,13 +192,6 @@ public class ClinicActivity extends AppCompatActivity {
                 case R.id.menu_complete_enrollment:
                     getNavigationManager().setEnrollmentMemberPhotoFragment(member);
                     break;
-                case R.id.menu_check_in_without_fingerprints:
-                    if (fragment instanceof CheckInMemberDetailFragment) {
-                        ((CheckInMemberDetailFragment) fragment).completeIdentificationWithoutFingerprints();
-                    } else {
-                        ExceptionManager.reportMessage("CheckInWithoutFingerprints menu button reached from fragment that's not CheckInMemberDetailFragment");
-                    }
-                    break;
             }
             return true;
         }
