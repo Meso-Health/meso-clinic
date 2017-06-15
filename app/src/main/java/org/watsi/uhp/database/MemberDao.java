@@ -100,12 +100,12 @@ public class MemberDao {
         return new HashSet<>(names);
     }
 
-    public static ArrayList<Member> fuzzySearchMembers(String query, int number, int threshold)
+    public static List<Member> fuzzySearchMembers(String query, int number, int threshold)
             throws SQLException {
         List<ExtractedResult> topMatchingNames =
                 FuzzySearch.extractTop(query, allUniqueMemberNames(), number, threshold);
 
-        ArrayList<Member> topMatchingMembers = new ArrayList<>();
+        List<Member> topMatchingMembers = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
             String name = result.getString();
             topMatchingMembers.addAll(findByName(name));
