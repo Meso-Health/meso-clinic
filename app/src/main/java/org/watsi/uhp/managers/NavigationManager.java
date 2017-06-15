@@ -59,7 +59,7 @@ public class NavigationManager {
     }
 
     private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
-                             popBackStack, int transition) {
+                             popBackStack) {
 
         FragmentManager fm = mActivity.getSupportFragmentManager();
         if (popBackStack) {
@@ -71,7 +71,6 @@ public class NavigationManager {
 
         FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
-        transaction.setTransition(transition);
 
         if (addToBackstack) {
             transaction.addToBackStack(null);
@@ -80,11 +79,11 @@ public class NavigationManager {
     }
 
     private void setFragment(Fragment fragment) {
-        setFragment(fragment, null, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(fragment, null, true, false);
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true, FragmentTransaction.TRANSIT_NONE);
+        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
     public void setMemberDetailFragment(Member member) {
@@ -112,20 +111,20 @@ public class NavigationManager {
             bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setClinicNumberFormFragment(IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
 
-        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
