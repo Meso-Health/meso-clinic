@@ -97,8 +97,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
                 case 8:
-                    // Migrating data in place?
-                    // no-op.
+                    // After talking to Pete, we should have this case for a no-op.
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
