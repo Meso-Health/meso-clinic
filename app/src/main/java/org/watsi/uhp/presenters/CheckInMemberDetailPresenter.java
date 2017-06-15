@@ -106,20 +106,34 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SIMPRINTS_VERIFICATION_INTENT && resultCode != RESULT_OK) {
+        mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+
+        // Report any errors if necessary.
+        if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
+            ExceptionManager.reportException(new IllegalStateException("Request code in simprints call was from a different intent: " + requestCode));
+        }
+
+        if (resultCode != Constants.SIMPRINTS_OK) {
+            // TODO make this message more useful
+            ExceptionManager.reportException(new IllegalStateException("ResultCode in simprints call is not OK. resultCode: " + resultCode));
+        }
+
+        if (resultCode == Constants.SIMPRINTS_CANCELLED) {
             showScanFailedToast();
+        } else if (resultCode == Constants.SIMPRINTS_OK) {
+            showScanSuccessfulToast();
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
             String fingerprintTier = verification.getTier().toString();
             float fingerprintConfidence = verification.getConfidence();
 
             mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
             mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
-
             navigateToClinicNumberForm();
         } else {
-            showScanSuccessfulToast();
-            mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+            // TODO No toast here?
+            // Reasons that it would reach here is more of a simprints issue.
+            // So we want this to advance to the clinic form.
+            navigateToClinicNumberForm();
         }
     }
 
@@ -184,7 +198,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mUnsavedIdentificationEvent.setAccepted(false);
         mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
         try {
-            mUnsavedIdentificationEvent.saveChanges(((ClinicActivity) mCheckInMemberDetailPresenterFragment.getActivity()).getAuthenticationToken());
+            mUnsavedIdentificationEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }

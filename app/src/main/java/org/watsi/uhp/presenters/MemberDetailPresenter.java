@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
@@ -114,5 +115,4 @@ public class MemberDetailPresenter {
     public NavigationManager getNavigationManager() {
         return mNavigationManager;
     }
-
 }

@@ -89,7 +89,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         checkIn.setDismissalReason(dismissReason);
 
         try {
-            checkIn.saveChanges(((ClinicActivity) getContext().getApplicationContext()).getAuthenticationToken());
+            checkIn.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
             Toast.makeText(getContext(),
                     getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
