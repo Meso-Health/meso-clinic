@@ -36,6 +36,7 @@ public class SearchMemberFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+
         mPresenter.focus();
     }
 }

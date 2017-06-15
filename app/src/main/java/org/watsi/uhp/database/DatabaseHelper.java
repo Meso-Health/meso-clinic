@@ -25,7 +25,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static DatabaseHelper instance;
 
@@ -97,7 +97,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
                 case 8:
-                    // After talking to Pete, we should have this case for a no-op.
+                    // Migrating data in place?
+                    // no-op.
+                case 9:
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier INTEGER");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier STRING;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
