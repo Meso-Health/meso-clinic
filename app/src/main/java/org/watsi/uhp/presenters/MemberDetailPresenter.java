@@ -78,7 +78,7 @@ public class MemberDetailPresenter {
 
     // Tested above.
     // Untested below.
-    
+
     protected TextView getMemberNameDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));
     }
