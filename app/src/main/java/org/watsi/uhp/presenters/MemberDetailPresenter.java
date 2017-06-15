@@ -69,12 +69,30 @@ public class MemberDetailPresenter {
         }
     }
 
-    // Untested below.
     protected void setPatientCardTextFields() {
-        ((TextView) mView.findViewById(R.id.member_name_detail_fragment)).setText(mMember.getFullName());
-        ((TextView) mView.findViewById(R.id.member_age_and_gender)).setText(mMember.getFormattedAgeAndGender());
-        ((TextView) mView.findViewById(R.id.member_card_id_detail_fragment)).setText(mMember.getFormattedCardId());
-        ((TextView) mView.findViewById(R.id.member_phone_number)).setText(mMember.getFormattedPhoneNumber());
+        getMemberNameDetailTextView().setText(mMember.getFullName());
+        getMemberAgeAndGenderTextView().setText(mMember.getFormattedAgeAndGender());
+        getMemberCardIdDetailTextView().setText(mMember.getFormattedCardId());
+        getMemberPhoneNumberTextView().setText(mMember.getFormattedPhoneNumber());
+    }
+
+    // Tested above.
+    // Untested below.
+    
+    protected TextView getMemberNameDetailTextView() {
+        return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));
+    }
+
+    protected TextView getMemberAgeAndGenderTextView() {
+        return ((TextView) mView.findViewById(R.id.member_age_and_gender));
+    }
+
+    protected TextView getMemberCardIdDetailTextView() {
+        return ((TextView) mView.findViewById(R.id.member_card_id_detail_fragment));
+    }
+
+    protected TextView getMemberPhoneNumberTextView() {
+        return ((TextView) mView.findViewById(R.id.member_phone_number));
     }
 
     protected void setPatientCardPhotoBitmap(Bitmap photoBitMap) {

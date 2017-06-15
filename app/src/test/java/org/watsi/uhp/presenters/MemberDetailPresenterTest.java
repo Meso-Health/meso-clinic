@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,11 +13,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -112,5 +117,33 @@ public class MemberDetailPresenterTest {
 
         verify(memberDetailPresenterSpy, times(1)).setPatientCardPhotoBitmap(mockPatientPhotoBitmap);
         verify(memberDetailPresenterSpy, never()).setPatientCardPhotoAsDefault();
+    }
+
+    @Test
+    public void setPatientCardTextFields() {
+        MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
+
+        TextView mockTextView = mock(TextView.class);
+        when(memberDetailPresenter.getMemberNameDetailTextView()).thenReturn(mockTextView);
+        when(memberDetailPresenter.getMemberAgeAndGenderTextView()).thenReturn(mockTextView);
+        when(memberDetailPresenter.getMemberCardIdDetailTextView()).thenReturn(mockTextView);
+        when(memberDetailPresenter.getMemberPhoneNumberTextView()).thenReturn(mockTextView);
+
+        when(mockMember.getFullName()).thenReturn("mockName");
+        when(mockMember.getFormattedAgeAndGender()).thenReturn("25 F");
+        when(mockMember.getFormattedCardId()).thenReturn("MOCK123123");
+        when(mockMember.getFormattedPhoneNumber()).thenReturn("123456789");
+
+        memberDetailPresenterSpy.setPatientCardTextFields();
+
+        verify(mockTextView, times(1)).setText("mockName");
+        verify(mockTextView, times(1)).setText("25 F");
+        verify(mockTextView, times(1)).setText("MOCK123123");
+        verify(mockTextView, times(1)).setText("123456789");
+
+        verify(memberDetailPresenterSpy, times(1)).getMemberNameDetailTextView();
+        verify(memberDetailPresenterSpy, times(1)).getMemberAgeAndGenderTextView();
+        verify(memberDetailPresenterSpy, times(1)).getMemberCardIdDetailTextView();
+        verify(memberDetailPresenterSpy, times(1)).getMemberPhoneNumberTextView();
     }
 }
