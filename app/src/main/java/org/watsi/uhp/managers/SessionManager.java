@@ -49,7 +49,7 @@ public class SessionManager {
      * @param account The account
      * @param password User's password
      */
-    private void addAccount(Account account, String password) {
+    public void addAccount(Account account, String password) {
         Account[] accounts = mAccountManager.getAccountsByType(Authenticator.ACCOUNT_TYPE);
         if (!Arrays.asList(accounts).contains(account)) {
             mAccountManager.addAccountExplicitly(account, password, null);
