@@ -5,6 +5,7 @@ import android.content.Context
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SearchView
+import android.widget.TextView
 import org.junit.Assert.assertEquals
 import org.junit.Before
 
@@ -28,6 +29,7 @@ class SearchMemberPresenterTest {
 
     @Mock lateinit var mockProgressDialog: ProgressDialog
     @Mock lateinit var mockListView: ListView
+    @Mock lateinit var mockEmptyView: TextView
     @Mock lateinit var mockSearchView: SearchView
     @Mock lateinit var mockContext: Context
     @Mock lateinit var mockNavigationManager: NavigationManager
@@ -39,7 +41,8 @@ class SearchMemberPresenterTest {
     fun setup() {
         mockStatic(MemberDao::class.java)
         presenter = SearchMemberPresenter(
-                mockProgressDialog, mockListView, mockSearchView, mockContext, mockNavigationManager)
+                mockProgressDialog, mockListView, mockEmptyView,
+                mockSearchView, mockContext, mockNavigationManager)
     }
 
     @Test
@@ -79,6 +82,7 @@ class SearchMemberPresenterTest {
     fun displayMembersResult() {
         presenter.displayMembersResult(IdentificationEvent.SearchMethodEnum.SEARCH_ID, mockMemberList)
 
+        verify(mockListView, times(1)).setEmptyView(mockEmptyView)
         verify(mockListView, times(1)).setAdapter(any(MemberAdapter::class.java))
         verify(mockListView, times(1)).setOnItemClickListener(any(AdapterView.OnItemClickListener::class.java))
         verify(mockProgressDialog, times(1)).dismiss()
