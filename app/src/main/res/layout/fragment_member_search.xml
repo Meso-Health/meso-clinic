@@ -14,19 +14,6 @@
         android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:layout_marginBottom="@dimen/fragment_vertical_margin" />
 
-    <RelativeLayout
-        android:id="@+id/loading_panel"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone" >
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-    </RelativeLayout>
-
     <TextView
         android:id="@+id/member_no_search_results_text"
         android:layout_width="match_parent"
