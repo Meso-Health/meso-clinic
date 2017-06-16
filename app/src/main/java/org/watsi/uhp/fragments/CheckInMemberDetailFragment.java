@@ -33,11 +33,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         checkInMemberDetailPresenter.setUp();
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-    }
-
     public IdentificationEvent getIdEvent() {
         return checkInMemberDetailPresenter.getUnsavedIdentificationEvent();
     }

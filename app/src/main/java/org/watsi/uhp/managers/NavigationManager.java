@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
@@ -28,6 +29,9 @@ import org.watsi.uhp.fragments.VersionAndSyncFragment;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Helper class for managing navigation between fragments
@@ -58,24 +62,29 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
-    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
+    private void setFragment(Fragment nextFragment, String prevTag, boolean addToBackstack, boolean
                              popBackStack) {
 
-        FragmentManager fm = mActivity.getSupportFragmentManager();
-        if (popBackStack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            if (fm.findFragmentByTag(HOME_TAG) != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
+
+        if (nextFragment instanceof BaseFragment) {
+            FragmentManager fm = mActivity.getSupportFragmentManager();
+            if (popBackStack) {
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                if ((prevTag == HOME_TAG) && (fm.findFragmentByTag(HOME_TAG) != null)) {
+                    fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
+                }
             }
-        }
 
-        FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment, tag);
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.replace(R.id.fragment_container, nextFragment, prevTag);
 
-        if (addToBackstack) {
-            transaction.addToBackStack(null);
+            if (addToBackstack) {
+                transaction.addToBackStack(null);
+            }
+            transaction.commit();
+        } else {
+            ExceptionManager.reportException(new IllegalStateException("setFragment called with fragment that is an instance of BaseFragment"));
         }
-        transaction.commit();
     }
 
     private void setFragment(Fragment fragment) {
@@ -86,22 +95,30 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
+    public void setMemberDetailFragment(Member member, boolean addToBackStack) {
+        setCurrentMemberDetailFragment(member, addToBackStack);
+    }
+
     public void setMemberDetailFragment(Member member) {
-        setCurrentMemberDetailFragment(member);
+        setCurrentMemberDetailFragment(member, true);
+    }
+
+    public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember, boolean addToBackStack) {
+        // Decides whether to show the pre-check in fragment, or the post-check in fragment.
+        if (member.currentCheckIn() == null) {
+            setCheckInMemberDetailFragment(member, idMethod, throughMember, addToBackStack);
+        } else {
+            setCurrentMemberDetailFragment(member, addToBackStack);
+        }
     }
 
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
-        // Decides whether to show the pre-check in fragment, or the post-check in fragment.
-        if (member.currentCheckIn() == null) {
-            setCheckInMemberDetailFragment(member, idMethod, throughMember);
-        } else {
-            setCurrentMemberDetailFragment(member);
-        }
+        setMemberDetailFragment(member, idMethod, throughMember, true);
     }
 
     protected void setCheckInMemberDetailFragment(Member member,
                                   IdentificationEvent.SearchMethodEnum idMethod,
-                                  Member throughMember) {
+                                  Member throughMember, boolean addToBackStack) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         if (idMethod != null) {
@@ -111,13 +128,13 @@ public class NavigationManager {
             bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, addToBackStack, false);
     }
 
-    protected void setCurrentMemberDetailFragment(Member member) {
+    protected void setCurrentMemberDetailFragment(Member member, boolean addToBackStack) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, addToBackStack, false);
     }
 
     public void setClinicNumberFormFragment(IdentificationEvent idEvent) {

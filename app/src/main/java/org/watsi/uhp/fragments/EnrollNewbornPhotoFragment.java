@@ -48,7 +48,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     void nextStep(View view) {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
-            getNavigationManager().setCurrentPatientsFragment();
+            getNavigationManager().setMemberDetailFragment(mSyncableModel, false);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
@@ -63,7 +63,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
             ExceptionManager.reportException(e);
-            getNavigationManager().setCurrentPatientsFragment();
+            getNavigationManager().setMemberDetailFragment(mSyncableModel, false);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
