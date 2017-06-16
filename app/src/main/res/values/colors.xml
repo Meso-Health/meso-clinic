@@ -6,6 +6,9 @@
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
 
+    <color name="disabledButton">#D6D6D6</color>
+    <color name="disabledButtonText">#A5A5A5</color>
+
     <color name="title">#212121</color>
     <color name="text">#747474</color>
     <color name="divider">#DADADA</color>
