@@ -1,7 +1,11 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -92,6 +96,14 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         mRadioGroupView = (RadioGroup) view.findViewById(R.id.gender_group);
         mDatePicker = (DatePicker) view.findViewById(R.id.birthdate);
 
+        Button mSaveButton = (Button) view.findViewById(R.id.save_button);
+
+        TextWatcher watcher = new FormTextWatcher(mNameView, mRadioGroupView, mCardIdView, mSaveButton);
+        mNameView.addTextChangedListener(watcher);
+        mCardIdView.addTextChangedListener(watcher);
+
+        mRadioGroupView.setOnCheckedChangeListener(new RadioGroupListener(mNameView, mRadioGroupView, mCardIdView, mSaveButton));
+
         Bundle sourceParams = getArguments().getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
         if (sourceParams == null) sourceParams = new Bundle();
 
@@ -163,5 +175,63 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         bundle.putString(Member.FIELD_NAME_BIRTHDATE, mDateFormat.format(cal.getTime()));
 
         return bundle;
+    }
+
+    private class FormTextWatcher implements TextWatcher {
+
+        private EditText nameEdit;
+        private RadioGroup genderGroup;
+        private EditText cardIdEdit;
+        private Button saveButton;
+
+        private FormTextWatcher(EditText nameEdit, RadioGroup genderGroup, EditText cardIdEdit, Button saveButton) {
+            this.nameEdit = nameEdit;
+            this.genderGroup = genderGroup;
+            this.cardIdEdit = cardIdEdit;
+            this.saveButton = saveButton;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // no-op
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // no-op
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (nameEdit.getText().toString().isEmpty() || genderGroup.getCheckedRadioButtonId() == -1 || cardIdEdit.getText().toString().isEmpty()) {
+                saveButton.setEnabled(false);
+            } else {
+                saveButton.setEnabled(true);
+            }
+        }
+    }
+
+    private class RadioGroupListener implements RadioGroup.OnCheckedChangeListener {
+
+        private EditText nameEdit;
+        private RadioGroup genderGroup;
+        private EditText cardIdEdit;
+        private Button saveButton;
+
+        private RadioGroupListener(EditText nameEdit, RadioGroup genderGroup, EditText cardIdEdit, Button saveButton) {
+            this.nameEdit = nameEdit;
+            this.genderGroup = genderGroup;
+            this.cardIdEdit = cardIdEdit;
+            this.saveButton = saveButton;
+        }
+
+        @Override
+        public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+            if (nameEdit.getText().toString().isEmpty() || genderGroup.getCheckedRadioButtonId() == -1 || cardIdEdit.getText().toString().isEmpty()) {
+                saveButton.setEnabled(false);
+            } else {
+                saveButton.setEnabled(true);
+            }
+        }
     }
 }
