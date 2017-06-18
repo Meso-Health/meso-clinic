@@ -121,10 +121,12 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         if (resultCode == Constants.SIMPRINTS_CANCELLED) {
             showScanFailedToast();
         } else if (resultCode == Constants.SIMPRINTS_OK) {
-            showScanSuccessfulToast();
             Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
             String fingerprintTier = verification.getTier().toString();
             float fingerprintConfidence = verification.getConfidence();
+
+            // showScanSuccessfulToast();
+            showScanSuccessfulToastWithConfidence(fingerprintTier, fingerprintConfidence);
 
             mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
             mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
@@ -227,6 +229,10 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void showScanSuccessfulToast() {
         Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG).show();
+    }
+
+    protected void showScanSuccessfulToastWithConfidence(String tier, float score) {
+        Toast.makeText(getContext(), "Fingerprint Scan Successful! " + tier + " " + score, Toast.LENGTH_LONG).show();
     }
 
     public void completeIdentificationWithoutFingerprints() {
