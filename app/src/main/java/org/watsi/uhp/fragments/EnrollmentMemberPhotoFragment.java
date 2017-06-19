@@ -1,6 +1,8 @@
 package org.watsi.uhp.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -44,19 +46,33 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
 
     @Override
     void nextStep(View view) {
-        try {
-            if (!mSyncableModel.shouldCaptureFingerprint()) {
-                mSyncableModel.saveChanges(getAuthenticationToken());
-                getNavigationManager().setCurrentPatientsFragment();
-                Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-            } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
-                getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel);
-            } else {
-                getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
-            }
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
+        if (!mSyncableModel.shouldCaptureFingerprint()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        mSyncableModel.saveChanges(getAuthenticationToken());
+                        getNavigationManager().setCurrentPatientsFragment();
+                        Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
+                    } catch (SQLException e) {
+                        ExceptionManager.reportException(e);
+                        Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
+            getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel);
+        } else {
+            getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
         }
     }
 
