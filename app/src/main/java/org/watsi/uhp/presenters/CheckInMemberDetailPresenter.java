@@ -232,7 +232,21 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void showScanSuccessfulToastWithConfidence(String tier, float score) {
-        Toast.makeText(getContext(), "Fingerprint Scan Successful! " + tier + " " + score, Toast.LENGTH_LONG).show();
+        String msg = "Fingerprint Result: ";
+        if (tier == "TIER_1") {
+            msg = msg + " Great Match (TIER_1). Score: " + score;
+        } else if (tier == "TIER 2") {
+            msg = msg + " Good Match (TIER_2). Score: " + score;
+        } else if (tier == "TIER_3") {
+            msg = msg + " Not sure (TIER_3). Score: " + score;
+        } else if (tier == "TIER_4") {
+            msg = msg + " No match (TIER_4). Score: " + score;
+        } else if (tier == "TIER_5") {
+            msg = msg + " No match (TIER_5). Score: " + score;
+        } else {
+            msg = msg + " Tier: " + tier + " . Score: " + score;
+        }
+        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
     }
 
     public void completeIdentificationWithoutFingerprints() {
