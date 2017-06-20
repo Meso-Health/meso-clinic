@@ -171,6 +171,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     protected void setMemberActionLink() {
         getMemberActionLink().setVisibility(View.VISIBLE);
         getMemberActionLink().setText(getContext().getString(R.string.reject_identity));
+        getMemberActionLink().setClickable(true);
         getMemberActionLink().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
