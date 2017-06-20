@@ -246,7 +246,10 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         } else {
             msg = msg + " Tier: " + tier + " . Score: " + score;
         }
-        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+        // Really hacky thing to get toast to show up for a long time.
+        for (int i = 0; i < 3; i++) {
+            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void completeIdentificationWithoutFingerprints() {
