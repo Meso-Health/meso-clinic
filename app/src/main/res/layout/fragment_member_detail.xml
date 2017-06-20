@@ -65,6 +65,7 @@
             android:id="@+id/member_action_link"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:clickable="true"
             android:layout_toEndOf="@id/member_photo"
             android:layout_alignParentBottom="true"
             android:visibility="gone" />
