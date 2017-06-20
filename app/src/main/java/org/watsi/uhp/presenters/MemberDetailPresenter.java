@@ -3,12 +3,22 @@ package org.watsi.uhp.presenters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by michaelliang on 6/1/17.
@@ -45,7 +55,10 @@ public class MemberDetailPresenter {
     }
 
     protected void setBottomListView() {
-        // no-op
+        List<Member> householdMembers = getMembersForBottomListView();
+        if (householdMembers != null) {
+            setBottomListWithMembers(householdMembers);
+        }
     }
 
     protected void setMemberActionLink() {
@@ -76,8 +89,51 @@ public class MemberDetailPresenter {
         getMemberPhoneNumberTextView().setText(mMember.getFormattedPhoneNumber());
     }
 
+    protected void setBottomListWithMembers(List<Member> householdMembers) {
+        TextView householdListLabel = getHouseholdMembersLabelTextView();
+        ListView householdListView = getHouseholdMembersListView();
+
+        int householdSize = householdMembers.size() + 1;
+
+        householdListLabel.setText(formatQuantityStringFromHouseholdSize(householdSize));
+        householdListView.setAdapter(new MemberAdapter(getContext(), householdMembers, false));
+        householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Member member = (Member) parent.getItemAtPosition(position);
+                getNavigationManager().setMemberDetailFragment(
+                        member,
+                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
+                        getMember()
+                );
+            }
+        });
+    }
+
+    protected List<Member> getMembersForBottomListView() {
+        try {
+            return MemberDao.getRemainingHouseholdMembers(
+                    getMember().getHouseholdId(), getMember().getId());
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            return null;
+        }
+    }
     // Tested above.
     // Untested below.
+
+    protected TextView getHouseholdMembersLabelTextView() {
+        return (TextView) getView().findViewById(R.id.household_members_label);
+    }
+
+    protected ListView getHouseholdMembersListView() {
+        return (ListView) getView().findViewById(R.id.household_members);
+    }
+
+    protected String formatQuantityStringFromHouseholdSize(int householdSize) {
+        return getContext().getResources().getQuantityString(
+                R.plurals.household_label, householdSize, householdSize);
+    }
 
     protected TextView getMemberNameDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));

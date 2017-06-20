@@ -74,62 +74,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         });
     }
 
-    protected void setBottomListView() {
-        List<Member> householdMembers = getMembersForBottomListView();
-        if (householdMembers != null) {
-            setBottomListWithMembers(householdMembers);
-        }
-    }
-
-    protected void setBottomListWithMembers(List<Member> householdMembers) {
-        TextView householdListLabel = getHouseholdMembersLabelTextView();
-        ListView householdListView = getHouseholdMembersListView();
-
-        int householdSize = householdMembers.size() + 1;
-
-        householdListLabel.setText(formatQuantityStringFromHouseholdSize(householdSize));
-        householdListView.setAdapter(new MemberAdapter(getContext(), householdMembers, false));
-        householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Member member = (Member) parent.getItemAtPosition(position);
-                getNavigationManager().setMemberDetailFragment(
-                        member,
-                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                        getMember()
-                );
-            }
-        });
-    }
-
-    protected List<Member> getMembersForBottomListView() {
-        try {
-            return MemberDao.getRemainingHouseholdMembers(
-                    getMember().getHouseholdId(), getMember().getId());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            return null;
-        }
-    }
-
     //// Tested above
     //// Below TBD because of fingerprints
 
-    protected String formatQuantityStringFromHouseholdSize(int householdSize) {
-        return mCheckInMemberDetailPresenterFragment.getResources().getQuantityString(
-                R.plurals.household_label, householdSize, householdSize);
-    }
-
     protected Button getMemberActionButton() {
          return (Button) getView().findViewById(R.id.member_action_button);
-    }
-
-    protected TextView getHouseholdMembersLabelTextView() {
-        return (TextView) getView().findViewById(R.id.household_members_label);
-    }
-
-    protected ListView getHouseholdMembersListView() {
-        return (ListView) getView().findViewById(R.id.household_members);
     }
 
     protected void setMemberActionLink() {
