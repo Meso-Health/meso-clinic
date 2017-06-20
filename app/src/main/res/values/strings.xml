@@ -81,7 +81,7 @@
     <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
-    <plurals name="household_label" >
+    <plurals name="household_label">
         <item quantity="one">%d Household Member</item>
         <item quantity="other">%d Household Members</item>
     </plurals>
