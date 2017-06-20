@@ -56,7 +56,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     protected void setMemberActionLink() {
         getMemberActionLink().setVisibility(View.VISIBLE);
         getMemberActionLink().setText(R.string.dismiss_patient);
-
+        getMemberActionLink().setClickable(true);
         getMemberActionLink().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
