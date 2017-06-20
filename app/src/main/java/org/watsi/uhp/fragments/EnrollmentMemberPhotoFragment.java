@@ -55,7 +55,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                     try {
                         mSyncableModel.saveChanges(getAuthenticationToken());
                         getNavigationManager().setCurrentPatientsFragment();
-                        Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
+                        confirmationToast().show();
                     } catch (SQLException e) {
                         ExceptionManager.reportException(e);
                         Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
@@ -74,6 +74,14 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
         } else {
             getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
         }
+    }
+
+    private Toast confirmationToast() {
+       if (mSyncableModel.isAbsentee()) {
+           return Toast.makeText(getContext(), "Any updates successfully saved", Toast.LENGTH_LONG);
+       } else {
+           return Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG);
+       }
     }
 
     @Override
