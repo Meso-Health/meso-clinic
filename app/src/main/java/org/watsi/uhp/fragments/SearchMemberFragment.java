@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.presenters.SearchMemberPresenter;
@@ -25,6 +26,7 @@ public class SearchMemberFragment extends BaseFragment {
         mPresenter = new SearchMemberPresenter(
                 new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER),
                 (ListView) view.findViewById(R.id.member_search_results),
+                (TextView) view.findViewById(R.id.member_no_search_results_text),
                 (SearchView) view.findViewById(R.id.member_search),
                 getContext(), getNavigationManager());
 
