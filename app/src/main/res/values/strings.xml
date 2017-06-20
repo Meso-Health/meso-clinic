@@ -74,6 +74,7 @@
     <string name="absentee_notification">Must complete enrollment</string>
     <string name="replace_card_notification">Needs new card</string>
     <string name="check_in">Check-in</string>
+    <string name="check_in_with_fingerprints">Check-in with fingerprints</string>
     <string name="check_in_without_fingerprints">Check-in without fingerprints</string>
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>

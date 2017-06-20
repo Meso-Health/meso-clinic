@@ -78,7 +78,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
         if (getMember().getFingerprintsGuid() != null) {
-            memberActionButton.setText(R.string.check_in);
+            memberActionButton.setText(R.string.check_in_with_fingerprints);
             memberActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -236,11 +236,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         if (tier == "TIER_1") {
             msg = msg + " Great Match (TIER_1). Score: " + score;
         } else if (tier == "TIER 2") {
-            msg = msg + " Good Match (TIER_2). Score: " + score;
+            msg = msg + " Great Match (TIER_2). Score: " + score;
         } else if (tier == "TIER_3") {
-            msg = msg + " Not sure (TIER_3). Score: " + score;
+            msg = msg + " Good Match (TIER_3). Score: " + score;
         } else if (tier == "TIER_4") {
-            msg = msg + " No match (TIER_4). Score: " + score;
+            msg = msg + " Match (TIER_4). Score: " + score;
         } else if (tier == "TIER_5") {
             msg = msg + " No match (TIER_5). Score: " + score;
         } else {
