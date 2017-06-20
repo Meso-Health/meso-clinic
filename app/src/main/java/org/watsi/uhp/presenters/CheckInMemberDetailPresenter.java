@@ -139,35 +139,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    protected void setBottomListView() {
-        TextView householdListLabel = (TextView) getView().findViewById(R.id.household_members_label);
-        ListView householdListView = (ListView) getView().findViewById(R.id.household_members);
-
-        try {
-            List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
-                    getMember().getHouseholdId(), getMember() .getId());
-            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
-            int householdSize = householdMembers.size() + 1;
-
-            householdListLabel.setText(mCheckInMemberDetailPresenterFragment.getResources().getQuantityString(
-                    R.plurals.household_label, householdSize, householdSize));
-            householdListView.setAdapter(adapter);
-            householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Member member = (Member) parent.getItemAtPosition(position);
-                    getNavigationManager().setMemberDetailFragment(
-                            member,
-                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                            getMember()
-                    );
-                }
-            });
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
-    }
-
     protected void setMemberActionLink() {
         getMemberActionLink().setVisibility(View.VISIBLE);
         getMemberActionLink().setText(R.string.reject_identity);

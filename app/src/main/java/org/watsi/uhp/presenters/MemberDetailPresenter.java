@@ -3,13 +3,23 @@ package org.watsi.uhp.presenters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
+import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by michaelliang on 6/1/17.
@@ -46,7 +56,32 @@ public class MemberDetailPresenter {
     }
 
     protected void setBottomListView() {
-        // no-op
+        TextView householdListLabel = (TextView) getView().findViewById(R.id.household_members_label);
+        ListView householdListView = (ListView) getView().findViewById(R.id.household_members);
+
+        try {
+            List<Member> householdMembers = MemberDao.getRemainingHouseholdMembers(
+                    getMember().getHouseholdId(), getMember() .getId());
+            ListAdapter adapter = new MemberAdapter(getContext(), householdMembers, false);
+            int householdSize = householdMembers.size() + 1;
+
+            householdListLabel.setText(getContext().getResources().getQuantityString(
+                    R.plurals.household_label, householdSize, householdSize));
+            householdListView.setAdapter(adapter);
+            householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Member member = (Member) parent.getItemAtPosition(position);
+                    getNavigationManager().setMemberDetailFragment(
+                            member,
+                            IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
+                            getMember()
+                    );
+                }
+            });
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
     }
 
     protected void setMemberActionLink() {
