@@ -18,6 +18,7 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.presenters.EnrollmentPresenter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
 
     private ImageView mMemberPhotoImageView;
     private Uri mUri;
+    private EnrollmentPresenter enrollmentPresenter;
 
     @Override
     int getTitleLabelId() {
@@ -55,7 +57,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                     try {
                         mSyncableModel.saveChanges(getAuthenticationToken());
                         getNavigationManager().setCurrentPatientsFragment();
-                        confirmationToast().show();
+                        enrollmentPresenter.confirmationToast().show();
                     } catch (SQLException e) {
                         ExceptionManager.reportException(e);
                         Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
@@ -74,14 +76,6 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
         } else {
             getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
         }
-    }
-
-    private Toast confirmationToast() {
-       if (mSyncableModel.isAbsentee()) {
-           return Toast.makeText(getContext(), "Any updates successfully saved", Toast.LENGTH_LONG);
-       } else {
-           return Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG);
-       }
     }
 
     @Override
@@ -107,6 +101,8 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             mSaveBtn.setText(R.string.enrollment_complete_btn);
         }
+
+        enrollmentPresenter = new EnrollmentPresenter(mSyncableModel, getContext());
     }
 
     @Override

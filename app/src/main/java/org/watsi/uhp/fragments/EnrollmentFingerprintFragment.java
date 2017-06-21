@@ -15,6 +15,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.presenters.EnrollmentPresenter;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
 
     private View mSuccessMessageView;
     private View mFailedMessageView;
+    private EnrollmentPresenter enrollmentPresenter;
 
     @Override
     int getTitleLabelId() {
@@ -53,7 +55,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
                 try {
                     mSyncableModel.saveChanges(getAuthenticationToken());
                     getNavigationManager().setCurrentPatientsFragment();
-                    confirmationToast().show();
+                    enrollmentPresenter.confirmationToast().show();
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
@@ -69,14 +71,6 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
         builder.show();
     }
 
-    private Toast confirmationToast() {
-        if (mSyncableModel.isAbsentee()) {
-            return Toast.makeText(getContext(), "Any updates successfully saved", Toast.LENGTH_LONG);
-        } else {
-            return Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG);
-        }
-    }
-
     @Override
     void setUpFragment(View view) {
         mSuccessMessageView = view.findViewById(R.id.enrollment_fingerprint_success_message);
@@ -84,6 +78,8 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
 
         Button fingerprintBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_capture_btn);
         fingerprintBtn.setOnClickListener(new CaptureThumbprintClickListener(mSyncableModel.getId(), this));
+
+        enrollmentPresenter = new EnrollmentPresenter(mSyncableModel, getContext());
     }
 
     private static class CaptureThumbprintClickListener implements View.OnClickListener {
