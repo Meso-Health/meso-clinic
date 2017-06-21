@@ -18,6 +18,7 @@ public class ClinicNumberFormFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_clinic_number_form, container, false);
         IdentificationEvent unsavedIdentificationEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
         clinicNumberFormPresenter = new ClinicNumberFormPresenter(view, getContext(), getNavigationManager(), getActivity(), unsavedIdentificationEvent);
+        clinicNumberFormPresenter.setUp();
         return view;
     }
 }

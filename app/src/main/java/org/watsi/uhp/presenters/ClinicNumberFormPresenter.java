@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -57,19 +60,20 @@ public class ClinicNumberFormPresenter {
         mClinicNumberRadioGroup = (RadioGroup) view.findViewById(R.id.radio_group_clinic_number);
         mClinicNumberView = (EditText) view.findViewById(R.id.clinic_number_field);
         mSubmitButton = (Button) view.findViewById(R.id.clinic_number_save_button);
-        mSubmitButton.setEnabled(false);
+    }
 
-        // Setting Listeners in the view
-        setListeners();
+    public void setUp() {
+        mSubmitButton.setEnabled(false);
 
         // Set title on screen
         mActivity.setTitle(R.string.clinic_number_form_fragment_label);
 
         // Keyboard set up
-        // mClinicNumberView.requestFocus();
-        KeyboardManager.focusAndShowKeyboard(mClinicNumberView, mContext);
-    }
+        KeyboardManager.focusAndForceShowKeyboard(mClinicNumberView, mContext);
 
+        // Setting Listeners in the view
+        setListeners();
+    }
 
     // DB ONLY
     protected void saveIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, Integer clinicNumber) {
