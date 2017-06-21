@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
+import com.simprints.libsimprints.Identification;
 import com.simprints.libsimprints.SimHelper;
 import com.simprints.libsimprints.Verification;
 
@@ -31,6 +32,7 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -41,6 +43,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
+    static final int SIMPRINTS_IDENTIFICATION_INTENT = 1;
 
     private final SessionManager mSessionManager;
     private IdentificationEvent mUnsavedIdentificationEvent;
@@ -83,10 +86,15 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                 @Override
                 public void onClick(View v) {
                     SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
+//                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
+//                    mCheckInMemberDetailPresenterFragment.startActivityForResult(
+//                            fingerprintIdentificationIntent,
+//                            SIMPRINTS_VERIFICATION_INTENT
+//                    );
+                    Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString());
                     mCheckInMemberDetailPresenterFragment.startActivityForResult(
                             fingerprintIdentificationIntent,
-                            SIMPRINTS_VERIFICATION_INTENT
+                            SIMPRINTS_IDENTIFICATION_INTENT
                     );
                 }
             });
@@ -121,15 +129,27 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         if (resultCode == Constants.SIMPRINTS_CANCELLED) {
             showScanFailedToast();
         } else if (resultCode == Constants.SIMPRINTS_OK) {
-            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
-            String fingerprintTier = verification.getTier().toString();
-            float fingerprintConfidence = verification.getConfidence();
+//            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+//            String fingerprintTier = verification.getTier().toString();
+//            float fingerprintConfidence = verification.getConfidence();
+//
+//            // showScanSuccessfulToast();
+//            showScanSuccessfulToastWithConfidence(fingerprintTier, fingerprintConfidence);
+//
+//            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+//            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
+            String result = "";
+            String confidences = "";
+            ArrayList<Identification> identifications = data.getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+            for (Identification id : identifications) {
+                result = result + id.getGuid() +  "|" + id.getConfidence() + "|" + id.getTier() + "\n";
+                confidences = confidences + " " + id.getConfidence();
+            }
+            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(result);
+            for (int i=0; i < 5; i++) {
+                Toast.makeText(getContext(), confidences, Toast.LENGTH_LONG).show();
+            }
 
-            // showScanSuccessfulToast();
-            showScanSuccessfulToastWithConfidence(fingerprintTier, fingerprintConfidence);
-
-            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
             navigateToClinicNumberForm();
         } else {
             // TODO No toast here?
