@@ -63,11 +63,6 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         }
 
         String genderString = attributeBundle.getString(Member.FIELD_NAME_GENDER);
-        if (genderString == null) {
-            RadioButton lastRadioButton = (RadioButton) mRadioGroupView.findViewById(R.id.female);
-            lastRadioButton.setError(getString(R.string.gender_validation_error));
-            return;
-        }
         newborn.setGender(Member.GenderEnum.valueOf(genderString));
 
         Date birthdate;
