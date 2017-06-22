@@ -4,16 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.adapters.MemberAdapter;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -24,7 +19,6 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
-import java.util.List;
 
 
 /**
