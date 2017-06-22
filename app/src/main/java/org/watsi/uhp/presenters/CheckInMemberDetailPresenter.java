@@ -130,7 +130,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void completeIdentification() {
-        // TODO, figure out how to deal with non-nullable integers and floats.
         getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
     }
 }
