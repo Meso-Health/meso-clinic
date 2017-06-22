@@ -146,10 +146,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                 confidences = confidences + " " + id.getConfidence();
             }
             mUnsavedIdentificationEvent.setFingerprintsVerificationTier(result);
-            for (int i=0; i < 5; i++) {
-                Toast.makeText(getContext(), confidences, Toast.LENGTH_LONG).show();
-            }
-
+            // Toast.makeText(getContext(), confidences, Toast.LENGTH_LONG).show();
+            showScanSuccessfulToast();
             navigateToClinicNumberForm();
         } else {
             // TODO No toast here?
