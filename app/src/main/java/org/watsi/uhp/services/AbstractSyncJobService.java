@@ -32,7 +32,7 @@ public abstract class AbstractSyncJobService extends JobService {
 
     public static JobInfo buildJobInfo(int jobId, ComponentName componentName) {
         return new JobInfo.Builder(jobId, componentName)
-                //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPeriodic(SYNC_INTERVAL)
                 .setPersisted(true)
                 .build();
