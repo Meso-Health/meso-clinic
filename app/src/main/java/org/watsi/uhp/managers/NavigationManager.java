@@ -30,9 +30,6 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * Helper class for managing navigation between fragments
  */

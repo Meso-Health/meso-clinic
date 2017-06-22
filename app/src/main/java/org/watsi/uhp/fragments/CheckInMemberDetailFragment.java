@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.view.Menu;
 import android.view.View;
 
 import org.watsi.uhp.managers.NavigationManager;
