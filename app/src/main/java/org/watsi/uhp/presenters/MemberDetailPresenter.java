@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -149,6 +149,10 @@ public class MemberDetailPresenter {
 
     protected TextView getMemberPhoneNumberTextView() {
         return ((TextView) mView.findViewById(R.id.member_phone_number));
+    }
+
+    protected Button getMemberActionButton() {
+        return ((Button) mView.findViewById(R.id.member_action_button));
     }
 
     protected void setPatientCardPhotoBitmap(Bitmap photoBitMap) {
