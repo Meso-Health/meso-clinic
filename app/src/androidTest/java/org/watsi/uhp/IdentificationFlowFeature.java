@@ -115,7 +115,7 @@ public class IdentificationFlowFeature extends ActivityTest {
 
     public void checkingInPatient_idFlow(String name) {
         // asserts that when you click 'CHECK-IN', clinic number dialog comes up
-        onView(withId(R.id.approve_identity)).perform(click());
+        onView(withId(R.id.member_action_button)).perform(click());
         onView(withText("Enter the patient's clinic number")).check(matches(isDisplayed()));
 
         // asserts that when you enter OPD number and click 'SUBMIT', current patients fragment displays with patient that you just checked in
