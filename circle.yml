@@ -4,19 +4,24 @@ machine:
 
 test:
   override:
-    # start the emulator
-    - emulator -avd circleci-android22 -no-boot-anim -no-audio -no-window:
-        background: true
-        parallel: true
     # run unit tests
     - ./gradlew testSpecDebugUnitTest
-    # wait for emulator to finish boot
-    - circle-android wait-for-boot
-    # unlock the emulator screen
-    - sleep 30
-    - adb shell input keyevent 82
-    # run offline instrumentation tests against the emulator
-    - ./gradlew connectedSpecDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=org.watsi.uhp.offline
+
+#    # run instrumentation tests locally for now
+#    # start the emulator
+#    - emulator -avd circleci-android22 -no-boot-anim -no-audio -no-window:
+#        background: true
+#        parallel: true
+#    # wait for emulator to finish boot
+#    - circle-android wait-for-boot
+#    # turn off data and wifi
+#    - adb shell svc data disable
+#    - adb shell svc wifi disable
+#    # unlock the emulator screen
+#    - sleep 30
+#    - adb shell input keyevent 82
+#    # run offline instrumentation tests against the emulator
+#    - ./gradlew connectedSpecDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=org.watsi.uhp.offline
 
   post:
       # copy unit and instrument test results to Circle Test results directory
