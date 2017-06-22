@@ -131,6 +131,8 @@ public class ClinicActivity extends AppCompatActivity {
             showDialogReturnToPreviousScreen();
         } else if (currentFragment instanceof ClinicNumberFormFragment) {
             showDialogReturnToPreviousScreen();
+        } else if (currentFragment instanceof MemberDetailFragment) {
+            getNavigationManager().setCurrentPatientsFragment();
         } else {
             super.onBackPressed();
         }
