@@ -25,16 +25,13 @@ import java.sql.SQLException;
  */
 
 public class ClinicNumberFormPresenter {
-    // Logic
     private IdentificationEvent mUnsavedIdentificationEvent;
 
-    // Activity, context, and view
     private final Activity mActivity;
     private final Context mContext;
     private final View mView;
     private final NavigationManager mNavigationManager;
 
-    // Elements in the view
     private EditText mClinicNumberView;
     private Button mSubmitButton;
     private RadioGroup mClinicNumberRadioGroup;
@@ -43,34 +40,25 @@ public class ClinicNumberFormPresenter {
     public ClinicNumberFormPresenter(View view, Context context, NavigationManager navigationManager, Activity activity, IdentificationEvent unsavedIdentificationEvent) {
         mUnsavedIdentificationEvent = unsavedIdentificationEvent;
 
-        // View
         mView = view;
 
-        // Activity
         mActivity = activity;
         mContext = context;
         mNavigationManager = navigationManager;
 
-        // Elements in the view
         mClinicNumberRadioGroup = (RadioGroup) view.findViewById(R.id.radio_group_clinic_number);
         mClinicNumberView = (EditText) view.findViewById(R.id.clinic_number_field);
         mSubmitButton = (Button) view.findViewById(R.id.clinic_number_save_button);
         mSubmitButton.setEnabled(false);
 
-        // Setting Listeners in the view
         setListeners();
 
-        // Set title on screen
         mActivity.setTitle(R.string.clinic_number_form_fragment_label);
 
-        // Keyboard set up
         KeyboardManager.focusAndForceShowKeyboard(mClinicNumberView, mContext);
     }
 
-
-    // DB ONLY
     protected void saveIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, Integer clinicNumber) {
-        // Getting stuff from UI
         mUnsavedIdentificationEvent.setClinicNumberType(clinicNumberType);
         mUnsavedIdentificationEvent.setClinicNumber(clinicNumber);
         mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
@@ -96,22 +84,15 @@ public class ClinicNumberFormPresenter {
     }
 
     protected void onClickSubmitButton() {
-        // save opd number (database stuff)
         saveIdentification(getSelectedClinicNumberType(), getSelectedClinicNumber());
-
-        // ui stuff
         displayIdentificationSuccessfulToast();
-
-        // navigation stuff
         navigateToCurrentPatientsFragment();
     }
 
-    // UI to value
     protected int getSelectedClinicNumber() {
         return Integer.valueOf(mClinicNumberView.getText().toString());
     }
 
-    // UI to value
     protected IdentificationEvent.ClinicNumberTypeEnum getSelectedClinicNumberType() {
         RadioButton selectedRadioButton = (RadioButton) mClinicNumberRadioGroup.findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
         IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
@@ -121,7 +102,6 @@ public class ClinicNumberFormPresenter {
     }
 
     protected String getAuthenticationTokenFromActivity() {
-        // TODO: Feels super hacky, probably should create a base class for all presenters
         return ((ClinicActivity) mActivity).getAuthenticationToken();
     }
 
