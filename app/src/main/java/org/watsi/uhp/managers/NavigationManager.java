@@ -67,7 +67,7 @@ public class NavigationManager {
             FragmentManager fm = mActivity.getSupportFragmentManager();
             if (popBackStack) {
                 fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                if ((prevTag == HOME_TAG) && (fm.findFragmentByTag(HOME_TAG) != null)) {
+                if (fm.findFragmentByTag(HOME_TAG) != null) {
                     fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
                 }
             }
@@ -92,30 +92,22 @@ public class NavigationManager {
         setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
-    public void setMemberDetailFragment(Member member, boolean addToBackStack) {
-        setCurrentMemberDetailFragment(member, addToBackStack);
-    }
-
     public void setMemberDetailFragment(Member member) {
-        setCurrentMemberDetailFragment(member, true);
-    }
-
-    public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember, boolean addToBackStack) {
-        // Decides whether to show the pre-check in fragment, or the post-check in fragment.
-        if (member.currentCheckIn() == null) {
-            setCheckInMemberDetailFragment(member, idMethod, throughMember, addToBackStack);
-        } else {
-            setCurrentMemberDetailFragment(member, addToBackStack);
-        }
+        setMemberDetailFragment(member, null, null);
     }
 
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
-        setMemberDetailFragment(member, idMethod, throughMember, true);
+        // Decides whether to show the pre-check in fragment, or the post-check in fragment.
+        if (member.currentCheckIn() == null) {
+            setCheckInMemberDetailFragment(member, idMethod, throughMember);
+        } else {
+            setCurrentMemberDetailFragment(member);
+        }
     }
 
     protected void setCheckInMemberDetailFragment(Member member,
                                   IdentificationEvent.SearchMethodEnum idMethod,
-                                  Member throughMember, boolean addToBackStack) {
+                                  Member throughMember) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         if (idMethod != null) {
@@ -125,13 +117,13 @@ public class NavigationManager {
             bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, addToBackStack, false);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
-    protected void setCurrentMemberDetailFragment(Member member, boolean addToBackStack) {
+    protected void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, addToBackStack, false);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setClinicNumberFormFragment(IdentificationEvent idEvent) {

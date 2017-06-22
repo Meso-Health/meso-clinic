@@ -64,7 +64,7 @@ public class ClinicNumberFormPresenter {
         mActivity.setTitle(R.string.clinic_number_form_fragment_label);
 
         // Keyboard set up
-        KeyboardManager.focusAndShowKeyboard(mClinicNumberView, mContext);
+        KeyboardManager.focusAndForceShowKeyboard(mClinicNumberView, mContext);
     }
 
 

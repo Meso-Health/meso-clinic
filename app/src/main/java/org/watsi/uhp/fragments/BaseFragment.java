@@ -23,10 +23,6 @@ public abstract class BaseFragment extends Fragment {
         return ((ClinicActivity) getActivity()).getAuthenticationToken();
     }
 
-    public String getTagForNavigation() {
-        return getClass().getSimpleName();
-    }
-
     public void onStart() {
         super.onStart();
 
