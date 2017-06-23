@@ -33,7 +33,7 @@
             android:id="@+id/save_button"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:theme="@style/PrimaryButton"
+            style="@style/PrimaryButton"
             android:text="@string/enrollment_next_step_btn" />
     </RelativeLayout>
 </LinearLayout>
