@@ -1,47 +1,24 @@
 package org.watsi.uhp.presenters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.simprints.libsimprints.SimHelper;
-
-import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
-import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
-import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.SyncableModel;
 
 /**
  * Created by michaelliang on 6/24/17.
  */
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
-    private final SessionManager mSessionManager;
-    private final CheckInMemberDetailFragment mCheckInMemberDeailFragment;
     private IdentificationEvent mIdEvent;
-    private NavigationManager mNavigationManager;
 
-    public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
+    public CheckInMemberDetailPresenter(NavigationManager navigationManager, View view, Context context, Member member, IdentificationEvent idEvent) {
         super(view, context, member, navigationManager);
-
-        mCheckInMemberDeailFragment = checkInMemberDetailFragment;
-        mSessionManager = sessionManager;
         mIdEvent = idEvent;
-        mNavigationManager = navigationManager;
-    }
-
-    public void setUp() {
-        super.setUp();
     }
 
     public void setMemberActionButton() {
@@ -71,7 +48,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void openClinicOpdDialog() {
-        mNavigationManager.setClinicNumberFormFragment(mIdEvent);
+        getNavigationManager().setClinicNumberFormFragment(mIdEvent);
     }
 
     public IdentificationEvent getIdEvent() {

@@ -20,8 +20,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
 
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
                 getNavigationManager(),
-                getSessionManager(),
-                this,
                 view,
                 getContext(),
                 getMember(),
