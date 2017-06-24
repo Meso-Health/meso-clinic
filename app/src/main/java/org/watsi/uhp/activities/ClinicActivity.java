@@ -23,7 +23,7 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
+import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.FormFragment;
@@ -131,8 +131,21 @@ public class ClinicActivity extends AppCompatActivity {
             showDialogReturnToPreviousScreen();
         } else if (currentFragment instanceof ClinicNumberFormFragment) {
             showDialogReturnToPreviousScreen();
+        } else if (currentFragment instanceof MemberDetailFragment) {
+            getNavigationManager().setCurrentPatientsFragment();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -146,12 +159,11 @@ public class ClinicActivity extends AppCompatActivity {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            Fragment fragment =
-                    getSupportFragmentManager().findFragmentByTag(NavigationManager.DETAIL_TAG);
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
             Member member = null;
-            if (fragment instanceof MemberDetailFragment) {
-                member = ((MemberDetailFragment) fragment).getMember();
+            if (currentFragment instanceof MemberDetailFragment) {
+                member = ((MemberDetailFragment) currentFragment).getMember();
             }
             switch (item.getItemId()) {
                 case R.id.menu_logout:
@@ -165,21 +177,21 @@ public class ClinicActivity extends AppCompatActivity {
                         }).create().show();
                     break;
                 case R.id.menu_member_edit:
-                    if (fragment instanceof CheckInMemberDetailFragment) {
-                        CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
+                    if (currentFragment instanceof IdentifyMemberDetailFragment) {
+                        IdentifyMemberDetailFragment identifyMemberDetailFragment = (IdentifyMemberDetailFragment) currentFragment;
                         getNavigationManager().setMemberEditFragment(
                                 member,
-                                checkInMemberDetailFragment.getIdEvent(),
+                                identifyMemberDetailFragment.getIdEvent(),
                                 null
                         );
 
-                    } else if (fragment instanceof CurrentMemberDetailFragment) {
+                    } else if (currentFragment instanceof CurrentMemberDetailFragment) {
                         getNavigationManager().setMemberEditFragment(
                                 member,
                                 null,
                                 null);
                     } else {
-                        ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
+                        ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [IdentifyMemberDetailFragment, CurrentMemberDetailFragment]");
                     }
 
                     break;
@@ -193,25 +205,14 @@ public class ClinicActivity extends AppCompatActivity {
                     getNavigationManager().setEnrollmentMemberPhotoFragment(member);
                     break;
                 case R.id.menu_check_in_without_fingerprints:
-                    if (fragment instanceof CheckInMemberDetailFragment) {
-                        ((CheckInMemberDetailFragment) fragment).completeIdentificationWithoutFingerprints();
+                    if (currentFragment instanceof IdentifyMemberDetailFragment) {
+                        ((IdentifyMemberDetailFragment) currentFragment).completeIdentificationWithoutFingerprints();
                     } else {
-                        ExceptionManager.reportMessage("CheckInWithoutFingerprints menu button reached from fragment that's not CheckInMemberDetailFragment");
+                        ExceptionManager.reportMessage("CheckInWithoutFingerprints menu button reached from fragment that's not IdentifyMemberDetailFragment");
                     }
                     break;
             }
             return true;
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -279,6 +280,17 @@ public class ClinicActivity extends AppCompatActivity {
 
                     public void onClick(DialogInterface arg0, int arg1) {
                         ClinicActivity.super.onBackPressed();
+                    }
+                }).create().show();
+    }
+
+    private void showDialogReturnToCurrentPatientsScreen() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_form_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        getNavigationManager().setCurrentPatientsFragment();
                     }
                 }).create().show();
     }

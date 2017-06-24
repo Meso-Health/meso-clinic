@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.widget.ListView
 import android.widget.SearchView
+import android.widget.TextView
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.database.MemberDao
 import org.watsi.uhp.managers.KeyboardManager
@@ -15,6 +16,7 @@ import org.watsi.uhp.models.Member
 class SearchMemberPresenter(
         private val mProgressDialog: ProgressDialog,
         private val mListView: ListView,
+        private val mEmptyView: TextView,
         private val mSearchView: SearchView,
         private val mContext: Context,
         private val mNavigationManager: NavigationManager) {
@@ -67,6 +69,7 @@ class SearchMemberPresenter(
     fun displayMembersResult(searchMethod: IdentificationEvent.SearchMethodEnum, members: List<Member>) {
         val adapter = MemberAdapter(mContext, members, false)
         mListView.adapter = adapter
+        mListView.emptyView = mEmptyView
         mListView.setOnItemClickListener { parent, _, position, _ ->
             val member = parent.getItemAtPosition(position) as Member
             mNavigationManager.setMemberDetailFragment(member, searchMethod, null)

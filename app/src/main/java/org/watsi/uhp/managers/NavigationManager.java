@@ -9,7 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
+import org.watsi.uhp.fragments.BaseFragment;
+import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
@@ -58,51 +59,53 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
-    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
-                             popBackStack, int transition) {
-
-        FragmentManager fm = mActivity.getSupportFragmentManager();
-        if (popBackStack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            if (fm.findFragmentByTag(HOME_TAG) != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
+    private void setFragment(Fragment nextFragment, String prevTag, boolean addToBackstack, boolean
+                             popBackStack) {
+        if (nextFragment instanceof BaseFragment) {
+            FragmentManager fm = mActivity.getSupportFragmentManager();
+            if (popBackStack) {
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                if (fm.findFragmentByTag(HOME_TAG) != null) {
+                    fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
+                }
             }
-        }
 
-        FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment, tag);
-        transaction.setTransition(transition);
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.replace(R.id.fragment_container, nextFragment, prevTag);
 
-        if (addToBackstack) {
-            transaction.addToBackStack(null);
+            if (addToBackstack) {
+                transaction.addToBackStack(null);
+            }
+            transaction.commit();
+        } else {
+            ExceptionManager.reportException(new IllegalStateException("setFragment called with fragment that is an instance of BaseFragment"));
         }
-        transaction.commit();
     }
 
     private void setFragment(Fragment fragment) {
-        setFragment(fragment, null, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(fragment, null, true, false);
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true, FragmentTransaction.TRANSIT_NONE);
+        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
     public void setMemberDetailFragment(Member member) {
-        setCurrentMemberDetailFragment(member);
+        setMemberDetailFragment(member, null, null);
     }
 
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         // Decides whether to show the pre-check in fragment, or the post-check in fragment.
         if (member.currentCheckIn() == null) {
-            setCheckInMemberDetailFragment(member, idMethod, throughMember);
+            setIdentifyMemberDetailFragment(member, idMethod, throughMember);
         } else {
             setCurrentMemberDetailFragment(member);
         }
     }
 
-    protected void setCheckInMemberDetailFragment(Member member,
-                                  IdentificationEvent.SearchMethodEnum idMethod,
-                                  Member throughMember) {
+    protected void setIdentifyMemberDetailFragment(Member member,
+                                                   IdentificationEvent.SearchMethodEnum idMethod,
+                                                   Member throughMember) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         if (idMethod != null) {
@@ -112,20 +115,20 @@ public class NavigationManager {
             bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         }
 
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(mFragmentProvider.createFragment(IdentifyMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_NONE);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setClinicNumberFormFragment(IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
 
-        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,

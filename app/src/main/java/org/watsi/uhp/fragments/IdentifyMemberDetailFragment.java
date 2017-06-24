@@ -8,10 +8,10 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
+import org.watsi.uhp.presenters.IdentifyMemberDetailPresenter;
 
-public class CheckInMemberDetailFragment extends MemberDetailFragment {
-    private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
+public class IdentifyMemberDetailFragment extends MemberDetailFragment {
+    private IdentifyMemberDetailPresenter identifyMemberDetailPresenter;
 
     protected void setUpFragment(View view) {
         String searchMethodString = getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
@@ -22,7 +22,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         Member throughMember = (Member) getArguments()
                 .getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
 
-        checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
+        identifyMemberDetailPresenter = new IdentifyMemberDetailPresenter(
                 getNavigationManager(),
                 getSessionManager(),
                 this,
@@ -32,7 +32,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
                 idMethod,
                 throughMember
         );
-        checkInMemberDetailPresenter.setUp();
+        identifyMemberDetailPresenter.setUp();
     }
 
     @Override
@@ -44,15 +44,15 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        checkInMemberDetailPresenter.handleOnActivityResult(requestCode, resultCode, data);
+        identifyMemberDetailPresenter.handleOnActivityResult(requestCode, resultCode, data);
     }
 
     public IdentificationEvent getIdEvent() {
-        return checkInMemberDetailPresenter.getUnsavedIdentificationEvent();
+        return identifyMemberDetailPresenter.getUnsavedIdentificationEvent();
     }
 
     public void completeIdentificationWithoutFingerprints() {
-        checkInMemberDetailPresenter.completeIdentificationWithoutFingerprints();
+        identifyMemberDetailPresenter.completeIdentificationWithoutFingerprints();
     }
 }
 

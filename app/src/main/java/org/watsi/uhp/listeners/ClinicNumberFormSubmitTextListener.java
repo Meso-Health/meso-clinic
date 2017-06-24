@@ -28,7 +28,6 @@ public class ClinicNumberFormSubmitTextListener implements TextWatcher {
         // no-op
     }
 
-    // This part is worth unit testing.
     @Override
     public void afterTextChanged(Editable s) {
         if (mClinicNumberView.getText().toString().isEmpty()) {

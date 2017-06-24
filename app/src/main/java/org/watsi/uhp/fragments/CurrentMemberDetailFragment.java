@@ -12,8 +12,8 @@ public class CurrentMemberDetailFragment extends MemberDetailFragment {
     private CurrentMemberDetailPresenter currentMemberDetailPresenter;
 
     protected void setUpFragment(View view) {
-        currentMemberDetailPresenter = new CurrentMemberDetailPresenter(getNavigationManager(), view
-                , getContext(), getMember());
+        currentMemberDetailPresenter = new CurrentMemberDetailPresenter(getNavigationManager(),
+                view, getContext(), getMember());
         currentMemberDetailPresenter.setUp();
     }
 }

@@ -31,7 +31,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void setMemberActionButton() {
-        Button confirmButton = (Button) getView().findViewById(R.id.member_action_button);
+        Button confirmButton = getMemberActionButton();
 
         confirmButton.setText(R.string.detail_create_encounter);
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +48,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
                 }
-                    getNavigationManager().setEncounterFragment(encounter);
+                getNavigationManager().setEncounterFragment(encounter);
             }
         });
     }
@@ -90,16 +90,24 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         try {
             checkIn.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
-            Toast.makeText(getContext(),
-                    getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
-                    Toast.LENGTH_LONG).
-                    show();
+            showCheckedOutSuccessfulToast();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
-            Toast.makeText(getContext(),
-                    getContext().getString(R.string.identification_dismissed_failure),
-                    Toast.LENGTH_LONG).
-                    show();
+            showFailedToCheckOutToast();
         }
+    }
+
+    protected void showFailedToCheckOutToast() {
+        Toast.makeText(getContext(),
+                getContext().getString(R.string.identification_dismissed_failure),
+                Toast.LENGTH_LONG).
+                show();
+    }
+
+    protected void showCheckedOutSuccessfulToast() {
+        Toast.makeText(getContext(),
+                getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
+                Toast.LENGTH_LONG).
+                show();
     }
 }
