@@ -1,15 +1,11 @@
 package org.watsi.uhp.fragments;
 
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 
-import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
-import org.watsi.uhp.presenters.IdentifyMemberDetailPresenter;
 
 public class CheckInMemberDetailFragment extends MemberDetailFragment {
     private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
@@ -19,12 +15,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
                 .getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
-                getNavigationManager(),
-                view,
-                getContext(),
-                getMember(),
-                idEvent
-        );
+                getNavigationManager(), view, getContext(), getMember(), idEvent);
         checkInMemberDetailPresenter.setUp();
     }
 
