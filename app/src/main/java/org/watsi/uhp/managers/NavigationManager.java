@@ -95,6 +95,18 @@ public class NavigationManager {
         setMemberDetailFragment(member, null, null);
     }
 
+    public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+        if (member.currentCheckIn() == null) {
+            if (member.getFingerprintsGuid() == null || idEvent.getFingerprintsVerificationTier() != null) {
+                setCheckInMemberDetailFragment(member, idEvent);
+            } else {
+                setIdentifyMemberDetailFragment(member, idEvent.getSearchMethod(), idEvent.getThroughMember());
+            }
+        } else {
+            setCurrentMemberDetailFragment(member);
+        }
+    }
+
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         // Decides whether to show the pre-check in fragment, or the post-check in fragment.
         if (member.currentCheckIn() == null) {
@@ -185,27 +197,31 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(AddNewBillableFragment.class, bundle));
     }
 
-    public void setEnrollmentContactInfoFragment(Member member) {
+    public void setEnrollmentContactInfoFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
     }
 
-    public void setEnrollmentMemberPhotoFragment(Member member) {
+    public void setEnrollmentMemberPhotoFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
     }
 
-    public void setEnrollmentIdPhotoFragment(Member member) {
+    public void setEnrollmentIdPhotoFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollmentIdPhotoFragment.class, bundle));
     }
 
-    public void setEnrollmentFingerprintFragment(Member member) {
+    public void setEnrollmentFingerprintFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
     }
 

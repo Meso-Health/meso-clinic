@@ -15,6 +15,8 @@ import com.simprints.libsimprints.SimHelper;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -26,6 +28,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
 
     private static int SIMPRINTS_ENROLLMENT_INTENT = 3;
 
+    private IdentificationEvent mIdEvent;
     private View mSuccessMessageView;
     private View mFailedMessageView;
 
@@ -53,7 +56,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     mSyncableModel.saveChanges(getAuthenticationToken());
-                    getNavigationManager().setCurrentPatientsFragment();
+                    getNavigationManager().setCheckInMemberDetailFragment(mSyncableModel, mIdEvent);
                     Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
@@ -74,6 +77,8 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     void setUpFragment(View view) {
         mSuccessMessageView = view.findViewById(R.id.enrollment_fingerprint_success_message);
         mFailedMessageView = view.findViewById(R.id.enrollment_fingerprint_failed_message);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+
 
         Button fingerprintBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_capture_btn);
         fingerprintBtn.setOnClickListener(new CaptureThumbprintClickListener(mSyncableModel.getId(), this));

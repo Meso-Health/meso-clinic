@@ -15,6 +15,8 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_MEMBER_PHOTO_INTENT = 1;
 
+    private IdentificationEvent mIdEvent;
     private ImageView mMemberPhotoImageView;
     private Uri mUri;
 
@@ -47,12 +50,12 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
         try {
             if (!mSyncableModel.shouldCaptureFingerprint()) {
                 mSyncableModel.saveChanges(getAuthenticationToken());
-                getNavigationManager().setCurrentPatientsFragment();
+                getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                 Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
             } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
-                getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel);
+                getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel, mIdEvent);
             } else {
-                getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
+                getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel, mIdEvent);
             }
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
@@ -79,6 +82,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                 new CapturePhotoClickListener(TAKE_MEMBER_PHOTO_INTENT, this, mUri));
 
         mMemberPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             mSaveBtn.setText(R.string.enrollment_complete_btn);

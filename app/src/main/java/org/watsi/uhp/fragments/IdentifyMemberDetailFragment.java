@@ -48,7 +48,7 @@ public class IdentifyMemberDetailFragment extends MemberDetailFragment {
     }
 
     public IdentificationEvent getIdEvent() {
-        return identifyMemberDetailPresenter.getUnsavedIdentificationEvent();
+        return identifyMemberDetailPresenter.getIdEvent();
     }
 
     public void completeIdentificationWithoutFingerprints() {

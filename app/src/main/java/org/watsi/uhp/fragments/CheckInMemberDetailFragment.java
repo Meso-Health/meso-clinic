@@ -35,8 +35,8 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         super.onPrepareOptionsMenu(menu);
     }
 
-//    public IdentificationEvent getIdEvent() {
-//        return checkInMemberDetailPresenter.getUnsavedIdentificationEvent();
-//    }
+    public IdentificationEvent getIdEvent() {
+        return checkInMemberDetailPresenter.getIdEvent();
+    }
 }
 

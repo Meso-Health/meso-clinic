@@ -30,7 +30,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     private final CheckInMemberDetailFragment mCheckInMemberDeailFragment;
     private IdentificationEvent mIdEvent;
     private NavigationManager mNavigationManager;
-    private  SessionManager sessionManager;
 
     public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
         super(view, context, member, navigationManager);
@@ -73,5 +72,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     public void openClinicOpdDialog() {
         mNavigationManager.setClinicNumberFormFragment(mIdEvent);
+    }
+
+    public IdentificationEvent getIdEvent() {
+        return mIdEvent;
     }
 }

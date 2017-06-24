@@ -23,6 +23,7 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
@@ -184,6 +185,13 @@ public class ClinicActivity extends AppCompatActivity {
                                 identifyMemberDetailFragment.getIdEvent(),
                                 null
                         );
+                    } else if (currentFragment instanceof CheckInMemberDetailFragment) {
+                        CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) currentFragment;
+                        getNavigationManager().setMemberEditFragment(
+                                member,
+                                checkInMemberDetailFragment.getIdEvent(),
+                                null
+                        );
 
                     } else if (currentFragment instanceof CurrentMemberDetailFragment) {
                         getNavigationManager().setMemberEditFragment(
@@ -202,7 +210,17 @@ public class ClinicActivity extends AppCompatActivity {
                     getNavigationManager().setVersionFragment();
                     break;
                 case R.id.menu_complete_enrollment:
-                    getNavigationManager().setEnrollmentMemberPhotoFragment(member);
+                    if (currentFragment instanceof IdentifyMemberDetailFragment) {
+                        getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((IdentifyMemberDetailFragment) currentFragment).getIdEvent());
+                    } else if (currentFragment instanceof CheckInMemberDetailFragment) {
+                        getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) currentFragment).getIdEvent());
+                    }
+
+                    else if (currentFragment instanceof CurrentMemberDetailFragment) {
+                        getNavigationManager().setEnrollmentMemberPhotoFragment(member, null);
+                    } else {
+                        ExceptionManager.reportMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
+                    }
                     break;
                 case R.id.menu_check_in_without_fingerprints:
                     if (currentFragment instanceof IdentifyMemberDetailFragment) {

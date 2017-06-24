@@ -15,6 +15,8 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class EnrollmentIdPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_ID_PHOTO_INTENT = 2;
 
+    private IdentificationEvent mIdEvent;
     private ImageView mIdPhotoImageView;
     private Uri mUri;
 
@@ -43,7 +46,7 @@ public class EnrollmentIdPhotoFragment extends FormFragment<Member> {
 
     @Override
     void nextStep(View view) {
-        getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
+        getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel, mIdEvent);
     }
 
     @Override
@@ -65,6 +68,7 @@ public class EnrollmentIdPhotoFragment extends FormFragment<Member> {
                 new CapturePhotoClickListener(TAKE_ID_PHOTO_INTENT, this, mUri));
 
         mIdPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
     }
 
     @Override

@@ -32,10 +32,9 @@ import java.sql.SQLException;
 
 public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
-    // static final int SIMPRINTS_IDENTIFICATION_INTENT = 1;
 
     private final SessionManager mSessionManager;
-    private IdentificationEvent mUnsavedIdentificationEvent;
+    private IdentificationEvent mIdEvent;
     private final IdentifyMemberDetailFragment mIdentifyMemberDetailPresenterFragment;
     private Member mThroughMember;
     private IdentificationEvent.SearchMethodEnum mIdMethod;
@@ -55,12 +54,12 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void preFillIdentificationEventFields() {
-        mUnsavedIdentificationEvent = new IdentificationEvent();
-        mUnsavedIdentificationEvent.setMember(getMember());
-        mUnsavedIdentificationEvent.setSearchMethod(mIdMethod);
-        mUnsavedIdentificationEvent.setThroughMember(mThroughMember);
+        mIdEvent = new IdentificationEvent();
+        mIdEvent.setMember(getMember());
+        mIdEvent.setSearchMethod(mIdMethod);
+        mIdEvent.setThroughMember(mThroughMember);
         if (getMember().getPhoto() == null) {
-            mUnsavedIdentificationEvent.setPhotoVerified(false);
+            mIdEvent.setPhotoVerified(false);
         }
     }
 
@@ -84,7 +83,7 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
     //// Below TBD because of fingerprints
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
+        mIdEvent.setFingerprintsVerificationResultCode(resultCode);
 
         // Report any errors if necessary.
         if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
@@ -103,8 +102,8 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
             String fingerprintTier = verification.getTier().toString();
             float fingerprintConfidence = verification.getConfidence();
 
-            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
+            mIdEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+            mIdEvent.setFingerprintsVerificationTier(fingerprintTier);
 
             showScanSuccessfulToast();
             navigateToCheckInMemberDetailFragment();
@@ -143,12 +142,12 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void completeIdentificationOnReport() throws SyncableModel.UnauthenticatedException {
-        mUnsavedIdentificationEvent.setClinicNumberType(null);
-        mUnsavedIdentificationEvent.setClinicNumber(null);
-        mUnsavedIdentificationEvent.setAccepted(false);
-        mUnsavedIdentificationEvent.setOccurredAt(Clock.getCurrentTime());
+        mIdEvent.setClinicNumberType(null);
+        mIdEvent.setClinicNumber(null);
+        mIdEvent.setAccepted(false);
+        mIdEvent.setOccurredAt(Clock.getCurrentTime());
         try {
-            mUnsavedIdentificationEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
+            mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }
@@ -160,12 +159,12 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
                 show();
     }
 
-    public IdentificationEvent getUnsavedIdentificationEvent() {
-        return mUnsavedIdentificationEvent;
+    public IdentificationEvent getIdEvent() {
+        return mIdEvent;
     }
 
     protected void navigateToCheckInMemberDetailFragment() {
-        getNavigationManager().setCheckInMemberDetailFragment(getMember(), mUnsavedIdentificationEvent);
+        getNavigationManager().setCheckInMemberDetailFragment(getMember(), mIdEvent);
     }
 
     protected void showScanFailedToast() {
@@ -181,6 +180,6 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
 
     public void completeIdentificationWithoutFingerprints() {
         // TODO, figure out how to deal with non-nullable integers and floats.
-        getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
+        getNavigationManager().setClinicNumberFormFragment(mIdEvent);
     }
 }
