@@ -43,7 +43,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
-    static final int SIMPRINTS_IDENTIFICATION_INTENT = 1;
+    // static final int SIMPRINTS_IDENTIFICATION_INTENT = 1;
 
     private final SessionManager mSessionManager;
     private IdentificationEvent mUnsavedIdentificationEvent;
@@ -86,16 +86,16 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                 @Override
                 public void onClick(View v) {
                     SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-//                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
-//                    mCheckInMemberDetailPresenterFragment.startActivityForResult(
-//                            fingerprintIdentificationIntent,
-//                            SIMPRINTS_VERIFICATION_INTENT
-//                    );
-                    Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString());
+                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
                     mCheckInMemberDetailPresenterFragment.startActivityForResult(
                             fingerprintIdentificationIntent,
-                            SIMPRINTS_IDENTIFICATION_INTENT
+                            SIMPRINTS_VERIFICATION_INTENT
                     );
+//                    Intent fingerprintIdentificationIntent = simHelper.identify(BuildConfig.PROVIDER_ID.toString());
+//                    mCheckInMemberDetailPresenterFragment.startActivityForResult(
+//                            fingerprintIdentificationIntent,
+//                            SIMPRINTS_IDENTIFICATION_INTENT
+//                    );
                 }
             });
         } else {
@@ -129,24 +129,13 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         if (resultCode == Constants.SIMPRINTS_CANCELLED) {
             showScanFailedToast();
         } else if (resultCode == Constants.SIMPRINTS_OK) {
-//            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
-//            String fingerprintTier = verification.getTier().toString();
-//            float fingerprintConfidence = verification.getConfidence();
-//
-//            // showScanSuccessfulToast();
-//            showScanSuccessfulToastWithConfidence(fingerprintTier, fingerprintConfidence);
-//
-//            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-//            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
-            String result = "";
-            String confidences = "";
-            ArrayList<Identification> identifications = data.getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
-            for (Identification id : identifications) {
-                result = result + id.getGuid() +  "|" + id.getConfidence() + "|" + id.getTier() + "\n";
-                confidences = confidences + " " + id.getConfidence();
-            }
-            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(result);
-            // Toast.makeText(getContext(), confidences, Toast.LENGTH_LONG).show();
+            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+            String fingerprintTier = verification.getTier().toString();
+            float fingerprintConfidence = verification.getConfidence();
+
+            mUnsavedIdentificationEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+            mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
+
             showScanSuccessfulToast();
             navigateToClinicNumberForm();
         } else {
