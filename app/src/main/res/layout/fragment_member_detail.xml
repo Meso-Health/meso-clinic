@@ -76,7 +76,7 @@
         android:id="@+id/member_action_button"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:theme="@style/PrimaryButton"
+        style="@style/PrimaryButton"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
         android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:layout_marginBottom="@dimen/fragment_vertical_margin"/>
