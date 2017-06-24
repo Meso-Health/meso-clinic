@@ -22,9 +22,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void setMemberActionButton() {
-        Button memberActionButton = getMemberActionButton();
-        memberActionButton.setText(R.string.check_in);
-        memberActionButton.setOnClickListener(new View.OnClickListener() {
+        getMemberActionButton().setText(R.string.check_in);
+        getMemberActionButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openClinicOpdDialog();
