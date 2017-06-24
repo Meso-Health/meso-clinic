@@ -37,10 +37,6 @@ public class MemberDetailPresenter {
         mNavigationManager = navigationManager;
     }
 
-    public TextView getMemberActionLink() {
-        return (TextView) mView.findViewById(R.id.member_action_link);
-    }
-
     public void setUp() {
         setPatientCardTextFields();
         setPatientCardPhoto();
@@ -63,9 +59,6 @@ public class MemberDetailPresenter {
 
     protected void setMemberActionLink() {
         // no-op
-        TextView memberActionLink = (TextView) getMemberActionLink();
-
-
     }
 
     protected void setPatientCardPhoto() {
@@ -124,6 +117,10 @@ public class MemberDetailPresenter {
     }
     // Tested above.
     // Untested below.
+
+    public TextView getMemberActionLink() {
+        return (TextView) mView.findViewById(R.id.member_action_link);
+    }
 
     protected TextView getHouseholdMembersLabelTextView() {
         return (TextView) getView().findViewById(R.id.household_members_label);
