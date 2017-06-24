@@ -181,5 +181,6 @@
     <string name="sync_new_members_label">New members</string>
     <string name="sync_id_events_label">Identifications</string>
     <string name="sync_encounters_label">Treatment Information</string>
+    <string name="sync_encounter_forms_label">Treatment Forms</string>
     <string name="all_synced">All synced</string>
 </resources>

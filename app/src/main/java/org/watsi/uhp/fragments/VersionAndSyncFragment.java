@@ -15,6 +15,7 @@ import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -76,7 +77,7 @@ public class VersionAndSyncFragment extends BaseFragment {
         new AsyncTask<String, Void, int[]>() {
             @Override
             protected int[] doInBackground(String... params) {
-                int[] counts = new int[5];
+                int[] counts = new int[6];
                 try {
                     counts[0] = MemberDao.membersWithPhotosToFetch().size();
                     List<Member> unsyncedMembers = Member.unsynced(Member.class);
@@ -93,6 +94,7 @@ public class VersionAndSyncFragment extends BaseFragment {
                     counts[2] = editedMembersCount;
                     counts[3] = IdentificationEvent.unsynced(IdentificationEvent.class).size();
                     counts[4] = Encounter.unsynced(Encounter.class).size();
+                    counts[5] = EncounterForm.unsynced(EncounterForm.class).size();
                 } catch (SQLException | IllegalStateException e) {
                     ExceptionManager.reportException(e);
                 }
@@ -114,6 +116,8 @@ public class VersionAndSyncFragment extends BaseFragment {
                             .setText(formattedQuantity(result[3]));
                     ((TextView) view.findViewById(R.id.sync_encounters_quantity))
                             .setText(formattedQuantity(result[4]));
+                    ((TextView) view.findViewById(R.id.sync_encounters_quantity))
+                            .setText(formattedQuantity(result[5]));
                 }
 
                 spinner.dismiss();
