@@ -10,6 +10,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.BaseFragment;
+import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
@@ -97,7 +98,15 @@ public class NavigationManager {
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         // Decides whether to show the pre-check in fragment, or the post-check in fragment.
         if (member.currentCheckIn() == null) {
-            setIdentifyMemberDetailFragment(member, idMethod, throughMember);
+            if (member.getFingerprintsGuid() != null) {
+                setIdentifyMemberDetailFragment(member, idMethod, throughMember);
+            } else {
+                IdentificationEvent idEvent = new IdentificationEvent();
+                idEvent.setMember(member);
+                idEvent.setSearchMethod(idMethod);
+                idEvent.setThroughMember(throughMember);
+                setCheckInMemberDetailFragment(member, idEvent);
+            }
         } else {
             setCurrentMemberDetailFragment(member);
         }
@@ -116,6 +125,13 @@ public class NavigationManager {
         }
 
         setFragment(mFragmentProvider.createFragment(IdentifyMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
+    }
+
+    public void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {

@@ -66,36 +66,22 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
-        if (getMember().getFingerprintsGuid() != null) {
-            memberActionButton.setText(R.string.check_in_with_fingerprints);
-            memberActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember() .getFingerprintsGuid().toString());
-                    mIdentifyMemberDetailPresenterFragment.startActivityForResult(
-                            fingerprintIdentificationIntent,
-                            SIMPRINTS_VERIFICATION_INTENT
-                    );
-                }
-            });
-        } else {
-            memberActionButton.setText(R.string.check_in_without_fingerprints);
-            memberActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    completeIdentificationWithoutFingerprints();
-                }
-            });
-        }
+        memberActionButton.setText(R.string.scan_fingerprints);
+        memberActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
+                Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid().toString());
+                mIdentifyMemberDetailPresenterFragment.startActivityForResult(
+                        fingerprintIdentificationIntent,
+                        SIMPRINTS_VERIFICATION_INTENT
+                );
+            }
+        });
     }
 
     //// Tested above
     //// Below TBD because of fingerprints
-
-    protected Button getMemberActionButton() {
-         return (Button) getView().findViewById(R.id.member_action_button);
-    }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         mUnsavedIdentificationEvent.setFingerprintsVerificationResultCode(resultCode);
@@ -121,12 +107,12 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
             mUnsavedIdentificationEvent.setFingerprintsVerificationTier(fingerprintTier);
 
             showScanSuccessfulToast();
-            navigateToClinicNumberForm();
+            navigateToCheckInMemberDetailFragment();
         } else {
             // TODO No toast here?
             // Reasons that it would reach here is more of a simprints issue.
             // So we want this to advance to the clinic form.
-            navigateToClinicNumberForm();
+            navigateToCheckInMemberDetailFragment();
         }
     }
 
@@ -178,8 +164,8 @@ public class IdentifyMemberDetailPresenter extends MemberDetailPresenter {
         return mUnsavedIdentificationEvent;
     }
 
-    protected void navigateToClinicNumberForm() {
-        getNavigationManager().setClinicNumberFormFragment(mUnsavedIdentificationEvent);
+    protected void navigateToCheckInMemberDetailFragment() {
+        getNavigationManager().setCheckInMemberDetailFragment(getMember(), mUnsavedIdentificationEvent);
     }
 
     protected void showScanFailedToast() {

@@ -69,16 +69,19 @@
     <string name="member_search_fragment_label">Search</string>
     <string name="member_no_search_results_text">No search results. Please try again.</string>
 
-    <!-- DetailFragment -->
+    <!-- MemberDetailFragment -->
     <string name="detail_fragment_label">Is this the right person?</string>
     <string name="absentee_notification">Must complete enrollment</string>
     <string name="replace_card_notification">Needs new card</string>
     <string name="check_in">Check-in</string>
-    <string name="check_in_with_fingerprints">Check-in with fingerprints</string>
+    <string name="scan_fingerprints">Scan Fingerprints</string>
     <string name="check_in_without_fingerprints">Check-in without fingerprints</string>
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
+    <string name="good_scan_indicator"> Good Scan </string>
+    <string name="bad_scan_indicator"> Bad Scan </string>
+    <string name="no_scan_indicator"> No Scan </string>
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
     <plurals name="household_label">

@@ -63,6 +63,9 @@ public class MemberDetailPresenter {
 
     protected void setMemberActionLink() {
         // no-op
+        TextView memberActionLink = (TextView) getMemberActionLink();
+
+
     }
 
     protected void setPatientCardPhoto() {
