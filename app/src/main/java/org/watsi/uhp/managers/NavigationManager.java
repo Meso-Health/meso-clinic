@@ -62,25 +62,21 @@ public class NavigationManager {
 
     private void setFragment(Fragment nextFragment, String prevTag, boolean addToBackstack, boolean
                              popBackStack) {
-        if (nextFragment instanceof BaseFragment) {
-            FragmentManager fm = mActivity.getSupportFragmentManager();
-            if (popBackStack) {
-                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                if (fm.findFragmentByTag(HOME_TAG) != null) {
-                    fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
-                }
+        FragmentManager fm = mActivity.getSupportFragmentManager();
+        if (popBackStack) {
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            if (fm.findFragmentByTag(HOME_TAG) != null) {
+                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
             }
-
-            FragmentTransaction transaction = fm.beginTransaction();
-            transaction.replace(R.id.fragment_container, nextFragment, prevTag);
-
-            if (addToBackstack) {
-                transaction.addToBackStack(null);
-            }
-            transaction.commit();
-        } else {
-            ExceptionManager.reportException(new IllegalStateException("setFragment called with fragment that is an instance of BaseFragment"));
         }
+
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fragment_container, nextFragment, prevTag);
+
+        if (addToBackstack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
     }
 
     private void setFragment(Fragment fragment) {
