@@ -60,7 +60,7 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
-    private void setFragment(Fragment nextFragment, String prevTag, boolean addToBackstack, boolean
+    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
                              popBackStack) {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         if (popBackStack) {
@@ -71,8 +71,7 @@ public class NavigationManager {
         }
 
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, nextFragment, prevTag);
-
+        transaction.replace(R.id.fragment_container, fragment, tag);
         if (addToBackstack) {
             transaction.addToBackStack(null);
         }
@@ -103,8 +102,12 @@ public class NavigationManager {
         }
     }
 
+    /*
+     *  This method contains branching logic depending on whether the member is checked in or not.
+     *  If member is checked in, this will show the CurrentMemberDetailFragment.
+     *  If the member is not checked in, resulting fragment depends on whether fingerprint verification is required.
+     */
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
-        // Decides whether to show the pre-check in fragment, or the post-check in fragment.
         if (member.currentCheckIn() == null) {
             if (member.getFingerprintsGuid() != null) {
                 setIdentifyMemberDetailFragment(member, idMethod, throughMember);
@@ -151,7 +154,6 @@ public class NavigationManager {
     public void setClinicNumberFormFragment(IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-
         setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
