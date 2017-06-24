@@ -2,7 +2,6 @@ package org.watsi.uhp.presenters;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Button;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
