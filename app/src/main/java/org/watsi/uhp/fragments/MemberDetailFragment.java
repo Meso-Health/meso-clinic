@@ -27,10 +27,9 @@ public abstract class MemberDetailFragment extends BaseFragment {
         memberDetailPresenter = new MemberDetailPresenter(view, getContext(), member, getNavigationManager());
         memberDetailPresenter.setUp();
 
-        // Prepare fragment stuff
         setUpMenuAndWindow();
-
         setUpFragment(view);
+
         return view;
     }
 
@@ -48,12 +47,8 @@ public abstract class MemberDetailFragment extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        // These should appear whenever you're in the detail view.
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
-
-        // This should only appear if member is an absentee.
         if (memberDetailPresenter.getMember().isAbsentee()) {
             menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
         }

@@ -44,6 +44,7 @@ public class MemberDetailPresenter {
         setMemberActionLink();
         setMemberActionButton();
         setBottomListView();
+        setMemberSecondaryActionButton();
     }
 
     protected void setMemberActionButton() {
@@ -57,8 +58,12 @@ public class MemberDetailPresenter {
         }
     }
 
+    protected void setMemberSecondaryActionButton() {
+        // no-op. Override to implement.
+    }
+
     protected void setMemberActionLink() {
-        // no-op
+        // no-op. Override to implement.
     }
 
     protected void setPatientCardPhoto() {
@@ -115,6 +120,7 @@ public class MemberDetailPresenter {
             return null;
         }
     }
+
     // Tested above.
     // Untested below.
     public Button getMemberSecondaryButton() {
