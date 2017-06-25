@@ -90,12 +90,12 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
             });
         } else if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
             scanResultButton.setVisibility(View.VISIBLE);
-            scanResultButton.setTextColor(Color.RED);
+            scanResultButton.setTextColor(Color.rgb(244,67,54));
             scanResultButton.setText("No Match");
             GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
-            d.setStroke(1, Color.RED);
+            d.setStroke(1, Color.rgb(244,67,54));
             VectorDrawable fingerprintsFigure = (VectorDrawable) scanResultButton.getCompoundDrawables()[0];
-            fingerprintsFigure.setTint(Color.RED);
+            fingerprintsFigure.setTint(Color.rgb(244,67,54));
         } else {
             scanResultButton.setVisibility(View.VISIBLE);
             scanResultButton.setTextColor(Color.rgb(76,175,80));
