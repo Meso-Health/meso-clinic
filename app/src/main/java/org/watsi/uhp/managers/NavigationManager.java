@@ -10,7 +10,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
-import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.EncounterFormFragment;
@@ -21,7 +20,6 @@ import org.watsi.uhp.fragments.EnrollmentContactInfoFragment;
 import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
 import org.watsi.uhp.fragments.EnrollmentIdPhotoFragment;
 import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment;
-import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
@@ -37,7 +35,6 @@ public class NavigationManager {
 
     public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
     public static String IDENTIFICATION_EVENT_BUNDLE_FIELD = "identificationEvent";
-    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
@@ -91,11 +88,7 @@ public class NavigationManager {
 
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         if (member.currentCheckIn() == null) {
-            if (member.getFingerprintsGuid() == null || idEvent.getFingerprintsVerificationTier() != null) {
-                setCheckInMemberDetailFragment(member, idEvent);
-            } else {
-                setIdentifyMemberDetailFragment(member, idEvent.getSearchMethod(), idEvent.getThroughMember());
-            }
+            setCheckInMemberDetailFragment(member, idEvent);
         } else {
             setCurrentMemberDetailFragment(member);
         }
@@ -108,33 +101,17 @@ public class NavigationManager {
      */
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         if (member.currentCheckIn() == null) {
-            if (member.getFingerprintsGuid() != null) {
-                setIdentifyMemberDetailFragment(member, idMethod, throughMember);
-            } else {
-                IdentificationEvent idEvent = new IdentificationEvent();
-                idEvent.setMember(member);
-                idEvent.setSearchMethod(idMethod);
-                idEvent.setThroughMember(throughMember);
-                setCheckInMemberDetailFragment(member, idEvent);
+            IdentificationEvent idEvent = new IdentificationEvent();
+            idEvent.setMember(member);
+            idEvent.setSearchMethod(idMethod);
+            idEvent.setThroughMember(throughMember);
+            if (member.getPhoto() == null) {
+                idEvent.setPhotoVerified(false);
             }
+            setCheckInMemberDetailFragment(member, idEvent);
         } else {
             setCurrentMemberDetailFragment(member);
         }
-    }
-
-    protected void setIdentifyMemberDetailFragment(Member member,
-                                                   IdentificationEvent.SearchMethodEnum idMethod,
-                                                   Member throughMember) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        if (idMethod != null) {
-            bundle.putString(ID_METHOD_BUNDLE_FIELD, idMethod.toString());
-        }
-        if (throughMember != null) {
-            bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
-        }
-
-        setFragment(mFragmentProvider.createFragment(IdentifyMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
@@ -148,12 +125,6 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, true, false);
-    }
-
-    public void setClinicNumberFormFragment(IdentificationEvent idEvent) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(ClinicNumberFormFragment.class, bundle), DETAIL_TAG, true, false);
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,

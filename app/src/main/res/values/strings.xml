@@ -162,12 +162,14 @@
     <string name="member_edit_save">Save</string>
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
-    <!-- ClinicNumberFormFragment -->
-    <string name="enter_patient_clinic_number_label">Enter the patient\'s clinic number</string>
+    <!-- ClinicNumberDialogFragment -->
     <string name="clinic_number_form_fragment_label">Patient Number</string>
     <string name="clinic_number_save">Complete check in</string>
     <string name="radio_opd">OPD</string>
     <string name="radio_delivery">Delivery</string>
+    <string name="clinic_number">Number</string>
+    <string name="clinic_number_button">Submit</string>
+    <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
 
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_info_label">Enroll newborn</string>

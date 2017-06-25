@@ -24,10 +24,8 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
-import org.watsi.uhp.fragments.ClinicNumberFormFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.fragments.IdentifyMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -130,8 +128,6 @@ public class ClinicActivity extends AppCompatActivity {
         if (currentFragment instanceof FormFragment &&
                 ((FormFragment) currentFragment).isFirstStep()) {
             showDialogReturnToPreviousScreen();
-        } else if (currentFragment instanceof ClinicNumberFormFragment) {
-            showDialogReturnToPreviousScreen();
         } else if (currentFragment instanceof MemberDetailFragment) {
             getNavigationManager().setCurrentPatientsFragment();
         } else {
@@ -178,30 +174,21 @@ public class ClinicActivity extends AppCompatActivity {
                         }).create().show();
                     break;
                 case R.id.menu_member_edit:
-                    if (currentFragment instanceof IdentifyMemberDetailFragment) {
-                        IdentifyMemberDetailFragment identifyMemberDetailFragment = (IdentifyMemberDetailFragment) currentFragment;
-                        getNavigationManager().setMemberEditFragment(
-                                member,
-                                identifyMemberDetailFragment.getIdEvent(),
-                                null
-                        );
-                    } else if (currentFragment instanceof CheckInMemberDetailFragment) {
+                    if (currentFragment instanceof CheckInMemberDetailFragment) {
                         CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) currentFragment;
                         getNavigationManager().setMemberEditFragment(
                                 member,
                                 checkInMemberDetailFragment.getIdEvent(),
                                 null
                         );
-
                     } else if (currentFragment instanceof CurrentMemberDetailFragment) {
                         getNavigationManager().setMemberEditFragment(
                                 member,
                                 null,
                                 null);
                     } else {
-                        ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [IdentifyMemberDetailFragment, CurrentMemberDetailFragment]");
+                        ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
                     }
-
                     break;
                 case R.id.menu_enroll_newborn:
                     getNavigationManager().setEnrollNewbornInfoFragment(member, null, null);
@@ -210,25 +197,20 @@ public class ClinicActivity extends AppCompatActivity {
                     getNavigationManager().setVersionFragment();
                     break;
                 case R.id.menu_complete_enrollment:
-                    if (currentFragment instanceof IdentifyMemberDetailFragment) {
-                        getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((IdentifyMemberDetailFragment) currentFragment).getIdEvent());
-                    } else if (currentFragment instanceof CheckInMemberDetailFragment) {
+                    if (currentFragment instanceof CheckInMemberDetailFragment) {
                         getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) currentFragment).getIdEvent());
-                    }
-
-                    else if (currentFragment instanceof CurrentMemberDetailFragment) {
+                    } else if (currentFragment instanceof CurrentMemberDetailFragment) {
                         getNavigationManager().setEnrollmentMemberPhotoFragment(member, null);
                     } else {
                         ExceptionManager.reportMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
                     }
                     break;
-                case R.id.menu_check_in_without_fingerprints:
-                    if (currentFragment instanceof IdentifyMemberDetailFragment) {
-                        ((IdentifyMemberDetailFragment) currentFragment).completeIdentificationWithoutFingerprints();
-                    } else {
-                        ExceptionManager.reportMessage("CheckInWithoutFingerprints menu button reached from fragment that's not IdentifyMemberDetailFragment");
+                case R.id.menu_report_member:
+                    if (currentFragment instanceof CheckInMemberDetailFragment) {
+                        ((MemberDetailFragment) currentFragment).reportMember(((CheckInMemberDetailFragment) currentFragment).getIdEvent());
+                    } else if (currentFragment instanceof CurrentMemberDetailFragment) {
+                        ((MemberDetailFragment) currentFragment).reportMember(((CurrentMemberDetailFragment) currentFragment).getIdEvent());
                     }
-                    break;
             }
             return true;
         }
@@ -298,17 +280,6 @@ public class ClinicActivity extends AppCompatActivity {
 
                     public void onClick(DialogInterface arg0, int arg1) {
                         ClinicActivity.super.onBackPressed();
-                    }
-                }).create().show();
-    }
-
-    private void showDialogReturnToCurrentPatientsScreen() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.exit_form_alert)
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        getNavigationManager().setCurrentPatientsFragment();
                     }
                 }).create().show();
     }

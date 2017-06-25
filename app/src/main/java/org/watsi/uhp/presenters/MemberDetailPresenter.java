@@ -192,4 +192,5 @@ public class MemberDetailPresenter {
     public NavigationManager getNavigationManager() {
         return mNavigationManager;
     }
+
 }

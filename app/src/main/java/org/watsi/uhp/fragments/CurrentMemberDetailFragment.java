@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.view.View;
 
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.presenters.CurrentMemberDetailPresenter;
 
 /**
@@ -15,5 +16,9 @@ public class CurrentMemberDetailFragment extends MemberDetailFragment {
         currentMemberDetailPresenter = new CurrentMemberDetailPresenter(getNavigationManager(),
                 view, getContext(), getMember());
         currentMemberDetailPresenter.setUp();
+    }
+
+    public IdentificationEvent getIdEvent() {
+        return currentMemberDetailPresenter.getIdEvent();
     }
 }

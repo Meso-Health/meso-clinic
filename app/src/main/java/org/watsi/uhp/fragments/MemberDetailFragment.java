@@ -1,16 +1,25 @@
 package org.watsi.uhp.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.activities.ClinicActivity;
+import org.watsi.uhp.managers.Clock;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
+
+import java.sql.SQLException;
 
 /**
  * Created by michaelliang on 6/12/17.
@@ -52,6 +61,7 @@ public abstract class MemberDetailFragment extends BaseFragment {
         // These should appear whenever you're in the detail view.
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
+        menu.findItem(R.id.menu_report_member).setVisible(true);
 
         // This should only appear if member is an absentee.
         if (memberDetailPresenter.getMember().isAbsentee()) {
@@ -61,5 +71,31 @@ public abstract class MemberDetailFragment extends BaseFragment {
 
     public Member getMember() {
         return memberDetailPresenter.getMember();
+    }
+
+    public void reportMember(IdentificationEvent idEvent) {
+        idEvent.setClinicNumberType(null);
+        idEvent.setClinicNumber(null);
+        idEvent.setAccepted(false);
+        idEvent.setOccurredAt(Clock.getCurrentTime());
+
+        final IdentificationEvent finalIdEvent = idEvent;
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.reject_identity_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        try {
+                            finalIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
+                            getNavigationManager().setCurrentPatientsFragment();
+                            Toast.makeText(getContext(),
+                                    getMember().getFullName() + " " + getContext().getString(R.string.identification_rejected),
+                                    Toast.LENGTH_LONG).
+                                    show();
+                        } catch (SQLException e) {
+                            ExceptionManager.reportException(e);
+                        }
+                    }
+                }).create().show();
     }
 }

@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 
@@ -11,11 +12,16 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
     private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
 
     protected void setUpFragment(View view) {
-        IdentificationEvent idEvent = (IdentificationEvent) getArguments()
-                .getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-
+        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
-                getNavigationManager(), view, getContext(), getMember(), idEvent);
+                getNavigationManager(),
+                getSessionManager(),
+                this,
+                view,
+                getContext(),
+                getMember(),
+                idEvent
+        );
         checkInMemberDetailPresenter.setUp();
     }
 
@@ -24,8 +30,17 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        checkInMemberDetailPresenter.handleOnActivityResult(requestCode, resultCode, data);
+    }
+
     public IdentificationEvent getIdEvent() {
         return checkInMemberDetailPresenter.getIdEvent();
+    }
+
+    public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) {
+        checkInMemberDetailPresenter.saveIdentificationEventAndCheckIn(clinicNumberType, clinicNumber);
     }
 }
 

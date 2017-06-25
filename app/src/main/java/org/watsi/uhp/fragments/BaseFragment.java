@@ -31,9 +31,6 @@ public abstract class BaseFragment extends Fragment {
             if (this instanceof CurrentPatientsFragment) {
                 supportBar.setDisplayHomeAsUpEnabled(false);
                 supportBar.setHomeAsUpIndicator(0);
-            } else if (this instanceof ClinicNumberFormFragment) {
-                supportBar.setDisplayHomeAsUpEnabled(true);
-                supportBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
             } else {
                 supportBar.setDisplayHomeAsUpEnabled(true);
                 supportBar.setHomeAsUpIndicator(0);
