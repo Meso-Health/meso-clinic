@@ -184,26 +184,13 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         clinicNumberDialog.setTargetFragment(mCheckInMemberDetailFragment, 0);
     }
 
-    public void saveIdentificationEventAndCheckIn(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) {
-        Log.i("UHP", "saveIdentificationEventAndCheckIn is called");
-        try {
-            mIdEvent.setClinicNumber(clinicNumber);
-            mIdEvent.setClinicNumberType(clinicNumberType);
-            mIdEvent.setAccepted(true);
-            mIdEvent.setOccurredAt(Clock.getCurrentTime());
-            mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
-
-            displayIdentificationSuccessfulToast();
-        } catch (SQLException e) {
-            Map hashMap = new HashMap();
-            hashMap.put("IdentificationEvent", mIdEvent);
-            Toast.makeText(getContext(), "Saving idEvent failed.", Toast.LENGTH_LONG);
-            ExceptionManager.reportMessage(
-                    "Failed saving IdentificationEvent",
-                    ExceptionManager.MESSAGE_LEVEL_WARNING,
-                    hashMap
-            );
-        }
+    public void saveIdentificationEventAndCheckIn(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException {
+        mIdEvent.setClinicNumber(clinicNumber);
+        mIdEvent.setClinicNumberType(clinicNumberType);
+        mIdEvent.setAccepted(true);
+        mIdEvent.setOccurredAt(Clock.getCurrentTime());
+        mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
+        displayIdentificationSuccessfulToast();
         navigateToCurrentPatientsFragment();
     }
 

@@ -9,6 +9,8 @@ import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
 
+import java.sql.SQLException;
+
 public class CheckInMemberDetailFragment extends MemberDetailFragment {
     private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
 
@@ -41,7 +43,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         return checkInMemberDetailPresenter.getIdEvent();
     }
 
-    public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) {
+    public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException {
         checkInMemberDetailPresenter.saveIdentificationEventAndCheckIn(clinicNumberType, clinicNumber);
     }
 
