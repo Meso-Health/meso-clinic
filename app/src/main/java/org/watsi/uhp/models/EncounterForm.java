@@ -105,8 +105,4 @@ public class EncounterForm extends SyncableModel {
         // no-op
         return null;
     }
-
-    public void destroy() throws SQLException {
-        getDao().deleteById(getId());
-    }
 }

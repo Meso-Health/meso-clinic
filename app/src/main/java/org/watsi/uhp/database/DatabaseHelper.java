@@ -18,7 +18,6 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -102,6 +101,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void clearDatabase() {
+        try {
+            ConnectionSource connectionSource = getConnectionSource();
+            TableUtils.clearTable(connectionSource, Member.class);
+            TableUtils.clearTable(connectionSource, Billable.class);
+            TableUtils.clearTable(connectionSource, IdentificationEvent.class);
+            TableUtils.clearTable(connectionSource, Encounter.class);
+            TableUtils.clearTable(connectionSource, EncounterItem.class);
+            TableUtils.clearTable(connectionSource, EncounterForm.class);
+            TableUtils.clearTable(connectionSource, User.class);
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
         }
     }
 

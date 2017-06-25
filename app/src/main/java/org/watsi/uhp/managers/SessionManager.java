@@ -13,6 +13,8 @@ import org.watsi.uhp.activities.AuthenticationActivity;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.models.User;
 
+import java.util.Arrays;
+
 public class SessionManager {
 
     private final PreferencesManager mPreferencesManager;
@@ -29,13 +31,29 @@ public class SessionManager {
      *
      * Also stores the username in SharedPreferences to remember the signed-in user
      * @param user Logged in user
+     * @param password User's password
      * @param token Authentication token
      */
-    public void setUserAsLoggedIn(User user, String token) {
+    public void setUserAsLoggedIn(User user, String password, String token) {
         Account account = new Account(user.getUsername(), Authenticator.ACCOUNT_TYPE);
+        addAccount(account, password);
+
         mAccountManager.setAuthToken(account, Authenticator.AUTH_TOKEN_TYPE, token);
         mPreferencesManager.setUsername(user.getUsername());
         ExceptionManager.setPersonData(String.valueOf(user.getId()), user.getUsername());
+    }
+
+    /**
+     * Creates an account using AccountManager if it does not already exist.
+     *
+     * @param account The account
+     * @param password User's password
+     */
+    public void addAccount(Account account, String password) {
+        Account[] accounts = mAccountManager.getAccountsByType(Authenticator.ACCOUNT_TYPE);
+        if (!Arrays.asList(accounts).contains(account)) {
+            mAccountManager.addAccountExplicitly(account, password, null);
+        }
     }
 
     /**

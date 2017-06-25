@@ -6,24 +6,22 @@ import java.util.UUID;
 
 public class MemberFactory extends Member {
 
-    // Member without household that does not use any setters:
-    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum) {
-        super();
+    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum)
+            throws ValidationException {
         setId(id);
-        mFullName = fullName;
-        mCardId = cardId;
-        mAge = age;
-        mGender = genderEnum;
+        setFullName(fullName);
+        setCardId(cardId);
+        setAge(age);
+        setGender(genderEnum);
     }
 
-    // Member with household that does not use any setters:
-    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum, UUID householdId) {
-        super();
+    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum,
+                         UUID householdId) throws ValidationException {
         setId(id);
-        mFullName = fullName;
-        mCardId = cardId;
-        mAge = age;
-        mGender = genderEnum;
-        mHouseholdId = householdId;
+        setFullName(fullName);
+        setCardId(cardId);
+        setAge(age);
+        setGender(genderEnum);
+        setHouseholdId(householdId);
     }
 }
