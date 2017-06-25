@@ -39,24 +39,24 @@ public class ClinicNumberDialogFragment extends DialogFragment {
         builder.setView(view)
                 .setMessage(R.string.clinic_number_prompt)
                 .setPositiveButton(R.string.clinic_number_button, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            RadioButton selectedRadioButton = (RadioButton) ((AlertDialog) dialog)
-                                    .findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
-                            IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
-                                    IdentificationEvent.ClinicNumberTypeEnum.valueOf(
-                                            selectedRadioButton.getText().toString().toUpperCase());
-                            int clinicNumber = Integer.valueOf(mClinicNumberView.getText().toString());
+                    public void onClick(DialogInterface dialog, int id) {
+                        RadioButton selectedRadioButton = (RadioButton) ((AlertDialog) dialog)
+                                .findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
+                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
+                                IdentificationEvent.ClinicNumberTypeEnum.valueOf(
+                                        selectedRadioButton.getText().toString().toUpperCase());
+                        int clinicNumber = Integer.valueOf(mClinicNumberView.getText().toString());
 
-                            try {
-                                ((CheckInMemberDetailFragment) getTargetFragment()).completeIdentification(
-                                        clinicNumberType, clinicNumber);
-                            } catch (java.sql.SQLException e) {
-                                ExceptionManager.reportException(e);
-                                Toast.makeText(getActivity(),
-                                        "Failed to save identification, contact support.",
-                                        Toast.LENGTH_LONG).show();
-                            }
+                        try {
+                            ((CheckInMemberDetailFragment) getTargetFragment()).completeIdentification(
+                                    clinicNumberType, clinicNumber);
+                        } catch (java.sql.SQLException e) {
+                            ExceptionManager.reportException(e);
+                            Toast.makeText(getActivity(),
+                                    "Failed to save identification, contact support.",
+                                    Toast.LENGTH_LONG).show();
                         }
+                    }
                 });
 
         AlertDialog dialog = builder.create();
