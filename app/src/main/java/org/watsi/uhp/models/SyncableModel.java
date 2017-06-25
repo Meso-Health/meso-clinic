@@ -51,7 +51,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return this.mId;
     }
 
-    protected void setId(UUID id) {
+    public void setId(UUID id) {
         this.mId = id;
     }
 
@@ -147,6 +147,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         handleUpdateFromSync(responseBody);
         setDirtyFields(diffFields(responseBody));
         getDao().createOrUpdate((T) this);
+    }
+
+    public void delete() throws SQLException {
+        getDao().delete((T) this);
     }
 
     public Response<T> sync(Context context) throws SyncException, SQLException, IOException {
