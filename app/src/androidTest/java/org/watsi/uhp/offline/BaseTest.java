@@ -105,5 +105,13 @@ class BaseTest {
                 Billable.TypeEnum.LAB,
                 2000
         ));
+
+        BillableDao.create(new BillableFactory(
+                "Sutures",
+                Billable.TypeEnum.SUPPLY,
+                "1",
+                "unit",
+                3000
+        ));
     }
 }
