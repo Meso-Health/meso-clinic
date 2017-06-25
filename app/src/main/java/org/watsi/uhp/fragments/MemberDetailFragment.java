@@ -74,11 +74,10 @@ public abstract class MemberDetailFragment extends BaseFragment {
     }
 
     public void reportMember(IdentificationEvent idEvent) {
-        idEvent.setClinicNumberType(null);
-        idEvent.setClinicNumber(null);
         idEvent.setAccepted(false);
-        idEvent.setOccurredAt(Clock.getCurrentTime());
-
+        if (idEvent.getOccurredAt() == null) {
+            idEvent.setOccurredAt(Clock.getCurrentTime());
+        }
         final IdentificationEvent finalIdEvent = idEvent;
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.reject_identity_alert)
