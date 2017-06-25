@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/form_item_vertical_margin"
-        android:theme="@style/PrimaryButton"
+        style="@style/PrimaryButton"
         android:text="@string/add_new_billable"
         android:textAllCaps="true"
         android:layout_below="@id/price_field" />

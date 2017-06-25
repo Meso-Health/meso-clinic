@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:theme="@style/PrimaryButton"
+            stle="@style/PrimaryButton"
             android:text="@string/encounter_form_finish_btn" />
     </LinearLayout>
 </LinearLayout>
