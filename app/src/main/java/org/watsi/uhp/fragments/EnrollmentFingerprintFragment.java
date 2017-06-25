@@ -100,8 +100,6 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
             SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mFragment.getSessionManager().getCurrentLoggedInUsername());
             Intent captureFingerprintIntent = simHelper.register(BuildConfig.PROVIDER_ID.toString());
 
-            // TODO: Make this a helper method?
-            // This checks whether simprints.id is installed on phone.
             PackageManager packageManager = mFragment.getActivity().getPackageManager();
             if (captureFingerprintIntent.resolveActivity(packageManager) != null) {
                 mFragment.startActivityForResult(
