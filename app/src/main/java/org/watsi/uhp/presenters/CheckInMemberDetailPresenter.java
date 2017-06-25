@@ -79,7 +79,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                     getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
                 }
             });
-        } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
+        } else if (getMember().getFingerprintsGuid() == null) {
             // show nothing.
         } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
             scanResultButton.setVisibility(View.VISIBLE);

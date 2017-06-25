@@ -176,7 +176,15 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
+        if (member.getPhotoUrl() == null && member.getPhoto() == null) {
+            setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
+        } else if (member.shouldCaptureNationalIdPhoto()) {
+            setEnrollmentIdPhotoFragment(member, idEvent);
+        } else if (member.getPhoneNumber() == null) {
+            setEnrollmentContactInfoFragment(member, idEvent);
+        } else if (member.shouldCaptureFingerprint()) {
+            setEnrollmentFingerprintFragment(member, idEvent);
+        }
     }
 
     public void setEnrollmentIdPhotoFragment(Member member, IdentificationEvent idEvent) {
