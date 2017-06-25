@@ -41,6 +41,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
     static final int ANDROID_MATERIAL_DESIGN_RED = Color.rgb(244,67,54);
     static final int ANDROID_MATERIAL_DESIGN_GREEN = Color.rgb(76,175,80);
+    static final int ANDROID_MATERIAL_DESIGN_BLUE = Color.rgb(33,150,243);
+    static final int ANDROID_MATERIAL_DESIGN_GRAY = Color.rgb(158,158,158);
     static final int DEFAULT_BORDER_WIDTH = 1;
 
     private final SessionManager mSessionManager;
@@ -72,7 +74,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void setFingerprintScanResult() {
         if (getMember().isAbsentee()) {
-            setMemberSecondaryButtonProperties(Color.BLUE, "Complete Enrollment",
+            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_BLUE, "Complete Enrollment", false,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -83,7 +85,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         } else if (getMember().getFingerprintsGuid() == null) {
             // show nothing.
         } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
-            setMemberSecondaryButtonProperties(Color.GRAY, "Scan",
+            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_GRAY, "Scan", true,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -97,7 +99,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                     }
             );
         } else if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
-            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_RED, "No Match",
+            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_RED, "No Match", true,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -111,17 +113,20 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                     }
             );
         } else {
-            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_GREEN, "Good Match", null);
+            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_GREEN, "Good Match", true, null);
         }
     }
 
-    private void setMemberSecondaryButtonProperties(int color, String text, View.OnClickListener onClickListener) {
+    private void setMemberSecondaryButtonProperties(int color, String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
         mScanResultButton.setVisibility(View.VISIBLE);
         mScanResultButton.setTextColor(color);
         mScanResultButton.setText(text);
         GradientDrawable buttonShape = (GradientDrawable) mScanResultButton.getBackground();
         buttonShape.setStroke(DEFAULT_BORDER_WIDTH, color);
         VectorDrawable fingerprintIcon = (VectorDrawable) mScanResultButton.getCompoundDrawables()[0];
+        if (!showFingerprintsIcon) {
+            mScanResultButton.setCompoundDrawables(null, null, null, null);
+        }
         fingerprintIcon.setTint(color);
         mScanResultButton.setOnClickListener(onClickListener);
     }

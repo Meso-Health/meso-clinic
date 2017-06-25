@@ -94,11 +94,11 @@ public class NavigationManager {
         }
     }
 
-    /*
-     *  This method contains branching logic depending on whether the member is checked in or not.
-     *  If member is checked in, this will show the CurrentMemberDetailFragment.
-     *  If the member is not checked in, resulting fragment depends on whether fingerprint verification is required.
-     */
+    /**
+      *  This method contains branching logic depending on whether the member is checked in or not.
+      *  If member is checked in, this will show the CurrentMemberDetailFragment.
+      *  If the member is not checked in, resulting fragment depends on whether fingerprint verification is required.
+      */
     public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
         if (member.currentCheckIn() == null) {
             IdentificationEvent idEvent = new IdentificationEvent();
