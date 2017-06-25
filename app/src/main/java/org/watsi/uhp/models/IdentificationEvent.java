@@ -2,6 +2,7 @@ package org.watsi.uhp.models;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
@@ -281,9 +282,9 @@ public class IdentificationEvent extends SyncableModel {
         }
 
         if (dirty(FIELD_NAME_DISMISSAL_REASON)) {
-            requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON,
-                    RequestBody.create(
-                            MultipartBody.FORM, String.valueOf(getDismissalReason())));
+            requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON, RequestBody.create(
+                    MultipartBody.FORM,
+                    new Gson().toJsonTree(getDismissalReason()).getAsString()));
         }
 
         return requestBodyMap;
