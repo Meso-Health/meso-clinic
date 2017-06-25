@@ -107,6 +107,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                     if (barcode != null) {
                         try {
                             Member member;
+                            IdentificationEvent idEvent;
                             switch (mScanPurpose) {
                                 case ID:
                                     member = MemberDao.findByCardId(barcode.displayValue);
@@ -119,10 +120,12 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                 case MEMBER_EDIT:
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+
 
                                     getNavigationManager().setMemberEditFragment(
                                             member,
-                                            null,
+                                            idEvent,
                                             barcode.displayValue
                                     );
                                     break;

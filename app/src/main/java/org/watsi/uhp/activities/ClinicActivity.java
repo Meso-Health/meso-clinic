@@ -129,7 +129,7 @@ public class ClinicActivity extends AppCompatActivity {
                 ((FormFragment) currentFragment).isFirstStep()) {
             showDialogReturnToPreviousScreen();
         } else if (currentFragment instanceof MemberDetailFragment) {
-            showDialogBeforeReturningToCurrentPatientsFragment();
+            getNavigationManager().setCurrentPatientsFragment();
         } else {
             super.onBackPressed();
         }
@@ -277,17 +277,6 @@ public class ClinicActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         ClinicActivity.super.onBackPressed();
-                    }
-                }).create().show();
-    }
-
-    private void showDialogBeforeReturningToCurrentPatientsFragment() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.exit_form_alert)
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        getNavigationManager().setCurrentPatientsFragment();
                     }
                 }).create().show();
     }

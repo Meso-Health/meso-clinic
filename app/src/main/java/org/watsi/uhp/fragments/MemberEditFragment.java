@@ -97,7 +97,8 @@ public class MemberEditFragment extends FormFragment<Member> {
         Bundle bundle = new Bundle();
         bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD,
                 getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
-
+        bundle.putSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD,
+                getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD));
         view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
                 getNavigationManager(), BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT,
                 mSyncableModel, bundle));

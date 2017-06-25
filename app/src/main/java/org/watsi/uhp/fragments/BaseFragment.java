@@ -29,10 +29,8 @@ public abstract class BaseFragment extends Fragment {
         if (supportBar != null) {
             if (this instanceof CurrentPatientsFragment) {
                 supportBar.setDisplayHomeAsUpEnabled(false);
-                supportBar.setHomeAsUpIndicator(0);
             } else {
                 supportBar.setDisplayHomeAsUpEnabled(true);
-                supportBar.setHomeAsUpIndicator(0);
             }
         }
     }

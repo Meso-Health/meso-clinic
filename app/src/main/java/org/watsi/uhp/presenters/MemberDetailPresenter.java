@@ -117,6 +117,9 @@ public class MemberDetailPresenter {
     }
     // Tested above.
     // Untested below.
+    public Button getMemberSecondaryButton() {
+        return (Button) getView().findViewById(R.id.member_scan_fingerprints_button);
+    }
 
     public TextView getMemberActionLink() {
         return (TextView) mView.findViewById(R.id.member_action_link);

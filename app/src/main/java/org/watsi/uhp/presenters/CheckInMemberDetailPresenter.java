@@ -31,6 +31,7 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Created by michaelliang on 6/13/17.
@@ -38,16 +39,23 @@ import java.util.Map;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
+    static final int ANDROID_MATERIAL_DESIGN_RED = Color.rgb(244,67,54);
+    static final int ANDROID_MATERIAL_DESIGN_GREEN = Color.rgb(76,175,80);
+    static final int DEFAULT_BORDER_WIDTH = 1;
 
     private final SessionManager mSessionManager;
     private IdentificationEvent mIdEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailFragment;
+
+    private final Button mScanResultButton;
 
     public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
         super(view, context, member, navigationManager);
         mCheckInMemberDetailFragment = checkInMemberDetailFragment;
         mSessionManager = sessionManager;
         mIdEvent = idEvent;
+
+        mScanResultButton = getMemberSecondaryButton();
         setFingerprintScanResult();
     }
 
@@ -63,59 +71,59 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void setFingerprintScanResult() {
-        Button scanResultButton = (Button) getView().findViewById(R.id.member_scan_fingerprints_button);
         if (getMember().isAbsentee()) {
-            scanResultButton.setVisibility(View.VISIBLE);
-            scanResultButton.setTextColor(Color.BLUE);
-            scanResultButton.setText("Complete Enrollment");
-            GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
-            d.setStroke(1, Color.BLUE);
-            scanResultButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            scanResultButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
-                }
-            });
+            setMemberSecondaryButtonProperties(Color.BLUE, "Complete Enrollment",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
+                        }
+                    }
+            );
         } else if (getMember().getFingerprintsGuid() == null) {
             // show nothing.
         } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
-            scanResultButton.setVisibility(View.VISIBLE);
-            scanResultButton.setTextColor(Color.GRAY);
-            scanResultButton.setText("Scan");
-            GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
-            d.setStroke(1, Color.GRAY);
-            VectorDrawable fingerprintsFigure = (VectorDrawable) scanResultButton.getCompoundDrawables()[0];
-            fingerprintsFigure.setTint(Color.GRAY);
-
-            scanResultButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                    Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid().toString());
-                    mCheckInMemberDetailFragment.startActivityForResult(
-                            fingerprintIdentificationIntent,
-                            SIMPRINTS_VERIFICATION_INTENT
-                    );
-                }
-            });
+            setMemberSecondaryButtonProperties(Color.GRAY, "Scan",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
+                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid().toString());
+                            mCheckInMemberDetailFragment.startActivityForResult(
+                                    fingerprintIdentificationIntent,
+                                    SIMPRINTS_VERIFICATION_INTENT
+                            );
+                        }
+                    }
+            );
         } else if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
-            scanResultButton.setVisibility(View.VISIBLE);
-            scanResultButton.setTextColor(Color.rgb(244,67,54));
-            scanResultButton.setText("No Match");
-            GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
-            d.setStroke(1, Color.rgb(244,67,54));
-            VectorDrawable fingerprintsFigure = (VectorDrawable) scanResultButton.getCompoundDrawables()[0];
-            fingerprintsFigure.setTint(Color.rgb(244,67,54));
+            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_RED, "No Match",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
+                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid().toString());
+                            mCheckInMemberDetailFragment.startActivityForResult(
+                                    fingerprintIdentificationIntent,
+                                    SIMPRINTS_VERIFICATION_INTENT
+                            );
+                        }
+                    }
+            );
         } else {
-            scanResultButton.setVisibility(View.VISIBLE);
-            scanResultButton.setTextColor(Color.rgb(76,175,80));
-            scanResultButton.setText("Good Match");
-            GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
-            d.setStroke(1, Color.rgb(76,175,80));
-            VectorDrawable fingerprintsFigure = (VectorDrawable) scanResultButton.getCompoundDrawables()[0];
-            fingerprintsFigure.setTint(Color.rgb(76,175,80));
+            setMemberSecondaryButtonProperties(ANDROID_MATERIAL_DESIGN_GREEN, "Good Match", null);
         }
+    }
+
+    private void setMemberSecondaryButtonProperties(int color, String text, View.OnClickListener onClickListener) {
+        mScanResultButton.setVisibility(View.VISIBLE);
+        mScanResultButton.setTextColor(color);
+        mScanResultButton.setText(text);
+        GradientDrawable buttonShape = (GradientDrawable) mScanResultButton.getBackground();
+        buttonShape.setStroke(DEFAULT_BORDER_WIDTH, color);
+        VectorDrawable fingerprintIcon = (VectorDrawable) mScanResultButton.getCompoundDrawables()[0];
+        fingerprintIcon.setTint(color);
+        mScanResultButton.setOnClickListener(onClickListener);
     }
 
     //// Tested above
