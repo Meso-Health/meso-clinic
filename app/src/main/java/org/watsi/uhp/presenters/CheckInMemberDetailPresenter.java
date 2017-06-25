@@ -66,8 +66,15 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void setFingerprintScanResult() {
         Button scanResultButton = (Button) getView().findViewById(R.id.member_scan_fingerprints_button);
-        if (getMember().getFingerprintsGuid() == null) {
-            // do nothing
+        if (getMember().isAbsentee()) {
+            scanResultButton.setVisibility(View.VISIBLE);
+            scanResultButton.setTextColor(Color.BLUE);
+            scanResultButton.setText("Complete Enrollment");
+            GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
+            d.setStroke(1, Color.BLUE);
+            scanResultButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
+            // show nothing.
         } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
             scanResultButton.setVisibility(View.VISIBLE);
             scanResultButton.setTextColor(Color.GRAY);
