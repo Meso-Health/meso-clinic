@@ -69,7 +69,6 @@
             android:layout_toEndOf="@id/member_photo"
             android:layout_alignParentBottom="true"
             android:visibility="gone" />
-
     </RelativeLayout>
 
     <Button
