@@ -184,6 +184,8 @@ public class NavigationManager {
             setEnrollmentContactInfoFragment(member, idEvent);
         } else if (member.shouldCaptureFingerprint()) {
             setEnrollmentFingerprintFragment(member, idEvent);
+        } else {
+            ExceptionManager.reportException(new IllegalStateException("Clinic user clicked complete enrollment for member with photo and fingerprint."));
         }
     }
 
