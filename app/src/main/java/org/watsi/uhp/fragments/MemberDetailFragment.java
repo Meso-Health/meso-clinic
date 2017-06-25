@@ -1,25 +1,16 @@
 package org.watsi.uhp.fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
-
-import java.sql.SQLException;
 
 /**
  * Created by michaelliang on 6/12/17.

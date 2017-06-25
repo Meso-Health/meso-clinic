@@ -2,7 +2,6 @@ package org.watsi.uhp.models;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;

@@ -2,7 +2,6 @@ package org.watsi.uhp.fragments;
 
 import android.view.View;
 
-import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.presenters.CurrentMemberDetailPresenter;
 
 /**

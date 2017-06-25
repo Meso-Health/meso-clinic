@@ -135,18 +135,6 @@ public class ClinicActivity extends AppCompatActivity {
         }
     }
 
-    private void showDialogBeforeReturningToCurrentPatientsFragment() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.exit_form_alert)
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        getNavigationManager().setCurrentPatientsFragment();
-                    }
-                }).create().show();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -287,9 +275,19 @@ public class ClinicActivity extends AppCompatActivity {
                 .setTitle(R.string.exit_form_alert)
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface arg0, int arg1) {
                         ClinicActivity.super.onBackPressed();
+                    }
+                }).create().show();
+    }
+
+    private void showDialogBeforeReturningToCurrentPatientsFragment() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_form_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        getNavigationManager().setCurrentPatientsFragment();
                     }
                 }).create().show();
     }
