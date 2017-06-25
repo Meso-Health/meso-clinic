@@ -73,6 +73,12 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
             GradientDrawable d = (GradientDrawable) scanResultButton.getBackground();
             d.setStroke(1, Color.BLUE);
             scanResultButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            scanResultButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
+                }
+            });
         } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
             // show nothing.
         } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
