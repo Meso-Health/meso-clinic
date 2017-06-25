@@ -139,10 +139,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    protected void setMemberActionLink() {
-
-    }
-
     public IdentificationEvent getIdEvent() {
         return mIdEvent;
     }
