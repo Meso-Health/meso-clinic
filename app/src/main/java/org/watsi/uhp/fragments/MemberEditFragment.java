@@ -53,15 +53,12 @@ public class MemberEditFragment extends FormFragment<Member> {
                         ExceptionManager.reportException(e);
                         toastMessage = "Failed to update the member information.";
                     }
-
                     IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                    // Basically, we want to preserve the method of identification depending on which fragment was before MemberEditFragment.
                     if (idEvent != null) {
                         getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
                     } else {
                         getNavigationManager().setMemberDetailFragment(mSyncableModel);
                     }
-
                     Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
