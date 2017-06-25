@@ -84,7 +84,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
             throws SyncableModel.UnauthenticatedException {
-        IdentificationEvent checkIn = getIdEvent();
+        IdentificationEvent checkIn = getMember().currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
 
         try {
@@ -109,9 +109,5 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                 getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
                 Toast.LENGTH_LONG).
                 show();
-    }
-
-    public IdentificationEvent getIdEvent() {
-        return getMember().currentCheckIn();
     }
 }

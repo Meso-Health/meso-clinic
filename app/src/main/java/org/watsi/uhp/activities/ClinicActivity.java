@@ -207,9 +207,7 @@ public class ClinicActivity extends AppCompatActivity {
                     break;
                 case R.id.menu_report_member:
                     if (currentFragment instanceof CheckInMemberDetailFragment) {
-                        ((MemberDetailFragment) currentFragment).reportMember(((CheckInMemberDetailFragment) currentFragment).getIdEvent());
-                    } else if (currentFragment instanceof CurrentMemberDetailFragment) {
-                        ((MemberDetailFragment) currentFragment).reportMember(((CurrentMemberDetailFragment) currentFragment).getIdEvent());
+                        ((CheckInMemberDetailFragment) currentFragment).reportMember();
                     }
             }
             return true;

@@ -56,7 +56,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     mSyncableModel.saveChanges(getAuthenticationToken());
-                    getNavigationManager().setCheckInMemberDetailFragment(mSyncableModel, mIdEvent);
+                    getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                     Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);

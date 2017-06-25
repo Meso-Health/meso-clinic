@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 
+import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
@@ -28,6 +29,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_report_member).setVisible(true);
     }
 
     @Override
@@ -41,6 +43,10 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
 
     public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) {
         checkInMemberDetailPresenter.saveIdentificationEventAndCheckIn(clinicNumberType, clinicNumber);
+    }
+
+    public void reportMember() {
+        checkInMemberDetailPresenter.reportMember();
     }
 }
 

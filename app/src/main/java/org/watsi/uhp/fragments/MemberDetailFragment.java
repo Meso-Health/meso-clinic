@@ -61,7 +61,6 @@ public abstract class MemberDetailFragment extends BaseFragment {
         // These should appear whenever you're in the detail view.
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
-        menu.findItem(R.id.menu_report_member).setVisible(true);
 
         // This should only appear if member is an absentee.
         if (memberDetailPresenter.getMember().isAbsentee()) {
@@ -73,28 +72,4 @@ public abstract class MemberDetailFragment extends BaseFragment {
         return memberDetailPresenter.getMember();
     }
 
-    public void reportMember(IdentificationEvent idEvent) {
-        idEvent.setAccepted(false);
-        if (idEvent.getOccurredAt() == null) {
-            idEvent.setOccurredAt(Clock.getCurrentTime());
-        }
-        final IdentificationEvent finalIdEvent = idEvent;
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.reject_identity_alert)
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        try {
-                            finalIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
-                            getNavigationManager().setCurrentPatientsFragment();
-                            Toast.makeText(getContext(),
-                                    getMember().getFullName() + " " + getContext().getString(R.string.identification_rejected),
-                                    Toast.LENGTH_LONG).
-                                    show();
-                        } catch (SQLException e) {
-                            ExceptionManager.reportException(e);
-                        }
-                    }
-                }).create().show();
-    }
 }

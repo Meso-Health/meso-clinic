@@ -279,15 +279,12 @@ public class IdentificationEvent extends SyncableModel {
             requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
                     RequestBody.create(
                             MultipartBody.FORM, String.valueOf(getDismissed())));
+        }
+
+        if (dirty(FIELD_NAME_DISMISSAL_REASON)) {
             requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON,
                     RequestBody.create(
                             MultipartBody.FORM, String.valueOf(getDismissalReason())));
-        }
-
-        if (dirty(FIELD_NAME_ACCEPTED)) {
-            requestBodyMap.put(IdentificationEvent.FIELD_NAME_ACCEPTED,
-                    RequestBody.create(
-                            MultipartBody.FORM, String.valueOf(getAccepted())));
         }
 
         return requestBodyMap;

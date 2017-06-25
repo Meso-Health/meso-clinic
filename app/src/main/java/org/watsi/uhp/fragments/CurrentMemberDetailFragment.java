@@ -17,8 +17,4 @@ public class CurrentMemberDetailFragment extends MemberDetailFragment {
                 view, getContext(), getMember());
         currentMemberDetailPresenter.setUp();
     }
-
-    public IdentificationEvent getIdEvent() {
-        return currentMemberDetailPresenter.getIdEvent();
-    }
 }
