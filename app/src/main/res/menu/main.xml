@@ -10,7 +10,7 @@
         android:visible="false" />
     <item
         android:id="@+id/menu_report_member"
-        android:orderInCategory="104"
+        android:orderInCategory="101"
         android:title="Report Member"
         app:showAsAction="never"
         android:visible="false" />
@@ -28,13 +28,13 @@
         android:visible="false" />
     <item
         android:id="@+id/menu_logout"
-        android:orderInCategory="105"
+        android:orderInCategory="104"
         android:title="@string/menu_logout_label"
         app:showAsAction="never"
         android:visible="true" />
     <item
         android:id="@+id/menu_version"
-        android:orderInCategory="106"
+        android:orderInCategory="105"
         android:title="@string/menu_version_and_sync_label"
         app:showAsAction="never"
         android:visible="true" />
