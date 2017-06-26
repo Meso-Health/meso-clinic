@@ -36,6 +36,7 @@ import java.sql.SQLException;
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
     static final int DEFAULT_BORDER_WIDTH = 1;
+    static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
 
     private final SessionManager mSessionManager;
     private IdentificationEvent mIdEvent;
@@ -98,7 +99,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void setMemberIndicator() {
-        if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
+        if (SIMPRINTS_VERIFICATION_TIER5.equals(mIdEvent.getFingerprintsVerificationTier())) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), "Bad Match");
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), "Good Match");
@@ -108,7 +109,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         // Report any errors if necessary.
         if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
-            ExceptionManager.reportException(new IllegalStateException("Request code in simprints call was from a different intent: " + requestCode));
+            ExceptionManager.reportErrorMessage("Request code in Simprints Verification call was from a different intent. Actual request code was: " + requestCode);
         } else {
             mIdEvent.setFingerprintsVerificationResultCode(resultCode);
             if (resultCode == Constants.SIMPRINTS_CANCELLED) {
