@@ -2,10 +2,13 @@ package org.watsi.uhp.presenters;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.simprints.libsimprints.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 /**
  * Created by michaelliang on 6/13/17.
@@ -84,6 +88,9 @@ public class CheckInMemberDetailPresenterTest {
 
     @Mock
     IdentificationEvent mockIdentificationEvent;
+
+    @Mock
+    Intent mockFingerprintIntentData;
 
     @Before
     public void setup() {
@@ -221,6 +228,65 @@ public class CheckInMemberDetailPresenterTest {
                 eq(R.color.indicatorRed), eq("Bad Match"));
         verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
                 eq(R.color.indicatorGreen), eq("Good Match"));
+    }
+
+    @Test
+    public void handleOnActivityResult_badIntent() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+
+        checkInMemberDetailPresenterSpy.handleOnActivityResult(
+                CheckInMemberDetailPresenter.SIMPRINTS_VERIFICATION_INTENT + 1,
+                Constants.SIMPRINTS_OK,
+                mockFingerprintIntentData);
+
+        verifyStatic();
+        ExceptionManager.reportException(any(IllegalStateException.class));
+    }
+
+    @Test
+    public void handleOnActivityResult_simprintsCancelled() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        doNothing().when(checkInMemberDetailPresenterSpy).showScanFailedToast();
+
+        checkInMemberDetailPresenterSpy.handleOnActivityResult(
+                CheckInMemberDetailPresenter.SIMPRINTS_VERIFICATION_INTENT,
+                Constants.SIMPRINTS_CANCELLED,
+                mockFingerprintIntentData);
+
+        verify(checkInMemberDetailPresenterSpy, times(1)).showScanFailedToast();
+        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
+    }
+
+    @Test
+    public void handleOnActivityResult_simprintsOK() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        doNothing().when(checkInMemberDetailPresenterSpy).showScanSuccessfulToast();
+        doNothing().when(checkInMemberDetailPresenterSpy).saveIdentificationEventWithVerificationData(any(Intent.class));
+        doNothing().when(checkInMemberDetailPresenterSpy).navigateToCheckInMemberDetailFragment();
+
+        checkInMemberDetailPresenterSpy.handleOnActivityResult(
+                CheckInMemberDetailPresenter.SIMPRINTS_VERIFICATION_INTENT,
+                Constants.SIMPRINTS_OK,
+                mockFingerprintIntentData);
+
+        verify(checkInMemberDetailPresenterSpy, times(1)).showScanSuccessfulToast();
+        verify(checkInMemberDetailPresenterSpy, times(1)).saveIdentificationEventWithVerificationData(mockFingerprintIntentData);
+        verify(checkInMemberDetailPresenterSpy, times(1)).navigateToCheckInMemberDetailFragment();
+        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
+    }
+
+    @Test
+    public void handleOnActivityResult_otherSimprintsResultCode() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        doNothing().when(checkInMemberDetailPresenterSpy).navigateToCheckInMemberDetailFragment();
+
+        checkInMemberDetailPresenterSpy.handleOnActivityResult(
+                CheckInMemberDetailPresenter.SIMPRINTS_VERIFICATION_INTENT,
+                Constants.SIMPRINTS_MISSING_VERIFY_GUID,
+                mockFingerprintIntentData);
+
+        verify(checkInMemberDetailPresenterSpy, times(1)).navigateToCheckInMemberDetailFragment();
+        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
     }
 }
 

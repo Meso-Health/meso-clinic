@@ -101,6 +101,24 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
+    public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+        // Report any errors if necessary.
+        if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
+            ExceptionManager.reportException(new IllegalStateException("Request code in simprints call was from a different intent: " + requestCode));
+        } else {
+            mIdEvent.setFingerprintsVerificationResultCode(resultCode);
+            if (resultCode == Constants.SIMPRINTS_CANCELLED) {
+                showScanFailedToast();
+            } else if (resultCode == Constants.SIMPRINTS_OK) {
+                saveIdentificationEventWithVerificationData(data);
+                showScanSuccessfulToast();
+                navigateToCheckInMemberDetailFragment();
+            } else {
+                navigateToCheckInMemberDetailFragment();
+            }
+        }
+    }
+
     //// Tested above
     //// Below TBD because of fingerprints
 
@@ -128,33 +146,13 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         fingerprintIcon.setTint(color);
     }
 
-    public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        mIdEvent.setFingerprintsVerificationResultCode(resultCode);
+    protected void saveIdentificationEventWithVerificationData(Intent data) {
+        Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+        String fingerprintTier = verification.getTier().toString();
+        float fingerprintConfidence = verification.getConfidence();
 
-        // Report any errors if necessary.
-        if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
-            ExceptionManager.reportException(new IllegalStateException("Request code in simprints call was from a different intent: " + requestCode));
-        }
-
-        if (resultCode != Constants.SIMPRINTS_OK) {
-            ExceptionManager.reportException(new IllegalStateException("ResultCode in simprints call is not OK. resultCode: " + resultCode));
-        }
-
-        if (resultCode == Constants.SIMPRINTS_CANCELLED) {
-            showScanFailedToast();
-        } else if (resultCode == Constants.SIMPRINTS_OK) {
-            Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
-            String fingerprintTier = verification.getTier().toString();
-            float fingerprintConfidence = verification.getConfidence();
-
-            mIdEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
-            mIdEvent.setFingerprintsVerificationTier(fingerprintTier);
-
-            showScanSuccessfulToast();
-            navigateToCheckInMemberDetailFragment();
-        } else {
-            navigateToCheckInMemberDetailFragment();
-        }
+        mIdEvent.setFingerprintsVerificationConfidence(fingerprintConfidence);
+        mIdEvent.setFingerprintsVerificationTier(fingerprintTier);
     }
 
     public IdentificationEvent getIdEvent() {
@@ -209,6 +207,10 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         if (mIdEvent.getOccurredAt() == null) {
             mIdEvent.setOccurredAt(Clock.getCurrentTime());
         }
+        confirmBeforeReporting();
+    }
+
+    protected void confirmBeforeReporting() {
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.reject_identity_alert)
                 .setNegativeButton(android.R.string.no, null)
