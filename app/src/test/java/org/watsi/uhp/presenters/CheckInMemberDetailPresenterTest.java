@@ -174,5 +174,53 @@ public class CheckInMemberDetailPresenterTest {
         verify(checkInMemberDetailPresenterSpy, never()).setMemberSecondaryButtonProperties(
                 eq("Scan"), eq(true), any(View.OnClickListener.class));
     }
+
+    @Test
+    public void setMemberIndicator_noScan() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn(null);
+
+        doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
+                any(int.class), any(String.class));
+
+        checkInMemberDetailPresenterSpy.setMemberSecondaryActionButton();
+
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorRed), eq("Bad Match"));
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorGreen), eq("Good Match"));
+    }
+
+    @Test
+    public void setMemberIndicator_tierFiveScan() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_5");
+
+        doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
+                any(int.class), any(String.class));
+
+        checkInMemberDetailPresenterSpy.setMemberIndicator();
+
+        verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
+                eq(R.color.indicatorRed), eq("Bad Match"));
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorGreen), eq("Good Match"));
+    }
+
+    @Test
+    public void setMemberIndicator_tierOneScan() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_1");
+
+        doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
+                any(int.class), any(String.class));
+
+        checkInMemberDetailPresenterSpy.setMemberIndicator();
+
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorRed), eq("Bad Match"));
+        verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
+                eq(R.color.indicatorGreen), eq("Good Match"));
+    }
 }
 
