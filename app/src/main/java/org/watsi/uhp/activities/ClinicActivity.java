@@ -23,15 +23,13 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
-import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
@@ -157,60 +155,8 @@ public class ClinicActivity extends AppCompatActivity {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
-            Member member = null;
-            if (currentFragment instanceof MemberDetailFragment) {
-                member = ((MemberDetailFragment) currentFragment).getMember();
-            }
-            switch (item.getItemId()) {
-                case R.id.menu_logout:
-                    new AlertDialog.Builder(mActivity)
-                        .setTitle(R.string.log_out_alert)
-                        .setNegativeButton(android.R.string.no, null)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                mSessionManager.logout(mActivity);
-                            }
-                        }).create().show();
-                    break;
-                case R.id.menu_member_edit:
-                    if (currentFragment instanceof CheckInMemberDetailFragment) {
-                        CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) currentFragment;
-                        getNavigationManager().setMemberEditFragment(
-                                member,
-                                checkInMemberDetailFragment.getIdEvent(),
-                                null
-                        );
-                    } else if (currentFragment instanceof CurrentMemberDetailFragment) {
-                        getNavigationManager().setMemberEditFragment(
-                                member,
-                                null,
-                                null);
-                    } else {
-                        ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
-                    }
-                    break;
-                case R.id.menu_enroll_newborn:
-                    getNavigationManager().setEnrollNewbornInfoFragment(member, null, null);
-                    break;
-                case R.id.menu_version:
-                    getNavigationManager().setVersionFragment();
-                    break;
-                case R.id.menu_complete_enrollment:
-                    if (currentFragment instanceof CheckInMemberDetailFragment) {
-                        getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) currentFragment).getIdEvent());
-                    } else if (currentFragment instanceof CurrentMemberDetailFragment) {
-                        getNavigationManager().setEnrollmentMemberPhotoFragment(member, null);
-                    } else {
-                        ExceptionManager.reportMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
-                    }
-                    break;
-                case R.id.menu_report_member:
-                    if (currentFragment instanceof CheckInMemberDetailFragment) {
-                        ((CheckInMemberDetailFragment) currentFragment).reportMember();
-                    }
-            }
-            return true;
+            MenuNavigationManager menuNavigationManager = new MenuNavigationManager(currentFragment, mActivity, item);
+            return menuNavigationManager.nextStep();
         }
     }
 
