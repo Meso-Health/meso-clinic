@@ -83,6 +83,30 @@ public class MemberDetailPresenterTest {
     }
 
     @Test
+    public void setUp() {
+        MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
+        doNothing().when(memberDetailPresenterSpy).setPatientCardTextFields();
+        doNothing().when(memberDetailPresenterSpy).setPatientCardPhoto();
+        doNothing().when(memberDetailPresenterSpy).setPatientCardNotifications();
+        doNothing().when(memberDetailPresenterSpy).setMemberActionLink();
+        doNothing().when(memberDetailPresenterSpy).setMemberActionButton();
+        doNothing().when(memberDetailPresenterSpy).setBottomListView();
+        doNothing().when(memberDetailPresenterSpy).setMemberSecondaryActionButton();
+        doNothing().when(memberDetailPresenterSpy).setMemberIndicator();
+
+        memberDetailPresenterSpy.setUp();
+
+        verify(memberDetailPresenterSpy, times(1)).setPatientCardTextFields();
+        verify(memberDetailPresenterSpy, times(1)).setPatientCardPhoto();
+        verify(memberDetailPresenterSpy, times(1)).setPatientCardNotifications();
+        verify(memberDetailPresenterSpy, times(1)).setMemberActionLink();
+        verify(memberDetailPresenterSpy, times(1)).setMemberActionButton();
+        verify(memberDetailPresenterSpy, times(1)).setBottomListView();
+        verify(memberDetailPresenterSpy, times(1)).setMemberSecondaryActionButton();
+        verify(memberDetailPresenterSpy, times(1)).setMemberIndicator();
+    }
+
+    @Test
     public void setPatientCardNotifications_absentee() {
         MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
 
