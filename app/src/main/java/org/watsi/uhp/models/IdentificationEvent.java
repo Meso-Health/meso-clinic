@@ -251,7 +251,7 @@ public class IdentificationEvent extends SyncableModel {
         this.mDismissalReason = dismissalReason;
     }
 
-    public void setFingerprintsVerificationConfidence(float confidence) {
+    public void setFingerprintsVerificationConfidence(Float confidence) {
         this.mFingerprintsVerificationConfidence = confidence;
     }
 
@@ -267,7 +267,7 @@ public class IdentificationEvent extends SyncableModel {
         return mFingerprintsVerificationAttemptDetail;
     }
 
-    public void setFingerprintsVerificationResultCode(int simprintsResultCode) {
+    public void setFingerprintsVerificationResultCode(Integer simprintsResultCode) {
         this.mFingerprintsVerificationResultCode = simprintsResultCode;
     }
 
@@ -285,7 +285,7 @@ public class IdentificationEvent extends SyncableModel {
                     MultipartBody.FORM,
                     new Gson().toJsonTree(getDismissalReason()).getAsString()));
         } else {
-            ExceptionManager.reportException(new IllegalStateException("Dismiss reason is null IdentificationEvent is patching."));
+            ExceptionManager.reportErrorMessage("Dismiss reason is null when patching an IdentificationEvent.");
         }
 
         return requestBodyMap;
