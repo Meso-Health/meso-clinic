@@ -75,7 +75,27 @@ public class MemberDetailPresenterTest {
         initMocks(this);
         mockStatic(MemberDao.class);
         mockStatic(ExceptionManager.class);
-        memberDetailPresenter = new MemberDetailPresenter(mockView, mockContext, mockMember, mockNavigationManager);
+        memberDetailPresenter = new MemberDetailPresenter(mockView, mockContext, mockMember, mockNavigationManager) {
+            @Override
+            protected void setMemberActionButton() {
+                // no-op
+            }
+
+            @Override
+            protected void setMemberSecondaryActionButton() {
+                // no-op
+            }
+
+            @Override
+            protected void setMemberIndicator() {
+                // no-op
+            }
+
+            @Override
+            protected void setMemberActionLink() {
+                // no-op
+            }
+        };
     }
 
     @Test

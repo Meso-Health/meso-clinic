@@ -55,11 +55,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberIndicator = getMemberIndicator();
     }
 
-    protected void showFingerprintsResults() {
-        getMemberSecondaryButton().setVisibility(View.INVISIBLE);
-        setMemberIndicator();
-    }
-
+    @Override
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
         memberActionButton.setText(R.string.check_in);
@@ -71,6 +67,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         });
     }
 
+    @Override
     protected void setMemberSecondaryActionButton() {
         if (getMember().isAbsentee()) {
             setMemberSecondaryButtonProperties("Complete Enrollment", false,
@@ -87,7 +84,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                         @Override
                         public void onClick(View v) {
                             SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid().toString());
+                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid() + "2");
                             mCheckInMemberDetailFragment.startActivityForResult(
                                     fingerprintIdentificationIntent,
                                     SIMPRINTS_VERIFICATION_INTENT
@@ -98,12 +95,20 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
+    @Override
     protected void setMemberIndicator() {
         if (SIMPRINTS_VERIFICATION_TIER5.equals(mIdEvent.getFingerprintsVerificationTier())) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), "Bad Match");
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), "Good Match");
+        } else if (mIdEvent.getFingerprintsVerificationResultCode() != Constants.SIMPRINTS_CANCELLED) {
+            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), "No Scan");
         }
+    }
+
+    @Override
+    protected void setMemberActionLink() {
+        // no-op
     }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
@@ -118,8 +123,15 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                 saveIdentificationEventWithVerificationData(data);
                 showScanSuccessfulToast();
                 showFingerprintsResults();
+            } else if (resultCode != Constants.SIMPRINTS_CANCELLED) {
+                showFingerprintsResults();
             }
         }
+    }
+
+    protected void showFingerprintsResults() {
+        getMemberSecondaryButton().setVisibility(View.INVISIBLE);
+        setMemberIndicator();
     }
 
     //// Tested above

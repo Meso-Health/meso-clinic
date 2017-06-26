@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,20 +19,18 @@ public abstract class MemberDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_member_detail, container, false);
+        setUpFragment(view);
 
-        Member member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-        memberDetailPresenter = new MemberDetailPresenter(view, getContext(), member, getNavigationManager());
+        memberDetailPresenter = getPresenter();
         memberDetailPresenter.setUp();
 
         setUpMenuAndWindow();
-        setUpFragment(view);
-
         return view;
     }
 
-    protected void setUpFragment(View view) {
-        // no-op.
-    }
+    protected abstract MemberDetailPresenter getPresenter();
+
+    protected abstract void setUpFragment(View view);
 
     protected void setUpMenuAndWindow() {
         setHasOptionsMenu(true);

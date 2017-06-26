@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
@@ -7,25 +8,33 @@ import android.view.View;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
+import org.watsi.uhp.presenters.MemberDetailPresenter;
 
 import java.sql.SQLException;
 
 public class CheckInMemberDetailFragment extends MemberDetailFragment {
-    private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
+    CheckInMemberDetailPresenter checkInMemberDetailPresenter;
 
+    @Override
+    protected MemberDetailPresenter getPresenter() {
+        return checkInMemberDetailPresenter;
+    }
+
+    @Override
     protected void setUpFragment(View view) {
         IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        Member member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
                 getNavigationManager(),
                 getSessionManager(),
                 this,
                 view,
                 getContext(),
-                getMember(),
+                member,
                 idEvent
         );
-        checkInMemberDetailPresenter.setUp();
     }
 
     @Override

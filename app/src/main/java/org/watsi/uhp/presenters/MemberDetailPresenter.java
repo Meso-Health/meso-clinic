@@ -20,7 +20,7 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 import java.util.List;
 
-public class MemberDetailPresenter {
+public abstract class MemberDetailPresenter {
     private final NavigationManager mNavigationManager;
     private final View mView;
     private final Context mContext;
@@ -44,27 +44,19 @@ public class MemberDetailPresenter {
         setMemberIndicator();
     }
 
-    protected void setMemberActionButton() {
-        // no-op
-    }
+    protected abstract void setMemberActionButton();
+
+    protected abstract void setMemberSecondaryActionButton();
+
+    protected abstract void setMemberIndicator();
+
+    protected abstract void setMemberActionLink();
 
     protected void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();
         if (householdMembers != null) {
             setBottomListWithMembers(householdMembers);
         }
-    }
-
-    protected void setMemberSecondaryActionButton() {
-        // no-op. Override to implement.
-    }
-
-    protected void setMemberIndicator() {
-        // no-op. Override to implement.
-    }
-
-    protected void setMemberActionLink() {
-        // no-op. Override to implement.
     }
 
     protected void setPatientCardPhoto() {

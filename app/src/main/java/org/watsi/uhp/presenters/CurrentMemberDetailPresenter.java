@@ -26,6 +26,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         super(view, context, member, navigationManager);
     }
 
+    @Override
     protected void setMemberActionButton() {
         Button confirmButton = getMemberActionButton();
 
@@ -37,6 +38,16 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                 getNavigationManager().setEncounterFragment(encounter);
             }
         });
+    }
+
+    @Override
+    protected void setMemberSecondaryActionButton() {
+        // no-op
+    }
+
+    @Override
+    protected void setMemberIndicator() {
+        // no-op
     }
 
     protected Encounter createUnsavedEncounterWithDefaultItems() {
@@ -54,6 +65,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         return encounter;
     }
 
+    @Override
     protected void setMemberActionLink() {
         getMemberActionLink().setVisibility(View.VISIBLE);
         getMemberActionLink().setText(R.string.dismiss_patient);
