@@ -55,10 +55,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberIndicator = getMemberIndicator();
     }
 
-    public void setUp() {
-        super.setUp();
-    }
-
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
         memberActionButton.setText(R.string.check_in);
