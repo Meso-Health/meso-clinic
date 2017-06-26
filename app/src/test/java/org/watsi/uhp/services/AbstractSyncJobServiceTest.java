@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 
@@ -102,7 +103,12 @@ public class AbstractSyncJobServiceTest {
         JobInfo result = FetchService.buildJobInfo(jobId, mockComponentName);
 
         assertEquals(result, mockJobInfo);
-        verify(mockBuilder, times(1)).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+        // hacky way to test logic that depends on a BuildConfig variable (which can't be mocked)
+        if (BuildConfig.USING_LOCAL_SERVER) {
+            verify(mockBuilder, times(1)).setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
+        } else {
+            verify(mockBuilder, times(1)).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+        }
         verify(mockBuilder, times(1)).setPeriodic(15 * 60 * 1000);
         verify(mockBuilder, times(1)).setPersisted(true);
     }
