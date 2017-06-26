@@ -10,6 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.managers.ExceptionManager;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -276,16 +277,15 @@ public class IdentificationEvent extends SyncableModel {
 
     public Map<String, RequestBody> formatPatchRequest() {
         Map<String, RequestBody> requestBodyMap = new HashMap<>();
-        if (dirty(FIELD_NAME_DISMISSED)) {
-            requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
-                    RequestBody.create(
-                            MultipartBody.FORM, String.valueOf(getDismissed())));
-        }
-
-        if (dirty(FIELD_NAME_DISMISSAL_REASON)) {
+        requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSED,
+                RequestBody.create(
+                        MultipartBody.FORM, String.valueOf(getDismissed())));
+        if (getDismissalReason() != null) {
             requestBodyMap.put(IdentificationEvent.FIELD_NAME_DISMISSAL_REASON, RequestBody.create(
                     MultipartBody.FORM,
                     new Gson().toJsonTree(getDismissalReason()).getAsString()));
+        } else {
+            ExceptionManager.reportException(new IllegalStateException("Dismiss reason is null IdentificationEvent is patching."));
         }
 
         return requestBodyMap;

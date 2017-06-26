@@ -33,20 +33,25 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Encounter encounter = new Encounter();
-                IdentificationEvent checkIn = getMember().currentCheckIn();
-                encounter.setOccurredAt(Clock.getCurrentTime());
-                encounter.setMember(getMember());
-                encounter.setIdentificationEvent(checkIn);
-                try {
-                    encounter.setEncounterItems(
-                            EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
-                } catch (SQLException e) {
-                    ExceptionManager.reportException(e);
-                }
+                Encounter encounter = createUnsavedEncounterWithDefaultItems();
                 getNavigationManager().setEncounterFragment(encounter);
             }
         });
+    }
+
+    protected Encounter createUnsavedEncounterWithDefaultItems() {
+        Encounter encounter = new Encounter();
+        IdentificationEvent checkIn = getMember().currentCheckIn();
+        encounter.setOccurredAt(Clock.getCurrentTime());
+        encounter.setMember(getMember());
+        encounter.setIdentificationEvent(checkIn);
+        try {
+            encounter.setEncounterItems(
+                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
+        return encounter;
     }
 
     protected void setMemberActionLink() {
