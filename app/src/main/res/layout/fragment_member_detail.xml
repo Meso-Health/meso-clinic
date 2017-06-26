@@ -71,16 +71,29 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/member_scan_fingerprints_button"
-            android:layout_height="wrap_content"
+        android:id="@+id/member_secondary_button"
+        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+            android:theme="@style/SecondaryButton"
+        android:paddingLeft="40px"
+        android:paddingRight="45px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/member_indicator"
+            android:layout_height="50dp"
             android:layout_width="150dp"
             android:drawableLeft="@drawable/fingerprints"
             android:background="@drawable/scan_result_button"
             android:paddingLeft="40px"
+            android:gravity="center"
             android:paddingRight="45px"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:visibility="gone" />
+            android:visibility="gone"
+             />
 
     </RelativeLayout>
 
