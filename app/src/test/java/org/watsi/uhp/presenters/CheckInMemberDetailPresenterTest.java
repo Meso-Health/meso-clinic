@@ -254,7 +254,7 @@ public class CheckInMemberDetailPresenterTest {
                 mockFingerprintIntentData);
 
         verify(checkInMemberDetailPresenterSpy, times(1)).showScanFailedToast();
-        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
+        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_CANCELLED);
     }
 
     @Test
@@ -272,7 +272,7 @@ public class CheckInMemberDetailPresenterTest {
         verify(checkInMemberDetailPresenterSpy, times(1)).showScanSuccessfulToast();
         verify(checkInMemberDetailPresenterSpy, times(1)).saveIdentificationEventWithVerificationData(mockFingerprintIntentData);
         verify(checkInMemberDetailPresenterSpy, times(1)).navigateToCheckInMemberDetailFragment();
-        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
+        verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_OK);
     }
 
     @Test
