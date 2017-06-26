@@ -97,10 +97,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
                 case 8:
-                    // Migrating data in place?
-                    // no-op.
+                    // After talking with @pete and @byronium we need this no-op here because in the past, we had to update
+                    // some phones's data directly. Those methods no longer will compile here, and all phones should be > version 8 now.
                 case 9:
-                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier INTEGER");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier STRING;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
             }
