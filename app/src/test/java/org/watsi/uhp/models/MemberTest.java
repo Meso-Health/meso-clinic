@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.webkit.URLUtil;
 
 import com.google.common.io.ByteStreams;
 import com.j256.ormlite.dao.Dao;
@@ -66,7 +67,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({ApiService.class, Bitmap.class, BitmapFactory.class, ByteStreams.class,
         EncounterDao.class, File.class, FileManager.class, ExceptionManager.class,
         MediaStore.Images.Media.class, Member.class, MemberDao.class, okhttp3.Response.class,
-        Request.class, Response.class, ResponseBody.class, Uri.class})
+        Request.class, Response.class, ResponseBody.class, Uri.class, URLUtil.class})
 public class MemberTest {
     private final String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
     private final String remotePhotoUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
@@ -115,7 +116,33 @@ public class MemberTest {
         mockStatic(MediaStore.Images.Media.class);
         mockStatic(MemberDao.class);
         mockStatic(Uri.class);
+        mockStatic(URLUtil.class);
+        when(URLUtil.isValidUrl(remotePhotoUrl)).thenReturn(true);
+        when(URLUtil.isValidUrl(localPhotoUrl)).thenReturn(true);
+        when(URLUtil.isValidUrl(localNationalIdPhotoUrl)).thenReturn(true);
         member = new Member();
+    }
+
+    @Test
+    public void setPhotoUrl_isNull_setsPhotoUrlToNull() throws Exception {
+        member.setPhotoUrl(null);
+
+        assertEquals(member.getPhotoUrl(), null);
+    }
+    
+    @Test
+    public void setPhotoUrl_isValid_setsPhotoUrl() throws Exception {
+        member.setPhotoUrl(remotePhotoUrl);
+
+        assertEquals(member.getPhotoUrl(), remotePhotoUrl);
+    }
+
+    @Test(expected=AbstractModel.ValidationException.class)
+    public void setPhotoUrl_isInvalid_throwsException() throws Exception {
+        String invalidUrl = "foo.jpg";
+        when(URLUtil.isValidUrl(invalidUrl)).thenReturn(false);
+
+        member.setPhoneNumber(invalidUrl);
     }
 
     @Test
@@ -201,6 +228,7 @@ public class MemberTest {
     @Test
     public void handleUpdateFromSync_responseHasPhotoUrl_setsAndFetchesPhoto() throws Exception {
         String previousPhotoUrl = "prevUrl";
+        when(URLUtil.isValidUrl(previousPhotoUrl)).thenReturn(true);
         member.setPhotoUrl(previousPhotoUrl);
         Member memberSpy = spy(member);
         Member responseMember = new Member();
@@ -220,6 +248,7 @@ public class MemberTest {
     @Test
     public void handleUpdateFromSync_responseHasPhotoUrlAndExistingPhotoIsLocal_deletesLocalPhoto() throws Exception {
         String previousPhotoUrl = "prevUrl";
+        when(URLUtil.isValidUrl(previousPhotoUrl)).thenReturn(true);
         member.setPhotoUrl(previousPhotoUrl);
         Member memberSpy = spy(member);
         Member responseMember = new Member();
