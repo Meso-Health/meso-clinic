@@ -17,83 +17,80 @@ import org.watsi.uhp.models.Member;
  */
 
 public class MenuNavigationManager {
-    private MenuItem mMenuItem;
-    private Fragment mFragment;
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
     private ClinicActivity mClinicActivity;
-    private Member mMember;
 
 
-    public MenuNavigationManager(Fragment fragment, ClinicActivity clinicActivity, MenuItem menuItem) {
-        mFragment = fragment;
-        mMenuItem = menuItem;
+    public MenuNavigationManager(ClinicActivity clinicActivity) {
         mSessionManager = clinicActivity.getSessionManager();
         mNavigationManager = clinicActivity.getNavigationManager();
         mClinicActivity = clinicActivity;
 
-        setMemberIfExists();
     }
 
-    protected void setMemberIfExists() {
-        if (mFragment instanceof MemberDetailFragment) {
-            mMember = ((MemberDetailFragment) mFragment).getMember();
-        }
-    }
-
-    public boolean nextStep() {
-        switch (mMenuItem.getItemId()) {
+    public boolean nextStep(Fragment currentFragment, MenuItem menuItem) {
+        Member member = getMemberFromFragmentIfExists(currentFragment);
+        switch (menuItem.getItemId()) {
             case R.id.menu_logout:
-                confirmBeforelogout();
+                confirmBeforelogout(currentFragment);
                 break;
             case R.id.menu_member_edit:
-                navigateToMemberEditFragment();
+                navigateToMemberEditFragment(currentFragment, member);
                 break;
             case R.id.menu_enroll_newborn:
-                mNavigationManager.setEnrollNewbornInfoFragment(mMember, null, null);
+                mNavigationManager.setEnrollNewbornInfoFragment(member, null, null);
                 break;
             case R.id.menu_version:
                 mNavigationManager.setVersionFragment();
                 break;
             case R.id.menu_complete_enrollment:
-                navigateToCompleteEnrollmentFragment();
+                navigateToCompleteEnrollmentFragment(currentFragment, member);
                 break;
             case R.id.menu_report_member:
-                reportMember();
+                reportMember(currentFragment);
                 break;
         }
         return true;
     }
 
-    private void reportMember() {
-        if (mFragment instanceof CheckInMemberDetailFragment) {
-            ((CheckInMemberDetailFragment) mFragment).reportMember();
+    protected Member getMemberFromFragmentIfExists(Fragment fragment) {
+        Member member = null;
+        if (fragment instanceof MemberDetailFragment) {
+            member = ((MemberDetailFragment) fragment).getMember();
+        }
+        return member;
+    }
+
+    protected void reportMember(Fragment fragment) {
+        if (fragment instanceof CheckInMemberDetailFragment) {
+            ((CheckInMemberDetailFragment) fragment).reportMember();
         } else {
             ExceptionManager.reportException(new IllegalStateException("Attempted to report member after check in."));
         }
     }
 
-    private void navigateToCompleteEnrollmentFragment() {
-        if (mFragment instanceof CheckInMemberDetailFragment) {
-            mNavigationManager.setEnrollmentMemberPhotoFragment(mMember, ((CheckInMemberDetailFragment) mFragment).getIdEvent());
-        } else if (mFragment instanceof CurrentMemberDetailFragment) {
-            mNavigationManager.setEnrollmentMemberPhotoFragment(mMember, null);
+    protected void navigateToCompleteEnrollmentFragment(Fragment fragment, Member member) {
+        if (fragment instanceof CheckInMemberDetailFragment) {
+            mNavigationManager.setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) fragment).getIdEvent());
+        } else if (fragment instanceof CurrentMemberDetailFragment) {
+            mNavigationManager.setEnrollmentMemberPhotoFragment(member, null);
         } else {
             ExceptionManager.reportMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
         }
     }
 
-    private void navigateToMemberEditFragment() {
-        if (mFragment instanceof CheckInMemberDetailFragment) {
-            CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) mFragment;
+    protected void navigateToMemberEditFragment(Fragment fragment, Member member) {
+        if (fragment instanceof CheckInMemberDetailFragment) {
+            CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
             mNavigationManager.setMemberEditFragment(
-                    mMember,
+                    member,
                     checkInMemberDetailFragment.getIdEvent(),
                     null
             );
-        } else if (mFragment instanceof CurrentMemberDetailFragment) {
+        } else if (fragment instanceof CurrentMemberDetailFragment) {
             mNavigationManager.setMemberEditFragment(
-                    mMember,
+                    member,
                     null,
                     null);
         } else {
@@ -101,8 +98,8 @@ public class MenuNavigationManager {
         }
     }
 
-    private void confirmBeforelogout() {
-        new AlertDialog.Builder(mFragment.getActivity())
+    protected void confirmBeforelogout(Fragment fragment) {
+        new AlertDialog.Builder(fragment.getActivity())
                 .setTitle(R.string.log_out_alert)
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

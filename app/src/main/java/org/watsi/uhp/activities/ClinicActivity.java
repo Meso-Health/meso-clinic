@@ -153,10 +153,10 @@ public class ClinicActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onMenuItemClick(MenuItem menuItem) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            MenuNavigationManager menuNavigationManager = new MenuNavigationManager(currentFragment, mActivity, item);
-            return menuNavigationManager.nextStep();
+            MenuNavigationManager menuNavigationManager = new MenuNavigationManager(mActivity);
+            return menuNavigationManager.nextStep(currentFragment, menuItem);
         }
     }
 
