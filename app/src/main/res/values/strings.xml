@@ -79,9 +79,9 @@
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="reject_identity"><u>Report</u></string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
-    <string name="good_scan_indicator"> Good Scan </string>
-    <string name="bad_scan_indicator"> Bad Scan </string>
-    <string name="no_scan_indicator"> No Scan </string>
+    <string name="good_scan_indicator">Good Scan</string>
+    <string name="bad_scan_indicator">Bad Scan</string>
+    <string name="no_scan_indicator">No Scan</string>
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
     <plurals name="household_label">
