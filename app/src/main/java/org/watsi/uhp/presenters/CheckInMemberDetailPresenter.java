@@ -128,12 +128,12 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberSecondaryButton.setVisibility(View.VISIBLE);
         mMemberSecondaryButton.setText(text);
         if (showFingerprintsIcon) {
-            addFingerprintsToButton();
+            addFingerprintsIconToSecondaryButton();
         }
         mMemberSecondaryButton.setOnClickListener(onClickListener);
     }
 
-    protected void addFingerprintsToButton() {
+    protected void addFingerprintsIconToSecondaryButton() {
         Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
         mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
     }
