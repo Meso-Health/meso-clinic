@@ -20,10 +20,6 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by michaelliang on 6/1/17.
- */
-
 public class MemberDetailPresenter {
     private final NavigationManager mNavigationManager;
     private final View mView;

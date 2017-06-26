@@ -41,10 +41,6 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-/**
- * Created by michaelliang on 6/1/17.
- */
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ MemberDao.class, MemberDetailPresenter.class, ExceptionManager.class })
 public class MemberDetailPresenterTest {

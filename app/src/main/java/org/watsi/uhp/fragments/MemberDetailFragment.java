@@ -12,10 +12,6 @@ import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
 
-/**
- * Created by michaelliang on 6/12/17.
- */
-
 public abstract class MemberDetailFragment extends BaseFragment {
     MemberDetailPresenter memberDetailPresenter;
 

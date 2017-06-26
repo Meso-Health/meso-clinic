@@ -4,10 +4,6 @@ import android.view.View;
 
 import org.watsi.uhp.presenters.CurrentMemberDetailPresenter;
 
-/**
- * Created by michaelliang on 6/12/17.
- */
-
 public class CurrentMemberDetailFragment extends MemberDetailFragment {
     private CurrentMemberDetailPresenter currentMemberDetailPresenter;
 

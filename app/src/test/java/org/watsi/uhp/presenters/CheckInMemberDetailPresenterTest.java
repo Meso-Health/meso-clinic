@@ -40,10 +40,6 @@ import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
-/**
- * Created by michaelliang on 6/13/17.
- */
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ MemberDao.class, CheckInMemberDetailPresenter.class, ExceptionManager.class })
 public class CheckInMemberDetailPresenterTest {

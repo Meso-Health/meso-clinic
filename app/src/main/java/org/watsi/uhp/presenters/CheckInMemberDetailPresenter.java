@@ -30,10 +30,6 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
-/**
- * Created by michaelliang on 6/13/17.
- */
-
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
     static final int DEFAULT_BORDER_WIDTH = 1;

@@ -20,10 +20,6 @@ import org.watsi.uhp.models.SyncableModel;
 
 import java.sql.SQLException;
 
-/**
- * Created by michaelliang on 6/13/17.
- */
-
 public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     public CurrentMemberDetailPresenter(NavigationManager navigationManager, View view, Context context, Member member) {
