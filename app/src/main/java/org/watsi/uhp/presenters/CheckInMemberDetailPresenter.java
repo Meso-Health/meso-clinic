@@ -134,8 +134,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         setMemberIndicator();
     }
 
-    //// Tested above
-
     protected void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
         mMemberSecondaryButton.setVisibility(View.VISIBLE);
         mMemberSecondaryButton.setText(text);

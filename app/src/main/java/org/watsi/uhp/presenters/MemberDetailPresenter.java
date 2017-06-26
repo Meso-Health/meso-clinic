@@ -114,8 +114,6 @@ public abstract class MemberDetailPresenter {
         }
     }
 
-    // Tested above.
-    // Untested below.
     public Button getMemberSecondaryButton() {
         return (Button) getView().findViewById(R.id.member_secondary_button);
     }
