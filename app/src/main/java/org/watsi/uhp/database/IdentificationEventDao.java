@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
@@ -26,13 +27,13 @@ public class IdentificationEventDao {
     private IdentificationEventDao() {
     }
 
-    private void setIdentificationDao(Dao identificationDao) {
+    private void setIdentificationEventDao(Dao identificationDao) {
         this.mIdentificationDao = identificationDao;
     }
 
-    private Dao<IdentificationEvent, UUID> getIdentificationDao() throws SQLException {
+    private Dao<IdentificationEvent, UUID> getIdentificationEventDao() throws SQLException {
         if (mIdentificationDao == null) {
-            setIdentificationDao(DatabaseHelper.getHelper().getDao(IdentificationEvent.class));
+            setIdentificationEventDao(DatabaseHelper.getHelper().getDao(IdentificationEvent.class));
         }
 
         return mIdentificationDao;
@@ -48,7 +49,7 @@ public class IdentificationEventDao {
                 "AND identifications.accepted = 1";
 
         GenericRawResults<String> rawResults =
-                getInstance().getIdentificationDao().queryRaw(rawQuery,
+                getInstance().getIdentificationEventDao().queryRaw(rawQuery,
                         new RawRowMapper<String>() {
                             public String mapRow(String[] columnNames, String[] resultColumns) {
                                 return resultColumns[0];
@@ -59,13 +60,18 @@ public class IdentificationEventDao {
         if (result == null) {
             return null;
         } else {
-            return getInstance().getIdentificationDao().queryForId(UUID.fromString(result));
+            return getInstance().getIdentificationEventDao().queryForId(UUID.fromString(result));
         }
+    }
+
+    public static void create(IdentificationEvent idEvent) throws SQLException {
+        idEvent.setCreatedAt(Clock.getCurrentTime());
+        getInstance().getIdentificationEventDao().create(idEvent);
     }
 
     public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
         for (UUID id : memberIdsToDelete) {
-            getInstance().getIdentificationDao().deleteById(id);
+            getInstance().getIdentificationEventDao().deleteById(id);
         }
     }
 }

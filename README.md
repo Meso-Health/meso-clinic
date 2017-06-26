@@ -200,9 +200,36 @@ $ git push origin head
 
 Tests can be run directly through the Android Studio UI by right-clicking the test file and selecting the 'Run <test>' option (or run the entire test suite by right-clicking the entire test folder).
 
-Tests can also be run from the terminal using the command `./gradlew test` from the project root.
+Tests can also be run from the terminal. 
 
-### To run end-to-end feature tests locally:
+ ```
+ # Run all unit tests against every build variant (this is unnecessary).
+ ./gradlew test
+ 
+ # Run all unit tests for a specific build variant.
+ ./gradlew test<variant_name>
+  
+ # Run all feature tests against every build variant (this is unnecessary).
+ ./gradlew connectedAndroidTest
+ 
+ # Run all feature tests for a specific build variant.
+ ./gradlew connected<variant_name>AndroidTest
+ 
+ # Run feature tests in a specific package for a specific build variant.
+ ./gradlew connected<variant_name>AndroidTest -Pandroid.testInstrumentationRunnerArguments.package=<package_name>
+ 
+ # Run specific feature test for a specific build variant.
+ ./gradlew connected<variant_name>AndroidTest -Pandroid.testInstrumentationRunnerArguments.class=<package_name>
+ ```
+ 
+ More options [here](https://developer.android.com/studio/test/command-line.htm).
+ 
+### To run offline feature tests locally:
+```
+ ./gradlew connectedSpecDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=org.watsi.uhp.offline
+```
+
+### To run end-to-end (online) feature tests locally:
 
 In your local UHP Backend folder:
 
@@ -215,7 +242,7 @@ $ rails server -e android-test -p 8000
 
 ```
 
-Then, back on the android side you can run your test locally either in Android Studio or in terminal, with either an emulator or a real connected device
+Then, back on the android side you can run your test locally either in Android Studio or in terminal, with either an emulator or a real connected device.
 
 ## Conventions
 

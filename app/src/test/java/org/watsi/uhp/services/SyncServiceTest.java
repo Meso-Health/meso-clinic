@@ -264,7 +264,7 @@ public class SyncServiceTest {
         syncService.syncEncounterForms(encounterFormsList);
 
         verify(mockEncounterForm, never()).sync(syncService);
-        verify(mockEncounterForm, times(1)).destroy();
+        verify(mockEncounterForm, times(1)).delete();
     }
 
     @Test

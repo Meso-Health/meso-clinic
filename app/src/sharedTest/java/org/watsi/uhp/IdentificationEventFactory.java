@@ -3,22 +3,22 @@ package org.watsi.uhp;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class IdentificationEventFactory extends IdentificationEvent {
 
-    // Identification Event with setters
-    public IdentificationEventFactory(UUID id, Date occurredAt, UUID memberId, Member member, SearchMethodEnum searchMethod, boolean photoVerified, int clinicNumber, ClinicNumberTypeEnum clinicNumberType, boolean accepted) {
-        super();
-        setId(id);
-        setOccurredAt(occurredAt);
-        setMemberId(memberId);
+    public IdentificationEventFactory(Member member, int clinicNumber) {
         setMember(member);
-        setSearchMethod(searchMethod);
-        setPhotoVerified(photoVerified);
         setClinicNumber(clinicNumber);
-        setClinicNumberType(clinicNumberType);
-        setAccepted(accepted);
+
+        setMemberId(member.getId());
+        setOccurredAt(Calendar.getInstance().getTime());
+        setId(UUID.randomUUID());
+        setAccepted(true);
+        setPhotoVerified(true);
+        setSearchMethod(SearchMethodEnum.SCAN_BARCODE);
+        setClinicNumberType(ClinicNumberTypeEnum.OPD);
+        setDismissed(false);
     }
 }
