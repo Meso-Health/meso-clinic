@@ -150,4 +150,6 @@ public class MenuNavigationManagerTest {
         verify(menuNavigationManagerSpy, times(1)).reportMember(mockGenericFragment);
         assertTrue(result);
     }
+
+    // TODO write the remaining tests.
 }
