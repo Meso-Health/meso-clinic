@@ -20,8 +20,11 @@ import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.User;
 
 import static junit.framework.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,8 +62,11 @@ public class SessionManagerTest {
 
     @Test
     public void setUserAsLoggedIn() throws Exception {
+        SessionManager spiedSessionManager = spy(sessionManager);
+
         int id = 0;
         String username = "username";
+        String password = "password";
         String token = "token";
 
         mockStatic(ExceptionManager.class);
@@ -68,14 +74,42 @@ public class SessionManagerTest {
         when(mockUser.getUsername()).thenReturn(username);
         whenNew(Account.class).withArguments(username, Authenticator.ACCOUNT_TYPE)
                 .thenReturn(mockAccount);
+        doNothing().when(spiedSessionManager).addAccount(any(Account.class), any(String.class));
 
-        sessionManager.setUserAsLoggedIn(mockUser, token);
+        spiedSessionManager.setUserAsLoggedIn(mockUser, password, token);
 
+        verify(spiedSessionManager, times(1)).addAccount(mockAccount, password);
         verify(mockAccountManager, times(1)).setAuthToken(
                 mockAccount, Authenticator.AUTH_TOKEN_TYPE, token);
         verify(mockPreferencesManager, times(1)).setUsername(username);
         verifyStatic(times(1));
         ExceptionManager.setPersonData(String.valueOf(id), username);
+    }
+
+    @Test
+    public void addAccount_accountDoesNotExist_addsAccount() throws Exception {
+        String password = "password";
+
+        when(mockAccountManager.getAccountsByType(Authenticator.ACCOUNT_TYPE))
+                .thenReturn(new Account[0]);
+
+        sessionManager.addAccount(mockAccount, password);
+
+        verify(mockAccountManager, times(1)).addAccountExplicitly(
+                mockAccount, password, null);
+    }
+
+    @Test
+    public void addAccount_accountExists_doesNotAddAccount() throws Exception {
+        String password = "password";
+
+        when(mockAccountManager.getAccountsByType(Authenticator.ACCOUNT_TYPE))
+                .thenReturn(new Account[] {mockAccount});
+
+        sessionManager.addAccount(mockAccount, password);
+
+        verify(mockAccountManager, never()).addAccountExplicitly(
+                mockAccount, password, null);
     }
 
     @Test
