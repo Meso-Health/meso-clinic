@@ -21,6 +21,7 @@ import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.models.Member;
 
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -69,6 +70,9 @@ public class MenuNavigationManagerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+
+        when(mockClinicActivity.getNavigationManager()).thenReturn(mockNavigationManager);
+        when(mockClinicActivity.getSessionManager()).thenReturn(mockSessionManager);
         menuNavigationManager = new MenuNavigationManager(mockClinicActivity);
     }
 
@@ -77,8 +81,73 @@ public class MenuNavigationManagerTest {
         when(mockMenuItem.getItemId()).thenReturn(R.id.menu_logout);
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
         doNothing().when(menuNavigationManagerSpy).confirmBeforelogout(mockGenericFragment);
-        menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
+        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
 
         verify(menuNavigationManagerSpy, times(1)).confirmBeforelogout(mockGenericFragment);
+        assertTrue(result);
+    }
+
+    @Test
+    public void nextStep_memberEdit() throws Exception {
+        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_member_edit);
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
+        doNothing().when(menuNavigationManagerSpy).navigateToMemberEditFragment(mockGenericFragment, mockMember);
+        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
+
+        verify(menuNavigationManagerSpy, times(1)).navigateToMemberEditFragment(mockGenericFragment, mockMember);
+        assertTrue(result);
+    }
+
+    @Test
+    public void nextStep_enrollNewborn() throws Exception {
+        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_enroll_newborn);
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
+
+        doNothing().when(mockNavigationManager).setEnrollNewbornInfoFragment(mockMember, null, null);
+        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
+
+        verify(mockNavigationManager, times(1)).setEnrollNewbornInfoFragment(mockMember, null, null);
+        assertTrue(result);
+    }
+
+    @Test
+    public void nextStep_version() throws Exception {
+        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_version);
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
+
+        doNothing().when(mockNavigationManager).setVersionFragment();
+        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
+
+        verify(mockNavigationManager, times(1)).setVersionFragment();
+        assertTrue(result);
+    }
+
+    @Test
+    public void nextStep_completeEnrollment() throws Exception {
+        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_complete_enrollment);
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
+
+        doNothing().when(menuNavigationManagerSpy).navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
+        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
+
+        verify(menuNavigationManagerSpy, times(1)).navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
+        assertTrue(result);
+    }
+
+    @Test
+    public void nextStep_reportMember() throws Exception {
+        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_report_member);
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
+
+        doNothing().when(menuNavigationManagerSpy).reportMember(mockGenericFragment);
+        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
+
+        verify(menuNavigationManagerSpy, times(1)).reportMember(mockGenericFragment);
+        assertTrue(result);
     }
 }
