@@ -59,7 +59,10 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
         mMemberSecondaryButton = getMemberSecondaryButton();
         mMemberIndicator = getMemberIndicator();
-        setFingerprintScanResult();
+    }
+
+    public void setUp() {
+        super.setUp();
     }
 
     protected void setMemberActionButton() {
@@ -73,11 +76,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         });
     }
 
-    protected void setFingerprintScanResult() {
+    protected void setMemberSecondaryActionButton() {
         if (getMember().isAbsentee()) {
-            mMemberSecondaryButton.setVisibility(View.VISIBLE);
-            mMemberSecondaryButton.setText("Complete Enrollment");
-            getMemberSecondaryButton().setOnClickListener(
+            setMemberSecondaryButtonProperties("Complete Enrollment", false,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -85,15 +86,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                         }
                     }
             );
-        } else if (getMember().getFingerprintsGuid() == null) {
-            // show nothing.
-        } else if (mIdEvent.getFingerprintsVerificationTier() == null) {
-            mMemberSecondaryButton.setVisibility(View.VISIBLE);
-            mMemberSecondaryButton.setText("Scan");
-            Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
-            fingerprintIcon.setTint(ANDROID_MATERIAL_DESIGN_GRAY);
-            mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
-            getMemberSecondaryButton().setOnClickListener(
+        } else if (getMember().getFingerprintsGuid() != null && mIdEvent.getFingerprintsVerificationTier() == null) {
+            setMemberSecondaryButtonProperties("Scan", true,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -106,27 +100,43 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                         }
                     }
             );
-        } else if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
-            mMemberIndicator.setVisibility(View.VISIBLE);
-            mMemberIndicator.setText("No Match");
-            mMemberIndicator.setTextColor(ANDROID_MATERIAL_DESIGN_RED);
-            GradientDrawable border = (GradientDrawable) mMemberIndicator.getBackground();
-            border.setStroke(DEFAULT_BORDER_WIDTH, ANDROID_MATERIAL_DESIGN_RED);
-            VectorDrawable fingerprintIcon = (VectorDrawable) mMemberIndicator.getCompoundDrawables()[0];
-            fingerprintIcon.setTint(ANDROID_MATERIAL_DESIGN_RED);
-        } else {
-            mMemberIndicator.setVisibility(View.VISIBLE);
-            mMemberIndicator.setText("Good match");
-            mMemberIndicator.setTextColor(ANDROID_MATERIAL_DESIGN_GREEN);
-            GradientDrawable border = (GradientDrawable) mMemberIndicator.getBackground();
-            border.setStroke(DEFAULT_BORDER_WIDTH, ANDROID_MATERIAL_DESIGN_GREEN);
-            VectorDrawable fingerprintIcon = (VectorDrawable) mMemberIndicator.getCompoundDrawables()[0];
-            fingerprintIcon.setTint(ANDROID_MATERIAL_DESIGN_GREEN);
+        }
+    }
+
+    protected void setMemberIndicator() {
+        if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
+            setMemberIndicatorProperties(ANDROID_MATERIAL_DESIGN_RED, "Bad Match");
+        } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
+            setMemberIndicatorProperties(ANDROID_MATERIAL_DESIGN_GREEN, "Good Match");
         }
     }
 
     //// Tested above
     //// Below TBD because of fingerprints
+
+    protected void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
+        mMemberSecondaryButton.setVisibility(View.VISIBLE);
+        mMemberSecondaryButton.setText(text);
+        if (showFingerprintsIcon) {
+            addFingerprintsToButton();
+        }
+        mMemberSecondaryButton.setOnClickListener(onClickListener);
+    }
+
+    protected void addFingerprintsToButton() {
+        Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
+        mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
+    }
+
+    protected void setMemberIndicatorProperties(int color, String text) {
+        mMemberIndicator.setVisibility(View.VISIBLE);
+        mMemberIndicator.setText(text);
+        mMemberIndicator.setTextColor(color);
+        GradientDrawable border = (GradientDrawable) mMemberIndicator.getBackground();
+        border.setStroke(DEFAULT_BORDER_WIDTH, color);
+        VectorDrawable fingerprintIcon = (VectorDrawable) mMemberIndicator.getCompoundDrawables()[0];
+        fingerprintIcon.setTint(color);
+    }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         mIdEvent.setFingerprintsVerificationResultCode(resultCode);

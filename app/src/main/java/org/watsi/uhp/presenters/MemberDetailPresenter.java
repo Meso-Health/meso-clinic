@@ -45,6 +45,7 @@ public class MemberDetailPresenter {
         setMemberActionButton();
         setBottomListView();
         setMemberSecondaryActionButton();
+        setMemberIndicator();
     }
 
     protected void setMemberActionButton() {
@@ -59,6 +60,10 @@ public class MemberDetailPresenter {
     }
 
     protected void setMemberSecondaryActionButton() {
+        // no-op. Override to implement.
+    }
+
+    protected void setMemberIndicator() {
         // no-op. Override to implement.
     }
 
