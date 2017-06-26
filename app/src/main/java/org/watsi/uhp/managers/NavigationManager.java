@@ -114,7 +114,7 @@ public class NavigationManager {
         }
     }
 
-    public void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);

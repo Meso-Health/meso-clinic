@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -51,6 +54,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberIndicator = getMemberIndicator();
     }
 
+    protected void showFingerprintsResults() {
+        getMemberSecondaryButton().setVisibility(View.INVISIBLE);
+        setMemberIndicator();
+    }
+
     protected void setMemberActionButton() {
         Button memberActionButton = getMemberActionButton();
         memberActionButton.setText(R.string.check_in);
@@ -91,9 +99,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void setMemberIndicator() {
         if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
-            setMemberIndicatorProperties(R.color.indicatorRed, "Bad Match");
+            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), "Bad Match");
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
-            setMemberIndicatorProperties(R.color.indicatorGreen, "Good Match");
+            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), "Good Match");
         }
     }
 
@@ -108,9 +116,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
             } else if (resultCode == Constants.SIMPRINTS_OK) {
                 saveIdentificationEventWithVerificationData(data);
                 showScanSuccessfulToast();
-                navigateToCheckInMemberDetailFragment();
-            } else {
-                navigateToCheckInMemberDetailFragment();
+                showFingerprintsResults();
             }
         }
     }
@@ -135,6 +141,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberIndicator.setVisibility(View.VISIBLE);
         mMemberIndicator.setText(text);
         mMemberIndicator.setTextColor(color);
+        mMemberIndicator.invalidate();
         GradientDrawable border = (GradientDrawable) mMemberIndicator.getBackground();
         border.setStroke(DEFAULT_BORDER_WIDTH, color);
         VectorDrawable fingerprintIcon = (VectorDrawable) mMemberIndicator.getCompoundDrawables()[0];
@@ -152,10 +159,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     public IdentificationEvent getIdEvent() {
         return mIdEvent;
-    }
-
-    protected void navigateToCheckInMemberDetailFragment() {
-        getNavigationManager().setCheckInMemberDetailFragment(getMember(), mIdEvent);
     }
 
     protected void showScanFailedToast() {
