@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
+import com.simprints.libsimprints.Metadata;
 import com.simprints.libsimprints.Registration;
 import com.simprints.libsimprints.SimHelper;
 
@@ -98,7 +99,8 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
         public void onClick(View v) {
             mFragment.hideFingerprintMessage();
             SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mFragment.getSessionManager().getCurrentLoggedInUsername());
-            Intent captureFingerprintIntent = simHelper.register(BuildConfig.PROVIDER_ID.toString());
+            Metadata metadata = new Metadata().put("memberId", mSyncableModelId.toString());
+            Intent captureFingerprintIntent = simHelper.register(BuildConfig.PROVIDER_ID.toString(), metadata);
 
             PackageManager packageManager = mFragment.getActivity().getPackageManager();
             if (captureFingerprintIntent.resolveActivity(packageManager) != null) {

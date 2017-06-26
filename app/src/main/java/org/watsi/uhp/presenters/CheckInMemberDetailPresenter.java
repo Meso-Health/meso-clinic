@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
@@ -30,7 +29,6 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.util.Vector;
 
 /**
  * Created by michaelliang on 6/13/17.
@@ -38,10 +36,6 @@ import java.util.Vector;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     static final int SIMPRINTS_VERIFICATION_INTENT = 1;
-    static final int ANDROID_MATERIAL_DESIGN_RED = Color.rgb(244,67,54);
-    static final int ANDROID_MATERIAL_DESIGN_GREEN = Color.rgb(76,175,80);
-    static final int ANDROID_MATERIAL_DESIGN_BLUE = Color.rgb(33,150,243);
-    static final int ANDROID_MATERIAL_DESIGN_GRAY = Color.rgb(158,158,158);
     static final int DEFAULT_BORDER_WIDTH = 1;
 
     private final SessionManager mSessionManager;
@@ -105,9 +99,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void setMemberIndicator() {
         if (mIdEvent.getFingerprintsVerificationTier() == "TIER_5") {
-            setMemberIndicatorProperties(ANDROID_MATERIAL_DESIGN_RED, "Bad Match");
+            setMemberIndicatorProperties(R.color.indicatorRed, "Bad Match");
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
-            setMemberIndicatorProperties(ANDROID_MATERIAL_DESIGN_GREEN, "Good Match");
+            setMemberIndicatorProperties(R.color.indicatorGreen, "Good Match");
         }
     }
 
