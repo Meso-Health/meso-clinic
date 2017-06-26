@@ -15,6 +15,7 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
                 mSyncableModel.setPhotoUrl(mUri.toString());
                 mSaveBtn.setEnabled(true);
                 return;
-            } catch (IOException e) {
+            } catch (IOException | AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
         }

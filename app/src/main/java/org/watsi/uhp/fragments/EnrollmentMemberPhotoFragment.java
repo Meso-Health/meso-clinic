@@ -16,6 +16,7 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -96,11 +97,11 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mMemberPhotoImageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
+                mSyncableModel.setPhotoUrl(mUri.toString());
+            } catch (IOException | AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
 
-            mSyncableModel.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {
             Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
