@@ -120,7 +120,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     //// Tested above
-    //// Below TBD because of fingerprints
 
     protected void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
         mMemberSecondaryButton.setVisibility(View.VISIBLE);
