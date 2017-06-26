@@ -6,6 +6,7 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.os.AsyncTask;
 
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 
@@ -31,8 +32,16 @@ public abstract class AbstractSyncJobService extends JobService {
     }
 
     public static JobInfo buildJobInfo(int jobId, ComponentName componentName) {
+        int networkType;
+
+        if (BuildConfig.USING_LOCAL_SERVER) {
+            networkType = JobInfo.NETWORK_TYPE_NONE;
+        } else {
+            networkType = JobInfo.NETWORK_TYPE_ANY;
+        }
+
         return new JobInfo.Builder(jobId, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setRequiredNetworkType(networkType)
                 .setPeriodic(SYNC_INTERVAL)
                 .setPersisted(true)
                 .build();
