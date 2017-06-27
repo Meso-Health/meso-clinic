@@ -14,10 +14,6 @@ import org.watsi.uhp.BuildConfig;
 
 import java.util.UUID;
 
-/**
- * Created by michaelliang on 6/27/17.
- */
-
 public class SimprintsHelper {
     public static int SIMPRINTS_ENROLLMENT_INTENT = 3;
     public static int SIMPRINTS_VERIFICATION_INTENT = 1;
