@@ -83,7 +83,7 @@
             android:id="@+id/member_indicator"
             android:layout_height="36dp"
             android:layout_width="156dp"
-            android:drawableStart="@drawable/fingerprints"
+            android:drawableLeft="@drawable/fingerprints"
             android:background="@drawable/scan_result_button"
             android:gravity="center"
             android:layout_toEndOf="@id/member_photo"
