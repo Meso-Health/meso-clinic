@@ -66,7 +66,7 @@ public class MenuNavigationManager {
         if (fragment instanceof CheckInMemberDetailFragment) {
             ((CheckInMemberDetailFragment) fragment).reportMember();
         } else {
-            ExceptionManager.reportException(new IllegalStateException("Attempted to report member after check in."));
+            ExceptionManager.reportErrorMessage("Attempted to report member after check in.");
         }
     }
 
