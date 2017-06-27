@@ -11,7 +11,7 @@
     <item
         android:id="@+id/menu_report_member"
         android:orderInCategory="101"
-        android:title="Report Member"
+        android:title="@string/menu_report_member"
         app:showAsAction="never"
         android:visible="false" />
     <item

@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
@@ -84,7 +82,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                         @Override
                         public void onClick(View v) {
                             SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid() + "2");
+                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig
+                                    .PROVIDER_ID.toString(), getMember().getFingerprintsGuid().toString());
                             mCheckInMemberDetailFragment.startActivityForResult(
                                     fingerprintIdentificationIntent,
                                     SIMPRINTS_VERIFICATION_INTENT
@@ -98,11 +97,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     @Override
     protected void setMemberIndicator() {
         if (SIMPRINTS_VERIFICATION_TIER5.equals(mIdEvent.getFingerprintsVerificationTier())) {
-            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), "Bad Match");
+            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), R.string.bad_scan_indicator);
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
-            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), "Good Match");
+            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), R.string.good_scan_indicator);
         } else if (mIdEvent.getFingerprintsVerificationResultCode() != Constants.SIMPRINTS_CANCELLED) {
-            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), "No Scan");
+            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), R.string.no_scan_indicator);
         }
     }
 
@@ -148,9 +147,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
     }
 
-    protected void setMemberIndicatorProperties(int color, String text) {
+    protected void setMemberIndicatorProperties(int color, int textId) {
         mMemberIndicator.setVisibility(View.VISIBLE);
-        mMemberIndicator.setText(text);
+        mMemberIndicator.setText(textId);
         mMemberIndicator.setTextColor(color);
         mMemberIndicator.invalidate();
         GradientDrawable border = (GradientDrawable) mMemberIndicator.getBackground();
@@ -173,14 +172,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void showScanFailedToast() {
-        Toast.makeText(
-                getContext(),
-                "Fingerprint Scan Failed",
-                Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show();
     }
 
     protected void showScanSuccessfulToast() {
-        Toast.makeText(getContext(), "Fingerprint Scan Successful!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show();
     }
 
     private void openClinicNumberDialog() {
