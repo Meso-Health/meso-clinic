@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
@@ -24,6 +22,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberDialogFragment;
+import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -34,13 +33,13 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
-    static final int SIMPRINTS_VERIFICATION_INTENT = 1;
     static final int DEFAULT_BORDER_WIDTH = 1;
     static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
 
     private final SessionManager mSessionManager;
     private IdentificationEvent mIdEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailFragment;
+    private SimprintsHelper mSimprintsHelper;
 
     private final Button mMemberSecondaryButton;
     private final TextView mMemberIndicator;
@@ -50,6 +49,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mCheckInMemberDetailFragment = checkInMemberDetailFragment;
         mSessionManager = sessionManager;
         mIdEvent = idEvent;
+        mSimprintsHelper = new SimprintsHelper(mSessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
 
         mMemberSecondaryButton = getMemberSecondaryButton();
         mMemberIndicator = getMemberIndicator();
@@ -83,12 +83,17 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SimHelper simHelper = new SimHelper(BuildConfig.SIMPRINTS_API_KEY, mSessionManager.getCurrentLoggedInUsername());
-                            Intent fingerprintIdentificationIntent = simHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid() + "2");
-                            mCheckInMemberDetailFragment.startActivityForResult(
-                                    fingerprintIdentificationIntent,
-                                    SIMPRINTS_VERIFICATION_INTENT
-                            );
+                            try {
+                                mSimprintsHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid());
+                            } catch (SimprintsHelper.SimprintsInvalidIntentException e) {
+                                Toast.makeText(
+                                        getContext(),
+                                        R.string.simprints_not_installed,
+                                        Toast.LENGTH_LONG).show();
+                            } catch (SimprintsHelper.SimprintsHelperException e) {
+                                ExceptionManager.reportException(e);
+                                showProceedToCheckAnywayToastAndReport();
+                            }
                         }
                     }
             );
@@ -112,21 +117,28 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        // Report any errors if necessary.
-        if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
-            ExceptionManager.reportErrorMessage("Request code in Simprints Verification call was from a different intent. Actual request code was: " + requestCode);
-        } else {
-            mIdEvent.setFingerprintsVerificationResultCode(resultCode);
-            if (resultCode == Constants.SIMPRINTS_CANCELLED) {
-                showScanFailedToast();
-            } else if (resultCode == Constants.SIMPRINTS_OK) {
-                saveIdentificationEventWithVerificationData(data);
+        // how do you want to shift the tasks over to the helper?
+
+        try {
+            Verification verification = mSimprintsHelper.onActivityResultFromVerify(requestCode, resultCode, data);
+            if (verification != null) {
+                saveIdentificationEventWithVerificationData(verification);
                 showScanSuccessfulToast();
                 showFingerprintsResults();
-            } else if (resultCode != Constants.SIMPRINTS_CANCELLED) {
-                showFingerprintsResults();
+            } else {
+                showScanFailedToast();
             }
+        } catch (SimprintsHelper.SimprintsHelperException e) {
+            ExceptionManager.reportException(e);
+            showProceedToCheckAnywayToastAndReport();
         }
+    }
+
+    private void showProceedToCheckAnywayToastAndReport() {
+        Toast.makeText(getContext(),
+                "Some issues with the scanner, please check in anyway.",
+                Toast.LENGTH_LONG).
+                show();
     }
 
     protected void showFingerprintsResults() {
@@ -145,6 +157,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void addFingerprintsIconToSecondaryButton() {
         Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
+        fingerprintIcon.setTint(ContextCompat.getColor(getContext(), R.color.indicatorNeutral));
         mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
     }
 
@@ -159,8 +172,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         fingerprintIcon.setTint(color);
     }
 
-    protected void saveIdentificationEventWithVerificationData(Intent data) {
-        Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+    protected void saveIdentificationEventWithVerificationData(Verification verification) {
         String fingerprintTier = verification.getTier().toString();
         float fingerprintConfidence = verification.getConfidence();
 

@@ -152,7 +152,7 @@
     <!-- EnrollmentFingerprintFragment -->
     <string name="enrollment_fingerprint_label">Fingerprint</string>
     <string name="enrollment_fingerprint_button">Capture fingerprint</string>
-    <string name="enrollment_fingerprint_simprints_not_installed">Simprints app is not installed</string>
+    <string name="simprints_not_installed">Simprints app is not installed</string>
     <string name="enrollment_fingerprint_simprints_succeeded">Success!</string>
     <string name="enrollment_fingerprint_simprints_failed">Scan failed</string>
     <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
