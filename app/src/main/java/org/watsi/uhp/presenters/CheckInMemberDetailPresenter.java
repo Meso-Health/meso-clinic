@@ -77,7 +77,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                         }
                     }
             );
-        } else if (getMember().getFingerprintsGuid() != null && mIdEvent.getFingerprintsVerificationResultCode() == null) {
+        } else if (getMember().getFingerprintsGuid() != null &&
+                  (mIdEvent.getFingerprintsVerificationResultCode() == null ||
+                   mIdEvent.getFingerprintsVerificationResultCode() == Constants.SIMPRINTS_CANCELLED)) {
             setMemberSecondaryButtonProperties("Scan", true,
                     new View.OnClickListener() {
                         @Override
