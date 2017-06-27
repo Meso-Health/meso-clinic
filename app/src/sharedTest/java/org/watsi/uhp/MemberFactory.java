@@ -6,22 +6,15 @@ import java.util.UUID;
 
 public class MemberFactory extends Member {
 
-    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum)
+    public MemberFactory(String fullName, String cardId, int age, GenderEnum genderEnum)
             throws ValidationException {
-        setId(id);
         setFullName(fullName);
         setCardId(cardId);
         setAge(age);
         setGender(genderEnum);
-    }
 
-    public MemberFactory(UUID id, String fullName, String cardId, int age, GenderEnum genderEnum,
-                         UUID householdId) throws ValidationException {
-        setId(id);
-        setFullName(fullName);
-        setCardId(cardId);
-        setAge(age);
-        setGender(genderEnum);
-        setHouseholdId(householdId);
+        setId(UUID.randomUUID());
+        setFingerprintsGuid(UUID.randomUUID());
+        setPhotoUrl("content://test_member_photo.jpg");
     }
 }

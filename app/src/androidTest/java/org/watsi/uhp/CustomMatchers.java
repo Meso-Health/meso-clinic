@@ -10,6 +10,9 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.models.Member;
+
+import java.util.UUID;
 
 public class CustomMatchers {
 
@@ -43,6 +46,23 @@ public class CustomMatchers {
             @Override
             public void describeTo(final Description description) {
                 description.appendText("with encounter item name: " + name);
+            }
+        };
+    }
+
+    /**
+     * Matches a Member with a specific id
+     */
+    public static Matcher<Object> withMemberId(final UUID id){
+        return new BoundedMatcher<Object, Member>(Member.class){
+            @Override
+            public boolean matchesSafely(Member member) {
+                return id.equals(member.getId());
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("with member id: " + id);
             }
         };
     }
