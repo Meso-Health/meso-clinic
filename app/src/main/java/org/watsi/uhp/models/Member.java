@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.webkit.URLUtil;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
@@ -180,7 +181,7 @@ public class Member extends SyncableModel {
                 }
                 setNationalIdPhotoUrl(nationalIdPhotoUrlFromResponse);
             }
-        } catch (IOException e) {
+        } catch (IOException | ValidationException e) {
             ExceptionManager.reportException(e);
         }
     }
@@ -290,8 +291,16 @@ public class Member extends SyncableModel {
         return mPhotoUrl;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.mPhotoUrl = photoUrl;
+    public void setPhotoUrl(String photoUrl) throws ValidationException {
+        if (photoUrl == null) {
+            this.mPhotoUrl = null;
+        } else {
+            if (URLUtil.isValidUrl(photoUrl)) {
+                this.mPhotoUrl = photoUrl;
+            } else {
+                throw new ValidationException(FIELD_NAME_PHOTO_URL, "Invalid photo url");
+            }
+        }
     }
 
     public String getNationalIdPhotoUrl() {

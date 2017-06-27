@@ -43,6 +43,10 @@ public class SessionManager {
         ExceptionManager.setPersonData(String.valueOf(user.getId()), user.getUsername());
     }
 
+    public String getCurrentLoggedInUsername() {
+        return mPreferencesManager.getUsername();
+    }
+
     /**
      * Creates an account using AccountManager if it does not already exist.
      *

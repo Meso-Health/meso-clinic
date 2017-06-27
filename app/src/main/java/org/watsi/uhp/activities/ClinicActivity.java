@@ -23,14 +23,13 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.fragments.DetailFragment;
 import org.watsi.uhp.fragments.FormFragment;
+import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
@@ -126,17 +125,27 @@ public class ClinicActivity extends AppCompatActivity {
 
         if (currentFragment instanceof FormFragment &&
                 ((FormFragment) currentFragment).isFirstStep()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.exit_form_alert)
-                    .setNegativeButton(android.R.string.no, null)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            ClinicActivity.super.onBackPressed();
-                        }
-                    }).create().show();
+            showDialogReturnToPreviousScreen();
+        } else if (currentFragment instanceof MemberDetailFragment) {
+            getNavigationManager().setCurrentPatientsFragment();
         } else {
-            ClinicActivity.super.onBackPressed();
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (currentFragment instanceof FormFragment) {
+                    showDialogReturnToCurrentPatientsScreen();
+                } else {
+                    getNavigationManager().setCurrentPatientsFragment();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -149,66 +158,10 @@ public class ClinicActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            Fragment fragment =
-                    getSupportFragmentManager().findFragmentByTag(NavigationManager.DETAIL_TAG);
-            Member member = null;
-            if (fragment != null) {
-                member = ((DetailFragment) fragment).getMember();
-            }
-            switch (item.getItemId()) {
-                case R.id.menu_logout:
-                    new AlertDialog.Builder(mActivity)
-                        .setTitle(R.string.log_out_alert)
-                        .setNegativeButton(android.R.string.no, null)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                mSessionManager.logout(mActivity);
-                            }
-                        }).create().show();
-                    break;
-                case R.id.menu_member_edit:
-                    IdentificationEvent.SearchMethodEnum searchMethod =
-                            ((DetailFragment) getSupportFragmentManager()
-                                    .findFragmentByTag("detail"))
-                                    .getIdMethod();
-                    getNavigationManager().setMemberEditFragment(member, searchMethod, null);
-                    break;
-                case R.id.menu_enroll_newborn:
-                    getNavigationManager().setEnrollNewbornInfoFragment(member, null, null);
-                    break;
-                case R.id.menu_version:
-                    getNavigationManager().setVersionFragment();
-                    break;
-                case R.id.menu_complete_enrollment:
-                    getNavigationManager().setEnrollmentMemberPhotoFragment(member);
-                    break;
-            }
-            return true;
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Fragment currentFragment =
-                        getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                if (currentFragment instanceof FormFragment) {
-                    new AlertDialog.Builder(this)
-                            .setTitle(R.string.exit_form_alert)
-                            .setNegativeButton(android.R.string.no, null)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    getNavigationManager().setCurrentPatientsFragment();
-                                }
-                            }).create().show();
-                } else {
-                    getNavigationManager().setCurrentPatientsFragment();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            MenuNavigationManager menuNavigationManager = new MenuNavigationManager(mActivity);
+            return menuNavigationManager.nextStep(currentFragment, menuItem);
         }
     }
 
@@ -266,5 +219,27 @@ public class ClinicActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void showDialogReturnToPreviousScreen() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_form_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        ClinicActivity.super.onBackPressed();
+                    }
+                }).create().show();
+    }
+
+    private void showDialogReturnToCurrentPatientsScreen() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_form_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        getNavigationManager().setCurrentPatientsFragment();
+                    }
+                }).create().show();
     }
 }

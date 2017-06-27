@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.watsi.uhp.CustomMatchers.withAdaptedData;
 import static org.watsi.uhp.CustomMatchers.withBillableName;
 import static org.watsi.uhp.CustomMatchers.withEncounterItemName;
 
@@ -92,24 +91,6 @@ public class EncounterFlowFeature extends BaseTest {
                 .perform(click());
     }
 
-    public void assertEncounterItemInList(String encounterItemName) {
-        onData(withEncounterItemName(encounterItemName))
-                .inAdapterView(withId(R.id.line_items_list))
-                .check(matches(isDisplayed()));
-    }
-
-    public void assertEncounterItemNotInList(String encounterItemName) {
-        onView(withId(R.id.line_items_list))
-                .check(matches(not(withAdaptedData(withEncounterItemName(encounterItemName)))));
-    }
-
-    public void assertDisplaysToast(int messageId) {
-        onView(withText(messageId))
-                .inRoot(withDecorView(not(clinicActivityRule.getActivity().getWindow()
-                        .getDecorView())))
-                .check(matches(isDisplayed()));
-    }
-
     @Test
     public void createEncounter_outpatientEncounterFlow() {
         String defaultBillable1 = "Consultation";
@@ -128,35 +109,35 @@ public class EncounterFlowFeature extends BaseTest {
         // appears with the default billables
         onView(withText(R.string.detail_create_encounter)).perform(click());
         onView(withText(R.string.encounter_fragment_label)).check(matches(isDisplayed()));
-        assertEncounterItemInList(defaultBillable1);
-        assertEncounterItemInList(defaultBillable2);
+        assertItemInList(withEncounterItemName(defaultBillable1), R.id.line_items_list);
+        assertItemInList(withEncounterItemName(defaultBillable2), R.id.line_items_list);
 
         // TODO: defaults do not appear for delivery
 
         // the user can billables to the list of encounters items
         addBillable(billableLab);
-        assertEncounterItemInList(billableLab.getName());
+        assertItemInList(withEncounterItemName(billableLab.getName()), R.id.line_items_list);
 
         addBillable(billableSupply);
-        assertEncounterItemInList(billableSupply.getName());
+        assertItemInList(withEncounterItemName(billableSupply.getName()), R.id.line_items_list);
 
         addBillable(billableDrug);
-        assertEncounterItemInList(billableDrug.getName());
+        assertItemInList(withEncounterItemName(billableDrug.getName()), R.id.line_items_list);
 
         // if the user selects the same billable twice, an error message appears
         addBillable(billableLab);
-        assertDisplaysToast(R.string.already_in_list_items);
+        assertDisplaysToast(clinicActivityRule, R.string.already_in_list_items);
 
         // the user can remove billables
         removeBillable(billableSupply);
-        assertEncounterItemNotInList(billableSupply.getName());
+        assertItemNotInList(withEncounterItemName(billableSupply.getName()), R.id.line_items_list);
 
         removeBillable(billableDrug);
-        assertEncounterItemNotInList(billableDrug.getName());
+        assertItemNotInList(withEncounterItemName(billableDrug.getName()), R.id.line_items_list);
 
         // the user can add a billable again after removing it
         addBillable(billableSupply);
-        assertEncounterItemInList(billableSupply.getName());
+        assertItemInList(withEncounterItemName(billableSupply.getName()), R.id.line_items_list);
 
         // the user can add a new billable with a custom name and amount
         onView(withId(R.id.add_billable_prompt)).perform(click());
@@ -187,6 +168,7 @@ public class EncounterFlowFeature extends BaseTest {
         onView(withText(newBillableName)).check(matches(isDisplayed()));
         onView(withText(R.string.save_encounter_button)).perform(click());
 
+        // TODO: add quick toast check
         // no checked-in members
         onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
     }

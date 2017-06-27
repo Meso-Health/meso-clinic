@@ -53,14 +53,12 @@ public class MemberEditFragment extends FormFragment<Member> {
                         ExceptionManager.reportException(e);
                         toastMessage = "Failed to update the member information.";
                     }
-
-                    String idMethodString =
-                            getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD);
-                    IdentificationEvent.SearchMethodEnum idMethod = null;
-                    if (idMethodString != null) {
-                        idMethod =  IdentificationEvent.SearchMethodEnum.valueOf(idMethodString);
+                    IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                    if (idEvent != null) {
+                        getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
+                    } else {
+                        getNavigationManager().setMemberDetailFragment(mSyncableModel);
                     }
-                    getNavigationManager().setDetailFragment(mSyncableModel, idMethod, null);
                     Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
@@ -96,7 +94,8 @@ public class MemberEditFragment extends FormFragment<Member> {
         Bundle bundle = new Bundle();
         bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD,
                 getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
-
+        bundle.putSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD,
+                getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD));
         view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
                 getNavigationManager(), BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT,
                 mSyncableModel, bundle));
