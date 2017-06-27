@@ -47,7 +47,7 @@ public class SimprintsHelper {
     }
 
     public void verify(String providerId, UUID fingerprintsGuid) throws SimprintsHelperException {
-        Intent fingerprintVerificationIntent = getSimHelper().verify(providerId, fingerprintsGuid.toString() + "w");
+        Intent fingerprintVerificationIntent = getSimHelper().verify(providerId, fingerprintsGuid.toString());
         if (validIntent(fingerprintVerificationIntent)) {
             mFragment.startActivityForResult(
                     fingerprintVerificationIntent,
