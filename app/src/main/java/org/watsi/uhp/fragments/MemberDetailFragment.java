@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
 

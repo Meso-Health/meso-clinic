@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.simprints.libsimprints.Constants;
-import com.simprints.libsimprints.SimHelper;
 import com.simprints.libsimprints.Verification;
 
 import org.junit.Before;
