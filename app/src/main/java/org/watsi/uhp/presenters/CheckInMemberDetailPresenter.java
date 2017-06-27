@@ -32,7 +32,7 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
-    static final int DEFAULT_BORDER_WIDTH = 1;
+    static final int DEFAULT_BORDER_WIDTH = 2;
     static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
 
     private final SessionManager mSessionManager;
@@ -162,7 +162,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     protected void addFingerprintsIconToSecondaryButton() {
         Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
-        fingerprintIcon.setTint(ContextCompat.getColor(getContext(), R.color.indicatorNeutral));
+        fingerprintIcon.setTint(ContextCompat.getColor(getContext(), R.color.title));
         mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
     }
 
