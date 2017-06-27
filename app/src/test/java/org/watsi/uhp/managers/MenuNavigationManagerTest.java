@@ -1,5 +1,6 @@
 package org.watsi.uhp.managers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,10 +8,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.rollbar.android.Rollbar;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.BarcodeFragment;
@@ -19,6 +25,7 @@ import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import static junit.framework.Assert.assertEquals;
@@ -30,13 +37,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ ExceptionManager.class })
 public class MenuNavigationManagerTest {
 
     @Mock
@@ -47,6 +59,9 @@ public class MenuNavigationManagerTest {
 
     @Mock
     private Fragment mockGenericFragment;
+
+    @Mock
+    private IdentificationEvent mockIdEvent;
 
     @Mock
     private CurrentMemberDetailFragment mockCurrentMemberDetailFragment;
@@ -72,7 +87,7 @@ public class MenuNavigationManagerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-
+        mockStatic(ExceptionManager.class);
         when(mockClinicActivity.getNavigationManager()).thenReturn(mockNavigationManager);
         when(mockClinicActivity.getSessionManager()).thenReturn(mockSessionManager);
         menuNavigationManager = new MenuNavigationManager(mockClinicActivity);
@@ -178,4 +193,58 @@ public class MenuNavigationManagerTest {
         Member member = menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockCheckInMemberDetailFragment);
         assertEquals(member, mockMember);
     }
+
+    @Test
+    public void reportMember_checkInMemberDetailFragment() throws Exception {
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+
+        doNothing().when(mockCheckInMemberDetailFragment).reportMember();
+        menuNavigationManagerSpy.reportMember(mockCheckInMemberDetailFragment);
+
+        verify(mockCheckInMemberDetailFragment, times(1)).reportMember();
+    }
+
+    @Test
+    public void reportMember_notCheckInMemberDetailFragment() throws Exception {
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+
+        menuNavigationManagerSpy.reportMember(mockGenericFragment);
+
+        verifyStatic();
+        ExceptionManager.reportErrorMessage(any(String.class));
+    }
+
+    @Test
+    public void navigateToCompleteEnrollmentFragment_checkInMemberDetailFragment() throws Exception {
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+
+        doReturn(mockIdEvent).when(mockCheckInMemberDetailFragment).getIdEvent();
+        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
+        menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockCheckInMemberDetailFragment, mockMember);
+
+        verify(mockNavigationManager, times(1)).setEnrollmentMemberPhotoFragment(mockMember, mockIdEvent);
+    }
+
+    @Test
+    public void navigateToCompleteEnrollmentFragment_currentMemberDetailFragment() throws Exception {
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+
+        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
+        menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockCurrentMemberDetailFragment, mockMember);
+
+        verify(mockNavigationManager, times(1)).setEnrollmentMemberPhotoFragment(mockMember, null);
+    }
+
+    @Test
+    public void navigateToCompleteEnrollmentFragment_notMemberDetailFragment() throws Exception {
+        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+
+        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
+        menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
+
+        verifyStatic();
+        ExceptionManager.reportErrorMessage(any(String.class));
+    }
+
+
 }
