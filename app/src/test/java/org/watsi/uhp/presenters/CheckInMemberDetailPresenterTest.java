@@ -194,14 +194,14 @@ public class CheckInMemberDetailPresenterTest {
         when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn(null);
 
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
-                any(int.class), any(String.class));
+                any(int.class), any(int.class));
 
         checkInMemberDetailPresenterSpy.setMemberSecondaryActionButton();
 
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorRed), eq("Bad Match"));
+                eq(R.color.indicatorRed), eq(R.string.bad_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorGreen), eq("Good Match"));
+                eq(R.color.indicatorGreen), eq(R.string.good_scan_indicator));
     }
 
     @Test
@@ -210,16 +210,16 @@ public class CheckInMemberDetailPresenterTest {
         when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_5");
         when(ContextCompat.getColor(mockContext, R.color.indicatorRed)).thenReturn(R.color.indicatorRed);
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
-                any(int.class), any(String.class));
+                any(int.class), any(int.class));
 
         checkInMemberDetailPresenterSpy.setMemberIndicator();
 
         verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
-                eq(R.color.indicatorRed), eq("Bad Match"));
+                eq(R.color.indicatorRed), eq(R.string.bad_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorGreen), eq("Good Match"));
+                eq(R.color.indicatorGreen), eq(R.string.good_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorNeutral), eq("No Scan"));
+                eq(R.color.indicatorNeutral), eq(R.string.no_scan_indicator));
     }
 
     @Test
@@ -228,16 +228,16 @@ public class CheckInMemberDetailPresenterTest {
         when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_1");
         when(ContextCompat.getColor(mockContext, R.color.indicatorGreen)).thenReturn(R.color.indicatorGreen);
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
-                any(int.class), any(String.class));
+                any(int.class), any(int.class));
 
         checkInMemberDetailPresenterSpy.setMemberIndicator();
 
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorRed), eq("Bad Match"));
+                eq(R.color.indicatorRed), eq(R.string.bad_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
-                eq(R.color.indicatorGreen), eq("Good Match"));
+                eq(R.color.indicatorGreen), eq(R.string.good_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorNeutral), eq("No Scan"));
+                eq(R.color.indicatorNeutral), eq(R.string.no_scan_indicator));
     }
 
     @Test
@@ -247,16 +247,16 @@ public class CheckInMemberDetailPresenterTest {
         when(mockIdentificationEvent.getFingerprintsVerificationResultCode()).thenReturn(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
         when(ContextCompat.getColor(mockContext, R.color.indicatorNeutral)).thenReturn(R.color.indicatorNeutral);
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
-                any(int.class), any(String.class));
+                any(int.class), any(int.class));
 
         checkInMemberDetailPresenterSpy.setMemberIndicator();
 
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorRed), eq("Bad Match"));
+                eq(R.color.indicatorRed), eq(R.string.bad_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
-                eq(R.color.indicatorGreen), eq("Good Match"));
+                eq(R.color.indicatorGreen), eq(R.string.good_scan_indicator));
         verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
-                eq(R.color.indicatorNeutral), eq("No Scan"));
+                eq(R.color.indicatorNeutral), eq(R.string.no_scan_indicator));
     }
 
     @Test
