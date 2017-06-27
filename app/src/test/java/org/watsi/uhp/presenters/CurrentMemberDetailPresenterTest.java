@@ -122,14 +122,4 @@ public class CurrentMemberDetailPresenterTest {
         verify(mockTextView, times(1)).setText(R.string.dismiss_patient);
         verify(mockTextView, times(1)).setOnClickListener(any(View.OnClickListener.class));
     }
-
-    @Test
-    public void createUnsavedEncounterWithDefaultItems() {
-
-    }
-
-    @Test
-    public void dismissIdentification() {
-
-    }
 }
