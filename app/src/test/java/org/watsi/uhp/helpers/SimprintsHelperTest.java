@@ -7,6 +7,7 @@ import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Metadata;
 import com.simprints.libsimprints.Registration;
 import com.simprints.libsimprints.SimHelper;
+import com.simprints.libsimprints.Verification;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +49,9 @@ public class SimprintsHelperTest {
 
     @Mock
     Registration mockRegistration;
+
+    @Mock
+    Verification mockVerification;
 
     @Before
     public void setup() {
@@ -114,7 +118,7 @@ public class SimprintsHelperTest {
     @Test(expected=SimprintsHelper.SimprintsInvalidIntentException.class)
     public void onActivityResultFromEnroll_invalidIntent() throws Exception {
         SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
-        simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT + 5, 0, null);
+        simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT, 0, null);
     }
 
     @Test(expected=SimprintsHelper.SimprintsRegistrationError.class)
@@ -152,5 +156,33 @@ public class SimprintsHelperTest {
         when(mockIntent.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION)).thenReturn(mockRegistration);
         UUID result = simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT, Constants.SIMPRINTS_MISSING_VERIFY_GUID, mockIntent);
         assertNull(result);
+    }
+
+    @Test(expected=SimprintsHelper.SimprintsInvalidIntentException.class)
+    public void onActivityResultFromVerify_invalidIntent() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+        simPrintsHelperSpy.onActivityResultFromVerify(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT, 0, null);
+    }
+
+    @Test
+    public void onActivityResultFromVerify_simprintsOK() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+        when(mockIntent.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION)).thenReturn(mockVerification);
+        Verification verification = simPrintsHelperSpy.onActivityResultFromVerify(SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT, Constants.SIMPRINTS_OK, mockIntent);
+        assertEquals(verification, mockVerification);
+    }
+
+    @Test
+    public void onActivityResultFromVerify_scanCancelled() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+        Verification verification = simPrintsHelperSpy.onActivityResultFromVerify(SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT, Constants.SIMPRINTS_CANCELLED, mockIntent);
+        assertNull(verification);
+    }
+
+    @Test(expected=SimprintsHelper.SimprintsErrorResultCodeException.class)
+    public void onActivityResultFromVerify_otherResultCode() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+        Verification verification = simPrintsHelperSpy.onActivityResultFromVerify(SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT, Constants.SIMPRINTS_VERIFY_GUID_NOT_FOUND_OFFLINE, mockIntent);
+        assertNull(verification);
     }
 }
