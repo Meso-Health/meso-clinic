@@ -2,16 +2,10 @@ package org.watsi.uhp.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.simprints.libsimprints.Constants;
-import com.simprints.libsimprints.Metadata;
-import com.simprints.libsimprints.Registration;
-import com.simprints.libsimprints.SimHelper;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
@@ -23,8 +17,6 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 import java.util.UUID;
-
-import static android.app.Activity.RESULT_OK;
 
 public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     private IdentificationEvent mIdEvent;
@@ -101,7 +93,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
             mFragment.hideFingerprintMessage();
 
             try {
-                mSimprintsHelper.enrollMember(BuildConfig.PROVIDER_ID.toString(), mSyncableModelId.toString());
+                mSimprintsHelper.enroll(BuildConfig.PROVIDER_ID.toString(), mSyncableModelId.toString());
             } catch (SimprintsHelper.SimprintsInvalidIntentException e) {
                 ExceptionManager.reportException(e);
                 Toast.makeText(

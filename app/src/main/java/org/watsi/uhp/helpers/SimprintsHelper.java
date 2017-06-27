@@ -26,9 +26,9 @@ public class SimprintsHelper {
         mFragment = fragment;
     }
 
-    public void enrollMember(String providerId, String memberId) throws SimprintsHelperException {
-        Metadata metadata = new Metadata().put("memberId", memberId);
-        Intent captureFingerprintIntent = mSimHelper.register(providerId, metadata);
+    public void enroll(String providerId, String memberId) throws SimprintsHelperException {
+        Metadata metadata = createMetadataWithMemberId(memberId);
+        Intent captureFingerprintIntent = getSimHelper().register(providerId, metadata);
 
         if (validIntent(captureFingerprintIntent)) {
             mFragment.startActivityForResult(
@@ -40,8 +40,14 @@ public class SimprintsHelper {
         }
     }
 
+    protected Metadata createMetadataWithMemberId(String memberId) {
+        Metadata metadata = new Metadata();
+        metadata.put("memberId", memberId);
+        return metadata;
+    }
+
     public void verify(String providerId, UUID fingerprintsGuid) throws SimprintsHelperException {
-        Intent fingerprintVerificationIntent = mSimHelper.verify(providerId, fingerprintsGuid.toString());
+        Intent fingerprintVerificationIntent = getSimHelper().verify(providerId, fingerprintsGuid.toString());
         if (validIntent(fingerprintVerificationIntent)) {
             mFragment.startActivityForResult(
                     fingerprintVerificationIntent,
@@ -60,7 +66,6 @@ public class SimprintsHelper {
             return false;
         }
     }
-
 
     public UUID onActivityResultFromEnroll(int requestCode, int resultCode, Intent data) throws SimprintsHelperException {
         if (requestCode != SIMPRINTS_ENROLLMENT_INTENT) {
@@ -95,6 +100,10 @@ public class SimprintsHelper {
                 throw new SimprintsErrorResultCodeException("Call to Simprints verification returned a resultCode of " + resultCode);
             }
         }
+    }
+
+    public SimHelper getSimHelper() {
+        return mSimHelper;
     }
 
     public class SimprintsHelperException extends Exception {
