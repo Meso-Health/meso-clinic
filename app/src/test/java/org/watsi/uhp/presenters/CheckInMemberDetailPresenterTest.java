@@ -175,7 +175,7 @@ public class CheckInMemberDetailPresenterTest {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
         when(mockMember.isAbsentee()).thenReturn(false);
         when(mockMember.getFingerprintsGuid()).thenReturn(UUID.randomUUID());
-        when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_5");
+        when(mockIdentificationEvent.getFingerprintsVerificationResultCode()).thenReturn(Constants.SIMPRINTS_OK);
 
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberSecondaryButtonProperties(
                 any(String.class), any(Boolean.class), any(View.OnClickListener.class));
