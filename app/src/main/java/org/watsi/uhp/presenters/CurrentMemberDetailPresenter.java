@@ -34,8 +34,13 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Encounter encounter = createUnsavedEncounterWithDefaultItems();
-                getNavigationManager().setEncounterFragment(encounter);
+                try {
+                    Encounter encounter = createUnsavedEncounterWithDefaultItems();
+                    getNavigationManager().setEncounterFragment(encounter);
+                } catch (SQLException e) {
+                    ExceptionManager.reportException(e);
+                }
+
             }
         });
     }
@@ -48,21 +53,6 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     @Override
     protected void setMemberIndicator() {
         // no-op
-    }
-
-    protected Encounter createUnsavedEncounterWithDefaultItems() {
-        Encounter encounter = new Encounter();
-        IdentificationEvent checkIn = getMember().currentCheckIn();
-        encounter.setOccurredAt(Clock.getCurrentTime());
-        encounter.setMember(getMember());
-        encounter.setIdentificationEvent(checkIn);
-        try {
-            encounter.setEncounterItems(
-                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
-        return encounter;
     }
 
     @Override
@@ -93,6 +83,17 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                                 }).create().show();
             }
         });
+    }
+
+    protected Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
+        Encounter encounter = new Encounter();
+        IdentificationEvent checkIn = getMember().currentCheckIn();
+        encounter.setOccurredAt(Clock.getCurrentTime());
+        encounter.setMember(getMember());
+        encounter.setIdentificationEvent(checkIn);
+        encounter.setEncounterItems(
+                EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+        return encounter;
     }
 
     public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
