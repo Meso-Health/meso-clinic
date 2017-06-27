@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,7 +42,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ MemberDao.class, CheckInMemberDetailPresenter.class, ExceptionManager.class })
+@PrepareForTest({ MemberDao.class, CheckInMemberDetailPresenter.class, ExceptionManager.class, ContextCompat.class})
 public class CheckInMemberDetailPresenterTest {
 
     private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
@@ -93,6 +94,7 @@ public class CheckInMemberDetailPresenterTest {
         MockitoAnnotations.initMocks(this);
         mockStatic(MemberDao.class);
         mockStatic(ExceptionManager.class);
+        mockStatic(ContextCompat.class);
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
                 mockNavigationManager, mockSessionManager, mockCheckInMemberDetailFragment,
                 mockView, mockContext, mockMember, mockIdentificationEvent);
@@ -198,7 +200,7 @@ public class CheckInMemberDetailPresenterTest {
     public void setMemberIndicator_tierFiveScan() {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
         when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_5");
-
+        when(ContextCompat.getColor(mockContext, R.color.indicatorRed)).thenReturn(R.color.indicatorRed);
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
                 any(int.class), any(String.class));
 
@@ -208,13 +210,15 @@ public class CheckInMemberDetailPresenterTest {
                 eq(R.color.indicatorRed), eq("Bad Match"));
         verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
                 eq(R.color.indicatorGreen), eq("Good Match"));
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorNeutral), eq("No Scan"));
     }
 
     @Test
     public void setMemberIndicator_tierOneScan() {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
         when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn("TIER_1");
-
+        when(ContextCompat.getColor(mockContext, R.color.indicatorGreen)).thenReturn(R.color.indicatorGreen);
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
                 any(int.class), any(String.class));
 
@@ -224,6 +228,27 @@ public class CheckInMemberDetailPresenterTest {
                 eq(R.color.indicatorRed), eq("Bad Match"));
         verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
                 eq(R.color.indicatorGreen), eq("Good Match"));
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorNeutral), eq("No Scan"));
+    }
+
+    @Test
+    public void setMemberIndicator_simprintsErrorResultCode() {
+        CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn(null);
+        when(mockIdentificationEvent.getFingerprintsVerificationResultCode()).thenReturn(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
+        when(ContextCompat.getColor(mockContext, R.color.indicatorNeutral)).thenReturn(R.color.indicatorNeutral);
+        doNothing().when(checkInMemberDetailPresenterSpy).setMemberIndicatorProperties(
+                any(int.class), any(String.class));
+
+        checkInMemberDetailPresenterSpy.setMemberIndicator();
+
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorRed), eq("Bad Match"));
+        verify(checkInMemberDetailPresenterSpy, never()).setMemberIndicatorProperties(
+                eq(R.color.indicatorGreen), eq("Good Match"));
+        verify(checkInMemberDetailPresenterSpy, times(1)).setMemberIndicatorProperties(
+                eq(R.color.indicatorNeutral), eq("No Scan"));
     }
 
     @Test
@@ -236,7 +261,7 @@ public class CheckInMemberDetailPresenterTest {
                 mockFingerprintIntentData);
 
         verifyStatic();
-        ExceptionManager.reportException(any(IllegalStateException.class));
+        ExceptionManager.reportErrorMessage(any(String.class));
     }
 
     @Test
@@ -258,7 +283,7 @@ public class CheckInMemberDetailPresenterTest {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
         doNothing().when(checkInMemberDetailPresenterSpy).showScanSuccessfulToast();
         doNothing().when(checkInMemberDetailPresenterSpy).saveIdentificationEventWithVerificationData(any(Intent.class));
-        doNothing().when(checkInMemberDetailPresenterSpy).navigateToCheckInMemberDetailFragment();
+        doNothing().when(checkInMemberDetailPresenterSpy).showFingerprintsResults();
 
         checkInMemberDetailPresenterSpy.handleOnActivityResult(
                 CheckInMemberDetailPresenter.SIMPRINTS_VERIFICATION_INTENT,
@@ -267,21 +292,22 @@ public class CheckInMemberDetailPresenterTest {
 
         verify(checkInMemberDetailPresenterSpy, times(1)).showScanSuccessfulToast();
         verify(checkInMemberDetailPresenterSpy, times(1)).saveIdentificationEventWithVerificationData(mockFingerprintIntentData);
-        verify(checkInMemberDetailPresenterSpy, times(1)).navigateToCheckInMemberDetailFragment();
+        verify(checkInMemberDetailPresenterSpy, times(1)).showFingerprintsResults();
         verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_OK);
     }
 
     @Test
     public void handleOnActivityResult_otherSimprintsResultCode() {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
-        doNothing().when(checkInMemberDetailPresenterSpy).navigateToCheckInMemberDetailFragment();
+        doNothing().when(checkInMemberDetailPresenterSpy).showFingerprintsResults();
+        when(ContextCompat.getColor(mockContext, R.color.indicatorGreen)).thenReturn(R.color.indicatorGreen);
 
         checkInMemberDetailPresenterSpy.handleOnActivityResult(
                 CheckInMemberDetailPresenter.SIMPRINTS_VERIFICATION_INTENT,
                 Constants.SIMPRINTS_MISSING_VERIFY_GUID,
                 mockFingerprintIntentData);
 
-        verify(checkInMemberDetailPresenterSpy, times(1)).navigateToCheckInMemberDetailFragment();
+        verify(checkInMemberDetailPresenterSpy, times(1)).showFingerprintsResults();
         verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_MISSING_VERIFY_GUID);
     }
 }
