@@ -3,7 +3,6 @@ package org.watsi.uhp.helpers;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
-import android.view.View;
 
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Metadata;
@@ -12,13 +11,8 @@ import com.simprints.libsimprints.SimHelper;
 import com.simprints.libsimprints.Verification;
 
 import org.watsi.uhp.BuildConfig;
-import org.watsi.uhp.fragments.EnrollmentFingerprintFragment;
-import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.Member;
 
 import java.util.UUID;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by michaelliang on 6/27/17.
@@ -43,7 +37,7 @@ public class SimprintsHelper {
         if (validIntent(captureFingerprintIntent)) {
             mFragment.startActivityForResult(
                     captureFingerprintIntent,
-                    SIMPRINTS_VERIFICATION_INTENT
+                    SIMPRINTS_ENROLLMENT_INTENT
             );
         } else {
             throw new SimprintsInvalidIntentException("Invalid enrollment intent. Check if simprints is installed.");
@@ -73,7 +67,7 @@ public class SimprintsHelper {
 
 
     public UUID onActivityResultFromEnroll(int requestCode, int resultCode, Intent data) throws SimprintsHelperException {
-        if (requestCode != SIMPRINTS_VERIFICATION_INTENT) {
+        if (requestCode != SIMPRINTS_ENROLLMENT_INTENT) {
             throw new SimprintsInvalidIntentException("RequestCode in simprints verification call was from a different intent. Actual request code was: " + requestCode);
         } else {
             if (resultCode == Constants.SIMPRINTS_OK) {
