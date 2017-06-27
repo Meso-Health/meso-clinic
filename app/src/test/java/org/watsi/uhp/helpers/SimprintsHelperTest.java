@@ -3,7 +3,9 @@ package org.watsi.uhp.helpers;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
+import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Metadata;
+import com.simprints.libsimprints.Registration;
 import com.simprints.libsimprints.SimHelper;
 
 import org.junit.Before;
@@ -17,7 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static junit.framework.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -43,6 +45,9 @@ public class SimprintsHelperTest {
 
     @Mock
     Metadata mockMetadata;
+
+    @Mock
+    Registration mockRegistration;
 
     @Before
     public void setup() {
@@ -110,5 +115,42 @@ public class SimprintsHelperTest {
     public void onActivityResultFromEnroll_invalidIntent() throws Exception {
         SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
         simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT + 5, 0, null);
+    }
+
+    @Test(expected=SimprintsHelper.SimprintsRegistrationError.class)
+    public void onActivityResultFromEnroll_noRegistration() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+
+        when(mockIntent.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION)).thenReturn(null);
+        simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT, Constants.SIMPRINTS_OK, mockIntent);
+    }
+
+    @Test
+    public void onActivityResultFromEnroll_validRegistration() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+        UUID expectedUUID = UUID.randomUUID();
+
+        when(mockIntent.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION)).thenReturn(mockRegistration);
+        when(mockRegistration.getGuid()).thenReturn(expectedUUID.toString());
+        UUID result = simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT, Constants.SIMPRINTS_OK, mockIntent);
+        assertEquals(result, expectedUUID);
+    }
+
+    @Test
+    public void onActivityResultFromEnroll_scanCancelled() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+
+        when(mockIntent.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION)).thenReturn(mockRegistration);
+        UUID result = simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT, Constants.SIMPRINTS_CANCELLED, mockIntent);
+        assertNull(result);
+    }
+
+    @Test(expected=SimprintsHelper.SimprintsErrorResultCodeException.class)
+    public void onActivityResultFromEnroll_otherResultCode() throws Exception {
+        SimprintsHelper simPrintsHelperSpy = spy(simprintsHelper);
+
+        when(mockIntent.getParcelableExtra(Constants.SIMPRINTS_REGISTRATION)).thenReturn(mockRegistration);
+        UUID result = simPrintsHelperSpy.onActivityResultFromEnroll(SimprintsHelper.SIMPRINTS_ENROLLMENT_INTENT, Constants.SIMPRINTS_MISSING_VERIFY_GUID, mockIntent);
+        assertNull(result);
     }
 }
