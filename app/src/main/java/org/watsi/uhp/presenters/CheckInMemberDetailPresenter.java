@@ -118,9 +118,9 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         // how do you want to shift the tasks over to the helper?
-
         try {
-            Verification verification = mSimprintsHelper.onActivityResultFromVerify(requestCode, resultCode, data);
+            Verification verification = getSimprintsHelper().onActivityResultFromVerify(requestCode, resultCode, data);
+            mIdEvent.setFingerprintsVerificationResultCode(resultCode);
             if (verification != null) {
                 saveIdentificationEventWithVerificationData(verification);
                 showScanSuccessfulToast();
@@ -134,7 +134,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    private void showProceedToCheckAnywayToastAndReport() {
+    protected SimprintsHelper getSimprintsHelper() {
+        return mSimprintsHelper;
+    }
+
+    protected void showProceedToCheckAnywayToastAndReport() {
         Toast.makeText(getContext(),
                 "Some issues with the scanner, please check in anyway.",
                 Toast.LENGTH_LONG).

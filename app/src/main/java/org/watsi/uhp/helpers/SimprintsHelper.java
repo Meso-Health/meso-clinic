@@ -107,7 +107,7 @@ public class SimprintsHelper {
         }
     }
 
-    public class SimprintsHelperException extends Throwable {
+    public class SimprintsHelperException extends Exception {
         public SimprintsHelperException(String errorMessage) {
             super(errorMessage);
         }
