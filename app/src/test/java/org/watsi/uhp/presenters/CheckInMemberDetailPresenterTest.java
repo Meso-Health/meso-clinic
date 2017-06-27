@@ -139,7 +139,7 @@ public class CheckInMemberDetailPresenterTest {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
         when(mockMember.isAbsentee()).thenReturn(false);
         when(mockMember.getFingerprintsGuid()).thenReturn(UUID.randomUUID());
-        when(mockIdentificationEvent.getFingerprintsVerificationTier()).thenReturn(null);
+        when(mockIdentificationEvent.getFingerprintsVerificationResultCode()).thenReturn(null);
 
         doNothing().when(checkInMemberDetailPresenterSpy).setMemberSecondaryButtonProperties(
                 any(String.class), any(Boolean.class), any(View.OnClickListener.class));
@@ -262,14 +262,16 @@ public class CheckInMemberDetailPresenterTest {
     @Test
     public void handleOnActivityResult_badIntent() {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
-        doNothing().when(checkInMemberDetailPresenterSpy).showProceedToCheckAnywayToastAndReport();
+        doNothing().when(checkInMemberDetailPresenterSpy).refreshFragment();
+        doNothing().when(checkInMemberDetailPresenterSpy).showScanFailedToast();
 
         checkInMemberDetailPresenterSpy.handleOnActivityResult(
                 SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT + 1,
                 Constants.SIMPRINTS_OK,
                 mockFingerprintIntentData);
 
-        verify(checkInMemberDetailPresenterSpy, times(1)).showProceedToCheckAnywayToastAndReport();
+        verify(checkInMemberDetailPresenterSpy, times(1)).refreshFragment();
+        verify(checkInMemberDetailPresenterSpy, times(1)).showScanFailedToast();
         verifyStatic();
         ExceptionManager.reportException(any(SimprintsHelper.SimprintsHelperException.class));
     }
@@ -299,7 +301,7 @@ public class CheckInMemberDetailPresenterTest {
 
         doNothing().when(checkInMemberDetailPresenterSpy).showScanSuccessfulToast();
         doNothing().when(checkInMemberDetailPresenterSpy).saveIdentificationEventWithVerificationData(mockVerification);
-        doNothing().when(checkInMemberDetailPresenterSpy).showFingerprintsResults();
+        doNothing().when(checkInMemberDetailPresenterSpy).refreshFragment();
 
         checkInMemberDetailPresenterSpy.handleOnActivityResult(
                 SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT,
@@ -309,7 +311,7 @@ public class CheckInMemberDetailPresenterTest {
         verify(mockSimprintsHelper, times(1)).onActivityResultFromVerify(SimprintsHelper.SIMPRINTS_VERIFICATION_INTENT, Constants.SIMPRINTS_OK, mockFingerprintIntentData);
         verify(checkInMemberDetailPresenterSpy, times(1)).showScanSuccessfulToast();
         verify(checkInMemberDetailPresenterSpy, times(1)).saveIdentificationEventWithVerificationData(mockVerification);
-        verify(checkInMemberDetailPresenterSpy, times(1)).showFingerprintsResults();
+        verify(checkInMemberDetailPresenterSpy, times(1)).refreshFragment();
         verify(mockIdentificationEvent, times(1)).setFingerprintsVerificationResultCode(Constants.SIMPRINTS_OK);
     }
 }
