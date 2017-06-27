@@ -2,7 +2,9 @@ package org.watsi.uhp.offline;
 
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.support.test.rule.ActivityTestRule;
 
+import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.watsi.uhp.BillableFactory;
@@ -19,11 +21,21 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.core.IsNot.not;
+import static org.watsi.uhp.CustomMatchers.withAdaptedData;
 
 class BaseTest {
+
+    final static String TEST_USER_NAME = "test";
 
     @BeforeClass
     public static void setUp() throws SQLException, AbstractModel.ValidationException {
@@ -46,7 +58,7 @@ class BaseTest {
     private static void login(Context context) {
         User u = new User();
         u.setId(1);
-        u.setUsername("test");
+        u.setUsername(TEST_USER_NAME);
         u.setName("test_name");
         u.setRole("provider");
 
@@ -65,7 +77,6 @@ class BaseTest {
 
     private static void loadFixtures() throws SQLException, AbstractModel.ValidationException {
         MemberDao.create(new MemberFactory(
-                UUID.randomUUID(),
                 "Lil Jon",
                 "RWI000000",
                 5,
@@ -73,7 +84,6 @@ class BaseTest {
         ));
 
         MemberDao.create(new MemberFactory(
-                UUID.randomUUID(),
                 "Big Jon",
                 "RWI000001",
                 50,
@@ -113,5 +123,27 @@ class BaseTest {
                 "unit",
                 3000
         ));
+    }
+
+    void assertItemInList(Matcher<Object> matcher, int listId) {
+        onData(matcher).inAdapterView(withId(listId)).check(matches(isDisplayed()));
+    }
+
+    void assertItemNotInList(Matcher<Object> matcher, int listId) {
+        onView(withId(listId)).check(matches(not(withAdaptedData(matcher))));
+    }
+
+    void assertDisplaysToast(ActivityTestRule rule, int messageId) {
+        onView(withText(messageId))
+                .inRoot(withDecorView(not(rule.getActivity().getWindow()
+                        .getDecorView())))
+                .check(matches(isDisplayed()));
+    }
+
+    void assertDisplaysToast(ActivityTestRule rule, String message) {
+        onView(withText(message))
+                .inRoot(withDecorView(not(rule.getActivity().getWindow()
+                        .getDecorView())))
+                .check(matches(isDisplayed()));
     }
 }
