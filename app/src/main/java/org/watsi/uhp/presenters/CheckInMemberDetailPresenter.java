@@ -105,7 +105,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), R.string.bad_scan_indicator);
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), R.string.good_scan_indicator);
-        } else if (mIdEvent.getFingerprintsVerificationResultCode() != Constants.SIMPRINTS_CANCELLED) {
+        } else if (mIdEvent.getFingerprintsVerificationResultCode() != null && mIdEvent.getFingerprintsVerificationResultCode() == Constants.SIMPRINTS_CANCELLED) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), R.string.no_scan_indicator);
         }
     }
@@ -125,6 +125,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                 showScanSuccessfulToast();
                 showFingerprintsResults();
             } else {
+                // When an event is cancelled, we want it to be a non 0 number because 0 is default resultCode if
+                // no fingerprints call was made.
                 showScanFailedToast();
             }
         } catch (SimprintsHelper.SimprintsHelperException e) {

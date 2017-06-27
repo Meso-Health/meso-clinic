@@ -117,12 +117,12 @@ public class IdentificationEvent extends SyncableModel {
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_RESULT_CODE)
     @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_RESULT_CODE)
-    private int mFingerprintsVerificationResultCode;
+    private Integer mFingerprintsVerificationResultCode;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
     @DatabaseField(columnName = FIELD_NAME_FINGERPRINTS_VERIFICATION_CONFIDENCE)
-    private float mFingerprintsVerificationConfidence;
+    private Float mFingerprintsVerificationConfidence;
 
     @Expose
     @SerializedName(FIELD_NAME_FINGERPRINTS_VERIFICATION_TIER)
@@ -255,7 +255,7 @@ public class IdentificationEvent extends SyncableModel {
         this.mFingerprintsVerificationConfidence = confidence;
     }
 
-    public float getFingerprintsVerificationConfidence() {
+    public Float getFingerprintsVerificationConfidence() {
         return this.mFingerprintsVerificationConfidence;
     }
 
@@ -271,7 +271,7 @@ public class IdentificationEvent extends SyncableModel {
         this.mFingerprintsVerificationResultCode = simprintsResultCode;
     }
 
-    public int getFingerprintsVerificationResultCode() {
+    public Integer getFingerprintsVerificationResultCode() {
         return mFingerprintsVerificationResultCode;
     }
 
