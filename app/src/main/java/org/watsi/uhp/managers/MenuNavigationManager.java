@@ -12,10 +12,6 @@ import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.models.Member;
 
-/**
- * Created by michaelliang on 6/26/17.
- */
-
 public class MenuNavigationManager {
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
@@ -66,35 +62,35 @@ public class MenuNavigationManager {
         if (fragment instanceof CheckInMemberDetailFragment) {
             ((CheckInMemberDetailFragment) fragment).reportMember();
         } else {
-            ExceptionManager.reportException(new IllegalStateException("Attempted to report member after check in."));
+            ExceptionManager.reportErrorMessage("Attempted to report member after check in.");
         }
     }
 
     protected void navigateToCompleteEnrollmentFragment(Fragment fragment, Member member) {
         if (fragment instanceof CheckInMemberDetailFragment) {
-            mNavigationManager.setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) fragment).getIdEvent());
+            getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) fragment).getIdEvent());
         } else if (fragment instanceof CurrentMemberDetailFragment) {
-            mNavigationManager.setEnrollmentMemberPhotoFragment(member, null);
+            getNavigationManager().setEnrollmentMemberPhotoFragment(member, null);
         } else {
-            ExceptionManager.reportMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
+            ExceptionManager.reportErrorMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
         }
     }
 
     protected void navigateToMemberEditFragment(Fragment fragment, Member member) {
         if (fragment instanceof CheckInMemberDetailFragment) {
             CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
-            mNavigationManager.setMemberEditFragment(
+            getNavigationManager().setMemberEditFragment(
                     member,
                     checkInMemberDetailFragment.getIdEvent(),
                     null
             );
         } else if (fragment instanceof CurrentMemberDetailFragment) {
-            mNavigationManager.setMemberEditFragment(
+            getNavigationManager().setMemberEditFragment(
                     member,
                     null,
                     null);
         } else {
-            ExceptionManager.reportMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
+            ExceptionManager.reportErrorMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
         }
     }
 
@@ -107,5 +103,9 @@ public class MenuNavigationManager {
                         mSessionManager.logout(mClinicActivity);
                     }
                 }).create().show();
+    }
+
+    public NavigationManager getNavigationManager() {
+        return mNavigationManager;
     }
 }

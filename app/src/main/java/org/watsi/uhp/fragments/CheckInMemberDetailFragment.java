@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
