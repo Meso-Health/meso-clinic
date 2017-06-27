@@ -77,7 +77,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                         }
                     }
             );
-        } else if (getMember().getFingerprintsGuid() != null && mIdEvent.getFingerprintsVerificationTier() == null) {
+        } else if (getMember().getFingerprintsGuid() != null && mIdEvent.getFingerprintsVerificationResultCode() == null) {
             setMemberSecondaryButtonProperties("Scan", true,
                     new View.OnClickListener() {
                         @Override
@@ -91,7 +91,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                                         Toast.LENGTH_LONG).show();
                             } catch (SimprintsHelper.SimprintsHelperException e) {
                                 ExceptionManager.reportException(e);
-                                showProceedToCheckAnywayToastAndReport();
+                                showScanFailedToast();
                             }
                         }
                     }
@@ -105,7 +105,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), R.string.bad_scan_indicator);
         } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), R.string.good_scan_indicator);
-        } else if (mIdEvent.getFingerprintsVerificationResultCode() != null && mIdEvent.getFingerprintsVerificationResultCode() == Constants.SIMPRINTS_CANCELLED) {
+        } else if (mIdEvent.getFingerprintsVerificationResultCode() != null && mIdEvent.getFingerprintsVerificationResultCode() != Constants.SIMPRINTS_CANCELLED) {
             setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), R.string.no_scan_indicator);
         }
     }
@@ -116,39 +116,28 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-        // how do you want to shift the tasks over to the helper?
+        mIdEvent.setFingerprintsVerificationResultCode(resultCode);
         try {
             Verification verification = getSimprintsHelper().onActivityResultFromVerify(requestCode, resultCode, data);
-            mIdEvent.setFingerprintsVerificationResultCode(resultCode);
             if (verification != null) {
                 saveIdentificationEventWithVerificationData(verification);
                 showScanSuccessfulToast();
-                showFingerprintsResults();
             } else {
-                // When an event is cancelled, we want it to be a non 0 number because 0 is default resultCode if
-                // no fingerprints call was made.
                 showScanFailedToast();
             }
         } catch (SimprintsHelper.SimprintsHelperException e) {
             ExceptionManager.reportException(e);
-            showProceedToCheckAnywayToastAndReport();
+            showScanFailedToast();
         }
+        refreshFragment();
+    }
+
+    protected void refreshFragment() {
+        getNavigationManager().setMemberDetailFragment(getMember(), getIdEvent());
     }
 
     protected SimprintsHelper getSimprintsHelper() {
         return mSimprintsHelper;
-    }
-
-    protected void showProceedToCheckAnywayToastAndReport() {
-        Toast.makeText(getContext(),
-                "Some issues with the scanner, please check in anyway.",
-                Toast.LENGTH_LONG).
-                show();
-    }
-
-    protected void showFingerprintsResults() {
-        getMemberSecondaryButton().setVisibility(View.INVISIBLE);
-        setMemberIndicator();
     }
 
     protected void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
