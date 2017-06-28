@@ -33,7 +33,7 @@ public class EnrollmentPresenterTest {
 
     @Test
     public void confirmationToast_memberStillAbsentee() throws Exception {
-        member.setPhotoUrl("fake photo url");
+        member.setPhotoUrl("file:///android_res/fake photo url");
 
         enrollmentPresenter.confirmationToast().show();
         assertEquals(ShadowToast.getTextOfLatestToast(), "Any updates successfully saved");
@@ -41,11 +41,11 @@ public class EnrollmentPresenterTest {
 
     @Test
     public void confirmationToast_memberNoLongerAbsentee() throws Exception {
-        member.setPhotoUrl("fake photo url");
+        member.setPhotoUrl("file:///android_res/fake photo url");
         member.setFingerprintsGuid(UUID.randomUUID());
 
         enrollmentPresenter.confirmationToast().show();
-        assertEquals( ShadowToast.getTextOfLatestToast(), "Enrollment completed");
+        assertEquals(ShadowToast.getTextOfLatestToast(), "Enrollment completed");
     }
 
 }
