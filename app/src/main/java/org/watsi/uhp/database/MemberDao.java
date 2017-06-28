@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
 
+import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -34,6 +35,11 @@ public class MemberDao {
     }
 
     private MemberDao() {
+    }
+
+    public static void create(Member member) throws SQLException {
+        member.setCreatedAt(Clock.getCurrentTime());
+        getInstance().getMemberDao().create(member);
     }
 
     private void setMemberDao(Dao memberDao) {
@@ -170,5 +176,10 @@ public class MemberDao {
             ids.add(m.getId());
         }
         return ids;
+    }
+
+    //TODO: move to a base Dao class
+    public static List<Member> all() throws SQLException {
+        return getInstance().getMemberDao().queryForAll();
     }
 }

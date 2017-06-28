@@ -91,7 +91,7 @@ public class SyncService extends AbstractSyncJobService {
             if (image == null) {
                 ExceptionManager.reportMessage("Null image for form on encounter: " +
                         encounter.getId().toString());
-                encounterForm.destroy();
+                encounterForm.delete();
                 continue;
             }
             try {

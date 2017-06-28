@@ -8,31 +8,33 @@
         android:title="@string/menu_complete_enrollment_label"
         app:showAsAction="never"
         android:visible="false" />
-
+    <item
+        android:id="@+id/menu_report_member"
+        android:orderInCategory="101"
+        android:title="@string/menu_report_member"
+        app:showAsAction="never"
+        android:visible="false" />
     <item
         android:id="@+id/menu_member_edit"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:title="@string/menu_member_edit_label"
         app:showAsAction="never"
         android:visible="false" />
-
     <item
         android:id="@+id/menu_enroll_newborn"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:title="@string/menu_enroll_number_label"
         app:showAsAction="never"
         android:visible="false" />
-
     <item
         android:id="@+id/menu_logout"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:title="@string/menu_logout_label"
         app:showAsAction="never"
         android:visible="true" />
-
     <item
         android:id="@+id/menu_version"
-        android:orderInCategory="104"
+        android:orderInCategory="105"
         android:title="@string/menu_version_and_sync_label"
         app:showAsAction="never"
         android:visible="true" />

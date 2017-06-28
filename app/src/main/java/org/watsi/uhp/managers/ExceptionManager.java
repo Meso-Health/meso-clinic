@@ -20,6 +20,7 @@ public class ExceptionManager {
 
     public static String MESSAGE_LEVEL_WARNING = "warning";
     public static String MESSAGE_LEVEL_INFO = "info";
+    public static String MESSAGE_LEVEL_ERROR = "error";
 
     public static void init(Application application) {
         if (BuildConfig.REPORT_TO_ROLLBAR && !Rollbar.isInit()) {
@@ -78,6 +79,12 @@ public class ExceptionManager {
             Rollbar.reportMessage(message, level, params);
         } else {
             Log.i("Message", message);
+        }
+    }
+
+    public static void reportErrorMessage(String message) {
+        if (Rollbar.isInit()) {
+            Rollbar.reportMessage(message, MESSAGE_LEVEL_ERROR);
         }
     }
 

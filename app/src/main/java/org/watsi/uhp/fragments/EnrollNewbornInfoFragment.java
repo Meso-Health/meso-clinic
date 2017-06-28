@@ -1,8 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;

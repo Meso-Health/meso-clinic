@@ -37,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:theme="@style/SecondaryButton"
-            android:text="@string/add_another_label"
+            android:text="@string/encounter_form_add_btn"
             android:enabled="false" />
 
         <Button
@@ -46,6 +46,6 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             style="@style/PrimaryButton"
-            android:text="@string/finish_btn_label" />
+            android:text="@string/encounter_form_finish_btn" />
     </LinearLayout>
 </LinearLayout>

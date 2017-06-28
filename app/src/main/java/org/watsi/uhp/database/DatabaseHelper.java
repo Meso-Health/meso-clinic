@@ -18,7 +18,6 @@ import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -26,7 +25,7 @@ import java.util.List;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static DatabaseHelper instance;
 
@@ -97,11 +96,33 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN dismissal_reason STRING;");
                 case 7:
                     TableUtils.createTable(connectionSource, EncounterForm.class);
+                case 8:
+                    // After talking with @pete and @byronium we need this no-op here because in the past, we had to update
+                    // some phones's data directly. Those methods no longer will compile here, and all phones should be > version 8 now.
+                case 9:
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_result_code INT;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier STRING;");
+                    getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void clearDatabase() {
+        try {
+            ConnectionSource connectionSource = getConnectionSource();
+            TableUtils.clearTable(connectionSource, Member.class);
+            TableUtils.clearTable(connectionSource, Billable.class);
+            TableUtils.clearTable(connectionSource, IdentificationEvent.class);
+            TableUtils.clearTable(connectionSource, Encounter.class);
+            TableUtils.clearTable(connectionSource, EncounterItem.class);
+            TableUtils.clearTable(connectionSource, EncounterForm.class);
+            TableUtils.clearTable(connectionSource, User.class);
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
         }
     }
 

@@ -16,12 +16,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.rollbar.android.Rollbar;
-
 import org.watsi.uhp.R;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.SyncableModel;
+
+import java.sql.SQLException;
 
 public class ClinicNumberDialogFragment extends DialogFragment {
 
@@ -40,7 +40,7 @@ public class ClinicNumberDialogFragment extends DialogFragment {
                 .setMessage(R.string.clinic_number_prompt)
                 .setPositiveButton(R.string.clinic_number_button, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        RadioButton selectedRadioButton = (RadioButton) ((AlertDialog)dialog)
+                        RadioButton selectedRadioButton = (RadioButton) ((AlertDialog) dialog)
                                 .findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
                         IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
                                 IdentificationEvent.ClinicNumberTypeEnum.valueOf(
@@ -48,14 +48,13 @@ public class ClinicNumberDialogFragment extends DialogFragment {
                         int clinicNumber = Integer.valueOf(mClinicNumberView.getText().toString());
 
                         try {
-                            ((DetailFragment) getTargetFragment()).completeIdentification(
-                                    true, clinicNumberType, clinicNumber);
-                        } catch (SyncableModel.UnauthenticatedException e) {
-                            Rollbar.reportException(e);
+                            ((CheckInMemberDetailFragment) getTargetFragment()).completeIdentification(
+                                    clinicNumberType, clinicNumber);
+                        } catch (SQLException e) {
+                            ExceptionManager.reportException(e);
                             Toast.makeText(getActivity(),
                                     "Failed to save identification, contact support.",
-                                    Toast.LENGTH_LONG).
-                                    show();
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 });

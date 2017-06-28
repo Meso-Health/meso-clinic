@@ -17,6 +17,9 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
 
@@ -27,6 +30,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
 
     static final int TAKE_MEMBER_PHOTO_INTENT = 1;
 
+    private IdentificationEvent mIdEvent;
     private ImageView mMemberPhotoImageView;
     private Uri mUri;
     private EnrollmentPresenter enrollmentPresenter;
@@ -56,7 +60,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                 public void onClick(DialogInterface dialog, int which) {
                     try {
                         mSyncableModel.saveChanges(getAuthenticationToken());
-                        getNavigationManager().setCurrentPatientsFragment();
+                        getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                         enrollmentPresenter.confirmationToast().show();
                     } catch (SQLException e) {
                         ExceptionManager.reportException(e);
@@ -72,9 +76,9 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
             });
             builder.show();
         } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
-            getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel);
+            getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel, mIdEvent);
         } else {
-            getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel);
+            getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel, mIdEvent);
         }
     }
 
@@ -97,6 +101,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                 new CapturePhotoClickListener(TAKE_MEMBER_PHOTO_INTENT, this, mUri));
 
         mMemberPhotoImageView = (ImageView) view.findViewById(R.id.photo);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             mSaveBtn.setText(R.string.enrollment_complete_btn);
@@ -112,11 +117,11 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
                 mMemberPhotoImageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
+                mSyncableModel.setPhotoUrl(mUri.toString());
+            } catch (IOException | AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
 
-            mSyncableModel.setPhotoUrl(mUri.toString());
             mSaveBtn.setEnabled(true);
         } else {
             Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();

@@ -62,32 +62,41 @@
             android:layout_below="@id/member_phone_number" />
 
         <TextView
-            android:id="@+id/reject_identity"
+            android:id="@+id/member_action_link"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="@string/reject_identity"
             android:clickable="true"
+            android:layout_toEndOf="@id/member_photo"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/member_secondary_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/SecondaryButton"
             android:layout_toEndOf="@id/member_photo"
             android:layout_alignParentBottom="true"
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/dismiss_patient"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/dismiss_patient"
-            android:clickable="true"
+            android:id="@+id/member_indicator"
+            android:layout_height="36dp"
+            android:layout_width="156dp"
+            android:drawableLeft="@drawable/fingerprints"
+            android:background="@drawable/scan_result_button"
+            android:gravity="center"
             android:layout_toEndOf="@id/member_photo"
             android:layout_alignParentBottom="true"
             android:visibility="gone" />
+
     </RelativeLayout>
 
     <Button
-        android:id="@+id/approve_identity"
+        android:id="@+id/member_action_button"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         style="@style/PrimaryButton"
-        android:text="@string/approve_identity"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
         android:layout_marginRight="@dimen/fragment_horizontal_margin"
         android:layout_marginBottom="@dimen/fragment_vertical_margin"/>

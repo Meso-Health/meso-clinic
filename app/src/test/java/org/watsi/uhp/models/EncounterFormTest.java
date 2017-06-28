@@ -123,17 +123,4 @@ public class EncounterFormTest {
 
         verify(mockApi, times(1)).syncEncounterForm("Token foo", encounterId, mockRequestBody);
     }
-
-    @Test
-    public void destroy() throws Exception {
-        UUID id = UUID.randomUUID();
-        encounterForm.setId(id);
-        EncounterForm encounterFormSpy = spy(encounterForm);
-
-        doReturn(mockDao).when(encounterFormSpy).getDao();
-
-        encounterFormSpy.destroy();
-
-        verify(mockDao, times(1)).deleteById(id);
-    }
 }
