@@ -14,6 +14,7 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.presenters.EnrollmentPresenter;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     private IdentificationEvent mIdEvent;
     private View mSuccessMessageView;
     private View mFailedMessageView;
+    private EnrollmentPresenter enrollmentPresenter;
     private SimprintsHelper mSimprintsHelper;
 
     @Override
@@ -49,7 +51,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
                 try {
                     mSyncableModel.saveChanges(getAuthenticationToken());
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
-                    Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
+                    enrollmentPresenter.confirmationToast().show();
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
@@ -74,6 +76,8 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
 
         Button fingerprintBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_capture_btn);
         fingerprintBtn.setOnClickListener(new CaptureThumbprintClickListener(mSyncableModel.getId(), this, mSimprintsHelper));
+
+        enrollmentPresenter = new EnrollmentPresenter(mSyncableModel, getContext());
     }
 
     private static class CaptureThumbprintClickListener implements View.OnClickListener {
