@@ -19,6 +19,8 @@ import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -83,6 +85,12 @@ public class ApiServiceTest {
         whenNew(OkHttpClient.Builder.class).withNoArguments().thenReturn(mockHttpClientBuilder);
         whenNew(UnauthorizedInterceptor.class).withArguments(mockAccountManager)
                 .thenReturn(mockInterceptor);
+        when(mockHttpClientBuilder.connectTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.readTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.writeTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
+                .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.addNetworkInterceptor(mockInterceptor))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.retryOnConnectionFailure(false))
