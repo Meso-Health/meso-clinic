@@ -14,6 +14,7 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -25,11 +26,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiService {
 
     private static UhpApi instance;
+    public static long HTTP_TIMEOUT_IN_SECONDS = 30L;
 
     public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
             AccountManager accountManager = AccountManager.get(context);
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                    .connectTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+                    .readTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+                    .writeTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
                     .addNetworkInterceptor(new UnauthorizedInterceptor(accountManager))
                     .retryOnConnectionFailure(false);
             Gson gson = new GsonBuilder()
