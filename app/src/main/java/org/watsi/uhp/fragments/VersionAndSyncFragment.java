@@ -116,7 +116,7 @@ public class VersionAndSyncFragment extends BaseFragment {
                             .setText(formattedQuantity(result[3]));
                     ((TextView) view.findViewById(R.id.sync_encounters_quantity))
                             .setText(formattedQuantity(result[4]));
-                    ((TextView) view.findViewById(R.id.sync_encounters_quantity))
+                    ((TextView) view.findViewById(R.id.sync_encounter_forms_quantity))
                             .setText(formattedQuantity(result[5]));
                 }
 
