@@ -5,6 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--
+        Setting android:layout_marginBottom="80dp" so that the last row does not
+        overlap with where the refresh button is at the bottom of the page.
+    -->
     <ScrollView
         android:id="@+id/stats_scrollview"
         android:layout_width="match_parent"
