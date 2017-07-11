@@ -3,7 +3,6 @@ package org.watsi.uhp.presenters
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.AsyncTask
-import android.view.View
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
@@ -73,7 +72,7 @@ class SearchMemberPresenter(
         mListView.emptyView = mEmptyView
         mListView.setOnItemClickListener { parent, _, position, _ ->
             val member = parent.getItemAtPosition(position) as Member
-            mNavigationManager.setDetailFragment(member, searchMethod, null)
+            mNavigationManager.setMemberDetailFragment(member, searchMethod, null)
         }
         mProgressDialog.dismiss()
         mListView.requestFocus()

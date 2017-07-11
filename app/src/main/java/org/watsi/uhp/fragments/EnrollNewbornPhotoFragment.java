@@ -15,6 +15,7 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     void nextStep(View view) {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
-            getNavigationManager().setCurrentPatientsFragment();
+            getNavigationManager().setMemberDetailFragment(mSyncableModel);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
@@ -63,7 +64,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
             mUri = FileManager.getUriFromProvider(filename, "member", getContext());
         } catch (IOException e) {
             ExceptionManager.reportException(e);
-            getNavigationManager().setCurrentPatientsFragment();
+            getNavigationManager().setMemberDetailFragment(mSyncableModel);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
 
@@ -90,7 +91,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
                 mSyncableModel.setPhotoUrl(mUri.toString());
                 mSaveBtn.setEnabled(true);
                 return;
-            } catch (IOException e) {
+            } catch (IOException | AbstractModel.ValidationException e) {
                 ExceptionManager.reportException(e);
             }
         }

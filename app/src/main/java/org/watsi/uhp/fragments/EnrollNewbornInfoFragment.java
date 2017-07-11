@@ -1,7 +1,9 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -9,11 +11,13 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.listeners.EnrollNewbornInfoFormRadioGroupListener;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.watchers.EnrollNewbornInfoFormTextWatcher;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,11 +61,6 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         }
 
         String genderString = attributeBundle.getString(Member.FIELD_NAME_GENDER);
-        if (genderString == null) {
-            RadioButton lastRadioButton = (RadioButton) mRadioGroupView.findViewById(R.id.female);
-            lastRadioButton.setError(getString(R.string.gender_validation_error));
-            return;
-        }
         newborn.setGender(Member.GenderEnum.valueOf(genderString));
 
         Date birthdate;
@@ -91,6 +90,14 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         mCardIdView = (EditText) view.findViewById(R.id.card_id);
         mRadioGroupView = (RadioGroup) view.findViewById(R.id.gender_group);
         mDatePicker = (DatePicker) view.findViewById(R.id.birthdate);
+
+        Button mSaveButton = (Button) view.findViewById(R.id.save_button);
+
+        TextWatcher watcher = new EnrollNewbornInfoFormTextWatcher(mNameView, mRadioGroupView, mCardIdView, mSaveButton);
+        mNameView.addTextChangedListener(watcher);
+        mCardIdView.addTextChangedListener(watcher);
+
+        mRadioGroupView.setOnCheckedChangeListener(new EnrollNewbornInfoFormRadioGroupListener(mNameView, mRadioGroupView, mCardIdView, mSaveButton));
 
         Bundle sourceParams = getArguments().getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
         if (sourceParams == null) sourceParams = new Bundle();

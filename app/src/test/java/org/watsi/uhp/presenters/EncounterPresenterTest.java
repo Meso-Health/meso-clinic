@@ -81,7 +81,6 @@ public class EncounterPresenterTest {
 
     @Before
     public void setup() {
-        initMocks(this);
         mockStatic(BillableDao.class);
 
         encounter = new Encounter();
@@ -237,5 +236,4 @@ public class EncounterPresenterTest {
         ArrayAdapter<String> result = encounterPresenter.getCategoriesAdapter("foo");
         assertEquals(result, mockArrayAdapter);
     }
-
 }

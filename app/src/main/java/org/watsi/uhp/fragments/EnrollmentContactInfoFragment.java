@@ -4,12 +4,15 @@ import android.view.View;
 import android.widget.EditText;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
     private EditText mPhoneNumberView;
+    private IdentificationEvent mIdEvent;
 
     @Override
     int getTitleLabelId() {
@@ -29,6 +32,7 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
     @Override
     void setUpFragment(View view) {
         mPhoneNumberView = (EditText) view.findViewById(R.id.phone_number);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
     }
 
     @Override
@@ -37,7 +41,7 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
             String phoneNumber = mPhoneNumberView.getText().toString();
             if (phoneNumber.isEmpty()) phoneNumber = null;
             mSyncableModel.setPhoneNumber(phoneNumber);
-            getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel);
+            getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel, mIdEvent);
         } catch (AbstractModel.ValidationException e) {
             String errorMessage = getString(R.string.phone_number_validation_error);
             mPhoneNumberView.setError(errorMessage);

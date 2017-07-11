@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
@@ -17,6 +18,7 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
@@ -36,13 +38,16 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ExceptionManager.class, FileManager.class, MemberDao.class, Log.class, DownloadMemberPhotosService.class })
+@PrepareForTest({ DownloadMemberPhotosService.class, ExceptionManager.class, FileManager.class,
+        Log.class, MemberDao.class, OkHttpClient.Builder.class })
 public class DownloadMemberPhotoServiceTest {
 
     private DownloadMemberPhotosService service;
 
     @Mock
     OkHttpClient mockHttpClient;
+    @Mock
+    OkHttpClient.Builder mockHttpClientBuilder;
 
     @Before
     public void setup() {
@@ -80,13 +85,25 @@ public class DownloadMemberPhotoServiceTest {
         ExceptionManager.reportException(mockException);
     }
 
+    private void mockHttpClient() throws Exception {
+        whenNew(OkHttpClient.Builder.class).withNoArguments().thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.connectTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.readTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.writeTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.build()).thenReturn(mockHttpClient);
+
+    }
+
     @Test
     public void fetchMemberPhotos_memberHasRemotePhoto() throws Exception {
         Member member = mock(Member.class);
         List<Member> memberList = new ArrayList<>();
         memberList.add(member);
 
-        whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
+        mockHttpClient();
         doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
         when(FileManager.isLocal(anyString())).thenReturn(false);
@@ -103,7 +120,7 @@ public class DownloadMemberPhotoServiceTest {
         List<Member> memberList = new ArrayList<>();
         memberList.add(member);
 
-        whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
+        mockHttpClient();
         doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
         when(FileManager.isLocal(anyString())).thenReturn(true);

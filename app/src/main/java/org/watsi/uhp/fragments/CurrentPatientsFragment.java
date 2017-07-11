@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,10 +48,11 @@ public class CurrentPatientsFragment extends BaseFragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Member member = (Member) parent.getItemAtPosition(position);
-                        getNavigationManager().setDetailFragment(member, null, null);
+                        getNavigationManager().setMemberDetailFragment(member);
                     }
                 });
             }
+
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
             Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();

@@ -69,10 +69,11 @@ public class IdentificationEventTest {
     public void getFormattedDismissalReasons() throws Exception {
         String[] formattedDismissalReasons = IdentificationEvent.getFormattedDismissalReasons();
 
-        assertEquals(formattedDismissalReasons.length, 3);
-        assertEquals(formattedDismissalReasons[0], "Accidental identification");
-        assertEquals(formattedDismissalReasons[1], "Patient left before care");
-        assertEquals(formattedDismissalReasons[2], "Patient left after care");
+        assertEquals(formattedDismissalReasons.length, 4);
+        assertEquals(formattedDismissalReasons[0], "Patient on other phone");
+        assertEquals(formattedDismissalReasons[1], "Accidental identification");
+        assertEquals(formattedDismissalReasons[2], "Patient left before care");
+        assertEquals(formattedDismissalReasons[3], "Patient left after care");
     }
 
     @Test

@@ -100,7 +100,8 @@
             android:id="@+id/save_button"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:theme="@style/PrimaryButton"
-            android:text="@string/enroll_newborn_save_btn" />
+            style="@style/PrimaryButton"
+            android:text="@string/enroll_newborn_save_btn"
+            android:enabled="false"/>
     </RelativeLayout>
 </LinearLayout>

@@ -2,6 +2,7 @@ package org.watsi.uhp.services;
 
 import android.util.Log;
 
+import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
@@ -36,7 +38,10 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
     protected void fetchMemberPhotos() throws SQLException {
         List<Member> membersWithPhotosToFetch = MemberDao.membersWithPhotosToFetch();
         Iterator<Member> iterator = membersWithPhotosToFetch.iterator();
-        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+                .readTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+                .build();
         int fetchFailures = 0;
         while (iterator.hasNext()) {
             Member member = iterator.next();
