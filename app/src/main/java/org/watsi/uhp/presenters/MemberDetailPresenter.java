@@ -9,10 +9,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -161,7 +164,16 @@ public abstract class MemberDetailPresenter {
 
     protected void setPatientCardPhotoBitmap(Bitmap photoBitMap) {
         ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
-        memberPhoto.setImageBitmap(photoBitMap);
+        if (getMember().getPhotoUrl() != null && FileManager.isLocal(getMember().getPhotoUrl())) {
+            // let's glide then!!!
+            Glide.with(getContext())
+                    .load(getMember().getPhotoUrl())
+                    .thumbnail(0.1f)
+                    .placeholder(R.drawable.portrait_placeholder)
+                    .into(memberPhoto);
+        } else {
+            memberPhoto.setImageBitmap(photoBitMap);
+        }
     }
 
     protected void setPatientCardPhotoAsDefault() {
