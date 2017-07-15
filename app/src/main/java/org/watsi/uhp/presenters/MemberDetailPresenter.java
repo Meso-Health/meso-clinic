@@ -65,9 +65,7 @@ public abstract class MemberDetailPresenter {
     }
 
     protected void setPatientCardPhoto() {
-        ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
-
-        PhotoLoaderHelper.loadMemberPhoto(getContext(), getMember(), memberPhoto,
+        PhotoLoaderHelper.loadMemberPhoto(getContext(), getMember(), getMemberPhotoImageView(),
                 R.drawable.portrait_placeholder, R.dimen.detail_fragment_photo_width,
                 R.dimen.detail_fragment_photo_height);
     }
@@ -143,6 +141,10 @@ public abstract class MemberDetailPresenter {
                 R.plurals.household_label, householdSize, householdSize);
     }
 
+    protected ImageView getMemberPhotoImageView() {
+        return (ImageView) mView.findViewById(R.id.member_photo);
+    }
+
     protected TextView getMemberNameDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));
     }
@@ -161,11 +163,6 @@ public abstract class MemberDetailPresenter {
 
     protected Button getMemberActionButton() {
         return ((Button) mView.findViewById(R.id.member_action_button));
-    }
-
-    protected void setPatientCardPhotoAsDefault() {
-        ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
-        memberPhoto.setImageResource(R.drawable.portrait_placeholder);
     }
 
     protected void showAbsenteeNotification() {

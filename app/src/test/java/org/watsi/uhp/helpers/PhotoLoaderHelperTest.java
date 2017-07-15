@@ -5,5 +5,5 @@ package org.watsi.uhp.helpers;
  */
 
 public class PhotoLoaderHelperTest {
-    
+
 }
