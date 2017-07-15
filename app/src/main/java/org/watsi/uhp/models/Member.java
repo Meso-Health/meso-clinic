@@ -402,7 +402,7 @@ public class Member extends SyncableModel {
     public Bitmap getPhotoBitmap(ContentResolver contentResolver) {
         if (mPhoto != null) {
             return BitmapFactory.decodeByteArray(this.mPhoto, 0, this.mPhoto.length);
-        } else if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
+        } else if (hasLocalPhoto()) {
             try {
                 return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
             } catch (IOException e) {
@@ -410,6 +410,10 @@ public class Member extends SyncableModel {
             }
         }
         return null;
+    }
+
+    public boolean hasLocalPhoto() {
+        return getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl());
     }
 
     public boolean shouldCaptureFingerprint() {

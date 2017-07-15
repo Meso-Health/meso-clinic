@@ -2,9 +2,7 @@ package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.MemoryCategory;
-import com.bumptech.glide.load.engine.cache.MemorySizeCalculator;
-
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.helpers.PhotoLoaderHelper;
 import org.watsi.uhp.models.Member;
 
 import java.util.List;
@@ -69,29 +63,9 @@ public class MemberAdapter extends ArrayAdapter<Member> {
                 viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
             }
 
-            // Lets try the Glide thingy.
-//            MemorySizeCalculator calculator = new MemorySizeCalculator(getContext());
-//            int defaultMemoryCacheSize = calculator.getMemoryCacheSize();
-//            int defaultBitmapPoolSize = calculator.getBitmapPoolSize();
-//            Log.i("UHP", "defaultMemoryCacheSize: " + defaultMemoryCacheSize);
-//            Log.i("UHP", "defaultBitmapPoolSize: " + defaultBitmapPoolSize);
-
-            if (member.getPhotoUrl() != null && FileManager.isLocal(member.getPhotoUrl())) {
-                // let's glide then!!!
-                Glide.with(getContext())
-                        .load(member.getPhotoUrl())
-                        .thumbnail(0.0001f)
-                        .placeholder(R.drawable.portrait_placeholder)
-                        .into(viewHolder.photo);
-            } else {
-
-                Bitmap photoBitmap = member.getPhotoBitmap(getContext().getContentResolver());
-                if (photoBitmap != null) {
-                    viewHolder.photo.setImageBitmap(photoBitmap);
-                } else {
-                    viewHolder.photo.setImageResource(R.drawable.portrait_placeholder);
-                }
-            }
+            PhotoLoaderHelper.loadMemberPhoto(getContext(), member, viewHolder.photo,
+                    R.drawable.portrait_placeholder, R.dimen.item_member_list_photo_width,
+                    R.dimen.item_member_list_photo_height);
         }
 
         return convertView;
