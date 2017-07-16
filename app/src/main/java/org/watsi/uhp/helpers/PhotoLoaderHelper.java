@@ -1,7 +1,6 @@
 package org.watsi.uhp.helpers;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -15,24 +14,36 @@ import org.watsi.uhp.models.Member;
  */
 
 public class PhotoLoaderHelper {
-    public static void loadMemberPhoto(Context context, Member member, ImageView photo, int placeholder, int width, int height) {
-        if (FileManager.isLocal(member.getPhotoUrl())) {
-            Glide.with(context)
-                    .load(member.getPhotoUrl())
-                    .override(getHeightFromDimensionResource(context, width), getWidthFromDimensionResource(context, height))
-                    .centerCrop()
-                    .placeholder(placeholder)
-                    .into(photo);
+    public static void loadMemberPhoto(Context context, Member member, ImageView imageView, int width, int height) {
+        String fullSizePhotoUrl = member.getPhotoUrl();
+        int adjustedWidth = getWidthFromDimensionResource(context, width);
+        int adjustedHeight =  getHeightFromDimensionResource(context, height);
+        if (fullSizePhotoUrl != null && FileManager.isLocal(fullSizePhotoUrl)) {
+            loadFullSizeImageWithGlide(context, imageView, fullSizePhotoUrl, adjustedWidth, adjustedHeight);
         } else {
-            // Need to clear because of https://github.com/bumptech/glide/issues/1275#issuecomment-226943312
-            Glide.clear(photo);
-            Bitmap photoBitmap = member.getPhotoBitmap(context.getContentResolver());
-            if (photoBitmap != null) {
-                photo.setImageBitmap(photoBitmap);
-            } else {
-                photo.setImageResource(R.drawable.portrait_placeholder);
-            }
+            // Reason we still with Glide for small images is that it is best practice to load
+            // the same loading mechanism for list views according to this post on reddit:
+            // https://www.reddit.com/r/androiddev/comments/3hlkbx/should_you_use_an_image_loading_lib_picasso_glide/cu8scpv/
+            loadSmallPhotoWithGlide(context, imageView, member.getPhoto(), adjustedWidth, adjustedHeight);
         }
+    }
+
+    protected static void loadSmallPhotoWithGlide(Context context, ImageView imageView, byte[] photoBytes, int width, int height) {
+        Glide.with(context)
+                .load(photoBytes)
+                .asBitmap()
+                .override(width, height)
+                .centerCrop()
+                .placeholder(R.drawable.portrait_placeholder)
+                .into(imageView);
+    }
+
+    protected static void loadFullSizeImageWithGlide(Context context, ImageView imageView, String fullSizePhotoUrl, int width, int height) {
+        Glide.with(context)
+                .load(fullSizePhotoUrl)
+                .override(width, height)
+                .centerCrop()
+                .into(imageView);
     }
 
     protected static int getHeightFromDimensionResource(Context context, int height) {

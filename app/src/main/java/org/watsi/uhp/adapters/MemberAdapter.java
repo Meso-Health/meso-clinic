@@ -64,8 +64,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
             }
 
             PhotoLoaderHelper.loadMemberPhoto(getContext(), member, viewHolder.photo,
-                    R.drawable.portrait_placeholder, R.dimen.item_member_list_photo_width,
-                    R.dimen.item_member_list_photo_height);
+                    R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height);
         }
 
         return convertView;

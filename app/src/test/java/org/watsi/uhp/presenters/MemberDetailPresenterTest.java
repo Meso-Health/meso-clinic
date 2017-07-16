@@ -159,7 +159,7 @@ public class MemberDetailPresenterTest {
         memberDetailPresenterSpy.setPatientCardPhoto();
 
         verifyStatic();
-        PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockPatientCardImageView, R.drawable.portrait_placeholder, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockPatientCardImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
     }
 
     @Test

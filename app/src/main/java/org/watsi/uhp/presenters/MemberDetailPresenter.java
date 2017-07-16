@@ -66,8 +66,7 @@ public abstract class MemberDetailPresenter {
 
     protected void setPatientCardPhoto() {
         PhotoLoaderHelper.loadMemberPhoto(getContext(), getMember(), getMemberPhotoImageView(),
-                R.drawable.portrait_placeholder, R.dimen.detail_fragment_photo_width,
-                R.dimen.detail_fragment_photo_height);
+                R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
     }
 
     protected void setPatientCardNotifications() {
