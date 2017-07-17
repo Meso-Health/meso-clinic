@@ -56,7 +56,7 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
-                    ExceptionManager.reportException(e1);
+                    ExceptionManager.reportExceptionWarning(e1);
                 }
             }
 
