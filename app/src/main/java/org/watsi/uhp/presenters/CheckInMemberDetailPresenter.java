@@ -152,7 +152,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     protected void addFingerprintsIconToSecondaryButton() {
-        Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
+        Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.ic_fingerprints, null);
         fingerprintIcon.setTint(ContextCompat.getColor(getContext(), R.color.title));
         mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
     }
