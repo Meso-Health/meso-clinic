@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +16,9 @@ import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.FileManager;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -49,7 +52,8 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     void nextStep(View view) {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
-            getNavigationManager().setMemberDetailFragment(mSyncableModel);
+            Member throughMember = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+            getNavigationManager().setMemberDetailFragment(mSyncableModel, IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, throughMember);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);

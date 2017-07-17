@@ -221,9 +221,10 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollNewbornInfoFragment.class, bundle));
     }
 
-    public void setEnrollNewbornPhotoFragment(Member newborn) {
+    public void setEnrollNewbornPhotoFragment(Member newborn, Member throughMember) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, newborn);
+        bundle.putSerializable(MEMBER_BUNDLE_FIELD, throughMember);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
