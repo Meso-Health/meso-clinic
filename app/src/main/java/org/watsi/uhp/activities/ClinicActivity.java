@@ -139,7 +139,7 @@ public class ClinicActivity extends AppCompatActivity {
             case android.R.id.home:
                 Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                 if (currentFragment instanceof FormFragment) {
-                    showDialogReturnToCurrentPatientsScreen();
+                    onBackPressed();
                 } else {
                     getNavigationManager().setCurrentPatientsFragment();
                 }
