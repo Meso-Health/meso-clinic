@@ -81,7 +81,7 @@ public class NavigationManager {
         transaction.replace(R.id.fragment_container, fragment, tag);
 
         if (addToBackstack) {
-            transaction.addToBackStack(fragment.getClass().getName());
+            transaction.addToBackStack(null);
         }
         transaction.commit();
     }
