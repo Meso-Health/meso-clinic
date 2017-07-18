@@ -38,6 +38,7 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
+    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
     public static String SOURCE_PARAMS_BUNDLE_FIELD = "sourceParams";
 
@@ -224,7 +225,7 @@ public class NavigationManager {
     public void setEnrollNewbornPhotoFragment(Member newborn, Member throughMember) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, newborn);
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, throughMember);
+        bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
