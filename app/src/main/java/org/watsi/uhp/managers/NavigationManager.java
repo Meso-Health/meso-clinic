@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
@@ -27,6 +28,8 @@ import org.watsi.uhp.fragments.VersionAndSyncFragment;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+
+import java.util.List;
 
 /**
  * Helper class for managing navigation between fragments
@@ -59,17 +62,25 @@ public class NavigationManager {
     private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
                              popBackStack) {
         FragmentManager fm = mActivity.getSupportFragmentManager();
+
         if (popBackStack) {
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             if (fm.findFragmentByTag(HOME_TAG) != null) {
                 fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
             }
+
+            // Hacky solution: (michaelliang) I added this extra check since the detail fragment may
+            // stick around when returning to the CurrentPatientsFragment.
+            if (fm.findFragmentByTag(DETAIL_TAG) != null) {
+                fm.beginTransaction().remove(fm.findFragmentByTag(DETAIL_TAG)).commit();
+            }
         }
 
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.fragment_container, fragment, tag);
+
         if (addToBackstack) {
-            transaction.addToBackStack(null);
+            transaction.addToBackStack(fragment.getClass().getName());
         }
         transaction.commit();
     }
@@ -118,13 +129,13 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, false, false);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, false, false);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
