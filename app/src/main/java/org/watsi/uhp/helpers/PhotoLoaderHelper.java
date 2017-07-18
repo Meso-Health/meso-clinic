@@ -21,14 +21,14 @@ public class PhotoLoaderHelper {
         if (fullSizePhotoUrl != null && FileManager.isLocal(fullSizePhotoUrl)) {
             loadFullSizeImageWithGlide(context, imageView, fullSizePhotoUrl, adjustedWidth, adjustedHeight);
         } else {
-            // Reason we still with Glide for small images is that it is best practice to load
+            // Reason we still use Glide for small images is that it is best practice to load
             // the same loading mechanism for list views according to this post on reddit:
             // https://www.reddit.com/r/androiddev/comments/3hlkbx/should_you_use_an_image_loading_lib_picasso_glide/cu8scpv/
-            loadSmallPhotoWithGlide(context, imageView, member.getPhoto(), adjustedWidth, adjustedHeight);
+            loadThumbnailPhotoWithGlide(context, imageView, member.getPhoto(), adjustedWidth, adjustedHeight);
         }
     }
 
-    protected static void loadSmallPhotoWithGlide(Context context, ImageView imageView, byte[] photoBytes, int width, int height) {
+    protected static void loadThumbnailPhotoWithGlide(Context context, ImageView imageView, byte[] photoBytes, int width, int height) {
         Glide.with(context)
                 .load(photoBytes)
                 .asBitmap()

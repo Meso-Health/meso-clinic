@@ -53,7 +53,7 @@ public class PhotoLoaderHelperTest {
         PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.loadSmallPhotoWithGlide(mockContext, mockImageView, photoBytes, 90, 120);
+        PhotoLoaderHelper.loadThumbnailPhotoWithGlide(mockContext, mockImageView, photoBytes, 90, 120);
     }
 
     @Test
