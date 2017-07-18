@@ -14,6 +14,9 @@ import org.watsi.uhp.models.Member;
  */
 
 public class PhotoLoaderHelper {
+    // It's OK for the thumbnail sized photos to be a little higher resolution.
+    private static int THUMBNAIL_SIZE_MULTIPLIER = 2;
+
     public static void loadMemberPhoto(Context context, Member member, ImageView imageView, int width, int height) {
         String fullSizePhotoUrl = member.getPhotoUrl();
         int adjustedWidth = getWidthFromDimensionResource(context, width);
@@ -32,7 +35,7 @@ public class PhotoLoaderHelper {
         Glide.with(context)
                 .load(photoBytes)
                 .asBitmap()
-                .override(width, height)
+                .override(width * THUMBNAIL_SIZE_MULTIPLIER, height * THUMBNAIL_SIZE_MULTIPLIER)
                 .centerCrop()
                 .placeholder(R.drawable.portrait_placeholder)
                 .into(imageView);
