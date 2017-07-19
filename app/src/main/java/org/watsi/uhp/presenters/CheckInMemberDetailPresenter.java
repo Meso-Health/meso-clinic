@@ -113,11 +113,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
-    protected void setMemberActionLink() {
-        // no-op
-    }
-
-    @Override
     protected void navigateToCompleteEnrollmentFragment() {
         getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), getIdEvent());
     }

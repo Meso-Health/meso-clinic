@@ -38,7 +38,6 @@ public abstract class MemberDetailPresenter {
         setMemberNotifications();
         setPatientCardTextFields();
         setPatientCardPhoto();
-        setMemberActionLink();
         setMemberActionButton();
         setBottomListView();
         setMemberSecondaryActionButton();
@@ -50,8 +49,6 @@ public abstract class MemberDetailPresenter {
     protected abstract void setMemberSecondaryActionButton();
 
     protected abstract void setMemberIndicator();
-
-    protected abstract void setMemberActionLink();
 
     protected abstract void navigateToCompleteEnrollmentFragment();
 

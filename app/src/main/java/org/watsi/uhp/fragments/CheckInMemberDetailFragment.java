@@ -47,10 +47,6 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         checkInMemberDetailPresenter.handleOnActivityResult(requestCode, resultCode, data);
     }
 
-    public IdentificationEvent getIdEvent() {
-        return checkInMemberDetailPresenter.getIdEvent();
-    }
-
     public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException {
         checkInMemberDetailPresenter.saveIdentificationEventAndCheckIn(clinicNumberType, clinicNumber);
     }
@@ -59,4 +55,3 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         checkInMemberDetailPresenter.reportMember();
     }
 }
-

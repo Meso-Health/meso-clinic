@@ -127,19 +127,6 @@ public class MenuNavigationManagerTest {
     }
 
     @Test
-    public void nextStep_completeEnrollment() throws Exception {
-        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_complete_enrollment);
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
-
-        doNothing().when(menuNavigationManagerSpy).navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
-        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
-
-        verify(menuNavigationManagerSpy, times(1)).navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
-        assertTrue(result);
-    }
-
-    @Test
     public void nextStep_reportMember() throws Exception {
         when(mockMenuItem.getItemId()).thenReturn(R.id.menu_report_member);
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);

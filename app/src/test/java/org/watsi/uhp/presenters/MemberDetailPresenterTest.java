@@ -92,11 +92,6 @@ public class MemberDetailPresenterTest {
             }
 
             @Override
-            protected void setMemberActionLink() {
-                // no-op
-            }
-
-            @Override
             protected void navigateToCompleteEnrollmentFragment() {
                 // no-op
             }
@@ -114,7 +109,6 @@ public class MemberDetailPresenterTest {
         doNothing().when(memberDetailPresenterSpy).setPatientCardTextFields();
         doNothing().when(memberDetailPresenterSpy).setPatientCardPhoto();
         doNothing().when(memberDetailPresenterSpy).setMemberNotifications();
-        doNothing().when(memberDetailPresenterSpy).setMemberActionLink();
         doNothing().when(memberDetailPresenterSpy).setMemberActionButton();
         doNothing().when(memberDetailPresenterSpy).setBottomListView();
         doNothing().when(memberDetailPresenterSpy).setMemberSecondaryActionButton();
@@ -125,7 +119,6 @@ public class MemberDetailPresenterTest {
         verify(memberDetailPresenterSpy, times(1)).setPatientCardTextFields();
         verify(memberDetailPresenterSpy, times(1)).setPatientCardPhoto();
         verify(memberDetailPresenterSpy, times(1)).setMemberNotifications();
-        verify(memberDetailPresenterSpy, times(1)).setMemberActionLink();
         verify(memberDetailPresenterSpy, times(1)).setMemberActionButton();
         verify(memberDetailPresenterSpy, times(1)).setBottomListView();
         verify(memberDetailPresenterSpy, times(1)).setMemberSecondaryActionButton();

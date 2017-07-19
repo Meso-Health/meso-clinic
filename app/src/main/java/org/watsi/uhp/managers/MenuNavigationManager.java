@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
+import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.models.Member;
 
@@ -26,8 +27,11 @@ public class MenuNavigationManager {
     public boolean nextStep(Fragment currentFragment, MenuItem menuItem) {
         Member member = getMemberFromFragmentIfExists(currentFragment);
         switch (menuItem.getItemId()) {
-            case R.id.menu_logout:
-                confirmBeforelogout(currentFragment);
+            case R.id.menu_report_member:
+                reportMember(currentFragment);
+                break;
+            case R.id.menu_dismiss_member:
+                dismissMember(currentFragment);
                 break;
             case R.id.menu_member_edit:
                 editMember(currentFragment);
@@ -38,11 +42,8 @@ public class MenuNavigationManager {
             case R.id.menu_version:
                 mNavigationManager.setVersionFragment();
                 break;
-            case R.id.menu_complete_enrollment:
-                navigateToCompleteEnrollmentFragment(currentFragment, member);
-                break;
-            case R.id.menu_report_member:
-                reportMember(currentFragment);
+            case R.id.menu_logout:
+                confirmBeforelogout(currentFragment);
                 break;
         }
         return true;
@@ -60,7 +61,17 @@ public class MenuNavigationManager {
         if (fragment instanceof CheckInMemberDetailFragment) {
             ((CheckInMemberDetailFragment) fragment).reportMember();
         } else {
-            ExceptionManager.reportErrorMessage("Attempted to report member after check in.");
+            ExceptionManager.reportErrorMessage("Report member menu button reached from " +
+                    fragment.getClass().toString());
+        }
+    }
+
+    void dismissMember(Fragment fragment) {
+        if (fragment instanceof CurrentMemberDetailFragment) {
+            ((CurrentMemberDetailFragment) fragment).dismissMember();
+        } else {
+            ExceptionManager.reportErrorMessage("Dismiss member menu button reached from " +
+                    fragment.getClass().toString());
         }
     }
 
@@ -69,7 +80,7 @@ public class MenuNavigationManager {
             ((MemberDetailFragment) fragment).navigateToMemberEditFragment();
         } else {
             ExceptionManager.reportErrorMessage("Edit member menu button reached from " +
-                    "fragment that's not a MemberDetailFragment");
+                    fragment.getClass().toString());
         }
     }
 
