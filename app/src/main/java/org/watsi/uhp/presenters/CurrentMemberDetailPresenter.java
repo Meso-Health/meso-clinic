@@ -85,6 +85,16 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         });
     }
 
+    @Override
+    protected void navigateToCompleteEnrollmentFragment() {
+        getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), null);
+    }
+
+    @Override
+    public void navigateToMemberEditFragment() {
+        getNavigationManager().setMemberEditFragment(getMember(), null, null);
+    }
+
     protected Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
         Encounter encounter = new Encounter();
         IdentificationEvent checkIn = getMember().currentCheckIn();

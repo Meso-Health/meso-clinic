@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.custom_components.NotificationBar;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -34,9 +35,9 @@ public abstract class MemberDetailPresenter {
     }
 
     public void setUp() {
+        setMemberNotifications();
         setPatientCardTextFields();
         setPatientCardPhoto();
-        setPatientCardNotifications();
         setMemberActionLink();
         setMemberActionButton();
         setBottomListView();
@@ -52,6 +53,19 @@ public abstract class MemberDetailPresenter {
 
     protected abstract void setMemberActionLink();
 
+    protected abstract void navigateToCompleteEnrollmentFragment();
+
+    public abstract void navigateToMemberEditFragment();
+
+    protected void setMemberNotifications() {
+        if (mMember.isAbsentee()) {
+            setAbsenteeNotification();
+        }
+        if (mMember.getCardId() == null) {
+            setReplaceCardNotification();
+        }
+    }
+
     protected void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();
         if (householdMembers != null) {
@@ -65,14 +79,6 @@ public abstract class MemberDetailPresenter {
             setPatientCardPhotoBitmap(photoBitmap);
         } else {
             setPatientCardPhotoAsDefault();
-        }
-    }
-
-    protected void setPatientCardNotifications() {
-        if (mMember.isAbsentee()) {
-            showAbsenteeNotification();
-        } else if (mMember.getCardId() == null) {
-            showReplaceCardNotification();
         }
     }
 
@@ -169,16 +175,36 @@ public abstract class MemberDetailPresenter {
         memberPhoto.setImageResource(R.drawable.portrait_placeholder);
     }
 
-    protected void showAbsenteeNotification() {
-        TextView memberNotification = (TextView) mView.findViewById(R.id.member_notification);
+    protected void setAbsenteeNotification() {
+        NotificationBar memberNotification =
+                (NotificationBar) mView.findViewById(R.id.absentee_notification);
         memberNotification.setVisibility(View.VISIBLE);
-        memberNotification.setText(R.string.absentee_notification);
+        memberNotification.setOnActionClickListener(
+                new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        navigateToCompleteEnrollmentFragment();
+                    }
+                }
+        );
     }
 
-    protected void showReplaceCardNotification() {
-        TextView memberNotification = (TextView) mView.findViewById(R.id.member_notification);
+    protected void setReplaceCardNotification() {
+        NotificationBar memberNotification =
+                (NotificationBar) mView.findViewById(R.id.replace_card_notification);
         memberNotification.setVisibility(View.VISIBLE);
-        memberNotification.setText(R.string.replace_card_notification);
+        memberNotification.setOnActionClickListener(
+                new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        navigateToMemberEditFragment();
+                    }
+                }
+        );
     }
 
     public Member getMember() {

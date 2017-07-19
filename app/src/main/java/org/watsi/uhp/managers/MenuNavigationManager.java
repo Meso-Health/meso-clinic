@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
-import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.models.Member;
 
@@ -22,7 +21,6 @@ public class MenuNavigationManager {
         mSessionManager = clinicActivity.getSessionManager();
         mNavigationManager = clinicActivity.getNavigationManager();
         mClinicActivity = clinicActivity;
-
     }
 
     public boolean nextStep(Fragment currentFragment, MenuItem menuItem) {
@@ -32,7 +30,7 @@ public class MenuNavigationManager {
                 confirmBeforelogout(currentFragment);
                 break;
             case R.id.menu_member_edit:
-                navigateToMemberEditFragment(currentFragment, member);
+                editMember(currentFragment);
                 break;
             case R.id.menu_enroll_newborn:
                 mNavigationManager.setEnrollNewbornInfoFragment(member, null, null);
@@ -50,7 +48,7 @@ public class MenuNavigationManager {
         return true;
     }
 
-    protected Member getMemberFromFragmentIfExists(Fragment fragment) {
+    Member getMemberFromFragmentIfExists(Fragment fragment) {
         Member member = null;
         if (fragment instanceof MemberDetailFragment) {
             member = ((MemberDetailFragment) fragment).getMember();
@@ -58,7 +56,7 @@ public class MenuNavigationManager {
         return member;
     }
 
-    protected void reportMember(Fragment fragment) {
+    void reportMember(Fragment fragment) {
         if (fragment instanceof CheckInMemberDetailFragment) {
             ((CheckInMemberDetailFragment) fragment).reportMember();
         } else {
@@ -66,35 +64,16 @@ public class MenuNavigationManager {
         }
     }
 
-    protected void navigateToCompleteEnrollmentFragment(Fragment fragment, Member member) {
-        if (fragment instanceof CheckInMemberDetailFragment) {
-            getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) fragment).getIdEvent());
-        } else if (fragment instanceof CurrentMemberDetailFragment) {
-            getNavigationManager().setEnrollmentMemberPhotoFragment(member, null);
+    void editMember(Fragment fragment) {
+        if (fragment instanceof MemberDetailFragment) {
+            ((MemberDetailFragment) fragment).navigateToMemberEditFragment();
         } else {
-            ExceptionManager.reportErrorMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
+            ExceptionManager.reportErrorMessage("Edit member menu button reached from " +
+                    "fragment that's not a MemberDetailFragment");
         }
     }
 
-    protected void navigateToMemberEditFragment(Fragment fragment, Member member) {
-        if (fragment instanceof CheckInMemberDetailFragment) {
-            CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
-            getNavigationManager().setMemberEditFragment(
-                    member,
-                    checkInMemberDetailFragment.getIdEvent(),
-                    null
-            );
-        } else if (fragment instanceof CurrentMemberDetailFragment) {
-            getNavigationManager().setMemberEditFragment(
-                    member,
-                    null,
-                    null);
-        } else {
-            ExceptionManager.reportErrorMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
-        }
-    }
-
-    protected void confirmBeforelogout(Fragment fragment) {
+    void confirmBeforelogout(Fragment fragment) {
         new AlertDialog.Builder(fragment.getActivity())
                 .setTitle(R.string.log_out_alert)
                 .setNegativeButton(android.R.string.no, null)

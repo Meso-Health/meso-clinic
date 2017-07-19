@@ -117,6 +117,16 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         // no-op
     }
 
+    @Override
+    protected void navigateToCompleteEnrollmentFragment() {
+        getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), getIdEvent());
+    }
+
+    @Override
+    public void navigateToMemberEditFragment() {
+        getNavigationManager().setMemberEditFragment(getMember(), getIdEvent(), null);
+    }
+
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         mIdEvent.setFingerprintsVerificationResultCode(resultCode);
         try {

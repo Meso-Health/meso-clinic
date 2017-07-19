@@ -78,8 +78,10 @@
 
     <!-- CheckinMemberDetailFragment -->
     <string name="detail_fragment_label">Is this the right person?</string>
-    <string name="absentee_notification">Must complete enrollment</string>
-    <string name="replace_card_notification">Needs new card</string>
+    <string name="absentee_notification">Needs to complete enrollment</string>
+    <string name="absentee_action">ENROLL</string>
+    <string name="replace_card_notification">Needs new member card</string>
+    <string name="replace_card_action">ISSUE</string>
     <string name="check_in">Check-in</string>
     <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="identification_approved">has been successfully checked in.</string>
