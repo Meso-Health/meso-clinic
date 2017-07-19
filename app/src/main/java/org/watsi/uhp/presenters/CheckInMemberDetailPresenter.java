@@ -227,20 +227,16 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void reportMember() {
-        mIdEvent.setAccepted(false);
-        if (mIdEvent.getOccurredAt() == null) {
-            mIdEvent.setOccurredAt(Clock.getCurrentTime());
-        }
-        confirmBeforeReporting();
-    }
-
-    protected void confirmBeforeReporting() {
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.reject_identity_alert)
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         try {
+                            mIdEvent.setAccepted(false);
+                            if (mIdEvent.getOccurredAt() == null) {
+                                mIdEvent.setOccurredAt(Clock.getCurrentTime());
+                            }
                             mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
                             getNavigationManager().setCurrentPatientsFragment();
                             Toast.makeText(getContext(),
