@@ -66,9 +66,17 @@ public class ExceptionManager {
         requestFailure(description, request, response, new HashMap<String,String>());
     }
 
+    public static void reportExceptionWarning(Throwable e) {
+        if (Rollbar.isInit()) {
+            Rollbar.reportException(e, MESSAGE_LEVEL_WARNING);
+        } else {
+            Log.w("Exception", e.getMessage());
+        }
+    }
+
     public static void reportException(Throwable e) {
         if (Rollbar.isInit()) {
-            Rollbar.reportException(e);
+            Rollbar.reportException(e, MESSAGE_LEVEL_ERROR);
         } else {
             Log.e("Exception", e.getMessage());
         }

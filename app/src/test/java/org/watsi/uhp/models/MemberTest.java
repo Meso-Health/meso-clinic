@@ -426,49 +426,6 @@ public class MemberTest {
     }
 
     @Test
-    public void getPhotoBitmap_photoIsNullAndPhotoUrlIsNull() throws Exception {
-        ContentResolver mockContentResolver = mock(ContentResolver.class);
-
-        assertNull(member.getPhotoBitmap(mockContentResolver));
-    }
-
-    @Test
-    public void getPhotoBitmap_photoIsNullAndPhotoUrlIsNotLocalUrl() throws Exception {
-        member.setPhotoUrl(remotePhotoUrl);
-        ContentResolver mockContentResolver = mock(ContentResolver.class);
-
-        when(FileManager.isLocal(member.getPhotoUrl())).thenReturn(false);
-
-        assertNull(member.getPhotoBitmap(mockContentResolver));
-    }
-
-    @Test
-    public void getPhotoBitmap_photoIsNullButLocalPhotoUrl() throws Exception {
-        member.setPhotoUrl(localPhotoUrl);
-        Bitmap mockBitmap = mock(Bitmap.class);
-        ContentResolver mockContentResolver = mock(ContentResolver.class);
-
-        when(FileManager.isLocal(member.getPhotoUrl())).thenReturn(true);
-        when(Uri.parse(member.getPhotoUrl())).thenReturn(mockUri);
-        when(MediaStore.Images.Media.getBitmap(mockContentResolver, mockUri)).thenReturn(mockBitmap);
-
-        assertEquals(member.getPhotoBitmap(mockContentResolver), mockBitmap);
-    }
-
-    @Test
-    public void getPhotoBitmap_photoIsNotNull() throws Exception {
-        ContentResolver mockContentResolver = mock(ContentResolver.class);
-        byte[] photoBytes = new byte[]{};
-        member.setPhoto(photoBytes);
-        Bitmap bitmap = mock(Bitmap.class);
-
-        when(Bitmap.createBitmap(any(Bitmap.class))).thenReturn(bitmap);
-        when(BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length)).thenReturn(bitmap);
-
-        assertEquals(member.getPhotoBitmap(mockContentResolver), bitmap);
-    }
-
-    @Test
     public void shouldCaptureFingerprint() throws Exception {
         member.setAge(Member.MINIMUM_FINGERPRINT_AGE - 1);
         assertFalse(member.shouldCaptureFingerprint());

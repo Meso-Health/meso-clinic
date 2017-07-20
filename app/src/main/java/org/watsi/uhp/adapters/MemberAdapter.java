@@ -2,7 +2,6 @@ package org.watsi.uhp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.helpers.PhotoLoaderHelper;
 import org.watsi.uhp.models.Member;
 
 import java.util.List;
@@ -63,12 +63,8 @@ public class MemberAdapter extends ArrayAdapter<Member> {
                 viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
             }
 
-            Bitmap photoBitmap = member.getPhotoBitmap(getContext().getContentResolver());
-            if (photoBitmap != null) {
-                viewHolder.photo.setImageBitmap(photoBitmap);
-            } else {
-                viewHolder.photo.setImageResource(R.drawable.portrait_placeholder);
-            }
+            PhotoLoaderHelper.loadMemberPhoto(getContext(), member, viewHolder.photo,
+                    R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height);
         }
 
         return convertView;

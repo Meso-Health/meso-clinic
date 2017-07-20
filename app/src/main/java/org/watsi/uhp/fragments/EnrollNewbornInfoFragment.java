@@ -81,7 +81,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
         newborn.setBirthdate(birthdate);
 
-        getNavigationManager().setEnrollNewbornPhotoFragment(newborn);
+        getNavigationManager().setEnrollNewbornPhotoFragment(newborn, mSyncableModel);
     }
 
     @Override

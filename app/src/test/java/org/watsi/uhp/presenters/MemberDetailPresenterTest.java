@@ -15,8 +15,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.helpers.PhotoLoaderHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
@@ -42,7 +44,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ MemberDao.class, MemberDetailPresenter.class, ExceptionManager.class })
+@PrepareForTest({ MemberDao.class, MemberDetailPresenter.class, ExceptionManager.class, PhotoLoaderHelper.class })
 public class MemberDetailPresenterTest {
     private MemberDetailPresenter memberDetailPresenter;
 
@@ -75,6 +77,7 @@ public class MemberDetailPresenterTest {
         initMocks(this);
         mockStatic(MemberDao.class);
         mockStatic(ExceptionManager.class);
+        mockStatic(PhotoLoaderHelper.class);
         memberDetailPresenter = new MemberDetailPresenter(mockView, mockContext, mockMember, mockNavigationManager) {
             @Override
             protected void setMemberActionButton() {
@@ -147,33 +150,16 @@ public class MemberDetailPresenterTest {
     }
 
     @Test
-    public void setPatientCardPhoto_noPhoto() {
+    public void setPatientCardPhoto() {
         MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
 
         when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
-        when(mockMember.getPhotoBitmap(mockContentResolver)).thenReturn(null);
-
-        doNothing().when(memberDetailPresenterSpy).setPatientCardPhotoAsDefault();
+        when(memberDetailPresenter.getMemberPhotoImageView()).thenReturn(mockPatientCardImageView);
 
         memberDetailPresenterSpy.setPatientCardPhoto();
 
-        verify(memberDetailPresenterSpy, times(1)).setPatientCardPhotoAsDefault();
-        verify(memberDetailPresenterSpy, never()).setPatientCardPhotoBitmap(any(Bitmap.class));
-    }
-
-    @Test
-    public void setPatientCardPhoto_withPhoto() {
-        MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
-
-        when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
-        when(mockMember.getPhotoBitmap(mockContentResolver)).thenReturn(mockPatientPhotoBitmap);
-
-        doNothing().when(memberDetailPresenterSpy).setPatientCardPhotoBitmap(mockPatientPhotoBitmap);
-
-        memberDetailPresenterSpy.setPatientCardPhoto();
-
-        verify(memberDetailPresenterSpy, times(1)).setPatientCardPhotoBitmap(mockPatientPhotoBitmap);
-        verify(memberDetailPresenterSpy, never()).setPatientCardPhotoAsDefault();
+        verifyStatic();
+        PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockPatientCardImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
     }
 
     @Test

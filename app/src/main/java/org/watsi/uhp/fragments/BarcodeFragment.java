@@ -71,7 +71,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    ExceptionManager.reportException(e);
+                    ExceptionManager.reportExceptionWarning(e);
                 }
             }
 
@@ -146,7 +146,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                             try {
                                 Thread.sleep(500);
                             } catch (InterruptedException e1) {
-                                ExceptionManager.reportException(e1);
+                                ExceptionManager.reportExceptionWarning(e1);
                             }
                         }
                     }
