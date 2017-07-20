@@ -141,7 +141,7 @@ public class IdentificationFlowFeature extends BaseTest {
         intending(verifyIntentMatcher).respondWith(activityResult);
 
         // click scan fingerprint button
-        onView(withId(R.id.member_secondary_button)).perform(click());
+        onView(withId(R.id.scan_fingerprints_btn)).perform(click());
 
         // checks that correct fingerprint intent was sent
         intended(verifyIntentMatcher);

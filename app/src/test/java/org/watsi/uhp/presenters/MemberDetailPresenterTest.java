@@ -82,16 +82,6 @@ public class MemberDetailPresenterTest {
             }
 
             @Override
-            protected void setMemberSecondaryActionButton() {
-                // no-op
-            }
-
-            @Override
-            protected void setMemberIndicator() {
-                // no-op
-            }
-
-            @Override
             protected void navigateToCompleteEnrollmentFragment() {
                 // no-op
             }
@@ -111,8 +101,6 @@ public class MemberDetailPresenterTest {
         doNothing().when(memberDetailPresenterSpy).setMemberNotifications();
         doNothing().when(memberDetailPresenterSpy).setMemberActionButton();
         doNothing().when(memberDetailPresenterSpy).setBottomListView();
-        doNothing().when(memberDetailPresenterSpy).setMemberSecondaryActionButton();
-        doNothing().when(memberDetailPresenterSpy).setMemberIndicator();
 
         memberDetailPresenterSpy.setUp();
 
@@ -121,8 +109,6 @@ public class MemberDetailPresenterTest {
         verify(memberDetailPresenterSpy, times(1)).setMemberNotifications();
         verify(memberDetailPresenterSpy, times(1)).setMemberActionButton();
         verify(memberDetailPresenterSpy, times(1)).setBottomListView();
-        verify(memberDetailPresenterSpy, times(1)).setMemberSecondaryActionButton();
-        verify(memberDetailPresenterSpy, times(1)).setMemberIndicator();
     }
 
     @Test

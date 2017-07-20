@@ -46,16 +46,6 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
-    protected void setMemberSecondaryActionButton() {
-        // no-op
-    }
-
-    @Override
-    protected void setMemberIndicator() {
-        // no-op
-    }
-
-    @Override
     protected void navigateToCompleteEnrollmentFragment() {
         getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), null);
     }

@@ -27,7 +27,7 @@ public abstract class MemberDetailPresenter {
     private final Context mContext;
     private final Member mMember;
 
-    public MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
+    MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
         mMember = member;
@@ -40,21 +40,15 @@ public abstract class MemberDetailPresenter {
         setPatientCardPhoto();
         setMemberActionButton();
         setBottomListView();
-        setMemberSecondaryActionButton();
-        setMemberIndicator();
     }
 
     protected abstract void setMemberActionButton();
-
-    protected abstract void setMemberSecondaryActionButton();
-
-    protected abstract void setMemberIndicator();
 
     protected abstract void navigateToCompleteEnrollmentFragment();
 
     public abstract void navigateToMemberEditFragment();
 
-    protected void setMemberNotifications() {
+    void setMemberNotifications() {
         if (mMember.isAbsentee()) {
             setAbsenteeNotification();
         }
@@ -63,14 +57,14 @@ public abstract class MemberDetailPresenter {
         }
     }
 
-    protected void setBottomListView() {
+    void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();
         if (householdMembers != null) {
             setBottomListWithMembers(householdMembers);
         }
     }
 
-    protected void setPatientCardPhoto() {
+    void setPatientCardPhoto() {
         Bitmap photoBitmap = mMember.getPhotoBitmap(mContext.getContentResolver());
         if (photoBitmap != null) {
             setPatientCardPhotoBitmap(photoBitmap);
@@ -79,14 +73,14 @@ public abstract class MemberDetailPresenter {
         }
     }
 
-    protected void setPatientCardTextFields() {
+    void setPatientCardTextFields() {
         getMemberNameDetailTextView().setText(mMember.getFullName());
         getMemberAgeAndGenderTextView().setText(mMember.getFormattedAgeAndGender());
         getMemberCardIdDetailTextView().setText(mMember.getFormattedCardId());
         getMemberPhoneNumberTextView().setText(mMember.getFormattedPhoneNumber());
     }
 
-    protected void setBottomListWithMembers(List<Member> householdMembers) {
+    void setBottomListWithMembers(List<Member> householdMembers) {
         TextView householdListLabel = getHouseholdMembersLabelTextView();
         ListView householdListView = getHouseholdMembersListView();
 
@@ -107,7 +101,7 @@ public abstract class MemberDetailPresenter {
         });
     }
 
-    protected List<Member> getMembersForBottomListView() {
+    List<Member> getMembersForBottomListView() {
         try {
             return MemberDao.getRemainingHouseholdMembers(
                     getMember().getHouseholdId(), getMember().getId());
@@ -117,62 +111,50 @@ public abstract class MemberDetailPresenter {
         }
     }
 
-    public Button getMemberSecondaryButton() {
-        return (Button) getView().findViewById(R.id.member_secondary_button);
-    }
-
-    public TextView getMemberIndicator() {
-        return (TextView) getView().findViewById(R.id.member_indicator);
-    }
-
-    public TextView getMemberActionLink() {
-        return (TextView) mView.findViewById(R.id.member_action_link);
-    }
-
-    protected TextView getHouseholdMembersLabelTextView() {
+    TextView getHouseholdMembersLabelTextView() {
         return (TextView) getView().findViewById(R.id.household_members_label);
     }
 
-    protected ListView getHouseholdMembersListView() {
+    ListView getHouseholdMembersListView() {
         return (ListView) getView().findViewById(R.id.household_members);
     }
 
-    protected String formatQuantityStringFromHouseholdSize(int householdSize) {
+    String formatQuantityStringFromHouseholdSize(int householdSize) {
         return getContext().getResources().getQuantityString(
                 R.plurals.household_label, householdSize, householdSize);
     }
 
-    protected TextView getMemberNameDetailTextView() {
+    TextView getMemberNameDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));
     }
 
-    protected TextView getMemberAgeAndGenderTextView() {
+    TextView getMemberAgeAndGenderTextView() {
         return ((TextView) mView.findViewById(R.id.member_age_and_gender));
     }
 
-    protected TextView getMemberCardIdDetailTextView() {
+    TextView getMemberCardIdDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_card_id_detail_fragment));
     }
 
-    protected TextView getMemberPhoneNumberTextView() {
+    TextView getMemberPhoneNumberTextView() {
         return ((TextView) mView.findViewById(R.id.member_phone_number));
     }
 
-    protected Button getMemberActionButton() {
+    Button getMemberActionButton() {
         return ((Button) mView.findViewById(R.id.member_action_button));
     }
 
-    protected void setPatientCardPhotoBitmap(Bitmap photoBitMap) {
+    void setPatientCardPhotoBitmap(Bitmap photoBitMap) {
         ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
         memberPhoto.setImageBitmap(photoBitMap);
     }
 
-    protected void setPatientCardPhotoAsDefault() {
+    void setPatientCardPhotoAsDefault() {
         ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
         memberPhoto.setImageResource(R.drawable.portrait_placeholder);
     }
 
-    protected void setAbsenteeNotification() {
+    private void setAbsenteeNotification() {
         NotificationBar memberNotification =
                 (NotificationBar) mView.findViewById(R.id.absentee_notification);
         memberNotification.setVisibility(View.VISIBLE);
@@ -188,7 +170,7 @@ public abstract class MemberDetailPresenter {
         );
     }
 
-    protected void setReplaceCardNotification() {
+    private void setReplaceCardNotification() {
         NotificationBar memberNotification =
                 (NotificationBar) mView.findViewById(R.id.replace_card_notification);
         memberNotification.setVisibility(View.VISIBLE);

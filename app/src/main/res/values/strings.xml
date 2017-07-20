@@ -87,6 +87,7 @@
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="identification_rejected">has been reported for suspicious behavior.</string>
 
+    <string name="fingerprint_scan_btn">SCAN</string>
     <string name="fingerprint_scan_successful">Fingerprint Scan Successful!</string>
     <string name="fingerprint_scan_failed">Fingerprint Scan Failed</string>
     <string name="good_scan_indicator">GOOD MATCH</string>
