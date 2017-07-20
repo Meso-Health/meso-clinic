@@ -26,7 +26,7 @@ public class SimprintsHelper {
         mFragment = fragment;
     }
 
-    public void enroll(String providerId, String memberId) throws SimprintsHelperException {
+    public void enroll(String providerId, String memberId) throws SimprintsInvalidIntentException {
         Metadata metadata = createMetadataWithMemberId(memberId);
         Intent captureFingerprintIntent = getSimHelper().register(providerId, metadata);
 
@@ -46,7 +46,7 @@ public class SimprintsHelper {
         return metadata;
     }
 
-    public void verify(String providerId, UUID fingerprintsGuid) throws SimprintsHelperException {
+    public void verify(String providerId, UUID fingerprintsGuid) throws SimprintsInvalidIntentException {
         Intent fingerprintVerificationIntent = getSimHelper().verify(providerId, fingerprintsGuid.toString());
         if (validIntent(fingerprintVerificationIntent)) {
             mFragment.startActivityForResult(

@@ -100,8 +100,6 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
                         mFragment.getContext(),
                         R.string.simprints_not_installed,
                         Toast.LENGTH_LONG).show();
-            } catch (SimprintsHelper.SimprintsHelperException e) {
-                ExceptionManager.reportException(e);
             }
         }
     }
