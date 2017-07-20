@@ -1,7 +1,6 @@
 package org.watsi.uhp.presenters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -13,6 +12,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.custom_components.NotificationBar;
 import org.watsi.uhp.database.MemberDao;
+import org.watsi.uhp.helpers.PhotoLoaderHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -65,12 +65,8 @@ public abstract class MemberDetailPresenter {
     }
 
     void setPatientCardPhoto() {
-        Bitmap photoBitmap = mMember.getPhotoBitmap(mContext.getContentResolver());
-        if (photoBitmap != null) {
-            setPatientCardPhotoBitmap(photoBitmap);
-        } else {
-            setPatientCardPhotoAsDefault();
-        }
+        PhotoLoaderHelper.loadMemberPhoto(getContext(), getMember(), getMemberPhotoImageView(),
+                R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
     }
 
     void setPatientCardTextFields() {
@@ -124,6 +120,10 @@ public abstract class MemberDetailPresenter {
                 R.plurals.household_label, householdSize, householdSize);
     }
 
+    ImageView getMemberPhotoImageView() {
+        return (ImageView) mView.findViewById(R.id.member_photo);
+    }
+
     TextView getMemberNameDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));
     }
@@ -142,16 +142,6 @@ public abstract class MemberDetailPresenter {
 
     Button getMemberActionButton() {
         return ((Button) mView.findViewById(R.id.member_action_button));
-    }
-
-    void setPatientCardPhotoBitmap(Bitmap photoBitMap) {
-        ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
-        memberPhoto.setImageBitmap(photoBitMap);
-    }
-
-    void setPatientCardPhotoAsDefault() {
-        ImageView memberPhoto = (ImageView) mView.findViewById(R.id.member_photo);
-        memberPhoto.setImageResource(R.drawable.portrait_placeholder);
     }
 
     private void setAbsenteeNotification() {

@@ -1,6 +1,8 @@
 package org.watsi.uhp.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -19,6 +21,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.presenters.EnrollmentPresenter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,6 +33,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
     private IdentificationEvent mIdEvent;
     private ImageView mMemberPhotoImageView;
     private Uri mUri;
+    private EnrollmentPresenter enrollmentPresenter;
 
     @Override
     int getTitleLabelId() {
@@ -48,19 +52,33 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
 
     @Override
     void nextStep(View view) {
-        try {
-            if (!mSyncableModel.shouldCaptureFingerprint()) {
-                mSyncableModel.saveChanges(getAuthenticationToken());
-                getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
-                Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-            } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
-                getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel, mIdEvent);
-            } else {
-                getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel, mIdEvent);
-            }
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
+        if (!mSyncableModel.shouldCaptureFingerprint()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        mSyncableModel.saveChanges(getAuthenticationToken());
+                        getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
+                        enrollmentPresenter.confirmationToast().show();
+                    } catch (SQLException e) {
+                        ExceptionManager.reportException(e);
+                        Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+            builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        } else if (mSyncableModel.shouldCaptureNationalIdPhoto()) {
+            getNavigationManager().setEnrollmentIdPhotoFragment(mSyncableModel, mIdEvent);
+        } else {
+            getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel, mIdEvent);
         }
     }
 
@@ -88,6 +106,8 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             mSaveBtn.setText(R.string.enrollment_complete_btn);
         }
+
+        enrollmentPresenter = new EnrollmentPresenter(mSyncableModel, getContext());
     }
 
     @Override

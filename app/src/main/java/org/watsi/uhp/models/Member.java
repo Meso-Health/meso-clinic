@@ -399,19 +399,6 @@ public class Member extends SyncableModel {
         }
     }
 
-    public Bitmap getPhotoBitmap(ContentResolver contentResolver) {
-        if (mPhoto != null) {
-            return BitmapFactory.decodeByteArray(this.mPhoto, 0, this.mPhoto.length);
-        } else if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
-            try {
-                return MediaStore.Images.Media.getBitmap(contentResolver, Uri.parse(getPhotoUrl()));
-            } catch (IOException e) {
-                ExceptionManager.reportException(e);
-            }
-        }
-        return null;
-    }
-
     public boolean shouldCaptureFingerprint() {
         return getAge() >= Member.MINIMUM_FINGERPRINT_AGE;
     }

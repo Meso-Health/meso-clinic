@@ -48,8 +48,11 @@ public class FetchService extends AbstractSyncJobService {
                 fetchBillables(authenticationToken, preferencesManager);
             }
             return true;
-        } catch (IOException | SQLException | IllegalStateException e) {
+        } catch (SQLException | IllegalStateException e) {
             ExceptionManager.reportException(e);
+            return false;
+        } catch (IOException e) {
+            ExceptionManager.reportExceptionWarning(e);
             return false;
         }
     }
