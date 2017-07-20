@@ -33,6 +33,7 @@ import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -41,9 +42,11 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ MemberDao.class, CheckInMemberDetailPresenter.class, ExceptionManager.class, ContextCompat.class})
+@PrepareForTest({ MemberDao.class, CheckInMemberDetailPresenter.class, ExceptionManager.class,
+        ContextCompat.class, SimprintsHelper.class})
 public class CheckInMemberDetailPresenterTest {
 
     private CheckInMemberDetailPresenter checkInMemberDetailPresenter;
@@ -97,11 +100,12 @@ public class CheckInMemberDetailPresenterTest {
     SimprintsHelper mockSimprintsHelper;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockStatic(MemberDao.class);
         mockStatic(ExceptionManager.class);
         mockStatic(ContextCompat.class);
+        whenNew(SimprintsHelper.class).withAnyArguments().thenReturn(mockSimprintsHelper);
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
                 mockNavigationManager, mockSessionManager, mockCheckInMemberDetailFragment,
                 mockView, mockContext, mockMember, mockIdentificationEvent);
@@ -190,8 +194,11 @@ public class CheckInMemberDetailPresenterTest {
     }
 
     @Test
-    public void handleOnActivityResult_badIntent() {
+    public void handleOnActivityResult_badIntent() throws Exception {
         CheckInMemberDetailPresenter checkInMemberDetailPresenterSpy = spy(checkInMemberDetailPresenter);
+        SimprintsHelper.SimprintsInvalidIntentException mockException = mock(SimprintsHelper.SimprintsInvalidIntentException.class);
+        when(mockSimprintsHelper.onActivityResultFromVerify(any(int.class), any(int.class), eq
+                (mockFingerprintIntentData))).thenThrow(mockException);
         doNothing().when(checkInMemberDetailPresenterSpy).showScanFailedToast();
 
         checkInMemberDetailPresenterSpy.handleOnActivityResult(
