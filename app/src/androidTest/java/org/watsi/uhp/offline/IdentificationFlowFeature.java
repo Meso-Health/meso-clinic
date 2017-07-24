@@ -168,10 +168,10 @@ public class IdentificationFlowFeature extends BaseTest {
 
         // when you search a name that belongs to a member, the member is found
         performSearch(member.getFullName());
-        onView(withText(member.getFormattedCardId())).check(matches(isDisplayed()));
+        assertItemInList(withMemberId(member.getId()), R.id.member_search_results);
 
         // when you click on member found, their detail fragment displays with correct information
-        onView(withText(member.getFormattedCardId())).perform(click());
+        clickItemInList(withMemberId(member.getId()), R.id.member_search_results);
         onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
@@ -193,15 +193,15 @@ public class IdentificationFlowFeature extends BaseTest {
 
         // when you look up id in system without spaces, member found
         performSearch(member.getCardId());
-        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+        assertItemInList(withMemberId(member.getId()), R.id.member_search_results);
         clearSearch();
 
         // when you look up id in system with spaces, member found
         performSearch(member.getFormattedCardId());
-        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+        assertItemInList(withMemberId(member.getId()), R.id.member_search_results);
 
         // when you click on member found, their detail fragment displays with correct information
-        onView(withText(member.getFullName())).perform(click());
+        clickItemInList(withMemberId(member.getId()), R.id.member_search_results);
         onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
