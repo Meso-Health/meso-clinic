@@ -47,5 +47,4 @@ public class EnrollmentPresenterTest {
         enrollmentPresenter.confirmationToast().show();
         assertEquals(ShadowToast.getTextOfLatestToast(), "Enrollment completed");
     }
-
 }

@@ -1,9 +1,7 @@
 package org.watsi.uhp.models;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.URLUtil;
@@ -64,7 +62,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ApiService.class, Bitmap.class, BitmapFactory.class, ByteStreams.class,
+@PrepareForTest({ApiService.class, Bitmap.class, ByteStreams.class,
         EncounterDao.class, File.class, FileManager.class, ExceptionManager.class,
         MediaStore.Images.Media.class, Member.class, MemberDao.class, okhttp3.Response.class,
         Request.class, Response.class, ResponseBody.class, Uri.class, URLUtil.class})
@@ -109,7 +107,6 @@ public class MemberTest {
         initMocks(this);
         mockStatic(ApiService.class);
         mockStatic(Bitmap.class);
-        mockStatic(BitmapFactory.class);
         mockStatic(ByteStreams.class);
         mockStatic(ExceptionManager.class);
         mockStatic(FileManager.class);

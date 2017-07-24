@@ -1,11 +1,7 @@
 package org.watsi.uhp.models;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.webkit.URLUtil;
 
 import com.google.common.io.ByteStreams;
