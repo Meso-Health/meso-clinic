@@ -34,13 +34,12 @@
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             style="?android:attr/buttonBarButtonStyle"
-            android:background="?attr/selectableItemBackground"
-            android:text="ENROLL" />
+            android:background="?attr/selectableItemBackground" />
     </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="1dip"
+        android:layout_height="1dp"
         android:background="@color/disabledButton" />
 
 </LinearLayout>

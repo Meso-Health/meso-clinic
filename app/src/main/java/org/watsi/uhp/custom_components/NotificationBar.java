@@ -34,8 +34,8 @@ public class NotificationBar extends LinearLayout {
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.notification_bar, this);
 
-        notificationMessage = (TextView)findViewById(R.id.notification_message);
-        notificationBtn = (Button)findViewById(R.id.notification_btn);
+        notificationMessage = (TextView) findViewById(R.id.notification_message);
+        notificationBtn = (Button) findViewById(R.id.notification_btn);
 
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.NotificationBar);
 

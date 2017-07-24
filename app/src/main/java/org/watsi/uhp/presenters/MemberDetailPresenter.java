@@ -149,8 +149,7 @@ public abstract class MemberDetailPresenter {
                 (NotificationBar) mView.findViewById(R.id.absentee_notification);
         memberNotification.setVisibility(View.VISIBLE);
         memberNotification.setOnActionClickListener(
-                new View.OnClickListener()
-                {
+                new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
                     {
