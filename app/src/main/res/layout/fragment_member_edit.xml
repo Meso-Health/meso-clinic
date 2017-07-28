@@ -1,76 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/fragment_vertical_margin"
-    android:layout_marginBottom="@dimen/fragment_vertical_margin"
-    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-    android:layout_marginRight="@dimen/fragment_horizontal_margin"
-    android:focusable="true"
-    android:focusableInTouchMode="true" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="member" type="org.watsi.uhp.fragments.MemberEditFragment.MemberFormDetails"/>
+    </data>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/name_label"
-        android:labelFor="@+id/member_name" />
-
-    <EditText
-        android:id="@+id/member_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:maxLines="1" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/phone_number_label"
-        android:labelFor="@+id/phone_number" />
-
-    <EditText
-        android:id="@+id/phone_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:maxLines="1" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/card_id_label"
-        android:labelFor="@+id/card_id" />
-
-    <EditText
-        android:id="@+id/card_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="none"
-        android:enabled="false"
-        android:focusable="false"
-        android:maxLines="1" />
-
-    <Button
-        android:id="@+id/scan_card"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:theme="@style/SecondaryButton"
-        android:text="@string/scan_card_btn_label" />
-
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom">
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
+        android:layout_marginBottom="@dimen/fragment_vertical_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin"
+        android:focusable="true"
+        android:focusableInTouchMode="true" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/name_label"
+            android:labelFor="@+id/member_name" />
+
+        <EditText
+            android:id="@+id/member_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:text="@={member.fullName}"
+            android:error="@{member.fullNameError}"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/phone_number_label"
+            android:labelFor="@+id/phone_number" />
+
+        <EditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:text="@={member.phoneNumber}"
+            android:error="@{member.phoneNumberError}"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/card_id_label"
+            android:labelFor="@+id/card_id" />
+
+        <EditText
+            android:id="@+id/card_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:enabled="false"
+            android:focusable="false"
+            android:maxLines="1" />
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/scan_card"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            style="@style/PrimaryButton"
-            android:text="@string/member_edit_save" />
-    </RelativeLayout>
-</LinearLayout>
+            android:theme="@style/SecondaryButton"
+            android:text="@string/scan_card_btn_label" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom">
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                style="@style/PrimaryButton"
+                android:text="@string/member_edit_save" />
+        </RelativeLayout>
+    </LinearLayout>
+</layout>

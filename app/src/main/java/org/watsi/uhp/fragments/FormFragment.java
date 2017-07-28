@@ -23,7 +23,6 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
 
         final View view = inflater.inflate(getFragmentLayoutId(), container, false);
 
-
         mSaveBtn = (Button) view.findViewById(R.id.save_button);
 
         if (mSaveBtn != null) {
