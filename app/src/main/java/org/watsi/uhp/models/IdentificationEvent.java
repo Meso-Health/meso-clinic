@@ -318,4 +318,12 @@ public class IdentificationEvent extends SyncableModel {
     protected void persistAssociations() {
         // no-op
     }
+
+    public static IdentificationEvent createUnsavedIdentificationEvent(Member member, SearchMethodEnum searchMethod, Member throughMember) {
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setMember(member);
+        idEvent.setSearchMethod(searchMethod);
+        idEvent.setThroughMember(throughMember);
+        return idEvent;
+    }
 }

@@ -95,31 +95,11 @@ public class NavigationManager {
     }
 
     public void setMemberDetailFragment(Member member) {
-        setMemberDetailFragment(member, null, null);
+        setMemberDetailFragment(member, null);
     }
 
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         if (member.currentCheckIn() == null) {
-            setCheckInMemberDetailFragment(member, idEvent);
-        } else {
-            setCurrentMemberDetailFragment(member);
-        }
-    }
-
-    /**
-      *  This method contains branching logic depending on whether the member is checked in or not.
-      *  If member is checked in, this will show the CurrentMemberDetailFragment.
-      *  If the member is not checked in, resulting fragment depends on whether fingerprint verification is required.
-      */
-    public void setMemberDetailFragment(Member member, IdentificationEvent.SearchMethodEnum idMethod, Member throughMember) {
-        if (member.currentCheckIn() == null) {
-            IdentificationEvent idEvent = new IdentificationEvent();
-            idEvent.setMember(member);
-            idEvent.setSearchMethod(idMethod);
-            idEvent.setThroughMember(throughMember);
-            if (member.getPhoto() == null) {
-                idEvent.setPhotoVerified(false);
-            }
             setCheckInMemberDetailFragment(member, idEvent);
         } else {
             setCurrentMemberDetailFragment(member);
@@ -141,11 +121,11 @@ public class NavigationManager {
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
                                    Member member,
-                                   Bundle sourceParams) {
+                                   IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putString(SCAN_PURPOSE_BUNDLE_FIELD, scanPurpose.toString());
         if (member != null) bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        if (sourceParams != null) bundle.putBundle(SOURCE_PARAMS_BUNDLE_FIELD, sourceParams);
+        if (idEvent != null) bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(BarcodeFragment.class, bundle));
     }
 
@@ -215,21 +195,17 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollmentFingerprintFragment.class, bundle));
     }
 
-    public void setMemberEditFragment(Member member,
-                                      IdentificationEvent idEvent,
-                                      String scannedCardId) {
+    public void setMemberEditFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
         setFragment(mFragmentProvider.createFragment(MemberEditFragment.class, bundle));
     }
 
-    public void setEnrollNewbornInfoFragment(Member parentMember, String scannedCardId, Bundle params) {
+    public void setEnrollNewbornInfoFragment(Member newborn, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, parentMember);
-        bundle.putString(SCANNED_CARD_ID_BUNDLE_FIELD, scannedCardId);
-        if (params != null) bundle.putBundle(SOURCE_PARAMS_BUNDLE_FIELD, params);
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, newborn);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornInfoFragment.class, bundle));
     }
 

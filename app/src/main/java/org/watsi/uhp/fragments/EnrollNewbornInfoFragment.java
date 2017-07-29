@@ -141,9 +141,9 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
             );
         }
 
-        view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
-                getNavigationManager(), BarcodeFragment.ScanPurposeEnum.NEWBORN,
-                mSyncableModel, createBundle()));
+//        view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
+//                getNavigationManager(), BarcodeFragment.ScanPurposeEnum.NEWBORN,
+//                mSyncableModel, createBundle()));
 
         String mScannedCardId = getArguments().getString(
                 NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);

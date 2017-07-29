@@ -112,36 +112,27 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                             switch (mScanPurpose) {
                                 case ID:
                                     member = MemberDao.findByCardId(barcode.displayValue);
-                                    getNavigationManager().setMemberDetailFragment(
+                                    idEvent = IdentificationEvent.createUnsavedIdentificationEvent(
                                             member,
                                             IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
                                             null
                                     );
+                                    getNavigationManager().setMemberDetailFragment(member, idEvent);
                                     break;
                                 case MEMBER_EDIT:
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                                     member.setCardId(barcode.displayValue);
+                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
-                                    getNavigationManager().setMemberEditFragment(
-                                            member,
-                                            idEvent,
-                                            barcode.displayValue
-                                    );
+                                    getNavigationManager().setMemberEditFragment(member, idEvent);
                                     break;
                                 case NEWBORN:
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-
                                     member.setCardId(barcode.displayValue);
-                                    Bundle sourceParams = getArguments()
-                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
-                                    getNavigationManager().setEnrollNewbornInfoFragment(
-                                            member,
-                                            barcode.displayValue,
-                                            sourceParams
-                                    );
+                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                                    getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
                                     break;
                             }
                         } catch (SQLException | AbstractModel.ValidationException e) {

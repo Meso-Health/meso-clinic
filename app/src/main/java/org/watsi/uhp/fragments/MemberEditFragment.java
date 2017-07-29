@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.DataBindingUtil;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -77,14 +76,11 @@ public class MemberEditFragment extends FormFragment<Member> {
         MemberEditFragmentMemberView memberEditFragmentMemberView = new MemberEditFragmentMemberView(mSyncableModel);
         binding.setMember(memberEditFragmentMemberView);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(NavigationManager.ID_METHOD_BUNDLE_FIELD,
-                getArguments().getString(NavigationManager.ID_METHOD_BUNDLE_FIELD));
-        bundle.putSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD,
-                getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD));
+        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+
         view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
                 getNavigationManager(), BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT,
-                mSyncableModel, bundle));
+                mSyncableModel, idEvent));
     }
 
     public class MemberEditFragmentMemberView extends BaseObservable {
@@ -226,7 +222,7 @@ public class MemberEditFragment extends FormFragment<Member> {
                 this.phoneNumberError = null;
             } else {
                 this.phoneNumberError = getString(R.string.phone_number_validation_error);
-                success = true;
+                success = false;
             }
             notifyPropertyChanged(BR.phoneNumberError);
             updateSaveButton();
