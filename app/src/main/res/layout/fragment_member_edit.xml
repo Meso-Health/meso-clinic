@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <variable name="member" type="org.watsi.uhp.fragments.MemberEditFragment.MemberFormDetails"/>
+        <variable name="member" type="org.watsi.uhp.fragments.MemberEditFragment.MemberEditFragmentMemberView"/>
     </data>
 
     <LinearLayout
@@ -61,6 +61,8 @@
             android:inputType="none"
             android:enabled="false"
             android:focusable="false"
+            android:text="@{member.cardId}"
+            android:error="@{member.cardIdError}"
             android:maxLines="1" />
 
         <Button
@@ -80,6 +82,8 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 style="@style/PrimaryButton"
+                android:enabled="@{member.saveEnabled}"
+                android:onClick="@{() -> member.onClickSave()}"
                 android:text="@string/member_edit_save" />
         </RelativeLayout>
     </LinearLayout>

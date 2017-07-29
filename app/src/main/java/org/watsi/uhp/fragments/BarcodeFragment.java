@@ -20,6 +20,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -121,7 +122,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-
+                                    member.setCardId(barcode.displayValue);
 
                                     getNavigationManager().setMemberEditFragment(
                                             member,
@@ -132,6 +133,8 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                 case NEWBORN:
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+
+                                    member.setCardId(barcode.displayValue);
                                     Bundle sourceParams = getArguments()
                                             .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
                                     getNavigationManager().setEnrollNewbornInfoFragment(
@@ -141,7 +144,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                     );
                                     break;
                             }
-                        } catch (SQLException e) {
+                        } catch (SQLException | AbstractModel.ValidationException e) {
                             displayFailureToast();
                             try {
                                 Thread.sleep(500);
