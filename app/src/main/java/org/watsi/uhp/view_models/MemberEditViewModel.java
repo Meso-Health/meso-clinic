@@ -112,20 +112,25 @@ public class MemberEditViewModel extends BaseObservable {
         return validateFullName() && validatePhoneNumber() && validateCardId();
     }
 
-    private void updateSaveButton() {
+    void setSaveEnabled(boolean saveEnabled) {
+        this.saveEnabled = saveEnabled;
+        notifyPropertyChanged(BR.saveEnabled);
+    }
+
+    void updateSaveButton() {
         saveEnabled = validFullName() && validPhoneNumber() && validCardId();
         notifyPropertyChanged(BR.saveEnabled);
     }
 
-    private boolean validPhoneNumber() {
+    boolean validPhoneNumber() {
         return phoneNumber == null || phoneNumber.isEmpty() || Member.validPhoneNumber(phoneNumber);
     }
 
-    private boolean validCardId() {
+    boolean validCardId() {
         return Member.validCardId(cardId);
     }
 
-    private boolean validFullName() {
+    boolean validFullName() {
         return fullName != null && !fullName.isEmpty();
     }
 

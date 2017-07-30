@@ -49,11 +49,11 @@ public class EnrollNewbornViewModel extends MemberEditViewModel {
         }
     }
 
-    boolean validateEverything() {
-        return validateFullName() && validatePhoneNumber() && validateCardId() && validateGender();
+    boolean validGender() {
+        return getMember().getGender() != null;
     }
 
-    boolean validateGender() {
-        return getMember().getGender() != null;
+    void updateSaveButton() {
+        setSaveEnabled(validFullName() && validPhoneNumber() && validCardId() && validGender());
     }
 }
