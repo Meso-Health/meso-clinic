@@ -41,6 +41,8 @@ public class EnrollNewbornViewModel extends MemberEditViewModel {
             notifyPropertyChanged(BR.isMale);
             notifyPropertyChanged(BR.isFemale);
         }
+
+        updateSaveButton();
     }
 
     public void onClickSave() {

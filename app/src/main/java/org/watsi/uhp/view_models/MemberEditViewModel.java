@@ -118,8 +118,7 @@ public class MemberEditViewModel extends BaseObservable {
     }
 
     void updateSaveButton() {
-        saveEnabled = validFullName() && validPhoneNumber() && validCardId();
-        notifyPropertyChanged(BR.saveEnabled);
+        setSaveEnabled(validFullName() && validPhoneNumber() && validCardId());
     }
 
     boolean validPhoneNumber() {
