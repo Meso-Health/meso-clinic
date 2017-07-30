@@ -52,9 +52,8 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     public void nextStep(View view) {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
-            Member throughMember = (Member) getArguments().getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
-            getNavigationManager().setMemberDetailFragment(mSyncableModel,
-                    IdentificationEvent.createUnsavedIdentificationEvent(mSyncableModel, IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, throughMember));
+            IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+            getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);

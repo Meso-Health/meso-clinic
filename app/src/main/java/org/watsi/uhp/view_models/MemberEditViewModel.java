@@ -2,7 +2,6 @@ package org.watsi.uhp.view_models;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.support.v4.app.Fragment;
 
 import org.watsi.uhp.BR;
 import org.watsi.uhp.R;
@@ -97,13 +96,19 @@ public class MemberEditViewModel extends BaseObservable {
         }
     }
 
+    public Member getMember() {
+        return mMember;
+    }
+
+    public FormFragment getFormFragment() { return mFormFragment; }
+
     public void onClickSave() {
         if (validateEverything()) {
             mFormFragment.nextStep(mFormFragment.getView());
         }
     }
 
-    private boolean validateEverything() {
+    boolean validateEverything() {
         return validateFullName() && validatePhoneNumber() && validateCardId();
     }
 
@@ -124,7 +129,7 @@ public class MemberEditViewModel extends BaseObservable {
         return fullName != null && !fullName.isEmpty();
     }
 
-    private boolean validateFullName() {
+    boolean validateFullName() {
         boolean success = true;
         if (validFullName()) {
             this.fullNameError = null;
@@ -136,7 +141,7 @@ public class MemberEditViewModel extends BaseObservable {
         return success;
     }
 
-    private boolean validatePhoneNumber() {
+    boolean validatePhoneNumber() {
         boolean success = true;
         if (validPhoneNumber()) {
             this.phoneNumberError = null;
@@ -148,7 +153,7 @@ public class MemberEditViewModel extends BaseObservable {
         return success;
     }
 
-    private boolean validateCardId() {
+    boolean validateCardId() {
         boolean success = true;
         if (validCardId()) {
             this.cardIdError = null;

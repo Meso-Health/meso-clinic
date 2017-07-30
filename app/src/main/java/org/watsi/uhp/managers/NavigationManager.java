@@ -35,15 +35,11 @@ import java.util.List;
  * Helper class for managing navigation between fragments
  */
 public class NavigationManager {
-
-    public static String ID_METHOD_BUNDLE_FIELD = "idMethod";
     public static String IDENTIFICATION_EVENT_BUNDLE_FIELD = "identificationEvent";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
-    public static String SCANNED_CARD_ID_BUNDLE_FIELD = "scannedCardId";
     public static String MEMBER_BUNDLE_FIELD = "member";
     public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
-    public static String SOURCE_PARAMS_BUNDLE_FIELD = "sourceParams";
 
     private static String HOME_TAG = "home";
     public static String DETAIL_TAG = "detail";
@@ -209,10 +205,10 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollNewbornInfoFragment.class, bundle));
     }
 
-    public void setEnrollNewbornPhotoFragment(Member newborn, Member throughMember) {
+    public void setEnrollNewbornPhotoFragment(Member newborn, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, newborn);
-        bundle.putSerializable(THROUGH_MEMBER_BUNDLE_FIELD, throughMember);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
