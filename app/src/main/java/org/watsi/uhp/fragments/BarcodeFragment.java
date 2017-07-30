@@ -62,7 +62,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
-            Log.d("UHP", "surface created");
             BarcodeDetector barcodeDetector = new BarcodeDetector
                     .Builder(getContext())
                     .setBarcodeFormats(Barcode.QR_CODE)
@@ -135,20 +134,22 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                     getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
                                     break;
                             }
-                        } catch (SQLException | AbstractModel.ValidationException e) {
+                        } catch (SQLException e) {
                             displayFailureToast();
                             try {
                                 Thread.sleep(500);
                             } catch (InterruptedException e1) {
                                 ExceptionManager.reportExceptionWarning(e1);
                             }
+                        } catch (AbstractModel.ValidationException e) {
+                            mErrorToast.setText(R.string.card_id_validation_error);
+                            displayFailureToast();
                         }
                     }
                 }
             }
          });
 
-        Log.d("UHP", "camera source started");
         mCameraSource = new CameraSource
                 .Builder(getContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)

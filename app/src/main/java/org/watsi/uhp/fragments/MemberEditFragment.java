@@ -5,7 +5,6 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -107,9 +106,7 @@ public class MemberEditFragment extends FormFragment<Member> {
         }
 
         @Bindable
-        public String getFullName() {
-            return fullName;
-        }
+        public String getFullName() { return fullName; }
 
         @Bindable
         public String getFullNameError() {
@@ -146,6 +143,7 @@ public class MemberEditFragment extends FormFragment<Member> {
             this.fullName = fullName;
             notifyPropertyChanged(BR.fullName);
             validateFullName();
+            updateSaveButton();
             try {
                 mMember.setFullName(fullName);
             } catch (AbstractModel.ValidationException e) {
@@ -171,23 +169,11 @@ public class MemberEditFragment extends FormFragment<Member> {
         }
 
         private boolean validateEverything() {
-            if (validateFullName() && validatePhoneNumber() && validateCardId()) {
-                saveEnabled = true;
-                return true;
-            } else {
-                saveEnabled = false;
-                return false;
-            }
+            return validateFullName() && validatePhoneNumber() && validateCardId();
         }
 
         private void updateSaveButton() {
-            Log.i("UHP-oman", "updateSaveButton");
-            if (validFullName() && validPhoneNumber() && validCardId()) {
-                saveEnabled = true;
-            } else {
-                Log.i("UHP-oman", "aww oman is not a country");
-                saveEnabled = false;
-            }
+            saveEnabled = validFullName() && validPhoneNumber() && validCardId();
             notifyPropertyChanged(BR.saveEnabled);
         }
 
@@ -212,7 +198,6 @@ public class MemberEditFragment extends FormFragment<Member> {
                 success = false;
             }
             notifyPropertyChanged(BR.fullNameError);
-            updateSaveButton();
             return success;
         }
 
@@ -225,7 +210,6 @@ public class MemberEditFragment extends FormFragment<Member> {
                 success = false;
             }
             notifyPropertyChanged(BR.phoneNumberError);
-            updateSaveButton();
             return success;
         }
 
@@ -238,7 +222,6 @@ public class MemberEditFragment extends FormFragment<Member> {
                 success = false;
             }
             notifyPropertyChanged(BR.cardIdError);
-            updateSaveButton();
             return success;
         }
     }
