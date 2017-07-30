@@ -29,8 +29,7 @@ public abstract class MemberDetailPresenter {
     public MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
-        // We will do a DB call.
-        mMember = getMemberToSet(member);
+        mMember = fetchMemberFromDB(member);
         mNavigationManager = navigationManager;
     }
 
@@ -53,16 +52,14 @@ public abstract class MemberDetailPresenter {
 
     protected abstract void setMemberActionLink();
 
-    protected Member getMemberToSet(Member member) {
-        return member;
-//        try {
-//            return MemberDao.findById(member.getId());
-//        } catch (SQLException e) {
-//            ExceptionManager.reportException(e);
-//            return member;
-//        }
+    protected Member fetchMemberFromDB(Member member) {
+        try {
+            return MemberDao.findById(member.getId());
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            return member;
+        }
     }
-
 
     protected void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();

@@ -10,10 +10,6 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
 
-/**
- * Created by michaelliang on 7/30/17.
- */
-
 public class MemberEditViewModel extends BaseObservable {
     private Member mMember;
     private FormFragment mFormFragment;

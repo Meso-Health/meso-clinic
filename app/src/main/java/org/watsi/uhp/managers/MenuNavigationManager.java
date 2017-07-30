@@ -83,14 +83,9 @@ public class MenuNavigationManager {
     protected void navigateToMemberEditFragment(Fragment fragment, Member member) {
         if (fragment instanceof CheckInMemberDetailFragment) {
             CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
-            getNavigationManager().setMemberEditFragment(
-                    member,
-                    checkInMemberDetailFragment.getIdEvent()
-            );
+            getNavigationManager().setMemberEditFragment(member, checkInMemberDetailFragment.getIdEvent());
         } else if (fragment instanceof CurrentMemberDetailFragment) {
-            getNavigationManager().setMemberEditFragment(
-                    member,
-                    null);
+            getNavigationManager().setMemberEditFragment(member, null);
         } else {
             ExceptionManager.reportErrorMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
         }
