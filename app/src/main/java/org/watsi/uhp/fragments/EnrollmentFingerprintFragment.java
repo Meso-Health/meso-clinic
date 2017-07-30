@@ -42,7 +42,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

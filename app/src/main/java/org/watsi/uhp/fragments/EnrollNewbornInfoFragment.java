@@ -48,7 +48,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep(View view) {
         Member newborn = mSyncableModel.createNewborn();
 
         Bundle attributeBundle = createBundle();

@@ -45,7 +45,7 @@ public class EnrollmentIdPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep(View view) {
         getNavigationManager().setEnrollmentContactInfoFragment(mSyncableModel, mIdEvent);
     }
 

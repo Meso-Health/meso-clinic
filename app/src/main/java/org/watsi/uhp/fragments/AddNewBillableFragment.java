@@ -31,7 +31,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep(View view) {
         if (nameField.getText().toString().length() == 0) {
             Toast.makeText(getActivity(), R.string.empty_billable_name_field,
                     Toast.LENGTH_LONG).show();

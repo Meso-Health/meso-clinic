@@ -17,6 +17,7 @@ import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.view_models.MemberEditViewModel;
 
 import java.sql.SQLException;
 
@@ -38,7 +39,7 @@ public class MemberEditFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(R.string.member_edit_confirmation);
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -72,7 +73,7 @@ public class MemberEditFragment extends FormFragment<Member> {
     @Override
     void setUpFragment(View view) {
         FragmentMemberEditBinding binding = DataBindingUtil.bind(view);
-        MemberEditFragmentMemberView memberEditFragmentMemberView = new MemberEditFragmentMemberView(mSyncableModel);
+        MemberEditViewModel memberEditFragmentMemberView = new MemberEditViewModel(this, mSyncableModel);
         binding.setMember(memberEditFragmentMemberView);
 
         IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);

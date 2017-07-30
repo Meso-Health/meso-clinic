@@ -34,7 +34,7 @@ public class ReceiptFragment extends FormFragment<Encounter> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep(View view) {
         String toastMessage;
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
