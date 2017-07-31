@@ -127,6 +127,7 @@ public abstract class MemberViewModel extends BaseObservable {
         updateSaveButton();
     }
 
+    // phoneNumber can be null because it's optional.
     boolean validPhoneNumber() {
         return phoneNumber == null || phoneNumber.isEmpty() || Member.validPhoneNumber(phoneNumber);
     }
