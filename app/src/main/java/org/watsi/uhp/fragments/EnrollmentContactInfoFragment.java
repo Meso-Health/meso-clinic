@@ -36,7 +36,7 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         try {
             String phoneNumber = mPhoneNumberView.getText().toString();
             if (phoneNumber.isEmpty()) phoneNumber = null;

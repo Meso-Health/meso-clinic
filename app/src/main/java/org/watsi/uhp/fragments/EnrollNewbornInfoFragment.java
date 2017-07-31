@@ -35,7 +35,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         getNavigationManager().setEnrollNewbornPhotoFragment(mSyncableModel, mIdEvent);
     }
 

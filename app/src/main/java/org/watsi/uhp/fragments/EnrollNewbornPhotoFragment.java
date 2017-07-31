@@ -49,7 +49,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
             IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);

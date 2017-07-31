@@ -35,7 +35,7 @@ public class MemberEditFragment extends FormFragment<Member> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(R.string.member_edit_confirmation);
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

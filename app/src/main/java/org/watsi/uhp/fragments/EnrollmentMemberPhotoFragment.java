@@ -51,7 +51,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);

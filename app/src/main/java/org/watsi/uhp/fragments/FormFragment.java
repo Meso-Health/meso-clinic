@@ -29,7 +29,7 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
             mSaveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    nextStep(view);
+                    nextStep();
                 }
             });
         }
@@ -45,7 +45,7 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
 
     public abstract boolean isFirstStep();
 
-    public abstract void nextStep(View view);
+    public abstract void nextStep();
 
     abstract void setUpFragment(View view);
 }
