@@ -14,6 +14,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
 
     private EditText nameField;
     private EditText priceField;
+    private View mView;
 
     @Override
     int getTitleLabelId() {
@@ -31,7 +32,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         if (nameField.getText().toString().length() == 0) {
             Toast.makeText(getActivity(), R.string.empty_billable_name_field,
                     Toast.LENGTH_LONG).show();
@@ -48,7 +49,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
             EncounterItem encounterItem = new EncounterItem();
             encounterItem.setBillable(billable);
 
-            KeyboardManager.hideKeyboard(view, getContext());
+            KeyboardManager.hideKeyboard(mView, getContext());
 
             mSyncableModel.getEncounterItems().add(encounterItem);
             getNavigationManager().setEncounterFragment(mSyncableModel);
@@ -57,6 +58,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
 
     @Override
     void setUpFragment(View view) {
+        mView = view;
         nameField = (EditText) view.findViewById(R.id.name_field);
         priceField = (EditText) view.findViewById(R.id.price_field);
 
