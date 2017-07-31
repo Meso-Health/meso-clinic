@@ -31,7 +31,7 @@ public class EncounterFragment extends FormFragment<Encounter> {
     }
 
     @Override
-    public void nextStep(View view) {
+    public void nextStep() {
         getNavigationManager().setEncounterFormFragment(mSyncableModel);
     }
 

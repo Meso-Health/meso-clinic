@@ -45,7 +45,7 @@ public class EncounterFormFragment extends FormFragment<Encounter> {
     }
 
     @Override
-    public void nextStep(View view) {}
+    public void nextStep() {}
 
     @Override
     void setUpFragment(View view) {
