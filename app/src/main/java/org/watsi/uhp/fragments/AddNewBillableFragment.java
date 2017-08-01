@@ -12,8 +12,8 @@ import org.watsi.uhp.models.EncounterItem;
 
 public class AddNewBillableFragment extends FormFragment<Encounter> {
 
-    private EditText nameField;
-    private EditText priceField;
+    private EditText mNameField;
+    private EditText mPriceField;
     private View mView;
 
     @Override
@@ -33,16 +33,16 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
 
     @Override
     public void nextStep() {
-        if (nameField.getText().toString().length() == 0) {
+        if (mNameField.getText().toString().length() == 0) {
             Toast.makeText(getActivity(), R.string.empty_billable_name_field,
                     Toast.LENGTH_LONG).show();
-        } else if (priceField.getText().toString().length() == 0) {
+        } else if (mPriceField.getText().toString().length() == 0) {
             Toast.makeText(getActivity(), R.string.empty_billable_price_field,
                     Toast.LENGTH_LONG).show();
         } else {
             Billable billable = new Billable();
-            billable.setName(nameField.getText().toString());
-            billable.setPrice(Integer.parseInt(priceField.getText().toString()));
+            billable.setName(mNameField.getText().toString());
+            billable.setPrice(Integer.parseInt(mPriceField.getText().toString()));
             billable.setType(Billable.TypeEnum.UNSPECIFIED);
             billable.setCreatedDuringEncounter(true);
 
@@ -59,9 +59,9 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
     @Override
     void setUpFragment(View view) {
         mView = view;
-        nameField = (EditText) view.findViewById(R.id.name_field);
-        priceField = (EditText) view.findViewById(R.id.price_field);
+        mNameField = (EditText) view.findViewById(R.id.name_field);
+        mPriceField = (EditText) view.findViewById(R.id.price_field);
 
-        KeyboardManager.focusAndForceShowKeyboard(nameField, getContext());
+        KeyboardManager.focusAndForceShowKeyboard(mNameField, getContext());
     }
 }
