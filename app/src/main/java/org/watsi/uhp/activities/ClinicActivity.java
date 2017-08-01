@@ -25,6 +25,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
+import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;

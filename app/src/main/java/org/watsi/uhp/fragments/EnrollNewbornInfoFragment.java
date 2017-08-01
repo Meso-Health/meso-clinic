@@ -63,8 +63,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
     void setUpDatePicker() {
         DatePicker datePicker = (DatePicker) mView.findViewById(R.id.birthdate);
 
-        Calendar cal = Calendar.getInstance();
-        datePicker.setMaxDate(cal.getTimeInMillis());
+        Calendar cal = makeCalendarWithNoTime();
         if (mSyncableModel.getBirthdate() != null) {
             cal.setTime(mSyncableModel.getBirthdate());
         }
@@ -76,11 +75,20 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
                 new DatePicker.OnDateChangedListener() {
                     @Override
                     public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-                        Calendar cal = Calendar.getInstance();
+                        Calendar cal = makeCalendarWithNoTime();
                         cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
                         mSyncableModel.setBirthdate(cal.getTime());
                     }
                 }
         );
+    }
+
+    private Calendar makeCalendarWithNoTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+        return cal;
     }
 }
