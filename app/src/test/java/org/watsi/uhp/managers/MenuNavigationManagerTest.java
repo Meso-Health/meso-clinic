@@ -22,6 +22,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -61,6 +62,9 @@ public class MenuNavigationManagerTest {
 
     @Mock
     private Member mockMember;
+
+    @Mock
+    private Member mockNewBorn;
 
     @Mock
     private NavigationManager mockNavigationManager;
@@ -105,11 +109,12 @@ public class MenuNavigationManagerTest {
         when(mockMenuItem.getItemId()).thenReturn(R.id.menu_enroll_newborn);
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
         when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
+        when(mockMember.createNewborn()).thenReturn(mockNewBorn);
 
-        doNothing().when(mockNavigationManager).setEnrollNewbornInfoFragment(mockMember, null, null);
+        doNothing().when(mockNavigationManager).setEnrollNewbornInfoFragment(eq(mockNewBorn), any(IdentificationEvent.class));
         boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
 
-        verify(mockNavigationManager, times(1)).setEnrollNewbornInfoFragment(mockMember, null, null);
+        verify(mockNavigationManager, times(1)).setEnrollNewbornInfoFragment(eq(mockNewBorn), any(IdentificationEvent.class));
         assertTrue(result);
     }
 
@@ -238,7 +243,7 @@ public class MenuNavigationManagerTest {
         doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
         menuNavigationManagerSpy.navigateToMemberEditFragment(mockCheckInMemberDetailFragment, mockMember);
 
-        verify(mockNavigationManager, times(1)).setMemberEditFragment(mockMember, mockIdEvent, null);
+        verify(mockNavigationManager, times(1)).setMemberEditFragment(mockMember, mockIdEvent);
     }
 
     @Test
@@ -248,7 +253,7 @@ public class MenuNavigationManagerTest {
         doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
         menuNavigationManagerSpy.navigateToMemberEditFragment(mockCurrentMemberDetailFragment, mockMember);
 
-        verify(mockNavigationManager, times(1)).setMemberEditFragment(mockMember, null, null);
+        verify(mockNavigationManager, times(1)).setMemberEditFragment(mockMember, null);
     }
 
     @Test
