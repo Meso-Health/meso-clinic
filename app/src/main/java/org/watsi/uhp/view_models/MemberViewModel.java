@@ -14,13 +14,11 @@ import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
 
 public abstract class MemberViewModel extends BaseObservable {
-    private Member mMember;
-    private FormFragment mFormFragment;
-    private String fullName;
+    private final Member mMember;
+    private final FormFragment mFormFragment;
+
     private String fullNameError;
-    private String phoneNumber;
     private String phoneNumberError;
-    private String cardId;
     private String cardIdError;
     private boolean saveEnabled;
 
@@ -28,11 +26,8 @@ public abstract class MemberViewModel extends BaseObservable {
         mFormFragment = formFragment;
         mMember = member;
 
-        fullName = member.getFullName();
         fullNameError = null;
-        phoneNumber = member.getPhoneNumber();
         phoneNumberError = null;
-        cardId = member.getCardId();
         cardIdError = null;
 
         updateSaveButton();
@@ -49,7 +44,7 @@ public abstract class MemberViewModel extends BaseObservable {
     public FormFragment getFormFragment() { return mFormFragment; }
 
     @Bindable
-    public String getFullName() { return fullName; }
+    public String getFullName() { return mMember.getFullName(); }
 
     @Bindable
     public String getFullNameError() {
@@ -57,9 +52,7 @@ public abstract class MemberViewModel extends BaseObservable {
     }
 
     @Bindable
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+    public String getPhoneNumber() { return mMember.getPhoneNumber(); }
 
     @Bindable
     public String getPhoneNumberError() {
@@ -68,7 +61,7 @@ public abstract class MemberViewModel extends BaseObservable {
 
     @Bindable
     public String getCardId() {
-        return cardId;
+        return mMember.getCardId();
     }
 
     @Bindable
@@ -83,12 +76,11 @@ public abstract class MemberViewModel extends BaseObservable {
 
     @Bindable
     public void setFullName(String fullName) {
-        this.fullName = fullName;
-        notifyPropertyChanged(BR.fullName);
-        validateFullName();
-        updateSaveButton();
         try {
             mMember.setFullName(fullName);
+            notifyPropertyChanged(BR.fullName);
+            validateFullName();
+            updateSaveButton();
         } catch (AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e);
         }
@@ -96,10 +88,9 @@ public abstract class MemberViewModel extends BaseObservable {
 
     @Bindable
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-        notifyPropertyChanged(BR.phoneNumber);
         try {
             mMember.setPhoneNumber(phoneNumber);
+            notifyPropertyChanged(BR.phoneNumber);
         } catch (AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e);
         }
@@ -129,17 +120,17 @@ public abstract class MemberViewModel extends BaseObservable {
 
     // phoneNumber can be null because it's optional.
     boolean validPhoneNumber() {
-        return phoneNumber == null || phoneNumber.isEmpty() || Member.validPhoneNumber(phoneNumber);
+        return getPhoneNumber() == null || getPhoneNumber().isEmpty() || Member.validPhoneNumber(getPhoneNumber());
     }
 
     boolean validGender() { return getMember().getGender() != null; }
 
     boolean validCardId() {
-        return Member.validCardId(cardId);
+        return Member.validCardId(getCardId());
     }
 
     boolean validFullName() {
-        return fullName != null && !fullName.isEmpty();
+        return getFullName() != null && !getFullName().isEmpty();
     }
 
     boolean validateFullName() {
