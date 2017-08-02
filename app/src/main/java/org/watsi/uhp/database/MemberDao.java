@@ -55,7 +55,7 @@ public class MemberDao {
         return mMemberDao;
     }
 
-    public static Member fetchUpdatedMemberFromDB(Member member) {
+    public static Member fetchUpdatedMemberFromDB(Member member) throws SQLException {
         try {
             return findById(member.getId());
         } catch (SQLException e) {
