@@ -29,7 +29,7 @@ public abstract class MemberDetailPresenter {
     public MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
-        mMember = fetchMemberFromDB(member);
+        mMember = MemberDao.fetchUpdatedMemberFromDB(member);
         mNavigationManager = navigationManager;
     }
 
@@ -51,15 +51,6 @@ public abstract class MemberDetailPresenter {
     protected abstract void setMemberIndicator();
 
     protected abstract void setMemberActionLink();
-
-    protected Member fetchMemberFromDB(Member member) {
-        try {
-            return MemberDao.findById(member.getId());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            return member;
-        }
-    }
 
     protected void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();
@@ -110,7 +101,7 @@ public abstract class MemberDetailPresenter {
     protected List<Member> getMembersForBottomListView() {
         try {
             return MemberDao.getRemainingHouseholdMembers(
-                    getMember().getHouseholdId(), getMember().getId());
+                    mMember.getHouseholdId(), mMember.getId());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return null;
