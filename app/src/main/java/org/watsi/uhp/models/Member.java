@@ -236,6 +236,7 @@ public class Member extends SyncableModel {
     }
 
     public void setCardId(String cardId) throws ValidationException {
+        cardId = cardId.replaceAll(" ","");
         if (validCardId(cardId)) {
             this.mCardId = cardId;
         } else {
