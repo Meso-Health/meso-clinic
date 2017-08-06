@@ -55,7 +55,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
             IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
             getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-        } catch (SQLException e) {
+        } catch (SQLException | AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e);
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }

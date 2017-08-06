@@ -75,6 +75,11 @@ public class Encounter extends SyncableModel {
     }
 
     @Override
+    public void validate() throws ValidationException {
+        // no-op
+    }
+
+    @Override
     public void handleUpdateFromSync(SyncableModel response) {
         // set the encounter items on the response so that encounter_items is not still marked
         //  as a dirty field when the models are diffed in the sync logic
@@ -92,7 +97,7 @@ public class Encounter extends SyncableModel {
     }
 
     @Override
-    protected void persistAssociations() throws SQLException {
+    protected void persistAssociations() throws SQLException, ValidationException {
         for (EncounterItem encounterItem : getEncounterItems()) {
             Billable billable = encounterItem.getBillable();
             if (billable.getId() == null) {

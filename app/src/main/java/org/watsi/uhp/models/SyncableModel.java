@@ -134,9 +134,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return diffSet;
     }
 
-    public void saveChanges(String token) throws SQLException {
+    public void saveChanges(String token) throws SQLException, ValidationException {
         setToken(token);
         if (this.mId == null) this.mId = UUID.randomUUID();
+        validate();
         setDirtyFields(changedFields());
         getDao().createOrUpdate((T) this);
         persistAssociations();
@@ -172,10 +173,11 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return dao.query(preparedQuery);
     }
 
+    public abstract void validate() throws ValidationException;
     public abstract void handleUpdateFromSync(T response);
     protected abstract Call<T> postApiCall(Context context) throws SQLException;
     protected abstract Call<T> patchApiCall(Context context) throws SQLException;
-    protected abstract void persistAssociations() throws SQLException;
+    protected abstract void persistAssociations() throws SQLException, ValidationException;
 
     public static class SyncException extends Exception {
         SyncException() {

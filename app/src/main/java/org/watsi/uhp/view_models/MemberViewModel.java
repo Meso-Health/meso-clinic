@@ -9,7 +9,6 @@ import android.widget.RadioGroup;
 import org.watsi.uhp.BR;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
 
@@ -20,6 +19,7 @@ public abstract class MemberViewModel extends BaseObservable {
     private String fullNameError;
     private String phoneNumberError;
     private String cardIdError;
+    private String genderError;
     private boolean saveEnabled;
 
     public MemberViewModel(FormFragment<Member> formFragment, Member member) {
@@ -29,6 +29,7 @@ public abstract class MemberViewModel extends BaseObservable {
         fullNameError = null;
         phoneNumberError = null;
         cardIdError = null;
+        genderError = null;
 
         updateSaveButton();
     }
@@ -75,25 +76,20 @@ public abstract class MemberViewModel extends BaseObservable {
     }
 
     @Bindable
+    public String getGenderError() { return genderError; }
+
+    @Bindable
     public void setFullName(String fullName) {
-        try {
-            mMember.setFullName(fullName);
-            notifyPropertyChanged(BR.fullName);
-            validateFullName();
-            updateSaveButton();
-        } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-        }
+        mMember.setFullName(fullName);
+        notifyPropertyChanged(BR.fullName);
+        validateFullName();
+        updateSaveButton();
     }
 
     @Bindable
     public void setPhoneNumber(String phoneNumber) {
-        try {
-            mMember.setPhoneNumber(phoneNumber);
-            notifyPropertyChanged(BR.phoneNumber);
-        } catch (AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-        }
+        mMember.setPhoneNumber(phoneNumber);
+        notifyPropertyChanged(BR.phoneNumber);
     }
 
     @Bindable
@@ -118,26 +114,25 @@ public abstract class MemberViewModel extends BaseObservable {
         updateSaveButton();
     }
 
-    // phoneNumber can be null because it's optional.
-    boolean validPhoneNumber() {
-        return getPhoneNumber() == null || getPhoneNumber().isEmpty() || Member.validPhoneNumber(getPhoneNumber());
-    }
-
-    boolean validGender() { return getMember().getGender() != null; }
-
-    boolean validCardId() {
-        return Member.validCardId(getCardId());
-    }
-
-    boolean validFullName() {
-        return getFullName() != null && !getFullName().isEmpty();
+    boolean validateGender() {
+        boolean success = true;
+        try {
+            mMember.validateGender();
+            this.genderError = null;
+        } catch (AbstractModel.ValidationException e) {
+            this.genderError = mFormFragment.getString(R.string.gender_validation_error);
+            success = false;
+        }
+        notifyPropertyChanged(BR.genderError);
+        return success;
     }
 
     boolean validateFullName() {
         boolean success = true;
-        if (validFullName()) {
+        try {
+            mMember.validateFullName();
             this.fullNameError = null;
-        } else {
+        } catch (AbstractModel.ValidationException e) {
             this.fullNameError = mFormFragment.getString(R.string.name_validation_error);
             success = false;
         }
@@ -147,9 +142,10 @@ public abstract class MemberViewModel extends BaseObservable {
 
     boolean validatePhoneNumber() {
         boolean success = true;
-        if (validPhoneNumber()) {
+        try {
+            mMember.validatePhoneNumber();
             this.phoneNumberError = null;
-        } else {
+        } catch (AbstractModel.ValidationException e) {
             this.phoneNumberError = mFormFragment.getString(R.string.phone_number_validation_error);
             success = false;
         }
@@ -159,9 +155,10 @@ public abstract class MemberViewModel extends BaseObservable {
 
     boolean validateCardId() {
         boolean success = true;
-        if (validCardId()) {
+        try {
+            mMember.validateCardId();
             this.cardIdError = null;
-        } else {
+        } catch (AbstractModel.ValidationException e) {
             this.cardIdError = mFormFragment.getString(R.string.card_id_validation_error);
             success = false;
         }

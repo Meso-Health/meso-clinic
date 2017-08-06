@@ -137,16 +137,52 @@ public class Member extends SyncableModel {
         super();
     }
 
-    public void setFullName(String fullName) throws ValidationException {
-        if (fullName == null || fullName.isEmpty()) {
-            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
-        } else {
-            this.mFullName = fullName;
-        }
+    public void setFullName(String fullName) {
+        this.mFullName = fullName;
     }
 
     public String getFullName() {
         return this.mFullName;
+    }
+
+    @Override
+    public void validate() throws ValidationException {
+        // TODO: Better error message.
+        validateFullName();
+        validateCardId();
+        validatePhoneNumber();
+        validateBirthdate();
+        validateGender();
+    }
+
+    public void validateFullName() throws ValidationException {
+        if (mFullName == null || mFullName.isEmpty()) {
+            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
+        }
+    }
+
+    public void validateCardId() throws ValidationException {
+        if (!Member.validCardId(mCardId)) {
+            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
+        }
+    }
+
+    public void validatePhoneNumber() throws ValidationException {
+        if (mPhoneNumber != null && !mPhoneNumber.matches("0?[1-9]\\d{8}")) {
+            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is wrong.");
+        }
+    }
+
+    public void validateGender() throws ValidationException {
+        if (mGender == null) {
+            throw new ValidationException(FIELD_NAME_GENDER, "Gender");
+        }
+    }
+
+    public void validateBirthdate() throws ValidationException {
+        if (mBirthdate == null || mBirthdateAccuracy == null) {
+            throw new ValidationException(FIELD_NAME_BIRTHDATE, "Stuff");
+        }
     }
 
     @Override
@@ -231,12 +267,8 @@ public class Member extends SyncableModel {
         }
     }
 
-    public void setCardId(String cardId) throws ValidationException {
-        if (validCardId(cardId)) {
-            this.mCardId = cardId;
-        } else {
-            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
-        }
+    public void setCardId(String cardId) {
+        this.mCardId = cardId;
     }
 
     public int getAge() {
@@ -287,6 +319,7 @@ public class Member extends SyncableModel {
         return mPhotoUrl;
     }
 
+    // TODO Leaving this to validate on set because the photos PR will take care of this.
     public void setPhotoUrl(String photoUrl) throws ValidationException {
         if (photoUrl == null) {
             this.mPhotoUrl = null;
@@ -331,15 +364,11 @@ public class Member extends SyncableModel {
         return mPhoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) throws ValidationException {
-        if (phoneNumber == null) {
+    public void setPhoneNumber(String phoneNumber) {
+        if (phoneNumber.isEmpty()) {
             this.mPhoneNumber = null;
         } else {
-            if (Member.validPhoneNumber(phoneNumber)) {
-                this.mPhoneNumber = phoneNumber;
-            } else {
-                throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Invalid phone number");
-            }
+            this.mPhoneNumber = phoneNumber;
         }
     }
 

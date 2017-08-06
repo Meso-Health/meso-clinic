@@ -10,7 +10,7 @@ public class MemberEditViewModel extends MemberViewModel {
     }
 
     public void updateSaveButton() {
-        setSaveEnabled(validFullName() && validPhoneNumber() && validCardId());
+        setSaveEnabled(validateFullName() && validateCardId());
     }
 
     public void onClickSave() {

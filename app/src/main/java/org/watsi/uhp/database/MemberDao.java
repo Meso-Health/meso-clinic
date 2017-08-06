@@ -7,7 +7,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
 
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -53,15 +52,6 @@ public class MemberDao {
         }
 
         return mMemberDao;
-    }
-
-    public static Member fetchUpdatedMemberFromDB(Member member) throws SQLException {
-        try {
-            return findById(member.getId());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            return member;
-        }
     }
 
     public static Member findById(UUID id) throws SQLException {

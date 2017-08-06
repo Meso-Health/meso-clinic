@@ -62,7 +62,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                         mSyncableModel.saveChanges(getAuthenticationToken());
                         getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                         enrollmentPresenter.confirmationToast().show();
-                    } catch (SQLException e) {
+                    } catch (SQLException | AbstractModel.ValidationException e) {
                         ExceptionManager.reportException(e);
                         Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
                     }

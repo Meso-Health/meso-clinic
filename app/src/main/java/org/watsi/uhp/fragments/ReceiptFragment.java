@@ -10,6 +10,7 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 
@@ -42,7 +43,7 @@ public class ReceiptFragment extends FormFragment<Encounter> {
 
             toastMessage = mSyncableModel.getMember()
                     .getFullName() + getString(R.string.encounter_submitted);
-        } catch (SQLException e) {
+        } catch (SQLException | AbstractModel.ValidationException e) {
             toastMessage = "Failed to save data, contact support.";
             ExceptionManager.reportException(e);
         }

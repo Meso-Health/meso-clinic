@@ -37,11 +37,13 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
     @Override
     public void nextStep() {
+        String phoneNumber = mPhoneNumberView.getText().toString();
+        if (phoneNumber.isEmpty()) phoneNumber = null;
+        mSyncableModel.setPhoneNumber(phoneNumber);
         try {
-            String phoneNumber = mPhoneNumberView.getText().toString();
-            if (phoneNumber.isEmpty()) phoneNumber = null;
-            mSyncableModel.setPhoneNumber(phoneNumber);
+            mSyncableModel.validatePhoneNumber();
             getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel, mIdEvent);
+            mPhoneNumberView.setError(null);
         } catch (AbstractModel.ValidationException e) {
             String errorMessage = getString(R.string.phone_number_validation_error);
             mPhoneNumberView.setError(errorMessage);

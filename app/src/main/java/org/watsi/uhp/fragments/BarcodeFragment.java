@@ -122,6 +122,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     member.setCardId(barcode.displayValue);
+                                    member.validateCardId();
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
                                     getNavigationManager().setMemberEditFragment(member, idEvent);
@@ -130,6 +131,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                     member = (Member) getArguments()
                                             .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     member.setCardId(barcode.displayValue);
+                                    member.validateCardId();
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                                     getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
                                     break;

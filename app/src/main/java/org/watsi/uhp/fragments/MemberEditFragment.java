@@ -11,6 +11,7 @@ import org.watsi.uhp.databinding.FragmentMemberEditBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.view_models.MemberEditViewModel;
@@ -44,7 +45,7 @@ public class MemberEditFragment extends FormFragment<Member> {
                 String toastMessage = mSyncableModel.getFullName() + "'s information has been updated.";
                 try {
                     mSyncableModel.saveChanges(getAuthenticationToken());
-                } catch (SQLException e) {
+                } catch (SQLException | AbstractModel.ValidationException e) {
                     ExceptionManager.reportException(e);
                     toastMessage = "Failed to update the member information.";
                 }

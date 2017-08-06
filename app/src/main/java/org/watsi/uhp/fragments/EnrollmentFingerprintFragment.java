@@ -12,6 +12,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
@@ -52,7 +53,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
                     mSyncableModel.saveChanges(getAuthenticationToken());
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                     enrollmentPresenter.confirmationToast().show();
-                } catch (SQLException e) {
+                } catch (SQLException | AbstractModel.ValidationException e) {
                     ExceptionManager.reportException(e);
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
                 }
