@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
