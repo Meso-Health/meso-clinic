@@ -109,7 +109,6 @@ public class MemberEditViewModelTest {
         memberEditViewModel.updateSaveButton();
         assertTrue(memberEditViewModel.getSaveEnabled());
         memberEditViewModel.onClickSave();
-        assertNull(memberEditViewModel.getPhoneNumberError());
 
         verify(mockFormFragment, times(1)).nextStep();
     }
