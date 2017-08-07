@@ -15,6 +15,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.watsi.uhp.view_models.MemberViewModel.NAME_VALIDATION_ERROR;
+import static org.watsi.uhp.view_models.MemberViewModel.PHONE_NUMBER_VALIDATION_ERROR;
 
 /**
  * Created by michaelliang on 8/2/17.
@@ -66,8 +68,6 @@ public class MemberViewModelTest {
         assertNull(memberViewModel.getFullNameError());
         assertNull(memberViewModel.getPhoneNumberError());
         assertNull(memberViewModel.getCardIdError());
-
-        assertFalse(memberViewModel.getSaveEnabled());
     }
 
     @Test
@@ -81,13 +81,42 @@ public class MemberViewModelTest {
     public void getFullNameError_nullName() throws Exception {
         memberViewModel.setFullName(null);
         assertNull(memberViewModel.getFullName());
-        assertEquals(memberViewModel.getFullNameError(), "Name cannot be blank.");
+        assertEquals(memberViewModel.getFullNameError(), NAME_VALIDATION_ERROR);
     }
 
     @Test
-    public void getPhoneNumberError_validNumber() throws Exception {
-
+    public void getPhoneNumber_invalidNumber() throws Exception {
+        memberViewModel.setPhoneNumber("123");
+        assertEquals(memberViewModel.getPhoneNumber(), "123");
+        memberViewModel.validatePhoneNumber();
+        assertEquals(memberViewModel.getPhoneNumberError(), PHONE_NUMBER_VALIDATION_ERROR);
     }
 
+    @Test
+    public void getPhoneNumber_validNumber() throws Exception {
+        memberViewModel.setPhoneNumber("123123123");
+        assertEquals(memberViewModel.getPhoneNumber(), "123123123");
+        assertNull(memberViewModel.getPhoneNumberError());
+    }
 
+    @Test
+    public void getPhoneNumber_emptyNumber() throws Exception {
+        memberViewModel.setPhoneNumber("");
+        assertEquals(memberViewModel.getPhoneNumber(), null);
+        assertNull(memberViewModel.getPhoneNumberError());
+    }
+
+    @Test
+    public void getCardId_validNoSpaces() throws Exception {
+        mMember.setCardId("RWI123123");
+        assertEquals(memberViewModel.getCardId(), "RWI123123");
+        assertNull(memberViewModel.getCardIdError());
+    }
+
+    @Test
+    public void getCardId_validWithSpaces() throws Exception {
+        mMember.setCardId("RWI 123 123");
+        assertEquals(memberViewModel.getCardId(), "RWI123123");
+        assertNull(memberViewModel.getCardIdError());
+    }
 }
