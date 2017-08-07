@@ -133,6 +133,13 @@ public class IdentificationEvent extends SyncableModel {
         super();
     }
 
+    public IdentificationEvent(Member member, SearchMethodEnum searchMethod, Member throughMember) {
+        IdentificationEvent idEvent = new IdentificationEvent();
+        idEvent.setMember(member);
+        idEvent.setSearchMethod(searchMethod);
+        idEvent.setThroughMember(throughMember);
+    }
+
     public Date getOccurredAt() {
         return mOccurredAt;
     }
@@ -322,13 +329,5 @@ public class IdentificationEvent extends SyncableModel {
     @Override
     protected void persistAssociations() {
         // no-op
-    }
-
-    public static IdentificationEvent createUnsavedIdentificationEvent(Member member, SearchMethodEnum searchMethod, Member throughMember) {
-        IdentificationEvent idEvent = new IdentificationEvent();
-        idEvent.setMember(member);
-        idEvent.setSearchMethod(searchMethod);
-        idEvent.setThroughMember(throughMember);
-        return idEvent;
     }
 }

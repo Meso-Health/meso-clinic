@@ -72,8 +72,7 @@ class SearchMemberPresenter(
         mListView.emptyView = mEmptyView
         mListView.setOnItemClickListener { parent, _, position, _ ->
             val member = parent.getItemAtPosition(position) as Member
-            mNavigationManager.setMemberDetailFragment(member,
-                    IdentificationEvent.createUnsavedIdentificationEvent(member, searchMethod, null));
+            mNavigationManager.setMemberDetailFragment(member, IdentificationEvent(member, searchMethod, null))
         }
         mProgressDialog.dismiss()
         mListView.requestFocus()

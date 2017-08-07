@@ -37,8 +37,8 @@ public class MenuNavigationManager {
                 break;
             case R.id.menu_enroll_newborn:
                 Member newborn = member.createNewborn();
-                IdentificationEvent idEvent = IdentificationEvent.createUnsavedIdentificationEvent(
-                        newborn, IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
+                IdentificationEvent idEvent = new IdentificationEvent(newborn,
+                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
                 mNavigationManager.setEnrollNewbornInfoFragment(newborn, idEvent);
                 break;
             case R.id.menu_version:
