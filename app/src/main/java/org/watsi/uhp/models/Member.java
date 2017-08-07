@@ -147,16 +147,11 @@ public class Member extends SyncableModel {
 
     @Override
     public void validate() throws ValidationException {
-        try {
-            validateFullName();
-            validateCardId();
-            validatePhoneNumber();
-            validateBirthdate();
-            validateGender();
-        } catch (ValidationException e) {
-            // TODO: Better error message.
-            ExceptionManager.reportException(e);
-        }
+        validateFullName();
+        validateCardId();
+        validatePhoneNumber();
+        validateBirthdate();
+        validateGender();
     }
 
     public boolean validFullName() {
