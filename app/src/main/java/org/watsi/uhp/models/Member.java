@@ -152,6 +152,7 @@ public class Member extends SyncableModel {
         validatePhoneNumber();
         validateBirthdate();
         validateGender();
+        // TODO better error message.
     }
 
     public boolean validFullName() {

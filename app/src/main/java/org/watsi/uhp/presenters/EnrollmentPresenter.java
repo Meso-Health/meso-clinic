@@ -3,7 +3,6 @@ package org.watsi.uhp.presenters;
 import android.content.Context;
 import android.widget.Toast;
 
-import org.watsi.uhp.R;
 import org.watsi.uhp.models.Member;
 
 public class EnrollmentPresenter {

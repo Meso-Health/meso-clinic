@@ -442,7 +442,7 @@ public class MemberTest {
     }
 
     @Test
-    public void validPhoneNumber() throws Exception {
+    public void validPhoneNumberStatic() throws Exception {
         assertFalse(Member.validPhoneNumber(null));
         assertFalse(Member.validPhoneNumber(""));
         assertFalse(Member.validPhoneNumber("123"));
@@ -750,5 +750,59 @@ public class MemberTest {
         assertEquals(newborn.getHouseholdId(), householdId);
         assertEquals(newborn.getBirthdateAccuracy(), Member.BirthdateAccuracyEnum.D);
         assertNotNull(newborn.getEnrolledAt());
+    }
+
+    @Test
+    public void validFullName() {
+        member.setFullName("Valid Full Name");
+        assertTrue(member.validFullName());
+        member.setFullName("");
+        assertFalse(member.validFullName());
+        member.setFullName(null);
+        assertFalse(member.validFullName());
+    }
+
+
+    @Test
+    public void validPhoneNumber() {
+        member.setPhoneNumber("123123123");
+        assertTrue(member.validPhoneNumber());
+        member.setPhoneNumber("123123");
+        assertFalse(member.validPhoneNumber());
+        member.setPhoneNumber("");
+        assertTrue(member.validPhoneNumber());
+        member.setPhoneNumber(null);
+        assertTrue(member.validPhoneNumber());
+    }
+
+    @Test
+    public void validBirthdate() {
+        Calendar cal = Calendar.getInstance();
+
+        member.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
+        member.setBirthdate(cal.getTime());
+        assertTrue(member.validBirthdate());
+
+        member.setBirthdateAccuracy(Member.BirthdateAccuracyEnum.D);
+        member.setBirthdate(null);
+        assertFalse(member.validBirthdate());
+
+        member.setBirthdateAccuracy(null);
+        member.setBirthdate(cal.getTime());
+        assertFalse(member.validBirthdate());
+
+        member.setBirthdateAccuracy(null);
+        member.setBirthdate(null);
+        assertFalse(member.validBirthdate());
+    }
+
+    @Test
+    public void validGender() {
+        member.setGender(null);
+        assertFalse(member.validGender());
+        member.setGender(Member.GenderEnum.F);
+        assertTrue(member.validGender());
+        member.setGender(Member.GenderEnum.M);
+        assertTrue(member.validGender());
     }
 }
