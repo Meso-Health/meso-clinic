@@ -1,6 +1,5 @@
 package org.watsi.uhp.models;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -137,17 +136,24 @@ public class MemberTest {
         assertEquals(member.getPhotoUrl(), remotePhotoUrl);
     }
 
-    @Test(expected=AbstractModel.ValidationException.class)
+    @Test(expected = AbstractModel.ValidationException.class)
     public void setPhotoUrl_isInvalid_throwsException() throws Exception {
         String invalidUrl = "foo.jpg";
         when(URLUtil.isValidUrl(invalidUrl)).thenReturn(false);
 
-        member.setPhoneNumber(invalidUrl);
+        member.setPhotoUrl(invalidUrl);
     }
 
     @Test
     public void setPhoneNumber_isNull_setsPhoneNumberToNull() throws Exception {
         member.setPhoneNumber(null);
+
+        assertEquals(member.getPhoneNumber(), null);
+    }
+
+    @Test
+    public void setPhoneNumber_isNull_setsPhoneNumberToEmptyString() throws Exception {
+        member.setPhoneNumber("");
 
         assertEquals(member.getPhoneNumber(), null);
     }
@@ -160,14 +166,6 @@ public class MemberTest {
         member.setPhoneNumber("0777555555");
 
         assertEquals(member.getPhoneNumber(), "0777555555");
-    }
-
-    @Test(expected=AbstractModel.ValidationException.class)
-    public void setPhoneNumber_isInvalid_throwsException() throws Exception {
-        mockStatic(Member.class);
-        when(Member.validPhoneNumber(anyString())).thenReturn(false);
-
-        member.setPhoneNumber("");
     }
 
     @Test

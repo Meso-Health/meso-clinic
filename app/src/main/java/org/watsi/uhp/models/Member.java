@@ -385,7 +385,7 @@ public class Member extends SyncableModel {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        if (phoneNumber.isEmpty()) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
             this.mPhoneNumber = null;
         } else {
             this.mPhoneNumber = phoneNumber;
