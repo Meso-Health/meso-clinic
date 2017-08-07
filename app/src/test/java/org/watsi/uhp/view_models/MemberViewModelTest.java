@@ -88,6 +88,7 @@ public class MemberViewModelTest {
     public void getPhoneNumber_invalidNumber() throws Exception {
         memberViewModel.setPhoneNumber("123");
         assertEquals(memberViewModel.getPhoneNumber(), "123");
+        // This one requires forcing validation. merely setting the field would not trigger validation by design.
         memberViewModel.validatePhoneNumber();
         assertEquals(memberViewModel.getPhoneNumberError(), PHONE_NUMBER_VALIDATION_ERROR);
     }
