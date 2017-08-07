@@ -179,6 +179,11 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     protected abstract Call<T> patchApiCall(Context context) throws SQLException;
     protected abstract void persistAssociations() throws SQLException, ValidationException;
 
+    public String getJson() {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(this);
+    }
+
     public static class SyncException extends Exception {
         SyncException() {
             super("Model is not in a syncable state");

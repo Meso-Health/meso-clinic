@@ -152,7 +152,6 @@ public class Member extends SyncableModel {
         validatePhoneNumber();
         validateBirthdate();
         validateGender();
-        // TODO better error message.
     }
 
     public boolean validFullName() {
@@ -520,7 +519,7 @@ public class Member extends SyncableModel {
     }
 
     public Map<String, RequestBody> formatPostRequest(Context context) {
-        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
 
         requestBodyMap.put(FIELD_NAME_ID, RequestBody.create(MultipartBody.FORM, getId().toString()));
 
@@ -534,10 +533,14 @@ public class Member extends SyncableModel {
                 RequestBody.create(MultipartBody.FORM, "birth")
         );
 
-        requestBodyMap.put(
-                FIELD_NAME_ENROLLED_AT,
-                RequestBody.create(MultipartBody.FORM, Clock.asIso(getEnrolledAt()))
-        );
+        if (getEnrolledAt() != null) {
+            requestBodyMap.put(
+                    FIELD_NAME_ENROLLED_AT,
+                    RequestBody.create(MultipartBody.FORM, Clock.asIso(getEnrolledAt()))
+            );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member without an enrolled date.");
+        }
 
         if (getBirthdate() != null){
             requestBodyMap.put(
@@ -578,6 +581,8 @@ public class Member extends SyncableModel {
                     FIELD_NAME_GENDER,
                     RequestBody.create(MultipartBody.FORM, getGender().toString())
             );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member with a null gender.");
         }
 
         if (getFullName() != null) {
@@ -585,6 +590,8 @@ public class Member extends SyncableModel {
                     FIELD_NAME_FULL_NAME,
                     RequestBody.create(MultipartBody.FORM, getFullName())
             );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member without a full name.");
         }
 
         if (getCardId() != null) {
@@ -592,6 +599,8 @@ public class Member extends SyncableModel {
                     FIELD_NAME_CARD_ID,
                     RequestBody.create(MultipartBody.FORM, getCardId())
             );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member without a valid card ID.");
         }
 
         clearDirtyFields();

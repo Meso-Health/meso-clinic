@@ -54,7 +54,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                     enrollmentPresenter.confirmationToast().show();
                 } catch (SQLException | AbstractModel.ValidationException e) {
-                    ExceptionManager.reportException(e);
+                    ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields. Member is: " + mSyncableModel.getJson());
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
                 }
             }
