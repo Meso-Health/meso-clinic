@@ -59,9 +59,9 @@ public class MemberDao {
     }
 
     public static Member findByCardId(String cardId) throws SQLException {
+        cardId = cardId.replaceAll(" ","");
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);
-
         List<Member> results = getInstance().getMemberDao().queryForFieldValues(queryMap);
         if (results.size() == 0) { throw new SQLException("Record not found."); }
         return results.get(0);
