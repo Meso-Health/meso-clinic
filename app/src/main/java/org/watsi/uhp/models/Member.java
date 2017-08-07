@@ -147,41 +147,65 @@ public class Member extends SyncableModel {
 
     @Override
     public void validate() throws ValidationException {
-        // TODO: Better error message.
-        validateFullName();
-        validateCardId();
-        validatePhoneNumber();
-        validateBirthdate();
-        validateGender();
+        try {
+            validateFullName();
+            validateCardId();
+            validatePhoneNumber();
+            validateBirthdate();
+            validateGender();
+        } catch (ValidationException e) {
+            // TODO: Better error message.
+            ExceptionManager.reportException(e);
+        }
+    }
+
+    public boolean validFullName() {
+        return mFullName != null && !mFullName.isEmpty();
+    }
+
+    public boolean validCardId() {
+        return Member.validCardId(mCardId);
+    }
+
+    public boolean validPhoneNumber() {
+        return mPhoneNumber == null || mPhoneNumber.matches("0?[1-9]\\d{8}");
+    }
+
+    public boolean validGender() {
+        return mGender != null;
+    }
+
+    public boolean validBirthdate() {
+        return mBirthdate != null && mBirthdateAccuracy != null;
     }
 
     public void validateFullName() throws ValidationException {
-        if (mFullName == null || mFullName.isEmpty()) {
+        if (!validFullName()) {
             throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
         }
     }
 
     public void validateCardId() throws ValidationException {
-        if (!Member.validCardId(mCardId)) {
+        if (!validCardId()) {
             throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
         }
     }
 
     public void validatePhoneNumber() throws ValidationException {
-        if (mPhoneNumber != null && !mPhoneNumber.matches("0?[1-9]\\d{8}")) {
-            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is wrong.");
+        if (!validPhoneNumber()) {
+            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is invalid.");
         }
     }
 
     public void validateGender() throws ValidationException {
-        if (mGender == null) {
-            throw new ValidationException(FIELD_NAME_GENDER, "Gender");
+        if (!validGender()) {
+            throw new ValidationException(FIELD_NAME_GENDER, "Gender cannot be blank.");
         }
     }
 
     public void validateBirthdate() throws ValidationException {
-        if (mBirthdate == null || mBirthdateAccuracy == null) {
-            throw new ValidationException(FIELD_NAME_BIRTHDATE, "Stuff");
+        if (!validBirthdate()) {
+            throw new ValidationException(FIELD_NAME_BIRTHDATE, "Birthdate or birthdate accuracy is invalid.");
         }
     }
 
@@ -518,20 +542,32 @@ public class Member extends SyncableModel {
                 RequestBody.create(MultipartBody.FORM, Clock.asIso(getEnrolledAt()))
         );
 
-        requestBodyMap.put(
-                Member.FIELD_NAME_BIRTHDATE,
-                RequestBody.create(MultipartBody.FORM, Clock.asIso(getBirthdate()))
-        );
+        if (getBirthdate() != null){
+            requestBodyMap.put(
+                    Member.FIELD_NAME_BIRTHDATE,
+                    RequestBody.create(MultipartBody.FORM, Clock.asIso(getBirthdate()))
+            );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member with a null birthdate.");
+        }
 
-        requestBodyMap.put(
-                Member.FIELD_NAME_BIRTHDATE_ACCURACY,
-                RequestBody.create(MultipartBody.FORM, getBirthdateAccuracy().toString())
-        );
+        if (getBirthdateAccuracy() != null) {
+            requestBodyMap.put(
+                    Member.FIELD_NAME_BIRTHDATE_ACCURACY,
+                    RequestBody.create(MultipartBody.FORM, getBirthdateAccuracy().toString())
+            );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member with a null birthdateAccuracy.");
+        }
 
-        requestBodyMap.put(
-                Member.FIELD_NAME_HOUSEHOLD_ID,
-                RequestBody.create(MultipartBody.FORM, getHouseholdId().toString())
-        );
+        if (getHouseholdId() != null) {
+            requestBodyMap.put(
+                    Member.FIELD_NAME_HOUSEHOLD_ID,
+                    RequestBody.create(MultipartBody.FORM, getHouseholdId().toString())
+            );
+        } else {
+            ExceptionManager.reportErrorMessage("Member.sync called on member with a null household ID.");
+        }
 
         if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
             byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);

@@ -66,6 +66,8 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         Calendar cal = makeCalendarWithNoTime();
         if (mSyncableModel.getBirthdate() != null) {
             cal.setTime(mSyncableModel.getBirthdate());
+        } else {
+            mSyncableModel.setBirthdate(cal.getTime());
         }
 
         datePicker.init(

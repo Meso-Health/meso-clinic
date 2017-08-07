@@ -31,8 +31,9 @@ public abstract class MemberViewModel extends BaseObservable {
         cardIdError = null;
         genderError = null;
 
-        updateSaveButton();
+        setUpViewModel();
     }
+    public abstract void setUpViewModel();
 
     public abstract void updateSaveButton();
 
@@ -114,25 +115,11 @@ public abstract class MemberViewModel extends BaseObservable {
         updateSaveButton();
     }
 
-    boolean validateGender() {
-        boolean success = true;
-        try {
-            mMember.validateGender();
-            this.genderError = null;
-        } catch (AbstractModel.ValidationException e) {
-            this.genderError = mFormFragment.getString(R.string.gender_validation_error);
-            success = false;
-        }
-        notifyPropertyChanged(BR.genderError);
-        return success;
-    }
-
     boolean validateFullName() {
         boolean success = true;
-        try {
-            mMember.validateFullName();
+        if (mMember.validFullName()) {
             this.fullNameError = null;
-        } catch (AbstractModel.ValidationException e) {
+        } else {
             this.fullNameError = mFormFragment.getString(R.string.name_validation_error);
             success = false;
         }
@@ -140,12 +127,23 @@ public abstract class MemberViewModel extends BaseObservable {
         return success;
     }
 
+    boolean validateGender() {
+        boolean success = true;
+        if (mMember.validGender()) {
+            this.genderError = null;
+        } else {
+            this.genderError = mFormFragment.getString(R.string.gender_validation_error);
+            success = false;
+        }
+        notifyPropertyChanged(BR.genderError);
+        return success;
+    }
+
     boolean validatePhoneNumber() {
         boolean success = true;
-        try {
-            mMember.validatePhoneNumber();
+        if (mMember.validPhoneNumber()) {
             this.phoneNumberError = null;
-        } catch (AbstractModel.ValidationException e) {
+        } else {
             this.phoneNumberError = mFormFragment.getString(R.string.phone_number_validation_error);
             success = false;
         }
@@ -155,10 +153,9 @@ public abstract class MemberViewModel extends BaseObservable {
 
     boolean validateCardId() {
         boolean success = true;
-        try {
-            mMember.validateCardId();
+        if (mMember.validCardId()) {
             this.cardIdError = null;
-        } catch (AbstractModel.ValidationException e) {
+        } else {
             this.cardIdError = mFormFragment.getString(R.string.card_id_validation_error);
             success = false;
         }

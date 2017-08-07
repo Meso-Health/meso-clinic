@@ -11,12 +11,17 @@ public class EnrollNewbornViewModel extends MemberViewModel {
         super(formFragment, member);
     }
 
+    @Override
+    public void setUpViewModel() {
+        updateSaveButton();
+    }
+
     public void updateSaveButton() {
-        setSaveEnabled(validateFullName() && validateCardId());
+        setSaveEnabled(getMember().validFullName() && getMember().validCardId() && getMember().validGender());
     }
 
     public void onClickSave() {
-        if (validateFullName() && validateGender() && validateCardId()) {
+        if (validateFullName() && validateCardId()) {
             getFormFragment().nextStep();
         }
     }

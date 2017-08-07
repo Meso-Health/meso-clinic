@@ -9,8 +9,13 @@ public class MemberEditViewModel extends MemberViewModel {
         super(formFragment, member);
     }
 
+    @Override
+    public void setUpViewModel() {
+        updateSaveButton();
+    }
+
     public void updateSaveButton() {
-        setSaveEnabled(validateFullName() && validateCardId());
+        setSaveEnabled(getMember().validFullName() && getMember().validCardId());
     }
 
     public void onClickSave() {
