@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
@@ -35,6 +34,11 @@ public class MemberViewModelTest {
         initMocks(this);
         mockStatic(ExceptionManager.class);
         memberViewModel = new MemberViewModel(mockFormFragment, mMember) {
+
+            @Override
+            public void setUpViewModel() {
+                // no-op
+            }
 
             @Override
             public void updateSaveButton() {
@@ -69,13 +73,14 @@ public class MemberViewModelTest {
     @Test
     public void setFullName_validName() throws Exception {
         memberViewModel.setFullName("Test Full Name");
-        assertNull(memberViewModel.getFullName(), "Test Full Name");
+        assertEquals(memberViewModel.getFullName(), "Test Full Name");
         assertNull(memberViewModel.getFullNameError());
     }
 
     @Test
     public void getFullNameError_nullName() throws Exception {
         memberViewModel.setFullName(null);
+        assertNull(memberViewModel.getFullName());
         assertEquals(memberViewModel.getFullNameError(), "Name cannot be blank.");
     }
 

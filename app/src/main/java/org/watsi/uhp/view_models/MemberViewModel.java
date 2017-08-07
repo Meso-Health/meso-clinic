@@ -9,10 +9,13 @@ import android.widget.RadioGroup;
 import org.watsi.uhp.BR;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Member;
 
 public abstract class MemberViewModel extends BaseObservable {
+    // Putting these variables here so that unit tests can not depend on android system.
+    public static final String PHONE_NUMBER_VALIDATION_ERROR = "Invalid phone number. Phone number must be blank, a 9 digit number, or a 10 digit number starting with 0.";
+    public static final String CARD_ID_VALIDATION_ERROR = "Invalid card ID. ID must be 3 letters followed by 6 numbers.";
+    public static final String NAME_VALIDATION_ERROR = "Name cannot be blank.";
     private final Member mMember;
     private final FormFragment mFormFragment;
 
@@ -120,22 +123,10 @@ public abstract class MemberViewModel extends BaseObservable {
         if (mMember.validFullName()) {
             this.fullNameError = null;
         } else {
-            this.fullNameError = mFormFragment.getString(R.string.name_validation_error);
+            this.fullNameError = NAME_VALIDATION_ERROR;
             success = false;
         }
         notifyPropertyChanged(BR.fullNameError);
-        return success;
-    }
-
-    boolean validateGender() {
-        boolean success = true;
-        if (mMember.validGender()) {
-            this.genderError = null;
-        } else {
-            this.genderError = mFormFragment.getString(R.string.gender_validation_error);
-            success = false;
-        }
-        notifyPropertyChanged(BR.genderError);
         return success;
     }
 
@@ -144,7 +135,7 @@ public abstract class MemberViewModel extends BaseObservable {
         if (mMember.validPhoneNumber()) {
             this.phoneNumberError = null;
         } else {
-            this.phoneNumberError = mFormFragment.getString(R.string.phone_number_validation_error);
+            this.phoneNumberError = PHONE_NUMBER_VALIDATION_ERROR;
             success = false;
         }
         notifyPropertyChanged(BR.phoneNumberError);
@@ -156,7 +147,7 @@ public abstract class MemberViewModel extends BaseObservable {
         if (mMember.validCardId()) {
             this.cardIdError = null;
         } else {
-            this.cardIdError = mFormFragment.getString(R.string.card_id_validation_error);
+            this.cardIdError = CARD_ID_VALIDATION_ERROR;
             success = false;
         }
         notifyPropertyChanged(BR.cardIdError);
