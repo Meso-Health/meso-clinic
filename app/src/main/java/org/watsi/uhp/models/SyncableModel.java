@@ -13,6 +13,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,6 +47,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     @DatabaseField(columnName = FIELD_NAME_DIRTY_FIELDS, defaultValue = "[]", canBeNull = false)
     private String mDirtyFields = "[]";
+
+    public SyncableModel refresh() throws SQLException {
+        return getDao().queryForId(getId());
+    }
 
     public UUID getId() {
         return this.mId;

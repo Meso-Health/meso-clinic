@@ -54,8 +54,7 @@ public abstract class MemberDetailPresenter {
 
     protected static Member fetchMemberFromDB(Member member) {
         try {
-            Member memberFromDB = MemberDao.findById(member.getId());
-            return memberFromDB;
+            return (Member) member.refresh();
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return member;
