@@ -134,10 +134,10 @@ public class IdentificationEvent extends SyncableModel {
     }
 
     public IdentificationEvent(Member member, SearchMethodEnum searchMethod, Member throughMember) {
-        IdentificationEvent idEvent = new IdentificationEvent();
-        idEvent.setMember(member);
-        idEvent.setSearchMethod(searchMethod);
-        idEvent.setThroughMember(throughMember);
+        super();
+        setMember(member);
+        setSearchMethod(searchMethod);
+        setThroughMember(throughMember);
     }
 
     public Date getOccurredAt() {
