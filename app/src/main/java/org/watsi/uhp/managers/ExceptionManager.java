@@ -82,9 +82,9 @@ public class ExceptionManager {
         }
     }
 
-    public static void reportException(Throwable e, String description, Map<String, String> params) {
+    public static void reportException(Throwable e, String description) {
         if (Rollbar.isInit()) {
-            Rollbar.reportException(e, MESSAGE_LEVEL_ERROR, description, params);
+            Rollbar.reportException(e, MESSAGE_LEVEL_ERROR, description);
         } else {
             Log.e("Exception", e.getMessage());
         }
