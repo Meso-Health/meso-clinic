@@ -40,8 +40,11 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                     getNavigationManager().setEncounterFragment(encounter);
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
+                } catch (IllegalStateException e) {
+                    showGenericFailedToast();
+                    ExceptionManager.reportException(e);
+                    getNavigationManager().setCurrentPatientsFragment();
                 }
-
             }
         });
     }
@@ -89,12 +92,16 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     protected Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
         Encounter encounter = new Encounter();
         IdentificationEvent checkIn = getMember().currentCheckIn();
-        encounter.setOccurredAt(Clock.getCurrentTime());
-        encounter.setMember(getMember());
-        encounter.setIdentificationEvent(checkIn);
-        encounter.setEncounterItems(
-                EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
-        return encounter;
+        if (checkIn != null) {
+            encounter.setOccurredAt(Clock.getCurrentTime());
+            encounter.setMember(getMember());
+            encounter.setIdentificationEvent(checkIn);
+            encounter.setEncounterItems(
+                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+            return encounter;
+        } else {
+            throw new IllegalStateException("Current member does not have a current IdentificationEvent. Member id is: " + getMember().getId());
+        }
     }
 
     public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
@@ -110,6 +117,13 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
             ExceptionManager.reportException(e);
             showFailedToCheckOutToast();
         }
+    }
+
+    protected void showGenericFailedToast() {
+        Toast.makeText(getContext(),
+                getContext().getString(R.string.generic_enter_treatment_info_failure),
+                Toast.LENGTH_LONG).
+                show();
     }
 
     protected void showFailedToCheckOutToast() {

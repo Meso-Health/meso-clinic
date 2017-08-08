@@ -97,6 +97,7 @@
     <string name="detail_create_encounter">Enter treatment information</string>
     <string name="dismiss_patient"><u>No treatment details</u></string>
     <string name="dismiss_patient_alert">Why are there no treatment details?</string>
+    <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Enter line items</string>
