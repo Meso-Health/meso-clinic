@@ -55,7 +55,7 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
             getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException | AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields. Member is: " + mSyncableModel.getJson());
+            ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields.", mSyncableModel.getSerializedMap());
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }
     }

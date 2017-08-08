@@ -46,7 +46,7 @@ public class MemberEditFragment extends FormFragment<Member> {
                 try {
                     mSyncableModel.saveChanges(getAuthenticationToken());
                 } catch (SQLException | AbstractModel.ValidationException e) {
-                    ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields. Member is: " + mSyncableModel.getJson());
+                    ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields. ", mSyncableModel.getSerializedMap());
                     toastMessage = "Failed to update the member information.";
                 }
                 IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);

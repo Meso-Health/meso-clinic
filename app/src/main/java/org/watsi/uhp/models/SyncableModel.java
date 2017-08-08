@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -16,6 +17,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -184,9 +186,9 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     protected abstract Call<T> patchApiCall(Context context) throws SQLException;
     protected abstract void persistAssociations() throws SQLException, ValidationException;
 
-    public String getJson() {
+    public Map<String, String> getSerializedMap() {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        return gson.toJson(this);
+        return gson.fromJson(gson.toJson(this), Map.class);
     }
 
     public static class SyncException extends Exception {
