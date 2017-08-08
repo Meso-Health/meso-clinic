@@ -63,7 +63,7 @@ public class MemberViewModelTest {
         assertEquals(memberViewModel.getFullName(), "Test Full Name");
         assertEquals(memberViewModel.getPhoneNumber(), "123123123");
         assertEquals(memberViewModel.getCardId(), "RWI123123");
-        
+
         assertNull(memberViewModel.getFullNameError());
         assertNull(memberViewModel.getPhoneNumberError());
         assertNull(memberViewModel.getCardIdError());
