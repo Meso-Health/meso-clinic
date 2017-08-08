@@ -762,7 +762,6 @@ public class MemberTest {
         assertFalse(member.validFullName());
     }
 
-
     @Test
     public void validPhoneNumber() {
         member.setPhoneNumber("123123123");

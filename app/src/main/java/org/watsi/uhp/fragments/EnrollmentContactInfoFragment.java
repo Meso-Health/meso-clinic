@@ -37,9 +37,7 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
     @Override
     public void nextStep() {
-        String phoneNumber = mPhoneNumberView.getText().toString();
-        if (phoneNumber.isEmpty()) phoneNumber = null;
-        mSyncableModel.setPhoneNumber(phoneNumber);
+        mSyncableModel.setPhoneNumber(mPhoneNumberView.getText().toString());
         try {
             mSyncableModel.validatePhoneNumber();
             getNavigationManager().setEnrollmentFingerprintFragment(mSyncableModel, mIdEvent);
