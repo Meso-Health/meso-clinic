@@ -6,6 +6,7 @@ import android.view.View;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
@@ -51,7 +52,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         return checkInMemberDetailPresenter.getIdEvent();
     }
 
-    public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException {
+    public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException, AbstractModel.ValidationException {
         checkInMemberDetailPresenter.saveIdentificationEventAndCheckIn(clinicNumberType, clinicNumber);
     }
 

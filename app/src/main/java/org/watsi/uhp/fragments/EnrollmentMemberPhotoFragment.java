@@ -51,7 +51,7 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep() {
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);
@@ -62,8 +62,8 @@ public class EnrollmentMemberPhotoFragment extends FormFragment<Member> {
                         mSyncableModel.saveChanges(getAuthenticationToken());
                         getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                         enrollmentPresenter.confirmationToast().show();
-                    } catch (SQLException e) {
-                        ExceptionManager.reportException(e);
+                    } catch (SQLException | AbstractModel.ValidationException e) {
+                        ExceptionManager.reportException(e, "Tried to save changes to a member that has invalid fields for member id: " + mSyncableModel.getId());
                         Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
                     }
                 }

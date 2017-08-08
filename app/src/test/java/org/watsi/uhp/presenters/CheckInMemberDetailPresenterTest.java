@@ -103,6 +103,7 @@ public class CheckInMemberDetailPresenterTest {
         mockStatic(MemberDao.class);
         mockStatic(ExceptionManager.class);
         mockStatic(ContextCompat.class);
+        when(MemberDetailPresenter.fetchMemberFromDB(mockMember)).thenReturn(mockMember);
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
                 mockNavigationManager, mockSessionManager, mockCheckInMemberDetailFragment,
                 mockView, mockContext, mockMember, mockIdentificationEvent);

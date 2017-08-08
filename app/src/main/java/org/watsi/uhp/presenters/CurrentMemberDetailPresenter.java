@@ -13,6 +13,7 @@ import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -105,7 +106,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
             checkIn.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
             showCheckedOutSuccessfulToast();
-        } catch (SQLException e) {
+        } catch (SQLException | AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e);
             showFailedToCheckOutToast();
         }

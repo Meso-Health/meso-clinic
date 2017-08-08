@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Response.class)
+@PrepareForTest({ Response.class })
 public class SyncableModelTest {
 
     @Mock
@@ -190,6 +190,7 @@ public class SyncableModelTest {
 
     @Test
     public void saveChanges_withToken_setsToken() throws Exception {
+        doNothing().when(memberSpy).validate();
         doReturn(new HashSet<>()).when(memberSpy).changedFields();
 
         memberSpy.saveChanges(token);
@@ -199,6 +200,7 @@ public class SyncableModelTest {
 
     @Test
     public void saveChanges_withTokenNullId_setsId() throws Exception {
+        doNothing().when(memberSpy).validate();
         memberSpy.setId(null);
 
         doReturn(new HashSet<>()).when(memberSpy).changedFields();
@@ -210,6 +212,7 @@ public class SyncableModelTest {
 
     @Test
     public void saveChanges_withToken_setsDirtyFieldsToChangedFields() throws Exception {
+        doNothing().when(memberSpy).validate();
         Set<String> changedFields = new HashSet<>();
 
         doReturn(changedFields).when(memberSpy).changedFields();
@@ -221,6 +224,7 @@ public class SyncableModelTest {
 
     @Test
     public void saveChanges_withToken_persistsTheModel() throws Exception {
+        doNothing().when(memberSpy).validate();
         Set<String> changedFields = new HashSet<>();
 
         doReturn(changedFields).when(memberSpy).changedFields();
@@ -232,6 +236,7 @@ public class SyncableModelTest {
 
     @Test
     public void saveChanges_withToken_persistsAssociations() throws Exception {
+        doNothing().when(memberSpy).validate();
         Set<String> changedFields = new HashSet<>();
 
         doReturn(changedFields).when(memberSpy).changedFields();
@@ -239,6 +244,15 @@ public class SyncableModelTest {
         memberSpy.saveChanges(token);
 
         verify(memberSpy, times(1)).persistAssociations();
+    }
+
+    @Test(expected = AbstractModel.ValidationException.class)
+    public void saveChanges_validationFails() throws Exception {
+        Set<String> changedFields = new HashSet<>();
+
+        doReturn(changedFields).when(memberSpy).changedFields();
+
+        memberSpy.saveChanges(token);
     }
 
     @Test

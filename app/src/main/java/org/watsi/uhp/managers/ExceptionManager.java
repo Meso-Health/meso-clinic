@@ -82,6 +82,14 @@ public class ExceptionManager {
         }
     }
 
+    public static void reportException(Throwable e, String description) {
+        if (Rollbar.isInit()) {
+            Rollbar.reportException(e, MESSAGE_LEVEL_ERROR, description);
+        } else {
+            Log.e("Exception", e.getMessage());
+        }
+    }
+
     public static void reportMessage(String message, String level, Map<String, String> params) {
         if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, level, params);
@@ -93,6 +101,8 @@ public class ExceptionManager {
     public static void reportErrorMessage(String message) {
         if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, MESSAGE_LEVEL_ERROR);
+        } else {
+            Log.i("Message", message);
         }
     }
 

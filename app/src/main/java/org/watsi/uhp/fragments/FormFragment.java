@@ -23,14 +23,13 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
 
         final View view = inflater.inflate(getFragmentLayoutId(), container, false);
 
-
         mSaveBtn = (Button) view.findViewById(R.id.save_button);
 
         if (mSaveBtn != null) {
             mSaveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    nextStep(view);
+                    nextStep();
                 }
             });
         }
@@ -46,7 +45,7 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
 
     public abstract boolean isFirstStep();
 
-    abstract void nextStep(View view);
+    public abstract void nextStep();
 
     abstract void setUpFragment(View view);
 }
