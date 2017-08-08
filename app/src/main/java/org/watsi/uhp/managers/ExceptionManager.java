@@ -101,6 +101,8 @@ public class ExceptionManager {
     public static void reportErrorMessage(String message) {
         if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, MESSAGE_LEVEL_ERROR);
+        } else {
+            Log.i("Message", message);
         }
     }
 

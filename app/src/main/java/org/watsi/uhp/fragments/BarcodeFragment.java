@@ -1,6 +1,7 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -114,21 +115,18 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                     getNavigationManager().setMemberDetailFragment(member, idEvent);
                                     break;
                                 case MEMBER_EDIT:
-                                    member = (Member) getArguments()
-                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    member.setCardId(barcode.displayValue);
-                                    member.validateCardId();
+                                    member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-
-                                    getNavigationManager().setMemberEditFragment(member, idEvent);
+                                    if (handleCardIdScan(member, idEvent, barcode.displayValue)) {
+                                        getNavigationManager().setMemberEditFragment(member, idEvent);
+                                    }
                                     break;
                                 case NEWBORN:
-                                    member = (Member) getArguments()
-                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    member.setCardId(barcode.displayValue);
-                                    member.validateCardId();
+                                    member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                                    getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
+                                    if (handleCardIdScan(member, idEvent, barcode.displayValue)) {
+                                        getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
+                                    }
                                     break;
                             }
                         } catch (SQLException e) {
@@ -138,9 +136,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                             } catch (InterruptedException e1) {
                                 ExceptionManager.reportExceptionWarning(e1);
                             }
-                        } catch (AbstractModel.ValidationException e) {
-                            mErrorToast.setText(R.string.card_id_validation_error);
-                            displayFailureToast();
                         }
                     }
                 }
@@ -162,6 +157,18 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                 getNavigationManager().setSearchMemberFragment();
             }
         });
+    }
+
+    private boolean handleCardIdScan(Member member, IdentificationEvent idEvent, String barcodeDisplayValue) {
+        if (Member.validCardId(barcodeDisplayValue)) {
+            member.setCardId(barcodeDisplayValue);
+            return true;
+        } else {
+            ExceptionManager.reportErrorMessage("Detected invalid card when scanning card for member edit. Card scanned: " + member.getCardId());
+            mErrorToast.setText("Invalid card ID. ID must be 3 letters followed by 6 numbers.");
+            displayFailureToast();
+            return false;
+        }
     }
 
     private void displayFailureToast() {
