@@ -99,6 +99,7 @@
     <string name="dismiss_member_alert">Why are you dismissing the member?</string>
     <string name="identification_dismissed">has been checked out without treatment details.</string>
     <string name="identification_dismissed_failure">Failed to check out member.</string>
+    <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Enter line items</string>

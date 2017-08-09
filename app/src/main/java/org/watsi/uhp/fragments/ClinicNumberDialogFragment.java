@@ -19,6 +19,7 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
@@ -50,7 +51,7 @@ public class ClinicNumberDialogFragment extends DialogFragment {
                         try {
                             ((CheckInMemberDetailFragment) getTargetFragment()).completeIdentification(
                                     clinicNumberType, clinicNumber);
-                        } catch (SQLException e) {
+                        } catch (SQLException | AbstractModel.ValidationException e) {
                             ExceptionManager.reportException(e);
                             Toast.makeText(getActivity(),
                                     "Failed to save identification, contact support.",

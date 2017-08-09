@@ -12,6 +12,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
@@ -42,7 +43,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(R.string.enrollment_fingerprint_confirm_completion);
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -52,8 +53,8 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
                     mSyncableModel.saveChanges(getAuthenticationToken());
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
                     enrollmentPresenter.confirmationToast().show();
-                } catch (SQLException e) {
-                    ExceptionManager.reportException(e);
+                } catch (SQLException | AbstractModel.ValidationException e) {
+                    ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " + mSyncableModel.getId());
                     Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
                 }
             }

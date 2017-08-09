@@ -30,7 +30,7 @@ public abstract class MemberDetailPresenter {
     MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
-        mMember = member;
+        mMember = fetchMemberFromDB(member);
         mNavigationManager = navigationManager;
     }
 
@@ -54,6 +54,15 @@ public abstract class MemberDetailPresenter {
         }
         if (mMember.getCardId() == null) {
             setReplaceCardNotification();
+        }
+    }
+
+    static Member fetchMemberFromDB(Member member) {
+        try {
+            return (Member) member.refresh();
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            return member;
         }
     }
 
@@ -88,11 +97,9 @@ public abstract class MemberDetailPresenter {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Member member = (Member) parent.getItemAtPosition(position);
-                getNavigationManager().setMemberDetailFragment(
-                        member,
-                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                        getMember()
-                );
+                IdentificationEvent idEvent = new IdentificationEvent(member,
+                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
+                getNavigationManager().setMemberDetailFragment(member, idEvent);
             }
         });
     }
@@ -100,7 +107,7 @@ public abstract class MemberDetailPresenter {
     List<Member> getMembersForBottomListView() {
         try {
             return MemberDao.getRemainingHouseholdMembers(
-                    getMember().getHouseholdId(), getMember().getId());
+                    mMember.getHouseholdId(), mMember.getId());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return null;

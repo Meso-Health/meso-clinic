@@ -25,6 +25,7 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.SessionManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -78,7 +79,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     @Override
     public void navigateToMemberEditFragment() {
-        getNavigationManager().setMemberEditFragment(getMember(), mIdEvent, null);
+        getNavigationManager().setMemberEditFragment(getMember(), mIdEvent);
     }
 
 
@@ -165,7 +166,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         clinicNumberDialog.setTargetFragment(mCheckInMemberDetailFragment, 0);
     }
 
-    public void saveIdentificationEventAndCheckIn(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException {
+    public void saveIdentificationEventAndCheckIn(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException, AbstractModel.ValidationException {
         mIdEvent.setClinicNumber(clinicNumber);
         mIdEvent.setClinicNumberType(clinicNumberType);
         mIdEvent.setAccepted(true);
@@ -203,7 +204,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                                     getMember().getFullName() + " " + getContext().getString(R.string.identification_rejected),
                                     Toast.LENGTH_LONG).
                                     show();
-                        } catch (SQLException e) {
+                        } catch (SQLException | AbstractModel.ValidationException e) {
                             ExceptionManager.reportException(e);
                         }
                     }

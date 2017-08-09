@@ -1,36 +1,23 @@
 package org.watsi.uhp.fragments;
 
-import android.os.Bundle;
-import android.text.TextWatcher;
+import android.databinding.DataBindingUtil;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.listeners.EnrollNewbornInfoFormRadioGroupListener;
+import org.watsi.uhp.databinding.FragmentEnrollNewbornBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.watchers.EnrollNewbornInfoFormTextWatcher;
+import org.watsi.uhp.view_models.EnrollNewbornViewModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
-    private EditText mNameView;
-    private EditText mCardIdView;
-    private RadioGroup mRadioGroupView;
-    private DatePicker mDatePicker;
-    private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private IdentificationEvent mIdEvent;
+    private View mView;
 
     @Override
     int getTitleLabelId() {
@@ -48,127 +35,62 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
-        Member newborn = mSyncableModel.createNewborn();
-
-        Bundle attributeBundle = createBundle();
-
-        try {
-            newborn.setFullName(attributeBundle.getString(Member.FIELD_NAME_FULL_NAME));
-        } catch (AbstractModel.ValidationException e) {
-            mNameView.setError(getString(R.string.name_validation_error));
-            return;
-        }
-
-        String genderString = attributeBundle.getString(Member.FIELD_NAME_GENDER);
-        newborn.setGender(Member.GenderEnum.valueOf(genderString));
-
-        Date birthdate;
-        try {
-            birthdate = mDateFormat.parse(attributeBundle.getString(Member.FIELD_NAME_BIRTHDATE));
-        } catch (ParseException e) {
-            ExceptionManager.reportException(e);
-            Toast.makeText(getContext(), R.string.birthdate_validation_error, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        try {
-            newborn.setCardId(mCardIdView.getText().toString());
-        } catch (AbstractModel.ValidationException e) {
-            mCardIdView.setError(getString(R.string.card_id_validation_error));
-            return;
-        }
-
-        newborn.setBirthdate(birthdate);
-
-        getNavigationManager().setEnrollNewbornPhotoFragment(newborn, mSyncableModel);
+    public void nextStep() {
+        getNavigationManager().setEnrollNewbornPhotoFragment(mSyncableModel, mIdEvent);
     }
 
     @Override
     void setUpFragment(View view) {
-        mNameView = (EditText) view.findViewById(R.id.name);
-        mCardIdView = (EditText) view.findViewById(R.id.card_id);
-        mRadioGroupView = (RadioGroup) view.findViewById(R.id.gender_group);
-        mDatePicker = (DatePicker) view.findViewById(R.id.birthdate);
+        mView = view;
 
-        Button mSaveButton = (Button) view.findViewById(R.id.save_button);
+        FragmentEnrollNewbornBinding binding = DataBindingUtil.bind(view);
+        EnrollNewbornViewModel enrollNewbornViewModel = new EnrollNewbornViewModel(this, mSyncableModel);
+        binding.setMember(enrollNewbornViewModel);
 
-        TextWatcher watcher = new EnrollNewbornInfoFormTextWatcher(mNameView, mRadioGroupView, mCardIdView, mSaveButton);
-        mNameView.addTextChangedListener(watcher);
-        mCardIdView.addTextChangedListener(watcher);
 
-        mRadioGroupView.setOnCheckedChangeListener(new EnrollNewbornInfoFormRadioGroupListener(mNameView, mRadioGroupView, mCardIdView, mSaveButton));
-
-        Bundle sourceParams = getArguments().getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
-        if (sourceParams == null) sourceParams = new Bundle();
-
-        String name = sourceParams.getString(Member.FIELD_NAME_FULL_NAME);
-        if (name != null) {
-            mNameView.getText().append(name);
-        }
-
-        String genderString = sourceParams.getString(Member.FIELD_NAME_GENDER);
-        if (genderString != null) {
-            Member.GenderEnum gender = Member.GenderEnum.valueOf(genderString);
-            if (gender.equals(Member.GenderEnum.M)) {
-                ((RadioButton) view.findViewById(R.id.male)).toggle();
-            } else {
-                ((RadioButton) view.findViewById(R.id.female)).toggle();
-            }
-        }
-
-        Calendar today = Calendar.getInstance();
-        mDatePicker.setMaxDate(today.getTimeInMillis());
-
-        String birthdateString = sourceParams.getString(Member.FIELD_NAME_BIRTHDATE);
-        if (birthdateString != null) {
-            try {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(mDateFormat.parse(birthdateString));
-                mDatePicker.updateDate(
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                );
-            } catch (ParseException e) {
-                ExceptionManager.reportException(e);
-            }
-        } else {
-            mDatePicker.updateDate(
-                    today.get(Calendar.YEAR),
-                    today.get(Calendar.MONTH),
-                    today.get(Calendar.DAY_OF_MONTH)
-            );
-        }
-
-        view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
-                getNavigationManager(), BarcodeFragment.ScanPurposeEnum.NEWBORN,
-                mSyncableModel, createBundle()));
-
-        String mScannedCardId = getArguments().getString(
-                NavigationManager.SCANNED_CARD_ID_BUNDLE_FIELD);
-        if (mScannedCardId != null) {
-            mCardIdView.getText().append(mScannedCardId);
-        }
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        setUpDatePicker();
+        setUpScanCardListener();
     }
 
-    private Bundle createBundle() {
-        Bundle bundle = new Bundle();
-        bundle.putString(Member.FIELD_NAME_FULL_NAME, mNameView.getText().toString());
+    void setUpScanCardListener() {
+        mView.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
+                getNavigationManager(), BarcodeFragment.ScanPurposeEnum.NEWBORN,
+                mSyncableModel, mIdEvent));
+    }
 
-        RadioButton selectedRadio =
-                (RadioButton) mRadioGroupView.findViewById(mRadioGroupView.getCheckedRadioButtonId());
-        if (selectedRadio != null) {
-            bundle.putString(
-                    Member.FIELD_NAME_GENDER,
-                    selectedRadio.getText().toString().substring(0,1)
-            );
+
+    void setUpDatePicker() {
+        DatePicker datePicker = (DatePicker) mView.findViewById(R.id.birthdate);
+
+        Calendar cal = makeCalendarWithNoTime();
+        if (mSyncableModel.getBirthdate() != null) {
+            cal.setTime(mSyncableModel.getBirthdate());
+        } else {
+            mSyncableModel.setBirthdate(cal.getTime());
         }
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth());
-        bundle.putString(Member.FIELD_NAME_BIRTHDATE, mDateFormat.format(cal.getTime()));
+        datePicker.init(
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH),
+                new DatePicker.OnDateChangedListener() {
+                    @Override
+                    public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                        Calendar cal = makeCalendarWithNoTime();
+                        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                        mSyncableModel.setBirthdate(cal.getTime());
+                    }
+                }
+        );
+    }
 
-        return bundle;
+    private Calendar makeCalendarWithNoTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+        return cal;
     }
 }

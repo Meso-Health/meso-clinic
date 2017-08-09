@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -13,8 +14,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +49,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     @DatabaseField(columnName = FIELD_NAME_DIRTY_FIELDS, defaultValue = "[]", canBeNull = false)
     private String mDirtyFields = "[]";
+
+    public SyncableModel refresh() throws SQLException {
+        return getDao().queryForId(getId());
+    }
 
     public UUID getId() {
         return this.mId;
@@ -134,9 +141,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return diffSet;
     }
 
-    public void saveChanges(String token) throws SQLException {
+    public void saveChanges(String token) throws SQLException, ValidationException {
         setToken(token);
         if (this.mId == null) this.mId = UUID.randomUUID();
+        validate();
         setDirtyFields(changedFields());
         getDao().createOrUpdate((T) this);
         persistAssociations();
@@ -172,10 +180,11 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         return dao.query(preparedQuery);
     }
 
+    public abstract void validate() throws ValidationException;
     public abstract void handleUpdateFromSync(T response);
     protected abstract Call<T> postApiCall(Context context) throws SQLException;
     protected abstract Call<T> patchApiCall(Context context) throws SQLException;
-    protected abstract void persistAssociations() throws SQLException;
+    protected abstract void persistAssociations() throws SQLException, ValidationException;
 
     public static class SyncException extends Exception {
         SyncException() {

@@ -12,8 +12,9 @@ import org.watsi.uhp.models.EncounterItem;
 
 public class AddNewBillableFragment extends FormFragment<Encounter> {
 
-    private EditText nameField;
-    private EditText priceField;
+    private EditText mNameField;
+    private EditText mPriceField;
+    private View mView;
 
     @Override
     int getTitleLabelId() {
@@ -31,24 +32,24 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
     }
 
     @Override
-    void nextStep(View view) {
-        if (nameField.getText().toString().length() == 0) {
+    public void nextStep() {
+        if (mNameField.getText().toString().length() == 0) {
             Toast.makeText(getActivity(), R.string.empty_billable_name_field,
                     Toast.LENGTH_LONG).show();
-        } else if (priceField.getText().toString().length() == 0) {
+        } else if (mPriceField.getText().toString().length() == 0) {
             Toast.makeText(getActivity(), R.string.empty_billable_price_field,
                     Toast.LENGTH_LONG).show();
         } else {
             Billable billable = new Billable();
-            billable.setName(nameField.getText().toString());
-            billable.setPrice(Integer.parseInt(priceField.getText().toString()));
+            billable.setName(mNameField.getText().toString());
+            billable.setPrice(Integer.parseInt(mPriceField.getText().toString()));
             billable.setType(Billable.TypeEnum.UNSPECIFIED);
             billable.setCreatedDuringEncounter(true);
 
             EncounterItem encounterItem = new EncounterItem();
             encounterItem.setBillable(billable);
 
-            KeyboardManager.hideKeyboard(view, getContext());
+            KeyboardManager.hideKeyboard(mView, getContext());
 
             mSyncableModel.getEncounterItems().add(encounterItem);
             getNavigationManager().setEncounterFragment(mSyncableModel);
@@ -57,9 +58,10 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
 
     @Override
     void setUpFragment(View view) {
-        nameField = (EditText) view.findViewById(R.id.name_field);
-        priceField = (EditText) view.findViewById(R.id.price_field);
+        mView = view;
+        mNameField = (EditText) view.findViewById(R.id.name_field);
+        mPriceField = (EditText) view.findViewById(R.id.price_field);
 
-        KeyboardManager.focusAndForceShowKeyboard(nameField, getContext());
+        KeyboardManager.focusAndForceShowKeyboard(mNameField, getContext());
     }
 }

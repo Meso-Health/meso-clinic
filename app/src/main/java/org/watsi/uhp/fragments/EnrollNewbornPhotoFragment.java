@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -49,14 +48,14 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void nextStep(View view) {
+    public void nextStep() {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
-            Member throughMember = (Member) getArguments().getSerializable(NavigationManager.THROUGH_MEMBER_BUNDLE_FIELD);
-            getNavigationManager().setMemberDetailFragment(mSyncableModel, IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, throughMember);
+            IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+            getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
+        } catch (SQLException | AbstractModel.ValidationException e) {
+            ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " +  mSyncableModel.getId());
             Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
         }
     }
