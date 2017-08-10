@@ -133,6 +133,13 @@ public class IdentificationEvent extends SyncableModel {
         super();
     }
 
+    public IdentificationEvent(Member member, SearchMethodEnum searchMethod, Member throughMember) {
+        super();
+        setMember(member);
+        setSearchMethod(searchMethod);
+        setThroughMember(throughMember);
+    }
+
     public Date getOccurredAt() {
         return mOccurredAt;
     }
@@ -289,6 +296,11 @@ public class IdentificationEvent extends SyncableModel {
         }
 
         return requestBodyMap;
+    }
+
+    @Override
+    public void validate() throws ValidationException {
+        // no-op
     }
 
     @Override

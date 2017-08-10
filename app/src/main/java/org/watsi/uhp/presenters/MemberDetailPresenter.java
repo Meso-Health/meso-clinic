@@ -29,7 +29,7 @@ public abstract class MemberDetailPresenter {
     public MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
-        mMember = member;
+        mMember = fetchMemberFromDB(member);
         mNavigationManager = navigationManager;
     }
 
@@ -51,6 +51,15 @@ public abstract class MemberDetailPresenter {
     protected abstract void setMemberIndicator();
 
     protected abstract void setMemberActionLink();
+
+    protected static Member fetchMemberFromDB(Member member) {
+        try {
+            return (Member) member.refresh();
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            return member;
+        }
+    }
 
     protected void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();
@@ -91,11 +100,9 @@ public abstract class MemberDetailPresenter {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Member member = (Member) parent.getItemAtPosition(position);
-                getNavigationManager().setMemberDetailFragment(
-                        member,
-                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD,
-                        getMember()
-                );
+                IdentificationEvent idEvent = new IdentificationEvent(member,
+                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
+                getNavigationManager().setMemberDetailFragment(member, idEvent);
             }
         });
     }
@@ -103,7 +110,7 @@ public abstract class MemberDetailPresenter {
     protected List<Member> getMembersForBottomListView() {
         try {
             return MemberDao.getRemainingHouseholdMembers(
-                    getMember().getHouseholdId(), getMember().getId());
+                    mMember.getHouseholdId(), mMember.getId());
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return null;

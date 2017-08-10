@@ -20,6 +20,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -61,7 +62,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
-            Log.d("UHP", "surface created");
             BarcodeDetector barcodeDetector = new BarcodeDetector
                     .Builder(getContext())
                     .setBarcodeFormats(Barcode.QR_CODE)
@@ -111,34 +111,22 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                             switch (mScanPurpose) {
                                 case ID:
                                     member = MemberDao.findByCardId(barcode.displayValue);
-                                    getNavigationManager().setMemberDetailFragment(
-                                            member,
-                                            IdentificationEvent.SearchMethodEnum.SCAN_BARCODE,
-                                            null
-                                    );
+                                    idEvent = new IdentificationEvent(member, IdentificationEvent.SearchMethodEnum.SCAN_BARCODE, null);
+                                    getNavigationManager().setMemberDetailFragment(member, idEvent);
                                     break;
                                 case MEMBER_EDIT:
-                                    member = (Member) getArguments()
-                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-
-
-                                    getNavigationManager().setMemberEditFragment(
-                                            member,
-                                            idEvent,
-                                            barcode.displayValue
-                                    );
+                                    if (handleCardIdScan(member, idEvent, barcode.displayValue)) {
+                                        getNavigationManager().setMemberEditFragment(member, idEvent);
+                                    }
                                     break;
                                 case NEWBORN:
-                                    member = (Member) getArguments()
-                                            .getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    Bundle sourceParams = getArguments()
-                                            .getBundle(NavigationManager.SOURCE_PARAMS_BUNDLE_FIELD);
-                                    getNavigationManager().setEnrollNewbornInfoFragment(
-                                            member,
-                                            barcode.displayValue,
-                                            sourceParams
-                                    );
+                                    member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                                    if (handleCardIdScan(member, idEvent, barcode.displayValue)) {
+                                        getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
+                                    }
                                     break;
                             }
                         } catch (SQLException e) {
@@ -154,7 +142,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
             }
          });
 
-        Log.d("UHP", "camera source started");
         mCameraSource = new CameraSource
                 .Builder(getContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
@@ -170,6 +157,18 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                 getNavigationManager().setSearchMemberFragment();
             }
         });
+    }
+
+    private boolean handleCardIdScan(Member member, IdentificationEvent idEvent, String barcodeDisplayValue) {
+        if (Member.validCardId(barcodeDisplayValue)) {
+            member.setCardId(barcodeDisplayValue);
+            return true;
+        } else {
+            ExceptionManager.reportErrorMessage("Detected invalid card when scanning card for member edit. Card scanned: " + member.getCardId());
+            mErrorToast.setText("Invalid card ID. ID must be 3 letters followed by 6 numbers.");
+            displayFailureToast();
+            return false;
+        }
     }
 
     private void displayFailureToast() {

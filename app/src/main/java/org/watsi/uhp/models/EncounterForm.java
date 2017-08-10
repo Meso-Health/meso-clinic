@@ -73,6 +73,11 @@ public class EncounterForm extends SyncableModel {
     }
 
     @Override
+    public void validate() throws ValidationException {
+        // no-op
+    }
+
+    @Override
     public void handleUpdateFromSync(SyncableModel responseModel) {
         try {
             FileManager.deleteLocalPhoto(getUrl());

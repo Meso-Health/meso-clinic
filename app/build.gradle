@@ -8,6 +8,10 @@ android {
     // building string config fields requires a double-quoted string
     def ENV = { k -> "\"${System.getenv(k)}\"" }
 
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "org.watsi.uhp"
         minSdkVersion 21

@@ -10,6 +10,7 @@ import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 public class MenuNavigationManager {
@@ -35,7 +36,10 @@ public class MenuNavigationManager {
                 navigateToMemberEditFragment(currentFragment, member);
                 break;
             case R.id.menu_enroll_newborn:
-                mNavigationManager.setEnrollNewbornInfoFragment(member, null, null);
+                Member newborn = member.createNewborn();
+                IdentificationEvent idEvent = new IdentificationEvent(newborn,
+                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
+                mNavigationManager.setEnrollNewbornInfoFragment(newborn, idEvent);
                 break;
             case R.id.menu_version:
                 mNavigationManager.setVersionFragment();
@@ -79,16 +83,9 @@ public class MenuNavigationManager {
     protected void navigateToMemberEditFragment(Fragment fragment, Member member) {
         if (fragment instanceof CheckInMemberDetailFragment) {
             CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
-            getNavigationManager().setMemberEditFragment(
-                    member,
-                    checkInMemberDetailFragment.getIdEvent(),
-                    null
-            );
+            getNavigationManager().setMemberEditFragment(member, checkInMemberDetailFragment.getIdEvent());
         } else if (fragment instanceof CurrentMemberDetailFragment) {
-            getNavigationManager().setMemberEditFragment(
-                    member,
-                    null,
-                    null);
+            getNavigationManager().setMemberEditFragment(member, null);
         } else {
             ExceptionManager.reportErrorMessage("MemberEdit menu button reached from fragment not in [CheckInMemberDetailFragment, CurrentMemberDetailFragment]");
         }
