@@ -81,6 +81,11 @@ public class MemberDetailPresenterTest {
         when(MemberDetailPresenter.fetchMemberFromDB(mockMember)).thenReturn(mockMember);
         memberDetailPresenter = new MemberDetailPresenter(mockView, mockContext, mockMember, mockNavigationManager) {
             @Override
+            protected void additionalSetup() {
+                // no-op
+            }
+
+            @Override
             protected void setMemberActionButton() {
                 // no-op
             }

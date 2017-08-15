@@ -55,8 +55,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
-    public void setUp() {
-        super.setUp();
+    public void additionalSetup() {
         setScanFingerprintButton();
     }
 

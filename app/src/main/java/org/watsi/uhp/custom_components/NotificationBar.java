@@ -22,14 +22,12 @@ public class NotificationBar extends LinearLayout {
     private TextView notificationMessage;
     private Button notificationBtn;
 
-    public NotificationBar(Context context, AttributeSet attrs)
-    {
+    public NotificationBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         initControl(context, attrs);
     }
 
-    private void initControl(Context context, AttributeSet attrs)
-    {
+    private void initControl(Context context, AttributeSet attrs) {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.notification_bar, this);

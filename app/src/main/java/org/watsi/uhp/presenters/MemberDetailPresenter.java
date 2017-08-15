@@ -40,7 +40,10 @@ public abstract class MemberDetailPresenter {
         setPatientCardPhoto();
         setMemberActionButton();
         setBottomListView();
+        additionalSetup();
     }
+
+    protected abstract void additionalSetup();
 
     protected abstract void setMemberActionButton();
 
@@ -171,8 +174,7 @@ public abstract class MemberDetailPresenter {
                 (NotificationBar) mView.findViewById(R.id.replace_card_notification);
         memberNotification.setVisibility(View.VISIBLE);
         memberNotification.setOnActionClickListener(
-                new View.OnClickListener()
-                {
+                new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
                     {

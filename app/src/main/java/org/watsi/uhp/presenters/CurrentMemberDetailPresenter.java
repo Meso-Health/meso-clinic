@@ -28,6 +28,11 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
+    public void additionalSetup() {
+        // no-op
+    }
+
+    @Override
     protected void setMemberActionButton() {
         Button confirmButton = getMemberActionButton();
 
