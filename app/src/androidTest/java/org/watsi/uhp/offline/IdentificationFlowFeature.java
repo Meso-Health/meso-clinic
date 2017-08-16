@@ -28,9 +28,7 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
@@ -110,19 +108,6 @@ public class IdentificationFlowFeature extends BaseTest {
 //        assertDisplaysToast(clinicActivityRule, member.getFullName() + " " + getInstrumentation()
 //                        .getTargetContext().getString(R.string.identification_approved));
         assertItemInList(withMemberId(member.getId()), R.id.current_patients);
-    }
-
-    public void reportPatient() {
-        // when the user decides to report the patient, a confirmation screen appears
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(withText(R.string.menu_report_member)).perform(click());
-        onView(withText(R.string.reject_identity_alert)).check(matches(isDisplayed()));
-
-        // after reporting a patient, the user can see a confirmation toast and that the patient
-        // is not in the current patients list
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-        onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
-        onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
     }
 
     public void scanFingerprintWithResult(int resultCode, boolean scanSuccess) {
@@ -206,7 +191,6 @@ public class IdentificationFlowFeature extends BaseTest {
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
         scanFingerprintWithResult(Activity.RESULT_OK, false);
-        reportPatient();
     }
 
     //TODO: test absentee flow

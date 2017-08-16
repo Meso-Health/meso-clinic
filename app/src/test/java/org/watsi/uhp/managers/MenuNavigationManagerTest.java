@@ -132,19 +132,6 @@ public class MenuNavigationManagerTest {
     }
 
     @Test
-    public void nextStep_reportMember() throws Exception {
-        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_report_member);
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
-
-        doNothing().when(menuNavigationManagerSpy).reportMember(mockGenericFragment);
-        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
-
-        verify(menuNavigationManagerSpy, times(1)).reportMember(mockGenericFragment);
-        assertTrue(result);
-    }
-
-    @Test
     public void getMemberFromFragmentIfExists_notMemberDetailFragment() throws Exception {
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
 
@@ -168,26 +155,6 @@ public class MenuNavigationManagerTest {
         when(mockCheckInMemberDetailFragment.getMember()).thenReturn(mockMember);
         Member member = menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockCheckInMemberDetailFragment);
         assertEquals(member, mockMember);
-    }
-
-    @Test
-    public void reportMember_checkInMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doNothing().when(mockCheckInMemberDetailFragment).reportMember();
-        menuNavigationManagerSpy.reportMember(mockCheckInMemberDetailFragment);
-
-        verify(mockCheckInMemberDetailFragment, times(1)).reportMember();
-    }
-
-    @Test
-    public void reportMember_notCheckInMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        menuNavigationManagerSpy.reportMember(mockGenericFragment);
-
-        verifyStatic();
-        ExceptionManager.reportErrorMessage(any(String.class));
     }
 
     @Test

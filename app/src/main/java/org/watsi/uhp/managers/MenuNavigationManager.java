@@ -7,7 +7,6 @@ import android.view.MenuItem;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -28,9 +27,6 @@ public class MenuNavigationManager {
     public boolean nextStep(Fragment currentFragment, MenuItem menuItem) {
         Member member = getMemberFromFragmentIfExists(currentFragment);
         switch (menuItem.getItemId()) {
-            case R.id.menu_report_member:
-                reportMember(currentFragment);
-                break;
             case R.id.menu_dismiss_member:
                 dismissMember(currentFragment);
                 break;
@@ -59,15 +55,6 @@ public class MenuNavigationManager {
             member = ((MemberDetailFragment) fragment).getMember();
         }
         return member;
-    }
-
-    void reportMember(Fragment fragment) {
-        if (fragment instanceof CheckInMemberDetailFragment) {
-            ((CheckInMemberDetailFragment) fragment).reportMember();
-        } else {
-            ExceptionManager.reportErrorMessage("Report member menu button reached from " +
-                    fragment.getClass().toString());
-        }
     }
 
     void dismissMember(Fragment fragment) {

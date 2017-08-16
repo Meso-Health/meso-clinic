@@ -1,8 +1,6 @@
 package org.watsi.uhp.presenters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
@@ -80,7 +78,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     public void navigateToMemberEditFragment() {
         getNavigationManager().setMemberEditFragment(getMember(), mIdEvent);
     }
-
 
     private void setScanFingerprintButton() {
         if (getMember().getFingerprintsGuid() != null) {
@@ -184,29 +181,5 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
 
     private void navigateToCurrentPatientsFragment() {
         getNavigationManager().setCurrentPatientsFragment();
-    }
-
-    public void reportMember() {
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.reject_identity_alert)
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        try {
-                            mIdEvent.setAccepted(false);
-                            if (mIdEvent.getOccurredAt() == null) {
-                                mIdEvent.setOccurredAt(Clock.getCurrentTime());
-                            }
-                            mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
-                            getNavigationManager().setCurrentPatientsFragment();
-                            Toast.makeText(getContext(),
-                                    getMember().getFullName() + " " + getContext().getString(R.string.identification_rejected),
-                                    Toast.LENGTH_LONG).
-                                    show();
-                        } catch (SQLException | AbstractModel.ValidationException e) {
-                            ExceptionManager.reportException(e);
-                        }
-                    }
-                }).create().show();
     }
 }
