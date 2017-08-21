@@ -43,7 +43,6 @@ public class EncounterFlowFeature extends BaseTest {
     private Billable billableDrug;
     private Billable billableLab;
     private Billable billableSupply;
-    private IdentificationEvent idEvent;
 
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
@@ -56,7 +55,7 @@ public class EncounterFlowFeature extends BaseTest {
         billableLab = BillableDao.getBillablesByCategory(Billable.TypeEnum.LAB).get(0);
         billableSupply = BillableDao.getBillablesByCategory(Billable.TypeEnum.SUPPLY).get(0);
 
-        idEvent = new IdentificationEventFactory(
+        IdentificationEvent idEvent = new IdentificationEventFactory(
                 member,
                 30
         );

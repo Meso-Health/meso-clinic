@@ -33,10 +33,9 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
-    static final int DEFAULT_BORDER_WIDTH = 2;
-    static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
+    private static final int DEFAULT_BORDER_WIDTH = 2;
+    private static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
 
-    private final SessionManager mSessionManager;
     private IdentificationEvent mIdEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailFragment;
     private SimprintsHelper mSimprintsHelper;
@@ -47,9 +46,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
         super(view, context, member, navigationManager);
         mCheckInMemberDetailFragment = checkInMemberDetailFragment;
-        mSessionManager = sessionManager;
         mIdEvent = idEvent;
-        mSimprintsHelper = new SimprintsHelper(mSessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
+        mSimprintsHelper = new SimprintsHelper(sessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
 
         mMemberSecondaryButton = getMemberSecondaryButton();
         mMemberIndicator = getMemberIndicator();
@@ -74,7 +72,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
+                            getNavigationManager().startCompleteEnrollmentFlow(getMember(), mIdEvent);
                         }
                     }
             );
@@ -135,15 +133,15 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         refreshFragment();
     }
 
-    protected void refreshFragment() {
+    void refreshFragment() {
         getNavigationManager().setMemberDetailFragment(getMember(), getIdEvent());
     }
 
-    protected SimprintsHelper getSimprintsHelper() {
+    SimprintsHelper getSimprintsHelper() {
         return mSimprintsHelper;
     }
 
-    protected void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
+    void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
         mMemberSecondaryButton.setVisibility(View.VISIBLE);
         mMemberSecondaryButton.setText(text);
         if (showFingerprintsIcon) {
@@ -152,13 +150,13 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mMemberSecondaryButton.setOnClickListener(onClickListener);
     }
 
-    protected void addFingerprintsIconToSecondaryButton() {
+    private void addFingerprintsIconToSecondaryButton() {
         Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
         fingerprintIcon.setTint(ContextCompat.getColor(getContext(), R.color.title));
         mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
     }
 
-    protected void setMemberIndicatorProperties(int color, int textId) {
+    void setMemberIndicatorProperties(int color, int textId) {
         mMemberIndicator.setVisibility(View.VISIBLE);
         mMemberIndicator.setText(textId);
         mMemberIndicator.setTextColor(color);
@@ -169,7 +167,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         fingerprintIcon.setTint(color);
     }
 
-    protected void saveIdentificationEventWithVerificationData(Verification verification) {
+    void saveIdentificationEventWithVerificationData(Verification verification) {
         String fingerprintTier = verification.getTier().toString();
         float fingerprintConfidence = verification.getConfidence();
 
@@ -181,11 +179,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         return mIdEvent;
     }
 
-    protected void showScanFailedToast() {
+    void showScanFailedToast() {
         Toast.makeText(getContext(), R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show();
     }
 
-    protected void showScanSuccessfulToast() {
+    void showScanSuccessfulToast() {
         Toast.makeText(getContext(), R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show();
     }
 
@@ -206,11 +204,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         navigateToCurrentPatientsFragment();
     }
 
-    protected void navigateToCurrentPatientsFragment() {
+    private void navigateToCurrentPatientsFragment() {
         getNavigationManager().setCurrentPatientsFragment();
     }
 
-    protected void displayIdentificationSuccessfulToast() {
+    private void displayIdentificationSuccessfulToast() {
         Toast.makeText(getContext(),
                 mIdEvent.getMember().getFullName() + " " + getContext().getString(R.string.identification_approved),
                 Toast.LENGTH_LONG).

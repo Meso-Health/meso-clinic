@@ -14,23 +14,22 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 public class MenuNavigationManager {
+
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
     private ClinicActivity mClinicActivity;
-
 
     public MenuNavigationManager(ClinicActivity clinicActivity) {
         mSessionManager = clinicActivity.getSessionManager();
         mNavigationManager = clinicActivity.getNavigationManager();
         mClinicActivity = clinicActivity;
-
     }
 
     public boolean nextStep(Fragment currentFragment, MenuItem menuItem) {
         Member member = getMemberFromFragmentIfExists(currentFragment);
         switch (menuItem.getItemId()) {
             case R.id.menu_logout:
-                confirmBeforelogout(currentFragment);
+                confirmBeforeLogout(currentFragment);
                 break;
             case R.id.menu_member_edit:
                 navigateToMemberEditFragment(currentFragment, member);
@@ -54,7 +53,7 @@ public class MenuNavigationManager {
         return true;
     }
 
-    protected Member getMemberFromFragmentIfExists(Fragment fragment) {
+    Member getMemberFromFragmentIfExists(Fragment fragment) {
         Member member = null;
         if (fragment instanceof MemberDetailFragment) {
             member = ((MemberDetailFragment) fragment).getMember();
@@ -62,7 +61,7 @@ public class MenuNavigationManager {
         return member;
     }
 
-    protected void reportMember(Fragment fragment) {
+    void reportMember(Fragment fragment) {
         if (fragment instanceof CheckInMemberDetailFragment) {
             ((CheckInMemberDetailFragment) fragment).reportMember();
         } else {
@@ -70,17 +69,20 @@ public class MenuNavigationManager {
         }
     }
 
-    protected void navigateToCompleteEnrollmentFragment(Fragment fragment, Member member) {
+    void navigateToCompleteEnrollmentFragment(Fragment fragment, Member member) {
         if (fragment instanceof CheckInMemberDetailFragment) {
-            getNavigationManager().setEnrollmentMemberPhotoFragment(member, ((CheckInMemberDetailFragment) fragment).getIdEvent());
+            // we need to include this IdEvent to remember which SearchMethod should be used
+            // if the member is checked-in from the detail fragment immediately after
+            // enrollment completion
+            getNavigationManager().startCompleteEnrollmentFlow(member, ((CheckInMemberDetailFragment) fragment).getIdEvent());
         } else if (fragment instanceof CurrentMemberDetailFragment) {
-            getNavigationManager().setEnrollmentMemberPhotoFragment(member, null);
+            getNavigationManager().startCompleteEnrollmentFlow(member, null);
         } else {
             ExceptionManager.reportErrorMessage("Complete enrollment menu button reached from fragment that's not a MemberDetailFragment");
         }
     }
 
-    protected void navigateToMemberEditFragment(Fragment fragment, Member member) {
+    void navigateToMemberEditFragment(Fragment fragment, Member member) {
         if (fragment instanceof CheckInMemberDetailFragment) {
             CheckInMemberDetailFragment checkInMemberDetailFragment = (CheckInMemberDetailFragment) fragment;
             getNavigationManager().setMemberEditFragment(member, checkInMemberDetailFragment.getIdEvent());
@@ -91,7 +93,7 @@ public class MenuNavigationManager {
         }
     }
 
-    protected void confirmBeforelogout(Fragment fragment) {
+    void confirmBeforeLogout(Fragment fragment) {
         new AlertDialog.Builder(fragment.getActivity())
                 .setTitle(R.string.log_out_alert)
                 .setNegativeButton(android.R.string.no, null)

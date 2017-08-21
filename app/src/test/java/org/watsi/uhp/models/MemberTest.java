@@ -23,7 +23,6 @@ import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -64,9 +63,9 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ApiService.class, Bitmap.class, BitmapFactory.class, ByteStreams.class,
-        EncounterDao.class, File.class, FileManager.class, ExceptionManager.class,
-        MediaStore.Images.Media.class, Member.class, MemberDao.class, okhttp3.Response.class,
-        Request.class, Response.class, ResponseBody.class, Uri.class, URLUtil.class})
+        EncounterDao.class, File.class, ExceptionManager.class, MediaStore.Images.Media.class,
+        Member.class, MemberDao.class, okhttp3.Response.class, Request.class, Response.class,
+        ResponseBody.class, Uri.class, URLUtil.class})
 public class MemberTest {
     private final String localPhotoUrl = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
     private final String remotePhotoUrl = "https://d2bxcwowl6jlve.cloudfront.net/media/foo-3bf77f20d8119074";
@@ -76,6 +75,8 @@ public class MemberTest {
 
     @Mock
     Response<Member> mockSyncResponse;
+    @Mock
+    Photo mockMemberPhoto;
     @Mock
     UhpApi mockApi;
     @Mock
@@ -111,7 +112,6 @@ public class MemberTest {
         mockStatic(BitmapFactory.class);
         mockStatic(ByteStreams.class);
         mockStatic(ExceptionManager.class);
-        mockStatic(FileManager.class);
         mockStatic(MediaStore.Images.Media.class);
         mockStatic(MemberDao.class);
         mockStatic(Uri.class);
@@ -120,28 +120,6 @@ public class MemberTest {
         when(URLUtil.isValidUrl(localPhotoUrl)).thenReturn(true);
         when(URLUtil.isValidUrl(localNationalIdPhotoUrl)).thenReturn(true);
         member = new Member();
-    }
-
-    @Test
-    public void setPhotoUrl_isNull_setsPhotoUrlToNull() throws Exception {
-        member.setPhotoUrl(null);
-
-        assertEquals(member.getPhotoUrl(), null);
-    }
-    
-    @Test
-    public void setPhotoUrl_isValid_setsPhotoUrl() throws Exception {
-        member.setPhotoUrl(remotePhotoUrl);
-
-        assertEquals(member.getPhotoUrl(), remotePhotoUrl);
-    }
-
-    @Test(expected = AbstractModel.ValidationException.class)
-    public void setPhotoUrl_isInvalid_throwsException() throws Exception {
-        String invalidUrl = "foo.jpg";
-        when(URLUtil.isValidUrl(invalidUrl)).thenReturn(false);
-
-        member.setPhotoUrl(invalidUrl);
     }
 
     @Test
@@ -171,7 +149,7 @@ public class MemberTest {
     @Test
     public void isAbsentee_isUnder6_hasPhoto_hasNoFingerprints_returnsFalse() throws Exception {
         member.setAge(5);
-        member.setPhotoUrl(remotePhotoUrl);
+        member.setLocalMemberPhoto(mockMemberPhoto);
         member.setFingerprintsGuid(null);
 
         assertEquals(member.isAbsentee(), false);
@@ -180,7 +158,7 @@ public class MemberTest {
     @Test
     public void isAbsentee_isUnder6_hasNoPhoto_hasNoFingerprints_returnsTrue() throws Exception {
         member.setAge(5);
-        member.setPhotoUrl(null);
+        member.setLocalMemberPhoto(null);
         member.setFingerprintsGuid(null);
 
         assertEquals(member.isAbsentee(), true);
@@ -189,7 +167,7 @@ public class MemberTest {
     @Test
     public void isAbsentee_isOver6_hasPhoto_hasFingerprints_returnsFalse() throws Exception {
         member.setAge(7);
-        member.setPhotoUrl(remotePhotoUrl);
+        member.setLocalMemberPhoto(mockMemberPhoto);
         member.setFingerprintsGuid(UUID.randomUUID());
 
         assertEquals(member.isAbsentee(), false);
@@ -198,7 +176,7 @@ public class MemberTest {
     @Test
     public void isAbsentee_isOver6_hasNoPhoto_hasFingerprints_returnsTrue() throws Exception {
         member.setAge(7);
-        member.setPhotoUrl(null);
+        member.setLocalMemberPhoto(null);
         member.setFingerprintsGuid(UUID.randomUUID());
 
         assertEquals(member.isAbsentee(), true);
@@ -207,7 +185,7 @@ public class MemberTest {
     @Test
     public void isAbsentee_isOver6_hasPhoto_hasNoFingerprints_returnsTrue() throws Exception {
         member.setAge(7);
-        member.setPhotoUrl(remotePhotoUrl);
+        member.setLocalMemberPhoto(mockMemberPhoto);
         member.setFingerprintsGuid(null);
 
         assertEquals(member.isAbsentee(), true);
@@ -216,69 +194,57 @@ public class MemberTest {
     @Test
     public void isAbsentee_isOver6_hasNoPhoto_hasNoFingerprints_returnsTrue() throws Exception {
         member.setAge(7);
-        member.setPhotoUrl(null);
+        member.setLocalMemberPhoto(null);
         member.setFingerprintsGuid(null);
 
         assertEquals(member.isAbsentee(), true);
     }
 
+    private void mockPhotoFetch() throws Exception {
+        doNothing().when(mockMemberPhoto).markAsSynced();
+        whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
+        when(mockRequestBuilder.url(remotePhotoUrl)).thenReturn(mockRequestBuilder);
+        when(mockRequestBuilder.build()).thenReturn(mockRequest);
+        whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
+        when(mockHttpClient.newCall(mockRequest)).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+    }
 
     @Test
     public void handleUpdateFromSync_responseHasPhotoUrl_setsAndFetchesPhoto() throws Exception {
         String previousPhotoUrl = "prevUrl";
         when(URLUtil.isValidUrl(previousPhotoUrl)).thenReturn(true);
-        member.setPhotoUrl(previousPhotoUrl);
+        member.setRemoteMemberPhotoUrl(previousPhotoUrl);
         Member memberSpy = spy(member);
+        memberSpy.setLocalMemberPhoto(mockMemberPhoto);
         Member responseMember = new Member();
-        responseMember.setPhotoUrl(remotePhotoUrl);
+        responseMember.setRemoteMemberPhotoUrl(remotePhotoUrl);
 
         mockPhotoFetch();
         doNothing().when(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
-        when(FileManager.isLocal(previousPhotoUrl)).thenReturn(false);
 
         memberSpy.handleUpdateFromSync(responseMember);
 
         verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl(mockHttpClient);
-        assertEquals(memberSpy.getPhotoUrl(), remotePhotoUrl);
+        assertEquals(memberSpy.getRemoteMemberPhotoUrl(), remotePhotoUrl);
     }
 
     @Test
-    public void handleUpdateFromSync_responseHasPhotoUrlAndExistingPhotoIsLocal_deletesLocalPhoto() throws Exception {
+    public void handleUpdateFromSync_responseHasNationalIdPhotoUrl_setsExisting() throws Exception {
         String previousPhotoUrl = "prevUrl";
-        when(URLUtil.isValidUrl(previousPhotoUrl)).thenReturn(true);
-        member.setPhotoUrl(previousPhotoUrl);
+        member.setRemoteNationalIdPhotoUrl(previousPhotoUrl);
         Member memberSpy = spy(member);
+        Photo mockNationalIdPhoto = mock(Photo.class);
+        memberSpy.setLocalNationalIdPhoto(mockNationalIdPhoto);
         Member responseMember = new Member();
-        responseMember.setPhotoUrl(remotePhotoUrl);
+        responseMember.setRemoteNationalIdPhotoUrl(remotePhotoUrl);
 
-        mockPhotoFetch();
-        doNothing().when(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(mockMemberSyncResponse.body()).thenReturn(responseMember);
-        when(FileManager.isLocal(previousPhotoUrl)).thenReturn(true);
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verifyStatic();
-        FileManager.deleteLocalPhoto(previousPhotoUrl);
-    }
-
-    @Test
-    public void handleUpdateFromSync_responseHasNationalIdPhotoUrl_setsAndDeletesExisting() throws Exception {
-        String previousPhotoUrl = "prevUrl";
-        member.setNationalIdPhotoUrl(previousPhotoUrl);
-        Member memberSpy = spy(member);
-        Member responseMember = new Member();
-        responseMember.setNationalIdPhotoUrl(remotePhotoUrl);
-
-        when(mockMemberSyncResponse.body()).thenReturn(responseMember);
-        when(FileManager.isLocal(previousPhotoUrl)).thenReturn(true);
-
-        memberSpy.handleUpdateFromSync(responseMember);
-
-        assertEquals(memberSpy.getNationalIdPhotoUrl(), remotePhotoUrl);
-        verifyStatic();
-        FileManager.deleteLocalPhoto(previousPhotoUrl);
+        verify(mockNationalIdPhoto, times(1)).markAsSynced();
     }
 
     @Test
@@ -293,7 +259,6 @@ public class MemberTest {
         memberSpy.updateFromFetch();
 
         verify(mockDao, times(1)).createOrUpdate(memberSpy);
-        verify(memberSpy, never()).setPhoto(any(byte[].class));
     }
 
     @Test
@@ -309,18 +274,18 @@ public class MemberTest {
         memberSpy.updateFromFetch();
 
         verify(mockDao, never()).createOrUpdate(memberSpy);
-        verify(memberSpy, never()).setPhoto(any(byte[].class));
     }
 
     @Test
     public void updateFromFetch_persistedMemberSyncedSamePhoto_setsPhotoAndUpdates() throws Exception {
         member.setId(UUID.randomUUID());
-        member.setPhotoUrl(remotePhotoUrl);
+        member.setRemoteMemberPhotoUrl(remotePhotoUrl);
         Member memberSpy = spy(member);
         byte[] photoBytes = new byte[]{(byte)0xe0};
         Member persistedMember = new Member();
-        persistedMember.setPhoto(photoBytes);
-        persistedMember.setPhotoUrl(remotePhotoUrl);
+        persistedMember.setLocalMemberPhoto(mockMemberPhoto);
+        persistedMember.setRemoteMemberPhotoUrl(remotePhotoUrl);
+        persistedMember.setCroppedPhoto(photoBytes);
         Member persistedMemberSpy = spy(persistedMember);
 
         when(persistedMemberSpy.isSynced()).thenReturn(true);
@@ -330,7 +295,7 @@ public class MemberTest {
         memberSpy.updateFromFetch();
 
         verify(mockDao, times(1)).createOrUpdate(memberSpy);
-        verify(memberSpy, times(1)).setPhoto(photoBytes);
+        verify(memberSpy, times(1)).setCroppedPhoto(photoBytes);
     }
 
     @Test
@@ -363,10 +328,9 @@ public class MemberTest {
 
     @Test
     public void fetchAndSetPhotoFromUrl_localUrl_doesNotAttemptToFetch() throws Exception {
-        member.setPhotoUrl(localPhotoUrl);
+        member.setRemoteMemberPhotoUrl(null);
 
         whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
-        when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
         when(mockRequestBuilder.url(localPhotoUrl)).thenReturn(mockRequestBuilder);
         mockPhotoFetch();
 
@@ -375,19 +339,9 @@ public class MemberTest {
         verify(mockRequestBuilder, never()).build();
     }
 
-    private void mockPhotoFetch() throws Exception {
-        whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
-        when(FileManager.isLocal(remotePhotoUrl)).thenReturn(false);
-        when(mockRequestBuilder.url(remotePhotoUrl)).thenReturn(mockRequestBuilder);
-        when(mockRequestBuilder.build()).thenReturn(mockRequest);
-        whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
-        when(mockHttpClient.newCall(mockRequest)).thenReturn(mockCall);
-        when(mockCall.execute()).thenReturn(mockResponse);
-    }
-
     @Test
     public void fetchAndSetPhotoFromUrl_remoteUrlFetchSucceeds_setsPhoto() throws Exception {
-        member.setPhotoUrl(remotePhotoUrl);
+        member.setRemoteMemberPhotoUrl(remotePhotoUrl);
         byte[] photoBytes = new byte[]{(byte)0xe0};
         // mock with PowerMockito because we want to mock byteStream which is a final method
         ResponseBody mockResponseBody = PowerMockito.mock(ResponseBody.class);
@@ -401,22 +355,22 @@ public class MemberTest {
 
         member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
-        assertEquals(member.getPhoto(), photoBytes);
+        assertEquals(member.getCroppedPhoto(), photoBytes);
         verify(mockResponse, times(1)).close();
     }
 
     @Test
     public void fetchAndSetPhotoFromUrl_remoteUrlFetchFails_reportsFailure() throws Exception {
         member.setId(UUID.randomUUID());
-        member.setPhotoUrl(remotePhotoUrl);
-        member.setPhoto(null);
+        member.setRemoteMemberPhotoUrl(remotePhotoUrl);
+        member.setCroppedPhoto(null);
 
         mockPhotoFetch();
         when(mockResponse.isSuccessful()).thenReturn(false);
 
         member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
-        assertNull(member.getPhoto());
+        assertNull(member.getCroppedPhoto());
         verifyStatic();
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class),
@@ -597,86 +551,81 @@ public class MemberTest {
     @Test
     public void formatPostRequest_validMemberNullPhotoUrl_doesNotIncludePhoto() throws Exception {
         Member newborn = spy(mockNewborn());
-        newborn.setPhotoUrl(null);
+        newborn.setLocalMemberPhoto(null);
 
         Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
 
-        assertFalse(requestBodyMap.containsKey(Member.FIELD_NAME_PHOTO));
+        assertFalse(requestBodyMap.containsKey(Member.API_NAME_MEMBER_PHOTO));
     }
 
 
     @Test
     public void formatPostRequest_validMemberHasPhotoUrl_includesPhoto() throws Exception {
         Member newborn = spy(mockNewborn());
-        newborn.setPhotoUrl(localPhotoUrl);
-        byte[] mockPhoto = new byte[]{(byte)0xe0};
+        newborn.setLocalMemberPhoto(mockMemberPhoto);
+        byte[] mockPhotoBytes = new byte[]{(byte)0xe0};
 
-        when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
+        when(mockMemberPhoto.bytes(mockContext)).thenReturn(mockPhotoBytes);
         when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
 
         Map<String, RequestBody> requestBodyMap = newborn.formatPostRequest(mockContext);
 
         Buffer buffer = new Buffer();
-        requestBodyMap.get(Member.FIELD_NAME_PHOTO).writeTo(buffer);
-        assertTrue(Arrays.equals(buffer.readByteArray(), mockPhoto));
+        requestBodyMap.get(Member.API_NAME_MEMBER_PHOTO).writeTo(buffer);
+        assertTrue(Arrays.equals(buffer.readByteArray(), mockMemberPhoto.bytes(mockContext)));
     }
 
     @Test
     public void formatPatchRequest_dirtyPhoto_includesPhoto() throws Exception {
         Member editedMember = spy(member);
-        editedMember.setPhotoUrl(localPhotoUrl);
-        byte[] mockPhoto = new byte[]{(byte)0xe0};
+        editedMember.setLocalMemberPhoto(mockMemberPhoto);
+        byte[] mockPhotoBytes = new byte[]{(byte)0xe0};
 
-        when(editedMember.dirty(Member.FIELD_NAME_PHOTO_URL)).thenReturn(true);
-        when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)).thenReturn(true);
+        when(mockMemberPhoto.bytes(mockContext)).thenReturn(mockPhotoBytes);
         when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
 
         Map<String, RequestBody> requestBodyMap = editedMember.formatPatchRequest(mockContext);
 
         Buffer buffer = new Buffer();
-        requestBodyMap.get(Member.FIELD_NAME_PHOTO).writeTo(buffer);
-        assertTrue(Arrays.equals(buffer.readByteArray(), mockPhoto));
+        requestBodyMap.get(Member.API_NAME_MEMBER_PHOTO).writeTo(buffer);
+        assertTrue(Arrays.equals(buffer.readByteArray(), mockPhotoBytes));
     }
 
     @Test
     public void formatPatchRequest_dirtyPhotoAndNationalId_doesNotIncludeNationalIdPhoto() throws Exception {
-        member.setPhotoUrl(localPhotoUrl);
-        member.setNationalIdPhotoUrl(localNationalIdPhotoUrl);
+        member.setLocalMemberPhoto(mockMemberPhoto);
+        member.setLocalNationalIdPhoto(mockMemberPhoto);
         Member editedMember = spy(member);
-        byte[] mockPhoto = new byte[]{(byte)0xe0};
+        byte[] mockPhotoBytes = new byte[]{(byte)0xe0};
 
-        when(editedMember.dirty(Member.FIELD_NAME_PHOTO_URL)).thenReturn(true);
-        when(editedMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO_URL)).thenReturn(true);
-        when(FileManager.isLocal(localPhotoUrl)).thenReturn(true);
-        when(FileManager.isLocal(localNationalIdPhotoUrl)).thenReturn(true);
+        when(mockMemberPhoto.bytes(mockContext)).thenReturn(mockPhotoBytes);
+        when(editedMember.dirty(Member.API_NAME_MEMBER_PHOTO)).thenReturn(true);
+        when(editedMember.dirty(Member.API_NAME_NATIONAL_ID_PHOTO)).thenReturn(true);
         when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
         when(Uri.parse(localNationalIdPhotoUrl)).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
 
         Map<String, RequestBody> requestBodyMap = editedMember.formatPatchRequest(mockContext);
 
-        assertFalse(requestBodyMap.containsKey(Member.FIELD_NAME_NATIONAL_ID_PHOTO));
+        assertFalse(requestBodyMap.containsKey(Member.API_NAME_NATIONAL_ID_PHOTO));
     }
 
     @Test
     public void formatPatchRequest_cleanPhotoDirtyNationalId_IncludesNationalIdPhoto() throws Exception {
-        member.setNationalIdPhotoUrl(localNationalIdPhotoUrl);
+        member.setLocalNationalIdPhoto(mockMemberPhoto);
         Member editedMember = spy(member);
-        byte[] mockPhoto = new byte[]{(byte)0xe0};
+        byte[] mockPhotoBytes = new byte[]{(byte)0xe0};
 
-        when(editedMember.dirty(Member.FIELD_NAME_PHOTO_URL)).thenReturn(false);
-        when(editedMember.dirty(Member.FIELD_NAME_NATIONAL_ID_PHOTO_URL)).thenReturn(true);
-        when(FileManager.isLocal(localNationalIdPhotoUrl)).thenReturn(true);
+        when(mockMemberPhoto.bytes(mockContext)).thenReturn(mockPhotoBytes);
+        when(editedMember.dirty(Member.API_NAME_MEMBER_PHOTO)).thenReturn(false);
+        when(editedMember.dirty(Member.API_NAME_NATIONAL_ID_PHOTO)).thenReturn(true);
         when(Uri.parse(localNationalIdPhotoUrl)).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(mockPhoto);
 
         Map<String, RequestBody> requestBodyMap = editedMember.formatPatchRequest(mockContext);
 
         Buffer buffer = new Buffer();
-        requestBodyMap.get(Member.FIELD_NAME_NATIONAL_ID_PHOTO).writeTo(buffer);
-        assertTrue(Arrays.equals(buffer.readByteArray(), mockPhoto));
+        requestBodyMap.get(Member.API_NAME_NATIONAL_ID_PHOTO).writeTo(buffer);
+        assertTrue(Arrays.equals(buffer.readByteArray(), mockPhotoBytes));
     }
 
     @Test

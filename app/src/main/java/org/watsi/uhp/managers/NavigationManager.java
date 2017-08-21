@@ -28,6 +28,8 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
+import java.sql.SQLException;
+
 /**
  * Helper class for managing navigation between fragments
  */
@@ -35,11 +37,10 @@ public class NavigationManager {
     public static String IDENTIFICATION_EVENT_BUNDLE_FIELD = "identificationEvent";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String MEMBER_BUNDLE_FIELD = "member";
-    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
 
     private static String HOME_TAG = "home";
-    public static String DETAIL_TAG = "detail";
+    private static String DETAIL_TAG = "detail";
 
     private FragmentActivity mActivity;
     private FragmentProvider mFragmentProvider;
@@ -92,21 +93,26 @@ public class NavigationManager {
     }
 
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
-        if (member.currentCheckIn() == null) {
-            setCheckInMemberDetailFragment(member, idEvent);
-        } else {
-            setCurrentMemberDetailFragment(member);
+        try {
+            if (member.currentCheckIn() == null) {
+                setCheckInMemberDetailFragment(member, idEvent);
+                return;
+            }
+        // TODO do not want to have to do catch here - I'd prefer the current check in to be already loaded on the Member to avoid the lookup
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
         }
+        setCurrentMemberDetailFragment(member);
     }
 
-    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+    private void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
     }
 
-    protected void setCurrentMemberDetailFragment(Member member) {
+    private void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
@@ -157,12 +163,11 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollmentContactInfoFragment.class, bundle));
     }
 
-    public void setEnrollmentMemberPhotoFragment(Member member, IdentificationEvent idEvent) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
-        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        if (member.getPhotoUrl() == null && member.getPhoto() == null) {
-            setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
+    public void startCompleteEnrollmentFlow(Member member, IdentificationEvent idEvent) {
+        if (member.getCroppedPhoto() == null &&
+                member.getRemoteMemberPhotoUrl() == null &&
+                member.getLocalMemberPhoto() == null) {
+            setEnrollmentMemberPhotoFragment(member, idEvent);
         } else if (member.shouldCaptureNationalIdPhoto()) {
             setEnrollmentIdPhotoFragment(member, idEvent);
         } else if (member.getPhoneNumber() == null) {
@@ -172,6 +177,13 @@ public class NavigationManager {
         } else {
             ExceptionManager.reportException(new IllegalStateException("Clinic user clicked complete enrollment for member with photo and fingerprint."));
         }
+    }
+
+    private void setEnrollmentMemberPhotoFragment(Member member, IdentificationEvent idEvent) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, member);
+        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
+        setFragment(mFragmentProvider.createFragment(EnrollmentMemberPhotoFragment.class, bundle));
     }
 
     public void setEnrollmentIdPhotoFragment(Member member, IdentificationEvent idEvent) {
@@ -209,22 +221,23 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
-    public void setVersionFragment() {
+    void setVersionFragment() {
         setFragment(new VersionAndSyncFragment());
     }
 
-    public static class FragmentProvider {
-        public Fragment createFragment(Class<? extends Fragment> clazz) {
+    static class FragmentProvider {
+        Fragment createFragment(Class<? extends Fragment> clazz) {
             return createFragment(clazz, null);
         }
 
-        public Fragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
+        Fragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
             try {
                 Fragment fragment = clazz.newInstance();
                 if (bundle != null) {
                     fragment.setArguments(bundle);
                 }
                 return fragment;
+                // TODO should not catch here
             } catch (InstantiationException | IllegalAccessException e) {
                 ExceptionManager.reportException(e);
                 return null;

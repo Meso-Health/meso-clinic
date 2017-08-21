@@ -16,8 +16,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.AuthenticationToken;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.Member;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +34,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccountManager.class, ApiService.class, Credentials.class,
         EncounterTypeAdapterFactory.class, GsonBuilder.class, GsonConverterFactory.class,
-        MemberTypeAdapterFactory.class, OkHttpClient.Builder.class, Response.class, Retrofit.class,
-        Retrofit.Builder.class })
+        OkHttpClient.Builder.class, Response.class, Retrofit.class, Retrofit.Builder.class })
 public class ApiServiceTest {
 
     @Mock
@@ -54,8 +51,6 @@ public class ApiServiceTest {
     GsonBuilder mockGsonBuilder;
     @Mock
     EncounterTypeAdapterFactory mockEncounterTypeAdapterFactory;
-    @Mock
-    MemberTypeAdapterFactory mockMemberTypeAdapterFactory;
     @Mock
     GsonConverterFactory mockGsonConverterFactory;
     @Mock
@@ -97,16 +92,12 @@ public class ApiServiceTest {
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.build()).thenReturn(mockHttpClient);
         whenNew(GsonBuilder.class).withNoArguments().thenReturn(mockGsonBuilder);
-        whenNew(EncounterTypeAdapterFactory.class).withArguments(Encounter.class)
+        whenNew(EncounterTypeAdapterFactory.class).withNoArguments()
                 .thenReturn(mockEncounterTypeAdapterFactory);
-        whenNew(MemberTypeAdapterFactory.class).withArguments(Member.class)
-                .thenReturn(mockMemberTypeAdapterFactory);
         when(mockGsonBuilder.excludeFieldsWithoutExposeAnnotation()).thenReturn(mockGsonBuilder);
         when(mockGsonBuilder.setDateFormat(Clock.ISO_DATE_FORMAT_STRING))
                 .thenReturn(mockGsonBuilder);
         when(mockGsonBuilder.registerTypeAdapterFactory(mockEncounterTypeAdapterFactory))
-                .thenReturn(mockGsonBuilder);
-        when(mockGsonBuilder.registerTypeAdapterFactory(mockMemberTypeAdapterFactory))
                 .thenReturn(mockGsonBuilder);
         when(mockGsonBuilder.create()).thenReturn(gson);
         whenNew(Retrofit.Builder.class).withNoArguments().thenReturn(mockRetrofitBuilder);

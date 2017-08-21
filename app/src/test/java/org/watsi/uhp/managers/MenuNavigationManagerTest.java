@@ -85,10 +85,10 @@ public class MenuNavigationManagerTest {
     public void nextStep_logout() throws Exception {
         when(mockMenuItem.getItemId()).thenReturn(R.id.menu_logout);
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-        doNothing().when(menuNavigationManagerSpy).confirmBeforelogout(mockGenericFragment);
+        doNothing().when(menuNavigationManagerSpy).confirmBeforeLogout(mockGenericFragment);
         boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
 
-        verify(menuNavigationManagerSpy, times(1)).confirmBeforelogout(mockGenericFragment);
+        verify(menuNavigationManagerSpy, times(1)).confirmBeforeLogout(mockGenericFragment);
         assertTrue(result);
     }
 
@@ -211,7 +211,7 @@ public class MenuNavigationManagerTest {
         doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
         menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockCheckInMemberDetailFragment, mockMember);
 
-        verify(mockNavigationManager, times(1)).setEnrollmentMemberPhotoFragment(mockMember, mockIdEvent);
+        verify(mockNavigationManager, times(1)).startCompleteEnrollmentFlow(mockMember, mockIdEvent);
     }
 
     @Test
@@ -221,7 +221,7 @@ public class MenuNavigationManagerTest {
         doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
         menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockCurrentMemberDetailFragment, mockMember);
 
-        verify(mockNavigationManager, times(1)).setEnrollmentMemberPhotoFragment(mockMember, null);
+        verify(mockNavigationManager, times(1)).startCompleteEnrollmentFlow(mockMember, null);
     }
 
     @Test

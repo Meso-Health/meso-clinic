@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -14,10 +13,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,10 +147,12 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         persistAssociations();
     }
 
-    public void updateFromSync(Response<T> response) throws SQLException {
+    public void updateFromSync(Response<T> response) throws SQLException, IOException {
         T responseBody = response.body();
         handleUpdateFromSync(responseBody);
         setDirtyFields(diffFields(responseBody));
+        // reason we save this instead of response is that not all data
+        //  we persist on the device is sent/returned during syncing
         getDao().createOrUpdate((T) this);
     }
 
@@ -181,7 +180,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     public abstract void validate() throws ValidationException;
-    public abstract void handleUpdateFromSync(T response);
+    public abstract void handleUpdateFromSync(T response) throws SQLException, IOException;
     protected abstract Call<T> postApiCall(Context context) throws SQLException;
     protected abstract Call<T> patchApiCall(Context context) throws SQLException;
     protected abstract void persistAssociations() throws SQLException, ValidationException;

@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
 /**
@@ -18,16 +17,15 @@ public class PhotoLoaderHelper {
     private static int THUMBNAIL_SIZE_MULTIPLIER = 2;
 
     public static void loadMemberPhoto(Context context, Member member, ImageView imageView, int width, int height) {
-        String fullSizePhotoUrl = member.getPhotoUrl();
         int adjustedWidth = getWidthFromDimensionResource(context, width);
         int adjustedHeight =  getHeightFromDimensionResource(context, height);
-        if (fullSizePhotoUrl != null && FileManager.isLocal(fullSizePhotoUrl)) {
-            loadFullSizeImageWithGlide(context, imageView, fullSizePhotoUrl, adjustedWidth, adjustedHeight);
-        } else {
+        if (member.getCroppedPhoto() != null || member.getLocalMemberPhoto() == null) {
             // Reason we still use Glide for small images is that it is best practice to load
             // the same loading mechanism for list views according to this post on reddit:
             // https://www.reddit.com/r/androiddev/comments/3hlkbx/should_you_use_an_image_loading_lib_picasso_glide/cu8scpv/
-            loadThumbnailPhotoWithGlide(context, imageView, member.getPhoto(), adjustedWidth, adjustedHeight);
+            loadThumbnailPhotoWithGlide(context, imageView, member.getCroppedPhoto(), adjustedWidth, adjustedHeight);
+        } else {
+            loadFullSizeImageWithGlide(context, imageView, member.getLocalMemberPhoto().getUrl(), adjustedWidth, adjustedHeight);
         }
     }
 

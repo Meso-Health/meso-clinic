@@ -14,11 +14,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.Photo;
 import org.watsi.uhp.models.SyncableModel;
 
 import java.io.File;
@@ -51,10 +51,12 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Encounter.class, EncounterDao.class, EncounterItemDao.class,
-        ExceptionManager.class, File.class, FileManager.class, IdentificationEvent.class,
-        MediaType.class, Member.class, okhttp3.Response.class, RequestBody.class, Response.class,
+        ExceptionManager.class, File.class, IdentificationEvent.class, MediaType.class,
+        Member.class, okhttp3.Response.class, RequestBody.class, Response.class,
         SyncableModel.class, SyncService.class, Uri.class, Log.class })
 public class SyncServiceTest {
+    @Mock
+    Photo mockPhoto;
     @Mock
     List<IdentificationEvent> mockIdentificationEventsList;
     @Mock
@@ -81,7 +83,6 @@ public class SyncServiceTest {
         mockStatic(Encounter.class);
         mockStatic(EncounterDao.class);
         mockStatic(EncounterItemDao.class);
-        mockStatic(FileManager.class);
         mockStatic(IdentificationEvent.class);
         mockStatic(MediaType.class);
         mockStatic(Member.class);
@@ -230,8 +231,10 @@ public class SyncServiceTest {
                 anyMapOf(String.class, String.class));
     }
 
-    private EncounterForm mockEncounterForm(boolean encounterSynced) throws Exception {
+    private EncounterForm mockEncounterForm(boolean encounterSynced, byte[] image) throws Exception {
         EncounterForm mockEncounterForm = mock(EncounterForm.class);
+        when(mockPhoto.bytes(syncService)).thenReturn(image);
+        when(mockEncounterForm.getPhoto()).thenReturn(mockPhoto);
         when(mockEncounterForm.getId()).thenReturn(UUID.randomUUID());
         Encounter mockEncounter = mockEncounter();
         when(mockEncounter.isSynced()).thenReturn(encounterSynced);
@@ -242,13 +245,13 @@ public class SyncServiceTest {
 
     @Test
     public void syncEncounterForms_associatedEncounterIsNotSynced() throws Exception {
-        EncounterForm mockEncounterForm = mockEncounterForm(false);
+        EncounterForm mockEncounterForm = mockEncounterForm(false, new byte[]{(byte)0xe0});
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
         Encounter mockEncounter = mockEncounterForm.getEncounter();
 
         when(EncounterDao.find(mockEncounter.getId())).thenReturn(mockEncounter);
-        when(mockEncounterForm(false).getEncounter().isSynced()).thenReturn(false);
+        when(mockEncounterForm(false, null).getEncounter().isSynced()).thenReturn(false);
 
         syncService.syncEncounterForms(encounterFormsList);
 
@@ -257,7 +260,7 @@ public class SyncServiceTest {
 
     @Test
     public void syncEncounterForms_associatedEncounterSyncedAndNullImage() throws Exception {
-        EncounterForm mockEncounterForm = mockEncounterForm(true);
+        EncounterForm mockEncounterForm = mockEncounterForm(true, null);
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
 
@@ -269,12 +272,10 @@ public class SyncServiceTest {
 
     @Test
     public void syncEncounterForms_associatedEncounterSyncedWithImage_succeeds() throws Exception {
-        EncounterForm mockEncounterForm = mockEncounterForm(true);
+        EncounterForm mockEncounterForm = mockEncounterForm(true, new byte[]{(byte)0xe0});
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
-        byte[] image = new byte[]{(byte)0xe0};
 
-        when(mockEncounterForm.getImage(syncService)).thenReturn(image);
         when(mockEncounterForm.sync(syncService)).thenReturn(mockEncounterSyncResponse);
         when(mockEncounterSyncResponse.isSuccessful()).thenReturn(true);
 
@@ -285,12 +286,10 @@ public class SyncServiceTest {
 
     @Test
     public void syncEncounterForms_associatedEncounterSyncedWithImage_fails() throws Exception {
-        EncounterForm mockEncounterForm = mockEncounterForm(true);
+        EncounterForm mockEncounterForm = mockEncounterForm(true, new byte[]{(byte)0xe0});
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
-        byte[] image = new byte[]{(byte)0xe0};
 
-        when(mockEncounterForm.getImage(syncService)).thenReturn(image);
         when(mockEncounterForm.sync(syncService)).thenReturn(mockEncounterSyncResponse);
         when(mockEncounterSyncResponse.isSuccessful()).thenReturn(false);
         when(mockEncounterSyncResponse.raw()).thenReturn(mockRawResponse);

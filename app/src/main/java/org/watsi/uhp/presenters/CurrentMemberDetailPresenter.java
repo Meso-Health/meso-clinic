@@ -76,7 +76,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                                         try {
                                             dismissIdentification(IdentificationEvent
                                                     .DismissalReasonEnum.values()[which]);
-                                        } catch (SyncableModel.UnauthenticatedException e) {
+                                        } catch (SyncableModel.UnauthenticatedException | SQLException e) {
                                             ExceptionManager.reportException(e);
                                             Toast.makeText(getContext(),
                                                     "Failed to dismiss member, contact support.",
@@ -105,7 +105,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
-            throws SyncableModel.UnauthenticatedException {
+            throws SyncableModel.UnauthenticatedException, SQLException {
         IdentificationEvent checkIn = getMember().currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
 

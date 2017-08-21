@@ -13,7 +13,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.api.UhpApi;
-import org.watsi.uhp.managers.FileManager;
 
 import java.util.UUID;
 
@@ -21,22 +20,21 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ApiService.class, EncounterForm.class, FileManager.class, MediaType.class,
-        RequestBody.class, Uri.class })
+@PrepareForTest({ ApiService.class, EncounterForm.class, MediaType.class, RequestBody.class, Uri.class })
 public class EncounterFormTest {
 
     @Mock
     Context mockContext;
+    @Mock
+    Photo mockPhoto;
     @Mock
     UhpApi mockApi;
     @Mock
@@ -53,56 +51,35 @@ public class EncounterFormTest {
     @Before
     public void setup() {
         mockStatic(ApiService.class);
-        mockStatic(FileManager.class);
         mockStatic(MediaType.class);
         mockStatic(RequestBody.class);
         encounterForm = new EncounterForm();
+        encounterForm.setPhoto(mockPhoto);
     }
 
     @Test
-    public void getImage() throws Exception {
-        byte[] image = new byte[]{(byte)0xe0};
-        String url = "foo";
-        encounterForm.setUrl(url);
-        mockStatic(Uri.class);
-        mockStatic(FileManager.class);
-        Uri mockUri = mock(Uri.class);
-
-        when(Uri.parse(url)).thenReturn(mockUri);
-        when(FileManager.readFromUri(mockUri, mockContext)).thenReturn(image);
-
-        byte[] result = encounterForm.getImage(mockContext);
-
-        assertEquals(result, image);
-    }
-
-    @Test
-    public void handleUpdateFromSync_deletesLocalFile() throws Exception {
+    public void handleUpdateFromSync_marksPhotoAsSynced() throws Exception {
+        doNothing().when(mockPhoto).markAsSynced();
         EncounterForm encounterFormResponse = new EncounterForm();
-        String url = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
-        encounterForm.setUrl(url);
 
         encounterForm.handleUpdateFromSync(encounterFormResponse);
 
-        verifyStatic();
-        FileManager.deleteLocalPhoto(encounterForm.getUrl());
+        verify(mockPhoto, times(1)).getSynced();
     }
 
     @Test
     public void handleUpdateFromSync_setsEncounterFormDetailsOnResponse() throws Exception {
+        doNothing().when(mockPhoto).markAsSynced();
         EncounterForm encounterFormResponse = new EncounterForm();
-        String url = "content://org.watsi.uhp.fileprovider/captured_image/photo.jpg";
         UUID formId = UUID.randomUUID();
         UUID encounterId = UUID.randomUUID();
         encounterForm.setId(formId);
         encounterForm.setEncounterId(encounterId);
-        encounterForm.setUrl(url);
 
         encounterForm.handleUpdateFromSync(encounterFormResponse);
 
         assertEquals(encounterFormResponse.getId(), formId);
         assertEquals(encounterFormResponse.getEncounterId(), encounterId);
-        assertEquals(encounterFormResponse.getUrl(), url);
     }
 
     @Test
@@ -113,7 +90,7 @@ public class EncounterFormTest {
         EncounterForm encounterFormSpy = spy(encounterForm);
         byte[] photoBytes = new byte[]{(byte)0xe0};
 
-        doReturn(photoBytes).when(encounterFormSpy).getImage(mockContext);
+        when(mockPhoto.bytes(mockContext)).thenReturn(photoBytes);
         when(MediaType.parse("image/jpg")).thenReturn(mockMediaType);
         when(mockEncounter.getId()).thenReturn(encounterId);
         when(RequestBody.create(mockMediaType, photoBytes)).thenReturn(mockRequestBody);
