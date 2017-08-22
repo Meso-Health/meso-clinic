@@ -28,9 +28,7 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
@@ -112,19 +110,6 @@ public class IdentificationFlowFeature extends BaseTest {
         assertItemInList(withMemberId(member.getId()), R.id.current_patients);
     }
 
-    public void reportPatient() {
-        // when the user decides to report the patient, a confirmation screen appears
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(withText(R.string.menu_report_member)).perform(click());
-        onView(withText(R.string.reject_identity_alert)).check(matches(isDisplayed()));
-
-        // after reporting a patient, the user can see a confirmation toast and that the patient
-        // is not in the current patients list
-        onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click());
-        onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
-        onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
-    }
-
     public void scanFingerprintWithResult(int resultCode, boolean scanSuccess) {
         Intent resultIntent = new Intent();
         Verification results;
@@ -141,7 +126,7 @@ public class IdentificationFlowFeature extends BaseTest {
         intending(verifyIntentMatcher).respondWith(activityResult);
 
         // click scan fingerprint button
-        onView(withId(R.id.member_secondary_button)).perform(click());
+        onView(withId(R.id.scan_fingerprints_btn)).perform(click());
 
         // checks that correct fingerprint intent was sent
         intended(verifyIntentMatcher);
@@ -168,10 +153,10 @@ public class IdentificationFlowFeature extends BaseTest {
 
         // when you search a name that belongs to a member, the member is found
         performSearch(member.getFullName());
-        onView(withText(member.getFormattedCardId())).check(matches(isDisplayed()));
+        assertItemInList(withMemberId(member.getId()), R.id.member_search_results);
 
         // when you click on member found, their detail fragment displays with correct information
-        onView(withText(member.getFormattedCardId())).perform(click());
+        clickItemInList(withMemberId(member.getId()), R.id.member_search_results);
         onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
@@ -193,20 +178,19 @@ public class IdentificationFlowFeature extends BaseTest {
 
         // when you look up id in system without spaces, member found
         performSearch(member.getCardId());
-        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+        assertItemInList(withMemberId(member.getId()), R.id.member_search_results);
         clearSearch();
 
         // when you look up id in system with spaces, member found
         performSearch(member.getFormattedCardId());
-        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+        assertItemInList(withMemberId(member.getId()), R.id.member_search_results);
 
         // when you click on member found, their detail fragment displays with correct information
-        onView(withText(member.getFullName())).perform(click());
+        clickItemInList(withMemberId(member.getId()), R.id.member_search_results);
         onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
 
         scanFingerprintWithResult(Activity.RESULT_OK, false);
-        reportPatient();
     }
 
     //TODO: test absentee flow

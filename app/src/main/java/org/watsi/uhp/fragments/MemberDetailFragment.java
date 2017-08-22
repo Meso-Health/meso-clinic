@@ -42,13 +42,13 @@ public abstract class MemberDetailFragment extends BaseFragment {
         super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.menu_member_edit).setVisible(true);
         menu.findItem(R.id.menu_enroll_newborn).setVisible(true);
-        if (memberDetailPresenter.getMember().isAbsentee()) {
-            menu.findItem(R.id.menu_complete_enrollment).setVisible(true);
-        }
     }
 
     public Member getMember() {
         return memberDetailPresenter.getMember();
     }
 
+    public void navigateToMemberEditFragment() {
+        memberDetailPresenter.navigateToMemberEditFragment();
+    }
 }

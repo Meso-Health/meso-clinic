@@ -1,10 +1,7 @@
 package org.watsi.uhp.presenters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.support.v4.content.ContextCompat;
@@ -33,16 +30,16 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 
 public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
-    static final int DEFAULT_BORDER_WIDTH = 2;
-    static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
+    private static final int DEFAULT_BORDER_WIDTH = 2;
+    private static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
 
     private final SessionManager mSessionManager;
     private IdentificationEvent mIdEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailFragment;
     private SimprintsHelper mSimprintsHelper;
 
-    private final Button mMemberSecondaryButton;
-    private final TextView mMemberIndicator;
+    private final Button mScanFingerprintsBtn;
+    private final TextView mScanResult;
 
     public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
         super(view, context, member, navigationManager);
@@ -51,8 +48,13 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mIdEvent = idEvent;
         mSimprintsHelper = new SimprintsHelper(mSessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
 
-        mMemberSecondaryButton = getMemberSecondaryButton();
-        mMemberIndicator = getMemberIndicator();
+        mScanFingerprintsBtn = (Button) getView().findViewById(R.id.scan_fingerprints_btn);
+        mScanResult = (TextView) getView().findViewById(R.id.scan_result);
+    }
+
+    @Override
+    public void additionalSetup() {
+        setScanFingerprintButton();
     }
 
     @Override
@@ -68,60 +70,38 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
-    protected void setMemberSecondaryActionButton() {
-        if (getMember().isAbsentee()) {
-            setMemberSecondaryButtonProperties("Complete Enrollment", false,
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
-                        }
-                    }
-            );
-        } else if (getMember().getFingerprintsGuid() != null &&
-                  (mIdEvent.getFingerprintsVerificationResultCode() == null ||
-                   mIdEvent.getFingerprintsVerificationResultCode() == Constants.SIMPRINTS_CANCELLED)) {
-            setMemberSecondaryButtonProperties("Scan", true,
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                mSimprintsHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid());
-                            } catch (SimprintsHelper.SimprintsInvalidIntentException e) {
-                                Toast.makeText(
-                                        getContext(),
-                                        R.string.simprints_not_installed,
-                                        Toast.LENGTH_LONG).show();
-                            } catch (SimprintsHelper.SimprintsHelperException e) {
-                                ExceptionManager.reportException(e);
-                                showScanFailedToast();
-                            }
-                        }
-                    }
-            );
-        }
+    protected void navigateToCompleteEnrollmentFragment() {
+        getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
     }
 
     @Override
-    protected void setMemberIndicator() {
-        if (SIMPRINTS_VERIFICATION_TIER5.equals(mIdEvent.getFingerprintsVerificationTier())) {
-            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), R.string.bad_scan_indicator);
-        } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
-            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), R.string.good_scan_indicator);
-        } else if (mIdEvent.getFingerprintsVerificationResultCode() != null && mIdEvent.getFingerprintsVerificationResultCode() != Constants.SIMPRINTS_CANCELLED) {
-            setMemberIndicatorProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), R.string.no_scan_indicator);
-        }
+    public void navigateToMemberEditFragment() {
+        getNavigationManager().setMemberEditFragment(getMember(), mIdEvent);
     }
 
-    @Override
-    protected void setMemberActionLink() {
-        // no-op
+    private void setScanFingerprintButton() {
+        if (getMember().getFingerprintsGuid() != null) {
+            mScanFingerprintsBtn.setVisibility(View.VISIBLE);
+            mScanFingerprintsBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        mSimprintsHelper.verify(BuildConfig.PROVIDER_ID.toString(), getMember().getFingerprintsGuid());
+                    } catch (SimprintsHelper.SimprintsInvalidIntentException e) {
+                        Toast.makeText(
+                                getContext(),
+                                R.string.simprints_not_installed,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
     }
 
     public void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
         mIdEvent.setFingerprintsVerificationResultCode(resultCode);
         try {
-            Verification verification = getSimprintsHelper().onActivityResultFromVerify(requestCode, resultCode, data);
+            Verification verification = mSimprintsHelper.onActivityResultFromVerify(requestCode, resultCode, data);
             if (verification != null) {
                 saveIdentificationEventWithVerificationData(verification);
                 showScanSuccessfulToast();
@@ -132,44 +112,34 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
             ExceptionManager.reportException(e);
             showScanFailedToast();
         }
-        refreshFragment();
+        setScanResult();
     }
 
-    protected void refreshFragment() {
-        getNavigationManager().setMemberDetailFragment(getMember(), getIdEvent());
-    }
-
-    protected SimprintsHelper getSimprintsHelper() {
-        return mSimprintsHelper;
-    }
-
-    protected void setMemberSecondaryButtonProperties(String text, boolean showFingerprintsIcon, View.OnClickListener onClickListener) {
-        mMemberSecondaryButton.setVisibility(View.VISIBLE);
-        mMemberSecondaryButton.setText(text);
-        if (showFingerprintsIcon) {
-            addFingerprintsIconToSecondaryButton();
+    void setScanResult() {
+        if (SIMPRINTS_VERIFICATION_TIER5.equals(mIdEvent.getFingerprintsVerificationTier())) {
+            setScanResultProperties(ContextCompat.getColor(getContext(), R.color.indicatorRed), R.string.bad_scan_indicator);
+        } else if (mIdEvent.getFingerprintsVerificationTier() != null) {
+            setScanResultProperties(ContextCompat.getColor(getContext(), R.color.indicatorGreen), R.string.good_scan_indicator);
+        } else if (mIdEvent.getFingerprintsVerificationResultCode() != null && mIdEvent.getFingerprintsVerificationResultCode() != Constants.SIMPRINTS_CANCELLED) {
+            setScanResultProperties(ContextCompat.getColor(getContext(), R.color.indicatorNeutral), R.string.no_scan_indicator);
         }
-        mMemberSecondaryButton.setOnClickListener(onClickListener);
     }
 
-    protected void addFingerprintsIconToSecondaryButton() {
-        Drawable fingerprintIcon = getContext().getResources().getDrawable(R.drawable.fingerprints, null);
-        fingerprintIcon.setTint(ContextCompat.getColor(getContext(), R.color.title));
-        mMemberSecondaryButton.setCompoundDrawablesWithIntrinsicBounds(fingerprintIcon, null, null, null);
-    }
-
-    protected void setMemberIndicatorProperties(int color, int textId) {
-        mMemberIndicator.setVisibility(View.VISIBLE);
-        mMemberIndicator.setText(textId);
-        mMemberIndicator.setTextColor(color);
-        mMemberIndicator.invalidate();
-        GradientDrawable border = (GradientDrawable) mMemberIndicator.getBackground();
+    void setScanResultProperties(int color, int textId) {
+        mScanResult.invalidate();
+        mScanResult.setText(textId);
+        mScanResult.setTextColor(color);
+        GradientDrawable border = (GradientDrawable) mScanResult.getBackground();
         border.setStroke(DEFAULT_BORDER_WIDTH, color);
-        VectorDrawable fingerprintIcon = (VectorDrawable) mMemberIndicator.getCompoundDrawables()[0];
-        fingerprintIcon.setTint(color);
+        VectorDrawable fingerprintIcon = (VectorDrawable) mScanResult.getCompoundDrawables()[0];
+        //mutate() allows us to modify only this instance of the drawable without affecting others
+        fingerprintIcon.mutate().setTint(color);
+
+        mScanFingerprintsBtn.setVisibility(View.GONE);
+        mScanResult.setVisibility(View.VISIBLE);
     }
 
-    protected void saveIdentificationEventWithVerificationData(Verification verification) {
+    void saveIdentificationEventWithVerificationData(Verification verification) {
         String fingerprintTier = verification.getTier().toString();
         float fingerprintConfidence = verification.getConfidence();
 
@@ -177,15 +147,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mIdEvent.setFingerprintsVerificationTier(fingerprintTier);
     }
 
-    public IdentificationEvent getIdEvent() {
-        return mIdEvent;
-    }
-
-    protected void showScanFailedToast() {
+    void showScanFailedToast() {
         Toast.makeText(getContext(), R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show();
     }
 
-    protected void showScanSuccessfulToast() {
+    void showScanSuccessfulToast() {
         Toast.makeText(getContext(), R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show();
     }
 
@@ -206,38 +172,14 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         navigateToCurrentPatientsFragment();
     }
 
-    protected void navigateToCurrentPatientsFragment() {
-        getNavigationManager().setCurrentPatientsFragment();
-    }
-
-    protected void displayIdentificationSuccessfulToast() {
+    private void displayIdentificationSuccessfulToast() {
         Toast.makeText(getContext(),
                 mIdEvent.getMember().getFullName() + " " + getContext().getString(R.string.identification_approved),
                 Toast.LENGTH_LONG).
                 show();
     }
 
-    public void reportMember() {
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.reject_identity_alert)
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        try {
-                            mIdEvent.setAccepted(false);
-                            if (mIdEvent.getOccurredAt() == null) {
-                                mIdEvent.setOccurredAt(Clock.getCurrentTime());
-                            }
-                            mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
-                            getNavigationManager().setCurrentPatientsFragment();
-                            Toast.makeText(getContext(),
-                                    getMember().getFullName() + " " + getContext().getString(R.string.identification_rejected),
-                                    Toast.LENGTH_LONG).
-                                    show();
-                        } catch (SQLException | AbstractModel.ValidationException e) {
-                            ExceptionManager.reportException(e);
-                        }
-                    }
-                }).create().show();
+    private void navigateToCurrentPatientsFragment() {
+        getNavigationManager().setCurrentPatientsFragment();
     }
 }
