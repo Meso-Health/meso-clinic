@@ -51,7 +51,7 @@ public class FileManager {
     public static boolean isLocal(String url) {
         Uri uri = Uri.parse(url);
         String scheme = uri.getScheme();
-        return scheme.equals("content");
+        return scheme != null && scheme.equals("content");
     }
 
     public static void deleteLocalPhoto(String url) throws FileDeletionException {
