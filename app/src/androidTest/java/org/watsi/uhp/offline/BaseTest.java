@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -131,6 +132,10 @@ class BaseTest {
 
     void assertItemNotInList(Matcher<Object> matcher, int listId) {
         onView(withId(listId)).check(matches(not(withAdaptedData(matcher))));
+    }
+
+    void clickItemInList(Matcher<Object> matcher, int listId) {
+        onData(matcher).inAdapterView(withId(listId)).perform(click());
     }
 
     void assertDisplaysToast(ActivityTestRule rule, int messageId) {

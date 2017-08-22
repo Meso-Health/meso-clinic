@@ -28,6 +28,11 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
+    public void additionalSetup() {
+        // no-op
+    }
+
+    @Override
     protected void setMemberActionButton() {
         Button confirmButton = getMemberActionButton();
 
@@ -50,43 +55,13 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
-    protected void setMemberSecondaryActionButton() {
-        // no-op
+    protected void navigateToCompleteEnrollmentFragment() {
+        getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), null);
     }
 
     @Override
-    protected void setMemberIndicator() {
-        // no-op
-    }
-
-    @Override
-    protected void setMemberActionLink() {
-        getMemberActionLink().setVisibility(View.VISIBLE);
-        getMemberActionLink().setText(R.string.dismiss_patient);
-        getMemberActionLink().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.dismiss_patient_alert)
-                        .setNegativeButton(R.string.cancel, null)
-                        .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
-                                DialogInterface
-                                        .OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        try {
-                                            dismissIdentification(IdentificationEvent
-                                                    .DismissalReasonEnum.values()[which]);
-                                        } catch (SyncableModel.UnauthenticatedException e) {
-                                            ExceptionManager.reportException(e);
-                                            Toast.makeText(getContext(),
-                                                    "Failed to dismiss member, contact support.",
-                                                    Toast.LENGTH_LONG).
-                                                    show();
-                                        }
-                                    }
-                                }).create().show();
-            }
-        });
+    public void navigateToMemberEditFragment() {
+        getNavigationManager().setMemberEditFragment(getMember(), null);
     }
 
     protected Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
@@ -138,5 +113,27 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                 getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public void dismissMember() {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.dismiss_member_alert)
+                .setNegativeButton(R.string.cancel, null)
+                .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
+                        DialogInterface
+                                .OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    dismissIdentification(IdentificationEvent
+                                            .DismissalReasonEnum.values()[which]);
+                                } catch (SyncableModel.UnauthenticatedException e) {
+                                    ExceptionManager.reportException(e);
+                                    Toast.makeText(getContext(),
+                                            "Failed to dismiss member, contact support.",
+                                            Toast.LENGTH_LONG).
+                                            show();
+                                }
+                            }
+                        }).create().show();
     }
 }
