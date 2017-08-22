@@ -47,7 +47,7 @@ public class PhotoLoaderHelperTest {
         PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.loadThumbnailPhotoWithGlide(mockContext, mockImageView, photoBytes, 90, 120);
+        PhotoLoaderHelper.loadPhotoFromBytes(mockContext, mockImageView, photoBytes, 90, 120);
     }
 
     @Test
@@ -64,6 +64,6 @@ public class PhotoLoaderHelperTest {
         PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.loadFullSizeImageWithGlide(mockContext, mockImageView, "random-local-full-size-image-url", 90, 120);
+        PhotoLoaderHelper.loadPhotoFromContentUri(mockContext, mockImageView, "random-local-full-size-image-url", 90, 120);
     }
 }

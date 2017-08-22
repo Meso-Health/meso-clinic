@@ -18,18 +18,15 @@ public class PhotoLoaderHelper {
 
     public static void loadMemberPhoto(Context context, Member member, ImageView imageView, int width, int height) {
         int adjustedWidth = getWidthFromDimensionResource(context, width);
-        int adjustedHeight =  getHeightFromDimensionResource(context, height);
-        if (member.getCroppedPhoto() != null || member.getLocalMemberPhoto() == null) {
-            // Reason we still use Glide for small images is that it is best practice to load
-            // the same loading mechanism for list views according to this post on reddit:
-            // https://www.reddit.com/r/androiddev/comments/3hlkbx/should_you_use_an_image_loading_lib_picasso_glide/cu8scpv/
-            loadThumbnailPhotoWithGlide(context, imageView, member.getCroppedPhoto(), adjustedWidth, adjustedHeight);
+        int adjustedHeight = getHeightFromDimensionResource(context, height);
+        if (member.getLocalMemberPhoto() != null) {
+            loadPhotoFromContentUri(context, imageView, member.getLocalMemberPhoto().getUrl(), adjustedWidth, adjustedHeight);
         } else {
-            loadFullSizeImageWithGlide(context, imageView, member.getLocalMemberPhoto().getUrl(), adjustedWidth, adjustedHeight);
+            loadPhotoFromBytes(context, imageView, member.getCroppedPhoto(), adjustedWidth, adjustedHeight);
         }
     }
 
-    protected static void loadThumbnailPhotoWithGlide(Context context, ImageView imageView, byte[] photoBytes, int width, int height) {
+    static void loadPhotoFromBytes(Context context, ImageView imageView, byte[] photoBytes, int width, int height) {
         Glide.with(context)
                 .load(photoBytes)
                 .asBitmap()
@@ -39,7 +36,7 @@ public class PhotoLoaderHelper {
                 .into(imageView);
     }
 
-    protected static void loadFullSizeImageWithGlide(Context context, ImageView imageView, String fullSizePhotoUrl, int width, int height) {
+    static void loadPhotoFromContentUri(Context context, ImageView imageView, String fullSizePhotoUrl, int width, int height) {
         Glide.with(context)
                 .load(fullSizePhotoUrl)
                 .override(width, height)
@@ -47,11 +44,11 @@ public class PhotoLoaderHelper {
                 .into(imageView);
     }
 
-    protected static int getHeightFromDimensionResource(Context context, int height) {
+    static int getHeightFromDimensionResource(Context context, int height) {
         return (int) (context.getResources().getDimension(height) / context.getResources().getDisplayMetrics().density);
     }
 
-    protected static int getWidthFromDimensionResource(Context context, int width) {
+    static int getWidthFromDimensionResource(Context context, int width) {
         return (int) (context.getResources().getDimension(width) / context.getResources().getDisplayMetrics().density);
     }
 }
