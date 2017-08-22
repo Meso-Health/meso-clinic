@@ -24,7 +24,6 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -97,10 +96,11 @@ public class MenuNavigationManagerTest {
         when(mockMenuItem.getItemId()).thenReturn(R.id.menu_member_edit);
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
         when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
-        doNothing().when(menuNavigationManagerSpy).navigateToMemberEditFragment(mockGenericFragment, mockMember);
+
+        doNothing().when(menuNavigationManagerSpy).editMember(mockGenericFragment);
         boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
 
-        verify(menuNavigationManagerSpy, times(1)).navigateToMemberEditFragment(mockGenericFragment, mockMember);
+        verify(menuNavigationManagerSpy, times(1)).editMember(mockGenericFragment);
         assertTrue(result);
     }
 
@@ -132,32 +132,6 @@ public class MenuNavigationManagerTest {
     }
 
     @Test
-    public void nextStep_completeEnrollment() throws Exception {
-        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_complete_enrollment);
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
-
-        doNothing().when(menuNavigationManagerSpy).navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
-        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
-
-        verify(menuNavigationManagerSpy, times(1)).navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
-        assertTrue(result);
-    }
-
-    @Test
-    public void nextStep_reportMember() throws Exception {
-        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_report_member);
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-        when(menuNavigationManagerSpy.getMemberFromFragmentIfExists(mockGenericFragment)).thenReturn(mockMember);
-
-        doNothing().when(menuNavigationManagerSpy).reportMember(mockGenericFragment);
-        boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
-
-        verify(menuNavigationManagerSpy, times(1)).reportMember(mockGenericFragment);
-        assertTrue(result);
-    }
-
-    @Test
     public void getMemberFromFragmentIfExists_notMemberDetailFragment() throws Exception {
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
 
@@ -184,88 +158,19 @@ public class MenuNavigationManagerTest {
     }
 
     @Test
-    public void reportMember_checkInMemberDetailFragment() throws Exception {
+    public void editMember_memberDetailFragment() throws Exception {
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
+        menuNavigationManagerSpy.editMember(mockCheckInMemberDetailFragment);
 
-        doNothing().when(mockCheckInMemberDetailFragment).reportMember();
-        menuNavigationManagerSpy.reportMember(mockCheckInMemberDetailFragment);
-
-        verify(mockCheckInMemberDetailFragment, times(1)).reportMember();
+        verify(mockCheckInMemberDetailFragment, times(1)).navigateToMemberEditFragment();
     }
 
     @Test
-    public void reportMember_notCheckInMemberDetailFragment() throws Exception {
+    public void editMember_notMemberDetailFragment() throws Exception {
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        menuNavigationManagerSpy.reportMember(mockGenericFragment);
+        menuNavigationManagerSpy.editMember(mockGenericFragment);
 
         verifyStatic();
         ExceptionManager.reportErrorMessage(any(String.class));
     }
-
-    @Test
-    public void navigateToCompleteEnrollmentFragment_checkInMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doReturn(mockIdEvent).when(mockCheckInMemberDetailFragment).getIdEvent();
-        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
-        menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockCheckInMemberDetailFragment, mockMember);
-
-        verify(mockNavigationManager, times(1)).startCompleteEnrollmentFlow(mockMember, mockIdEvent);
-    }
-
-    @Test
-    public void navigateToCompleteEnrollmentFragment_currentMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
-        menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockCurrentMemberDetailFragment, mockMember);
-
-        verify(mockNavigationManager, times(1)).startCompleteEnrollmentFlow(mockMember, null);
-    }
-
-    @Test
-    public void navigateToCompleteEnrollmentFragment_notMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
-        menuNavigationManagerSpy.navigateToCompleteEnrollmentFragment(mockGenericFragment, mockMember);
-
-        verifyStatic();
-        ExceptionManager.reportErrorMessage(any(String.class));
-    }
-
-    @Test
-    public void navigateToMemberEditFragment_checkInMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doReturn(mockIdEvent).when(mockCheckInMemberDetailFragment).getIdEvent();
-        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
-        menuNavigationManagerSpy.navigateToMemberEditFragment(mockCheckInMemberDetailFragment, mockMember);
-
-        verify(mockNavigationManager, times(1)).setMemberEditFragment(mockMember, mockIdEvent);
-    }
-
-    @Test
-    public void navigateToMemberEditFragment_currentMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
-        menuNavigationManagerSpy.navigateToMemberEditFragment(mockCurrentMemberDetailFragment, mockMember);
-
-        verify(mockNavigationManager, times(1)).setMemberEditFragment(mockMember, null);
-    }
-
-    @Test
-    public void navigateToMemberEditFragment_notMemberDetailFragment() throws Exception {
-        MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-
-        doReturn(mockNavigationManager).when(menuNavigationManagerSpy).getNavigationManager();
-        menuNavigationManagerSpy.navigateToMemberEditFragment(mockGenericFragment, mockMember);
-
-        verifyStatic();
-        ExceptionManager.reportErrorMessage(any(String.class));
-    }
-
-
 }

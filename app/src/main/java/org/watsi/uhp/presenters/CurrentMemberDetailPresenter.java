@@ -28,6 +28,11 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
+    public void additionalSetup() {
+        // no-op
+    }
+
+    @Override
     protected void setMemberActionButton() {
         Button confirmButton = getMemberActionButton();
 
@@ -50,46 +55,15 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
     }
 
     @Override
-    protected void setMemberSecondaryActionButton() {
-        // no-op
+    protected void navigateToCompleteEnrollmentFragment() {
+        getNavigationManager().startCompleteEnrollmentFlow(getMember(), null);
     }
 
-    @Override
-    protected void setMemberIndicator() {
-        // no-op
+    public void navigateToMemberEditFragment() {
+        getNavigationManager().setMemberEditFragment(getMember(), null);
     }
 
-    @Override
-    protected void setMemberActionLink() {
-        getMemberActionLink().setVisibility(View.VISIBLE);
-        getMemberActionLink().setText(R.string.dismiss_patient);
-        getMemberActionLink().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.dismiss_patient_alert)
-                        .setNegativeButton(R.string.cancel, null)
-                        .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
-                                DialogInterface
-                                        .OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        try {
-                                            dismissIdentification(IdentificationEvent
-                                                    .DismissalReasonEnum.values()[which]);
-                                        } catch (SyncableModel.UnauthenticatedException | SQLException e) {
-                                            ExceptionManager.reportException(e);
-                                            Toast.makeText(getContext(),
-                                                    "Failed to dismiss member, contact support.",
-                                                    Toast.LENGTH_LONG).
-                                                    show();
-                                        }
-                                    }
-                                }).create().show();
-            }
-        });
-    }
-
-    protected Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
+    private Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
         Encounter encounter = new Encounter();
         IdentificationEvent checkIn = getMember().currentCheckIn();
         if (checkIn != null) {
@@ -104,7 +78,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
+    private void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
             throws SyncableModel.UnauthenticatedException, SQLException {
         IdentificationEvent checkIn = getMember().currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
@@ -119,24 +93,46 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    protected void showGenericFailedToast() {
+    private void showGenericFailedToast() {
         Toast.makeText(getContext(),
                 getContext().getString(R.string.generic_enter_treatment_info_failure),
                 Toast.LENGTH_LONG).
                 show();
     }
 
-    protected void showFailedToCheckOutToast() {
+    private void showFailedToCheckOutToast() {
         Toast.makeText(getContext(),
                 getContext().getString(R.string.identification_dismissed_failure),
                 Toast.LENGTH_LONG).
                 show();
     }
 
-    protected void showCheckedOutSuccessfulToast() {
+    private void showCheckedOutSuccessfulToast() {
         Toast.makeText(getContext(),
                 getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
                 Toast.LENGTH_LONG).
                 show();
+    }
+
+    public void dismissMember() {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.dismiss_member_alert)
+                .setNegativeButton(R.string.cancel, null)
+                .setItems(IdentificationEvent.getFormattedDismissalReasons(), new
+                        DialogInterface
+                                .OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    dismissIdentification(IdentificationEvent
+                                            .DismissalReasonEnum.values()[which]);
+                                } catch (SQLException | SyncableModel.UnauthenticatedException e) {
+                                    ExceptionManager.reportException(e);
+                                    Toast.makeText(getContext(),
+                                            "Failed to dismiss member, contact support.",
+                                            Toast.LENGTH_LONG).
+                                            show();
+                                }
+                            }
+                        }).create().show();
     }
 }

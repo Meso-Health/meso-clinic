@@ -20,11 +20,14 @@ import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -88,6 +91,32 @@ public class EncounterFlowFeature extends BaseTest {
                 .inAdapterView(withId(R.id.line_items_list))
                 .onChildView(withId(R.id.remove_line_item_btn))
                 .perform(click());
+    }
+
+    public void dismissMember() {
+        // when the user decides to dismiss a patient, a confirmation screen appears
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(withText(R.string.menu_dismiss_member)).perform(click());
+        onView(withText(R.string.dismiss_member_alert)).check(matches(isDisplayed()));
+
+        // after dismissing a patient, the user can see a confirmation toast and that the patient
+        // is not in the current patients list
+        onView(withText("Patient on other phone")).inRoot(isDialog()).perform(click());
+        onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
+        onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void dismissMemberFlow() {
+        // the user can see checked-in members
+        onView(withText(member.getFullName())).check(matches(isDisplayed()));
+
+        // when the user clicks on a checked-in member, their details appear
+        onView(withText(member.getFullName())).perform(click());
+        onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
+
+        // the user can dismiss the checked-in member without entering treatment info
+        dismissMember();
     }
 
     @Test

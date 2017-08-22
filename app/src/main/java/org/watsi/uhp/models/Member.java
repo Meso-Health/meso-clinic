@@ -1,7 +1,6 @@
 package org.watsi.uhp.models;
 
 import android.content.Context;
-import android.net.Uri;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
@@ -44,7 +43,7 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
     public static final String FIELD_NAME_GENDER = "gender";
-    public static final String FIELD_NAME_CROPPED_PHOTO = "photo"; // TODO: better name
+    public static final String FIELD_NAME_CROPPED_PHOTO = "photo";
     public static final String FIELD_NAME_REMOTE_MEMBER_PHOTO_URL = "photo_url";
     public static final String FIELD_NAME_REMOTE_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_LOCAL_MEMBER_PHOTO_ID = "local_member_photo_id";

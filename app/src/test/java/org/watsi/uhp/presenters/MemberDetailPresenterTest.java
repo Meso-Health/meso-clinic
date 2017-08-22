@@ -81,22 +81,22 @@ public class MemberDetailPresenterTest {
         when(MemberDetailPresenter.fetchMemberFromDB(mockMember)).thenReturn(mockMember);
         memberDetailPresenter = new MemberDetailPresenter(mockView, mockContext, mockMember, mockNavigationManager) {
             @Override
+            protected void additionalSetup() {
+                // no-op
+            }
+
+            @Override
             protected void setMemberActionButton() {
                 // no-op
             }
 
             @Override
-            protected void setMemberSecondaryActionButton() {
+            protected void navigateToCompleteEnrollmentFragment() {
                 // no-op
             }
 
             @Override
-            protected void setMemberIndicator() {
-                // no-op
-            }
-
-            @Override
-            protected void setMemberActionLink() {
+            public void navigateToMemberEditFragment() {
                 // no-op
             }
         };
@@ -107,47 +107,17 @@ public class MemberDetailPresenterTest {
         MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
         doNothing().when(memberDetailPresenterSpy).setPatientCardTextFields();
         doNothing().when(memberDetailPresenterSpy).setPatientCardPhoto();
-        doNothing().when(memberDetailPresenterSpy).setPatientCardNotifications();
-        doNothing().when(memberDetailPresenterSpy).setMemberActionLink();
+        doNothing().when(memberDetailPresenterSpy).setMemberNotifications();
         doNothing().when(memberDetailPresenterSpy).setMemberActionButton();
         doNothing().when(memberDetailPresenterSpy).setBottomListView();
-        doNothing().when(memberDetailPresenterSpy).setMemberSecondaryActionButton();
-        doNothing().when(memberDetailPresenterSpy).setMemberIndicator();
 
         memberDetailPresenterSpy.setUp();
 
         verify(memberDetailPresenterSpy, times(1)).setPatientCardTextFields();
         verify(memberDetailPresenterSpy, times(1)).setPatientCardPhoto();
-        verify(memberDetailPresenterSpy, times(1)).setPatientCardNotifications();
-        verify(memberDetailPresenterSpy, times(1)).setMemberActionLink();
+        verify(memberDetailPresenterSpy, times(1)).setMemberNotifications();
         verify(memberDetailPresenterSpy, times(1)).setMemberActionButton();
         verify(memberDetailPresenterSpy, times(1)).setBottomListView();
-        verify(memberDetailPresenterSpy, times(1)).setMemberSecondaryActionButton();
-        verify(memberDetailPresenterSpy, times(1)).setMemberIndicator();
-    }
-
-    @Test
-    public void setPatientCardNotifications_absentee() {
-        MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
-
-        doNothing().when(memberDetailPresenterSpy).showAbsenteeNotification();
-        when(mockMember.isAbsentee()).thenReturn(true);
-
-        memberDetailPresenterSpy.setPatientCardNotifications();
-
-        verify(memberDetailPresenterSpy, times(1)).showAbsenteeNotification();
-    }
-
-    @Test
-    public void setPatientCardNotifications_notAbsentee() {
-        MemberDetailPresenter memberDetailPresenterSpy = spy(memberDetailPresenter);
-
-        doNothing().when(memberDetailPresenterSpy).showReplaceCardNotification();
-        when(mockMember.isAbsentee()).thenReturn(false);
-
-        memberDetailPresenterSpy.setPatientCardNotifications();
-
-        verify(memberDetailPresenterSpy, times(1)).showReplaceCardNotification();
     }
 
     @Test

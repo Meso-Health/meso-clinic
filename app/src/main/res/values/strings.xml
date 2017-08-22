@@ -18,9 +18,8 @@
     <string name="exit_form_alert">Are you sure you want to exit?</string>
 
     <!-- Menu -->
-    <string name="menu_report_member">Report member</string>
-    <string name="menu_member_edit_label">Edit member details</string>
-    <string name="menu_complete_enrollment_label">Complete enrollment</string>
+    <string name="menu_dismiss_member">Dismiss member</string>
+    <string name="menu_member_edit_label">Edit member</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
     <string name="log_out_alert">Are you sure you want to log out?</string>
@@ -79,15 +78,14 @@
 
     <!-- CheckinMemberDetailFragment -->
     <string name="detail_fragment_label">Is this the right person?</string>
-    <string name="absentee_notification">Must complete enrollment</string>
-    <string name="replace_card_notification">Needs new card</string>
+    <string name="absentee_notification">Needs to complete enrollment</string>
+    <string name="absentee_action">ENROLL</string>
+    <string name="replace_card_notification">Needs new member card</string>
+    <string name="replace_card_action">ISSUE</string>
     <string name="check_in">Check-in</string>
-    <string name="reject_identity_alert">Are you sure you want to report?</string>
     <string name="identification_approved">has been successfully checked in.</string>
-    <string name="identification_rejected">has been reported for suspicious behavior.</string>
-    <string name="identification_dismissed">has been checked out without treatment details.</string>
-    <string name="identification_dismissed_failure">Failed to check out member.</string>
 
+    <string name="fingerprint_scan_btn">SCAN</string>
     <string name="fingerprint_scan_successful">Fingerprint Scan Successful!</string>
     <string name="fingerprint_scan_failed">Fingerprint Scan Failed</string>
     <string name="good_scan_indicator">GOOD MATCH</string>
@@ -96,8 +94,9 @@
 
     <!-- CurrentMemberDetailFragment -->
     <string name="detail_create_encounter">Enter treatment information</string>
-    <string name="dismiss_patient"><u>No treatment details</u></string>
-    <string name="dismiss_patient_alert">Why are there no treatment details?</string>
+    <string name="dismiss_member_alert">Why are you dismissing the member?</string>
+    <string name="identification_dismissed">has been checked out without treatment details.</string>
+    <string name="identification_dismissed_failure">Failed to check out member.</string>
     <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
 
     <!-- EncounterFragment -->

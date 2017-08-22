@@ -110,16 +110,4 @@ public class CurrentMemberDetailPresenterTest {
         verify(mockButton, times(1)).setText(R.string.detail_create_encounter);
         verify(mockButton, times(1)).setOnClickListener(any(View.OnClickListener.class));
     }
-
-    @Test
-    public void setMemberActionLink() {
-        CurrentMemberDetailPresenter currentMemberDetailPresenterSpy = spy(currentMemberDetailPresenter);
-        when(currentMemberDetailPresenterSpy.getMemberActionLink()).thenReturn(mockTextView);
-
-        currentMemberDetailPresenterSpy.setMemberActionLink();
-
-        verify(mockTextView, times(1)).setVisibility(View.VISIBLE);
-        verify(mockTextView, times(1)).setText(R.string.dismiss_patient);
-        verify(mockTextView, times(1)).setOnClickListener(any(View.OnClickListener.class));
-    }
 }

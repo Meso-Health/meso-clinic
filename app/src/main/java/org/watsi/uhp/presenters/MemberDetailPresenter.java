@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
+import org.watsi.uhp.custom_components.NotificationBar;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -26,7 +27,7 @@ public abstract class MemberDetailPresenter {
     private final Context mContext;
     private final Member mMember;
 
-    public MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
+    MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
         mMember = fetchMemberFromDB(member);
@@ -34,25 +35,32 @@ public abstract class MemberDetailPresenter {
     }
 
     public void setUp() {
+        setMemberNotifications();
         setPatientCardTextFields();
         setPatientCardPhoto();
-        setPatientCardNotifications();
-        setMemberActionLink();
         setMemberActionButton();
         setBottomListView();
-        setMemberSecondaryActionButton();
-        setMemberIndicator();
+        additionalSetup();
     }
+
+    protected abstract void additionalSetup();
 
     protected abstract void setMemberActionButton();
 
-    protected abstract void setMemberSecondaryActionButton();
+    protected abstract void navigateToCompleteEnrollmentFragment();
 
-    protected abstract void setMemberIndicator();
+    public abstract void navigateToMemberEditFragment();
 
-    protected abstract void setMemberActionLink();
+    void setMemberNotifications() {
+        if (mMember.isAbsentee()) {
+            setAbsenteeNotification();
+        }
+        if (mMember.getCardId() == null) {
+            setReplaceCardNotification();
+        }
+    }
 
-    protected static Member fetchMemberFromDB(Member member) {
+    static Member fetchMemberFromDB(Member member) {
         try {
             return (Member) member.refresh();
         } catch (SQLException e) {
@@ -61,34 +69,26 @@ public abstract class MemberDetailPresenter {
         }
     }
 
-    protected void setBottomListView() {
+    void setBottomListView() {
         List<Member> householdMembers = getMembersForBottomListView();
         if (householdMembers != null) {
             setBottomListWithMembers(householdMembers);
         }
     }
 
-    protected void setPatientCardPhoto() {
+    void setPatientCardPhoto() {
         PhotoLoaderHelper.loadMemberPhoto(getContext(), getMember(), getMemberPhotoImageView(),
                 R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
     }
 
-    protected void setPatientCardNotifications() {
-        if (mMember.isAbsentee()) {
-            showAbsenteeNotification();
-        } else if (mMember.getCardId() == null) {
-            showReplaceCardNotification();
-        }
-    }
-
-    protected void setPatientCardTextFields() {
+    void setPatientCardTextFields() {
         getMemberNameDetailTextView().setText(mMember.getFullName());
         getMemberAgeAndGenderTextView().setText(mMember.getFormattedAgeAndGender());
         getMemberCardIdDetailTextView().setText(mMember.getFormattedCardId());
         getMemberPhoneNumberTextView().setText(mMember.getFormattedPhoneNumber());
     }
 
-    protected void setBottomListWithMembers(List<Member> householdMembers) {
+    void setBottomListWithMembers(List<Member> householdMembers) {
         TextView householdListLabel = getHouseholdMembersLabelTextView();
         ListView householdListView = getHouseholdMembersListView();
 
@@ -107,7 +107,7 @@ public abstract class MemberDetailPresenter {
         });
     }
 
-    protected List<Member> getMembersForBottomListView() {
+    List<Member> getMembersForBottomListView() {
         try {
             return MemberDao.getRemainingHouseholdMembers(
                     mMember.getHouseholdId(), mMember.getId());
@@ -117,65 +117,71 @@ public abstract class MemberDetailPresenter {
         }
     }
 
-    public Button getMemberSecondaryButton() {
-        return (Button) getView().findViewById(R.id.member_secondary_button);
-    }
-
-    public TextView getMemberIndicator() {
-        return (TextView) getView().findViewById(R.id.member_indicator);
-    }
-
-    public TextView getMemberActionLink() {
-        return (TextView) mView.findViewById(R.id.member_action_link);
-    }
-
-    protected TextView getHouseholdMembersLabelTextView() {
+    TextView getHouseholdMembersLabelTextView() {
         return (TextView) getView().findViewById(R.id.household_members_label);
     }
 
-    protected ListView getHouseholdMembersListView() {
+    ListView getHouseholdMembersListView() {
         return (ListView) getView().findViewById(R.id.household_members);
     }
 
-    protected String formatQuantityStringFromHouseholdSize(int householdSize) {
+    String formatQuantityStringFromHouseholdSize(int householdSize) {
         return getContext().getResources().getQuantityString(
                 R.plurals.household_label, householdSize, householdSize);
     }
 
-    protected ImageView getMemberPhotoImageView() {
+    ImageView getMemberPhotoImageView() {
         return (ImageView) mView.findViewById(R.id.member_photo);
     }
 
-    protected TextView getMemberNameDetailTextView() {
+    TextView getMemberNameDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_name_detail_fragment));
     }
 
-    protected TextView getMemberAgeAndGenderTextView() {
+    TextView getMemberAgeAndGenderTextView() {
         return ((TextView) mView.findViewById(R.id.member_age_and_gender));
     }
 
-    protected TextView getMemberCardIdDetailTextView() {
+    TextView getMemberCardIdDetailTextView() {
         return ((TextView) mView.findViewById(R.id.member_card_id_detail_fragment));
     }
 
-    protected TextView getMemberPhoneNumberTextView() {
+    TextView getMemberPhoneNumberTextView() {
         return ((TextView) mView.findViewById(R.id.member_phone_number));
     }
 
-    protected Button getMemberActionButton() {
+    Button getMemberActionButton() {
         return ((Button) mView.findViewById(R.id.member_action_button));
     }
 
-    protected void showAbsenteeNotification() {
-        TextView memberNotification = (TextView) mView.findViewById(R.id.member_notification);
+    private void setAbsenteeNotification() {
+        NotificationBar memberNotification =
+                (NotificationBar) mView.findViewById(R.id.absentee_notification);
         memberNotification.setVisibility(View.VISIBLE);
-        memberNotification.setText(R.string.absentee_notification);
+        memberNotification.setOnActionClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        navigateToCompleteEnrollmentFragment();
+                    }
+                }
+        );
     }
 
-    protected void showReplaceCardNotification() {
-        TextView memberNotification = (TextView) mView.findViewById(R.id.member_notification);
+    private void setReplaceCardNotification() {
+        NotificationBar memberNotification =
+                (NotificationBar) mView.findViewById(R.id.replace_card_notification);
         memberNotification.setVisibility(View.VISIBLE);
-        memberNotification.setText(R.string.replace_card_notification);
+        memberNotification.setOnActionClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        navigateToMemberEditFragment();
+                    }
+                }
+        );
     }
 
     public Member getMember() {
