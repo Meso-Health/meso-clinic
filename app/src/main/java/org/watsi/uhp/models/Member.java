@@ -221,7 +221,8 @@ public class Member extends SyncableModel {
             memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
         }
 
-        if (nationalIdPhotoUrlFromResponse != null) {
+        // TODO need to handle edge case where the response has a URL for a photo that is different then the locally stored photo
+        if (nationalIdPhotoUrlFromResponse != null && getLocalNationalIdPhoto() != null) {
             getLocalNationalIdPhoto().markAsSynced();
             memberResponse.setLocalNationalIdPhoto(getLocalNationalIdPhoto());
         }
@@ -245,7 +246,9 @@ public class Member extends SyncableModel {
                 setCroppedPhoto(persistedMember.getCroppedPhoto());
             }
 
-            // TODO: if it is a new remote photo url - should clear out current croppedPhoto
+            if (!getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
+                setCroppedPhoto(null);
+            }
         }
         getDao().createOrUpdate(this);
     }
@@ -341,11 +344,9 @@ public class Member extends SyncableModel {
     }
 
     public String getRemoteMemberPhotoUrlForFetch() {
-        if (mRemoteMemberPhotoUrl.charAt(0) == '/') {
-            return BuildConfig.API_HOST + mRemoteMemberPhotoUrl;
-        } else {
-            return mRemoteMemberPhotoUrl;
-        }
+        return BuildConfig.USING_LOCAL_SERVER ?
+                BuildConfig.API_HOST + mRemoteMemberPhotoUrl :
+                mRemoteMemberPhotoUrl;
     }
 
     public void setRemoteMemberPhotoUrl(String photoUrl) {
