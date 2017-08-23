@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public abstract class PhotoFragment<T extends SyncableModel> extends FormFragment<T> {
 
     private static int CAPTURE_PHOTO_INTENT = 111;
-    private static int DELETE_GALLERY_PHOTO_INTERVAL = 60000;
+    private static int DELETE_GALLERY_PHOTO_INTERVAL_IN_MS = 60000;
 
     private Uri mUri;
 
@@ -101,7 +101,7 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
 
         long dateTaken = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN));
 
-        if (dateTaken > (Clock.getCurrentTime().getTime() - DELETE_GALLERY_PHOTO_INTERVAL)) {
+        if (dateTaken > (Clock.getCurrentTime().getTime() - DELETE_GALLERY_PHOTO_INTERVAL_IN_MS)) {
             long photoId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
             Uri duplicatePhotoUri = ContentUris.withAppendedId(mediaStoreImageUri, photoId);
             getContext().getContentResolver().delete(duplicatePhotoUri, null, null);
