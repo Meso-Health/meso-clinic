@@ -87,8 +87,13 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
                 MediaStore.Images.Media.DATE_TAKEN
         };
 
+        Long oneMinuteAgo = Clock.getCurrentTime().getTime() - DELETE_GALLERY_PHOTO_INTERVAL_IN_MS;
+
+        String whereClause = MediaStore.Images.Media.DATE_TAKEN + " > ?";
+        String[] whereArgs = new String[]{ oneMinuteAgo.toString() };
+
         Cursor cursor = getContext().getContentResolver().query(
-                mediaStoreImageUri, projection, null, null,
+                mediaStoreImageUri, projection, whereClause, whereArgs,
                 MediaStore.Images.Media.DATE_TAKEN + " DESC" );
 
         if (cursor == null) {
@@ -96,15 +101,13 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
             return;
         }
 
-        if (cursor.getCount() > 1) {
-            ExceptionManager.reportErrorMessage("Multiple photos returned in media store query");
+        int cursorCount = cursor.getCount();
+        if (cursorCount != 1) {
+            ExceptionManager.reportErrorMessage(
+                    "Unexpected number of photos returned from delete photo from gallery query: " + cursorCount);
         }
 
-        cursor.moveToFirst();
-
-        long dateTaken = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN));
-
-        if (dateTaken > (Clock.getCurrentTime().getTime() - DELETE_GALLERY_PHOTO_INTERVAL_IN_MS)) {
+        while (cursor.moveToNext()) {
             long photoId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
             Uri duplicatePhotoUri = ContentUris.withAppendedId(mediaStoreImageUri, photoId);
             getContext().getContentResolver().delete(duplicatePhotoUri, null, null);
