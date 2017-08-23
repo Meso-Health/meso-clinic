@@ -43,7 +43,7 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
     public static final String FIELD_NAME_GENDER = "gender";
-    public static final String FIELD_NAME_CROPPED_PHOTO = "photo";
+    public static final String FIELD_NAME_CROPPED_PHOTO_BYTES = "photo";
     public static final String FIELD_NAME_REMOTE_MEMBER_PHOTO_URL = "photo_url";
     public static final String FIELD_NAME_REMOTE_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
     public static final String FIELD_NAME_LOCAL_MEMBER_PHOTO_ID = "local_member_photo_id";
@@ -84,8 +84,8 @@ public class Member extends SyncableModel {
     @DatabaseField(columnName = FIELD_NAME_GENDER)
     protected GenderEnum mGender;
 
-    @DatabaseField(columnName = FIELD_NAME_CROPPED_PHOTO, dataType = DataType.BYTE_ARRAY)
-    protected byte[] mCroppedPhoto;
+    @DatabaseField(columnName = FIELD_NAME_CROPPED_PHOTO_BYTES, dataType = DataType.BYTE_ARRAY)
+    protected byte[] mCroppedPhotoBytes;
 
     @Expose
     @SerializedName(FIELD_NAME_REMOTE_MEMBER_PHOTO_URL)
@@ -240,14 +240,14 @@ public class Member extends SyncableModel {
             // if the existing member record has a photo and the fetched member record has
             // the same photo url as the existing record, copy the photo to the new record
             // so we do not have to re-download it
-            if (persistedMember.getCroppedPhoto() != null &&
+            if (persistedMember.getCroppedPhotoBytes() != null &&
                     persistedMember.getRemoteMemberPhotoUrl() != null &&
                     persistedMember.getRemoteMemberPhotoUrl().equals(getRemoteMemberPhotoUrl())) {
-                setCroppedPhoto(persistedMember.getCroppedPhoto());
+                setCroppedPhotoBytes(persistedMember.getCroppedPhotoBytes());
             }
 
             if (!getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
-                setCroppedPhoto(null);
+                setCroppedPhotoBytes(null);
             }
         }
         getDao().createOrUpdate(this);
@@ -323,12 +323,12 @@ public class Member extends SyncableModel {
         return getFormattedAge() + " / " + getFormattedGender();
     }
 
-    public byte[] getCroppedPhoto() {
-        return mCroppedPhoto;
+    public byte[] getCroppedPhotoBytes() {
+        return mCroppedPhotoBytes;
     }
 
-    public void setCroppedPhoto(byte[] photoBytes) {
-        this.mCroppedPhoto = photoBytes;
+    public void setCroppedPhotoBytes(byte[] photoBytes) {
+        this.mCroppedPhotoBytes = photoBytes;
     }
 
     public Photo getLocalMemberPhoto() {
@@ -438,7 +438,7 @@ public class Member extends SyncableModel {
         try {
             if (response.isSuccessful()) {
                 InputStream is = response.body().byteStream();
-                setCroppedPhoto(ByteStreams.toByteArray(is));
+                setCroppedPhotoBytes(ByteStreams.toByteArray(is));
             } else {
                 Map<String,String> params = new HashMap<>();
                 params.put("member.id", getId().toString());

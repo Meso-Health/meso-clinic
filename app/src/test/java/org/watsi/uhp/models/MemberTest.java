@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.api.UhpApi;
 import org.watsi.uhp.database.EncounterDao;
@@ -201,7 +202,7 @@ public class MemberTest {
     private void mockPhotoFetch() throws Exception {
         doNothing().when(mockMemberPhoto).markAsSynced();
         whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
-        when(mockRequestBuilder.url(remotePhotoUrl)).thenReturn(mockRequestBuilder);
+        when(mockRequestBuilder.url(BuildConfig.API_HOST + remotePhotoUrl)).thenReturn(mockRequestBuilder);
         when(mockRequestBuilder.build()).thenReturn(mockRequest);
         whenNew(OkHttpClient.class).withNoArguments().thenReturn(mockHttpClient);
         when(mockHttpClient.newCall(mockRequest)).thenReturn(mockCall);
@@ -283,7 +284,7 @@ public class MemberTest {
         Member persistedMember = new Member();
         persistedMember.setLocalMemberPhoto(mockMemberPhoto);
         persistedMember.setRemoteMemberPhotoUrl(remotePhotoUrl);
-        persistedMember.setCroppedPhoto(photoBytes);
+        persistedMember.setCroppedPhotoBytes(photoBytes);
         Member persistedMemberSpy = spy(persistedMember);
 
         when(persistedMemberSpy.isSynced()).thenReturn(true);
@@ -293,7 +294,7 @@ public class MemberTest {
         memberSpy.updateFromFetch();
 
         verify(mockDao, times(1)).createOrUpdate(memberSpy);
-        verify(memberSpy, times(1)).setCroppedPhoto(photoBytes);
+        verify(memberSpy, times(1)).setCroppedPhotoBytes(photoBytes);
     }
 
     @Test
@@ -353,7 +354,7 @@ public class MemberTest {
 
         member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
-        assertEquals(member.getCroppedPhoto(), photoBytes);
+        assertEquals(member.getCroppedPhotoBytes(), photoBytes);
         verify(mockResponse, times(1)).close();
     }
 
@@ -361,14 +362,14 @@ public class MemberTest {
     public void fetchAndSetPhotoFromUrl_remoteUrlFetchFails_reportsFailure() throws Exception {
         member.setId(UUID.randomUUID());
         member.setRemoteMemberPhotoUrl(remotePhotoUrl);
-        member.setCroppedPhoto(null);
+        member.setCroppedPhotoBytes(null);
 
         mockPhotoFetch();
         when(mockResponse.isSuccessful()).thenReturn(false);
 
         member.fetchAndSetPhotoFromUrl(mockHttpClient);
 
-        assertNull(member.getCroppedPhoto());
+        assertNull(member.getCroppedPhotoBytes());
         verifyStatic();
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class),

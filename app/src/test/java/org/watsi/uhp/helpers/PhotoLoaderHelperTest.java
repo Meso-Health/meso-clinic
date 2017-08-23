@@ -38,7 +38,7 @@ public class PhotoLoaderHelperTest {
     @Test
     public void loadMemberPhoto_nonLocalPhoto() throws Exception {
         byte[] photoBytes = new byte[]{(byte)0xe0};
-        when(mockMember.getCroppedPhoto()).thenReturn(photoBytes);
+        when(mockMember.getCroppedPhotoBytes()).thenReturn(photoBytes);
         when(PhotoLoaderHelper.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
         when(PhotoLoaderHelper.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
 
@@ -55,7 +55,7 @@ public class PhotoLoaderHelperTest {
         Photo photo = new Photo();
         photo.setUrl("random-local-full-size-image-url");
         when(mockMember.getLocalMemberPhoto()).thenReturn(photo);
-        when(mockMember.getCroppedPhoto()).thenReturn(null);
+        when(mockMember.getCroppedPhotoBytes()).thenReturn(null);
         when(PhotoLoaderHelper.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
         when(PhotoLoaderHelper.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
 

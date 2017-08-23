@@ -22,7 +22,7 @@ public class PhotoLoaderHelper {
         if (member.getLocalMemberPhoto() != null) {
             loadPhotoFromContentUri(context, imageView, member.getLocalMemberPhoto().getUrl(), adjustedWidth, adjustedHeight);
         } else {
-            loadPhotoFromBytes(context, imageView, member.getCroppedPhoto(), adjustedWidth, adjustedHeight);
+            loadPhotoFromBytes(context, imageView, member.getCroppedPhotoBytes(), adjustedWidth, adjustedHeight);
         }
     }
 

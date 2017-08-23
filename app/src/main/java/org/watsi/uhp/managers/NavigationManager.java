@@ -164,7 +164,7 @@ public class NavigationManager {
     }
 
     public void startCompleteEnrollmentFlow(Member member, IdentificationEvent idEvent) {
-        if (member.getCroppedPhoto() == null &&
+        if (member.getCroppedPhotoBytes() == null &&
                 member.getRemoteMemberPhotoUrl() == null &&
                 member.getLocalMemberPhoto() == null) {
             setEnrollmentMemberPhotoFragment(member, idEvent);
