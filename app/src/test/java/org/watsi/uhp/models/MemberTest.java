@@ -225,8 +225,10 @@ public class MemberTest {
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verify(memberSpy, times(1)).fetchAndSetPhotoFromUrl(mockHttpClient);
+        verify(mockMemberPhoto).markAsSynced();
         assertEquals(memberSpy.getRemoteMemberPhotoUrl(), remotePhotoUrl);
+        verify(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
+        assertEquals(responseMember.getLocalMemberPhoto(), mockMemberPhoto);
     }
 
     @Test
@@ -243,7 +245,8 @@ public class MemberTest {
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verify(mockNationalIdPhoto, times(1)).markAsSynced();
+        verify(mockNationalIdPhoto).markAsSynced();
+        assertEquals(responseMember.getLocalNationalIdPhoto(), mockNationalIdPhoto);
     }
 
     @Test
