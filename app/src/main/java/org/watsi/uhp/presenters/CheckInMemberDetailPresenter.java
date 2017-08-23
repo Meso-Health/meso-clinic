@@ -144,10 +144,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mIdEvent.setFingerprintsVerificationTier(fingerprintTier);
     }
 
-    public IdentificationEvent getIdEvent() {
-        return mIdEvent;
-    }
-
     void showScanFailedToast() {
         Toast.makeText(getContext(), R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show();
     }

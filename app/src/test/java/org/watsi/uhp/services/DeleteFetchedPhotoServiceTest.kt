@@ -1,6 +1,5 @@
 package org.watsi.uhp.services
 
-import android.util.Log
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -16,7 +15,7 @@ import org.powermock.modules.junit4.PowerMockRunner
 import org.watsi.uhp.database.PhotoDao
 
 @RunWith(PowerMockRunner::class)
-@PrepareForTest(DeleteFetchedPhotoService::class, Log::class, PhotoDao::class)
+@PrepareForTest(DeleteFetchedPhotoService::class, PhotoDao::class)
 class DeleteFetchedPhotoServiceTest {
     val mockPhoto = spy(Photo::class.java)
     val photoList = listOf(mockPhoto)
@@ -24,7 +23,6 @@ class DeleteFetchedPhotoServiceTest {
 
     @Before
     fun setup() {
-        PowerMockito.mockStatic(Log::class.java)
         PowerMockito.mockStatic(DeleteFetchedPhotoService::class.java)
         PowerMockito.mockStatic(PhotoDao::class.java)
     }
