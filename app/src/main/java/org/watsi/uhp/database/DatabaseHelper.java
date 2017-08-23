@@ -163,7 +163,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                         String url = form.getUrl();
                         Photo photo = new Photo();
                         photo.setUrl(url);
-                        photo.setSynced(form.isSynced());
                         photo.create();
                         form.setPhoto(photo);
                         getDao(EncounterForm.class).update(form);

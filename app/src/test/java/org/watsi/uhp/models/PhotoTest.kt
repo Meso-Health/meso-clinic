@@ -66,14 +66,4 @@ class PhotoTest {
         assertTrue(photo.deleted)
         Mockito.verify(photo).update()
     }
-
-    @Test
-    fun markAsSynced() {
-        photo.synced = false
-
-        photo.markAsSynced()
-
-        assertTrue(photo.synced)
-        Mockito.verify(photo).update()
-    }
 }

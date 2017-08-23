@@ -24,7 +24,6 @@ open class Photo() : AbstractModel() {
         const val TABLE_NAME = "photos"
         const val FIELD_NAME_ID = "id"
         const val FIELD_NAME_URL = "url"
-        const val FIELD_NAME_SYNCED = "synced"
         const val FIELD_NAME_DELETED = "deleted"
         const val CAPTURE_IMAGE_FILE_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider"
 
@@ -43,9 +42,6 @@ open class Photo() : AbstractModel() {
 
     @DatabaseField(columnName = FIELD_NAME_URL, canBeNull = false)
     var url: String? = null
-
-    @DatabaseField(columnName = FIELD_NAME_SYNCED, canBeNull = false)
-    var synced: Boolean = false
 
     @DatabaseField(columnName = FIELD_NAME_DELETED, canBeNull = false)
     var deleted: Boolean = false
@@ -69,12 +65,6 @@ open class Photo() : AbstractModel() {
         }
         if (deleted) update()
         return deleted
-    }
-
-    @Throws(SQLException::class)
-    open fun markAsSynced() {
-        synced = true
-        PhotoDao.update(this)
     }
 
     open fun bytes(context: Context): ByteArray? {

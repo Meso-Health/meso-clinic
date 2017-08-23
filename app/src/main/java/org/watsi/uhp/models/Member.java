@@ -219,14 +219,12 @@ public class Member extends SyncableModel {
             fetchAndSetPhotoFromUrl(new OkHttpClient()); // async?
 
             if (getLocalMemberPhoto() != null) {
-                getLocalMemberPhoto().markAsSynced();
                 memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
             }
         }
 
         // TODO need to handle edge case where the response has a URL for a photo that is different then the locally stored photo
         if (nationalIdPhotoUrlFromResponse != null && getLocalNationalIdPhoto() != null) {
-            getLocalNationalIdPhoto().markAsSynced();
             memberResponse.setLocalNationalIdPhoto(getLocalNationalIdPhoto());
         }
     }
@@ -468,7 +466,7 @@ public class Member extends SyncableModel {
     public Map<String, RequestBody> formatPatchRequest(Context context) {
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        if (getLocalMemberPhoto() != null && !getLocalMemberPhoto().getSynced()) {
+        if (dirty(FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)) {
             byte[] image = getLocalMemberPhoto().bytes(context);
             if (image != null) {
                 requestPartMap.put(
@@ -478,10 +476,10 @@ public class Member extends SyncableModel {
             }
         }
 
-        // only include national ID field in request if member photo is not
+        // only include national ID photo field in request if member photo is not
         //  being sent in order to limit the size of the request
         if (requestPartMap.get(API_NAME_MEMBER_PHOTO) == null) {
-            if (getLocalNationalIdPhoto() != null && !getLocalNationalIdPhoto().getSynced()) {
+            if (dirty(FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID)) {
                 byte[] image =  getLocalNationalIdPhoto().bytes(context);
                 if (image != null) {
                     requestPartMap.put(

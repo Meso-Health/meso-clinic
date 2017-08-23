@@ -20,7 +20,6 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -58,18 +57,7 @@ public class EncounterFormTest {
     }
 
     @Test
-    public void handleUpdateFromSync_marksPhotoAsSynced() throws Exception {
-        doNothing().when(mockPhoto).markAsSynced();
-        EncounterForm encounterFormResponse = new EncounterForm();
-
-        encounterForm.handleUpdateFromSync(encounterFormResponse);
-
-        verify(mockPhoto, times(1)).getSynced();
-    }
-
-    @Test
     public void handleUpdateFromSync_setsEncounterFormDetailsOnResponse() throws Exception {
-        doNothing().when(mockPhoto).markAsSynced();
         EncounterForm encounterFormResponse = new EncounterForm();
         UUID formId = UUID.randomUUID();
         UUID encounterId = UUID.randomUUID();
@@ -80,6 +68,7 @@ public class EncounterFormTest {
 
         assertEquals(encounterFormResponse.getId(), formId);
         assertEquals(encounterFormResponse.getEncounterId(), encounterId);
+        assertEquals(encounterForm.getPhoto(), encounterFormResponse.getPhoto());
     }
 
     @Test

@@ -200,7 +200,6 @@ public class MemberTest {
     }
 
     private void mockPhotoFetch() throws Exception {
-        doNothing().when(mockMemberPhoto).markAsSynced();
         whenNew(Request.Builder.class).withNoArguments().thenReturn(mockRequestBuilder);
         when(mockRequestBuilder.url(BuildConfig.API_HOST + remotePhotoUrl)).thenReturn(mockRequestBuilder);
         when(mockRequestBuilder.build()).thenReturn(mockRequest);
@@ -225,7 +224,6 @@ public class MemberTest {
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verify(mockMemberPhoto).markAsSynced();
         assertEquals(memberSpy.getRemoteMemberPhotoUrl(), remotePhotoUrl);
         verify(memberSpy).fetchAndSetPhotoFromUrl(mockHttpClient);
         assertEquals(responseMember.getLocalMemberPhoto(), mockMemberPhoto);
@@ -245,7 +243,6 @@ public class MemberTest {
 
         memberSpy.handleUpdateFromSync(responseMember);
 
-        verify(mockNationalIdPhoto).markAsSynced();
         assertEquals(responseMember.getLocalNationalIdPhoto(), mockNationalIdPhoto);
     }
 
@@ -621,8 +618,8 @@ public class MemberTest {
         byte[] mockPhotoBytes = new byte[]{(byte)0xe0};
 
         when(mockMemberPhoto.bytes(mockContext)).thenReturn(mockPhotoBytes);
-        when(editedMember.dirty(Member.API_NAME_MEMBER_PHOTO)).thenReturn(true);
-        when(editedMember.dirty(Member.API_NAME_NATIONAL_ID_PHOTO)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID)).thenReturn(true);
         when(Uri.parse(localPhotoUrl)).thenReturn(mockUri);
         when(Uri.parse(localNationalIdPhotoUrl)).thenReturn(mockUri);
 
@@ -638,8 +635,8 @@ public class MemberTest {
         byte[] mockPhotoBytes = new byte[]{(byte)0xe0};
 
         when(mockMemberPhoto.bytes(mockContext)).thenReturn(mockPhotoBytes);
-        when(editedMember.dirty(Member.API_NAME_MEMBER_PHOTO)).thenReturn(false);
-        when(editedMember.dirty(Member.API_NAME_NATIONAL_ID_PHOTO)).thenReturn(true);
+        when(editedMember.dirty(Member.FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)).thenReturn(false);
+        when(editedMember.dirty(Member.FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID)).thenReturn(true);
         when(Uri.parse(localNationalIdPhotoUrl)).thenReturn(mockUri);
 
         Map<String, RequestBody> requestBodyMap = editedMember.formatPatchRequest(mockContext);

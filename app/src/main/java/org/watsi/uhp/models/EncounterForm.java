@@ -32,11 +32,11 @@ public class EncounterForm extends SyncableModel {
     @DatabaseField(columnName = FIELD_NAME_ENCOUNTER_ID, foreign = true, canBeNull = false)
     private Encounter mEncounter;
 
+    @Expose(deserialize = false)
     @SerializedName(FIELD_NAME_PHOTO)
     @DatabaseField(columnName = FIELD_NAME_PHOTO, foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private Photo mPhoto;
 
-    @Expose(deserialize = false)
     @SerializedName(FIELD_NAME_URL)
     @DatabaseField(columnName = FIELD_NAME_URL)
     private String mUrl;
@@ -76,13 +76,12 @@ public class EncounterForm extends SyncableModel {
 
     @Override
     public void handleUpdateFromSync(SyncableModel responseModel) throws SQLException {
-        getPhoto().markAsSynced();
-
         // set the ID, URL and encounter ID from the model onto the response so that they do
         //  not get marked as dirty fields when the models are diffed in the sync logic
         EncounterForm response = (EncounterForm) responseModel;
         response.setId(getId());
         response.setEncounterId(getEncounterId());
+        ((EncounterForm) responseModel).setPhoto(getPhoto());
     }
 
     @Override
