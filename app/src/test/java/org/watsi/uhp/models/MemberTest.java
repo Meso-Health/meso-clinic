@@ -260,7 +260,7 @@ public class MemberTest {
 
         memberSpy.updateFromFetch();
 
-        verify(mockDao, times(1)).createOrUpdate(memberSpy);
+        verify(mockDao).createOrUpdate(memberSpy);
     }
 
     @Test
@@ -296,8 +296,27 @@ public class MemberTest {
 
         memberSpy.updateFromFetch();
 
-        verify(mockDao, times(1)).createOrUpdate(memberSpy);
-        verify(memberSpy, times(1)).setCroppedPhotoBytes(photoBytes);
+        verify(mockDao).createOrUpdate(memberSpy);
+        verify(memberSpy).setCroppedPhotoBytes(photoBytes);
+    }
+
+    @Test
+    public void updateFromFetch_remoteMemberPhotoUrlChanges_clearsCroppedPhotoBytes() throws Exception {
+        member.setId(UUID.randomUUID());
+        member.setRemoteMemberPhotoUrl(remotePhotoUrl);
+        Member memberSpy = spy(member);
+        Member persistedMember = new Member();
+        persistedMember.setRemoteMemberPhotoUrl("http://watsi.org/updated/photo/url");
+        Member persistedMemberSpy = spy(persistedMember);
+
+        when(persistedMemberSpy.isSynced()).thenReturn(true);
+        when(MemberDao.findById(memberSpy.getId())).thenReturn(persistedMemberSpy);
+        doReturn(mockDao).when(memberSpy).getDao();
+
+        memberSpy.updateFromFetch();
+
+        verify(mockDao).createOrUpdate(memberSpy);
+        verify(memberSpy).setCroppedPhotoBytes(null);
     }
 
     @Test
