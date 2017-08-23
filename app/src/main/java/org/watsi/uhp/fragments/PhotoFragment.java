@@ -66,7 +66,6 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
             } else {
                 ExceptionManager.reportErrorMessage("Image capture intent failed");
                 Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
-
             }
 
         } catch (IOException | SQLException e) {
@@ -95,6 +94,10 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
         if (cursor == null) {
             ExceptionManager.reportErrorMessage("Null cursor returned when attempting to delete photo duplicate");
             return;
+        }
+
+        if (cursor.getCount() > 1) {
+            ExceptionManager.reportErrorMessage("Multiple photos returned in media store query");
         }
 
         cursor.moveToFirst();
