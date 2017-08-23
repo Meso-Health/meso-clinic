@@ -64,7 +64,7 @@ public class PhotoDao {
                         "(members.id IS NULL AND encounter_forms.id IS NULL AND\n" +
                         // check photo is at least 30 minutes old so we do not delete it before it
                         // has a chance to be associated with its corresponding member/encounter form
-                        "photos.created_at >= datetime('now', '-30 minutes')))";
+                        "photos.created_at <= datetime('now', '-30 minutes')))";
 
         GenericRawResults<String[]> results = getInstance().getPhotoDao().queryRaw(rawQuery);
 
