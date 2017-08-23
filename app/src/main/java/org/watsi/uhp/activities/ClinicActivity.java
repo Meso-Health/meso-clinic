@@ -103,7 +103,8 @@ public class ClinicActivity extends AppCompatActivity {
                 new ComponentName(this, DownloadMemberPhotosService.class)));
         jobScheduler.schedule(SyncService.buildJobInfo(
                 DELETE_PHOTOS_SERVICE_JOB_ID,
-                new ComponentName(this, DeleteFetchedPhotoService.class)));
+                new ComponentName(this, DeleteFetchedPhotoService.class),
+                false));
     }
 
     private void setupToolbar() {
