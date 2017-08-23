@@ -116,6 +116,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                             if (uri.getScheme().equals("content")) {
                                 Photo photo = new Photo();
                                 photo.setUrl(member.getRemoteMemberPhotoUrl());
+
                                 photo.create();
                                 member.setLocalMemberPhoto(photo);
                                 member.setRemoteMemberPhotoUrl(null);
@@ -142,15 +143,27 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     //  and dropping the old table
                     getDao(EncounterForm.class).executeRaw("ALTER TABLE `encounter_forms` RENAME TO `encounter_forms_deprecated`");
                     TableUtils.createTable(connectionSource, EncounterForm.class);
+
+                    // because photo_id is a required field on the new EncounterForm table with
+                    // a foreign key constraint, we need to pass a valid photo ID when we copy
+                    // over records - so this creates a placeholder Photo to use as the valid ID
+                    // and after the table is created loops through and replaces the photo_id
+                    // with a new Photo model created using the proper URL
+                    Photo placeholderPhoto = new Photo();
+                    placeholderPhoto.setUrl("placeholder");
+                    placeholderPhoto.create();
+                    String placeholderPhotoId = placeholderPhoto.getId().toString();
                     getDao(EncounterForm.class).executeRaw("INSERT INTO `encounter_forms`\n"+
-                                    "SELECT id, created_at, token, dirty_fields, encounter_id, url, null AS photo_id FROM `encounter_forms_deprecated`");
+                                    "SELECT id, created_at, token, dirty_fields, encounter_id, url, ? AS photo_id FROM `encounter_forms_deprecated`",
+                            placeholderPhotoId);
                     getDao(EncounterForm.class).executeRaw("DROP TABLE `encounter_forms_deprecated`");
 
-                    // copy unsynced EncounterForm photos to Photo models
-                    for (EncounterForm form : EncounterForm.unsynced(EncounterForm.class)) {
+                    // create Photo models for all EncounterForms
+                    for (EncounterForm form : getDao(EncounterForm.class).queryForAll()) {
                         String url = form.getUrl();
                         Photo photo = new Photo();
                         photo.setUrl(url);
+                        photo.setSynced(form.isSynced());
                         photo.create();
                         form.setPhoto(photo);
                         getDao(EncounterForm.class).update(form);
