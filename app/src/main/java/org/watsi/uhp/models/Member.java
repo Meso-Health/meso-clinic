@@ -215,10 +215,13 @@ public class Member extends SyncableModel {
         String nationalIdPhotoUrlFromResponse = memberResponse.getRemoteNationalIdPhotoUrl();
 
         if (photoUrlFromResponse != null) {
-            getLocalMemberPhoto().markAsSynced();
             setRemoteMemberPhotoUrl(photoUrlFromResponse);
             fetchAndSetPhotoFromUrl(new OkHttpClient()); // async?
-            memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
+
+            if (getLocalMemberPhoto() != null) {
+                getLocalMemberPhoto().markAsSynced();
+                memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
+            }
         }
 
         // TODO need to handle edge case where the response has a URL for a photo that is different then the locally stored photo
