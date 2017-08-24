@@ -53,8 +53,8 @@ public class NavigationManager {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
+        // No need for a removeFragment transaction if there is no current fragment. (i.e. open app)
         if (currentFragment != null) {
-            // We do not need this remove transaction if there's no currentFragment on page.
             fm.beginTransaction()
                     .remove(currentFragment)
                     .addToBackStack("remove" + currentFragment.getName())
