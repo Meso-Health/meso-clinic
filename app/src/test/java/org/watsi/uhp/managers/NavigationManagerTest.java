@@ -10,21 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.watsi.uhp.R;
-import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.CurrentPatientsFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
-import org.watsi.uhp.fragments.SearchMemberFragment;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class NavigationManagerTest {
@@ -58,53 +47,5 @@ public class NavigationManagerTest {
 
         Fragment fragment = fragmentProvider.createFragment(EncounterFragment.class);
         assertThat(fragment, instanceOf(EncounterFragment.class));
-    }
-
-        @Test
-    public void setCurrentPatientsFragment() throws Exception {
-        Fragment mockFragment = mock(Fragment.class);
-        when(mockFragmentManager.findFragmentByTag("home")).thenReturn(mockFragment);
-        when(mockFragmentTransaction.remove(mockFragment)).thenReturn(mockFragmentTransaction);
-
-        navMgr.setCurrentPatientsFragment();
-
-        verify(mockFragmentTransaction, never()).addToBackStack(null);
-        verify(mockFragmentManager).popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        verify(mockFragmentTransaction).remove(mockFragment);
-        verify(mockFragmentTransaction).replace(
-                anyInt(),
-                any(CurrentPatientsFragment.class),
-                anyString()
-        );
-        verify(mockFragmentTransaction, times(2)).commit();
-    }
-
-//    @Test // skipping test while we figure out a solution for mocking BaseBundle
-    public void setBarcodeFragment() throws Exception {
-        BarcodeFragment fragment = mock(BarcodeFragment.class);
-        when(mockFragmentProvider.createFragment(BarcodeFragment.class)).thenReturn(fragment);
-
-        navMgr.setBarcodeFragment(BarcodeFragment.ScanPurposeEnum.ID, null, null);
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    @Test
-    public void setSearchMemberFragment() throws Exception {
-        SearchMemberFragment fragment = mock(SearchMemberFragment.class);
-        when(mockFragmentProvider.createFragment(SearchMemberFragment.class)).thenReturn(fragment);
-
-        navMgr.setSearchMemberFragment();
-        addsToBackStackButDoesNotPopBackStack(fragment);
-    }
-
-    private void addsToBackStackButDoesNotPopBackStack(Fragment fragment) {
-        verify(mockFragmentManager, never()).popBackStack(anyString(), anyInt());
-        verify(mockFragmentTransaction).addToBackStack(null);
-        verify(mockFragmentTransaction).replace(
-                R.id.fragment_container,
-                fragment,
-                null
-        );
-        verify(mockFragmentTransaction).commit();
     }
 }
