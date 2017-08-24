@@ -59,7 +59,7 @@ public class NavigationManager {
                     .remove(currentFragment)
                     .addToBackStack("remove" + currentFragment.getName())
                     .commit();
-            // If new fragment that we're going to is already in the stack, we're going to remove it from backstack first.
+            // Make sure we remove all instances of this fragment (and anything above it) in the stack.
             if (fm.findFragmentByTag(fragment.getName()) != null) {
                 fm.popBackStack("add" + fragment.getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
