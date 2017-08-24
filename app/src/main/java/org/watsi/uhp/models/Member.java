@@ -247,7 +247,8 @@ public class Member extends SyncableModel {
                 setCroppedPhotoBytes(persistedMember.getCroppedPhotoBytes());
             }
 
-            if (!getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
+            if (getRemoteMemberPhotoUrl() != null &&
+                    !getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
                 setCroppedPhotoBytes(null);
             }
         }
