@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
@@ -29,8 +27,6 @@ import org.watsi.uhp.fragments.VersionAndSyncFragment;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
-
-import java.util.List;
 
 /**
  * Helper class for managing navigation between fragments
