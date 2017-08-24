@@ -36,11 +36,6 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public String getName() {
-        String simpleName = getClass().getSimpleName();
-        if (simpleName.contains("MemberDetailFragment")) {
-            return "MemberDetailFragment";
-        } else {
-            return simpleName;
-        }
+        return getClass().getSimpleName();
     }
 }
