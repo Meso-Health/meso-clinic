@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,9 +24,7 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
