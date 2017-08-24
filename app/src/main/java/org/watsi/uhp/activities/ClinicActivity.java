@@ -129,11 +129,11 @@ public class ClinicActivity extends AppCompatActivity {
                 ((FormFragment) currentFragment).isFirstStep()) {
             showDialogReturnToPreviousScreen();
         } else {
-            onBackPressedImmediate();
+            onBackPressedNoConfirmation();
         }
     }
 
-    private void onBackPressedImmediate() {
+    private void onBackPressedNoConfirmation() {
         getSupportFragmentManager().popBackStack();
         super.onBackPressed();
     }
@@ -227,7 +227,7 @@ public class ClinicActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        onBackPressedImmediate();
+                        onBackPressedNoConfirmation();
                     }
                 }).create().show();
     }
