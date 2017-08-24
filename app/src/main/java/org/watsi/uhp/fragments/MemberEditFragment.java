@@ -49,13 +49,13 @@ public class MemberEditFragment extends FormFragment<Member> {
                     ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " + mSyncableModel.getId());
                     toastMessage = "Failed to update the member information.";
                 }
-                Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                 if (idEvent != null) {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
                 } else {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel);
                 }
+                Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

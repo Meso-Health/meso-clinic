@@ -162,7 +162,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     private boolean handleCardIdScan(Member member, IdentificationEvent idEvent, String barcodeDisplayValue) {
         if (Member.validCardId(barcodeDisplayValue)) {
             member.setCardId(barcodeDisplayValue);
-            Log.i("UHP-debug", "handleCardIdScan legit");
             return true;
         } else {
             ExceptionManager.reportErrorMessage("Detected invalid card when scanning card for member edit. Card scanned: " + member.getCardId());
