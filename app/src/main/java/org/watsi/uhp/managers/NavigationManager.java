@@ -202,17 +202,17 @@ public class NavigationManager {
     }
 
     public static class FragmentProvider {
-        public BaseFragment createFragment(Class<? extends Fragment> clazz) {
+        public BaseFragment createFragment(Class<? extends BaseFragment> clazz) {
             return createFragment(clazz, null);
         }
 
-        public BaseFragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
+        public BaseFragment createFragment(Class<? extends BaseFragment> clazz, Bundle bundle) {
             try {
-                Fragment fragment = clazz.newInstance();
+                BaseFragment fragment = clazz.newInstance();
                 if (bundle != null) {
                     fragment.setArguments(bundle);
                 }
-                return (BaseFragment) fragment;
+                return fragment;
             } catch (InstantiationException | IllegalAccessException e) {
                 ExceptionManager.reportException(e);
                 return null;
