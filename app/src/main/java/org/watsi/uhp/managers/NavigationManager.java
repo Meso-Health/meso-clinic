@@ -5,10 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
@@ -28,6 +30,8 @@ import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
+import java.util.List;
+
 /**
  * Helper class for managing navigation between fragments
  */
@@ -35,11 +39,7 @@ public class NavigationManager {
     public static String IDENTIFICATION_EVENT_BUNDLE_FIELD = "identificationEvent";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String MEMBER_BUNDLE_FIELD = "member";
-    public static String THROUGH_MEMBER_BUNDLE_FIELD = "throughMember";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
-
-    private static String HOME_TAG = "home";
-    public static String DETAIL_TAG = "detail";
 
     private FragmentActivity mActivity;
     private FragmentProvider mFragmentProvider;
@@ -53,38 +53,30 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
-    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
-                             popBackStack) {
+    private void setFragment(BaseFragment fragment) {
         FragmentManager fm = mActivity.getSupportFragmentManager();
+        BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
-        if (popBackStack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            if (fm.findFragmentByTag(HOME_TAG) != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
-            }
-
-            // Hacky solution: (michaelliang) I added this extra check since the detail fragment may
-            // stick around when returning to the CurrentPatientsFragment.
-            if (fm.findFragmentByTag(DETAIL_TAG) != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag(DETAIL_TAG)).commit();
+        if (currentFragment != null) {
+            // We do not need this remove transaction if there's no currentFragment on page.
+            fm.beginTransaction()
+                    .remove(currentFragment)
+                    .addToBackStack("remove" + currentFragment.getName())
+                    .commit();
+            // If new fragment that we're going to is already in the stack, we're going to remove it from backstack first.
+            if (fm.findFragmentByTag(fragment.getName()) != null) {
+                fm.popBackStack("add" + fragment.getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
 
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment, tag);
-
-        if (addToBackstack) {
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
-    }
-
-    private void setFragment(Fragment fragment) {
-        setFragment(fragment, null, true, false);
+        fm.beginTransaction()
+                .add(R.id.fragment_container, fragment, fragment.getName())
+                .addToBackStack("add" + fragment.getName())
+                .commit();
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
+        setFragment(mFragmentProvider.createFragment(CurrentPatientsFragment.class));
     }
 
     public void setMemberDetailFragment(Member member) {
@@ -103,13 +95,13 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle));
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle));
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
@@ -210,21 +202,21 @@ public class NavigationManager {
     }
 
     public void setVersionFragment() {
-        setFragment(new VersionAndSyncFragment());
+        setFragment(mFragmentProvider.createFragment(VersionAndSyncFragment.class));
     }
 
     public static class FragmentProvider {
-        public Fragment createFragment(Class<? extends Fragment> clazz) {
+        public BaseFragment createFragment(Class<? extends Fragment> clazz) {
             return createFragment(clazz, null);
         }
 
-        public Fragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
+        public BaseFragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
             try {
                 Fragment fragment = clazz.newInstance();
                 if (bundle != null) {
                     fragment.setArguments(bundle);
                 }
-                return fragment;
+                return (BaseFragment) fragment;
             } catch (InstantiationException | IllegalAccessException e) {
                 ExceptionManager.reportException(e);
                 return null;

@@ -13,8 +13,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -23,6 +25,7 @@ import net.hockeyapp.android.UpdateManager;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.managers.ExceptionManager;
@@ -122,13 +125,26 @@ public class ClinicActivity extends AppCompatActivity {
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_container);
-
         if (currentFragment instanceof FormFragment &&
                 ((FormFragment) currentFragment).isFirstStep()) {
             showDialogReturnToPreviousScreen();
-        } else if (currentFragment instanceof MemberDetailFragment) {
-            getNavigationManager().setCurrentPatientsFragment();
         } else {
+            onBackPressedForreal();
+        }
+    }
+
+    // TODO: Rename this method.
+    private void onBackPressedForreal() {
+        FragmentManager fm = getSupportFragmentManager();
+        BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
+
+        // TODO Make this logic better to handle the first one.
+        if (currentFragment != null && !currentFragment.getName().equals("CurrentPatientsFragment")) {
+            // TODO pop until the last one is an "add"
+            fm.popBackStack();
+            fm.popBackStack();
+        } else {
+            fm.popBackStack();
             super.onBackPressed();
         }
     }
@@ -137,12 +153,7 @@ public class ClinicActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                if (currentFragment instanceof FormFragment) {
-                    onBackPressed();
-                } else {
-                    getNavigationManager().setCurrentPatientsFragment();
-                }
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -227,7 +238,7 @@ public class ClinicActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        ClinicActivity.super.onBackPressed();
+                        onBackPressedForreal();
                     }
                 }).create().show();
     }
