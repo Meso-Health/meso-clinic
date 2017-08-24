@@ -123,30 +123,19 @@ public class ClinicActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_container);
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof FormFragment &&
                 ((FormFragment) currentFragment).isFirstStep()) {
             showDialogReturnToPreviousScreen();
         } else {
-            onBackPressedForreal();
+            onBackPressedImmediate();
         }
     }
 
-    // TODO: Rename this method.
-    private void onBackPressedForreal() {
-        FragmentManager fm = getSupportFragmentManager();
-        BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
-
-        // TODO Make this logic better to handle the first one.
-        if (currentFragment != null && !currentFragment.getName().equals("CurrentPatientsFragment")) {
-            // TODO pop until the last one is an "add"
-            fm.popBackStack();
-            fm.popBackStack();
-        } else {
-            fm.popBackStack();
-            super.onBackPressed();
-        }
+    private void onBackPressedImmediate() {
+        getSupportFragmentManager().popBackStack();
+        super.onBackPressed();
     }
 
     @Override
@@ -238,7 +227,7 @@ public class ClinicActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        onBackPressedForreal();
+                        onBackPressedImmediate();
                     }
                 }).create().show();
     }
