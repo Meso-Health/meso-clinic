@@ -130,9 +130,8 @@ public class ClinicActivity extends AppCompatActivity {
         }
     }
 
-    // This requires both a popBackStack and calling onBackPressed because to go from one fragment
-    // to another requires two transactions (removeFragment, addFragment).
-    // So this requires backtracking twice instead of once.
+    // We updated how setFragment in NavigationManager works to both remove & add.
+    // This requires us to always have to go back two transactions at a time.
     private void onBackPressedNoConfirmation() {
         getSupportFragmentManager().popBackStack();
         super.onBackPressed();
