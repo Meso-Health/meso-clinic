@@ -89,8 +89,7 @@ public class NavigationManager {
             setCurrentMemberDetailFragment(member);
         }
     }
-
-    // This method should only be used after enrolling a newborn.
+    
     public void setMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
         if (member.currentCheckIn() == null && idEvent.getThroughMember() != null) {
             setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
