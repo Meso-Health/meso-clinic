@@ -48,4 +48,19 @@ public class NavigationManagerTest {
         Fragment fragment = fragmentProvider.createFragment(EncounterFragment.class);
         assertThat(fragment, instanceOf(EncounterFragment.class));
     }
+
+    @Test
+    public void setFragment_noCurrentFragment() throws Exception {
+
+    }
+
+    @Test
+    public void setFragment_newFragmentNotInBackstack() throws Exception {
+
+    }
+
+    @Test
+    public void setFragment_fragmentInBackstack() throws Exception {
+
+    }
 }

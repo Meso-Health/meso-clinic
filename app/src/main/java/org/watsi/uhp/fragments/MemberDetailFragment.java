@@ -59,6 +59,7 @@ public abstract class MemberDetailFragment extends BaseFragment {
 
     @Override
     public String getName() {
+        // We want distinct entries in the backstack per member so that we can back through family members.
         return getClass().getSimpleName() + "-" + getSerializedMember().getId().toString();
     }
 }
