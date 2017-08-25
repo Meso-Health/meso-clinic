@@ -124,4 +124,25 @@ public class NavigationManagerTest {
         verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
         verify(mockRemoveFragmentTransaction, times(1)).commit();
     }
+
+    @Test
+    public void setFragment_customFrgmentName() throws Exception {
+        when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
+        when(mockFragmentManager.findFragmentByTag("CustomFragmentName")).thenReturn(mockNewFragment);
+        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "CustomFragmentName")).thenReturn(mockAddFragmentTransaction);
+        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockRemoveFragmentTransaction);
+        when(mockAddFragmentTransaction.addToBackStack("addCustomFragmentName")).thenReturn(mockAddFragmentTransaction);
+        when(mockRemoveFragmentTransaction.addToBackStack("removeMockCurrentFragment")).thenReturn(mockRemoveFragmentTransaction);
+
+        navigationManager.setFragment(mockNewFragment, "CustomFragmentName");
+
+        verify(mockFragmentManager, times(1)).popBackStack("addCustomFragmentName", POP_BACK_STACK_INCLUSIVE);
+
+        verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
+        verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "CustomFragmentName");
+        verify(mockAddFragmentTransaction, times(1)).addToBackStack("addCustomFragmentName");
+        verify(mockAddFragmentTransaction, times(1)).commit();
+        verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
+        verify(mockRemoveFragmentTransaction, times(1)).commit();
+    }
 }
