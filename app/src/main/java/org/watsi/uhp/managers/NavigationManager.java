@@ -89,7 +89,7 @@ public class NavigationManager {
             setCurrentMemberDetailFragment(member);
         }
     }
-    
+
     public void setMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
         if (member.currentCheckIn() == null && idEvent.getThroughMember() != null) {
             setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
