@@ -1,7 +1,6 @@
 package org.watsi.uhp.managers;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
@@ -59,7 +58,7 @@ public class NavigationManager {
                     .remove(currentFragment)
                     .addToBackStack("remove" + currentFragment.getName())
                     .commit();
-            // Make sure we remove all instances of this fragment (and anything above it) in the stack.
+            // If the fragment exists in the backstack, remove backstack entries above and including that point.
             if (fm.findFragmentByTag(fragment.getName()) != null) {
                 fm.popBackStack("add" + fragment.getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
