@@ -59,6 +59,6 @@ public abstract class MemberDetailFragment extends BaseFragment {
 
     @Override
     public String getName() {
-        return "MemberDetailFragment" + "-" + getSerializedMember().getId().toString();
+        return getClass().getSimpleName() + "-" + getSerializedMember().getId().toString();
     }
 }
