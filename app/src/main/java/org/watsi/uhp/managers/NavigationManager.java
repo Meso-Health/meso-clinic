@@ -102,7 +102,11 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
+        if (nextFragmentName != null) {
+            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
+        } else {
+            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle));
+        }
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
