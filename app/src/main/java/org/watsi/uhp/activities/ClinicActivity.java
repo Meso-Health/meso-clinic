@@ -147,7 +147,7 @@ public class ClinicActivity extends AppCompatActivity {
                         ((FormFragment) currentFragment).isFirstStep()) {
                     showDialogReturnToHomeScreen();
                 } else {
-                    onBackPressedNoConfirmation();
+                    getNavigationManager().setCurrentPatientsFragment();
                 }
                 return true;
             default:

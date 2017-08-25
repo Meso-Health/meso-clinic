@@ -49,6 +49,10 @@ public class NavigationManager {
     }
 
     protected void setFragment(BaseFragment fragment) {
+        setFragment(fragment, fragment.getName());
+    }
+
+    protected void setFragment(BaseFragment fragment, String nextFragmentName) {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
@@ -59,14 +63,14 @@ public class NavigationManager {
                     .addToBackStack("remove" + currentFragment.getName())
                     .commit();
             // If the fragment exists in the backstack, remove backstack entries above and including that point.
-            if (fm.findFragmentByTag(fragment.getName()) != null) {
-                fm.popBackStack("add" + fragment.getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            if (fm.findFragmentByTag(nextFragmentName) != null) {
+                fm.popBackStack("add" + nextFragmentName, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
 
         fm.beginTransaction()
-                .add(R.id.fragment_container, fragment, fragment.getName())
-                .addToBackStack("add" + fragment.getName())
+                .add(R.id.fragment_container, fragment, nextFragmentName)
+                .addToBackStack("add" + nextFragmentName)
                 .commit();
     }
 
@@ -80,17 +84,30 @@ public class NavigationManager {
 
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         if (member.currentCheckIn() == null) {
-            setCheckInMemberDetailFragment(member, idEvent);
+            setCheckInMemberDetailFragment(member, idEvent, null);
         } else {
             setCurrentMemberDetailFragment(member);
         }
     }
 
-    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+    // This method should only be used after enrolling a newborn.
+    public void setMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
+        if (member.currentCheckIn() == null && idEvent.getThroughMember() != null) {
+            setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
+        } else {
+            throw new IllegalStateException("setMemberDetailFragmentAfterEnrollNewborn should only be called on complete enrollment.");
+        }
+    }
+
+    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String nextFragmentName) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle));
+        if (nextFragmentName != null) {
+            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
+        } else {
+            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle));
+        }
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
