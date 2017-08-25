@@ -95,7 +95,7 @@ public class NavigationManager {
         if (member.currentCheckIn() == null && idEvent.getThroughMember() != null) {
             setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
         } else {
-            throw new IllegalStateException("setMemberDetailFragmentAfterEnrollNewborn should only be called on complete enrollment.");
+            throw new IllegalStateException("setMemberDetailFragmentAfterEnrollNewborn should only be called on newborn enrollment.");
         }
     }
 
