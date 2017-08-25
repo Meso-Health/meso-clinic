@@ -48,7 +48,7 @@ public class NavigationManager {
         this(activity, new FragmentProvider());
     }
 
-    private void setFragment(BaseFragment fragment) {
+    protected void setFragment(BaseFragment fragment) {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
