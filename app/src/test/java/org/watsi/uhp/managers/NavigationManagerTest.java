@@ -116,7 +116,7 @@ public class NavigationManagerTest {
         navigationManager.setFragment(mockNewFragment);
 
         verify(mockFragmentManager, times(1)).popBackStack("addMockNewFragment", POP_BACK_STACK_INCLUSIVE);
-        
+
         verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
         verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
         verify(mockAddFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
