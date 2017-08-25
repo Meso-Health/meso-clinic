@@ -126,7 +126,7 @@ public class NavigationManagerTest {
     }
 
     @Test
-    public void setFragment_customFrgmentName() throws Exception {
+    public void setFragment_customFragmentName() throws Exception {
         when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
         when(mockFragmentManager.findFragmentByTag("CustomFragmentName")).thenReturn(mockNewFragment);
         when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "CustomFragmentName")).thenReturn(mockAddFragmentTransaction);
@@ -144,5 +144,10 @@ public class NavigationManagerTest {
         verify(mockAddFragmentTransaction, times(1)).commit();
         verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
         verify(mockRemoveFragmentTransaction, times(1)).commit();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void setFragment_nullFragmentName() throws Exception {
+        navigationManager.setFragment(mockNewFragment, null);
     }
 }

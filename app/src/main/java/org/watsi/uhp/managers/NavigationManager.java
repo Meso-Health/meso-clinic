@@ -53,6 +53,10 @@ public class NavigationManager {
     }
 
     protected void setFragment(BaseFragment fragment, String nextFragmentName) {
+        if (nextFragmentName == null) {
+            throw new IllegalStateException("setFragment received a null nextFragmentName as parameter.");
+        }
+
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
@@ -91,22 +95,14 @@ public class NavigationManager {
     }
 
     public void setMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
-        if (member.currentCheckIn() == null && idEvent.getThroughMember() != null) {
-            setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
-        } else {
-            throw new IllegalStateException("setMemberDetailFragmentAfterEnrollNewborn should only be called on newborn enrollment.");
-        }
+        setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
     }
 
     protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String nextFragmentName) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        if (nextFragmentName != null) {
-            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
-        } else {
-            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle));
-        }
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {
