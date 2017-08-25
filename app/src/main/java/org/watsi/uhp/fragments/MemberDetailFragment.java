@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
 
@@ -50,5 +51,14 @@ public abstract class MemberDetailFragment extends BaseFragment {
 
     public void navigateToMemberEditFragment() {
         memberDetailPresenter.navigateToMemberEditFragment();
+    }
+
+    private Member getSerializedMember() {
+        return (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+    }
+
+    @Override
+    public String getName() {
+        return "MemberDetailFragment" + "-" + getSerializedMember().getId().toString();
     }
 }

@@ -142,7 +142,14 @@ public class ClinicActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+                if (currentFragment instanceof FormFragment &&
+                        ((FormFragment) currentFragment).isFirstStep()) {
+                    showDialogReturnToHomeScreen();
+                } else {
+                    onBackPressedNoConfirmation();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -228,6 +235,17 @@ public class ClinicActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         onBackPressedNoConfirmation();
+                    }
+                }).create().show();
+    }
+
+    private void showDialogReturnToHomeScreen() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_form_alert)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        getNavigationManager().setCurrentPatientsFragment();
                     }
                 }).create().show();
     }
