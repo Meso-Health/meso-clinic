@@ -54,7 +54,7 @@ public class NavigationManager {
 
     protected void setFragment(BaseFragment fragment, String nextFragmentName) {
         if (nextFragmentName == null) {
-            throw new IllegalStateException("setFragment received a null nextFragmentName as parameter.");
+            nextFragmentName = fragment.getName();
         }
 
         FragmentManager fm = mActivity.getSupportFragmentManager();
@@ -102,11 +102,7 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        if (nextFragmentName != null) {
-            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
-        } else {
-            setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle));
-        }
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
     }
 
     protected void setCurrentMemberDetailFragment(Member member) {

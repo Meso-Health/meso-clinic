@@ -145,9 +145,4 @@ public class NavigationManagerTest {
         verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
         verify(mockRemoveFragmentTransaction, times(1)).commit();
     }
-
-    @Test(expected = IllegalStateException.class)
-    public void setFragment_nullFragmentName() throws Exception {
-        navigationManager.setFragment(mockNewFragment, null);
-    }
 }
