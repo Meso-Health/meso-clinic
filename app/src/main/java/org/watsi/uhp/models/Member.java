@@ -97,10 +97,12 @@ public class Member extends SyncableModel {
     protected String mRemoteNationalIdPhotoUrl;
 
     @Expose(deserialize = false)
+    @SerializedName(FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)
     @DatabaseField(columnName = FIELD_NAME_LOCAL_MEMBER_PHOTO_ID, foreign = true, foreignAutoRefresh = true)
     protected Photo mLocalMemberPhoto;
 
     @Expose(deserialize = false)
+    @SerializedName(FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID)
     @DatabaseField(columnName = FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID, foreign = true, foreignAutoRefresh = true)
     protected Photo mLocalNationalIdPhoto;
 
