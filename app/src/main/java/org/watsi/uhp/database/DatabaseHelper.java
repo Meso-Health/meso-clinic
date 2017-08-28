@@ -19,6 +19,7 @@ import org.watsi.uhp.models.Photo;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -150,11 +151,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     // and after the table is created loops through and replaces the photo_id
                     // with a new Photo model created using the proper URL
                     Photo placeholderPhoto = new Photo();
+                    placeholderPhoto.setId(UUID.randomUUID());
                     placeholderPhoto.setUrl("placeholder");
                     placeholderPhoto.create();
                     String placeholderPhotoId = placeholderPhoto.getId().toString();
-                    getDao(EncounterForm.class).executeRaw("INSERT INTO `encounter_forms`\n"+
-                                    "SELECT id, created_at, token, dirty_fields, encounter_id, url, ? AS photo_id FROM `encounter_forms_deprecated`",
+                    getDao(EncounterForm.class).executeRaw("INSERT INTO `encounter_forms` \n" +
+                                    "(id, created_at, token, dirty_fields, encounter_id, url, photo_id) \n" +
+                                    "SELECT id, created_at, token, dirty_fields, encounter_id, url, ? FROM `encounter_forms_deprecated`",
                             placeholderPhotoId);
                     getDao(EncounterForm.class).executeRaw("DROP TABLE `encounter_forms_deprecated`");
 
