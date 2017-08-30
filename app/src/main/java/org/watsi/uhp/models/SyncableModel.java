@@ -161,9 +161,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     public Response<T> sync(Context context) throws SyncException, SQLException, IOException {
-        if (!isDirty() || getToken() == null) {
-            throw new SyncException();
-        }
+        if (getId() == null) throw new SyncException("Attempted to sync model with no ID set");
+        if (!isDirty()) throw new SyncException("Attempted to sync model " + getId().toString() + " with no dirty fields");
+        if (getToken() == null) throw new SyncException("Attempted to sync model " + getId().toString() + " with no API token");
+
         if (isNew()) {
             return postApiCall(context).execute();
         } else {
@@ -181,14 +182,12 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     public abstract void validate() throws ValidationException;
     public abstract void handleUpdateFromSync(T response) throws SQLException, IOException;
-    protected abstract Call<T> postApiCall(Context context) throws SQLException;
-    protected abstract Call<T> patchApiCall(Context context) throws SQLException;
+    protected abstract Call<T> postApiCall(Context context) throws SQLException, SyncException;
+    protected abstract Call<T> patchApiCall(Context context) throws SQLException, SyncException;
     protected abstract void persistAssociations() throws SQLException, ValidationException;
 
     public static class SyncException extends Exception {
-        SyncException() {
-            super("Model is not in a syncable state");
-        }
+        SyncException(String message) { super(message); }
     }
 
     public static class UnauthenticatedException extends Exception {
