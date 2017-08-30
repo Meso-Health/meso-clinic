@@ -269,7 +269,7 @@ public class Member extends SyncableModel {
     }
 
     @Override
-    protected Call patchApiCall(Context context) throws SQLException {
+    protected Call patchApiCall(Context context) throws SQLException, SyncException {
         return ApiService.requestBuilder(context).syncMember(
                 getTokenAuthHeaderString(), getId(), formatPatchRequest(context));
     }
@@ -452,7 +452,7 @@ public class Member extends SyncableModel {
         return getAge() >= Member.MINIMUM_NATIONAL_ID_AGE;
     }
 
-    public Map<String, RequestBody> formatPatchRequest(Context context) {
+    public Map<String, RequestBody> formatPatchRequest(Context context) throws SyncException {
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
         if (dirty(FIELD_NAME_PHOTO_URL)) {
@@ -515,6 +515,10 @@ public class Member extends SyncableModel {
             }
         }
 
+        if (requestPartMap.isEmpty()) {
+            throw new SyncException("Empty request body map for member " + getId().toString() +
+                    ". Dirty fields are: " + getDirtyFields().toString());
+        }
         return requestPartMap;
     }
 
