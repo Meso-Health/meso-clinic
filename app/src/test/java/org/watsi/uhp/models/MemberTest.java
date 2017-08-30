@@ -737,6 +737,16 @@ public class MemberTest {
         assertEquals(buffer.readUtf8(), cardId);
     }
 
+    @Test(expected = SyncableModel.SyncException.class)
+    public void formatPatchRequest_emptyRequestBody_throwsSyncException() throws Exception {
+        member.setId(UUID.randomUUID());
+        Member editedMember = spy(member);
+
+        when(editedMember.dirty(anyString())).thenReturn(false);
+
+        editedMember.formatPatchRequest(mockContext);
+    }
+
     @Test
     public void createNewborn() throws Exception {
         UUID householdId = UUID.randomUUID();
