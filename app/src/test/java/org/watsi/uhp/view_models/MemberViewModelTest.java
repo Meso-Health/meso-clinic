@@ -107,6 +107,13 @@ public class MemberViewModelTest {
     }
 
     @Test
+    public void getCardId_blank() throws Exception {
+        mMember.setCardId("");
+        assertEquals(memberViewModel.getCardId(), "");
+        assertNull(memberViewModel.getCardIdError());
+    }
+
+    @Test
     public void getCardId_validNoSpaces() throws Exception {
         mMember.setCardId("RWI123123");
         assertEquals(memberViewModel.getCardId(), "RWI123123");

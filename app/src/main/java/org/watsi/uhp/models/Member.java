@@ -159,7 +159,7 @@ public class Member extends SyncableModel {
     }
 
     public boolean validCardId() {
-        return Member.validCardId(mCardId);
+        return mCardId == null || mCardId.isEmpty() || Member.validCardId(mCardId);
     }
 
     public boolean validPhoneNumber() {
@@ -176,25 +176,25 @@ public class Member extends SyncableModel {
 
     public void validateFullName() throws ValidationException {
         if (!validFullName()) {
-            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
+            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank: " + mFullName);
         }
     }
 
     public void validateCardId() throws ValidationException {
         if (!validCardId()) {
-            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
+            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers: " + mCardId);
         }
     }
 
     public void validatePhoneNumber() throws ValidationException {
         if (!validPhoneNumber()) {
-            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is invalid.");
+            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is invalid: " + mPhoneNumber);
         }
     }
 
     public void validateGender() throws ValidationException {
         if (!validGender()) {
-            throw new ValidationException(FIELD_NAME_GENDER, "Gender cannot be blank.");
+            throw new ValidationException(FIELD_NAME_GENDER, "Gender cannot be blank: " + mGender);
         }
     }
 
