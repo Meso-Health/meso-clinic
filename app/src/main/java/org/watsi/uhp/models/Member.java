@@ -159,7 +159,7 @@ public class Member extends SyncableModel {
     }
 
     public boolean validCardId() {
-        return mCardId == null || mCardId.isEmpty() || Member.validCardId(mCardId);
+        return mCardId == null || Member.validCardId(mCardId);
     }
 
     public boolean validPhoneNumber() {
