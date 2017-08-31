@@ -109,7 +109,7 @@ public class MemberViewModelTest {
     @Test
     public void getCardId_blank() throws Exception {
         mMember.setCardId("");
-        assertEquals(memberViewModel.getCardId(), "");
+        assertEquals(memberViewModel.getCardId(), null);
         assertNull(memberViewModel.getCardIdError());
     }
 

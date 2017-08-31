@@ -159,7 +159,7 @@ public class Member extends SyncableModel {
     }
 
     public boolean validCardId() {
-        return mCardId == null || Member.validCardId(mCardId);
+        return mCardId == null || Member.validNonNullCardId(mCardId);
     }
 
     public boolean validPhoneNumber() {
@@ -288,7 +288,11 @@ public class Member extends SyncableModel {
 
     public void setCardId(String cardId) {
         cardId = cardId.replaceAll(" ","");
-        this.mCardId = cardId;
+        if (cardId.isEmpty()) {
+            this.mCardId = null;
+        } else {
+            this.mCardId = cardId;
+        }
     }
 
     public int getAge() {
@@ -611,12 +615,8 @@ public class Member extends SyncableModel {
         return requestBodyMap;
     }
 
-    public static boolean validCardId(String cardId) {
-        if (cardId == null || cardId.isEmpty()) {
-            return false;
-        } else {
-            return cardId.matches("[A-Z]{3}[0-9]{6}");
-        }
+    public static boolean validNonNullCardId(String cardId) {
+        return cardId != null && cardId.replace(" ", "").matches("[A-Z]{3}[0-9]{6}");
     }
 
     public static boolean validPhoneNumber(String phoneNumber) {
