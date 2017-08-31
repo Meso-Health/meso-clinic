@@ -288,16 +288,30 @@ public class SyncableModelTest {
     }
 
     @Test(expected=SyncableModel.SyncException.class)
+    public void sync_nullId_throwsSyncException() throws Exception {
+        member.setId(null);
+        member.setToken("foo");
+        Member memberSpy = spy(member);
+        when(memberSpy.isDirty()).thenReturn(true);
+
+        memberSpy.sync(mockContext);
+    }
+
+    @Test(expected=SyncableModel.SyncException.class)
     public void sync_nullToken_throwsSyncException() throws Exception {
+        member.setId(UUID.randomUUID());
         member.setToken(null);
+        Member memberSpy = spy(member);
+        when(memberSpy.isDirty()).thenReturn(true);
 
         member.sync(mockContext);
     }
 
     @Test(expected=SyncableModel.SyncException.class)
     public void sync_isNotDirty_throwsSyncException() throws Exception {
-        memberSpy.setToken(token);
-
+        member.setId(UUID.randomUUID());
+        member.setToken("foo");
+        Member memberSpy = spy(member);
         when(memberSpy.isDirty()).thenReturn(false);
 
         memberSpy.sync(mockContext);
@@ -305,6 +319,7 @@ public class SyncableModelTest {
 
     @Test
     public void sync_isNew_returnsTheResultOfPostRequest() throws Exception {
+        memberSpy.setId(UUID.randomUUID());
         memberSpy.setToken(token);
 
         when(memberSpy.isDirty()).thenReturn(true);
