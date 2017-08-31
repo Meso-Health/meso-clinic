@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -14,10 +13,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,9 +159,10 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     public Response<T> sync(Context context) throws SyncException, SQLException, IOException {
-        if (!isDirty() || getToken() == null) {
-            throw new SyncException();
-        }
+        if (getId() == null) throw new SyncException("Attempted to sync model with no ID set");
+        if (!isDirty()) throw new SyncException("Attempted to sync model " + getId().toString() + " with no dirty fields");
+        if (getToken() == null) throw new SyncException("Attempted to sync model " + getId().toString() + " with no API token");
+
         if (isNew()) {
             return postApiCall(context).execute();
         } else {
@@ -182,14 +180,12 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     public abstract void validate() throws ValidationException;
     public abstract void handleUpdateFromSync(T response);
-    protected abstract Call<T> postApiCall(Context context) throws SQLException;
-    protected abstract Call<T> patchApiCall(Context context) throws SQLException;
+    protected abstract Call<T> postApiCall(Context context) throws SQLException, SyncException;
+    protected abstract Call<T> patchApiCall(Context context) throws SQLException, SyncException;
     protected abstract void persistAssociations() throws SQLException, ValidationException;
 
     public static class SyncException extends Exception {
-        SyncException() {
-            super("Model is not in a syncable state");
-        }
+        SyncException(String message) { super(message); }
     }
 
     public static class UnauthenticatedException extends Exception {
