@@ -11,7 +11,6 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
