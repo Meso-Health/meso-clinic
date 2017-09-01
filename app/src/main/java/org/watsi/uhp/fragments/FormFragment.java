@@ -29,7 +29,6 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
             mSaveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mSaveBtn.setEnabled(false);
                     nextStep();
                 }
             });

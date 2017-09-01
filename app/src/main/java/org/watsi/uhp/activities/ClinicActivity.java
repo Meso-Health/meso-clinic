@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -130,10 +131,13 @@ public class ClinicActivity extends AppCompatActivity {
         }
     }
 
-    // We updated how setFragment in NavigationManager works to both remove & add.
-    // This requires us to always have to go back two transactions at a time.
     private void onBackPressedNoConfirmation() {
-        getSupportFragmentManager().popBackStack();
+        getNavigationManager().setLastFragmentTransitionAsBackPress();
+        // In the case where there is only one fragment, we need to pop backstack as well as exit the
+        // activity. Without this extra check & call to popBackStack, we would see a blank activity.
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getSupportFragmentManager().popBackStack();
+        }
         super.onBackPressed();
     }
 

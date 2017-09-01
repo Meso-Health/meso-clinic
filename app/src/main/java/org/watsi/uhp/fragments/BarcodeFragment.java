@@ -154,7 +154,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
         mSearchMemberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSearchMemberButton.setEnabled(false);
                 getNavigationManager().setSearchMemberFragment();
             }
         });
