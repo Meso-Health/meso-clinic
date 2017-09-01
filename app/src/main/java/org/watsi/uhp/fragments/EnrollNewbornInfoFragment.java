@@ -83,6 +83,22 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
                     }
                 }
         );
+        // This is a policy decision we made during IPM so only newborns born within the last
+        // three months can be enrolled via this flow.
+        datePicker.setMinDate(makeCalendarThreeMonthsAgo().getTimeInMillis());
+        datePicker.setMaxDate(makeCalendarTomorrow().getTimeInMillis());
+    }
+
+    private Calendar makeCalendarThreeMonthsAgo() {
+        Calendar threeMonthsAgo = makeCalendarWithNoTime();
+        threeMonthsAgo.add(Calendar.MONTH, -3);
+        return threeMonthsAgo;
+    }
+
+    private Calendar makeCalendarTomorrow() {
+        Calendar tomorrow = makeCalendarWithNoTime();
+        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
+        return tomorrow;
     }
 
     private Calendar makeCalendarWithNoTime() {
