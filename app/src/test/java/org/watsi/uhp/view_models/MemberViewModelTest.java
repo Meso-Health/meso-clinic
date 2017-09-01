@@ -11,7 +11,6 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -104,6 +103,13 @@ public class MemberViewModelTest {
         memberViewModel.setPhoneNumber("");
         assertEquals(memberViewModel.getPhoneNumber(), null);
         assertNull(memberViewModel.getPhoneNumberError());
+    }
+
+    @Test
+    public void getCardId_blank() throws Exception {
+        mMember.setCardId("");
+        assertEquals(memberViewModel.getCardId(), null);
+        assertNull(memberViewModel.getCardIdError());
     }
 
     @Test

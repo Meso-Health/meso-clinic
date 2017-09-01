@@ -160,7 +160,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     }
 
     private boolean handleCardIdScan(Member member, IdentificationEvent idEvent, String barcodeDisplayValue) {
-        if (Member.validCardId(barcodeDisplayValue)) {
+        if (Member.validNonNullCardId(barcodeDisplayValue)) {
             member.setCardId(barcodeDisplayValue);
             return true;
         } else {

@@ -812,4 +812,15 @@ public class MemberTest {
         member.setGender(Member.GenderEnum.M);
         assertTrue(member.validGender());
     }
+
+    @Test
+    public void validNonEmptyCardId() {
+        assertTrue(Member.validNonNullCardId("RWI123123"));
+        assertTrue(Member.validNonNullCardId("RWI 123 123"));
+        assertTrue(Member.validNonNullCardId("RWI123 123"));
+        assertFalse(Member.validNonNullCardId("LALALA BANANAPHONE 123"));
+        assertFalse(Member.validNonNullCardId(""));
+        assertFalse(Member.validNonNullCardId("   "));
+        assertFalse(Member.validNonNullCardId(null));
+    }
 }
