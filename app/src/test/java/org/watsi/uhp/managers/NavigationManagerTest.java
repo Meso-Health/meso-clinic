@@ -14,7 +14,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -31,10 +30,6 @@ public class NavigationManagerTest {
     private FragmentManager mockFragmentManager;
     @Mock
     private FragmentTransaction mockFragmentTransaction;
-    @Mock
-    private FragmentTransaction mockAddFragmentTransaction;
-    @Mock
-    private FragmentTransaction mockRemoveFragmentTransaction;
     @Mock
     private NavigationManager.FragmentProvider mockFragmentProvider;
 
@@ -71,26 +66,25 @@ public class NavigationManagerTest {
     @Test
     public void setFragment_noCurrentFragment() throws Exception {
         when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(null);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockAddFragmentTransaction);
-        when(mockAddFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockAddFragmentTransaction);
+        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockFragmentTransaction);
         navigationManager.setFragment(mockNewFragment);
 
         verify(mockFragmentManager, never()).popBackStack(any(String.class), any(int.class));
 
         verify(mockFragmentTransaction, never()).remove(mockCurrentFragment);
         verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
-        verify(mockAddFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
-        verify(mockAddFragmentTransaction, times(1)).commit();
+        verify(mockFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
+        verify(mockFragmentTransaction, times(1)).commit();
     }
 
     @Test
     public void setFragment_newFragmentNotInBackstack() throws Exception {
         when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
         when(mockFragmentManager.findFragmentByTag("MockNewFragment")).thenReturn(null);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockAddFragmentTransaction);
-        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockRemoveFragmentTransaction);
-        when(mockAddFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockAddFragmentTransaction);
-        when(mockRemoveFragmentTransaction.addToBackStack("removeMockCurrentFragment")).thenReturn(mockRemoveFragmentTransaction);
+        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockFragmentTransaction);
 
         navigationManager.setFragment(mockNewFragment);
 
@@ -98,51 +92,43 @@ public class NavigationManagerTest {
 
         verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
         verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
-        verify(mockAddFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
-        verify(mockAddFragmentTransaction, times(1)).commit();
-        verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
-        verify(mockRemoveFragmentTransaction, times(1)).commit();
+        verify(mockFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
+        verify(mockFragmentTransaction, times(1)).commit();
     }
 
     @Test
     public void setFragment_fragmentInBackstack() throws Exception {
         when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
         when(mockFragmentManager.findFragmentByTag("MockNewFragment")).thenReturn(mockNewFragment);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockAddFragmentTransaction);
-        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockRemoveFragmentTransaction);
-        when(mockAddFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockAddFragmentTransaction);
-        when(mockRemoveFragmentTransaction.addToBackStack("removeMockCurrentFragment")).thenReturn(mockRemoveFragmentTransaction);
+        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockFragmentTransaction);
 
         navigationManager.setFragment(mockNewFragment);
 
-        verify(mockFragmentManager, times(1)).popBackStack("addMockNewFragment", POP_BACK_STACK_INCLUSIVE);
+        verify(mockFragmentManager, times(1)).popBackStack("addMockNewFragment", 0);
 
         verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
         verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
-        verify(mockAddFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
-        verify(mockAddFragmentTransaction, times(1)).commit();
-        verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
-        verify(mockRemoveFragmentTransaction, times(1)).commit();
+        verify(mockFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
+        verify(mockFragmentTransaction, times(1)).commit();
     }
 
     @Test
     public void setFragment_customFragmentName() throws Exception {
         when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
         when(mockFragmentManager.findFragmentByTag("CustomFragmentName")).thenReturn(mockNewFragment);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "CustomFragmentName")).thenReturn(mockAddFragmentTransaction);
-        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockRemoveFragmentTransaction);
-        when(mockAddFragmentTransaction.addToBackStack("addCustomFragmentName")).thenReturn(mockAddFragmentTransaction);
-        when(mockRemoveFragmentTransaction.addToBackStack("removeMockCurrentFragment")).thenReturn(mockRemoveFragmentTransaction);
+        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "CustomFragmentName")).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockFragmentTransaction);
+        when(mockFragmentTransaction.addToBackStack("addCustomFragmentName")).thenReturn(mockFragmentTransaction);
 
         navigationManager.setFragment(mockNewFragment, "CustomFragmentName");
 
-        verify(mockFragmentManager, times(1)).popBackStack("addCustomFragmentName", POP_BACK_STACK_INCLUSIVE);
+        verify(mockFragmentManager, times(1)).popBackStack("addCustomFragmentName", 0);
 
         verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
         verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "CustomFragmentName");
-        verify(mockAddFragmentTransaction, times(1)).addToBackStack("addCustomFragmentName");
-        verify(mockAddFragmentTransaction, times(1)).commit();
-        verify(mockRemoveFragmentTransaction, times(1)).addToBackStack("removeMockCurrentFragment");
-        verify(mockRemoveFragmentTransaction, times(1)).commit();
+        verify(mockFragmentTransaction, times(1)).addToBackStack("addCustomFragmentName");
+        verify(mockFragmentTransaction, times(1)).commit();
     }
 }
