@@ -57,7 +57,7 @@ public class NavigationManager {
         setFragment(fragment, fragment.getName());
     }
 
-    private String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
+    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
         if (currentFragment == null) {
             return "->" + nextFragmentName;
         } else {
@@ -86,7 +86,7 @@ public class NavigationManager {
 
         String addTobackStackTag = "add" + nextFragmentName;
 
-        // No need for a removeFragment transaction if there is no current fragment. (i.e. open app)
+        // No need for a removeFragment transaction if there is no current fragment, i.e. when you first open app.
         if (currentFragment != null) {
             if (fm.findFragmentByTag(nextFragmentName) != null) {
                 fm.popBackStack(addTobackStackTag, 0);

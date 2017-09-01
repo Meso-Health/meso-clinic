@@ -14,6 +14,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 
+import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -130,5 +131,11 @@ public class NavigationManagerTest {
         verify(mockFragmentTransaction, never()).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
         verify(mockFragmentTransaction, never()).addToBackStack("addMockNewFragment");
         verify(mockFragmentTransaction, never()).commit();
+    }
+
+    @Test
+    public void formatUniqueFragmentTransition() throws Exception {
+        assertEquals(NavigationManager.formatUniqueFragmentTransition(null, "nextFragmentName"), "->nextFragmentName");
+        // assertEquals(NavigationManager.formatUniqueFragmentTransition(mockCurrentFragment, "nextFragmentName"), "->nextFragmentName";
     }
 }
