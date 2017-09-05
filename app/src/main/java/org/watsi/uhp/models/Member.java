@@ -165,7 +165,7 @@ public class Member extends SyncableModel {
     }
 
     public boolean validCardId() {
-        return Member.validCardId(mCardId);
+        return mCardId == null || Member.validNonNullCardId(mCardId);
     }
 
     public boolean validPhoneNumber() {
@@ -182,25 +182,25 @@ public class Member extends SyncableModel {
 
     public void validateFullName() throws ValidationException {
         if (!validFullName()) {
-            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank");
+            throw new ValidationException(FIELD_NAME_FULL_NAME, "Name cannot be blank: " + mFullName);
         }
     }
 
     public void validateCardId() throws ValidationException {
         if (!validCardId()) {
-            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers");
+            throw new ValidationException(FIELD_NAME_CARD_ID, "Card must be 3 letters followed by 6 numbers: " + mCardId);
         }
     }
 
     public void validatePhoneNumber() throws ValidationException {
         if (!validPhoneNumber()) {
-            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is invalid.");
+            throw new ValidationException(FIELD_NAME_PHONE_NUMBER, "Phone number is invalid: " + mPhoneNumber);
         }
     }
 
     public void validateGender() throws ValidationException {
         if (!validGender()) {
-            throw new ValidationException(FIELD_NAME_GENDER, "Gender cannot be blank.");
+            throw new ValidationException(FIELD_NAME_GENDER, "Gender cannot be blank: " + mGender);
         }
     }
 
@@ -288,7 +288,11 @@ public class Member extends SyncableModel {
 
     public void setCardId(String cardId) {
         cardId = cardId.replaceAll(" ","");
-        this.mCardId = cardId;
+        if (cardId.isEmpty()) {
+            this.mCardId = null;
+        } else {
+            this.mCardId = cardId;
+        }
     }
 
     public int getAge() {
@@ -626,12 +630,8 @@ public class Member extends SyncableModel {
         return requestBodyMap;
     }
 
-    public static boolean validCardId(String cardId) {
-        if (cardId == null || cardId.isEmpty()) {
-            return false;
-        } else {
-            return cardId.matches("[A-Z]{3}[0-9]{6}");
-        }
+    public static boolean validNonNullCardId(String cardId) {
+        return cardId != null && cardId.replace(" ", "").matches("[A-Z]{3}[0-9]{6}");
     }
 
     public static boolean validPhoneNumber(String phoneNumber) {
