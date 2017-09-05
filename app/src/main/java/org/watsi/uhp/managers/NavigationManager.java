@@ -43,14 +43,10 @@ public class NavigationManager {
     private String mLastFragmentTransition;
 
 
-    public NavigationManager(FragmentActivity activity, FragmentProvider fragmentProvider) {
-        this.mActivity = activity;
-        this.mFragmentProvider = fragmentProvider;
-        this.mLastFragmentTransition = "";
-    }
-
     public NavigationManager(FragmentActivity activity) {
-        this(activity, new FragmentProvider());
+        this.mActivity = activity;
+        this.mFragmentProvider = new FragmentProvider();
+        this.mLastFragmentTransition = "";
     }
 
     protected void setFragment(BaseFragment fragment) {

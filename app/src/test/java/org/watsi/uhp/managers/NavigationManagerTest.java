@@ -1,141 +1,113 @@
 package org.watsi.uhp.managers;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.watsi.uhp.R;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.watsi.uhp.BuildConfig;
+import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.BaseFragment;
-import org.watsi.uhp.fragments.EncounterFragment;
 
 import static junit.framework.Assert.assertEquals;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class)
 public class NavigationManagerTest {
 
-    @Mock
-    private AppCompatActivity mockActivity;
-    @Mock
-    private FragmentManager mockFragmentManager;
-    @Mock
-    private FragmentTransaction mockFragmentTransaction;
-    @Mock
-    private NavigationManager.FragmentProvider mockFragmentProvider;
-
-    @Mock
-    private BaseFragment mockCurrentFragment;
-
-    @Mock
-    private BaseFragment mockNewFragment;
-
-    @Mock
-    private Bundle mockBundle;
-
-    private NavigationManager navigationManager;
+    private FragmentActivity mFragmentActivity;
+    private NavigationManager mNavigationManager;
 
     @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        when(mockActivity.getSupportFragmentManager()).thenReturn(mockFragmentManager);
-        when(mockFragmentManager.beginTransaction()).thenReturn(mockFragmentTransaction);
-        when(mockNewFragment.getName()).thenReturn("MockNewFragment");
-        when(mockCurrentFragment.getName()).thenReturn("MockCurrentFragment");
-        navigationManager = new NavigationManager(mockActivity, mockFragmentProvider);
+    public void setUp() throws Exception {
+        mFragmentActivity = Robolectric.buildActivity(ClinicActivity.class)
+                .create().start().resume().get();
+        mNavigationManager = new NavigationManager(mFragmentActivity);
+    }
+
+
+    @Test
+    public void setUpSuccess() throws Exception {
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 0);
     }
 
     @Test
-    public void fragmentProvider() throws Exception {
-        NavigationManager.FragmentProvider fragmentProvider =
-                new NavigationManager.FragmentProvider();
+    public void setCurrentPatientsFragment_success() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
 
-        Fragment fragment = fragmentProvider.createFragment(EncounterFragment.class);
-        assertThat(fragment, instanceOf(EncounterFragment.class));
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 1);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
     }
 
     @Test
-    public void setFragment_noCurrentFragment() throws Exception {
-        when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(null);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockFragmentTransaction);
-        navigationManager.setFragment(mockNewFragment);
+    public void setFragment_twoDifferentFragments() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"));
 
-        verify(mockFragmentManager, never()).popBackStack(any(String.class), any(int.class));
 
-        verify(mockFragmentTransaction, never()).remove(mockCurrentFragment);
-        verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
-        verify(mockFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
-        verify(mockFragmentTransaction, times(1)).commit();
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 2);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
     }
 
     @Test
-    public void setFragment_newFragmentNotInBackstack() throws Exception {
-        when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
-        when(mockFragmentManager.findFragmentByTag("MockNewFragment")).thenReturn(null);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockFragmentTransaction);
+    public void setFragment_twoDifferentFragmentsThenBackToSameFragment() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"));
+        mNavigationManager.setFragment(new TestFragment("FragmentC"));
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
 
-        navigationManager.setFragment(mockNewFragment);
-
-        verify(mockFragmentManager, never()).popBackStack(any(String.class), any(int.class));
-
-        verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
-        verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
-        verify(mockFragmentTransaction, times(1)).addToBackStack("addMockNewFragment");
-        verify(mockFragmentTransaction, times(1)).commit();
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 1);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
     }
 
     @Test
-    public void setFragment_customFragmentNameNotInBackStack() throws Exception {
-        when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
-        when(mockFragmentManager.findFragmentByTag("CustomFragmentName")).thenReturn(null);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "CustomFragmentName")).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.addToBackStack("addCustomFragmentName")).thenReturn(mockFragmentTransaction);
+    public void setFragment_repeatedConsecutiveTransitions() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"));
 
-        navigationManager.setFragment(mockNewFragment, "CustomFragmentName");
-
-        verify(mockFragmentManager, never()).popBackStack("addCustomFragmentName", 0);
-
-        verify(mockFragmentTransaction, times(1)).remove(mockCurrentFragment);
-        verify(mockFragmentTransaction, times(1)).add(R.id.fragment_container, mockNewFragment, "CustomFragmentName");
-        verify(mockFragmentTransaction, times(1)).addToBackStack("addCustomFragmentName");
-        verify(mockFragmentTransaction, times(1)).commit();
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 2);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
     }
 
     @Test
-    public void setFragment_fragmentInBackstack() throws Exception {
-        when(mockFragmentManager.findFragmentById(R.id.fragment_container)).thenReturn(mockCurrentFragment);
-        when(mockFragmentManager.findFragmentByTag("MockNewFragment")).thenReturn(mockNewFragment);
-        when(mockFragmentTransaction.add(R.id.fragment_container, mockNewFragment, "MockNewFragment")).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.remove(mockCurrentFragment)).thenReturn(mockFragmentTransaction);
-        when(mockFragmentTransaction.addToBackStack("addMockNewFragment")).thenReturn(mockFragmentTransaction);
+    public void setFragment_customFragmentNames() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"), "FragmentB-custom");
 
-        navigationManager.setFragment(mockNewFragment);
-
-        verify(mockFragmentManager, times(1)).popBackStack("addMockNewFragment", 0);
-
-        verify(mockFragmentTransaction, never()).remove(mockCurrentFragment);
-        verify(mockFragmentTransaction, never()).add(R.id.fragment_container, mockNewFragment, "MockNewFragment");
-        verify(mockFragmentTransaction, never()).addToBackStack("addMockNewFragment");
-        verify(mockFragmentTransaction, never()).commit();
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 2);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB-custom");
     }
 
     @Test
     public void formatUniqueFragmentTransition() throws Exception {
-        assertEquals(NavigationManager.formatUniqueFragmentTransition(null, "nextFragmentName"), "->nextFragmentName");
-        // assertEquals(NavigationManager.formatUniqueFragmentTransition(mockCurrentFragment, "nextFragmentName"), "->nextFragmentName";
+        assertEquals(mNavigationManager.formatUniqueFragmentTransition(null, "nextFragmentName"), "->nextFragmentName");
+        assertEquals(mNavigationManager.formatUniqueFragmentTransition(new TestFragment("firstFragmentName"), "nextFragmentName"), "firstFragmentName->nextFragmentName");
+    }
+
+    public static class TestFragment extends BaseFragment {
+        String mName;
+
+        public TestFragment(String fragmentName) {
+            mName = fragmentName;
+        }
+
+        public String getName() {
+            return mName;
+        }
     }
 }
