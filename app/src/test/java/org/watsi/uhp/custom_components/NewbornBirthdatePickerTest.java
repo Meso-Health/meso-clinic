@@ -21,7 +21,7 @@ import static junit.framework.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class NewbornBirthdateDatePickerTest {
+public class NewbornBirthdatePickerTest {
     private Member mMember;
     private DatePicker mDatePicker;
 
@@ -34,7 +34,7 @@ public class NewbornBirthdateDatePickerTest {
 
     @Test
     public void datePicker_maxDateSet() throws Exception {
-        NewbornBirthdateDatePicker newbornBirthdateDatePicker = new NewbornBirthdateDatePicker(mDatePicker, mMember);
+        NewbornBirthdatePicker newbornBirthdatePicker = new NewbornBirthdatePicker(mDatePicker, mMember);
         Calendar maxDate = Calendar.getInstance();
         maxDate.setTimeInMillis(mDatePicker.getMaxDate());
 
@@ -48,7 +48,7 @@ public class NewbornBirthdateDatePickerTest {
 
     @Test
     public void datePicker_minDateSet() throws Exception {
-        NewbornBirthdateDatePicker newbornBirthdateDatePicker = new NewbornBirthdateDatePicker(mDatePicker, mMember);
+        NewbornBirthdatePicker newbornBirthdatePicker = new NewbornBirthdatePicker(mDatePicker, mMember);
         Calendar threeMonthsAgo = Calendar.getInstance();
         threeMonthsAgo.add(Calendar.MONTH, -3);
 
@@ -64,7 +64,7 @@ public class NewbornBirthdateDatePickerTest {
     @Test
     public void datePicker_memberNoBirthdateDefaultsToToday() throws Exception {
         mMember.setBirthdate(null);
-        NewbornBirthdateDatePicker newbornBirthdateDatePicker = new NewbornBirthdateDatePicker(mDatePicker, mMember);
+        NewbornBirthdatePicker newbornBirthdatePicker = new NewbornBirthdatePicker(mDatePicker, mMember);
         Calendar today = Calendar.getInstance();
         assertEquals(mDatePicker.getYear(), today.get(Calendar.YEAR));
         assertEquals(mDatePicker.getMonth(), today.get(Calendar.MONTH));
@@ -75,7 +75,7 @@ public class NewbornBirthdateDatePickerTest {
 
     @Test
     public void datePicker_memberHasBirthdate() throws Exception {
-        NewbornBirthdateDatePicker newbornBirthdateDatePicker = new NewbornBirthdateDatePicker(mDatePicker, mMember);
+        NewbornBirthdatePicker newbornBirthdatePicker = new NewbornBirthdatePicker(mDatePicker, mMember);
         Calendar birthdate = Calendar.getInstance();
         birthdate.setTime(mMember.getBirthdate());
         assertEquals(mDatePicker.getYear(), birthdate.get(Calendar.YEAR));
@@ -88,7 +88,7 @@ public class NewbornBirthdateDatePickerTest {
 
     @Test
     public void datePicker_onDateChanged() throws Exception {
-        NewbornBirthdateDatePicker newbornBirthdateDatePicker = new NewbornBirthdateDatePicker(mDatePicker, mMember);
+        NewbornBirthdatePicker newbornBirthdatePicker = new NewbornBirthdatePicker(mDatePicker, mMember);
         Calendar fiveDaysAgo = Calendar.getInstance();
         fiveDaysAgo.add(Calendar.DAY_OF_MONTH, -5);
 

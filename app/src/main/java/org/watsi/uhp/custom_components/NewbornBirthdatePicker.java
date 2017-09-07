@@ -6,11 +6,11 @@ import org.watsi.uhp.models.Member;
 
 import java.util.Calendar;
 
-public class NewbornBirthdateDatePicker {
+public class NewbornBirthdatePicker {
     Member mMember;
     DatePicker mDatePicker;
 
-    public NewbornBirthdateDatePicker(DatePicker datePicker, Member member) {
+    public NewbornBirthdatePicker(DatePicker datePicker, Member member) {
         mDatePicker = datePicker;
         mMember = member;
 

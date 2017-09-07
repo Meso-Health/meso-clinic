@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.DatePicker;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.custom_components.NewbornBirthdateDatePicker;
+import org.watsi.uhp.custom_components.NewbornBirthdatePicker;
 import org.watsi.uhp.databinding.FragmentEnrollNewbornBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
 import org.watsi.uhp.managers.NavigationManager;
@@ -17,7 +17,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
     private IdentificationEvent mIdEvent;
     private View mView;
-    private NewbornBirthdateDatePicker mNewbornBirthdateDatePicker;
+    private NewbornBirthdatePicker mNewbornBirthdatePicker;
 
     @Override
     int getTitleLabelId() {
@@ -47,7 +47,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
         mView = view;
         mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-        mNewbornBirthdateDatePicker = new NewbornBirthdateDatePicker((DatePicker) mView.findViewById(R.id.birthdate), mSyncableModel);
+        mNewbornBirthdatePicker = new NewbornBirthdatePicker((DatePicker) mView.findViewById(R.id.birthdate), mSyncableModel);
         setUpScanCardListener();
     }
 
