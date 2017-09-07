@@ -45,7 +45,7 @@ public class AuthenticatorTest {
     @Mock
     Account mockAccount;
 
-    Authenticator authenticator;
+    private Authenticator authenticator;
 
     @Before
     public void setup() {

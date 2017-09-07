@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -20,7 +19,6 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -117,14 +115,14 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                 case MEMBER_EDIT:
                                     member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                                    if (handleCardIdScan(member, idEvent, barcode.displayValue)) {
+                                    if (handleCardIdScan(member, barcode.displayValue)) {
                                         getNavigationManager().setMemberEditFragment(member, idEvent);
                                     }
                                     break;
                                 case NEWBORN:
                                     member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
                                     idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                                    if (handleCardIdScan(member, idEvent, barcode.displayValue)) {
+                                    if (handleCardIdScan(member, barcode.displayValue)) {
                                         getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
                                     }
                                     break;
@@ -159,8 +157,8 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
         });
     }
 
-    private boolean handleCardIdScan(Member member, IdentificationEvent idEvent, String barcodeDisplayValue) {
-        if (Member.validCardId(barcodeDisplayValue)) {
+    private boolean handleCardIdScan(Member member, String barcodeDisplayValue) {
+        if (Member.validNonNullCardId(barcodeDisplayValue)) {
             member.setCardId(barcodeDisplayValue);
             return true;
         } else {

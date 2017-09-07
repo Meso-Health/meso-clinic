@@ -12,7 +12,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -24,11 +23,9 @@ import okhttp3.OkHttpClient;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,8 +35,8 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DownloadMemberPhotosService.class, ExceptionManager.class, FileManager.class,
-        Log.class, MemberDao.class, OkHttpClient.Builder.class })
+@PrepareForTest({ DownloadMemberPhotosService.class, ExceptionManager.class, Log.class,
+        MemberDao.class, OkHttpClient.Builder.class })
 public class DownloadMemberPhotoServiceTest {
 
     private DownloadMemberPhotosService service;
@@ -53,7 +50,6 @@ public class DownloadMemberPhotoServiceTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockStatic(ExceptionManager.class);
-        mockStatic(FileManager.class);
         mockStatic(MemberDao.class);
         mockStatic(Log.class);
         service = new DownloadMemberPhotosService();
@@ -98,7 +94,7 @@ public class DownloadMemberPhotoServiceTest {
     }
 
     @Test
-    public void fetchMemberPhotos_memberHasRemotePhoto() throws Exception {
+    public void fetchMemberPhotos_callsFetchAndSetPhotoFromUrlOnModels() throws Exception {
         Member member = mock(Member.class);
         List<Member> memberList = new ArrayList<>();
         memberList.add(member);
@@ -106,27 +102,9 @@ public class DownloadMemberPhotoServiceTest {
         mockHttpClient();
         doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
         when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
-        when(FileManager.isLocal(anyString())).thenReturn(false);
 
         service.fetchMemberPhotos();
 
         verify(member, times(1)).fetchAndSetPhotoFromUrl(mockHttpClient);
-        verify(member, times(1)).updateFromFetch();
-    }
-
-    @Test
-    public void fetchMemberPhotos_memberHasLocalPhoto() throws Exception {
-        Member member = mock(Member.class);
-        List<Member> memberList = new ArrayList<>();
-        memberList.add(member);
-
-        mockHttpClient();
-        doNothing().when(member).fetchAndSetPhotoFromUrl(mockHttpClient);
-        when(MemberDao.membersWithPhotosToFetch()).thenReturn(memberList);
-        when(FileManager.isLocal(anyString())).thenReturn(true);
-
-        service.fetchMemberPhotos();
-
-        verify(member, never()).fetchAndSetPhotoFromUrl(mockHttpClient);
     }
 }

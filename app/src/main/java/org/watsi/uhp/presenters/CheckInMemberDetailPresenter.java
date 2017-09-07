@@ -33,7 +33,6 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     private static final int DEFAULT_BORDER_WIDTH = 2;
     private static final String SIMPRINTS_VERIFICATION_TIER5 = "TIER_5";
 
-    private final SessionManager mSessionManager;
     private IdentificationEvent mIdEvent;
     private final CheckInMemberDetailFragment mCheckInMemberDetailFragment;
     private SimprintsHelper mSimprintsHelper;
@@ -44,9 +43,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
         super(view, context, member, navigationManager);
         mCheckInMemberDetailFragment = checkInMemberDetailFragment;
-        mSessionManager = sessionManager;
         mIdEvent = idEvent;
-        mSimprintsHelper = new SimprintsHelper(mSessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
+        mSimprintsHelper = new SimprintsHelper(sessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
 
         mScanFingerprintsBtn = (Button) getView().findViewById(R.id.scan_fingerprints_btn);
         mScanResult = (TextView) getView().findViewById(R.id.scan_result);
@@ -69,9 +67,8 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         });
     }
 
-    @Override
     protected void navigateToCompleteEnrollmentFragment() {
-        getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), mIdEvent);
+        getNavigationManager().startCompleteEnrollmentFlow(getMember(), mIdEvent);
     }
 
     @Override

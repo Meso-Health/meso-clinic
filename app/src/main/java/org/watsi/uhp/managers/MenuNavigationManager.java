@@ -13,10 +13,10 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 public class MenuNavigationManager {
+
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
     private ClinicActivity mClinicActivity;
-
 
     public MenuNavigationManager(ClinicActivity clinicActivity) {
         mSessionManager = clinicActivity.getSessionManager();
@@ -43,7 +43,7 @@ public class MenuNavigationManager {
                 mNavigationManager.setVersionFragment();
                 break;
             case R.id.menu_logout:
-                confirmBeforelogout(currentFragment);
+                confirmBeforeLogout(currentFragment);
                 break;
         }
         return true;
@@ -57,7 +57,7 @@ public class MenuNavigationManager {
         return member;
     }
 
-    void dismissMember(Fragment fragment) {
+    private void dismissMember(Fragment fragment) {
         if (fragment instanceof CurrentMemberDetailFragment) {
             ((CurrentMemberDetailFragment) fragment).dismissMember();
         } else {
@@ -75,7 +75,7 @@ public class MenuNavigationManager {
         }
     }
 
-    void confirmBeforelogout(Fragment fragment) {
+    void confirmBeforeLogout(Fragment fragment) {
         new AlertDialog.Builder(fragment.getActivity())
                 .setTitle(R.string.log_out_alert)
                 .setNegativeButton(android.R.string.no, null)

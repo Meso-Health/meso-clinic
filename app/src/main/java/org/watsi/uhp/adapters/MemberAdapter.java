@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class MemberAdapter extends ArrayAdapter<Member> {
@@ -60,7 +62,12 @@ public class MemberAdapter extends ArrayAdapter<Member> {
             if (showClinicNumber) {
                 viewHolder.phone_number.setVisibility(View.GONE);
                 viewHolder.clinic_number.setVisibility(View.VISIBLE);
-                viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
+                try {
+                    // TODO not cool to have to do a lookup here... we need to store this on the model
+                    viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
+                } catch (SQLException e) {
+                    ExceptionManager.reportException(e);
+                }
             }
 
             PhotoLoaderHelper.loadMemberPhoto(getContext(), member, viewHolder.photo,

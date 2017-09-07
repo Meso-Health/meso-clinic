@@ -2,7 +2,7 @@ package org.watsi.uhp.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.net.Uri;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -15,9 +15,11 @@ import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.Photo;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Singleton for managing access to local Sqlite DB
@@ -25,7 +27,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     private static DatabaseHelper instance;
 
@@ -56,7 +58,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, EncounterItem.class);
             TableUtils.createTable(connectionSource, EncounterForm.class);
             TableUtils.createTable(connectionSource, User.class);
-            Log.d("UHP", "onCreate database helper called");
+            TableUtils.createTable(connectionSource, Photo.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -103,6 +105,71 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_result_code INT;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_tier STRING;");
                     getDao(IdentificationEvent.class).executeRaw("ALTER TABLE `identifications` ADD COLUMN fingerprints_verification_confidence FLOAT;");
+                case 10:
+                    TableUtils.createTable(connectionSource, Photo.class);
+                    // copy unsynced Member photos to Photo model
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN local_member_photo_id INT REFERENCES photos(id);");
+                    getDao(Member.class).executeRaw("ALTER TABLE `members` ADD COLUMN local_national_id_photo_id INT REFERENCES photos(id);");
+                    for (Member member : Member.unsynced(Member.class)) {
+                        // remote member photo url stored the local URI prior to this migration
+                        if (member.getRemoteMemberPhotoUrl() != null) {
+                            Uri uri = Uri.parse(member.getRemoteMemberPhotoUrl());
+                            if (uri.getScheme().equals("content")) {
+                                Photo photo = new Photo();
+                                photo.setUrl(member.getRemoteMemberPhotoUrl());
+
+                                photo.create();
+                                member.setLocalMemberPhoto(photo);
+                                member.setRemoteMemberPhotoUrl(null);
+                                getDao(Member.class).update(member);
+                            }
+                        }
+
+                        if (member.getRemoteNationalIdPhotoUrl() != null) {
+                            Uri uri = Uri.parse(member.getRemoteNationalIdPhotoUrl());
+                            if (uri.getScheme().equals("content")) {
+                                Photo photo = new Photo();
+                                photo.setUrl(member.getRemoteNationalIdPhotoUrl());
+                                photo.create();
+                                member.setLocalNationalIdPhoto(photo);
+                                member.setRemoteNationalIdPhotoUrl(null);
+                                getDao(Member.class).update(member);
+                            }
+                        }
+                    }
+
+                    // remove non-null restriction from url column in EncounterForm table renaming
+                    //  the encounter forms table, creating a new encounter forms table with the
+                    //  updated column schema, copying the data from original table to the new table
+                    //  and dropping the old table
+                    getDao(EncounterForm.class).executeRaw("ALTER TABLE `encounter_forms` RENAME TO `encounter_forms_deprecated`");
+                    TableUtils.createTable(connectionSource, EncounterForm.class);
+
+                    // because photo_id is a required field on the new EncounterForm table with
+                    // a foreign key constraint, we need to pass a valid photo ID when we copy
+                    // over records - so this creates a placeholder Photo to use as the valid ID
+                    // and after the table is created loops through and replaces the photo_id
+                    // with a new Photo model created using the proper URL
+                    Photo placeholderPhoto = new Photo();
+                    placeholderPhoto.setId(UUID.randomUUID());
+                    placeholderPhoto.setUrl("placeholder");
+                    placeholderPhoto.create();
+                    String placeholderPhotoId = placeholderPhoto.getId().toString();
+                    getDao(EncounterForm.class).executeRaw("INSERT INTO `encounter_forms` \n" +
+                                    "(id, created_at, token, dirty_fields, encounter_id, url, photo_id) \n" +
+                                    "SELECT id, created_at, token, dirty_fields, encounter_id, url, ? FROM `encounter_forms_deprecated`",
+                            placeholderPhotoId);
+                    getDao(EncounterForm.class).executeRaw("DROP TABLE `encounter_forms_deprecated`");
+
+                    // create Photo models for all EncounterForms
+                    for (EncounterForm form : getDao(EncounterForm.class).queryForAll()) {
+                        String url = form.getUrl();
+                        Photo photo = new Photo();
+                        photo.setUrl(url);
+                        photo.create();
+                        form.setPhoto(photo);
+                        getDao(EncounterForm.class).update(form);
+                    }
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
@@ -121,6 +188,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, EncounterItem.class);
             TableUtils.clearTable(connectionSource, EncounterForm.class);
             TableUtils.clearTable(connectionSource, User.class);
+            TableUtils.clearTable(connectionSource, Photo.class);
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }

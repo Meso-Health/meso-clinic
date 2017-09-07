@@ -10,30 +10,29 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowToast;
 import org.watsi.uhp.models.Member;
 
-import java.util.UUID;
-
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class EnrollmentPresenterTest {
 
     private EnrollmentPresenter enrollmentPresenter;
-    private Member member;
+    @Mock
+    private Member mockMember;
 
     @Mock
     Context context;
 
     @Before
     public void setup() {
-        member = new Member();
-        member.setAge(40);
-
-        enrollmentPresenter = new EnrollmentPresenter(member, context);
+        initMocks(this);
+        enrollmentPresenter = new EnrollmentPresenter(mockMember, context);
     }
 
     @Test
     public void confirmationToast_memberStillAbsentee() throws Exception {
-        member.setPhotoUrl("file:///android_res/fake photo url");
+        when(mockMember.isAbsentee()).thenReturn(true);
 
         enrollmentPresenter.confirmationToast().show();
         assertEquals(ShadowToast.getTextOfLatestToast(), "Any updates successfully saved");
@@ -41,8 +40,7 @@ public class EnrollmentPresenterTest {
 
     @Test
     public void confirmationToast_memberNoLongerAbsentee() throws Exception {
-        member.setPhotoUrl("file:///android_res/fake photo url");
-        member.setFingerprintsGuid(UUID.randomUUID());
+        when(mockMember.isAbsentee()).thenReturn(false);
 
         enrollmentPresenter.confirmationToast().show();
         assertEquals(ShadowToast.getTextOfLatestToast(), "Enrollment completed");
