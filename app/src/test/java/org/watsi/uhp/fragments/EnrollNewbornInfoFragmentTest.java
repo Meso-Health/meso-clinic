@@ -75,4 +75,19 @@ public class EnrollNewbornInfoFragmentTest {
         assertEquals(enrollNewbornInfoFragment.getDatePicker().getMonth(), fiveDaysAgo.get(Calendar.MONTH));
         assertEquals(enrollNewbornInfoFragment.getDatePicker().getYear(), fiveDaysAgo.get(Calendar.YEAR));
     }
+
+    @Test
+    public void datePicker_onChange() throws Exception {
+        startFragment(enrollNewbornInfoFragment, ClinicActivity.class);
+        Calendar fiveDaysAgo = makeCalendarToday();
+        fiveDaysAgo.add(Calendar.DAY_OF_MONTH, -5);
+
+        enrollNewbornInfoFragment.getDatePicker().updateDate(
+                fiveDaysAgo.get(Calendar.YEAR),
+                fiveDaysAgo.get(Calendar.MONTH),
+                fiveDaysAgo.get(Calendar.DAY_OF_MONTH)
+        );
+        
+        assertEquals(mNewborn.getBirthdate().getTime(), fiveDaysAgo.getTimeInMillis());
+    }
 }
