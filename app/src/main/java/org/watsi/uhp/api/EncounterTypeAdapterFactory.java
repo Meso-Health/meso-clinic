@@ -15,8 +15,8 @@ import java.util.Iterator;
  */
 public class EncounterTypeAdapterFactory extends CustomizedTypeAdapterFactory<Encounter> {
 
-    public EncounterTypeAdapterFactory(Class<Encounter> customizedClass) {
-        super(customizedClass);
+    public EncounterTypeAdapterFactory() {
+        super(Encounter.class);
     }
 
     /**

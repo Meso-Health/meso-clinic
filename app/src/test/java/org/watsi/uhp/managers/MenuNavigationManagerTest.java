@@ -84,10 +84,10 @@ public class MenuNavigationManagerTest {
     public void nextStep_logout() throws Exception {
         when(mockMenuItem.getItemId()).thenReturn(R.id.menu_logout);
         MenuNavigationManager menuNavigationManagerSpy = spy(menuNavigationManager);
-        doNothing().when(menuNavigationManagerSpy).confirmBeforelogout(mockGenericFragment);
+        doNothing().when(menuNavigationManagerSpy).confirmBeforeLogout(mockGenericFragment);
         boolean result = menuNavigationManagerSpy.nextStep(mockGenericFragment, mockMenuItem);
 
-        verify(menuNavigationManagerSpy, times(1)).confirmBeforelogout(mockGenericFragment);
+        verify(menuNavigationManagerSpy, times(1)).confirmBeforeLogout(mockGenericFragment);
         assertTrue(result);
     }
 

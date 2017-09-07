@@ -147,10 +147,12 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         persistAssociations();
     }
 
-    public void updateFromSync(Response<T> response) throws SQLException {
+    public void updateFromSync(Response<T> response) throws SQLException, IOException {
         T responseBody = response.body();
         handleUpdateFromSync(responseBody);
         setDirtyFields(diffFields(responseBody));
+        // reason we save this instead of response is that not all data
+        //  we persist on the device is sent/returned during syncing
         getDao().createOrUpdate((T) this);
     }
 
@@ -179,7 +181,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     }
 
     public abstract void validate() throws ValidationException;
-    public abstract void handleUpdateFromSync(T response);
+    public abstract void handleUpdateFromSync(T response) throws SQLException, IOException;
     protected abstract Call<T> postApiCall(Context context) throws SQLException, SyncException;
     protected abstract Call<T> patchApiCall(Context context) throws SQLException, SyncException;
     protected abstract void persistAssociations() throws SQLException, ValidationException;

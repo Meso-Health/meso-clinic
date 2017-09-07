@@ -1,8 +1,6 @@
 package org.watsi.uhp.models;
 
 import android.content.Context;
-import android.net.Uri;
-import android.webkit.URLUtil;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.annotations.Expose;
@@ -18,7 +16,6 @@ import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,16 +43,19 @@ public class Member extends SyncableModel {
     public static final String FIELD_NAME_FULL_NAME = "full_name";
     public static final String FIELD_NAME_AGE = "age";
     public static final String FIELD_NAME_GENDER = "gender";
-    public static final String FIELD_NAME_PHOTO = "photo";
-    public static final String FIELD_NAME_PHOTO_URL = "photo_url";
-    public static final String FIELD_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
-    public static final String FIELD_NAME_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
+    public static final String FIELD_NAME_CROPPED_PHOTO_BYTES = "photo";
+    public static final String FIELD_NAME_REMOTE_MEMBER_PHOTO_URL = "photo_url";
+    public static final String FIELD_NAME_REMOTE_NATIONAL_ID_PHOTO_URL = "national_id_photo_url";
+    public static final String FIELD_NAME_LOCAL_MEMBER_PHOTO_ID = "local_member_photo_id";
+    public static final String FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID = "local_national_id_photo_id";
     public static final String FIELD_NAME_HOUSEHOLD_ID = "household_id";
     public static final String FIELD_NAME_FINGERPRINTS_GUID = "fingerprints_guid";
     public static final String FIELD_NAME_PHONE_NUMBER = "phone_number";
     public static final String FIELD_NAME_BIRTHDATE = "birthdate";
     public static final String FIELD_NAME_BIRTHDATE_ACCURACY = "birthdate_accuracy";
     public static final String FIELD_NAME_ENROLLED_AT = "enrolled_at";
+    public static final String API_NAME_MEMBER_PHOTO = "photo";
+    public static final String API_NAME_NATIONAL_ID_PHOTO = "national_id_photo";
 
     public static final int MINIMUM_FINGERPRINT_AGE = 6;
     public static final int MINIMUM_NATIONAL_ID_AGE = 18;
@@ -84,21 +84,27 @@ public class Member extends SyncableModel {
     @DatabaseField(columnName = FIELD_NAME_GENDER)
     protected GenderEnum mGender;
 
-    @DatabaseField(columnName = FIELD_NAME_PHOTO, dataType = DataType.BYTE_ARRAY)
-    protected byte[] mPhoto;
+    @DatabaseField(columnName = FIELD_NAME_CROPPED_PHOTO_BYTES, dataType = DataType.BYTE_ARRAY)
+    protected byte[] mCroppedPhotoBytes;
 
     @Expose
-    @SerializedName(FIELD_NAME_PHOTO_URL)
-    @DatabaseField(columnName = FIELD_NAME_PHOTO_URL)
-    protected String mPhotoUrl;
+    @SerializedName(FIELD_NAME_REMOTE_MEMBER_PHOTO_URL)
+    @DatabaseField(columnName = FIELD_NAME_REMOTE_MEMBER_PHOTO_URL)
+    protected String mRemoteMemberPhotoUrl;
 
-    @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO, dataType = DataType.BYTE_ARRAY)
-    protected byte[] mNationalIdPhoto;
+    @Expose(serialize = false)
+    @SerializedName(FIELD_NAME_REMOTE_NATIONAL_ID_PHOTO_URL)
+    protected String mRemoteNationalIdPhotoUrl;
 
-    @Expose
-    @SerializedName(FIELD_NAME_NATIONAL_ID_PHOTO_URL)
-    @DatabaseField(columnName = FIELD_NAME_NATIONAL_ID_PHOTO_URL)
-    protected String mNationalIdPhotoUrl;
+    @Expose(deserialize = false)
+    @SerializedName(FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)
+    @DatabaseField(columnName = FIELD_NAME_LOCAL_MEMBER_PHOTO_ID, foreign = true, foreignAutoRefresh = true)
+    protected Photo mLocalMemberPhoto;
+
+    @Expose(deserialize = false)
+    @SerializedName(FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID)
+    @DatabaseField(columnName = FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID, foreign = true, foreignAutoRefresh = true)
+    protected Photo mLocalNationalIdPhoto;
 
     @Expose
     @SerializedName(FIELD_NAME_HOUSEHOLD_ID)
@@ -205,35 +211,23 @@ public class Member extends SyncableModel {
     }
 
     @Override
-    public void handleUpdateFromSync(SyncableModel response) {
+    public void handleUpdateFromSync(SyncableModel response) throws SQLException, IOException {
         Member memberResponse = (Member) response;
-        String photoUrlFromResponse = memberResponse.getPhotoUrl();
-        String nationalIdPhotoUrlFromResponse = memberResponse.getNationalIdPhotoUrl();
+        String photoUrlFromResponse = memberResponse.getRemoteMemberPhotoUrl();
+        String nationalIdPhotoUrlFromResponse = memberResponse.getRemoteNationalIdPhotoUrl();
 
-        try {
-            if (photoUrlFromResponse != null) {
-                try {
-                    if (FileManager.isLocal(getPhotoUrl())) FileManager.deleteLocalPhoto(getPhotoUrl());
-                } catch (FileManager.FileDeletionException e) {
-                    ExceptionManager.reportException(e);
-                }
-                setPhotoUrl(photoUrlFromResponse);
-                fetchAndSetPhotoFromUrl(new OkHttpClient());
-                // set the photo field on the response so the field does not get marked as
-                //  dirty when the models are diffed in the sync logic
-                memberResponse.setPhoto(getPhoto());
-            }
+        if (photoUrlFromResponse != null) {
+            setRemoteMemberPhotoUrl(photoUrlFromResponse);
+            fetchAndSetPhotoFromUrl(new OkHttpClient()); // async?
 
-            if (nationalIdPhotoUrlFromResponse != null && FileManager.isLocal((getNationalIdPhotoUrl()))) {
-                try {
-                    FileManager.deleteLocalPhoto(getNationalIdPhotoUrl());
-                } catch (FileManager.FileDeletionException e) {
-                    ExceptionManager.reportException(e);
-                }
-                setNationalIdPhotoUrl(nationalIdPhotoUrlFromResponse);
+            if (getLocalMemberPhoto() != null) {
+                memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
             }
-        } catch (IOException | ValidationException e) {
-            ExceptionManager.reportException(e);
+        }
+
+        // TODO need to handle edge case where the response has a URL for a photo that is different then the locally stored photo
+        if (nationalIdPhotoUrlFromResponse != null && getLocalNationalIdPhoto() != null) {
+            memberResponse.setLocalNationalIdPhoto(getLocalNationalIdPhoto());
         }
     }
 
@@ -249,9 +243,15 @@ public class Member extends SyncableModel {
             // if the existing member record has a photo and the fetched member record has
             // the same photo url as the existing record, copy the photo to the new record
             // so we do not have to re-download it
-            if (persistedMember.getPhoto() != null && persistedMember.getPhotoUrl() != null &&
-                    persistedMember.getPhotoUrl().equals(getPhotoUrl())) {
-                setPhoto(persistedMember.getPhoto());
+            if (persistedMember.getCroppedPhotoBytes() != null &&
+                    persistedMember.getRemoteMemberPhotoUrl() != null &&
+                    persistedMember.getRemoteMemberPhotoUrl().equals(getRemoteMemberPhotoUrl())) {
+                setCroppedPhotoBytes(persistedMember.getCroppedPhotoBytes());
+            }
+
+            if (getRemoteMemberPhotoUrl() != null &&
+                    !getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
+                setCroppedPhotoBytes(null);
             }
         }
         getDao().createOrUpdate(this);
@@ -331,37 +331,50 @@ public class Member extends SyncableModel {
         return getFormattedAge() + " / " + getFormattedGender();
     }
 
-    public byte[] getPhoto() {
-        return mPhoto;
+    public byte[] getCroppedPhotoBytes() {
+        return mCroppedPhotoBytes;
     }
 
-    public void setPhoto(byte[] photoBytes) {
-        this.mPhoto = photoBytes;
+    public void setCroppedPhotoBytes(byte[] photoBytes) {
+        this.mCroppedPhotoBytes = photoBytes;
     }
 
-    public String getPhotoUrl() {
-        return mPhotoUrl;
+    public Photo getLocalMemberPhoto() {
+        return mLocalMemberPhoto;
     }
 
-    // TODO Leaving this to validate on set because the photos PR will take care of this.
-    public void setPhotoUrl(String photoUrl) throws ValidationException {
-        if (photoUrl == null) {
-            this.mPhotoUrl = null;
-        } else {
-            if (URLUtil.isValidUrl(photoUrl)) {
-                this.mPhotoUrl = photoUrl;
-            } else {
-                throw new ValidationException(FIELD_NAME_PHOTO_URL, "Invalid photo url");
-            }
-        }
+    public void setLocalMemberPhoto(Photo photo) {
+        this.mLocalMemberPhoto = photo;
     }
 
-    public String getNationalIdPhotoUrl() {
-        return mNationalIdPhotoUrl;
+    public String getRemoteMemberPhotoUrl() {
+        return mRemoteMemberPhotoUrl;
     }
 
-    public void setNationalIdPhotoUrl(String nationalIdPhotoUrl) {
-        this.mNationalIdPhotoUrl = nationalIdPhotoUrl;
+    public String getRemoteMemberPhotoUrlForFetch() {
+        return BuildConfig.USING_LOCAL_SERVER ?
+                BuildConfig.API_HOST + mRemoteMemberPhotoUrl :
+                mRemoteMemberPhotoUrl;
+    }
+
+    public void setRemoteMemberPhotoUrl(String photoUrl) {
+        this.mRemoteMemberPhotoUrl = photoUrl;
+    }
+
+    public Photo getLocalNationalIdPhoto() {
+        return mLocalNationalIdPhoto;
+    }
+
+    public void setLocalNationalIdPhoto(Photo photo) {
+        this.mLocalNationalIdPhoto = photo;
+    }
+
+    public String getRemoteNationalIdPhotoUrl() {
+        return mRemoteNationalIdPhotoUrl;
+    }
+
+    public void setRemoteNationalIdPhotoUrl(String nationalIdPhotoUrl) {
+        this.mRemoteNationalIdPhotoUrl = nationalIdPhotoUrl;
     }
 
     public void setHouseholdId(UUID householdId) {
@@ -421,18 +434,19 @@ public class Member extends SyncableModel {
     }
 
     public boolean isAbsentee() {
-        return getPhotoUrl() == null || (getAge() >= 6 && getFingerprintsGuid() == null);
+        return (getLocalMemberPhoto() == null && getRemoteMemberPhotoUrl() == null) ||
+                (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
     }
 
     public void fetchAndSetPhotoFromUrl(OkHttpClient okHttpClient) throws IOException {
-        if (FileManager.isLocal(getPhotoUrl())) return;
-        Request request = new Request.Builder().url(getPhotoUrl()).build();
+        if (getRemoteMemberPhotoUrl() == null) return;
+        Request request = new Request.Builder().url(getRemoteMemberPhotoUrlForFetch()).build();
         okhttp3.Response response = okHttpClient.newCall(request).execute();
 
         try {
             if (response.isSuccessful()) {
                 InputStream is = response.body().byteStream();
-                setPhoto(ByteStreams.toByteArray(is));
+                setCroppedPhotoBytes(ByteStreams.toByteArray(is));
             } else {
                 Map<String,String> params = new HashMap<>();
                 params.put("member.id", getId().toString());
@@ -459,24 +473,24 @@ public class Member extends SyncableModel {
     public Map<String, RequestBody> formatPatchRequest(Context context) throws SyncException {
         Map<String, RequestBody> requestPartMap = new HashMap<>();
 
-        if (dirty(FIELD_NAME_PHOTO_URL)) {
-            byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+        if (dirty(FIELD_NAME_LOCAL_MEMBER_PHOTO_ID)) {
+            byte[] image = getLocalMemberPhoto().bytes(context);
             if (image != null) {
                 requestPartMap.put(
-                        FIELD_NAME_PHOTO,
+                        API_NAME_MEMBER_PHOTO,
                         RequestBody.create(MediaType.parse("image/jpg"), image)
                 );
             }
         }
 
-        // only include national ID field in request if member photo is not
+        // only include national ID photo field in request if member photo is not
         //  being sent in order to limit the size of the request
-        if (requestPartMap.get(FIELD_NAME_PHOTO) == null) {
-            if (dirty(FIELD_NAME_NATIONAL_ID_PHOTO_URL)) {
-                byte[] image =  FileManager.readFromUri(Uri.parse(getNationalIdPhotoUrl()), context);
+        if (requestPartMap.get(API_NAME_MEMBER_PHOTO) == null) {
+            if (dirty(FIELD_NAME_LOCAL_NATIONAL_ID_PHOTO_ID)) {
+                byte[] image =  getLocalNationalIdPhoto().bytes(context);
                 if (image != null) {
                     requestPartMap.put(
-                            FIELD_NAME_NATIONAL_ID_PHOTO,
+                            API_NAME_NATIONAL_ID_PHOTO,
                             RequestBody.create(MediaType.parse("image/jpg"), image)
                     );
                 }
@@ -577,13 +591,14 @@ public class Member extends SyncableModel {
             ExceptionManager.reportErrorMessage("Member.sync called on member with a null household ID.");
         }
 
-        if (getPhotoUrl() != null && FileManager.isLocal(getPhotoUrl())) {
-            byte[] image = FileManager.readFromUri(Uri.parse(getPhotoUrl()), context);
+        if (getLocalMemberPhoto() != null) {
+            byte[] image = getLocalMemberPhoto().bytes(context);
             if (image != null) {
-                requestBodyMap.put(FIELD_NAME_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
+                requestBodyMap.put(API_NAME_MEMBER_PHOTO, RequestBody.create(MediaType.parse("image/jpg"), image));
             }
         }
 
+        // TODO: why do we only do null checks on some of these?
         if (getGender() != null) {
             requestBodyMap.put(
                     FIELD_NAME_GENDER,
@@ -641,13 +656,8 @@ public class Member extends SyncableModel {
         }
     }
 
-    public IdentificationEvent currentCheckIn() {
-        try {
-            return IdentificationEventDao.openCheckIn(getId());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            return null;
-        }
+    public IdentificationEvent currentCheckIn() throws SQLException {
+        return IdentificationEventDao.openCheckIn(getId());
     }
 
     public Member createNewborn() {
