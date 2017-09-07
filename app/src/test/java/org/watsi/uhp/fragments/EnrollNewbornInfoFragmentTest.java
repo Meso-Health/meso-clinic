@@ -77,7 +77,7 @@ public class EnrollNewbornInfoFragmentTest {
     }
 
     @Test
-    public void datePicker_onChange() throws Exception {
+    public void datePicker_onDateChanged() throws Exception {
         startFragment(enrollNewbornInfoFragment, ClinicActivity.class);
         Calendar fiveDaysAgo = makeCalendarToday();
         fiveDaysAgo.add(Calendar.DAY_OF_MONTH, -5);
@@ -87,7 +87,7 @@ public class EnrollNewbornInfoFragmentTest {
                 fiveDaysAgo.get(Calendar.MONTH),
                 fiveDaysAgo.get(Calendar.DAY_OF_MONTH)
         );
-        
+
         assertEquals(mNewborn.getBirthdate().getTime(), fiveDaysAgo.getTimeInMillis());
     }
 }
