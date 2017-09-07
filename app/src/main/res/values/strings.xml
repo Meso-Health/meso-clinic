@@ -1,6 +1,7 @@
 <resources>
     <!-- Error Messages -->
     <string name="image_capture_failed">Image capture failed</string>
+    <string name="image_failed_to_save">Image failed to save</string>
     <string name="generic_error_message">An error has occurred. Contact support.</string>
     <string name="name_validation_error">Name cannot be blank.</string>
     <string name="card_id_validation_error">

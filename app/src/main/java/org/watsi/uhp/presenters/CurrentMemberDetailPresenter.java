@@ -56,15 +56,14 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     @Override
     protected void navigateToCompleteEnrollmentFragment() {
-        getNavigationManager().setEnrollmentMemberPhotoFragment(getMember(), null);
+        getNavigationManager().startCompleteEnrollmentFlow(getMember(), null);
     }
 
-    @Override
     public void navigateToMemberEditFragment() {
         getNavigationManager().setMemberEditFragment(getMember(), null);
     }
 
-    protected Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
+    private Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
         Encounter encounter = new Encounter();
         IdentificationEvent checkIn = getMember().currentCheckIn();
         if (checkIn != null) {
@@ -79,8 +78,8 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    public void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
-            throws SyncableModel.UnauthenticatedException {
+    private void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
+            throws SyncableModel.UnauthenticatedException, SQLException {
         IdentificationEvent checkIn = getMember().currentCheckIn();
         checkIn.setDismissalReason(dismissReason);
 
@@ -94,21 +93,21 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    protected void showGenericFailedToast() {
+    private void showGenericFailedToast() {
         Toast.makeText(getContext(),
                 getContext().getString(R.string.generic_enter_treatment_info_failure),
                 Toast.LENGTH_LONG).
                 show();
     }
 
-    protected void showFailedToCheckOutToast() {
+    private void showFailedToCheckOutToast() {
         Toast.makeText(getContext(),
                 getContext().getString(R.string.identification_dismissed_failure),
                 Toast.LENGTH_LONG).
                 show();
     }
 
-    protected void showCheckedOutSuccessfulToast() {
+    private void showCheckedOutSuccessfulToast() {
         Toast.makeText(getContext(),
                 getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
                 Toast.LENGTH_LONG).
@@ -126,7 +125,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                                 try {
                                     dismissIdentification(IdentificationEvent
                                             .DismissalReasonEnum.values()[which]);
-                                } catch (SyncableModel.UnauthenticatedException e) {
+                                } catch (SQLException | SyncableModel.UnauthenticatedException e) {
                                     ExceptionManager.reportException(e);
                                     Toast.makeText(getContext(),
                                             "Failed to dismiss member, contact support.",

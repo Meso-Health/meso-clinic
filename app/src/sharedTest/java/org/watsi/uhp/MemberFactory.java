@@ -1,6 +1,7 @@
 package org.watsi.uhp;
 
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.Photo;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ public class MemberFactory extends Member {
 
         setId(UUID.randomUUID());
         setFingerprintsGuid(UUID.randomUUID());
-        setPhotoUrl("content://test_member_photo.jpg");
+        setLocalMemberPhoto(new Photo());
+        getLocalMemberPhoto().setUrl("content://test_member_photo.jpg");
     }
 }

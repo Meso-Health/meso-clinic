@@ -90,7 +90,7 @@ public class SyncService extends AbstractSyncJobService {
                 continue;
             }
 
-            byte[] image = encounterForm.getImage(this);
+            byte[] image = encounterForm.getPhoto().bytes(this);
             if (image == null) {
                 ExceptionManager.reportMessage("Null image for form on encounter: " +
                         encounter.getId().toString());

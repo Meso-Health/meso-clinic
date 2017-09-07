@@ -10,8 +10,6 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AuthenticationToken;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +38,7 @@ public class ApiService {
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT_STRING)
-                    .registerTypeAdapterFactory(new EncounterTypeAdapterFactory(Encounter.class))
-                    .registerTypeAdapterFactory(new MemberTypeAdapterFactory(Member.class))
+                    .registerTypeAdapterFactory(new EncounterTypeAdapterFactory())
                     .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(BuildConfig.API_HOST)

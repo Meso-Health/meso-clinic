@@ -30,6 +30,7 @@ import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
+import org.watsi.uhp.services.DeleteFetchedPhotoService;
 import org.watsi.uhp.services.DownloadMemberPhotosService;
 import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
@@ -41,6 +42,7 @@ public class ClinicActivity extends AppCompatActivity {
     private static int FETCH_SERVICE_JOB_ID = 0;
     private static int SYNC_SERVICE_JOB_ID = 1;
     private static int DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID = 2;
+    private static int DELETE_PHOTOS_SERVICE_JOB_ID = 3;
 
     private SessionManager mSessionManager;
     private NavigationManager mNavigationManager;
@@ -99,6 +101,10 @@ public class ClinicActivity extends AppCompatActivity {
         jobScheduler.schedule(DownloadMemberPhotosService.buildJobInfo(
                 DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID,
                 new ComponentName(this, DownloadMemberPhotosService.class)));
+        jobScheduler.schedule(SyncService.buildJobInfo(
+                DELETE_PHOTOS_SERVICE_JOB_ID,
+                new ComponentName(this, DeleteFetchedPhotoService.class),
+                false));
     }
 
     private void setupToolbar() {

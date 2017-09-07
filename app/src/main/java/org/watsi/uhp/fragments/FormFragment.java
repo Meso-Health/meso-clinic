@@ -1,6 +1,8 @@
 package org.watsi.uhp.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +41,10 @@ public abstract class FormFragment<T extends SyncableModel> extends BaseFragment
         return view;
     }
 
+    @StringRes
     abstract int getTitleLabelId();
 
+    @LayoutRes
     abstract int getFragmentLayoutId();
 
     public abstract boolean isFirstStep();

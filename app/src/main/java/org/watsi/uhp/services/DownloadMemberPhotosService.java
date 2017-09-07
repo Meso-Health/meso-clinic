@@ -5,7 +5,6 @@ import android.util.Log;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -46,13 +45,12 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
         while (iterator.hasNext()) {
             Member member = iterator.next();
             try {
-                if (!FileManager.isLocal(member.getPhotoUrl())) {
-                    member.fetchAndSetPhotoFromUrl(okHttpClient);
-                    member.updateFromFetch();
-                }
+                member.fetchAndSetPhotoFromUrl(okHttpClient);
+                member.updateFromFetch();
             } catch (IOException e) {
-                ExceptionManager.reportException(e);
+                // count fetch failures so we can abort fetching early if it is consistently failing
                 fetchFailures++;
+                ExceptionManager.reportException(e);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {

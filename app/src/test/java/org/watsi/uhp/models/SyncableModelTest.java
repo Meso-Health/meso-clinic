@@ -48,15 +48,14 @@ public class SyncableModelTest {
     Response<Member> mockResponse;
     @Mock
     Member mockResponseMember;
+    @Mock
+    Dao<Member, UUID> mockDao;
 
     // SyncableModel is an abstract class so testing with an implementation
     private Member member = new Member();
     private Member memberSpy = spy(member);
     private UUID id = UUID.randomUUID();
     private String token = "foo";
-
-    @Mock
-    Dao<Member, UUID> mockDao;
 
     @Before
     public void setup() throws Exception {
