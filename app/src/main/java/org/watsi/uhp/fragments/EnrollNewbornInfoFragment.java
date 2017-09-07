@@ -14,10 +14,15 @@ import org.watsi.uhp.view_models.EnrollNewbornViewModel;
 
 import java.util.Calendar;
 
+import static org.watsi.uhp.helpers.DateTimeHelper.makeCalendarThreeMonthsAgo;
+import static org.watsi.uhp.helpers.DateTimeHelper.makeCalendarTomorrow;
+import static org.watsi.uhp.helpers.DateTimeHelper.makeCalendarToday;
+
 public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
     private IdentificationEvent mIdEvent;
     private View mView;
+    private DatePicker mDatePicker;
 
     @Override
     int getTitleLabelId() {
@@ -42,6 +47,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
     @Override
     void setUpFragment(View view) {
         mView = view;
+        mDatePicker = (DatePicker) mView.findViewById(R.id.birthdate);
 
         FragmentEnrollNewbornBinding binding = DataBindingUtil.bind(view);
         EnrollNewbornViewModel enrollNewbornViewModel = new EnrollNewbornViewModel(this, mSyncableModel);
@@ -61,23 +67,21 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
 
 
     void setUpDatePicker() {
-        DatePicker datePicker = (DatePicker) mView.findViewById(R.id.birthdate);
-
-        Calendar cal = makeCalendarWithNoTime();
+        Calendar cal = makeCalendarToday();
         if (mSyncableModel.getBirthdate() != null) {
             cal.setTime(mSyncableModel.getBirthdate());
         } else {
             mSyncableModel.setBirthdate(cal.getTime());
         }
 
-        datePicker.init(
+        mDatePicker.init(
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH),
                 new DatePicker.OnDateChangedListener() {
                     @Override
                     public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-                        Calendar cal = makeCalendarWithNoTime();
+                        Calendar cal = makeCalendarToday();
                         cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
                         mSyncableModel.setBirthdate(cal.getTime());
                     }
@@ -85,28 +89,11 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         );
         // This is a policy decision we made during IPM so only newborns born within the last
         // three months can be enrolled via this flow.
-        datePicker.setMinDate(makeCalendarThreeMonthsAgo().getTimeInMillis());
-        datePicker.setMaxDate(makeCalendarTomorrow().getTimeInMillis());
+        mDatePicker.setMinDate(makeCalendarThreeMonthsAgo().getTimeInMillis());
+        mDatePicker.setMaxDate(makeCalendarTomorrow().getTimeInMillis());
     }
 
-    private Calendar makeCalendarThreeMonthsAgo() {
-        Calendar threeMonthsAgo = makeCalendarWithNoTime();
-        threeMonthsAgo.add(Calendar.MONTH, -3);
-        return threeMonthsAgo;
-    }
-
-    private Calendar makeCalendarTomorrow() {
-        Calendar tomorrow = makeCalendarWithNoTime();
-        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        return tomorrow;
-    }
-
-    private Calendar makeCalendarWithNoTime() {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE,0);
-        cal.set(Calendar.SECOND,0);
-        cal.set(Calendar.MILLISECOND,0);
-        return cal;
+    public DatePicker getDatePicker() {
+        return mDatePicker;
     }
 }
