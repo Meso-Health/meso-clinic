@@ -2,10 +2,6 @@ package org.watsi.uhp.helpers;
 
 import java.util.Calendar;
 
-/**
- * Created by michaelliang on 9/7/17.
- */
-
 public class DateTimeHelper {
     public static Calendar makeCalendarToday() {
         Calendar cal = Calendar.getInstance();
