@@ -7,7 +7,7 @@ machine:
 test:
   override:
     # run unit tests
-    - ./gradlew testSpecDebug
+    - ./gradlew testSpecDebug --parallel
 
 #    # run instrumentation tests locally for now
 #    # start the emulator
