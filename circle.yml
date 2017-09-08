@@ -1,11 +1,13 @@
 machine:
   environment:
     ADB_INSTALL_TIMEOUT: "10"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+
 
 test:
   override:
     # run unit tests
-    - ./gradlew testSpecDebug --max-workers 2
+    - ./gradlew testSpecDebug
 
 #    # run instrumentation tests locally for now
 #    # start the emulator
