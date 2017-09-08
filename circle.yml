@@ -5,7 +5,7 @@ machine:
 test:
   override:
     # run unit tests
-    - ./gradlew testSpecDebug
+    - ./gradlew testSpecDebug --no-daemon --max-workers 2
 
 #    # run instrumentation tests locally for now
 #    # start the emulator
