@@ -10,6 +10,8 @@ open class DeleteFetchedPhotoService : AbstractSyncJobService() {
         photosToDelete?.forEach {
             if (!it.delete(this)) {
                 ExceptionManager.reportErrorMessage("Failed to delete photo at: " + it.url)
+                it.deleted = true
+                it.update()
             }
         }
 
