@@ -91,6 +91,10 @@ public class NewbornBirthdatePickerTest {
         NewbornBirthdatePicker newbornBirthdatePicker = new NewbornBirthdatePicker(mDatePicker, mMember);
         Calendar fiveDaysAgo = Calendar.getInstance();
         fiveDaysAgo.add(Calendar.DAY_OF_MONTH, -5);
+        fiveDaysAgo.set(Calendar.HOUR_OF_DAY, 0);
+        fiveDaysAgo.set(Calendar.MINUTE,0);
+        fiveDaysAgo.set(Calendar.SECOND,0);
+        fiveDaysAgo.set(Calendar.MILLISECOND,0);
 
         mDatePicker.updateDate(
                 fiveDaysAgo.get(Calendar.YEAR),
