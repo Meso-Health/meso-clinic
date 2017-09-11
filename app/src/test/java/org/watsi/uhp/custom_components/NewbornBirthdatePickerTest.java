@@ -102,6 +102,7 @@ public class NewbornBirthdatePickerTest {
         assertEquals(mDatePicker.getMonth(), fiveDaysAgo.get(Calendar.MONTH));
         assertEquals(mDatePicker.getDayOfMonth(), fiveDaysAgo.get(Calendar.DAY_OF_MONTH));
 
+        assertEquals(mMember.getBirthdate().getTime(), fiveDaysAgo.getTimeInMillis());
         assertDateHasNoTime(mMember.getBirthdate().getTime());
     }
 
