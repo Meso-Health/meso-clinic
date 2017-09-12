@@ -244,7 +244,7 @@ public class NavigationManager {
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
-    
+
     public void setVersionFragment() {
         setFragment(mFragmentProvider.createFragment(VersionAndSyncFragment.class));
     }
