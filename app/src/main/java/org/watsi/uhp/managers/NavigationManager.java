@@ -252,12 +252,12 @@ public class NavigationManager {
         this.mLastFragmentTransition = FRAGMENT_TRANSITION_BACKPRESS;
     }
 
-    public static class FragmentProvider {
-        public BaseFragment createFragment(Class<? extends BaseFragment> clazz) {
+    static class FragmentProvider {
+        BaseFragment createFragment(Class<? extends BaseFragment> clazz) {
             return createFragment(clazz, null);
         }
 
-        public BaseFragment createFragment(Class<? extends BaseFragment> clazz, Bundle bundle) {
+        BaseFragment createFragment(Class<? extends BaseFragment> clazz, Bundle bundle) {
             try {
                 BaseFragment fragment = clazz.newInstance();
                 if (bundle != null) {
