@@ -42,8 +42,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
 
         View view = inflater.inflate(R.layout.fragment_barcode, container, false);
 
-        mScanPurpose = ScanPurposeEnum.valueOf(
-                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
+        mScanPurpose = getScanPurposeFromArguments();
 
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
@@ -179,5 +178,16 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                 }
             }
         });
+    }
+
+    private ScanPurposeEnum getScanPurposeFromArguments() {
+        return ScanPurposeEnum.valueOf(
+                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
+    }
+
+    @Override
+    public String getName() {
+        // We want distinct entries in the backstack per member so that we can back through family members.
+        return "BarcodeFragment-" + getScanPurposeFromArguments();
     }
 }
