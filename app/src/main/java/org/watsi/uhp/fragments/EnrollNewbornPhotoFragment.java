@@ -1,36 +1,21 @@
 package org.watsi.uhp.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.listeners.CapturePhotoClickListener;
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.FileManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.models.Photo;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static org.watsi.uhp.R.string.save_btn_label;
-
-public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
-
-    static final int TAKE_NEWBORN_PHOTO_INTENT = 4;
-
-    private ImageView mNewbornPhotoImageView;
-    private Uri mUri;
+public class EnrollNewbornPhotoFragment extends PhotoFragment<Member> {
 
     @Override
     int getTitleLabelId() {
@@ -61,44 +46,22 @@ public class EnrollNewbornPhotoFragment extends FormFragment<Member> {
     }
 
     @Override
-    void setUpFragment(View view) {
-        try {
-            String filename = "newborn_" + Clock.getCurrentTime().getTime() + ".jpg";
-            mUri = FileManager.getUriFromProvider(filename, "member", getContext());
-        } catch (IOException e) {
-            ExceptionManager.reportException(e);
-            getNavigationManager().setMemberDetailFragment(mSyncableModel);
-            Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
-        }
+    void handleSetupFailure() {
+        getNavigationManager().setMemberDetailFragment(mSyncableModel);
+        Toast.makeText(getContext(), R.string.generic_error_message, Toast.LENGTH_LONG).show();
+    }
 
-        Button capturePhotoBtn = ((Button) view.findViewById(R.id.photo_btn));
+    @Override
+    void additionalSetup(View view) {
         Button savePhotoBtn = ((Button) view.findViewById(R.id.save_button));
+        savePhotoBtn.setText(R.string.save_btn_label);
 
-        capturePhotoBtn.setText(R.string.enrollment_member_photo_btn);
-        capturePhotoBtn.setOnClickListener(
-                new CapturePhotoClickListener(TAKE_NEWBORN_PHOTO_INTENT, this, mUri));
-
-        savePhotoBtn.setText(save_btn_label);
-
-        mNewbornPhotoImageView = (ImageView) view.findViewById(R.id.photo);
         mSaveBtn.setEnabled(false);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TAKE_NEWBORN_PHOTO_INTENT && resultCode == Activity.RESULT_OK) {
-
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mUri);
-                mNewbornPhotoImageView.setImageBitmap(bitmap);
-                mSyncableModel.setPhotoUrl(mUri.toString());
-                mSaveBtn.setEnabled(true);
-                return;
-            } catch (IOException | AbstractModel.ValidationException e) {
-                ExceptionManager.reportException(e);
-            }
-        }
+    void onPhotoCaptured(Photo photo) throws IOException {
+        mSyncableModel.setLocalMemberPhoto(photo);
         mSaveBtn.setEnabled(true);
-        Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
     }
 }

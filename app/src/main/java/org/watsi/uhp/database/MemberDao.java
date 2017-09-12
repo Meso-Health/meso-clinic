@@ -157,9 +157,9 @@ public class MemberDao {
         PreparedQuery<Member> pq = getInstance().getMemberDao()
                 .queryBuilder()
                 .where()
-                .isNull(Member.FIELD_NAME_PHOTO)
+                .isNull(Member.FIELD_NAME_CROPPED_PHOTO_BYTES)
                 .and()
-                .isNotNull(Member.FIELD_NAME_PHOTO_URL)
+                .isNotNull(Member.FIELD_NAME_REMOTE_MEMBER_PHOTO_URL)
                 .prepare();
         return getInstance().getMemberDao().query(pq);
     }
