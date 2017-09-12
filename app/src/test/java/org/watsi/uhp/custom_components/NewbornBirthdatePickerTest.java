@@ -43,7 +43,6 @@ public class NewbornBirthdatePickerTest {
         assertEquals(maxDate.get(Calendar.YEAR), today.get(Calendar.YEAR));
         assertEquals(maxDate.get(Calendar.MONTH), today.get(Calendar.MONTH));
         assertEquals(maxDate.get(Calendar.DAY_OF_MONTH), today.get(Calendar.DAY_OF_MONTH));
-        assertDateHasNoTime(mDatePicker.getMaxDate());
     }
 
     @Test
@@ -58,7 +57,6 @@ public class NewbornBirthdatePickerTest {
         assertEquals(minDate.get(Calendar.YEAR), threeMonthsAgo.get(Calendar.YEAR));
         assertEquals(minDate.get(Calendar.MONTH), threeMonthsAgo.get(Calendar.MONTH));
         assertEquals(minDate.get(Calendar.DAY_OF_MONTH), threeMonthsAgo.get(Calendar.DAY_OF_MONTH));
-        assertDateHasNoTime(mDatePicker.getMinDate());
     }
 
     @Test
