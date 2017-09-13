@@ -228,11 +228,7 @@ public class ClinicActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
             } else {
                 mClinicActivity.setAuthenticationToken(token);
-                Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container);
-                if (currentFragment == null) {
-                    getNavigationManager().setCurrentPatientsFragment();
-                }
+                getNavigationManager().setCurrentPatientsFragment();
             }
         }
     }

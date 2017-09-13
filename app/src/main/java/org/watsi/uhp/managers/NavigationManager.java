@@ -71,21 +71,21 @@ public class NavigationManager {
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
-        // This ensures that we never have call fragmentA -> fragmentB in the stack twice.
-        // Sometimes setFragment can be accidentally called twice from the same source fragment to the same
-        // destination fragment. In order to prevent this from messing up the stack, since the call to
-        // setFragment is synchronous, we can make sure only one of those transactions is committed.
-        String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
-        if (mLastFragmentTransition != FRAGMENT_TRANSITION_BACKPRESS && this.mLastFragmentTransition.equals(nextFragmentTransition)) {
-            return;
-        } else {
-            this.mLastFragmentTransition = nextFragmentTransition;
-        }
-
         String addTobackStackTag = "add" + nextFragmentName;
 
         // No need for a removeFragment transaction if there is no current fragment, i.e. when you first open app.
         if (currentFragment != null) {
+            // This ensures that we never have call fragmentA -> fragmentB in the stack twice.
+            // Sometimes setFragment can be accidentally called twice from the same source fragment to the same
+            // destination fragment. In order to prevent this from messing up the stack, since the call to
+            // setFragment is synchronous, we can make sure only one of those transactions is committed.
+            String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
+            if (mLastFragmentTransition != FRAGMENT_TRANSITION_BACKPRESS && this.mLastFragmentTransition.equals(nextFragmentTransition)) {
+                return;
+            } else {
+                this.mLastFragmentTransition = nextFragmentTransition;
+            }
+
             if (fm.findFragmentByTag(nextFragmentName) != null) {
                 fm.popBackStack(addTobackStackTag, 0);
             } else {
