@@ -533,6 +533,13 @@ public class Member extends SyncableModel {
             }
         }
 
+        if (dirty(FIELD_NAME_BIRTHDATE)) {
+            requestPartMap.put(
+                    Member.FIELD_NAME_BIRTHDATE,
+                    RequestBody.create(MultipartBody.FORM, Clock.asIso(getBirthdate()))
+            );
+        }
+
         if (requestPartMap.isEmpty()) {
             throw new SyncException("Empty request body map for member " + getId().toString() +
                     ". Dirty fields are: " + getDirtyFields().toString());
