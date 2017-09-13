@@ -228,7 +228,16 @@ public class ClinicActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
             } else {
                 mClinicActivity.setAuthenticationToken(token);
-                getNavigationManager().setCurrentPatientsFragment();
+                Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container);
+                // We only want to navigate to CurrentPatientsFragment if going from a non-ClinicActivity
+                // to a fragment that belongs to ClinicActivity only in the case where there are no
+                // fragments in the backstack. (i.e. log out + logging back in)
+                // Otherwise, in the cases of jumping to camera / simprints then clicking back, we
+                // just want this to return to the most recent fragment in ClinicActivity.
+                if (currentFragment == null) {
+                    getNavigationManager().setCurrentPatientsFragment();
+                }
             }
         }
     }
