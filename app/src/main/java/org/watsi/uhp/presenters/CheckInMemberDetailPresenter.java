@@ -164,6 +164,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mIdEvent.setClinicNumberType(clinicNumberType);
         mIdEvent.setAccepted(true);
         mIdEvent.setOccurredAt(Clock.getCurrentTime());
+        mIdEvent.setPhotoVerified(getMember().hasMemberPhoto());
         mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
         displayIdentificationSuccessfulToast();
         navigateToCurrentPatientsFragment();

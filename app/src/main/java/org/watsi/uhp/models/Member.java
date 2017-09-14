@@ -434,8 +434,11 @@ public class Member extends SyncableModel {
     }
 
     public boolean isAbsentee() {
-        return (getLocalMemberPhoto() == null && getRemoteMemberPhotoUrl() == null) ||
-                (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
+        return hasMemberPhoto() || (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
+    }
+
+    public boolean hasMemberPhoto() {
+        return getLocalMemberPhoto() != null || getRemoteMemberPhotoUrl() != null;
     }
 
     public void fetchAndSetPhotoFromUrl(OkHttpClient okHttpClient) throws IOException {
