@@ -434,7 +434,7 @@ public class Member extends SyncableModel {
     }
 
     public boolean isAbsentee() {
-        return hasMemberPhoto() || (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
+        return !hasMemberPhoto() || (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
     }
 
     public boolean hasMemberPhoto() {
