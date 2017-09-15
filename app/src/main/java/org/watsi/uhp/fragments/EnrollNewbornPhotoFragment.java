@@ -37,7 +37,7 @@ public class EnrollNewbornPhotoFragment extends PhotoFragment<Member> {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
             IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-            getNavigationManager().setMemberDetailFragmentAfterEnrollNewborn(mSyncableModel, idEvent);
+            getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
             Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
         } catch (SQLException | AbstractModel.ValidationException e) {
             ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " +  mSyncableModel.getId());

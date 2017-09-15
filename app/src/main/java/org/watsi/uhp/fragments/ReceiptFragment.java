@@ -40,18 +40,20 @@ public class ReceiptFragment extends FormFragment<Encounter> {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
+
             toastMessage = mSyncableModel.getMember()
                     .getFullName() + getString(R.string.encounter_submitted);
         } catch (SQLException | AbstractModel.ValidationException e) {
             toastMessage = "Failed to save data, contact support.";
             ExceptionManager.reportException(e);
         }
+
         Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
 
     @Override
     void setUpFragment(View view) {
-        List<EncounterItem> encounterItems = mSyncableModel.getEncounterItems();
+        List<EncounterItem> encounterItems = (List<EncounterItem>) mSyncableModel.getEncounterItems();
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
         Adapter mAdapter = new ReceiptItemAdapter(getActivity(), encounterItems);

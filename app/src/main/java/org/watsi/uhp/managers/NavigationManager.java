@@ -1,13 +1,14 @@
 package org.watsi.uhp.managers;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
-import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
@@ -37,74 +38,54 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String MEMBER_BUNDLE_FIELD = "member";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
-    public static String FRAGMENT_TRANSITION_BACKPRESS = "backPress";
 
+    private static String HOME_TAG = "home";
+    private static String DETAIL_TAG = "detail";
 
     private FragmentActivity mActivity;
     private FragmentProvider mFragmentProvider;
-    private String mLastFragmentTransition;
 
+    public NavigationManager(FragmentActivity activity, FragmentProvider fragmentProvider) {
+        this.mActivity = activity;
+        this.mFragmentProvider = fragmentProvider;
+    }
 
     public NavigationManager(FragmentActivity activity) {
-        this.mActivity = activity;
-        this.mFragmentProvider = new FragmentProvider();
-        this.mLastFragmentTransition = "";
+        this(activity, new FragmentProvider());
     }
 
-    protected void setFragment(BaseFragment fragment) {
-        setFragment(fragment, fragment.getName());
-    }
-
-    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
-        if (currentFragment == null) {
-            return "->" + nextFragmentName;
-        } else {
-            return currentFragment.getName() + "->" + nextFragmentName;
-        }
-    }
-
-    protected void setFragment(BaseFragment fragment, String nextFragmentName) {
-        if (nextFragmentName == null) {
-            nextFragmentName = fragment.getName();
-        }
-
+    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
+                             popBackStack) {
         FragmentManager fm = mActivity.getSupportFragmentManager();
-        BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
-        String addTobackStackTag = "add" + nextFragmentName;
-
-        // No need for a removeFragment transaction if there is no current fragment, i.e. when you first open app.
-        if (currentFragment != null) {
-            // This ensures that we never have call fragmentA -> fragmentB in the stack twice.
-            // Sometimes setFragment can be accidentally called twice from the same source fragment to the same
-            // destination fragment. In order to prevent this from messing up the stack, since the call to
-            // setFragment is synchronous, we can make sure only one of those transactions is committed.
-            String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
-            if (mLastFragmentTransition != FRAGMENT_TRANSITION_BACKPRESS && this.mLastFragmentTransition.equals(nextFragmentTransition)) {
-                return;
-            } else {
-                this.mLastFragmentTransition = nextFragmentTransition;
+        if (popBackStack) {
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            if (fm.findFragmentByTag(HOME_TAG) != null) {
+                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
             }
 
-            if (fm.findFragmentByTag(nextFragmentName) != null) {
-                fm.popBackStack(addTobackStackTag, 0);
-            } else {
-                fm.beginTransaction()
-                        .remove(currentFragment)
-                        .add(R.id.fragment_container, fragment, nextFragmentName)
-                        .addToBackStack(addTobackStackTag)
-                        .commit();
+            // Hacky solution: (michaelliang) I added this extra check since the detail fragment may
+            // stick around when returning to the CurrentPatientsFragment.
+            if (fm.findFragmentByTag(DETAIL_TAG) != null) {
+                fm.beginTransaction().remove(fm.findFragmentByTag(DETAIL_TAG)).commit();
             }
-        } else {
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment, nextFragmentName)
-                    .addToBackStack(addTobackStackTag)
-                    .commit();
         }
+
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment, tag);
+
+        if (addToBackstack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
+    }
+
+    private void setFragment(Fragment fragment) {
+        setFragment(fragment, null, true, false);
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(mFragmentProvider.createFragment(CurrentPatientsFragment.class));
+        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
     }
 
     public void setMemberDetailFragment(Member member) {
@@ -114,7 +95,7 @@ public class NavigationManager {
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         try {
             if (member.currentCheckIn() == null) {
-                setCheckInMemberDetailFragment(member, idEvent, null);
+                setCheckInMemberDetailFragment(member, idEvent);
                 return;
             }
         // TODO do not want to have to do catch here - I'd prefer the current check in to be already loaded on the Member to avoid the lookup
@@ -124,21 +105,17 @@ public class NavigationManager {
         setCurrentMemberDetailFragment(member);
     }
 
-    public void setMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
-        setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId());
-    }
-
-    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String nextFragmentName) {
+    private void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
     }
 
     private void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle));
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
@@ -244,22 +221,18 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
-    public void setVersionFragment() {
-        setFragment(mFragmentProvider.createFragment(VersionAndSyncFragment.class));
-    }
-
-    public void setLastFragmentTransitionAsBackPress() {
-        this.mLastFragmentTransition = FRAGMENT_TRANSITION_BACKPRESS;
+    void setVersionFragment() {
+        setFragment(new VersionAndSyncFragment());
     }
 
     static class FragmentProvider {
-        BaseFragment createFragment(Class<? extends BaseFragment> clazz) {
+        Fragment createFragment(Class<? extends Fragment> clazz) {
             return createFragment(clazz, null);
         }
 
-        BaseFragment createFragment(Class<? extends BaseFragment> clazz, Bundle bundle) {
+        Fragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
             try {
-                BaseFragment fragment = clazz.newInstance();
+                Fragment fragment = clazz.newInstance();
                 if (bundle != null) {
                     fragment.setArguments(bundle);
                 }
