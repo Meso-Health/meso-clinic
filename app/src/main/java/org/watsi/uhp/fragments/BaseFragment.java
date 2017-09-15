@@ -34,4 +34,8 @@ public abstract class BaseFragment extends Fragment {
             }
         }
     }
+
+    public String getName() {
+        return getClass().getSimpleName();
+    }
 }
