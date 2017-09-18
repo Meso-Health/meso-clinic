@@ -53,9 +53,10 @@ public class NavigationManagerTest {
 
 
         FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 2);
+        assertEquals(fm.getBackStackEntryCount(), 3);
         assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentB");
     }
 
     @Test
@@ -77,9 +78,10 @@ public class NavigationManagerTest {
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
 
         FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 2);
+        assertEquals(fm.getBackStackEntryCount(), 3);
         assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentB");
     }
 
     @Test
@@ -88,9 +90,10 @@ public class NavigationManagerTest {
         mNavigationManager.setFragment(new TestFragment("FragmentB"), "FragmentB-custom");
 
         FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 2);
+        assertEquals(fm.getBackStackEntryCount(), 3);
         assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB-custom");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentB-custom");
     }
 
     @Test

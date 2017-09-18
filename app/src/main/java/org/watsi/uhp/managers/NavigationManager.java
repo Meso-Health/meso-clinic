@@ -70,6 +70,7 @@ public class NavigationManager {
 
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
+        // check if the fragment
 
         String addTobackStackTag = "add" + nextFragmentName;
 
@@ -86,21 +87,20 @@ public class NavigationManager {
                 this.mLastFragmentTransition = nextFragmentTransition;
             }
 
-            if (fm.findFragmentByTag(nextFragmentName) != null) {
-                fm.popBackStack(addTobackStackTag, 0);
-            } else {
-                fm.beginTransaction()
-                        .remove(currentFragment)
-                        .add(R.id.fragment_container, fragment, nextFragmentName)
-                        .addToBackStack(addTobackStackTag)
-                        .commit();
-            }
-        } else {
+            // We do not need this remove transaction if there's no currentFragment on page.
             fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment, nextFragmentName)
-                    .addToBackStack(addTobackStackTag)
+                    .remove(currentFragment)
+                    .addToBackStack("remove" + currentFragment.getName())
                     .commit();
+            // If new fragment that we're going to is already in the stack, we're going to remove it from backstack first.
+            if (fm.findFragmentByTag(nextFragmentName) != null) {
+                fm.popBackStack(addTobackStackTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
         }
+        fm.beginTransaction()
+                .add(R.id.fragment_container, fragment, fragment.getName())
+                .addToBackStack(addTobackStackTag)
+                .commit();
     }
 
     public void setCurrentPatientsFragment() {
