@@ -104,7 +104,7 @@ public class NavigationManager {
             }
         }
         fm.beginTransaction()
-                .add(R.id.fragment_container, fragment, fragment.getName())
+                .add(R.id.fragment_container, fragment, nextFragmentName)
                 .addToBackStack(addTobackStackTag)
                 .commit();
     }

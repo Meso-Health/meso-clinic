@@ -96,6 +96,36 @@ public class NavigationManagerTest {
         assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentB-custom");
     }
 
+
+
+    @Test
+    public void setFragment_customFragmentToPop() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"));
+        mNavigationManager.setFragment(new TestFragment("FragmentC"));
+        mNavigationManager.setFragment(new TestFragment("FragmentD"), null, "FragmentB");
+
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 3);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentD");
+    }
+
+    @Test
+    public void setFragment_customFragmentName_customFragmentToPop() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"), "FragmentB-customName");
+        mNavigationManager.setFragment(new TestFragment("FragmentC"));
+        mNavigationManager.setFragment(new TestFragment("FragmentD"), "FragmentD-customName", "FragmentB-customName");
+
+        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
+        assertEquals(fm.getBackStackEntryCount(), 3);
+        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(fm.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentD-customName");
+    }
+
     @Test
     public void formatUniqueFragmentTransition() throws Exception {
         assertEquals(mNavigationManager.formatUniqueFragmentTransition(null, "nextFragmentName"), "->nextFragmentName");
