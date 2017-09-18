@@ -190,6 +190,6 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
         // We want each barcode fragment appended with the scan purpose so that the fragment manager
         // would not re-use a barcode fragment that was intended for identification to be called
         // when a member needs a new card.
-        return "BarcodeFragment-" + getScanPurposeFromArguments();
+        return super.getName() + "-" + getScanPurposeFromArguments();
     }
 }
