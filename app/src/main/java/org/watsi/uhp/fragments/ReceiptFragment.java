@@ -47,7 +47,7 @@ public class ReceiptFragment extends FormFragment<Encounter> {
             toastMessage = "Failed to save data, contact support.";
             ExceptionManager.reportException(e);
         }
-        
+
         Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
 

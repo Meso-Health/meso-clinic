@@ -126,7 +126,8 @@ public class ClinicActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof FormFragment &&
                 ((FormFragment) currentFragment).isFirstStep()) {
             showDialogReturnToPreviousScreen();
