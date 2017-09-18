@@ -51,7 +51,7 @@ public class ReceiptFragment extends FormFragment<Encounter> {
 
     @Override
     void setUpFragment(View view) {
-        List<EncounterItem> encounterItems = mSyncableModel.getEncounterItems();
+        List<EncounterItem> encounterItems = (List<EncounterItem>) mSyncableModel.getEncounterItems();
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
         Adapter mAdapter = new ReceiptItemAdapter(getActivity(), encounterItems);
