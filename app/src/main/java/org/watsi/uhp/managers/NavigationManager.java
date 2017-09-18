@@ -90,13 +90,11 @@ public class NavigationManager {
                 this.mLastFragmentTransition = nextFragmentTransition;
             }
 
-            // We do not need this remove transaction if there's no currentFragment on page.
             fm.beginTransaction()
                     .remove(currentFragment)
                     .addToBackStack("remove" + currentFragment.getName())
                     .commit();
-            // If new fragment that we're going to is already in the stack, we're going to remove it from backstack first.
-            // Fragment to pop
+
             if (fragmentNameToPop == null && fm.findFragmentByTag(nextFragmentName) != null) {
                 fm.popBackStack(addTobackStackTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             } else if (fm.findFragmentByTag(fragmentNameToPop) != null) {
@@ -120,7 +118,7 @@ public class NavigationManager {
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         try {
             if (member.currentCheckIn() == null) {
-                setCheckInMemberDetailFragment(member, idEvent, null);
+                setCheckInMemberDetailFragment(member, idEvent, null, null);
                 return;
             }
         // TODO do not want to have to do catch here - I'd prefer the current check in to be already loaded on the Member to avoid the lookup
@@ -131,17 +129,14 @@ public class NavigationManager {
     }
 
     public void setCheckInMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), null, "MemberDetailFragment-" + idEvent.getThroughMember().getId().toString());
+        setCheckInMemberDetailFragment(member, idEvent, null, "MemberDetailFragment-" + idEvent.getThroughMember().getId().toString());
     }
 
-    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String nextFragmentName) {
+    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String nextFragmentName, String customFragmentNameToPop) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName, customFragmentNameToPop);
     }
 
     private void setCurrentMemberDetailFragment(Member member) {
