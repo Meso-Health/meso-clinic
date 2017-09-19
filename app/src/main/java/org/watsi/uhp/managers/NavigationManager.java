@@ -88,7 +88,11 @@ public class NavigationManager {
 
             String fragmentNameToPop = overrideFragmentNameToPop == null ? nextFragmentName : overrideFragmentNameToPop;
             if (fm.findFragmentByTag(fragmentNameToPop) != null) {
-                fm.popBackStackImmediate("add" + fragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fm.popBackStack("add" + fragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fm.beginTransaction()
+                        .add(R.id.fragment_container, fragment, nextFragmentName)
+                        .addToBackStack(addTobackStackTag)
+                        .commit();
             }
         }
         fm.beginTransaction()
