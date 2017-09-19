@@ -2,7 +2,6 @@ package org.watsi.uhp.managers;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
@@ -30,8 +29,6 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-
-import static android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
 
 /**
  * Helper class for managing navigation between fragments
@@ -83,7 +80,7 @@ public class NavigationManager {
             // destination fragment. In order to prevent this from messing up the stack, since the call to
             // setFragment is synchronous, we can make sure only one of those transactions is committed.
             String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
-            if (!mLastFragmentTransition.equals(FRAGMENT_TRANSITION_BACKPRESS) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(mLastFragmentTransition)) {
+            if (!FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(mLastFragmentTransition)) {
                 return;
             } else {
                 this.mLastFragmentTransition = nextFragmentTransition;
