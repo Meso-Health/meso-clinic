@@ -80,6 +80,16 @@ public class NavigationManagerTest {
     }
 
     @Test
+    public void setFragment_consecutiveSameFragmentsThreeTimes() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 1);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
+    }
+
+    @Test
     public void setFragment_overrideFragmentToPop_inclusive() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
