@@ -1,6 +1,7 @@
 package org.watsi.uhp.managers;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
@@ -52,25 +53,16 @@ public class NavigationManager {
     }
 
     protected void setFragment(BaseFragment fragment) {
-        setFragment(fragment, fragment.getName());
+        setFragment(fragment, null);
     }
 
-    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
-        if (currentFragment == null) {
-            return "->" + nextFragmentName;
-        } else {
-            return currentFragment.getName() + "->" + nextFragmentName;
-        }
-    }
-
-    protected void setFragment(BaseFragment fragment, String nextFragmentName) {
-        setFragment(fragment, nextFragmentName, null);
-    }
-
-    protected void setFragment(BaseFragment fragment, String nextFragmentName, String fragmentNameToPop) {
-        if (nextFragmentName == null) {
-            nextFragmentName = fragment.getName();
-        }
+    /*
+       @fragment: The new fragment to transition to.
+       @overrideFragmentNameToPop: The name of the fragment to pop, which means any fragment in the backstack
+                                   that matches this parameter and above it would be popped.
+     */
+    protected void setFragment(BaseFragment fragment, String overrideFragmentNameToPop) {
+        String nextFragmentName = fragment.getName();
 
         FragmentManager fm = mActivity.getSupportFragmentManager();
         BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
@@ -84,7 +76,7 @@ public class NavigationManager {
             // destination fragment. In order to prevent this from messing up the stack, since the call to
             // setFragment is synchronous, we can make sure only one of those transactions is committed.
             String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
-            if (mLastFragmentTransition != FRAGMENT_TRANSITION_BACKPRESS && this.mLastFragmentTransition.equals(nextFragmentTransition)) {
+            if (FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(this.mLastFragmentTransition)) {
                 return;
             } else {
                 this.mLastFragmentTransition = nextFragmentTransition;
@@ -95,12 +87,13 @@ public class NavigationManager {
                     .addToBackStack("remove" + currentFragment.getName())
                     .commit();
 
-            if (fragmentNameToPop == null && fm.findFragmentByTag(nextFragmentName) != null) {
+            if (overrideFragmentNameToPop == null && fm.findFragmentByTag(nextFragmentName) != null) {
                 fm.popBackStack(addTobackStackTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            } else if (fm.findFragmentByTag(fragmentNameToPop) != null) {
-                fm.popBackStack("add" + fragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else if (fm.findFragmentByTag(overrideFragmentNameToPop) != null) {
+                fm.popBackStack("add" + overrideFragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
+
         fm.beginTransaction()
                 .add(R.id.fragment_container, fragment, nextFragmentName)
                 .addToBackStack(addTobackStackTag)
@@ -118,7 +111,7 @@ public class NavigationManager {
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         try {
             if (member.currentCheckIn() == null) {
-                setCheckInMemberDetailFragment(member, idEvent, null, null);
+                setCheckInMemberDetailFragment(member, idEvent, null);
                 return;
             }
         // TODO do not want to have to do catch here - I'd prefer the current check in to be already loaded on the Member to avoid the lookup
@@ -129,14 +122,15 @@ public class NavigationManager {
     }
 
     public void setCheckInMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
-        setCheckInMemberDetailFragment(member, idEvent, null, "MemberDetailFragment-" + idEvent.getThroughMember().getId().toString());
+        setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId().toString());
     }
 
-    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String nextFragmentName, String customFragmentNameToPop) {
+    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String customFragmentNameToPop) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), nextFragmentName, customFragmentNameToPop);
+        // 0 means we pop non-inclusively,
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), customFragmentNameToPop);
     }
 
     private void setCurrentMemberDetailFragment(Member member) {
@@ -254,6 +248,15 @@ public class NavigationManager {
 
     public void setLastFragmentTransitionAsBackPress() {
         this.mLastFragmentTransition = FRAGMENT_TRANSITION_BACKPRESS;
+    }
+
+    @NonNull
+    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
+        if (currentFragment == null) {
+            return "->" + nextFragmentName;
+        } else {
+            return currentFragment.getName() + "->" + nextFragmentName;
+        }
     }
 
     static class FragmentProvider {
