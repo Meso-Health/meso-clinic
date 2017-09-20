@@ -39,9 +39,9 @@ public class ReceiptFragment extends FormFragment<Encounter> {
         String toastMessage;
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
+            getNavigationManager().setCurrentPatientsFragment();
             toastMessage = mSyncableModel.getMember()
                     .getFullName() + getString(R.string.encounter_submitted);
-            getNavigationManager().setCurrentPatientsFragment();
         } catch (SQLException | AbstractModel.ValidationException e) {
             toastMessage = "Failed to save data, contact support.";
             ExceptionManager.reportException(e);
