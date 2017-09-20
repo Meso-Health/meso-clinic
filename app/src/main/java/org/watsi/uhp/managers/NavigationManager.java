@@ -52,19 +52,15 @@ public class NavigationManager {
         this.mLastFragmentTransition = "";
     }
 
-    @NonNull
-    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
-        if (currentFragment == null) {
-            return "->" + nextFragmentName;
-        } else {
-            return currentFragment.getName() + "->" + nextFragmentName;
-        }
-    }
-
     protected void setFragment(BaseFragment fragment) {
         setFragment(fragment, null);
     }
 
+    /*
+       @fragment: The new fragment to transition to.
+       @overrideFragmentNameToPop: The name of the fragment to pop, which means any fragment in the backstack
+                                   that matches this parameter and above it would be popped.
+     */
     protected void setFragment(BaseFragment fragment, String overrideFragmentNameToPop) {
         String nextFragmentName = fragment.getName();
 
@@ -80,23 +76,26 @@ public class NavigationManager {
             // destination fragment. In order to prevent this from messing up the stack, since the call to
             // setFragment is synchronous, we can make sure only one of those transactions is committed.
             String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
-            if (!FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(mLastFragmentTransition)) {
+            if (FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(this.mLastFragmentTransition)) {
                 return;
             } else {
                 this.mLastFragmentTransition = nextFragmentTransition;
             }
 
-            String fragmentNameToPop = overrideFragmentNameToPop == null ? nextFragmentName : overrideFragmentNameToPop;
-            if (fm.findFragmentByTag(fragmentNameToPop) != null) {
-                fm.popBackStack("add" + fragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                fm.beginTransaction()
-                        .add(R.id.fragment_container, fragment, nextFragmentName)
-                        .addToBackStack(addTobackStackTag)
-                        .commit();
+            fm.beginTransaction()
+                    .remove(currentFragment)
+                    .addToBackStack("remove" + currentFragment.getName())
+                    .commit();
+
+            if (overrideFragmentNameToPop == null && fm.findFragmentByTag(nextFragmentName) != null) {
+                fm.popBackStack(addTobackStackTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else if (fm.findFragmentByTag(overrideFragmentNameToPop) != null) {
+                fm.popBackStack("add" + overrideFragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
+
         fm.beginTransaction()
-                .replace(R.id.fragment_container, fragment, nextFragmentName)
+                .add(R.id.fragment_container, fragment, nextFragmentName)
                 .addToBackStack(addTobackStackTag)
                 .commit();
     }
@@ -130,6 +129,7 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
+        // 0 means we pop non-inclusively,
         setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), customFragmentNameToPop);
     }
 
@@ -248,6 +248,15 @@ public class NavigationManager {
 
     public void setLastFragmentTransitionAsBackPress() {
         this.mLastFragmentTransition = FRAGMENT_TRANSITION_BACKPRESS;
+    }
+
+    @NonNull
+    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
+        if (currentFragment == null) {
+            return "->" + nextFragmentName;
+        } else {
+            return currentFragment.getName() + "->" + nextFragmentName;
+        }
     }
 
     static class FragmentProvider {

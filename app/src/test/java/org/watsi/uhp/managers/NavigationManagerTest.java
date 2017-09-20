@@ -21,46 +21,39 @@ public class NavigationManagerTest {
 
     private ClinicActivity mFragmentActivity;
     private NavigationManager mNavigationManager;
+    private FragmentManager mFragmentManager;
 
     @Before
     public void setUp() throws Exception {
         mFragmentActivity = Robolectric.buildActivity(ClinicActivity.class)
                 .create().start().resume().get();
         mNavigationManager = mFragmentActivity.getNavigationManager();
+        mFragmentManager = mFragmentActivity.getSupportFragmentManager();
     }
 
 
     @Test
     public void setUpSuccess() throws Exception {
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 0);
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 0);
     }
 
     @Test
     public void setCurrentPatientsFragment_success() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
 
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 1);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 1);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
     }
 
     @Test
-    public void setFragment_manyFragments() throws Exception {
+    public void setFragment_twoDifferentFragments() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
-        mNavigationManager.setFragment(new TestFragment("FragmentC"));
-        mNavigationManager.setFragment(new TestFragment("FragmentD"));
-        mNavigationManager.setFragment(new TestFragment("FragmentE"));
 
-
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 5);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
-        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentC");
-        assertEquals(fm.getBackStackEntryAt(3).getName(), "addFragmentD");
-        assertEquals(fm.getBackStackEntryAt(4).getName(), "addFragmentE");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 3);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(2).getName(), "addFragmentB");
     }
 
     @Test
@@ -70,9 +63,8 @@ public class NavigationManagerTest {
         mNavigationManager.setFragment(new TestFragment("FragmentC"));
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
 
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 1);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 1);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
     }
 
     @Test
@@ -80,52 +72,59 @@ public class NavigationManagerTest {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
-        mNavigationManager.setFragment(new TestFragment("FragmentC"));
 
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 3);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
-        assertEquals(fm.getBackStackEntryAt(2).getName(), "addFragmentC");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 3);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(2).getName(), "addFragmentB");
     }
 
     @Test
-    public void setFragment_overideFragmentToPop() throws Exception {
+    public void setFragment_overrideFragmentToPop_inclusive() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
         mNavigationManager.setFragment(new TestFragment("FragmentC"));
         mNavigationManager.setFragment(new TestFragment("FragmentD"), "FragmentB");
 
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 2);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentD");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 3);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(2).getName(), "addFragmentD");
     }
 
     @Test
-    public void setFragment_backPressActivity() throws Exception {
+    public void setFragment_overrideFragmentToPop_exclusive() throws Exception {
+        mNavigationManager.setFragment(new TestFragment("FragmentA"));
+        mNavigationManager.setFragment(new TestFragment("FragmentB"));
+        mNavigationManager.setFragment(new TestFragment("FragmentC"));
+        mNavigationManager.setFragment(new TestFragment("FragmentD"), "FragmentB");
+
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 3);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(2).getName(), "addFragmentD");
+    }
+
+    @Test
+    public void setFragment_backPressExitActivity() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mFragmentActivity.onBackPressed();
 
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 0);
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 0);
     }
 
     @Test
-    public void setFragment_withBackPress() throws Exception {
+    public void setFragment_backPressTwoFragments() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
         mFragmentActivity.onBackPressed();
 
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-        assertEquals(fm.getBackStackEntryCount(), 1);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 1);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
     }
 
     @Test
-    public void setFragment_backPressWithPopping() throws Exception {
-        FragmentManager fm = mFragmentActivity.getSupportFragmentManager();
-
+    public void setFragment_backPressAfterPop() throws Exception {
         mNavigationManager.setFragment(new TestFragment("FragmentA"));
         mNavigationManager.setFragment(new TestFragment("FragmentB"));
         mNavigationManager.setFragment(new TestFragment("FragmentC"));
@@ -133,9 +132,10 @@ public class NavigationManagerTest {
         mNavigationManager.setFragment(new TestFragment("FragmentC"));
         mFragmentActivity.onBackPressed();
 
-        assertEquals(fm.getBackStackEntryCount(), 2);
-        assertEquals(fm.getBackStackEntryAt(0).getName(), "addFragmentA");
-        assertEquals(fm.getBackStackEntryAt(1).getName(), "addFragmentB");
+        assertEquals(mFragmentManager.getBackStackEntryCount(), 3);
+        assertEquals(mFragmentManager.getBackStackEntryAt(0).getName(), "addFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(1).getName(), "removeFragmentA");
+        assertEquals(mFragmentManager.getBackStackEntryAt(2).getName(), "addFragmentB");
     }
 
     @Test
