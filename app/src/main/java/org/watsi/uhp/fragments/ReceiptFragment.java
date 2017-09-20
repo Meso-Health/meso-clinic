@@ -41,13 +41,12 @@ public class ReceiptFragment extends FormFragment<Encounter> {
             mSyncableModel.saveChanges(getAuthenticationToken());
             toastMessage = mSyncableModel.getMember()
                     .getFullName() + getString(R.string.encounter_submitted);
-            Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
             getNavigationManager().setCurrentPatientsFragment();
         } catch (SQLException | AbstractModel.ValidationException e) {
             toastMessage = "Failed to save data, contact support.";
-            Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
             ExceptionManager.reportException(e);
         }
+        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
 
     @Override
