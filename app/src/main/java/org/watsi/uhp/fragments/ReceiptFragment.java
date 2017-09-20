@@ -40,7 +40,7 @@ public class ReceiptFragment extends FormFragment<Encounter> {
         try {
             mSyncableModel.saveChanges(getAuthenticationToken());
             getNavigationManager().setCurrentPatientsFragment();
-            
+
             toastMessage = mSyncableModel.getMember()
                     .getFullName() + getString(R.string.encounter_submitted);
         } catch (SQLException | AbstractModel.ValidationException e) {
