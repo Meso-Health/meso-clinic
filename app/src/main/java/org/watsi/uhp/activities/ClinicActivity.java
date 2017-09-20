@@ -138,11 +138,7 @@ public class ClinicActivity extends AppCompatActivity {
 
     private void onBackPressedNoConfirmation() {
         getNavigationManager().setLastFragmentTransitionAsBackPress();
-        // We updated how setFragment in NavigationManager works to both remove & add.
-        // This requires us to always have to go back two transactions at a time.
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            getSupportFragmentManager().popBackStack();
-        }
+        getSupportFragmentManager().popBackStack();
         super.onBackPressed();
     }
 

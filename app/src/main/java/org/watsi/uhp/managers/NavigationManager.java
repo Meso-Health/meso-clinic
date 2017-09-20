@@ -76,7 +76,7 @@ public class NavigationManager {
             // destination fragment. In order to prevent this from messing up the stack, since the call to
             // setFragment is synchronous, we can make sure only one of those transactions is committed.
             String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
-            if (FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(this.mLastFragmentTransition)) {
+            if (!FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(this.mLastFragmentTransition)) {
                 return;
             } else {
                 this.mLastFragmentTransition = nextFragmentTransition;
