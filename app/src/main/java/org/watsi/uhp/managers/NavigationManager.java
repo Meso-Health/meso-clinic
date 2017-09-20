@@ -129,7 +129,6 @@ public class NavigationManager {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        // 0 means we pop non-inclusively,
         setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), customFragmentNameToPop);
     }
 
