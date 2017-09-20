@@ -138,6 +138,8 @@ public class ClinicActivity extends AppCompatActivity {
 
     private void onBackPressedNoConfirmation() {
         getNavigationManager().setLastFragmentTransitionAsBackPress();
+        // Transitioning from one fragment to another requires two fragment manager transactions,
+        // as a result, we now need to pop twice on backpress to return to the previous fragment.
         getSupportFragmentManager().popBackStack();
         super.onBackPressed();
     }
