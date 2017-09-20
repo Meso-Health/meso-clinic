@@ -40,32 +40,4 @@ public abstract class BaseFragment extends Fragment {
     public String getName() {
         return getClass().getSimpleName();
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("UHP-debug", "resumed " + this.getName());
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        int count = fm.getBackStackEntryCount();
-        String s = "Back stack currently contains: \n";
-        for (int i=count-1; i >= 0; i--) {
-            FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(i);
-            s = s + " " + entry.getName() + " \n";
-        }
-        Log.i("UHP-debug", s);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("UHP-debug", "onPause " + this.getName());
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        int count = fm.getBackStackEntryCount();
-        String s = "Back stack currently contains: \n";
-        for (int i=count-1; i >= 0; i--) {
-            FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(i);
-            s = s + " " + entry.getName() + " \n";
-        }
-        Log.i("UHP-debug", s);
-    }
 }
