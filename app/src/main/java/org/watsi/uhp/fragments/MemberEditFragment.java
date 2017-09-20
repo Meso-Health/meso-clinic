@@ -50,12 +50,12 @@ public class MemberEditFragment extends FormFragment<Member> {
                     toastMessage = "Failed to update the member information.";
                 }
                 IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
                 if (idEvent != null) {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
                 } else {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel);
                 }
+                Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
