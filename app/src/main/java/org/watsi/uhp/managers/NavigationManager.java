@@ -122,8 +122,8 @@ public class NavigationManager {
     }
 
     public void setCheckInMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
-        // This is to make after enrolling a newborn jump to the new born fragment, and upon backpress
-        // would return to the parent's member detail fragment.
+        // This is to make after enrolling a newborn jump to the newborn's member detail fragment.
+        // Clicking back would return to the parent's member detail fragment.
         setCheckInMemberDetailFragment(member, idEvent, "EnrollNewbornInfoFragment");
     }
 
