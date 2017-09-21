@@ -122,7 +122,9 @@ public class NavigationManager {
     }
 
     public void setCheckInMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
-        setCheckInMemberDetailFragment(member, idEvent, "MemberDetailFragment-" + idEvent.getThroughMember().getId().toString());
+        // This is to make after enrolling a newborn jump to the new born fragment, and upon backpress
+        // would return to the parent's member detail fragment.
+        setCheckInMemberDetailFragment(member, idEvent, "EnrollNewbornInfoFragment");
     }
 
     protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String customFragmentNameToPop) {
