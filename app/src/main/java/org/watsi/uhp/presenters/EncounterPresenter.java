@@ -251,14 +251,8 @@ public class EncounterPresenter {
     }
 
     protected List<String> getCategoriesList(String prompt) {
-        List<String> categories = new ArrayList<>();
-        categories.add(prompt);
-        for (Billable.TypeEnum billableType : Billable.TypeEnum.values()) {
-            if (!billableType.equals(Billable.TypeEnum.UNSPECIFIED)) {
-                categories.add(billableType.toString());
-            }
-        }
-
+        List<String> categories = Billable.getBillableTypes();
+        categories.add(0, prompt);
         return categories;
     }
 

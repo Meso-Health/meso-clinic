@@ -1,57 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/fragment_vertical_margin"
-    android:layout_marginBottom="@dimen/fragment_vertical_margin"
-    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-    android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_new_name" />
-    <EditText
-        android:id="@+id/name_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/name"
-        android:maxLines="1"
-        android:inputType="text" />
+    <data>
+        <variable name="billable" type="org.watsi.uhp.view_models.BillableViewModel"/>
+    </data>
 
-    <TextView
-        android:id="@+id/price"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/form_item_vertical_margin"
-        android:text="@string/add_new_price"
-        android:layout_below="@id/name_field" />
-    <EditText
-        android:id="@+id/price_field"
-        android:layout_width="175dp"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_below="@id/price" />
-    <TextView
-        android:id="@+id/ugx"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:textAlignment="gravity"
-        android:text="@string/UGX"
-        android:theme="@style/LargeLabel"
-        android:layout_toEndOf="@id/price_field"
-        android:layout_below="@id/price" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
+        android:layout_marginBottom="@dimen/fragment_vertical_margin"
+        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_horizontal_margin" >
 
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/form_item_vertical_margin"
-        style="@style/PrimaryButton"
-        android:text="@string/add_new_billable"
-        android:textAllCaps="true"
-        android:layout_below="@id/price_field" />
-</RelativeLayout>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/add_new_billable_name_label"
+            android:labelFor="@+id/name_field" />
+
+        <EditText
+                android:id="@+id/name_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={billable.name}"
+                android:maxLines="1"
+                android:inputType="text" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/add_new_billable_unit_label"
+            android:labelFor="@+id/name_field" />
+
+        <EditText
+            android:id="@+id/unit_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@={billable.unit}"
+            android:maxLines="1"
+            android:inputType="text" />
+
+         <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/add_new_billable_price_label"
+                android:labelFor="@+id/price_field" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/price_field"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={billable.price}"
+                android:maxLines="1"
+                android:inputType="number" />
+
+            <TextView
+                android:id="@+id/ugx"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/UGX"
+                android:theme="@style/LargeLabel" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/add_new_billable_type_label"
+            android:labelFor="@+id/type_field" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/view_outline_rectangle"
+            android:layout_marginTop="@dimen/spinner_vertical_margin"
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+            <Spinner
+                android:id="@+id/type_field"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:entries="@{billable.typeSelections}"
+                android:selectedItemPosition="@={billable.selectedTypeIndex}"
+                />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/add_new_billable_composition_label"
+            android:labelFor="@+id/composition_field" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/view_outline_rectangle"
+            android:layout_marginTop="@dimen/spinner_vertical_margin"
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+            <Spinner
+                android:id="@+id/composition_field"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:entries="@{billable.compositionSelections}"
+                android:selectedItemPosition="@={billable.selectedCompositionIndex}"
+                />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_item_vertical_margin"
+            style="@style/PrimaryButton"
+            android:text="@string/add_new_billable"
+            android:enabled="@{billable.saveEnabled}"
+            android:onClick="@{() -> billable.onClickSave()}"
+            android:textAllCaps="true"
+            android:layout_below="@id/price_field" />
+    </LinearLayout>
+</layout>

@@ -5,7 +5,13 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.managers.ExceptionManager;
+
+import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Billable.TABLE_NAME)
@@ -152,5 +158,32 @@ public class Billable extends AbstractModel {
         String formattedPrice = df.format(price);
 
         return formattedPrice;
+    }
+
+    public boolean validName() {
+        return mName != null && !mName.isEmpty();
+    }
+
+    public boolean validPrice() {
+        return mPrice != null;
+    }
+    
+    public static List<String> getBillableTypes() {
+        ArrayList<String> categories = new ArrayList<>();
+        for (Billable.TypeEnum billableType : Billable.TypeEnum.values()) {
+            if (!billableType.equals(Billable.TypeEnum.UNSPECIFIED)) {
+                categories.add(billableType.toString());
+            }
+        }
+        return categories;
+    }
+
+    public static List<String> getBillableCompositions() {
+        try {
+            return BillableDao.getUniqueBillableCompositions();
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+            return new ArrayList<>();
+        }
     }
 }

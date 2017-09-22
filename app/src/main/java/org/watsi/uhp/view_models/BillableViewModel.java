@@ -1,0 +1,151 @@
+package org.watsi.uhp.view_models;
+
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+import android.databinding.InverseBindingMethod;
+import android.databinding.InverseBindingMethods;
+import android.widget.Spinner;
+
+import org.watsi.uhp.BR;
+import org.watsi.uhp.fragments.FormFragment;
+import org.watsi.uhp.models.Billable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@InverseBindingMethods({
+        @InverseBindingMethod(type = Spinner.class, attribute = "android:selectedItemPosition"),
+})
+public class BillableViewModel extends BaseObservable {
+    private final static String SELECT_COMPOSITION_PROMPT = "Select Composition...";
+    private final static String SELECT_TYPE_PROMPT = "Select Type...";
+    private final Billable mBillable;
+    private final FormFragment mFormFragment;
+    private List<String> mBillableCompositionChoices;
+    private List<String> mBillableTypeChoices;
+
+    private Integer mSelectedTypeIndex;
+    private Integer mSelectedCompositionIndex;
+
+    public BillableViewModel(FormFragment formFragment) {
+        mBillable = new Billable();
+        mFormFragment = formFragment;
+        mSelectedTypeIndex = 0;
+
+        setUpBillableCompositions();
+        setUpBillableTypes();
+    }
+
+    private void setUpBillableCompositions() {
+        List<String> compositions = new ArrayList<>(Billable.getBillableCompositions());
+        compositions.add(0, SELECT_COMPOSITION_PROMPT);
+
+        mBillableCompositionChoices = compositions;
+    }
+
+    private void setUpBillableTypes() {
+        List<String> types = new ArrayList<>(Billable.getBillableTypes());
+        types.add(0, SELECT_TYPE_PROMPT);
+
+        mBillableTypeChoices = types;
+    }
+
+    @Bindable
+    public String getName() {
+        return mBillable.getName();
+    }
+
+    @Bindable
+    public String getPrice() {
+        if (mBillable.getPrice() == null) {
+            return "";
+        } else {
+            return mBillable.getPrice().toString();
+        }
+    }
+
+    @Bindable
+    public String getUnit() {
+        return mBillable.getUnit();
+    }
+
+    @Bindable
+    public void setUnit(String unit) {
+        mBillable.setUnit(unit);
+    }
+
+    @Bindable
+    public void setName(String name) {
+        mBillable.setName(name);
+        notifyPropertyChanged(BR.name);
+        notifyPropertyChanged(BR.saveEnabled);
+    }
+
+    @Bindable
+    public void setPrice(String price) {
+        try {
+            mBillable.setPrice(Integer.parseInt(price));
+        } catch (NumberFormatException e) {
+            mBillable.setPrice(null);
+        }
+        notifyPropertyChanged(BR.price);
+        notifyPropertyChanged(BR.saveEnabled);
+    }
+
+    public Billable getBillable() {
+        return mBillable;
+    }
+
+    @Bindable
+    public boolean getSaveEnabled() {
+        return mBillable.validName() && mBillable.validPrice();
+    }
+
+    @Bindable
+    public List<String> getTypeSelections() {
+        return mBillableTypeChoices;
+    }
+
+    @Bindable
+    public List<String> getCompositionSelections() {
+        return mBillableCompositionChoices;
+    }
+
+    @Bindable
+    public void setSelectedTypeIndex(Integer i) {
+        if (i > 0) {
+            mSelectedTypeIndex = i;
+            mBillable.setType(Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex)));
+        }
+    }
+
+    @Bindable
+    public void setSelectedCompositionIndex(Integer i) {
+        if (i > 0) {
+            mSelectedCompositionIndex = i;
+            mBillable.setComposition(mBillableCompositionChoices.get(mSelectedCompositionIndex));
+        }
+    }
+
+    @Bindable
+    public Integer getSelectedTypeIndex() {
+        return mSelectedTypeIndex;
+    }
+
+    @Bindable
+    public Integer getSelectedCompositionIndex() {
+        return mSelectedCompositionIndex;
+    }
+
+    @Bindable
+    public void setType(String type) {
+        if (!SELECT_TYPE_PROMPT.equals(type)) {
+            mBillable.setType(Billable.TypeEnum.valueOf(type));
+        }
+    }
+
+    public void onClickSave() {
+        // TODO: Add validation here.
+        mFormFragment.nextStep();
+    }
+}
