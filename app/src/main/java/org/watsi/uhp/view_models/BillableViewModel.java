@@ -97,11 +97,6 @@ public class BillableViewModel extends BaseObservable {
     }
 
     @Bindable
-    public boolean getSaveEnabled() {
-        return mBillable.validName() && mBillable.validPrice();
-    }
-
-    @Bindable
     public List<String> getTypeSelections() {
         return mBillableTypeChoices;
     }
@@ -142,6 +137,11 @@ public class BillableViewModel extends BaseObservable {
         if (!SELECT_TYPE_PROMPT.equals(type)) {
             mBillable.setType(Billable.TypeEnum.valueOf(type));
         }
+    }
+
+    @Bindable
+    public boolean getSaveEnabled() {
+        return mBillable.validName() && mBillable.validPrice() && mBillable.validType();
     }
 
     public void onClickSave() {

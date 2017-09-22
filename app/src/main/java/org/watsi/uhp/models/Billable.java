@@ -167,6 +167,10 @@ public class Billable extends AbstractModel {
     public boolean validPrice() {
         return mPrice != null;
     }
+
+    public boolean validType() {
+        return mType != null;
+    }
     
     public static List<String> getBillableTypes() {
         ArrayList<String> categories = new ArrayList<>();
