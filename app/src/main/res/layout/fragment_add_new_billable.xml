@@ -108,18 +108,12 @@
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/add_new_billable_composition_label"
-            android:labelFor="@+id/composition_field" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="5dp"
+            android:visibility="@{billable.showComposition}"
             android:background="@drawable/view_outline_rectangle">
             <Spinner
                 android:id="@+id/composition_field"

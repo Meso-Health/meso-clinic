@@ -119,6 +119,7 @@ public class BillableDao {
         PreparedQuery<Billable> pq = getInstance().getBillableDao()
                 .queryBuilder()
                 .distinct()
+                .orderBy(Billable.FIELD_NAME_COMPOSITION, false)
                 .selectColumns(Billable.FIELD_NAME_COMPOSITION)
                 .where()
                 .isNotNull(Billable.FIELD_NAME_COMPOSITION)

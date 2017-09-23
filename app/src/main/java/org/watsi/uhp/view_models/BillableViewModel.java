@@ -113,6 +113,7 @@ public class BillableViewModel extends BaseObservable {
             mSelectedTypeIndex = i;
             mBillable.setType(Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex)));
             notifyPropertyChanged(BR.showUnit);
+            notifyPropertyChanged(BR.showComposition);
         }
     }
 
@@ -140,13 +141,17 @@ public class BillableViewModel extends BaseObservable {
     }
 
     @Bindable
+    public int getShowComposition() {
+        if (mBillable.getType() != null && mBillable.getType().equals(Billable.TypeEnum.DRUG)) {
+            return View.VISIBLE;
+        } else {
+            return View.GONE;
+        }
+    }
+
+    @Bindable
     public int getShowUnit() {
-        if (mBillable.getType() != null &&
-                (
-                    mBillable.getType().equals(Billable.TypeEnum.DRUG) ||
-                    mBillable.getType().equals(Billable.TypeEnum.VACCINE) ||
-                    mBillable.getType().equals(Billable.TypeEnum.SUPPLY)
-                )) {
+        if (mBillable.getType() != null && (mBillable.getType().equals(Billable.TypeEnum.DRUG) || mBillable.getType().equals(Billable.TypeEnum.VACCINE))) {
             return View.VISIBLE;
         } else {
             return View.GONE;
