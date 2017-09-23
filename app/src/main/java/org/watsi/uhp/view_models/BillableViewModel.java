@@ -4,6 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.InverseBindingMethod;
 import android.databinding.InverseBindingMethods;
+import android.view.View;
 import android.widget.Spinner;
 
 import org.watsi.uhp.BR;
@@ -18,7 +19,7 @@ import java.util.List;
 })
 public class BillableViewModel extends BaseObservable {
     private final static String SELECT_COMPOSITION_PROMPT = "Select Composition...";
-    private final static String SELECT_TYPE_PROMPT = "Select Type...";
+    private final static String SELECT_TYPE_PROMPT = "Select A Category";
     private final Billable mBillable;
     private final FormFragment mFormFragment;
     private List<String> mBillableCompositionChoices;
@@ -111,6 +112,7 @@ public class BillableViewModel extends BaseObservable {
         if (i > 0) {
             mSelectedTypeIndex = i;
             mBillable.setType(Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex)));
+            notifyPropertyChanged(BR.showUnit);
         }
     }
 
@@ -133,15 +135,22 @@ public class BillableViewModel extends BaseObservable {
     }
 
     @Bindable
-    public void setType(String type) {
-        if (!SELECT_TYPE_PROMPT.equals(type)) {
-            mBillable.setType(Billable.TypeEnum.valueOf(type));
-        }
+    public boolean getSaveEnabled() {
+        return mBillable.validName() && mBillable.validPrice() && mBillable.validType();
     }
 
     @Bindable
-    public boolean getSaveEnabled() {
-        return mBillable.validName() && mBillable.validPrice() && mBillable.validType();
+    public int getShowUnit() {
+        if (mBillable.getType() != null &&
+                (
+                    mBillable.getType().equals(Billable.TypeEnum.DRUG) ||
+                    mBillable.getType().equals(Billable.TypeEnum.VACCINE) ||
+                    mBillable.getType().equals(Billable.TypeEnum.SUPPLY)
+                )) {
+            return View.VISIBLE;
+        } else {
+            return View.GONE;
+        }
     }
 
     public void onClickSave() {

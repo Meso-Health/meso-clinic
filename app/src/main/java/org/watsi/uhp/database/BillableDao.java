@@ -120,6 +120,8 @@ public class BillableDao {
                 .queryBuilder()
                 .distinct()
                 .selectColumns(Billable.FIELD_NAME_COMPOSITION)
+                .where()
+                .isNotNull(Billable.FIELD_NAME_COMPOSITION)
                 .prepare();
 
         List<Billable> allBillables = getInstance().getBillableDao().query(pq);
