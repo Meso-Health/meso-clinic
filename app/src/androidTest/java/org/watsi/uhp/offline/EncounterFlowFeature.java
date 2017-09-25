@@ -167,16 +167,18 @@ public class EncounterFlowFeature extends BaseTest {
         addBillable(billableSupply);
         assertItemInList(withEncounterItemName(billableSupply.getName()), R.id.line_items_list);
 
-        // the user can add a new billable with a custom name and amount
+        // the user can add a new service billable with a custom name and amount
         onView(withId(R.id.add_billable_prompt)).perform(click());
+        onView(withId(R.id.type_field)).perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(Billable.TypeEnum.SERVICE.toString())))
+                .perform(click());
         onView(withId(R.id.name_field)).perform(typeText(newBillableName));
         onView(withId(R.id.price_field)).perform(typeText(newBillablePrice));
         onView(withId(R.id.save_button)).perform(click());
         onData(withEncounterItemName(newBillableName))
                 .inAdapterView(withId(R.id.line_items_list))
                 .check(matches(isDisplayed()));
-
-        // TODO: the user can change the quantity of drugs to a positive number
 
         // TODO: the user cannot change the quantity of non-drugs
 
