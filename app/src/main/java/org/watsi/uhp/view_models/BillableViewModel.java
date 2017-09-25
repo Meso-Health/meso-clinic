@@ -14,12 +14,15 @@ import org.watsi.uhp.models.Billable;
 import java.util.ArrayList;
 import java.util.List;
 
+// This inverse binding method here is needed in order to expose attribute android:selectedItemPosition in XML
+// and bind to the method Spinner.getSelectedItemPosition()
 @InverseBindingMethods({
         @InverseBindingMethod(type = Spinner.class, attribute = "android:selectedItemPosition"),
 })
+
 public class BillableViewModel extends BaseObservable {
     private final static String SELECT_COMPOSITION_PROMPT = "Select Composition...";
-    private final static String SELECT_TYPE_PROMPT = "Select A Category";
+    private final static String SELECT_TYPE_PROMPT = "Select A Category...";
     private final Billable mBillable;
     private final FormFragment mFormFragment;
     private List<String> mBillableCompositionChoices;
@@ -73,12 +76,12 @@ public class BillableViewModel extends BaseObservable {
     @Bindable
     public void setUnit(String unit) {
         mBillable.setUnit(unit);
+        notifyPropertyChanged(BR.saveEnabled);
     }
 
     @Bindable
     public void setName(String name) {
         mBillable.setName(name);
-        notifyPropertyChanged(BR.name);
         notifyPropertyChanged(BR.saveEnabled);
     }
 
@@ -89,7 +92,6 @@ public class BillableViewModel extends BaseObservable {
         } catch (NumberFormatException e) {
             mBillable.setPrice(null);
         }
-        notifyPropertyChanged(BR.price);
         notifyPropertyChanged(BR.saveEnabled);
     }
 
@@ -114,6 +116,7 @@ public class BillableViewModel extends BaseObservable {
             mBillable.setType(Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex)));
             notifyPropertyChanged(BR.showUnit);
             notifyPropertyChanged(BR.showComposition);
+            notifyPropertyChanged(BR.saveEnabled);
         }
     }
 
@@ -122,6 +125,7 @@ public class BillableViewModel extends BaseObservable {
         if (i > 0) {
             mSelectedCompositionIndex = i;
             mBillable.setComposition(mBillableCompositionChoices.get(mSelectedCompositionIndex));
+            notifyPropertyChanged(BR.saveEnabled);
         }
     }
 
@@ -137,7 +141,7 @@ public class BillableViewModel extends BaseObservable {
 
     @Bindable
     public boolean getSaveEnabled() {
-        return mBillable.validName() && mBillable.validPrice() && mBillable.validType();
+        return mBillable.valid();
     }
 
     @Bindable
@@ -159,7 +163,6 @@ public class BillableViewModel extends BaseObservable {
     }
 
     public void onClickSave() {
-        // TODO: Add validation here.
         mFormFragment.nextStep();
     }
 }

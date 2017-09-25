@@ -160,6 +160,20 @@ public class Billable extends AbstractModel {
         return formattedPrice;
     }
 
+    public boolean valid() {
+        if (validType() && validName() && validPrice()) {
+            if (getType().equals(Billable.TypeEnum.DRUG)) {
+                return validUnits() && validComposition();
+            } else if (getType().equals(Billable.TypeEnum.VACCINE)) {
+                return validUnits();
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public boolean validName() {
         return mName != null && !mName.isEmpty();
     }
@@ -170,6 +184,14 @@ public class Billable extends AbstractModel {
 
     public boolean validType() {
         return mType != null;
+    }
+
+    public boolean validUnits() {
+        return mUnit != null && !mUnit.isEmpty();
+    }
+
+    public boolean validComposition() {
+        return mComposition != null && !mComposition.isEmpty();
     }
     
     public static List<String> getBillableTypes() {
