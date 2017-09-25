@@ -1,8 +1,10 @@
 package org.watsi.uhp.fragments;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.managers.NavigationManager;
@@ -33,5 +35,9 @@ public abstract class BaseFragment extends Fragment {
                 supportBar.setDisplayHomeAsUpEnabled(true);
             }
         }
+    }
+
+    public String getName() {
+        return getClass().getSimpleName();
     }
 }

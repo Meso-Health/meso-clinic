@@ -1,14 +1,14 @@
 package org.watsi.uhp.managers;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
+import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
@@ -38,54 +38,70 @@ public class NavigationManager {
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String MEMBER_BUNDLE_FIELD = "member";
     public static String SYNCABLE_MODEL_BUNDLE_FIELD = "syncableModel";
+    public static String FRAGMENT_TRANSITION_BACKPRESS = "backPress";
 
-    private static String HOME_TAG = "home";
-    private static String DETAIL_TAG = "detail";
 
     private FragmentActivity mActivity;
     private FragmentProvider mFragmentProvider;
+    private String mLastFragmentTransition;
 
-    public NavigationManager(FragmentActivity activity, FragmentProvider fragmentProvider) {
-        this.mActivity = activity;
-        this.mFragmentProvider = fragmentProvider;
-    }
 
     public NavigationManager(FragmentActivity activity) {
-        this(activity, new FragmentProvider());
+        this.mActivity = activity;
+        this.mFragmentProvider = new FragmentProvider();
+        this.mLastFragmentTransition = "";
     }
 
-    private void setFragment(Fragment fragment, String tag, boolean addToBackstack, boolean
-                             popBackStack) {
+    protected void setFragment(BaseFragment fragment) {
+        setFragment(fragment, null);
+    }
+
+    /*
+       @fragment: The new fragment to transition to.
+       @overrideFragmentNameToPop: The name of the fragment to pop, which means any fragment in the backstack
+                                   that matches this parameter and above it would be popped.
+     */
+    protected void setFragment(BaseFragment fragment, String overrideFragmentNameToPop) {
+        String nextFragmentName = fragment.getName();
+
         FragmentManager fm = mActivity.getSupportFragmentManager();
+        BaseFragment currentFragment = (BaseFragment) fm.findFragmentById(R.id.fragment_container);
 
-        if (popBackStack) {
-            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            if (fm.findFragmentByTag(HOME_TAG) != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag(HOME_TAG)).commit();
+        String addTobackStackTag = "add" + nextFragmentName;
+
+        // No need for a removeFragment transaction if there is no current fragment, i.e. when you first open app.
+        if (currentFragment != null) {
+            // This ensures that we never have call fragmentA -> fragmentB in the stack twice.
+            // Sometimes setFragment can be accidentally called twice from the same source fragment to the same
+            // destination fragment. In order to prevent this from messing up the stack, since the call to
+            // setFragment is synchronous, we can make sure only one of those transactions is committed.
+            String nextFragmentTransition = formatUniqueFragmentTransition(currentFragment, nextFragmentName);
+            if (!FRAGMENT_TRANSITION_BACKPRESS.equals(mLastFragmentTransition) && !nextFragmentName.equals(currentFragment.getName()) && nextFragmentTransition.equals(this.mLastFragmentTransition)) {
+                return;
+            } else {
+                this.mLastFragmentTransition = nextFragmentTransition;
             }
 
-            // Hacky solution: (michaelliang) I added this extra check since the detail fragment may
-            // stick around when returning to the CurrentPatientsFragment.
-            if (fm.findFragmentByTag(DETAIL_TAG) != null) {
-                fm.beginTransaction().remove(fm.findFragmentByTag(DETAIL_TAG)).commit();
+            fm.beginTransaction()
+                    .remove(currentFragment)
+                    .addToBackStack("remove" + currentFragment.getName())
+                    .commit();
+
+            if (overrideFragmentNameToPop == null && fm.findFragmentByTag(nextFragmentName) != null) {
+                fm.popBackStack(addTobackStackTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else if (fm.findFragmentByTag(overrideFragmentNameToPop) != null) {
+                fm.popBackStack("add" + overrideFragmentNameToPop, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
 
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment, tag);
-
-        if (addToBackstack) {
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
-    }
-
-    private void setFragment(Fragment fragment) {
-        setFragment(fragment, null, true, false);
+        fm.beginTransaction()
+                .add(R.id.fragment_container, fragment, nextFragmentName)
+                .addToBackStack(addTobackStackTag)
+                .commit();
     }
 
     public void setCurrentPatientsFragment() {
-        setFragment(new CurrentPatientsFragment(), HOME_TAG, false, true);
+        setFragment(mFragmentProvider.createFragment(CurrentPatientsFragment.class));
     }
 
     public void setMemberDetailFragment(Member member) {
@@ -95,7 +111,7 @@ public class NavigationManager {
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
         try {
             if (member.currentCheckIn() == null) {
-                setCheckInMemberDetailFragment(member, idEvent);
+                setCheckInMemberDetailFragment(member, idEvent, null);
                 return;
             }
         // TODO do not want to have to do catch here - I'd prefer the current check in to be already loaded on the Member to avoid the lookup
@@ -105,17 +121,23 @@ public class NavigationManager {
         setCurrentMemberDetailFragment(member);
     }
 
-    private void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent) {
+    public void setCheckInMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {
+        // This is to make after enrolling a newborn jump to the newborn's member detail fragment.
+        // Clicking back would return to the parent's member detail fragment.
+        setCheckInMemberDetailFragment(member, idEvent, "EnrollNewbornInfoFragment");
+    }
+
+    protected void setCheckInMemberDetailFragment(Member member, IdentificationEvent idEvent, String customFragmentNameToPop) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
         bundle.putSerializable(IDENTIFICATION_EVENT_BUNDLE_FIELD, idEvent);
-        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
+        setFragment(mFragmentProvider.createFragment(CheckInMemberDetailFragment.class, bundle), customFragmentNameToPop);
     }
 
     private void setCurrentMemberDetailFragment(Member member) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(MEMBER_BUNDLE_FIELD, member);
-        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle), DETAIL_TAG, false, true);
+        setFragment(mFragmentProvider.createFragment(CurrentMemberDetailFragment.class, bundle));
     }
 
     public void setBarcodeFragment(BarcodeFragment.ScanPurposeEnum scanPurpose,
@@ -221,18 +243,31 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EnrollNewbornPhotoFragment.class, bundle));
     }
 
-    void setVersionFragment() {
-        setFragment(new VersionAndSyncFragment());
+    public void setVersionFragment() {
+        setFragment(mFragmentProvider.createFragment(VersionAndSyncFragment.class));
+    }
+
+    public void setLastFragmentTransitionAsBackPress() {
+        this.mLastFragmentTransition = FRAGMENT_TRANSITION_BACKPRESS;
+    }
+
+    @NonNull
+    static String formatUniqueFragmentTransition(BaseFragment currentFragment, String nextFragmentName) {
+        if (currentFragment == null) {
+            return "->" + nextFragmentName;
+        } else {
+            return currentFragment.getName() + "->" + nextFragmentName;
+        }
     }
 
     static class FragmentProvider {
-        Fragment createFragment(Class<? extends Fragment> clazz) {
+        BaseFragment createFragment(Class<? extends BaseFragment> clazz) {
             return createFragment(clazz, null);
         }
 
-        Fragment createFragment(Class<? extends Fragment> clazz, Bundle bundle) {
+        BaseFragment createFragment(Class<? extends BaseFragment> clazz, Bundle bundle) {
             try {
-                Fragment fragment = clazz.newInstance();
+                BaseFragment fragment = clazz.newInstance();
                 if (bundle != null) {
                     fragment.setArguments(bundle);
                 }
