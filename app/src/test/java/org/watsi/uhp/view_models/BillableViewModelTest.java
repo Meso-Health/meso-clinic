@@ -59,6 +59,9 @@ public class BillableViewModelTest {
         assertFalse(billableViewModel.getSaveEnabled());
         billableViewModel.setUnit("100mg");
         assertTrue(billableViewModel.getSaveEnabled());
+
+        assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.DRUG,
+                "Drug Name", 1000, "100mg", "vial");
     }
 
     @Test
@@ -71,6 +74,9 @@ public class BillableViewModelTest {
         billableViewModel.setName("Service Name");
         billableViewModel.setPrice("1000");
         assertTrue(billableViewModel.getSaveEnabled());
+
+        assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.SERVICE,
+                "Service Name", 1000, null, null);
     }
 
     @Test
@@ -83,6 +89,9 @@ public class BillableViewModelTest {
         billableViewModel.setName("Lab Name");
         billableViewModel.setPrice("1000");
         assertTrue(billableViewModel.getSaveEnabled());
+
+        assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.LAB,
+                "Lab Name", 1000, null, null);
     }
 
     @Test
@@ -95,6 +104,9 @@ public class BillableViewModelTest {
         billableViewModel.setName("Supply Name");
         billableViewModel.setPrice("1000");
         assertTrue(billableViewModel.getSaveEnabled());
+
+        assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.SUPPLY,
+                "Supply Name", 1000, null, null);
     }
 
 
@@ -111,5 +123,17 @@ public class BillableViewModelTest {
         assertFalse(billableViewModel.getSaveEnabled());
         billableViewModel.setUnit("100mg");
         assertTrue(billableViewModel.getSaveEnabled());
+
+        assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.VACCINE,
+                "Vaccine Name", 1000, "100mg", null);
+    }
+
+    private void assertBillableHasAttributes(Billable billable, Billable.TypeEnum billableType, String billableName,
+                                             int price, String units, String composition) {
+        assertEquals(billable.getType(), billableType);
+        assertEquals(billable.getName(), billableName);
+        assertEquals(billable.getUnit(), units);
+        assertEquals(billable.getPrice(), Integer.valueOf(price));
+        assertEquals(billable.getComposition(), composition);
     }
 }
