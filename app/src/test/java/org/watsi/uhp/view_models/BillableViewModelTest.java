@@ -54,14 +54,14 @@ public class BillableViewModelTest {
 
         billableViewModel.setName("Drug Name");
         billableViewModel.setPrice("1000");
-        billableViewModel.setSelectedCompositionIndex(1);
+        billableViewModel.setComposition("tablet");
 
         assertFalse(billableViewModel.getSaveEnabled());
         billableViewModel.setUnit("100mg");
         assertTrue(billableViewModel.getSaveEnabled());
 
         assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.DRUG,
-                "Drug Name", 1000, "100mg", "vial");
+                "Drug Name", 1000, "100mg", "tablet");
     }
 
     @Test
@@ -125,7 +125,7 @@ public class BillableViewModelTest {
         assertTrue(billableViewModel.getSaveEnabled());
 
         assertBillableHasAttributes(billableViewModel.getBillable(), Billable.TypeEnum.VACCINE,
-                "Vaccine Name", 1000, "100mg", null);
+                "Vaccine Name", 1000, "100mg", "vial");
     }
 
     private void assertBillableHasAttributes(Billable billable, Billable.TypeEnum billableType, String billableName,

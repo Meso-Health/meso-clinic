@@ -1,5 +1,6 @@
 package org.watsi.uhp.offline;
 
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -21,6 +22,7 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -28,11 +30,14 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
+import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
@@ -123,8 +128,6 @@ public class EncounterFlowFeature extends BaseTest {
     public void createEncounter_outpatientEncounterFlow() {
         String defaultBillable1 = "Consultation";
         String defaultBillable2 = "Medical Form";
-        String newBillableName = "New Billable";
-        String newBillablePrice = "1000";
 
         // the user can see checked-in members
         onView(withText(member.getFullName())).check(matches(isDisplayed()));
@@ -168,17 +171,17 @@ public class EncounterFlowFeature extends BaseTest {
         assertItemInList(withEncounterItemName(billableSupply.getName()), R.id.line_items_list);
 
         // the user can add a new service billable with a custom name and amount
-        onView(withId(R.id.add_billable_prompt)).perform(click());
-        onView(withId(R.id.type_field)).perform(click());
-        onData(allOf(is(instanceOf(String.class)),
-                is(Billable.TypeEnum.SERVICE.toString())))
-                .perform(click());
-        onView(withId(R.id.name_field)).perform(typeText(newBillableName));
-        onView(withId(R.id.price_field)).perform(typeText(newBillablePrice));
-        onView(withId(R.id.save_button)).perform(click());
-        onData(withEncounterItemName(newBillableName))
-                .inAdapterView(withId(R.id.line_items_list))
-                .check(matches(isDisplayed()));
+        addNewBillable("New Service Billable", Billable.TypeEnum.SERVICE, 1255, null, null);
+        addNewBillable("New Drug Billable", Billable.TypeEnum.DRUG, 1599, "100mg", "syrup");
+        addNewBillable("New Vaccine Billable", Billable.TypeEnum.VACCINE, 15000, "128mg", null);
+
+        onData(anything()).inAdapterView(withId(R.id.line_items_list)).atPosition(3).perform(click());
+
+        onView(withText("New Service Billable")).check(matches(isDisplayed()));
+        onView(withText("New Drug Billable")).check(matches(isDisplayed()));
+        onView(withText("100mg syrup")).check(matches(isDisplayed()));
+        onView(withText("New Vaccine Billable")).check(matches(isDisplayed()));
+        onView(withText("128mg vial")).check(matches(isDisplayed()));
 
         // TODO: the user cannot change the quantity of non-drugs
 
@@ -195,11 +198,45 @@ public class EncounterFlowFeature extends BaseTest {
         onView(withText(defaultBillable2)).check(matches(isDisplayed()));
         onView(withText(billableLab.getName())).check(matches(isDisplayed()));
         onView(withText(billableSupply.getName())).check(matches(isDisplayed()));
-        onView(withText(newBillableName)).check(matches(isDisplayed()));
+
+        onData(anything()).inAdapterView(withId(R.id.receipt_items)).atPosition(6).perform(click());
+        // Check that all the new billables are in the receipt.
+        onView(withText("New Service Billable")).check(matches(isDisplayed()));
+        onView(withText("1,255")).check(matches(isDisplayed()));
+
+        onView(withText("New Drug Billable")).check(matches(isDisplayed()));
+        onView(withText("100mg syrup")).check(matches(isDisplayed()));
+        onView(withText("1,599")).check(matches(isDisplayed()));
+
+        onView(withText("New Vaccine Billable")).check(matches(isCompletelyDisplayed()));
+        onView(withText("15,000")).check(matches(isCompletelyDisplayed()));
+        onView(withText("128mg vial")).check(matches(isCompletelyDisplayed()));
+
         onView(withText(R.string.save_encounter_button)).perform(click());
 
         // TODO: add quick toast check
         // no checked-in members
         onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
+    }
+
+    private void addNewBillable(String name, Billable.TypeEnum type, int price, String units, String composition) {
+        onView(withId(R.id.add_billable_prompt)).perform(click());
+        onView(withId(R.id.type_field)).perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(type.toString())))
+                .perform(click());
+        onView(withId(R.id.name_field)).perform(typeText(name));
+        onView(withId(R.id.price_field)).perform(typeText(String.valueOf(price)));
+        if (units != null) {
+            onView(withId(R.id.unit_field)).perform(typeText(units));
+        }
+
+        if (composition != null) {
+            onView(withId(R.id.list_of_compositions)).perform(click());
+            onView(withText(composition))
+                    .inRoot(isPlatformPopup())
+                    .perform(click());
+        }
+        onView(withId(R.id.save_button)).perform(click());
     }
 }

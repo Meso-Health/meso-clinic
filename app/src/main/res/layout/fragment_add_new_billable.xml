@@ -42,8 +42,9 @@
                 android:layout_height="wrap_content"
                 android:text="@={billable.name}"
                 android:maxLines="1"
-                android:inputType="text" />
-
+                android:imeOptions="actionDone"
+                android:inputType="text"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,8 +79,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:inputType="text"
                 android:maxLines="1"
+                android:imeOptions="actionDone"
+                android:inputType="text"
                 android:text="@={billable.unit}"
                 android:visibility="@{billable.showUnit}" />
 
@@ -95,6 +97,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:inputType="number"
+                android:imeOptions="actionDone"
                 android:text="@={billable.price}" />
 
                 <TextView
@@ -108,21 +111,26 @@
             </LinearLayout>
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+
+        <TextView
+            android:id="@+id/add_new_billable_composition"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="5dp"
+            android:text="@string/add_new_billable_composition_label"
             android:visibility="@{billable.showComposition}"
-            android:background="@drawable/view_outline_rectangle">
-            <Spinner
-                android:id="@+id/composition_field"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:entries="@{billable.compositionSelections}"
-                android:selectedItemPosition="@={billable.selectedCompositionIndex}"
-                />
-        </RelativeLayout>
+            />
+
+        <AutoCompleteTextView
+            android:id="@+id/list_of_compositions"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/member_name"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:text="@={billable.composition}"
+            android:visibility="@{billable.showComposition}"/>
 
         <Button
             android:id="@+id/save_button"

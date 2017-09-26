@@ -21,30 +21,19 @@ import java.util.List;
 })
 
 public class BillableViewModel extends BaseObservable {
-    private final static String SELECT_COMPOSITION_PROMPT = "Select Composition...";
     private final static String SELECT_TYPE_PROMPT = "Select A Category...";
     private final Billable mBillable;
     private final FormFragment mFormFragment;
-    private List<String> mBillableCompositionChoices;
     private List<String> mBillableTypeChoices;
 
     private Integer mSelectedTypeIndex;
-    private Integer mSelectedCompositionIndex;
 
     public BillableViewModel(FormFragment formFragment) {
         mBillable = new Billable();
         mFormFragment = formFragment;
         mSelectedTypeIndex = 0;
 
-        setUpBillableCompositions();
         setUpBillableTypes();
-    }
-
-    private void setUpBillableCompositions() {
-        List<String> compositions = new ArrayList<>(Billable.getBillableCompositions());
-        compositions.add(0, SELECT_COMPOSITION_PROMPT);
-
-        mBillableCompositionChoices = compositions;
     }
 
     private void setUpBillableTypes() {
@@ -105,15 +94,29 @@ public class BillableViewModel extends BaseObservable {
     }
 
     @Bindable
-    public List<String> getCompositionSelections() {
-        return mBillableCompositionChoices;
+    public String getComposition() {
+        return mBillable.getComposition();
+    }
+
+    @Bindable
+    public void setComposition(String composition) {
+        mBillable.setComposition(composition);
+        notifyPropertyChanged(BR.saveEnabled);
     }
 
     @Bindable
     public void setSelectedTypeIndex(Integer i) {
         if (i > 0) {
             mSelectedTypeIndex = i;
-            mBillable.setType(Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex)));
+            Billable.TypeEnum selectedType = Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex));
+            mBillable.setType(selectedType);
+            if (selectedType.equals(Billable.TypeEnum.VACCINE)) {
+                // According to our DB, all vaccines are of composition "vial".
+                mBillable.setComposition("vial");
+            } else {
+                mBillable.setComposition(null);
+            }
+
             notifyPropertyChanged(BR.showUnit);
             notifyPropertyChanged(BR.showComposition);
             notifyPropertyChanged(BR.saveEnabled);
@@ -121,22 +124,8 @@ public class BillableViewModel extends BaseObservable {
     }
 
     @Bindable
-    public void setSelectedCompositionIndex(Integer i) {
-        if (i > 0) {
-            mSelectedCompositionIndex = i;
-            mBillable.setComposition(mBillableCompositionChoices.get(mSelectedCompositionIndex));
-            notifyPropertyChanged(BR.saveEnabled);
-        }
-    }
-
-    @Bindable
     public Integer getSelectedTypeIndex() {
         return mSelectedTypeIndex;
-    }
-
-    @Bindable
-    public Integer getSelectedCompositionIndex() {
-        return mSelectedCompositionIndex;
     }
 
     @Bindable
