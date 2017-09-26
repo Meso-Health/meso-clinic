@@ -70,6 +70,16 @@ public class EnrollNewbornViewModelTest {
     }
 
     @Test
+    public void updateSaveButton_noCardId() {
+        mMember.setFullName("Valid Full Name");
+        mMember.setCardId("");
+        mMember.setGender(Member.GenderEnum.F);
+        mMember.setBirthdate(Calendar.getInstance().getTime());
+        enrollNewbornViewModel.updateSaveButton();
+        assertFalse(enrollNewbornViewModel.getSaveEnabled());
+    }
+
+    @Test
     public void updateSaveButton_valid() {
         mMember.setFullName("Valid Full Name");
         mMember.setCardId("RWI123123");

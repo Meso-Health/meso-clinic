@@ -42,8 +42,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
 
         View view = inflater.inflate(R.layout.fragment_barcode, container, false);
 
-        mScanPurpose = ScanPurposeEnum.valueOf(
-                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
+        mScanPurpose = getScanPurposeFromArguments();
 
         SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.barcode_preview_surface);
         surfaceView.getHolder().addCallback(this);
@@ -179,5 +178,18 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                 }
             }
         });
+    }
+
+    private ScanPurposeEnum getScanPurposeFromArguments() {
+        return ScanPurposeEnum.valueOf(
+                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
+    }
+
+    @Override
+    public String getName() {
+        // We want each barcode fragment appended with the scan purpose so that the fragment manager
+        // would not re-use a barcode fragment that was intended for identification to be called
+        // when a member needs a new card.
+        return super.getName() + "-" + getScanPurposeFromArguments();
     }
 }

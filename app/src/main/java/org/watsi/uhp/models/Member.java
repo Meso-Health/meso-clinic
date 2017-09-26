@@ -434,8 +434,11 @@ public class Member extends SyncableModel {
     }
 
     public boolean isAbsentee() {
-        return (getLocalMemberPhoto() == null && getRemoteMemberPhotoUrl() == null) ||
-                (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
+        return !hasMemberPhoto() || (getAge() >= MINIMUM_FINGERPRINT_AGE && getFingerprintsGuid() == null);
+    }
+
+    public boolean hasMemberPhoto() {
+        return getLocalMemberPhoto() != null || getRemoteMemberPhotoUrl() != null;
     }
 
     public void fetchAndSetPhotoFromUrl(OkHttpClient okHttpClient) throws IOException {
@@ -531,6 +534,13 @@ public class Member extends SyncableModel {
                         RequestBody.create(MultipartBody.FORM, getCardId())
                 );
             }
+        }
+
+        if (dirty(FIELD_NAME_BIRTHDATE)) {
+            requestPartMap.put(
+                    Member.FIELD_NAME_BIRTHDATE,
+                    RequestBody.create(MultipartBody.FORM, Clock.asIso(getBirthdate()))
+            );
         }
 
         if (requestPartMap.isEmpty()) {

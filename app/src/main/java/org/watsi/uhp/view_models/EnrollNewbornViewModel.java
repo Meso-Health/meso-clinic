@@ -15,7 +15,7 @@ public class EnrollNewbornViewModel extends MemberViewModel {
     }
 
     public void updateSaveButton() {
-        setSaveEnabled(getMember().validFullName() && getMember().validCardId() && getMember().validGender());
+        setSaveEnabled(getMember().validFullName() &&  Member.validNonNullCardId(getMember().getCardId()) && getMember().validGender());
     }
 
     public void onClickSave() {

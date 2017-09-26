@@ -101,7 +101,7 @@ public abstract class MemberDetailPresenter {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Member member = (Member) parent.getItemAtPosition(position);
                 IdentificationEvent idEvent = new IdentificationEvent(member,
-                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
+                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, mMember);
                 getNavigationManager().setMemberDetailFragment(member, idEvent);
             }
         });
