@@ -121,7 +121,7 @@
             android:visibility="@{billable.showComposition}"
             />
 
-        <AutoCompleteTextView
+        <org.watsi.uhp.custom_components.BillableCompositionInput
             android:id="@+id/list_of_compositions"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

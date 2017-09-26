@@ -170,6 +170,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                         form.setPhoto(photo);
                         getDao(EncounterForm.class).update(form);
                     }
+                case 11:
+                    // Is it worth dropping this column? sqlite does not support dropping a column, so we gotta
+                    // do this create new table, copy stuff over, etc.
+                    // https://stackoverflow.com/questions/8045249/how-do-i-delete-column-from-sqlite-table-in-android
+                    // TODO: Figure this out
+
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);

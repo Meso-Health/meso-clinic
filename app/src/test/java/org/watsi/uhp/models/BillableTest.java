@@ -26,7 +26,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_noName() throws Exception {
+    public void valid_nullName_isInValid() throws Exception {
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.SERVICE);
         assertFalse(billable.valid());
