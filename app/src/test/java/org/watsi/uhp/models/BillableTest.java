@@ -26,14 +26,14 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_nullName_isInValid() throws Exception {
+    public void valid_nullName_notValid() throws Exception {
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.SERVICE);
         assertFalse(billable.valid());
     }
 
     @Test
-    public void valid_service() throws Exception {
+    public void valid_service_isValid() throws Exception {
         billable.setName("Service name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.SERVICE);
@@ -41,7 +41,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_supply() throws Exception {
+    public void valid_supply_valid() throws Exception {
         billable.setName("Supply name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.SUPPLY);
@@ -49,7 +49,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_drug() throws Exception {
+    public void valid_drugNoCompositionOrUnit_invalid() throws Exception {
         billable.setName("Drug name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.DRUG);
@@ -61,12 +61,49 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_vaccine() throws Exception {
+    public void valid_drugNoUnit_invalid() throws Exception {
+        billable.setName("Drug name");
+        billable.setPrice(1000);
+        billable.setType(Billable.TypeEnum.DRUG);
+        billable.setComposition("Syrup");
+        assertFalse(billable.valid());
+        billable.setUnit("100 mg");
+        assertTrue(billable.valid());
+    }
+
+    @Test
+    public void valid_drugNoComposition_invalid() throws Exception {
+        billable.setName("Drug name");
+        billable.setPrice(1000);
+        billable.setType(Billable.TypeEnum.DRUG);
+        billable.setUnit("100 mg");
+        assertFalse(billable.valid());
+    }
+
+    @Test
+    public void valid_drug_valid() throws Exception {
+        billable.setName("Drug name");
+        billable.setPrice(1000);
+        billable.setType(Billable.TypeEnum.DRUG);
+        billable.setComposition("Syrup");
+        billable.setUnit("100 mg");
+        assertTrue(billable.valid());
+    }
+
+    @Test
+    public void valid_vaccine_valid() throws Exception {
+        billable.setName("Vaccine name");
+        billable.setPrice(1000);
+        billable.setType(Billable.TypeEnum.VACCINE);
+        billable.setUnit("100 mg");
+        assertTrue(billable.valid());
+    }
+
+    @Test
+    public void valid_vaccineNoUnits_notValid() throws Exception {
         billable.setName("Vaccine name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.VACCINE);
         assertFalse(billable.valid());
-        billable.setUnit("100 mg");
-        assertTrue(billable.valid());
     }
 }
