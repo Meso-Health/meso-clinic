@@ -176,14 +176,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     // https://stackoverflow.com/questions/8045249/how-do-i-delete-column-from-sqlite-table-in-android
                     // This is essentially: "copy, drop table, create new table, copy back".
                     getDao(Billable.class).executeRaw(
-                            "BEGIN TRANSACTION;\n" +
                             "CREATE TEMPORARY TABLE billables_backup(id,created_at,type,composition,unit,price,name);\n" +
                             "INSERT INTO billables_backup SELECT id,created_at,type,composition,unit,price,name FROM billables;\n" +
                             "DROP TABLE billables;\n" +
                             "CREATE TABLE billables(a,b);\n" +
                             "INSERT INTO billables SELECT id,created_at,type,composition,unit,price,name FROM billables_backup;\n" +
-                            "DROP TABLE billables_backup;\n" +
-                            "COMMIT;"
+                            "DROP TABLE billables_backup;\n"
                     );
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
