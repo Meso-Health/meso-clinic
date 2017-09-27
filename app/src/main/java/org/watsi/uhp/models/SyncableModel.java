@@ -197,6 +197,8 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         }
     }
 
+    // This was code written in order to mark a member as synced if it had birthdate in the future.
+    // This will be removed once that data is fixed. Please do not call this method in other scenarios.
     public void markAllFieldsAsCleanInOrderToFixDirtyAgeField() throws SQLException {
         setDirtyFields(Collections.<String>emptySet());
         getDao().createOrUpdate((T) this);;
