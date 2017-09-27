@@ -173,6 +173,7 @@ public class EncounterFlowFeature extends BaseTest {
         addNewBillable("New Drug Billable", Billable.TypeEnum.DRUG, 1599, "100mg", "syrup");
         addNewBillable("New Vaccine Billable", Billable.TypeEnum.VACCINE, 15000, "128mg", null);
 
+        // scroll to the bottom.
         onData(anything()).inAdapterView(withId(R.id.line_items_list)).atPosition(3).perform(click());
 
         // make sure billables are displayed correctly in the encounter fragment.
