@@ -25,8 +25,6 @@ public class BillableCompositionInput extends AppCompatAutoCompleteTextView {
                     compositionChoices
         );
         setAdapter(adapter);
-
-
         setThreshold(1);
         setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

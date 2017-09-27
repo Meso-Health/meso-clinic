@@ -185,7 +185,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                             "DROP TABLE billables_backup;\n" +
                             "COMMIT;"
                     );
-
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
