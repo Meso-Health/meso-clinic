@@ -38,6 +38,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
     @Override
     public void nextStep() {
         Billable billable = mBillableViewModel.getBillable();
+        billable.setCreatedDuringEncounter(true);
 
         EncounterItem encounterItem = new EncounterItem();
         encounterItem.setBillable(billable);

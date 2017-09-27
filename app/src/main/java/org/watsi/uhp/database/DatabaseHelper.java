@@ -27,7 +27,7 @@ import java.util.UUID;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 11;
 
     private static DatabaseHelper instance;
 
@@ -170,19 +170,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                         form.setPhoto(photo);
                         getDao(EncounterForm.class).update(form);
                     }
-                case 11:
-                    // Drops the created_during_encounter field.
-                    // Since SQLite does not have DROP COLUMN, we gotta do this from stackoverflow:
-                    // https://stackoverflow.com/questions/8045249/how-do-i-delete-column-from-sqlite-table-in-android
-                    // This is essentially: "copy, drop table, create new table, copy back".
-                    getDao(Billable.class).executeRaw(
-                            "CREATE TEMPORARY TABLE billables_backup(id,created_at,type,composition,unit,price,name);\n" +
-                            "INSERT INTO billables_backup SELECT id,created_at,type,composition,unit,price,name FROM billables;\n" +
-                            "DROP TABLE billables;\n" +
-                            "CREATE TABLE billables(a,b);\n" +
-                            "INSERT INTO billables SELECT id,created_at,type,composition,unit,price,name FROM billables_backup;\n" +
-                            "DROP TABLE billables_backup;\n"
-                    );
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);

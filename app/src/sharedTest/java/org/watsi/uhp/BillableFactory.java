@@ -12,6 +12,7 @@ public class BillableFactory extends Billable {
         setUnit(unit);
         setComposition(composition);
         setPrice(price);
+        setCreatedDuringEncounter(false);
     }
 
     public BillableFactory(String name, Billable.TypeEnum type, int price) {
@@ -19,5 +20,6 @@ public class BillableFactory extends Billable {
         setName(name);
         setType(type);
         setPrice(price);
+        setCreatedDuringEncounter(false);
     }
 }

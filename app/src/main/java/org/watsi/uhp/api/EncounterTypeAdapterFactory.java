@@ -38,7 +38,9 @@ public class EncounterTypeAdapterFactory extends CustomizedTypeAdapterFactory<En
             JsonObject encounterItemJson = iterator.next().getAsJsonObject();
             JsonObject billableJson = encounterItemJson.remove(EncounterItem.FIELD_NAME_BILLABLE_ID)
                     .getAsJsonObject();
-            if (billableJson.get(Billable.FIELD_NAME_ID).isJsonNull()) {
+            boolean isNewBillable = billableJson.get(Billable.FIELD_NAME_CREATED_DURING_ENCOUNTER)
+                    .getAsBoolean();
+            if (isNewBillable) {
                 encounterItemJson.add("billable", billableJson);
             } else {
                 String billableId = billableJson.get(Billable.FIELD_NAME_ID).getAsString();
