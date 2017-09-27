@@ -27,7 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({ Billable.class })
 public class BillableViewModelTest {
     private BillableViewModel billableViewModel;
-    private final List<String> COMPOSITIONS = new ArrayList<>(Arrays.asList("vial", "tablet", "syrup", "fluid"));
+    private final List<String> COMPOSITIONS = Arrays.asList("vial", "tablet", "syrup", "fluid");
     private final int TYPE_DRUG_INDEX = 1;
     private final int TYPE_SERVICE_INDEX = 2;
     private final int TYPE_LAB_INDEX = 3;
