@@ -128,7 +128,6 @@ public class SyncService extends AbstractSyncJobService {
     protected void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
             try {
-                fixMemberDirtyAgeIfNecessary(member);
                 Response<Member> response = member.sync(this);
                 if (response.isSuccessful()) {
                     member.updateFromSync(response);
@@ -140,79 +139,16 @@ public class SyncService extends AbstractSyncJobService {
                             response.raw(), params);
                 }
             } catch (SyncableModel.SyncException e) {
-                ExceptionManager.reportException(e);
-            }
-        }
-    }
-
-    // There were two member swhose birthdate was accidentally set in the future.
-    // This is temporary code to set the birthdate to Aug 30th 2017 for the 1st member, and
-    // September 21st 2017 for the 2nd member.
-    // This code will be removed once the member has successfully synced.
-    private void fixMemberDirtyAgeIfNecessary(Member member) throws SQLException {
-        PreferencesManager preferencesManager = new PreferencesManager(this);
-        String authToken = getAuthenticationToken(preferencesManager);
-        String memberIdWithDirtyAgeField = "d016d90a-93d1-44a1-94d5-3439146662ec";
-        if (member.getId().toString().equals(memberIdWithDirtyAgeField) &&
-                Clock.getCurrentTime().getTime() < member.getBirthdate().getTime()) {
-            if (authToken != null) {
-                try {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.YEAR, 2017);
-                    calendar.set(Calendar.MONTH, Calendar.AUGUST);
-                    calendar.set(Calendar.DAY_OF_MONTH, 30);
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
-                    member.setBirthdate(calendar.getTime());
-                    member.saveChanges(authToken);
-                } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.reportErrorMessage("Failed to save member with dirty age with id: " + memberIdWithDirtyAgeField);
+                // There were two member whose birthdate was accidentally set in the future.
+                // This code will be removed once the member has successfully synced.
+                if ((member.getId().toString().equals("416abfbc-42d9-45ce-91a5-8254bf83cb4b") ||
+                        member.getId().toString().equals("d016d90a-93d1-44a1-94d5-3439146662ec")) &&
+                        Clock.getCurrentTime().getTime() < member.getBirthdate().getTime()) {
+                    member.markAllFieldsAsCleanInOrderToFixDirtyAgeField();
+                } else {
+                    ExceptionManager.reportException(e);
                 }
-            } else {
-                ExceptionManager.reportMessage("Did not attempt to save member with dirty age with id: " + memberIdWithDirtyAgeField +
-                        " because authToken from PreferencesManager is null.");
             }
         }
-
-        String memberIdWithDirtyAgeField2 = "416abfbc-42d9-45ce-91a5-8254bf83cb4b";
-        if (member.getId().toString().equals(memberIdWithDirtyAgeField2) &&
-                Clock.getCurrentTime().getTime() < member.getBirthdate().getTime()) {
-            if (authToken != null) {
-                try {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.YEAR, 2017);
-                    calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
-                    calendar.set(Calendar.DAY_OF_MONTH, 21);
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
-                    member.setBirthdate(calendar.getTime());
-                    member.saveChanges(authToken);
-                } catch (AbstractModel.ValidationException e) {
-                    ExceptionManager.reportErrorMessage("Failed to save member with dirty age with id: " + memberIdWithDirtyAgeField2);
-                }
-            } else {
-                ExceptionManager.reportMessage("Did not attempt to save member with dirty age with id: " + memberIdWithDirtyAgeField2 +
-                        " because authToken from PreferenceManager is null.");
-            }
-        }
-    }
-    // Temporary code copied from FetchService.
-    protected String getAuthenticationToken(PreferencesManager preferencesManager) {
-        SessionManager sessionManager = new SessionManager(
-                preferencesManager, AccountManager.get(this));
-        AccountManagerFuture<Bundle> tokenFuture = sessionManager.fetchToken();
-        try {
-            if (tokenFuture != null) {
-                Bundle tokenBundle = tokenFuture.getResult();
-                return tokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
-            }
-        } catch (OperationCanceledException | IOException | AuthenticatorException e) {
-            ExceptionManager.reportException(e);
-        }
-        return null;
     }
 }
