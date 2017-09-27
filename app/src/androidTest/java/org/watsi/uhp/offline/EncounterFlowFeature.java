@@ -1,6 +1,5 @@
 package org.watsi.uhp.offline;
 
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -22,7 +21,6 @@ import org.watsi.uhp.models.Member;
 import java.sql.SQLException;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -32,7 +30,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
-import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -42,6 +39,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.watsi.uhp.CustomMatchers.withBillableName;
+import static org.watsi.uhp.CustomMatchers.withEncounterItem;
 import static org.watsi.uhp.CustomMatchers.withEncounterItemName;
 
 @RunWith(AndroidJUnit4.class)
@@ -194,23 +192,15 @@ public class EncounterFlowFeature extends BaseTest {
 
         // the user can review all entered encounter line items in the receipt fragment and submit
         onView(withText(R.string.receipt_fragment_label)).check(matches(isDisplayed()));
-        onView(withText(defaultBillable1)).check(matches(isDisplayed()));
-        onView(withText(defaultBillable2)).check(matches(isDisplayed()));
-        onView(withText(billableLab.getName())).check(matches(isDisplayed()));
-        onView(withText(billableSupply.getName())).check(matches(isDisplayed()));
 
-        onData(anything()).inAdapterView(withId(R.id.receipt_items)).atPosition(6).perform(click());
-        // Check that all the new billables are in the receipt.
-        onView(withText("New Service Billable")).check(matches(isDisplayed()));
-        onView(withText("1,255")).check(matches(isDisplayed()));
 
-        onView(withText("New Drug Billable")).check(matches(isDisplayed()));
-        onView(withText("100mg syrup")).check(matches(isDisplayed()));
-        onView(withText("1,599")).check(matches(isDisplayed()));
-
-        onView(withText("New Vaccine Billable")).check(matches(isCompletelyDisplayed()));
-        onView(withText("15,000")).check(matches(isCompletelyDisplayed()));
-        onView(withText("128mg vial")).check(matches(isCompletelyDisplayed()));
+        assertItemInList(withEncounterItem(defaultBillable1, 2000, null), R.id.receipt_items);
+        assertItemInList(withEncounterItem(defaultBillable2, 1000, null), R.id.receipt_items);
+        assertItemInList(withEncounterItem(billableLab.getName(), billableLab.getPrice(), null), R.id.receipt_items);
+        assertItemInList(withEncounterItem(billableSupply.getName(), billableSupply.getPrice(), null), R.id.receipt_items);
+        assertItemInList(withEncounterItem("New Service Billable", 1255, null), R.id.receipt_items);
+        assertItemInList(withEncounterItem("New Drug Billable", 1599, null), R.id.receipt_items);
+        assertItemInList(withEncounterItem("New Vaccine Billable", 15000, null), R.id.receipt_items);
 
         onView(withText(R.string.save_encounter_button)).perform(click());
 
