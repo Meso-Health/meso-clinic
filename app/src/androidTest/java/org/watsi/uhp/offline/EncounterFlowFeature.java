@@ -175,6 +175,7 @@ public class EncounterFlowFeature extends BaseTest {
 
         onData(anything()).inAdapterView(withId(R.id.line_items_list)).atPosition(3).perform(click());
 
+        // make sure billables are displayed correctly in the encounter fragment.
         onView(withText("New Service Billable")).check(matches(isDisplayed()));
         onView(withText("New Drug Billable")).check(matches(isDisplayed()));
         onView(withText("100mg syrup")).check(matches(isDisplayed()));
@@ -193,6 +194,7 @@ public class EncounterFlowFeature extends BaseTest {
         // the user can review all entered encounter line items in the receipt fragment and submit
         onView(withText(R.string.receipt_fragment_label)).check(matches(isDisplayed()));
 
+        // all the billables, descriptions, and prices are displayed correctly in the list of receipt items.
         assertItemInList(withEncounterItem(defaultBillable1, 2000, null), R.id.receipt_items);
         assertItemInList(withEncounterItem(defaultBillable2, 1000, null), R.id.receipt_items);
         assertItemInList(withEncounterItem(billableLab.getName(), billableLab.getPrice(), null), R.id.receipt_items);
