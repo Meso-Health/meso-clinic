@@ -129,6 +129,7 @@
             android:maxLines="1"
             android:imeOptions="actionDone"
             android:inputType="text"
+            android:focusableInTouchMode="true"
             android:text="@={billable.composition}"
             android:visibility="@{billable.showComposition}"/>
 

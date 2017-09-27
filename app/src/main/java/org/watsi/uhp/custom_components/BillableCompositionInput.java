@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,15 @@ public class BillableCompositionInput extends AppCompatAutoCompleteTextView {
                     compositionChoices
         );
         setAdapter(adapter);
+
+
+        setThreshold(1);
+        setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                KeyboardManager.hideKeyboard(BillableCompositionInput.this , getContext());
+            }
+        });
     }
 
     @Override
@@ -36,12 +46,11 @@ public class BillableCompositionInput extends AppCompatAutoCompleteTextView {
     }
 
     @Override
-    public AdapterView.OnItemClickListener getOnItemClickListener() {
-        return new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                KeyboardManager.hideKeyboard(view, getContext());
-            }
-        };
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        showDropDown();
+        return true;
     }
+
+
 }
