@@ -193,7 +193,6 @@ public class EncounterFlowFeature extends BaseTest {
         // the user can review all entered encounter line items in the receipt fragment and submit
         onView(withText(R.string.receipt_fragment_label)).check(matches(isDisplayed()));
 
-
         assertItemInList(withEncounterItem(defaultBillable1, 2000, null), R.id.receipt_items);
         assertItemInList(withEncounterItem(defaultBillable2, 1000, null), R.id.receipt_items);
         assertItemInList(withEncounterItem(billableLab.getName(), billableLab.getPrice(), null), R.id.receipt_items);
