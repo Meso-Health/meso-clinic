@@ -35,8 +35,7 @@ public class BillableCompositionInput extends AppCompatAutoCompleteTextView {
     }
 
     @Override
-    protected void onFocusChanged(boolean focused, int direction,
-                                  Rect previouslyFocusedRect) {
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         if (focused) {
             showDropDown();
@@ -49,6 +48,4 @@ public class BillableCompositionInput extends AppCompatAutoCompleteTextView {
         showDropDown();
         return true;
     }
-
-
 }

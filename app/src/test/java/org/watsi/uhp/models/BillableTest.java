@@ -33,7 +33,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_service_isValid() throws Exception {
+    public void valid_serviceHasNameAndPrice_isValid() throws Exception {
         billable.setName("Service name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.SERVICE);
@@ -41,7 +41,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_supply_valid() throws Exception {
+    public void valid_supplyHasNameAndPrice_valid() throws Exception {
         billable.setName("Supply name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.SUPPLY);
@@ -81,7 +81,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_drug_valid() throws Exception {
+    public void valid_drugHasNameAndPriceAndCompositionAndUnit_valid() throws Exception {
         billable.setName("Drug name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.DRUG);
@@ -91,7 +91,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_vaccine_valid() throws Exception {
+    public void valid_vaccineHasNameAndPriceAndUnit_valid() throws Exception {
         billable.setName("Vaccine name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.VACCINE);
@@ -100,7 +100,7 @@ public class BillableTest {
     }
 
     @Test
-    public void valid_vaccineNoUnits_notValid() throws Exception {
+    public void valid_vaccineNoUnits_invalid() throws Exception {
         billable.setName("Vaccine name");
         billable.setPrice(1000);
         billable.setType(Billable.TypeEnum.VACCINE);
