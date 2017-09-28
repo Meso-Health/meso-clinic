@@ -106,21 +106,32 @@ public class BillableViewModel extends BaseObservable {
 
     @Bindable
     public void setSelectedTypeIndex(Integer i) {
+        mSelectedTypeIndex = i;
         if (i > 0) {
-            mSelectedTypeIndex = i;
             Billable.TypeEnum selectedType = Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex));
             mBillable.setType(selectedType);
             if (selectedType.equals(Billable.TypeEnum.VACCINE)) {
                 // According to our DB, all vaccines are of composition "vial".
                 mBillable.setComposition("vial");
+            } else if (selectedType.equals(Billable.TypeEnum.DRUG)) {
+                clearCompositionAndUnit();
             } else {
-                mBillable.setComposition(null);
+                clearCompositionAndUnit();
             }
-
-            notifyPropertyChanged(BR.showUnit);
-            notifyPropertyChanged(BR.showComposition);
-            notifyPropertyChanged(BR.saveEnabled);
+        } else {
+            mBillable.setType(null);
+            clearCompositionAndUnit();
         }
+        notifyPropertyChanged(BR.showUnit);
+        notifyPropertyChanged(BR.showComposition);
+        notifyPropertyChanged(BR.saveEnabled);
+        notifyPropertyChanged(BR.composition);
+        notifyPropertyChanged(BR.unit);
+    }
+
+    private void clearCompositionAndUnit() {
+        mBillable.setComposition(null);
+        mBillable.setUnit(null);
     }
 
     @Bindable

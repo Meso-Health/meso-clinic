@@ -33,6 +33,13 @@ public class BillableTest {
     }
 
     @Test
+    public void valid_unspecified_notValid() throws Exception {
+        billable.setPrice(1000);
+        billable.setType(Billable.TypeEnum.UNSPECIFIED);
+        assertFalse(billable.valid());
+    }
+
+    @Test
     public void valid_serviceHasNameAndPrice_isValid() throws Exception {
         billable.setName("Service name");
         billable.setPrice(1000);

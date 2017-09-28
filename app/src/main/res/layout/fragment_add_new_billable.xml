@@ -92,23 +92,25 @@
                 android:orientation="horizontal">
 
                 <EditText
-                android:id="@+id/price_field"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:inputType="number"
-                android:imeOptions="actionDone"
-                android:text="@={billable.price}" />
+                    android:id="@+id/price_field"
+                    android:layout_width="156dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:gravity="left"
+                    android:imeOptions="actionDone"
+                    android:text="@={billable.price}" />
 
                 <TextView
                     android:id="@+id/ugx"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:gravity="center_vertical"
                     android:text="@string/UGX"
                     android:theme="@style/LargeLabel" />
             </LinearLayout>
+
         </LinearLayout>
 
 
