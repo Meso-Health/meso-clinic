@@ -28,6 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class BillableViewModelTest {
     private BillableViewModel billableViewModel;
     private final List<String> COMPOSITIONS = Arrays.asList("vial", "tablet", "syrup", "fluid");
+    private final int TYPE_UNSPECIFIED_INDEX = 0;
     private final int TYPE_DRUG_INDEX = 1;
     private final int TYPE_SERVICE_INDEX = 2;
     private final int TYPE_LAB_INDEX = 3;
@@ -44,6 +45,23 @@ public class BillableViewModelTest {
         when(Billable.getBillableCompositions()).thenReturn(COMPOSITIONS);
         when(Billable.getBillableTypes()).thenCallRealMethod();
         billableViewModel = new BillableViewModel(mockFormFragment);
+    }
+
+    @Test
+    public void setType_unselectedType() {
+        billableViewModel.setSelectedTypeIndex(TYPE_DRUG_INDEX);
+        billableViewModel.setName("Drug Name");
+        billableViewModel.setPrice("1000");
+        billableViewModel.setComposition("tablet");
+        billableViewModel.setUnit("100mg");
+
+        billableViewModel.setSelectedTypeIndex(0);
+        assertEquals(billableViewModel.getName(), "Drug Name");
+        assertEquals(billableViewModel.getPrice(), "1000");
+        assertEquals(billableViewModel.getComposition(), null);
+        assertEquals(billableViewModel.getUnit(), null);
+
+        assertBillableHasAttributes(billableViewModel.getBillable(), null, "Drug Name", 1000, null, null);
     }
 
     @Test
