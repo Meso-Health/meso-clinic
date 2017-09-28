@@ -1,18 +1,10 @@
 package org.watsi.uhp.services;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.os.Bundle;
 import android.util.Log;
 
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.PreferencesManager;
-import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -21,7 +13,6 @@ import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
