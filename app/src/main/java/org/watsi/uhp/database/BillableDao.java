@@ -114,4 +114,22 @@ public class BillableDao {
         queryMap.put(Billable.FIELD_NAME_TYPE, category);
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
     }
+
+    public static List<String> getUniqueBillableCompositions() throws SQLException {
+        PreparedQuery<Billable> pq = getInstance().getBillableDao()
+                .queryBuilder()
+                .distinct()
+                .orderBy(Billable.FIELD_NAME_COMPOSITION, false)
+                .selectColumns(Billable.FIELD_NAME_COMPOSITION)
+                .where()
+                .isNotNull(Billable.FIELD_NAME_COMPOSITION)
+                .prepare();
+
+        List<Billable> allBillables = getInstance().getBillableDao().query(pq);
+        List<String> compositions = new ArrayList<>();
+        for (Billable billable : allBillables) {
+            compositions.add(billable.getComposition());
+        }
+        return compositions;
+    }
 }

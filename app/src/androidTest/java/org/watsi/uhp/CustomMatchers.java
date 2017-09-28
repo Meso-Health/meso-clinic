@@ -50,6 +50,30 @@ public class CustomMatchers {
         };
     }
 
+
+    /**
+     * Matches an EncounterItem with a specific name, price, and description (optional).
+     */
+    public static Matcher<Object> withEncounterItem(final String name, final Integer price, final String description){
+        return new BoundedMatcher<Object, EncounterItem>(EncounterItem.class){
+            @Override
+            public boolean matchesSafely(EncounterItem encounterItem) {
+                Billable billable = encounterItem.getBillable();
+                boolean priceAndNameMatches = billable.getPrice().equals(price) && billable.getName().equals(name);
+                if (description != null) {
+                    return billable.dosageDetails().equals(description) && priceAndNameMatches;
+                } else {
+                    return priceAndNameMatches;
+                }
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("with encounter item name: " + price);
+            }
+        };
+    }
+
     /**
      * Matches a Member with a specific id
      */
