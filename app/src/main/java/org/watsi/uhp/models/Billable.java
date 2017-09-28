@@ -182,7 +182,7 @@ public class Billable extends AbstractModel {
     }
 
     public boolean validType() {
-        return mType != null && !mType.equals(TypeEnum.UNSPECIFIED);
+        return mType != null;
     }
 
     public boolean validUnits() {

@@ -28,7 +28,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class BillableViewModelTest {
     private BillableViewModel billableViewModel;
     private final List<String> COMPOSITIONS = Arrays.asList("vial", "tablet", "syrup", "fluid");
-    private final int TYPE_UNSPECIFIED_INDEX = 0;
     private final int TYPE_DRUG_INDEX = 1;
     private final int TYPE_SERVICE_INDEX = 2;
     private final int TYPE_LAB_INDEX = 3;
