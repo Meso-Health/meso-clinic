@@ -203,6 +203,9 @@ Tests can be run directly through the Android Studio UI by right-clicking the te
 Tests can also be run from the terminal. 
 
  ```
+ # Make sure the current environment variables are loaded, otherwise this will fail to build.
+ source .env
+
  # Run all unit tests against every build variant (this is unnecessary).
  ./gradlew test
  
@@ -211,7 +214,10 @@ Tests can also be run from the terminal.
   
  # Run all feature tests against every build variant (this is unnecessary).
  ./gradlew connectedAndroidTest
- 
+
+ # Run all feature tests against development debug variant.
+ ./gradlew connectedDevelopmentDebugAndroidTest
+
  # Run all feature tests for a specific build variant.
  ./gradlew connected<variant_name>AndroidTest
  

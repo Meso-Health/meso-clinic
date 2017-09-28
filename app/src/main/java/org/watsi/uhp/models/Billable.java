@@ -5,7 +5,12 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.watsi.uhp.database.BillableDao;
+
+import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @DatabaseTable(tableName = Billable.TABLE_NAME)
@@ -152,5 +157,53 @@ public class Billable extends AbstractModel {
         String formattedPrice = df.format(price);
 
         return formattedPrice;
+    }
+
+    public boolean valid() {
+        if (validType() && validName() && validPrice()) {
+            if (getType().equals(Billable.TypeEnum.DRUG)) {
+                return validUnits() && validComposition();
+            } else if (getType().equals(Billable.TypeEnum.VACCINE)) {
+                return validUnits();
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean validName() {
+        return mName != null && !mName.isEmpty();
+    }
+
+    public boolean validPrice() {
+        return mPrice != null;
+    }
+
+    public boolean validType() {
+        return mType != null;
+    }
+
+    public boolean validUnits() {
+        return mUnit != null && !mUnit.isEmpty();
+    }
+
+    public boolean validComposition() {
+        return mComposition != null && !mComposition.isEmpty();
+    }
+    
+    public static List<String> getBillableTypes() {
+        ArrayList<String> categories = new ArrayList<>();
+        for (Billable.TypeEnum billableType : Billable.TypeEnum.values()) {
+            if (!billableType.equals(Billable.TypeEnum.UNSPECIFIED)) {
+                categories.add(billableType.toString());
+            }
+        }
+        return categories;
+    }
+
+    public static List<String> getBillableCompositions() throws SQLException {
+        return BillableDao.getUniqueBillableCompositions();
     }
 }
