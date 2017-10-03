@@ -54,10 +54,10 @@ public class IdentificationEvent extends SyncableModel {
     }
 
     public enum DismissalReasonEnum {
-        @SerializedName("patient_on_other_phone") PATIENT_ON_OTHER_PHONE,
+        @SerializedName("patient_on_other_phone") MEMBER_ON_OTHER_PHONE,
         @SerializedName("accidental_identification") ACCIDENTAL_IDENTIFICATION,
-        @SerializedName("patient_left_before_care") PATIENT_LEFT_BEFORE_CARE,
-        @SerializedName("patient_left_after_care") PATIENT_LEFT_AFTER_CARE,
+        @SerializedName("patient_left_before_care") MEMBER_LEFT_BEFORE_CARE,
+        @SerializedName("patient_left_after_care") MEMBER_LEFT_AFTER_CARE,
     }
 
     @Expose

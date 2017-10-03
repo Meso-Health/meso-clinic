@@ -200,20 +200,16 @@ $ git push origin head
 
 Tests can be run directly through the Android Studio UI by right-clicking the test file and selecting the 'Run <test>' option (or run the entire test suite by right-clicking the entire test folder).
 
+Because some of our tests are run using [Roboelectric](http://robolectric.org/), we must also edit the default working directory for our JUnit environment to `$MODULE_DIR$` as described [here](http://robolectric.org/getting-started/#note-for-linux-and-mac-users).
+
 Tests can also be run from the terminal. 
 
  ```
  # Make sure the current environment variables are loaded, otherwise this will fail to build.
  source .env
 
- # Run all unit tests against every build variant (this is unnecessary).
- ./gradlew test
- 
  # Run all unit tests for a specific build variant.
  ./gradlew test<variant_name>
-  
- # Run all feature tests against every build variant (this is unnecessary).
- ./gradlew connectedAndroidTest
 
  # Run all feature tests against development debug variant.
  ./gradlew connectedDevelopmentDebugAndroidTest

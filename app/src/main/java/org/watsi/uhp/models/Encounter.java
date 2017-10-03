@@ -33,6 +33,7 @@ public class Encounter extends SyncableModel {
     public static final String FIELD_NAME_ENCOUNTER_ITEMS = "encounter_items";
     public static final String FIELD_NAME_ENCOUNTER_FORMS = "encounter_forms";
     public static final String FIELD_NAME_BACKDATED_OCCURRED_AT = "backdated_occurred_at";
+    public static final String FIELD_NAME_COPAYMENT_PAID = "copayment_paid";
 
     public static final DecimalFormat PRICE_FORMAT = new DecimalFormat("#,###,###");
 
@@ -65,6 +66,11 @@ public class Encounter extends SyncableModel {
     @SerializedName(FIELD_NAME_BACKDATED_OCCURRED_AT)
     @DatabaseField(columnName = FIELD_NAME_BACKDATED_OCCURRED_AT, canBeNull = false, defaultValue = "false")
     private boolean mBackdatedOccurredAt;
+
+    @Expose
+    @SerializedName(FIELD_NAME_COPAYMENT_PAID)
+    @DatabaseField(columnName = FIELD_NAME_COPAYMENT_PAID)
+    private Boolean mCopaymentPaid;
 
     public Encounter() {
         super();
@@ -182,6 +188,14 @@ public class Encounter extends SyncableModel {
     public void addEncounterForm(EncounterForm encounterForm) {
         encounterForm.setEncounter(this);
         getEncounterForms().add(encounterForm);
+    }
+
+    public Boolean getCopaymentPaid() {
+        return mCopaymentPaid;
+    }
+
+    public void setCopaymentPaid(Boolean copaymentPaid) {
+        this.mCopaymentPaid = copaymentPaid;
     }
 
     public int price() {

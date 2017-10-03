@@ -45,7 +45,7 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
         if (encounterItem != null) {
             final Billable billable = encounterItem.getBillable();
 
-            viewHolder.billableQuantity.setText(String.valueOf(encounterItemQuantity(encounterItem)));
+            viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
             viewHolder.billableName.setText(billable.getName());
             if (billable.dosageDetails() == null) {
                 viewHolder.billableDetails.setVisibility(View.GONE);
@@ -57,18 +57,10 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
             if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
                 viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(billable.getPrice()));
             } else {
-                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(encounterItemQuantity(encounterItem) * billable.getPrice()));
+                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(encounterItem.getQuantity() * billable.getPrice()));
             }
         }
         return convertView;
-    }
-
-    private int encounterItemQuantity(EncounterItem encounterItem) {
-        if (String.valueOf(encounterItem.getQuantity()) == null) {
-            return 1;
-        } else {
-            return encounterItem.getQuantity();
-        }
     }
 
     private static class ViewHolder {

@@ -24,6 +24,7 @@
     <string name="menu_logout_label">Logout</string>
     <string name="log_out_alert">Are you sure you want to log out?</string>
     <string name="menu_version_and_sync_label">Status</string>
+    <string name="menu_submit_without_copayment">Submit (no copayment)</string>
 
     <!-- General Labels -->
     <string name="name_label">Name</string>
@@ -53,17 +54,17 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
     <!-- CurrentPatientsFragment -->
-    <string name="current_patients_fragment_label">Select a patient</string>
-    <string name="identification_button">Look up patient</string>
-    <string name="current_patients_empty_text">There are no checked-in patients.</string>
+    <string name="current_patients_fragment_label">Select a member</string>
+    <string name="identification_button">Look up member</string>
+    <string name="current_patients_empty_text">There are no checked-in members.</string>
     <plurals name="current_patients_label" >
-        <item quantity="one">%d Current Patient</item>
-        <item quantity="other">%d Current Patients</item>
+        <item quantity="one">%d Current Member</item>
+        <item quantity="other">%d Current Members</item>
     </plurals>
 
     <!-- BarcodeFragment -->
     <string name="barcode_fragment_label">Scan ID</string>
-    <string name="search_member_hint">Search patient name or ID</string>
+    <string name="search_member_hint">Search member name or ID</string>
     <string name="id_not_found_toast">Card not found. Try searching by name.</string>
 
     <!-- SearchMemberFragment -->
@@ -77,7 +78,7 @@
     </plurals>
 
     <!-- CheckinMemberDetailFragment -->
-    <string name="detail_fragment_label">Is this the right person?</string>
+    <string name="detail_fragment_label">Member</string>
     <string name="absentee_notification">Needs to complete enrollment</string>
     <string name="absentee_action">ENROLL</string>
     <string name="replace_card_notification">Needs new member card</string>
@@ -93,7 +94,7 @@
     <string name="no_scan_indicator">NO SCAN</string>
 
     <!-- CurrentMemberDetailFragment -->
-    <string name="detail_create_encounter">Enter treatment information</string>
+    <string name="detail_create_encounter">Record Encounter</string>
     <string name="dismiss_member_alert">Why are you dismissing the member?</string>
     <string name="identification_dismissed">has been checked out without treatment details.</string>
     <string name="identification_dismissed_failure">Failed to check out member.</string>
@@ -108,7 +109,7 @@
     <string name="default_billable_quantity">1</string>
     <string name="remove_billable_button">X</string>
     <string name="encounter_product_list_label">Items</string>
-    <string name="continue_encounter_button">Continue</string>
+    <string name="continue_encounter_button">Next</string>
     <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
@@ -127,16 +128,21 @@
     <!-- EncounterFormFragment -->
     <string name="encounter_form_fragment_label">Take photo of form</string>
     <string name="encounter_form_add_btn">Add another</string>
-    <string name="encounter_form_finish_btn">Finish</string>
+    <string name="encounter_form_finish_btn">Next</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">Review receipt</string>
-    <string name="receipt_check_prompt">Does this look correct?</string>
-    <string name="total">Total</string>
+    <string name="receipt_fragment_label">Review encounter</string>
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
-    <string name="encounter_submitted">\'s clinical record has been submitted successfully.</string>
+    <string name="receipt_total">Total</string>
+    <string name="encounter_submitted">\'s encounter was submitted successfully.</string>
+    <string name="copayment_paid_checkbox">Copayment received</string>
+    <plurals name="receipt_line_item_count" >
+        <item quantity="one">%d Item</item>
+        <item quantity="other">%d Items</item>
+    </plurals>
     <plurals name="forms_attached_label" >
+        <item quantity="zero">No forms attached</item>
         <item quantity="one">%d form attached</item>
         <item quantity="other">%d forms attached</item>
     </plurals>
@@ -172,13 +178,12 @@
     <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
 
     <!-- ClinicNumberDialogFragment -->
-    <string name="clinic_number_form_fragment_label">Patient Number</string>
     <string name="clinic_number_save">Complete check in</string>
     <string name="radio_opd">OPD</string>
     <string name="radio_delivery">Delivery</string>
     <string name="clinic_number">Number</string>
     <string name="clinic_number_button">Submit</string>
-    <string name="clinic_number_prompt">Enter the patient\'s clinic number</string>
+    <string name="clinic_number_prompt">Enter the member\'s clinic number</string>
 
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_info_label">Enroll newborn</string>
@@ -196,7 +201,7 @@
     <string name="sync_edited_members_label">Edited members</string>
     <string name="sync_new_members_label">New members</string>
     <string name="sync_id_events_label">Identifications</string>
-    <string name="sync_encounters_label">Treatment Information</string>
+    <string name="sync_encounters_label">Encounters</string>
     <string name="sync_encounter_forms_label">Treatment Forms</string>
     <string name="all_synced">All synced</string>
 </resources>

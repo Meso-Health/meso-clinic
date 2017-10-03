@@ -106,4 +106,14 @@ public class BillableTest {
         billable.setType(Billable.TypeEnum.VACCINE);
         assertFalse(billable.valid());
     }
+
+    @Test
+    public void typeEnum_toString_returnsTitleCase() throws Exception {
+        assertEquals(Billable.TypeEnum.SERVICE.toString(), "Service");
+    }
+
+    @Test
+    public void typeEnum_fromString_parsesTitleCase() throws Exception {
+        assertEquals(Billable.TypeEnum.fromString("Service"), Billable.TypeEnum.SERVICE);
+    }
 }
