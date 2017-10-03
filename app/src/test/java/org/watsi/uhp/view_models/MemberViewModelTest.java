@@ -17,10 +17,6 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.watsi.uhp.view_models.MemberViewModel.NAME_VALIDATION_ERROR;
 import static org.watsi.uhp.view_models.MemberViewModel.PHONE_NUMBER_VALIDATION_ERROR;
 
-/**
- * Created by michaelliang on 8/2/17.
- */
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ExceptionManager.class })
 public class MemberViewModelTest {

@@ -27,7 +27,7 @@ import java.util.UUID;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     private static DatabaseHelper instance;
 
@@ -170,6 +170,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                         form.setPhoto(photo);
                         getDao(EncounterForm.class).update(form);
                     }
+                case 11:
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN copayment_paid BOOLEAN NOT NULL DEFAULT 1;");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);

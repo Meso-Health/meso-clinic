@@ -37,7 +37,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -49,35 +48,16 @@ public class EncounterPresenterTest {
     private EncounterPresenter encounterPresenter;
     private Encounter encounter;
 
-    @Mock
-    View view;
-
-    @Mock
-    Spinner spinner;
-
-    @Mock
-    SearchView searchView;
-
-    @Mock
-    ListView listView;
-
-    @Mock
-    TextView textView;
-
-    @Mock
-    ArrayAdapter mockArrayAdapter;
-
-    @Mock
-    EncounterItemAdapter encounterItemAdapter;
-
-    @Mock
-    Context context;
-
-    @Mock
-    NavigationManager navigationManager;
-
-    @Mock
-    EncounterFragment encounterFragment;
+    @Mock View view;
+    @Mock Spinner spinner;
+    @Mock SearchView searchView;
+    @Mock ListView listView;
+    @Mock TextView textView;
+    @Mock ArrayAdapter mockArrayAdapter;
+    @Mock EncounterItemAdapter encounterItemAdapter;
+    @Mock Context context;
+    @Mock NavigationManager navigationManager;
+    @Mock EncounterFragment encounterFragment;
 
     @Before
     public void setup() {
@@ -223,7 +203,7 @@ public class EncounterPresenterTest {
     public void getCategoriesList() throws Exception {
         List<String> categoriesList = encounterPresenter.getCategoriesList("foo");
 
-        assertEquals(categoriesList.toString(), "[foo, DRUG, SERVICE, LAB, SUPPLY, VACCINE]");
+        assertEquals(categoriesList.toString(), "[foo, Drug, Service, Lab, Supply, Vaccine]");
     }
 
     @Test

@@ -26,7 +26,7 @@ public class BillableViewModel extends BaseObservable {
     private final FormFragment mFormFragment;
     private List<String> mBillableTypeChoices;
 
-    private Integer mSelectedTypeIndex;
+    private int mSelectedTypeIndex;
 
     public BillableViewModel(FormFragment formFragment) {
         mBillable = new Billable();
@@ -108,7 +108,7 @@ public class BillableViewModel extends BaseObservable {
     public void setSelectedTypeIndex(Integer i) {
         mSelectedTypeIndex = i;
         if (i > 0) {
-            Billable.TypeEnum selectedType = Billable.TypeEnum.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex));
+            Billable.TypeEnum selectedType = Billable.TypeEnum.fromString(mBillableTypeChoices.get(mSelectedTypeIndex));
             mBillable.setType(selectedType);
             if (selectedType.equals(Billable.TypeEnum.VACCINE)) {
                 // According to our DB, all vaccines are of composition "vial".

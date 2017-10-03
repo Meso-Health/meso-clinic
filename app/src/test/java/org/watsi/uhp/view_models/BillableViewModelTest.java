@@ -11,8 +11,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.models.Billable;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

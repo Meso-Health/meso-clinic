@@ -53,7 +53,7 @@ public class LoginFeature {
         onView(allOf(supportsInputMethods(), withParent(withId(R.id.login_password))))
                 .perform(typeText(password));
         onView(withId(R.id.login_button)).perform(click());
-        onView(withText("Select a patient")).check(matches(isDisplayed()));
+        onView(withText("Select a member")).check(matches(isDisplayed()));
     }
 
     public static void logsUserOut() {

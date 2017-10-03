@@ -104,7 +104,7 @@ public class EncounterFlowFeature extends BaseTest {
 
         // after dismissing a patient, the user can see a confirmation toast and that the patient
         // is not in the current patients list
-        onView(withText("Patient on other phone")).inRoot(isDialog()).perform(click());
+        onView(withText("Member on other phone")).inRoot(isDialog()).perform(click());
         onView(withText(R.string.current_patients_fragment_label)).check(matches(isDisplayed()));
         onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
     }
