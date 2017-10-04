@@ -351,9 +351,9 @@ public class FetchServiceTest {
         spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic();
-        BillableDao.clear();
+        BillableDao.clearBillablesNotCreatedDuringEncounter();
         verifyStatic();
-        BillableDao.create(mockBillablesList);
+        BillableDao.createOrUpdate(mockBillablesList);
         verify(mockPreferencesManager, times(1))
                 .setBillablesLastModified(updatedLastModifiedTimestamp);
     }
@@ -371,9 +371,9 @@ public class FetchServiceTest {
         spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic(never());
-        BillableDao.clear();
+        BillableDao.clearBillablesNotCreatedDuringEncounter();
         verifyStatic(never());
-        BillableDao.create(anyListOf(Billable.class));
+        BillableDao.createOrUpdate(anyListOf(Billable.class));
         verify(mockPreferencesManager, never()).setBillablesLastModified(anyString());
         verifyStatic(never());
         ExceptionManager.requestFailure(
@@ -397,9 +397,9 @@ public class FetchServiceTest {
         spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic(never());
-        BillableDao.clear();
+        BillableDao.clearBillablesNotCreatedDuringEncounter();
         verifyStatic(never());
-        BillableDao.create(anyListOf(Billable.class));
+        BillableDao.createOrUpdate(anyListOf(Billable.class));
         verify(mockPreferencesManager, never()).setBillablesLastModified(anyString());
         verifyStatic();
         ExceptionManager.requestFailure(
