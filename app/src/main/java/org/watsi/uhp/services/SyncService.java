@@ -5,7 +5,6 @@ import android.util.Log;
 import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -14,7 +13,6 @@ import org.watsi.uhp.models.SyncableModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,28 +119,6 @@ public class SyncService extends AbstractSyncJobService {
     protected void syncMembers(List<Member> unsyncedMembers) throws SQLException, IOException {
         for (Member member : unsyncedMembers) {
             try {
-                // There was one member whose birthdate was accidentally set in the future.
-                // This is temporary code to set the birthdate to Aug 30th 2017 for this specific member.
-                // This code will be removed once the member has successfully synced.
-                String memberIdWithDirtyAgeField = "d016d90a-93d1-44a1-94d5-3439146662ec";
-                if (member.getId().toString().equals(memberIdWithDirtyAgeField) &&
-                        Clock.getCurrentTime().getTime() < member.getBirthdate().getTime()) {
-                    try {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, 2017);
-                        calendar.set(Calendar.MONTH, Calendar.AUGUST);
-                        calendar.set(Calendar.DAY_OF_MONTH, 30);
-                        calendar.set(Calendar.HOUR_OF_DAY, 0);
-                        calendar.set(Calendar.MINUTE,0);
-                        calendar.set(Calendar.SECOND,0);
-                        calendar.set(Calendar.MILLISECOND,0);
-                        member.setBirthdate(calendar.getTime());
-                        member.saveChanges(member.getToken());
-                    } catch (AbstractModel.ValidationException e) {
-                        ExceptionManager.reportErrorMessage("Failed to save member with dirty age with id: " + memberIdWithDirtyAgeField);
-                    }
-                }
-
                 Response<Member> response = member.sync(this);
                 if (response.isSuccessful()) {
                     member.updateFromSync(response);
@@ -154,7 +130,15 @@ public class SyncService extends AbstractSyncJobService {
                             response.raw(), params);
                 }
             } catch (SyncableModel.SyncException e) {
-                ExceptionManager.reportException(e);
+                // There were two member whose birthdate was accidentally set in the future.
+                // This code will be removed once the member has successfully synced.
+                if ((member.getId().toString().equals("416abfbc-42d9-45ce-91a5-8254bf83cb4b") ||
+                        member.getId().toString().equals("d016d90a-93d1-44a1-94d5-3439146662ec")) &&
+                        Clock.getCurrentTime().getTime() < member.getBirthdate().getTime()) {
+                    member.markAllFieldsAsCleanInOrderToFixDirtyAgeField();
+                } else {
+                    ExceptionManager.reportException(e);
+                }
             }
         }
     }

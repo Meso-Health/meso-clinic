@@ -19,10 +19,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-/**
- * Created by michaelliang on 8/7/17.
- */
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ExceptionManager.class })
 public class EnrollNewbornViewModelTest {

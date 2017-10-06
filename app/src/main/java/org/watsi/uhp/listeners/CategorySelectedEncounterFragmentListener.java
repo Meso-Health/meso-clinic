@@ -25,7 +25,7 @@ public class CategorySelectedEncounterFragmentListener implements AdapterView.On
 
         if (position != 0) {
             String categoryString = (String) parent.getItemAtPosition(position);
-            Billable.TypeEnum selectedCategory = Billable.TypeEnum.valueOf(categoryString);
+            Billable.TypeEnum selectedCategory = Billable.TypeEnum.fromString(categoryString);
             if (selectedCategory.equals(Billable.TypeEnum.DRUG)) {
                 mEncounterPresenter.getDrugSearchView().setVisibility(View.VISIBLE);
                 KeyboardManager.focusAndForceShowKeyboard(mEncounterPresenter.getDrugSearchView(), mContext);

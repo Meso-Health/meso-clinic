@@ -15,6 +15,8 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
+import org.watsi.uhp.fragments.ReceiptFragment;
+import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -24,6 +26,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,38 +38,17 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 @PrepareForTest({ ExceptionManager.class })
 public class MenuNavigationManagerTest {
 
-    @Mock
-    private AppCompatActivity mockActivity;
-
-    @Mock
-    private MenuItem mockMenuItem;
-
-    @Mock
-    private Fragment mockGenericFragment;
-
-    @Mock
-    private IdentificationEvent mockIdEvent;
-
-    @Mock
-    private CurrentMemberDetailFragment mockCurrentMemberDetailFragment;
-
-    @Mock
-    private CheckInMemberDetailFragment mockCheckInMemberDetailFragment;
-
-    @Mock
-    private SessionManager mockSessionManager;
-
-    @Mock
-    private ClinicActivity mockClinicActivity;
-
-    @Mock
-    private Member mockMember;
-
-    @Mock
-    private Member mockNewBorn;
-
-    @Mock
-    private NavigationManager mockNavigationManager;
+    @Mock private AppCompatActivity mockActivity;
+    @Mock private MenuItem mockMenuItem;
+    @Mock private Fragment mockGenericFragment;
+    @Mock private IdentificationEvent mockIdEvent;
+    @Mock private CurrentMemberDetailFragment mockCurrentMemberDetailFragment;
+    @Mock private CheckInMemberDetailFragment mockCheckInMemberDetailFragment;
+    @Mock private SessionManager mockSessionManager;
+    @Mock private ClinicActivity mockClinicActivity;
+    @Mock private Member mockMember;
+    @Mock private Member mockNewBorn;
+    @Mock private NavigationManager mockNavigationManager;
 
     private MenuNavigationManager menuNavigationManager;
 
@@ -172,5 +154,19 @@ public class MenuNavigationManagerTest {
 
         verifyStatic();
         ExceptionManager.reportErrorMessage(any(String.class));
+    }
+
+    @Test
+    public void submitWithoutCopayment() throws Exception {
+        ReceiptFragment mockFragment = mock(ReceiptFragment.class);
+        Encounter mockEncounter = mock(Encounter.class);
+
+        when(mockMenuItem.getItemId()).thenReturn(R.id.menu_submit_without_copayment);
+        when(mockFragment.getEncounter()).thenReturn(mockEncounter);
+
+        menuNavigationManager.nextStep(mockFragment, mockMenuItem);
+
+        verify(mockEncounter).setCopaymentPaid(false);
+        verify(mockFragment).nextStep();
     }
 }

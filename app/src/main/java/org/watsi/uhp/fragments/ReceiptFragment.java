@@ -1,21 +1,26 @@
 package org.watsi.uhp.fragments;
 
+import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
+import org.watsi.uhp.databinding.FragmentReceiptBinding;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
+import org.watsi.uhp.databinding.FragmentReceiptListFooterBinding;
+import org.watsi.uhp.databinding.FragmentReceiptListHeaderBinding;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.view_models.EncounterViewModel;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class ReceiptFragment extends FormFragment<Encounter> {
 
@@ -51,21 +56,50 @@ public class ReceiptFragment extends FormFragment<Encounter> {
         Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
 
+    public Encounter getEncounter() {
+        return mSyncableModel;
+    }
+
     @Override
     void setUpFragment(View view) {
-        List<EncounterItem> encounterItems = (List<EncounterItem>) mSyncableModel.getEncounterItems();
+        setHasOptionsMenu(true);
+        getActivity().invalidateOptionsMenu();
+
+        FragmentReceiptBinding binding = DataBindingUtil.bind(view);
+        EncounterViewModel viewModel = new EncounterViewModel(mSyncableModel, getContext());
+        binding.setEncounter(viewModel);
+
+        setupListView(view, viewModel);
+    }
+
+    // Android does not let you nest views that scroll and by default ListView is a scrollable view,
+    // so in order to have the entire receipt content by scrollable, we have to include it within
+    // the ListView by adding the top label and bottom total information as a header/footer
+    private void setupListView(View view, EncounterViewModel viewModel) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);
-        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), encounterItems);
+
+        View listHeaderView = inflater.inflate(R.layout.fragment_receipt_list_header, null);
+        FragmentReceiptListHeaderBinding headerBinding = DataBindingUtil.bind(listHeaderView);
+        headerBinding.setEncounter(viewModel);
+        listView.addHeaderView(listHeaderView);
+
+        View listFooterView = inflater.inflate(R.layout.fragment_receipt_list_footer, null);
+        FragmentReceiptListFooterBinding footerBinding = DataBindingUtil.bind(listFooterView);
+        footerBinding.setEncounter(viewModel);
+        listView.addFooterView(listFooterView);
+
+        Adapter mAdapter = new ReceiptItemAdapter(getActivity(), mSyncableModel.getEncounterItems());
         listView.setAdapter((ListAdapter) mAdapter);
 
-        TextView priceTextView = (TextView) view.findViewById(R.id.total_price);
+        listView.setFooterDividersEnabled(false);
+        listView.setHeaderDividersEnabled(false);
+    }
 
-        String formattedPrice = Encounter.PRICE_FORMAT.format(mSyncableModel.price());
-        priceTextView.setText(getString(R.string.price_with_currency, formattedPrice));
-
-        int numFormsAttached = mSyncableModel.getEncounterForms().size();
-        ((TextView) view.findViewById(R.id.forms_attached)).setText(getActivity().getResources()
-                .getQuantityString(R.plurals.forms_attached_label, numFormsAttached, numFormsAttached));
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_submit_without_copayment).setVisible(true);
     }
 }

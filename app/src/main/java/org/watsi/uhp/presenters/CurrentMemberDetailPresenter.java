@@ -67,6 +67,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         Encounter encounter = new Encounter();
         IdentificationEvent checkIn = getMember().currentCheckIn();
         if (checkIn != null) {
+            encounter.setCopaymentPaid(true);
             encounter.setOccurredAt(Clock.getCurrentTime());
             encounter.setMember(getMember());
             encounter.setIdentificationEvent(checkIn);

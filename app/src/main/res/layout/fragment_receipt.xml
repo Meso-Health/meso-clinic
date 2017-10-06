@@ -1,63 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/fragment_vertical_margin" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="encounter" type="org.watsi.uhp.view_models.EncounterViewModel"/>
+    </data>
 
-    <TextView
-        android:id="@+id/receipt_prompt"
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:text="@string/receipt_check_prompt" />
+        android:layout_marginRight="@dimen/fragment_horizontal_margin" >
 
-    <ListView
-        android:id="@+id/receipt_items"
-        android:layout_width="match_parent"
-        android:layout_height="390dp"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:layout_below="@id/receipt_prompt" />
+        <ListView
+            android:id="@+id/receipt_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="48dp"
+            android:layout_marginTop="@dimen/fragment_vertical_margin"/>
 
-    <TextView
-        android:id="@+id/total"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:layout_below="@id/receipt_items"
-        android:text="@string/total"
-        android:theme="@style/Title" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white" >
 
-    <TextView
-        android:id="@+id/total_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:layout_below="@id/receipt_items"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/total"
-        android:gravity="end"
-        android:theme="@style/Title" />
-
-    <TextView
-        android:id="@+id/forms_attached"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:layout_below="@id/total_price"
-        android:layout_alignParentEnd="true"
-        android:gravity="end" />
-
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/PrimaryButton"
-        android:text="@string/save_encounter_button"
-        android:layout_alignParentBottom="true"/>
-</RelativeLayout>
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/PrimaryButton"
+                android:text="@string/save_encounter_button" />
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

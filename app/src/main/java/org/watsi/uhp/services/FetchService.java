@@ -142,8 +142,8 @@ public class FetchService extends AbstractSyncJobService {
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();
-            BillableDao.clear();
-            BillableDao.create(billables);
+            BillableDao.clearBillablesNotCreatedDuringEncounter();
+            BillableDao.createOrUpdate(billables);
             preferencesManager.setBillablesLastModified(
                     response.headers().get(LAST_MODIFIED_HEADER));
         } else {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="encounter" type="org.watsi.uhp.view_models.EncounterViewModel"/>
+    </data>
+
+    <TextView
+        android:id="@+id/receipt_item_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@{encounter.itemsCountLabel}" />
+</layout>

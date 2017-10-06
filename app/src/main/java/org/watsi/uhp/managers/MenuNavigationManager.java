@@ -9,6 +9,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
+import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
@@ -25,7 +26,6 @@ public class MenuNavigationManager {
     }
 
     public boolean nextStep(Fragment currentFragment, MenuItem menuItem) {
-        Member member = getMemberFromFragmentIfExists(currentFragment);
         switch (menuItem.getItemId()) {
             case R.id.menu_dismiss_member:
                 dismissMember(currentFragment);
@@ -34,6 +34,7 @@ public class MenuNavigationManager {
                 editMember(currentFragment);
                 break;
             case R.id.menu_enroll_newborn:
+                Member member = getMemberFromFragmentIfExists(currentFragment);
                 Member newborn = member.createNewborn();
                 IdentificationEvent idEvent = new IdentificationEvent(newborn,
                         IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
@@ -44,6 +45,11 @@ public class MenuNavigationManager {
                 break;
             case R.id.menu_logout:
                 confirmBeforeLogout(currentFragment);
+                break;
+            case R.id.menu_submit_without_copayment:
+                ReceiptFragment receiptFragment = (ReceiptFragment) currentFragment;
+                receiptFragment.getEncounter().setCopaymentPaid(false);
+                receiptFragment.nextStep();
                 break;
         }
         return true;

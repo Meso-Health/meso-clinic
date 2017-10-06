@@ -16,6 +16,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -194,5 +195,12 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         UnauthenticatedException() {
             super("Current user is not authenticated");
         }
+    }
+
+    // This was code written in order to mark a member as synced if it had birthdate in the future.
+    // This will be removed once that data is fixed. Please do not call this method in other scenarios.
+    public void markAllFieldsAsCleanInOrderToFixDirtyAgeField() throws SQLException {
+        setDirtyFields(Collections.<String>emptySet());
+        getDao().createOrUpdate((T) this);;
     }
 }

@@ -1,16 +1,15 @@
 package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,20 +53,20 @@ public class BillableDao {
         getInstance().getBillableDao().create(billable);
     }
 
-    public static void create(List<Billable> billables) throws SQLException {
-        Date createdAt = Clock.getCurrentTime();
+    public static void createOrUpdate(List<Billable> billables) throws SQLException {
         for (Billable billable : billables) {
-            billable.setCreatedAt(createdAt);
+            getInstance().getBillableDao().createOrUpdate(billable);
         }
-        getInstance().getBillableDao().create(billables);
     }
 
     public static void refresh(Billable billable) throws SQLException {
         getInstance().getBillableDao().refresh(billable);
     }
 
-    public static void clear() throws SQLException {
-        TableUtils.clearTable(getInstance().getBillableDao().getConnectionSource(), Billable.class);
+    public static void clearBillablesNotCreatedDuringEncounter() throws SQLException {
+        DeleteBuilder<Billable, UUID> deleteBuilder = getInstance().getBillableDao().deleteBuilder();
+        deleteBuilder.where().eq(Billable.FIELD_NAME_CREATED_DURING_ENCOUNTER, false);
+        deleteBuilder.delete();
     }
 
     public static Billable findById(UUID id) throws SQLException {
@@ -113,5 +112,23 @@ public class BillableDao {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put(Billable.FIELD_NAME_TYPE, category);
         return getInstance().getBillableDao().queryForFieldValues(queryMap);
+    }
+
+    public static List<String> getUniqueBillableCompositions() throws SQLException {
+        PreparedQuery<Billable> pq = getInstance().getBillableDao()
+                .queryBuilder()
+                .distinct()
+                .orderBy(Billable.FIELD_NAME_COMPOSITION, false)
+                .selectColumns(Billable.FIELD_NAME_COMPOSITION)
+                .where()
+                .isNotNull(Billable.FIELD_NAME_COMPOSITION)
+                .prepare();
+
+        List<Billable> allBillables = getInstance().getBillableDao().query(pq);
+        List<String> compositions = new ArrayList<>();
+        for (Billable billable : allBillables) {
+            compositions.add(billable.getComposition());
+        }
+        return compositions;
     }
 }

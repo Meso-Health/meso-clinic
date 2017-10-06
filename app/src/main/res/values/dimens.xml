@@ -30,7 +30,7 @@
     <dimen name="item_member_list_photo_width">90dp</dimen>
     <dimen name="item_member_list_photo_height">120dp</dimen>
 
-    <!-- dimensions for photo on detail view-->
+    <!-- dimensions for photo on detail view -->
     <dimen name="detail_fragment_photo_height">208dp</dimen>
     <dimen name="detail_fragment_photo_width">156dp</dimen>
 </resources>
