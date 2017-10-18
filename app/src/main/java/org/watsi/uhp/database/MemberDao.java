@@ -21,48 +21,26 @@ import java.util.UUID;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
-/**
- * POJO helper for querying Members
- */
 public class MemberDao {
 
-    private static MemberDao instance = new MemberDao();
-
-    private Dao<Member, UUID> mMemberDao;
-
-    private static synchronized MemberDao getInstance() {
-        return instance;
-    }
-
-    private MemberDao() {
+    private static Dao<Member, UUID> getDao() throws SQLException {
+        return DatabaseHelper.fetchDao(Member.class);
     }
 
     public static void create(Member member) throws SQLException {
         member.setCreatedAt(Clock.getCurrentTime());
-        getInstance().getMemberDao().create(member);
-    }
-
-    private void setMemberDao(Dao memberDao) {
-        this.mMemberDao = memberDao;
-    }
-
-    private Dao<Member, UUID> getMemberDao() throws SQLException {
-        if (mMemberDao == null) {
-            setMemberDao(DatabaseHelper.getHelper().getDao(Member.class));
-        }
-
-        return mMemberDao;
+        getDao().create(member);
     }
 
     public static Member findById(UUID id) throws SQLException {
-        return getInstance().getMemberDao().queryForId(id);
+        return getDao().queryForId(id);
     }
 
     public static Member findByCardId(String cardId) throws SQLException {
         cardId = cardId.replaceAll(" ","");
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_CARD_ID, cardId);
-        List<Member> results = getInstance().getMemberDao().queryForFieldValues(queryMap);
+        List<Member> results = getDao().queryForFieldValues(queryMap);
         if (results.size() == 0) { throw new SQLException("Record not found."); }
         return results.get(0);
     }
@@ -70,26 +48,26 @@ public class MemberDao {
     private static List<Member> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Member.FIELD_NAME_FULL_NAME, new SelectArg(name));
-        return getInstance().getMemberDao().queryForFieldValues(queryMap);
+        return getDao().queryForFieldValues(queryMap);
     }
 
     public static List<Member> withCardIdLike(String query) throws SQLException {
         query = query.replaceAll(" ","");
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
+        PreparedQuery<Member> pq = getDao()
                 .queryBuilder()
                 .where()
                 .like(Member.FIELD_NAME_CARD_ID, "%" + query + "%")
                 .prepare();
-        return getInstance().getMemberDao().query(pq);
+        return getDao().query(pq);
     }
 
     private static Set<String> allUniqueMemberNames() throws SQLException {
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
+        PreparedQuery<Member> pq = getDao()
                 .queryBuilder()
                 .selectColumns(Member.FIELD_NAME_FULL_NAME)
                 .prepare();
 
-        List<Member> members = getInstance().getMemberDao().query(pq);
+        List<Member> members = getDao().query(pq);
         List<String> names = new ArrayList<>();
         for (Member m : members) {
             names.add(m.getFullName());
@@ -97,10 +75,10 @@ public class MemberDao {
         return new HashSet<>(names);
     }
 
-    public static List<Member> fuzzySearchMembers(String query, int number, int threshold)
+    public static List<Member> fuzzySearchMembers(String query)
             throws SQLException {
         List<ExtractedResult> topMatchingNames =
-                FuzzySearch.extractTop(query, allUniqueMemberNames(), number, threshold);
+                FuzzySearch.extractTop(query, allUniqueMemberNames(), 20, 60);
 
         List<Member> topMatchingMembers = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
@@ -126,7 +104,7 @@ public class MemberDao {
                 "ORDER BY last_identifications.occurred_at";
 
         GenericRawResults<String> rawResults =
-                getInstance().getMemberDao().queryRaw(rawQuery,
+                getDao().queryRaw(rawQuery,
                         new RawRowMapper<String>() {
                             public String mapRow(String[] columnNames, String[] resultColumns) {
                                 return resultColumns[0];
@@ -142,7 +120,7 @@ public class MemberDao {
 
     public static List<Member> getRemainingHouseholdMembers(UUID householdId, UUID memberId) throws
             SQLException {
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
+        PreparedQuery<Member> pq = getDao()
                 .queryBuilder()
                 .orderBy(Member.FIELD_NAME_AGE, false)
                 .where()
@@ -150,27 +128,27 @@ public class MemberDao {
                 .and()
                 .not().eq(Member.FIELD_NAME_ID, memberId)
                 .prepare();
-        return getInstance().getMemberDao().query(pq);
+        return getDao().query(pq);
     }
 
     public static List<Member> membersWithPhotosToFetch() throws SQLException {
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
+        PreparedQuery<Member> pq = getDao()
                 .queryBuilder()
                 .where()
                 .isNull(Member.FIELD_NAME_CROPPED_PHOTO_BYTES)
                 .and()
                 .isNotNull(Member.FIELD_NAME_REMOTE_MEMBER_PHOTO_URL)
                 .prepare();
-        return getInstance().getMemberDao().query(pq);
+        return getDao().query(pq);
     }
 
     public static Set<UUID> allMemberIds() throws SQLException {
-        PreparedQuery<Member> pq = getInstance().getMemberDao()
+        PreparedQuery<Member> pq = getDao()
                 .queryBuilder()
                 .selectColumns(Member.FIELD_NAME_ID)
                 .prepare();
 
-        List<Member> members = getInstance().getMemberDao().query(pq);
+        List<Member> members = getDao().query(pq);
         Set<UUID> ids = new HashSet<>();
         for (Member m : members) {
             ids.add(m.getId());
@@ -180,6 +158,6 @@ public class MemberDao {
 
     //TODO: move to a base Dao class
     public static List<Member> all() throws SQLException {
-        return getInstance().getMemberDao().queryForAll();
+        return getDao().queryForAll();
     }
 }
