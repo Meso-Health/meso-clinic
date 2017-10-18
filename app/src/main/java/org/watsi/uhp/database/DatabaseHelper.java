@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -19,6 +20,8 @@ import org.watsi.uhp.models.Photo;
 import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -30,6 +33,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 12;
 
     private static DatabaseHelper instance;
+
+    private final Map<Class, Dao> daoMap = new HashMap<>();
 
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,6 +51,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         if (instance == null) {
             instance = new DatabaseHelper(context.getApplicationContext());
         }
+    }
+
+    public static synchronized void reset() {
+        instance.close();
+        instance = null;
+    }
+
+    public static synchronized Dao fetchDao(Class clazz) throws SQLException {
+        if (!instance.daoMap.containsKey(clazz)) {
+            instance.daoMap.put(clazz, instance.getDao(clazz));
+        }
+        return instance.daoMap.get(clazz);
     }
 
     @Override

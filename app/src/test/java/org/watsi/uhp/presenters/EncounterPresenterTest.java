@@ -180,7 +180,7 @@ public class EncounterPresenterTest {
         billables.add(fakeLab2);
         billables.add(fakeLab3);
 
-        when(BillableDao.getBillablesByCategory(Billable.TypeEnum.LAB)).thenReturn(billables);
+        when(BillableDao.getBillablesByType(Billable.TypeEnum.LAB)).thenReturn(billables);
 
         List<Billable> billablesList = encounterPresenter.getBillablesList(Billable.TypeEnum.LAB);
 

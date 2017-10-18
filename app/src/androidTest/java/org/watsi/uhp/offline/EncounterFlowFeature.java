@@ -57,9 +57,9 @@ public class EncounterFlowFeature extends BaseTest {
     @Before
     public void setUpTest() throws SQLException, AbstractModel.ValidationException {
         member = MemberDao.all().get(0);
-        billableDrug = BillableDao.getBillablesByCategory(Billable.TypeEnum.DRUG).get(0);
-        billableLab = BillableDao.getBillablesByCategory(Billable.TypeEnum.LAB).get(0);
-        billableSupply = BillableDao.getBillablesByCategory(Billable.TypeEnum.SUPPLY).get(0);
+        billableDrug = BillableDao.getBillablesByType(Billable.TypeEnum.DRUG).get(0);
+        billableLab = BillableDao.getBillablesByType(Billable.TypeEnum.LAB).get(0);
+        billableSupply = BillableDao.getBillablesByType(Billable.TypeEnum.SUPPLY).get(0);
 
         IdentificationEvent idEvent = new IdentificationEventFactory(
                 member,
