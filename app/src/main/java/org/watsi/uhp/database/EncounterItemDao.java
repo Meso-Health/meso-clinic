@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * POJO helper for querying EncounterItems
- */
 public class EncounterItemDao {
 
     private static Dao<EncounterItem, UUID> getDao() throws SQLException {
