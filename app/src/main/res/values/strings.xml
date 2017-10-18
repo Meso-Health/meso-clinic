@@ -73,7 +73,7 @@
 
     <!-- MemberDetailFragment -->
     <plurals name="household_label">
-        <item quantity="one">%d Household Member</item>
+        <item quantity="one">No other household members</item>
         <item quantity="other">%d Household Members</item>
     </plurals>
 
