@@ -46,6 +46,10 @@ public class EncounterItem extends AbstractModel {
         setQuantity(quantity);
     }
 
+    public UUID getId() {
+        return mId;
+    }
+
     public UUID getEncounterId() {
         return mEncounterId;
     }
