@@ -12,30 +12,11 @@ import java.util.UUID;
  */
 public class EncounterDao {
 
-    private static EncounterDao instance = new EncounterDao();
-
-    private Dao<Encounter, UUID> mEncounterDao;
-
-    private static synchronized EncounterDao getInstance() {
-        return instance;
-    }
-
-    private EncounterDao() {
-    }
-
-    private void setEncounterDao(Dao encounterDao) {
-        this.mEncounterDao = encounterDao;
-    }
-
-    private Dao<Encounter, UUID> getEncounterDao() throws SQLException {
-        if (mEncounterDao == null) {
-            setEncounterDao(DatabaseHelper.getHelper().getDao(Encounter.class));
-        }
-
-        return mEncounterDao;
+    private static Dao<Encounter, UUID> getDao() throws SQLException {
+        return DatabaseHelper.fetchDao(Encounter.class);
     }
 
     public static Encounter find(UUID id) throws SQLException {
-        return getInstance().getEncounterDao().queryForId(id);
+        return getDao().queryForId(id);
     }
 }

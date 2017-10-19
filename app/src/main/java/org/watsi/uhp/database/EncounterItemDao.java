@@ -14,44 +14,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * POJO helper for querying LineItems
- */
 public class EncounterItemDao {
 
-    private static EncounterItemDao instance = new EncounterItemDao();
-
-    private Dao<EncounterItem, UUID> mEncounterItemDao;
-
-    private static synchronized EncounterItemDao getInstance() {
-        return instance;
-    }
-
-    private EncounterItemDao() {
-    }
-
-    private void setEncounterItemDao(Dao encounterItemDao) {
-        this.mEncounterItemDao = encounterItemDao;
-    }
-
-    private Dao<EncounterItem, UUID> getEncounterItemDao() throws SQLException {
-        if (mEncounterItemDao == null) {
-            setEncounterItemDao(DatabaseHelper.getHelper().getDao(EncounterItem.class));
-        }
-
-        return mEncounterItemDao;
+    private static Dao<EncounterItem, UUID> getDao() throws SQLException {
+        return DatabaseHelper.fetchDao(EncounterItem.class);
     }
 
     public static void create(EncounterItem encounterItem) throws SQLException {
         encounterItem.setCreatedAt(Clock.getCurrentTime());
-        getInstance().getEncounterItemDao().create(encounterItem);
+        getDao().create(encounterItem);
     }
 
     public static List<EncounterItem> fromEncounter(Encounter encounter) throws SQLException {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put(EncounterItem.FIELD_NAME_ENCOUNTER_ID, encounter.getId());
-        List<EncounterItem> encounterItems =
-                getInstance().getEncounterItemDao().queryForFieldValues(queryMap);
+        List<EncounterItem> encounterItems = getDao().queryForFieldValues(queryMap);
         for (EncounterItem encounterItem : encounterItems) {
             encounterItem.setEncounterId(encounterItem.getEncounter().getId());
             BillableDao.refresh(encounterItem.getBillable());
@@ -59,9 +36,9 @@ public class EncounterItemDao {
         return encounterItems;
     }
 
-    public static ArrayList<EncounterItem> getDefaultEncounterItems(
+    public static List<EncounterItem> getDefaultEncounterItems(
             IdentificationEvent.ClinicNumberTypeEnum type) throws SQLException {
-        ArrayList<EncounterItem> defaultLineItems = new ArrayList<>();
+        List<EncounterItem> defaultLineItems = new ArrayList<>();
 
         if (type == IdentificationEvent.ClinicNumberTypeEnum.OPD) {
             defaultLineItems.add(new EncounterItem(BillableDao.findByName("Consultation").get(0), 1));

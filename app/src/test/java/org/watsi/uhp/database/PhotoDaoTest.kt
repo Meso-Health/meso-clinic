@@ -2,11 +2,7 @@ package org.watsi.uhp.database
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import org.watsi.uhp.managers.Clock
 import org.watsi.uhp.models.Encounter
 import org.watsi.uhp.models.EncounterForm
@@ -14,13 +10,7 @@ import org.watsi.uhp.models.Member
 import org.watsi.uhp.models.Photo
 import java.util.*
 
-@RunWith(RobolectricTestRunner::class)
-class PhotoDaoTest {
-
-    @Before
-    fun setup() {
-        DatabaseHelper.init(RuntimeEnvironment.application)
-    }
+class PhotoDaoTest: DaoTest() {
 
     @Test
     fun canBeDeleted() {

@@ -70,7 +70,7 @@ class SearchMemberPresenterTest {
     fun performQuery_queryContainsOnlyLetters() {
         val query = "Foo"
 
-        `when`(MemberDao.fuzzySearchMembers(query, 20, 60)).thenReturn(mockMemberList)
+        `when`(MemberDao.fuzzySearchMembers(query)).thenReturn(mockMemberList)
 
         val result = presenter.performQuery(query)
 

@@ -25,69 +25,50 @@ import me.xdrop.fuzzywuzzy.model.ExtractedResult;
  */
 public class BillableDao {
 
-    private static BillableDao instance = new BillableDao();
-
-    private Dao<Billable, UUID> mBillableDao;
-
-    private static synchronized BillableDao getInstance() {
-        return instance;
-    }
-
-    private BillableDao() {
-    }
-
-    private void setBillableDao(Dao billableDao) {
-        this.mBillableDao = billableDao;
-    }
-
-    private Dao<Billable, UUID> getBillableDao() throws SQLException {
-        if (mBillableDao == null) {
-            setBillableDao(DatabaseHelper.getHelper().getDao(Billable.class));
-        }
-
-        return mBillableDao;
+    private static Dao<Billable, UUID> getDao() throws SQLException {
+        return DatabaseHelper.fetchDao(Billable.class);
     }
 
     public static void create(Billable billable) throws SQLException {
         billable.setCreatedAt(Clock.getCurrentTime());
-        getInstance().getBillableDao().create(billable);
+        getDao().create(billable);
     }
 
     public static void createOrUpdate(List<Billable> billables) throws SQLException {
         for (Billable billable : billables) {
-            getInstance().getBillableDao().createOrUpdate(billable);
+            getDao().createOrUpdate(billable);
         }
     }
 
     public static void refresh(Billable billable) throws SQLException {
-        getInstance().getBillableDao().refresh(billable);
+        getDao().refresh(billable);
     }
 
     public static void clearBillablesNotCreatedDuringEncounter() throws SQLException {
-        DeleteBuilder<Billable, UUID> deleteBuilder = getInstance().getBillableDao().deleteBuilder();
+        DeleteBuilder<Billable, UUID> deleteBuilder = getDao().deleteBuilder();
         deleteBuilder.where().eq(Billable.FIELD_NAME_CREATED_DURING_ENCOUNTER, false);
         deleteBuilder.delete();
     }
 
     public static Billable findById(UUID id) throws SQLException {
-        return getInstance().getBillableDao().queryForId(id);
+        return getDao().queryForId(id);
     }
 
     public static List<Billable> findByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Billable.FIELD_NAME_NAME, new SelectArg(name));
-        return getInstance().getBillableDao().queryForFieldValues(queryMap);
+        return getDao().queryForFieldValues(queryMap);
     }
 
     public static Set<String> allUniqueDrugNames() throws SQLException {
-        PreparedQuery<Billable> pq = getInstance().getBillableDao()
+        PreparedQuery<Billable> pq = getDao()
                 .queryBuilder()
                 .selectColumns(Billable.FIELD_NAME_NAME)
                 .where()
                 .eq(Billable.FIELD_NAME_TYPE, Billable.TypeEnum.DRUG)
                 .prepare();
 
-        List<Billable> allDrugs = getInstance().getBillableDao().query(pq);
+        List<Billable> allDrugs = getDao().query(pq);
         List<String> names = new ArrayList<>();
         for (Billable billable : allDrugs) {
             names.add(billable.getName());
@@ -102,20 +83,25 @@ public class BillableDao {
         List<Billable> topMatchingDrugs = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
             String name = result.getString();
-            topMatchingDrugs.addAll(findByName(name));
+            List<Billable> billablesWithMatchingName = findByName(name);
+            for (Billable billable : billablesWithMatchingName) {
+                if (billable.getType().equals(Billable.TypeEnum.DRUG)) {
+                    topMatchingDrugs.add(billable);
+                }
+            }
         }
 
         return topMatchingDrugs;
     }
 
-    public static List<Billable> getBillablesByCategory(Billable.TypeEnum category) throws SQLException {
+    public static List<Billable> getBillablesByType(Billable.TypeEnum type) throws SQLException {
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(Billable.FIELD_NAME_TYPE, category);
-        return getInstance().getBillableDao().queryForFieldValues(queryMap);
+        queryMap.put(Billable.FIELD_NAME_TYPE, type);
+        return getDao().queryForFieldValues(queryMap);
     }
 
     public static List<String> getUniqueBillableCompositions() throws SQLException {
-        PreparedQuery<Billable> pq = getInstance().getBillableDao()
+        PreparedQuery<Billable> pq = getDao()
                 .queryBuilder()
                 .distinct()
                 .orderBy(Billable.FIELD_NAME_COMPOSITION, false)
@@ -124,7 +110,7 @@ public class BillableDao {
                 .isNotNull(Billable.FIELD_NAME_COMPOSITION)
                 .prepare();
 
-        List<Billable> allBillables = getInstance().getBillableDao().query(pq);
+        List<Billable> allBillables = getDao().query(pq);
         List<String> compositions = new ArrayList<>();
         for (Billable billable : allBillables) {
             compositions.add(billable.getComposition());

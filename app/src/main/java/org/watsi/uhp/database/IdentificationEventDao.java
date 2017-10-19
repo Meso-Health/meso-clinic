@@ -8,35 +8,12 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
-import java.util.Set;
 import java.util.UUID;
 
-/**
- * POJO helper for querying Identifications
- */
 public class IdentificationEventDao {
 
-    private static IdentificationEventDao instance = new IdentificationEventDao();
-
-    private Dao<IdentificationEvent, UUID> mIdentificationDao;
-
-    private static synchronized IdentificationEventDao getInstance() {
-        return instance;
-    }
-
-    private IdentificationEventDao() {
-    }
-
-    private void setIdentificationEventDao(Dao identificationDao) {
-        this.mIdentificationDao = identificationDao;
-    }
-
-    private Dao<IdentificationEvent, UUID> getIdentificationEventDao() throws SQLException {
-        if (mIdentificationDao == null) {
-            setIdentificationEventDao(DatabaseHelper.getHelper().getDao(IdentificationEvent.class));
-        }
-
-        return mIdentificationDao;
+    private static Dao<IdentificationEvent, UUID> getDao() throws SQLException {
+        return DatabaseHelper.fetchDao(IdentificationEvent.class);
     }
 
     public static IdentificationEvent openCheckIn(UUID memberId) throws SQLException {
@@ -49,7 +26,7 @@ public class IdentificationEventDao {
                 "AND identifications.accepted = 1";
 
         GenericRawResults<String> rawResults =
-                getInstance().getIdentificationEventDao().queryRaw(rawQuery,
+                getDao().queryRaw(rawQuery,
                         new RawRowMapper<String>() {
                             public String mapRow(String[] columnNames, String[] resultColumns) {
                                 return resultColumns[0];
@@ -57,21 +34,11 @@ public class IdentificationEventDao {
                         });
 
         String result = rawResults.getFirstResult();
-        if (result == null) {
-            return null;
-        } else {
-            return getInstance().getIdentificationEventDao().queryForId(UUID.fromString(result));
-        }
+        return (result == null) ? null : getDao().queryForId(UUID.fromString(result));
     }
 
     public static void create(IdentificationEvent idEvent) throws SQLException {
         idEvent.setCreatedAt(Clock.getCurrentTime());
-        getInstance().getIdentificationEventDao().create(idEvent);
-    }
-
-    public static void deleteById(Set<UUID> memberIdsToDelete) throws SQLException {
-        for (UUID id : memberIdsToDelete) {
-            getInstance().getIdentificationEventDao().deleteById(id);
-        }
+        getDao().create(idEvent);
     }
 }

@@ -236,7 +236,7 @@ public class EncounterPresenter {
         List<Billable> billables = new ArrayList<>();
         billables.add(promptBillable(category.toString()));
 
-        billables.addAll(BillableDao.getBillablesByCategory(category));
+        billables.addAll(BillableDao.getBillablesByType(category));
 
         return billables;
     }
