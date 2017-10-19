@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:launchMode="singleTop"
-        android:theme="@style/main_theme">
+        android:theme="@style/mainTheme">
         <service
             android:name=".services.DownloadMemberPhotosService"
             android:permission="android.permission.BIND_JOB_SERVICE"

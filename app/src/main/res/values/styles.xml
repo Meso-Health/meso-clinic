@@ -1,9 +1,15 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="main_theme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="mainTheme" parent="Theme.AppCompat.Light">
+        <!-- Color palette -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:colorAccent">@color/colorPrimary</item>
+
+        <!-- Toolbar styles -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="Title">
