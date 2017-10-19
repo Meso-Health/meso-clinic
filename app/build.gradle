@@ -53,6 +53,7 @@ android {
             resValue "string", "main_activity_label", "UHP Dev"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             resValue "color", "colorPrimary", "#868E96" // gray
+            resValue "color", "colorPrimaryDark", "#343A40"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_development"
             ]
@@ -73,6 +74,7 @@ android {
             resValue "string", "main_activity_label", "UHP Sandbox"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             resValue "color", "colorPrimary", "#FCAF63" // beige
+            resValue "color", "colorPrimaryDark", "#E89746"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
@@ -89,6 +91,7 @@ android {
             resValue "string", "main_activity_label", "UHP Spec"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             resValue "color", "colorPrimary", "#F4C2C2" // pink
+            resValue "color", "colorPrimaryDark", "#E09F9F"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_spec"
             ]
@@ -108,7 +111,8 @@ android {
             resValue "string", "app_name", "UHP"
             resValue "string", "main_activity_label", "UHP"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#868E96" // gray
+            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
+            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -124,6 +128,7 @@ android {
             resValue "string", "main_activity_label", "UHP"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             resValue "color", "colorPrimary", "#329AF0" // Watsi blue
+            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
