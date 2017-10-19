@@ -30,4 +30,13 @@
     <style name="SecondaryButton" parent="Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/white</item>
     </style>
+
+    <style name="toolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Title -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- Subtitle and icons -->
+        <item name="android:textColorSecondary">@color/white</item>
+        <!-- Menu items -->
+        <item name="android:textColor">@color/title</item>
+    </style>
 </resources>
