@@ -29,6 +29,10 @@ public class BillableDao {
         return DatabaseHelper.fetchDao(Billable.class);
     }
 
+    public static List<Billable> all() throws SQLException {
+        return getDao().queryForAll();
+    }
+
     public static void create(Billable billable) throws SQLException {
         billable.setCreatedAt(Clock.getCurrentTime());
         getDao().create(billable);

@@ -1,0 +1,76 @@
+!tape
+name: FetchServiceIntegrationTest
+interactions:
+- recorded: 2017-10-20T18:29:43.997Z
+  request:
+    method: GET
+    uri: http://localhost:5000/providers/1/billables
+    headers:
+      Authorization: Token returns200
+  response:
+    status: 200
+    headers:
+      Cache-Control: max-age=0, private, must-revalidate
+      Content-Type: application/json; charset=utf-8
+      ETag: W/"f979096fadd141c6998d25ca53cd7458"
+      Last-Modified: Fri, 20 Oct 2017 00:10:41 GMT
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding, Origin
+      X-Request-Id: 0e0f30da-5046-4d8c-a234-6cdc88f5d853
+      X-Runtime: '0.079902'
+    body: '[{"id":"4438d9c5-41c9-4c68-ae3f-febf2ad4369a","provider_id":1,"type":"drug","name":"new lab","composition":"tablet","unit":"150 mg","price":500,"requires_lab_result":false,"active":true,"reviewed":false},{"id":"d40eec44-65b9-4202-83ba-d95126b54418","provider_id":1,"type":"service","name":"Antenatal
+      Consultation","composition":null,"unit":null,"price":0,"requires_lab_result":false,"active":true,"reviewed":true}]'
+- recorded: 2017-10-20T19:26:27.187Z
+  request:
+    method: GET
+    uri: http://localhost:5000/providers/1/billables
+    headers:
+      Authorization: Token returns304
+      If-Modified-Since: Fri, 20 Oct 2017 00:10:41 GMT
+  response:
+    status: 304
+    headers:
+      Cache-Control: max-age=0, private, must-revalidate
+      ETag: W/"f979096fadd141c6998d25ca53cd7458"
+      Last-Modified: Fri, 20 Oct 2017 00:10:41 GMT
+      Vary: Origin
+      X-Request-Id: 22054078-9db3-4f72-b1c7-7f2ba8bd059d
+      X-Runtime: '0.010454'
+    body: ''
+- recorded: 2017-10-20T20:55:46.778Z
+  request:
+    method: GET
+    uri: http://localhost:5000/providers/1/members
+    headers:
+      Authorization: Token returns200
+  response:
+    status: 200
+    headers:
+      Cache-Control: max-age=0, private, must-revalidate
+      Content-Type: application/json; charset=utf-8
+      ETag: W/"231923ce7652c3c2ba36fac950dfe84e"
+      Last-Modified: Mon, 28 Aug 2017 17:55:03 GMT
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding, Origin
+      X-Request-Id: 29db1bfc-4fed-41b1-a804-cdd0f23189d0
+      X-Runtime: '0.062041'
+    body: '[{"id":"44a4cdc1-a6a0-496a-8224-a4cae870ff97","created_at":"2017-08-09T00:45:06.182+03:00","updated_at":"2017-08-09T00:45:06.182+03:00","enrolled_at":"2017-08-09T00:45:06.147+03:00","absentee":false,"card_id":"RWI399118","full_name":"Annette Alayna
+      Von","gender":"F","age":13,"birthdate":"2004-08-09","birthdate_accuracy":"Y","phone_number":"0516037776","fingerprints_guid":"0c1d9774-7e26-475d-be27-e5d0519bcda8","preferred_language":"english","preferred_contact":"sms","provider_id":1,"household_id":"34d331eb-7fa1-422e-a39f-6102eb788823","photo_url":"/dragonfly/media/W1siZiIsIjIwMTcvMDgvMDgvNTc2cmdrZWY0eF9maWxlIl0sWyJwIiwiY29udmVydCIsIi1zdHJpcCJdLFsicCIsInRodW1iIiwiODEweDEwODAjIl1d-4446aa563b742ab9"},{"id":"0c318af8-6de4-4427-8405-5e4818f86618","created_at":"2017-08-09T00:45:06.251+03:00","updated_at":"2017-08-22T00:49:56.825+03:00","enrolled_at":"2017-08-09T00:45:06.220+03:00","absentee":false,"card_id":"RWI744983","full_name":"Katarina
+      Cortney Casper","gender":"F","age":33,"birthdate":"1984-08-09","birthdate_accuracy":"Y","phone_number":"123654789","fingerprints_guid":"217eb4c2-5e35-4a58-b4fe-6e6c3fe348ef","preferred_language":"english","preferred_contact":"sms","provider_id":1,"household_id":"b8eef73e-744c-4c33-946b-c961b71403cc","photo_url":"/dragonfly/media/W1siZiIsIjIwMTcvMDgvMjEvMzR6ZmlidHQ0bF9maWxlIl0sWyJwIiwiY29udmVydCIsIi1zdHJpcCJdLFsicCIsInRodW1iIiwiODEweDEwODAjIl1d-aae161b9aa425a68"}]'
+- recorded: 2017-10-20T21:05:09.225Z
+  request:
+    method: GET
+    uri: http://localhost:5000/providers/1/members
+    headers:
+      Authorization: Token returns304
+      If-Modified-Since: Mon, 28 Aug 2017 17:55:03 GMT
+  response:
+    status: 304
+    headers:
+      Cache-Control: max-age=0, private, must-revalidate
+      ETag: W/"f109936b38f1bbc67c9e2de59eb32cef"
+      Last-Modified: Mon, 28 Aug 2017 17:55:03 GMT
+      Vary: Origin
+      X-Request-Id: a9781974-cf2f-4c25-98fb-f3f69c138fc5
+      X-Runtime: '0.014112'
+    body: ''

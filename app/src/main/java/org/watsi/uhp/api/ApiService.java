@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
+import okreplay.OkReplayInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -24,16 +25,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiService {
 
     private static UhpApi instance;
+    public static OkReplayInterceptor replayInterceptor;
+
     public static long HTTP_TIMEOUT_IN_SECONDS = 30L;
 
     public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
             AccountManager accountManager = AccountManager.get(context);
+            replayInterceptor = new OkReplayInterceptor();
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
                     .connectTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
                     .readTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
                     .writeTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
                     .addNetworkInterceptor(new UnauthorizedInterceptor(accountManager))
+                    .addInterceptor(replayInterceptor)
                     .retryOnConnectionFailure(false);
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
