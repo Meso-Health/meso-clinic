@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
+import okreplay.OkReplayInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -36,37 +37,25 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccountManager.class, ApiService.class, Credentials.class,
         EncounterTypeAdapterFactory.class, GsonBuilder.class, GsonConverterFactory.class,
-        OkHttpClient.Builder.class, Response.class, Retrofit.class, Retrofit.Builder.class })
+        OkHttpClient.Builder.class, OkReplayInterceptor.class, Response.class, Retrofit.class,
+        Retrofit.Builder.class })
 public class ApiServiceTest {
 
-    @Mock
-    Context mockContext;
-    @Mock
-    AccountManager mockAccountManager;
-    @Mock
-    OkHttpClient.Builder mockHttpClientBuilder;
-    @Mock
-    OkHttpClient mockHttpClient;
-    @Mock
-    UnauthorizedInterceptor mockUnauthorizedInterceptor;
-    @Mock
-    NotModifiedInterceptor mockNotModifiedInterceptor;
-    @Mock
-    GsonBuilder mockGsonBuilder;
-    @Mock
-    EncounterTypeAdapterFactory mockEncounterTypeAdapterFactory;
-    @Mock
-    GsonConverterFactory mockGsonConverterFactory;
-    @Mock
-    Retrofit.Builder mockRetrofitBuilder;
-    @Mock
-    Retrofit mockRetrofit;
-    @Mock
-    UhpApi mockApi;
-    @Mock
-    Call<AuthenticationToken> mockAuthRequest;
-    @Mock
-    Response<AuthenticationToken> mockAuthResponse;
+    @Mock Context mockContext;
+    @Mock AccountManager mockAccountManager;
+    @Mock OkHttpClient.Builder mockHttpClientBuilder;
+    @Mock OkHttpClient mockHttpClient;
+    @Mock UnauthorizedInterceptor mockUnauthorizedInterceptor;
+    @Mock OkReplayInterceptor mockOkReplayInterceptor;
+    @Mock NotModifiedInterceptor mockNotModifiedInterceptor;
+    @Mock GsonBuilder mockGsonBuilder;
+    @Mock EncounterTypeAdapterFactory mockEncounterTypeAdapterFactory;
+    @Mock GsonConverterFactory mockGsonConverterFactory;
+    @Mock Retrofit.Builder mockRetrofitBuilder;
+    @Mock Retrofit mockRetrofit;
+    @Mock UhpApi mockApi;
+    @Mock Call<AuthenticationToken> mockAuthRequest;
+    @Mock Response<AuthenticationToken> mockAuthResponse;
 
     @Before
     public void setup() {
@@ -85,6 +74,7 @@ public class ApiServiceTest {
         whenNew(NotModifiedInterceptor.class).withNoArguments().thenReturn(mockNotModifiedInterceptor);
         whenNew(UnauthorizedInterceptor.class).withArguments(mockAccountManager)
                 .thenReturn(mockUnauthorizedInterceptor);
+        whenNew(OkReplayInterceptor.class).withNoArguments().thenReturn(mockOkReplayInterceptor);
         when(mockHttpClientBuilder.cache(any(Cache.class)))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.connectTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
@@ -94,6 +84,8 @@ public class ApiServiceTest {
         when(mockHttpClientBuilder.writeTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.addNetworkInterceptor(mockUnauthorizedInterceptor))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.addInterceptor(mockOkReplayInterceptor))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.addInterceptor(mockNotModifiedInterceptor))
                 .thenReturn(mockHttpClientBuilder);
