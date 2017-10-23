@@ -30,8 +30,13 @@ public abstract class MemberDetailPresenter {
     MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
         mView = view;
         mContext = context;
-        mMember = fetchMemberFromDB(member);
+        mMember = member;
         mNavigationManager = navigationManager;
+        try {
+            member.refresh();
+        } catch (SQLException e) {
+            ExceptionManager.reportException(e);
+        }
     }
 
     public void setUp() {
@@ -57,15 +62,6 @@ public abstract class MemberDetailPresenter {
         }
         if (mMember.getCardId() == null) {
             setReplaceCardNotification();
-        }
-    }
-
-    static Member fetchMemberFromDB(Member member) {
-        try {
-            return (Member) member.refresh();
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            return member;
         }
     }
 

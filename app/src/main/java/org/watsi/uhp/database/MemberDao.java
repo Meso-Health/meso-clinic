@@ -27,15 +27,6 @@ public class MemberDao {
         return DatabaseHelper.fetchDao(Member.class);
     }
 
-    public static void create(Member member) throws SQLException {
-        member.setCreatedAt(Clock.getCurrentTime());
-        getDao().create(member);
-    }
-
-    public static Member findById(UUID id) throws SQLException {
-        return getDao().queryForId(id);
-    }
-
     public static Member findByCardId(String cardId) throws SQLException {
         cardId = cardId.replaceAll(" ","");
         Map<String,Object> queryMap = new HashMap<>();
@@ -113,7 +104,7 @@ public class MemberDao {
 
         List<Member> members = new ArrayList<>();
         for (String id : rawResults.getResults()) {
-            members.add(findById(UUID.fromString(id)));
+            members.add(Member.find(UUID.fromString(id), Member.class));
         }
         return members;
     }
@@ -154,10 +145,5 @@ public class MemberDao {
             ids.add(m.getId());
         }
         return ids;
-    }
-
-    //TODO: move to a base Dao class
-    public static List<Member> all() throws SQLException {
-        return getDao().queryForAll();
     }
 }

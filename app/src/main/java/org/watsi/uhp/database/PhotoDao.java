@@ -3,7 +3,6 @@ package org.watsi.uhp.database;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Photo;
 
 import java.sql.SQLException;
@@ -16,35 +15,8 @@ import java.util.UUID;
  */
 public class PhotoDao {
 
-    private static PhotoDao instance = new PhotoDao();
-
-    private Dao<Photo, UUID> mPhotoDao;
-
-    private static synchronized PhotoDao getInstance() {
-        return instance;
-    }
-
-    private PhotoDao() {}
-
-    private void setPhotoDao(Dao photoDao) {
-        this.mPhotoDao = photoDao;
-    }
-
-    private Dao<Photo, UUID> getPhotoDao() throws SQLException {
-        if (mPhotoDao == null) {
-            setPhotoDao(DatabaseHelper.getHelper().getDao(Photo.class));
-        }
-
-        return mPhotoDao;
-    }
-
-    public static boolean create(Photo photo) throws SQLException {
-        photo.setCreatedAt(Clock.getCurrentTime());
-        return getInstance().getPhotoDao().create(photo) == 1;
-    }
-
-    public static boolean update(Photo photo) throws SQLException {
-        return getInstance().getPhotoDao().update(photo) == 1;
+    private static Dao<Photo, UUID> getDao() throws SQLException {
+        return DatabaseHelper.fetchDao(Photo.class);
     }
 
     public static List<Photo> canBeDeleted() throws SQLException {
@@ -67,11 +39,11 @@ public class PhotoDao {
                             "(members.id IS NULL AND encounter_forms.id IS NULL AND\n" +
                             "photos.created_at <= datetime('now', 'localtime', '-30 Minute')))";
 
-        GenericRawResults<String[]> results = getInstance().getPhotoDao().queryRaw(rawQuery);
+        GenericRawResults<String[]> results = getDao().queryRaw(rawQuery);
 
         List<Photo> photosToDelete = new ArrayList<>();
         for (String[] result : results) {
-            Photo photo = getInstance().getPhotoDao().queryForId(UUID.fromString(result[0]));
+            Photo photo = getDao().queryForId(UUID.fromString(result[0]));
             photosToDelete.add(photo);
         }
         return photosToDelete;

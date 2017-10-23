@@ -11,9 +11,9 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -50,7 +50,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Encounter.class, EncounterDao.class, EncounterItemDao.class,
+@PrepareForTest({ AbstractModel.class, Encounter.class, EncounterItemDao.class,
         ExceptionManager.class, File.class, IdentificationEvent.class, MediaType.class,
         Member.class, okhttp3.Response.class, RequestBody.class, Response.class,
         SyncableModel.class, SyncService.class, Uri.class, Log.class })
@@ -79,9 +79,9 @@ public class SyncServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        mockStatic(AbstractModel.class);
         mockStatic(ExceptionManager.class);
         mockStatic(Encounter.class);
-        mockStatic(EncounterDao.class);
         mockStatic(EncounterItemDao.class);
         mockStatic(IdentificationEvent.class);
         mockStatic(MediaType.class);
@@ -238,7 +238,8 @@ public class SyncServiceTest {
         when(mockEncounterForm.getId()).thenReturn(UUID.randomUUID());
         Encounter mockEncounter = mockEncounter();
         when(mockEncounter.isSynced()).thenReturn(encounterSynced);
-        when(EncounterDao.find(mockEncounter.getId())).thenReturn(mockEncounter);
+//        when(Encounter.find(mockEncounter.getId(), Encounter.class)).thenReturn(mockEncounter);
+        when(AbstractModel.find(mockEncounter.getId(), Encounter.class)).thenReturn(mockEncounter);
         when(mockEncounterForm.getEncounter()).thenReturn(mockEncounter);
         return mockEncounterForm;
     }
@@ -248,9 +249,7 @@ public class SyncServiceTest {
         EncounterForm mockEncounterForm = mockEncounterForm(false, new byte[]{(byte)0xe0});
         List<EncounterForm> encounterFormsList = new ArrayList<>();
         encounterFormsList.add(mockEncounterForm);
-        Encounter mockEncounter = mockEncounterForm.getEncounter();
 
-        when(EncounterDao.find(mockEncounter.getId())).thenReturn(mockEncounter);
         when(mockEncounterForm(false, null).getEncounter().isSynced()).thenReturn(false);
 
         syncService.syncEncounterForms(encounterFormsList);
@@ -267,7 +266,7 @@ public class SyncServiceTest {
         syncService.syncEncounterForms(encounterFormsList);
 
         verify(mockEncounterForm, never()).sync(syncService);
-        verify(mockEncounterForm, times(1)).delete();
+        verify(mockEncounterForm, times(1)).destroy();
     }
 
     @Test

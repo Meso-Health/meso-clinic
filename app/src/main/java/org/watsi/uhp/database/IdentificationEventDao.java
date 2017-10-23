@@ -36,9 +36,4 @@ public class IdentificationEventDao {
         String result = rawResults.getFirstResult();
         return (result == null) ? null : getDao().queryForId(UUID.fromString(result));
     }
-
-    public static void create(IdentificationEvent idEvent) throws SQLException {
-        idEvent.setCreatedAt(Clock.getCurrentTime());
-        getDao().create(idEvent);
-    }
 }

@@ -16,10 +16,9 @@ import org.mockito.Mockito.*
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import org.watsi.uhp.database.PhotoDao
 
 @RunWith(PowerMockRunner::class)
-@PrepareForTest(Photo::class, PhotoDao::class, Uri::class)
+@PrepareForTest(Photo::class, Uri::class)
 class PhotoTest {
 
     val mockContext = mock(Context::class.java)
@@ -33,18 +32,9 @@ class PhotoTest {
     @Before
     fun setup() {
         photo.url = url
-        PowerMockito.mockStatic(PhotoDao::class.java)
         PowerMockito.mockStatic(Uri::class.java)
         `when`(mockContext.contentResolver).thenReturn(mockContentResolver)
         `when`(Uri.parse(url)).thenReturn(mockUri)
-    }
-
-    @Test
-    fun create() {
-        photo.create()
-
-        PowerMockito.verifyStatic(Mockito.times(1))
-        PhotoDao.create(photo)
     }
 
     @Test
@@ -61,6 +51,7 @@ class PhotoTest {
         `when`(mockContentResolver.query(
                 Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any()))
                 .thenReturn(mockCursor)
+        doReturn(true).`when`(photo).update()
 
         assertTrue(photo.delete(mockContext))
         assertTrue(photo.deleted)

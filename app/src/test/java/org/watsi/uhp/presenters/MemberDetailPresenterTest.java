@@ -78,7 +78,6 @@ public class MemberDetailPresenterTest {
         mockStatic(MemberDao.class);
         mockStatic(ExceptionManager.class);
         mockStatic(PhotoLoaderHelper.class);
-        when(MemberDetailPresenter.fetchMemberFromDB(mockMember)).thenReturn(mockMember);
         memberDetailPresenter = new MemberDetailPresenter(mockView, mockContext, mockMember, mockNavigationManager) {
             @Override
             protected void additionalSetup() {

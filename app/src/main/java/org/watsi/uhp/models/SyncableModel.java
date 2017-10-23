@@ -12,9 +12,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 
-import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.managers.ExceptionManager;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -32,7 +29,7 @@ import retrofit2.Response;
  * Abstract class for specifying any fields and behavior that all
  * models that need to be synced to the back-end should share
  */
-public abstract class SyncableModel<T extends SyncableModel<T>> extends AbstractModel {
+public abstract class SyncableModel<T extends SyncableModel<T>> extends AbstractModel<T, UUID> {
 
     public static final String FIELD_NAME_ID = "id";
     public static final String FIELD_NAME_TOKEN = "token";
@@ -48,10 +45,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
 
     @DatabaseField(columnName = FIELD_NAME_DIRTY_FIELDS, defaultValue = "[]", canBeNull = false)
     private String mDirtyFields = "[]";
-
-    public SyncableModel refresh() throws SQLException {
-        return getDao().queryForId(getId());
-    }
 
     public UUID getId() {
         return this.mId;
@@ -79,14 +72,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         } else {
             return new Gson().fromJson(this.mDirtyFields, Set.class);
         }
-    }
-
-    protected static <K> Dao<K,UUID> getDao(Class<K> clazz) throws SQLException {
-        return (Dao<K, UUID>) DatabaseHelper.getHelper().getDao(clazz);
-    }
-
-    Dao<T, UUID> getDao() throws SQLException {
-        return (Dao<T, UUID>) getDao(getClass());
     }
 
     public boolean isSynced() throws SQLException {
@@ -156,10 +141,6 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
         // reason we save this instead of response is that not all data
         //  we persist on the device is sent/returned during syncing
         getDao().createOrUpdate((T) this);
-    }
-
-    public void delete() throws SQLException {
-        getDao().delete((T) this);
     }
 
     public Response<T> sync(Context context) throws SyncException, SQLException, IOException {

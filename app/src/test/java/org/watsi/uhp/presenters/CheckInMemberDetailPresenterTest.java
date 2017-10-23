@@ -106,7 +106,6 @@ public class CheckInMemberDetailPresenterTest {
         mockStatic(ExceptionManager.class);
         mockStatic(ContextCompat.class);
         whenNew(SimprintsHelper.class).withAnyArguments().thenReturn(mockSimprintsHelper);
-        when(MemberDetailPresenter.fetchMemberFromDB(mockMember)).thenReturn(mockMember);
         checkInMemberDetailPresenter = new CheckInMemberDetailPresenter(
                 mockNavigationManager, mockSessionManager, mockCheckInMemberDetailFragment,
                 mockView, mockContext, mockMember, mockIdentificationEvent);

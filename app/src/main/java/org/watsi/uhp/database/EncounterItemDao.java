@@ -20,18 +20,13 @@ public class EncounterItemDao {
         return DatabaseHelper.fetchDao(EncounterItem.class);
     }
 
-    public static void create(EncounterItem encounterItem) throws SQLException {
-        encounterItem.setCreatedAt(Clock.getCurrentTime());
-        getDao().create(encounterItem);
-    }
-
     public static List<EncounterItem> fromEncounter(Encounter encounter) throws SQLException {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put(EncounterItem.FIELD_NAME_ENCOUNTER_ID, encounter.getId());
         List<EncounterItem> encounterItems = getDao().queryForFieldValues(queryMap);
         for (EncounterItem encounterItem : encounterItems) {
             encounterItem.setEncounterId(encounterItem.getEncounter().getId());
-            BillableDao.refresh(encounterItem.getBillable());
+            encounterItem.getBillable().refresh();
         }
         return encounterItems;
     }

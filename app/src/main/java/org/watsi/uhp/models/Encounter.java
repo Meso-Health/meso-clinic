@@ -9,7 +9,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
-import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.EncounterItemDao;
 
 import java.sql.SQLException;
@@ -108,10 +107,10 @@ public class Encounter extends SyncableModel {
             Billable billable = encounterItem.getBillable();
             if (billable.getId() == null) {
                 billable.generateId();
-                BillableDao.create(billable);
+                billable.create();
             }
             encounterItem.setEncounter(this);
-            EncounterItemDao.create(encounterItem);
+            encounterItem.create();
         }
         for (EncounterForm encounterForm : getEncounterForms()) {
             encounterForm.saveChanges(getToken());

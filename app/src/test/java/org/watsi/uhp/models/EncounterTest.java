@@ -11,7 +11,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.api.UhpApi;
-import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.EncounterItemDao;
 
 import java.util.ArrayList;
@@ -26,15 +25,16 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ApiService.class, BillableDao.class, EncounterItemDao.class })
+@PrepareForTest({ ApiService.class, EncounterItemDao.class })
 public class EncounterTest {
 
     @Mock
@@ -49,7 +49,6 @@ public class EncounterTest {
     @Before
     public void setup() {
         mockStatic(ApiService.class);
-        mockStatic(BillableDao.class);
         mockStatic(EncounterItemDao.class);
         encounter = new Encounter();
     }
@@ -85,10 +84,12 @@ public class EncounterTest {
     @Test
     public void persistAssociations() throws Exception {
         encounter.setToken("foo");
-        EncounterItem encounterItemWithExistingBillable = new EncounterItem();
+        EncounterItem encounterItemWithExistingBillable = spy(EncounterItem.class);
+        doReturn(true).when(encounterItemWithExistingBillable).create();
         Billable existingBillable = mock(Billable.class);
         encounterItemWithExistingBillable.setBillable(existingBillable);
-        EncounterItem encounterItemWithNewBillable = new EncounterItem();
+        EncounterItem encounterItemWithNewBillable = spy(EncounterItem.class);
+        doReturn(true).when(encounterItemWithNewBillable).create();
         Billable newBillable = mock(Billable.class);
         encounterItemWithNewBillable.setBillable(newBillable);
         List<EncounterItem> encounterItems = new ArrayList<>();
@@ -103,15 +104,12 @@ public class EncounterTest {
         encounter.persistAssociations();
 
         assertEquals(encounterItemWithExistingBillable.getEncounter(), encounter);
-        verifyStatic();
-        EncounterItemDao.create(encounterItemWithExistingBillable);
+        verify(encounterItemWithExistingBillable).create();
         assertEquals(encounterItemWithNewBillable.getEncounter(), encounter);
-        verify(newBillable, times(1)).generateId();
-        verifyStatic();
-        BillableDao.create(newBillable);
-        verifyStatic();
-        EncounterItemDao.create(encounterItemWithNewBillable);
-        verify(form, times(1)).saveChanges("foo");
+        verify(newBillable).generateId();
+        verify(newBillable).create();
+        verify(encounterItemWithNewBillable).create();
+        verify(form).saveChanges("foo");
     }
 
     @Test

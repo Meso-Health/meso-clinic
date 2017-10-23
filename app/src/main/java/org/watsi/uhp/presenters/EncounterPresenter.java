@@ -166,7 +166,7 @@ public class EncounterPresenter {
         MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
         String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
         try {
-            Billable billable = BillableDao.findById(UUID.fromString(uuidString));
+            Billable billable = Billable.find(UUID.fromString(uuidString), Billable.class);
             addToEncounterItemList(billable);
             clearDrugSearch();
             scrollToBottom();

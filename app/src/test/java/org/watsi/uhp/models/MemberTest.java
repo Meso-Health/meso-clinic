@@ -19,8 +19,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.api.UhpApi;
-import org.watsi.uhp.database.EncounterDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 
@@ -62,8 +60,8 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ApiService.class, Bitmap.class, ByteStreams.class, EncounterDao.class, File.class,
-        ExceptionManager.class, MediaStore.Images.Media.class, Member.class, MemberDao.class,
+@PrepareForTest({AbstractModel.class, ApiService.class, Bitmap.class, ByteStreams.class, File.class,
+        ExceptionManager.class, MediaStore.Images.Media.class, Member.class,
         okhttp3.Response.class, Request.class, Response.class, ResponseBody.class, Uri.class,
         URLUtil.class})
 public class MemberTest {
@@ -73,46 +71,31 @@ public class MemberTest {
 
     private Member member;
 
-    @Mock
-    Response<Member> mockSyncResponse;
-    @Mock
-    Photo mockMemberPhoto;
-    @Mock
-    UhpApi mockApi;
-    @Mock
-    Response<Member> mockMemberSyncResponse;
-    @Mock
-    HashMap<String, RequestBody> mockRequestBodyMap;
-    @Mock
-    Call<Member> mockMemberCall;
-    @Mock
-    Context mockContext;
-    @Mock
-    Request.Builder mockRequestBuilder;
-    @Mock
-    Request mockRequest;
-    @Mock
-    OkHttpClient mockHttpClient;
-    @Mock
-    okhttp3.Response mockResponse;
-    @Mock
-    okhttp3.Call mockCall;
-    @Mock
-    InputStream mockInputStream;
-    @Mock
-    Dao mockDao;
-    @Mock
-    Uri mockUri;
+    @Mock Response<Member> mockSyncResponse;
+    @Mock Photo mockMemberPhoto;
+    @Mock UhpApi mockApi;
+    @Mock Response<Member> mockMemberSyncResponse;
+    @Mock HashMap<String, RequestBody> mockRequestBodyMap;
+    @Mock Call<Member> mockMemberCall;
+    @Mock Context mockContext;
+    @Mock Request.Builder mockRequestBuilder;
+    @Mock Request mockRequest;
+    @Mock OkHttpClient mockHttpClient;
+    @Mock okhttp3.Response mockResponse;
+    @Mock okhttp3.Call mockCall;
+    @Mock InputStream mockInputStream;
+    @Mock Dao mockDao;
+    @Mock Uri mockUri;
 
     @Before
     public void setup() {
         initMocks(this);
+        mockStatic(AbstractModel.class);
         mockStatic(ApiService.class);
         mockStatic(Bitmap.class);
         mockStatic(ByteStreams.class);
         mockStatic(ExceptionManager.class);
         mockStatic(MediaStore.Images.Media.class);
-        mockStatic(MemberDao.class);
         mockStatic(Uri.class);
         mockStatic(URLUtil.class);
         when(URLUtil.isValidUrl(remotePhotoUrl)).thenReturn(true);
@@ -252,7 +235,7 @@ public class MemberTest {
         member.setId(id);
         Member memberSpy = spy(member);
 
-        when(MemberDao.findById(id)).thenReturn(null);
+        when(AbstractModel.find(id, Member.class)).thenReturn(null);
         doReturn(mockDao).when(memberSpy).getDao();
 
         memberSpy.updateFromFetch();
@@ -267,7 +250,7 @@ public class MemberTest {
         Member persistedMember = mock(Member.class);
 
         when(persistedMember.isSynced()).thenReturn(false);
-        when(MemberDao.findById(memberSpy.getId())).thenReturn(persistedMember);
+        when(Member.find(memberSpy.getId(), Member.class)).thenReturn(persistedMember);
         doReturn(mockDao).when(memberSpy).getDao();
 
         memberSpy.updateFromFetch();
@@ -288,7 +271,7 @@ public class MemberTest {
         Member persistedMemberSpy = spy(persistedMember);
 
         when(persistedMemberSpy.isSynced()).thenReturn(true);
-        when(MemberDao.findById(memberSpy.getId())).thenReturn(persistedMemberSpy);
+        when(Member.find(memberSpy.getId(), Member.class)).thenReturn(persistedMemberSpy);
         doReturn(mockDao).when(memberSpy).getDao();
 
         memberSpy.updateFromFetch();
@@ -307,7 +290,7 @@ public class MemberTest {
         Member persistedMemberSpy = spy(persistedMember);
 
         when(persistedMemberSpy.isSynced()).thenReturn(true);
-        when(MemberDao.findById(memberSpy.getId())).thenReturn(persistedMemberSpy);
+        when(Member.find(memberSpy.getId(), Member.class)).thenReturn(persistedMemberSpy);
         doReturn(mockDao).when(memberSpy).getDao();
 
         memberSpy.updateFromFetch();

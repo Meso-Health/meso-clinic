@@ -82,7 +82,7 @@ class BillableDaoTest: DaoTest() {
         billable.price = 100
         billable.composition = composition
         billable.generateId()
-        BillableDao.create(billable)
+        billable.create()
         return billable
     }
 }
