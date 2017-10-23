@@ -13,6 +13,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;

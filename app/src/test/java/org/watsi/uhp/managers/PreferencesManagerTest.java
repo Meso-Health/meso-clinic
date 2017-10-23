@@ -14,6 +14,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Calendar;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +33,6 @@ public class PreferencesManagerTest {
     SharedPreferences.Editor mockEditor;
 
     private PreferencesManager preferencesManager;
-    private String expiryString = Clock.ISO_DATE_FORMAT.format(Calendar.getInstance().getTime());
 
     @Before
     public void setup() {
@@ -44,10 +45,10 @@ public class PreferencesManagerTest {
     }
 
     @Test
-    public void setMemberLastModified() throws Exception {
-        preferencesManager.setMemberLastModified(expiryString);
+    public void updateMembersLastModified() throws Exception {
+        preferencesManager.updateMembersLastModified();
 
-        verify(mockEditor, times(1)).putString("membersLastModified", expiryString);
+        verify(mockEditor, times(1)).putString(eq("membersLastModified"), anyString());
         verify(mockEditor, times(1)).apply();
     }
 
@@ -60,9 +61,9 @@ public class PreferencesManagerTest {
 
     @Test
     public void setBillablesLastModified() throws Exception {
-        preferencesManager.setBillablesLastModified(expiryString);
+        preferencesManager.updateBillableLastModified();
 
-        verify(mockEditor, times(1)).putString("billablesLastModified", expiryString);
+        verify(mockEditor, times(1)).putString(eq("billablesLastModified"), anyString());
         verify(mockEditor, times(1)).apply();
     }
 

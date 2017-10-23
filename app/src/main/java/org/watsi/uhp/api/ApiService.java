@@ -14,6 +14,8 @@ import org.watsi.uhp.models.AuthenticationToken;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
+import okhttp3.CacheControl;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okreplay.OkReplayInterceptor;
@@ -31,12 +33,17 @@ public class ApiService {
 
     public static synchronized UhpApi requestBuilder(Context context) throws IllegalStateException {
         if (instance == null) {
+            int cacheSize = 10 * 1024 * 1024; // 10 MiB
+            Cache cache = new Cache(context.getCacheDir(), cacheSize);
+
             AccountManager accountManager = AccountManager.get(context);
             replayInterceptor = new OkReplayInterceptor();
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                    .cache(cache)
                     .connectTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
                     .readTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
                     .writeTimeout(HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+                    .addInterceptor(new NotModifiedInterceptor())
                     .addNetworkInterceptor(new UnauthorizedInterceptor(accountManager))
                     .addInterceptor(replayInterceptor)
                     .retryOnConnectionFailure(false);

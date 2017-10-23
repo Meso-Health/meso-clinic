@@ -24,7 +24,7 @@ public class ExceptionManager {
 
     public static void init(Application application) {
         if (BuildConfig.REPORT_TO_ROLLBAR && !Rollbar.isInit()) {
-            Rollbar.init(application, BuildConfig.ROLLBAR_API_KEY, BuildConfig.ROLLBAR_ENV_KEY);
+            Rollbar.init(application, BuildConfig.ROLLBAR_API_KEY, BuildConfig.FLAVOR);
         }
 
         if (LeakCanary.isInAnalyzerProcess(application)) {
@@ -58,7 +58,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.reportMessage(description, MESSAGE_LEVEL_WARNING, params);
         } else {
-            Log.i("Message", description + " - " + params.toString());
+            Log.i("UHP-Message", description + " - " + params.toString());
         }
     }
 
@@ -70,7 +70,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.reportException(e, MESSAGE_LEVEL_WARNING);
         } else {
-            Log.w("Exception", e.getMessage());
+            Log.w("UHP-Exception", e.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.reportException(e, MESSAGE_LEVEL_ERROR);
         } else {
-            Log.e("Exception", e.getMessage());
+            Log.e("UHP-Exception", e.getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.reportException(e, MESSAGE_LEVEL_ERROR, description);
         } else {
-            Log.e("Exception", e.getMessage());
+            Log.e("UHP-Exception", e.getMessage());
         }
     }
 
@@ -94,7 +94,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, level, params);
         } else {
-            Log.i("Message", message);
+            Log.i("UHP-Message", message);
         }
     }
 
@@ -102,7 +102,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.reportMessage(message, MESSAGE_LEVEL_ERROR);
         } else {
-            Log.i("Message", message);
+            Log.i("UHP-Message", message);
         }
     }
 
@@ -114,7 +114,7 @@ public class ExceptionManager {
         if (Rollbar.isInit()) {
             Rollbar.setPersonData(id, username, null);
         } else {
-            Log.i("User logged in", "id:" + id + ", username:" + username);
+            Log.i("UHP-Message", "Person data set with id:" + id + ", username:" + username);
         }
     }
 }

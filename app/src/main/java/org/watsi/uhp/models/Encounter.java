@@ -119,9 +119,8 @@ public class Encounter extends SyncableModel {
     }
 
     @Override
-    protected Call patchApiCall(Context context) throws SQLException {
-        // no-op
-        return null;
+    protected Call patchApiCall(Context context) throws SQLException, SyncException {
+        throw new SyncException("Tried to patch an Encounter with dirty fields: " + getDirtyFields().toString());
     }
 
     public Date getOccurredAt() {

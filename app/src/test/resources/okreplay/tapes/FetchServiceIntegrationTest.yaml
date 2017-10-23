@@ -26,7 +26,7 @@ interactions:
     uri: http://localhost:5000/providers/1/billables
     headers:
       Authorization: Token returns304
-      If-Modified-Since: Fri, 20 Oct 2017 00:10:41 GMT
+      ETag: W/"f979096fadd141c6998d25ca53cd7458"
   response:
     status: 304
     headers:
@@ -63,12 +63,12 @@ interactions:
     uri: http://localhost:5000/providers/1/members
     headers:
       Authorization: Token returns304
-      If-Modified-Since: Mon, 28 Aug 2017 17:55:03 GMT
+      ETag: W/"231923ce7652c3c2ba36fac950dfe84e"
   response:
     status: 304
     headers:
       Cache-Control: max-age=0, private, must-revalidate
-      ETag: W/"f109936b38f1bbc67c9e2de59eb32cef"
+      ETag: W/"231923ce7652c3c2ba36fac950dfe84e"
       Last-Modified: Mon, 28 Aug 2017 17:55:03 GMT
       Vary: Origin
       X-Request-Id: a9781974-cf2f-4c25-98fb-f3f69c138fc5

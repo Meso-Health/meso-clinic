@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-public class PreferencesManager {
+import java.text.SimpleDateFormat;
 
+public class PreferencesManager {
+    private final static SimpleDateFormat LAST_MODIFIED_DATE_FORMAT = new SimpleDateFormat("hh:mm:ss a  yyyy/M/d");
     private final static String MEMBERS_LAST_MODIFIED_PREF_KEY = "membersLastModified";
     private final static String BILLABLES_LAST_MODIFIED_PREF_KEY = "billablesLastModified";
     private final static String USERNAME_PREF_KEY = "username";
@@ -18,16 +20,16 @@ public class PreferencesManager {
         this.mEditor = mSharedPreferences.edit();
     }
 
-    public void setMemberLastModified(String lastModifiedTimestamp) {
-        setValue(MEMBERS_LAST_MODIFIED_PREF_KEY, lastModifiedTimestamp);
+    public void updateMembersLastModified() {
+        setValue(MEMBERS_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(Clock.getCurrentTime()));
     }
 
     public String getMemberLastModified() {
         return getValue(MEMBERS_LAST_MODIFIED_PREF_KEY);
     }
 
-    public void setBillablesLastModified(String lastModifiedTimestamp) {
-        setValue(BILLABLES_LAST_MODIFIED_PREF_KEY, lastModifiedTimestamp);
+    public void updateBillableLastModified() {
+        setValue(BILLABLES_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(Clock.getCurrentTime()));
     }
 
     public String getBillablesLastModified() {
