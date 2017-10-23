@@ -6,6 +6,7 @@ android {
     buildToolsVersion "25.0.2"
 
     // building string config fields requires a double-quoted string
+    // For non-strings in buildConfigField, use System.getenv instead of ENV.
     def ENV = { k -> "\"${System.getenv(k)}\"" }
 
     dataBinding {
@@ -23,8 +24,8 @@ android {
         buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
         buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
     }
     signingConfigs {
         releaseConfig {
@@ -61,10 +62,9 @@ android {
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
             buildConfigField "String", "API_HOST", ENV("DEVELOPMENT_API_HOST")
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "String", "ROLLBAR_ENV_KEY", "null"
-            buildConfigField "String", "ROLLBAR_API_KEY", "null"
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
+            buildConfigField "String", "ROLLBAR_API_KEY", "null"
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
         sandbox {
@@ -78,9 +78,7 @@ android {
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
-
             buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
-            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("SANDBOX_ROLLBAR_ENV_KEY")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
@@ -99,26 +97,42 @@ android {
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
             buildConfigField "String", "API_HOST", ENV("SPEC_API_HOST")
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "String", "ROLLBAR_ENV_KEY", "null"
-            buildConfigField "String", "ROLLBAR_API_KEY", "null"
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
+            buildConfigField "String", "ROLLBAR_API_KEY", "null"
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
         demo {
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
-            resValue "string", "app_name", "UHP"
-            resValue "string", "main_activity_label", "UHP"
+            resValue "string", "app_name", "UHP Demo"
+            resValue "string", "main_activity_label", "UHP Demo"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             resValue "color", "colorPrimary", "#329AF0" // Watsi blue
             resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
+
             buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
-            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("DEMO_ROLLBAR_ENV_KEY")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("DEMO_HOCKEYAPP_APP_ID")
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+        }
+        training {
+            applicationIdSuffix ".training"
+            versionNameSuffix "-training"
+            resValue "string", "app_name", "UHP Training"
+            resValue "string", "main_activity_label", "UHP Training"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
+            resValue "color", "colorPrimaryDark", "#1C7CD6"
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_training"
+            ]
+
+            buildConfigField "Integer", "PROVIDER_ID", System.getenv("TRAINING_PROVIDER_ID")
+            buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("TRAINING_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
         production {
@@ -134,7 +148,6 @@ android {
             ]
 
             buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
-            buildConfigField "String", "ROLLBAR_ENV_KEY", ENV("PRODUCTION_ROLLBAR_ENV_KEY")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
         }
@@ -178,6 +191,9 @@ dependencies {
     testCompile 'org.powermock:powermock:1.6.5'
     testCompile 'org.powermock:powermock-module-junit4:1.6.5'
     testCompile 'org.powermock:powermock-api-mockito:1.6.5'
+    testCompile "org.powermock:powermock-module-junit4-rule:1.6.5"
+    testCompile "org.powermock:powermock-classloading-xstream:1.6.5"
+
     testCompile "org.robolectric:robolectric:3.3.2"
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'

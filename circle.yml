@@ -50,9 +50,19 @@ deployment:
       - ./deploy_scripts/downloadKeystore.sh
       - ./deploy_scripts/assembleSignedRelease.sh production
       - ./deploy_scripts/deployHockeyApp.sh production
+      - ./deploy_scripts/assembleSignedRelease.sh training
+      - ./deploy_scripts/deployHockeyApp.sh training
+      - ./deploy_scripts/assembleSignedRelease.sh demo
+      - ./deploy_scripts/deployHockeyApp.sh demo
   master:
     branch: master
     commands:
       - ./deploy_scripts/downloadKeystore.sh
       - ./deploy_scripts/assembleSignedRelease.sh sandbox
       - ./deploy_scripts/deployHockeyApp.sh sandbox
+  training:
+    branch: training
+    commands:
+      - ./deploy_scripts/downloadKeystore.sh
+      - ./deploy_scripts/assembleSignedRelease.sh training
+      - ./deploy_scripts/deployHockeyApp.sh training

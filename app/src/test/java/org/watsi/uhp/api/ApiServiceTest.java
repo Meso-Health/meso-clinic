@@ -19,6 +19,7 @@ import org.watsi.uhp.models.AuthenticationToken;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -27,6 +28,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -46,7 +48,9 @@ public class ApiServiceTest {
     @Mock
     OkHttpClient mockHttpClient;
     @Mock
-    UnauthorizedInterceptor mockInterceptor;
+    UnauthorizedInterceptor mockUnauthorizedInterceptor;
+    @Mock
+    NotModifiedInterceptor mockNotModifiedInterceptor;
     @Mock
     GsonBuilder mockGsonBuilder;
     @Mock
@@ -78,15 +82,20 @@ public class ApiServiceTest {
 
         when(AccountManager.get(mockContext)).thenReturn(mockAccountManager);
         whenNew(OkHttpClient.Builder.class).withNoArguments().thenReturn(mockHttpClientBuilder);
+        whenNew(NotModifiedInterceptor.class).withNoArguments().thenReturn(mockNotModifiedInterceptor);
         whenNew(UnauthorizedInterceptor.class).withArguments(mockAccountManager)
-                .thenReturn(mockInterceptor);
+                .thenReturn(mockUnauthorizedInterceptor);
+        when(mockHttpClientBuilder.cache(any(Cache.class)))
+                .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.connectTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.readTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.writeTimeout(ApiService.HTTP_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS))
                 .thenReturn(mockHttpClientBuilder);
-        when(mockHttpClientBuilder.addNetworkInterceptor(mockInterceptor))
+        when(mockHttpClientBuilder.addNetworkInterceptor(mockUnauthorizedInterceptor))
+                .thenReturn(mockHttpClientBuilder);
+        when(mockHttpClientBuilder.addInterceptor(mockNotModifiedInterceptor))
                 .thenReturn(mockHttpClientBuilder);
         when(mockHttpClientBuilder.retryOnConnectionFailure(false))
                 .thenReturn(mockHttpClientBuilder);

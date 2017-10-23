@@ -201,14 +201,14 @@ public class FetchServiceTest {
             throws Exception {
         String lastModifiedTimestamp = "foo";
 
-        doNothing().when(spiedFetchService).notifyAboutMembersToBeDeleted(anyListOf(Member.class));
+        doNothing().when(spiedFetchService).deleteMembersDueToProviderAssignmentEnding(anyListOf(Member.class));
         doNothing().when(spiedFetchService).createOrUpdateMembers(anyListOf(Member.class));
         when(mockPreferencesManager.getMemberLastModified()).thenReturn(lastModifiedTimestamp);
         when(ApiService.requestBuilder(spiedFetchService)).thenReturn(mockApi);
-        when(mockApi.members("Token " + token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
+        when(mockApi.members("Token " + token, BuildConfig.PROVIDER_ID))
                 .thenReturn(mockFetchMembersCall);
         when(mockFetchMembersCall.execute()).thenReturn(mockFetchMembersResponse);
-        doNothing().when(mockPreferencesManager).setMemberLastModified(anyString());
+        doNothing().when(mockPreferencesManager).updateMembersLastModified();
         return mockFetchMembersResponse;
     }
 
@@ -223,14 +223,13 @@ public class FetchServiceTest {
         when(mockResponse.body()).thenReturn(mockMembersList);
         Headers mockHeaders = mock(Headers.class);
         when(mockResponse.headers()).thenReturn(mockHeaders);
-        when(mockHeaders.get("last-modified")).thenReturn(updatedLastModifiedTimestamp);
+        when(mockPreferencesManager.getBillablesLastModified()).thenReturn(updatedLastModifiedTimestamp);
 
         spiedFetchService.fetchMembers(token, mockPreferencesManager);
 
-        verify(spiedFetchService, times(1)).notifyAboutMembersToBeDeleted(mockMembersList);
+        verify(spiedFetchService, times(1)).deleteMembersDueToProviderAssignmentEnding(mockMembersList);
         verify(spiedFetchService, times(1)).createOrUpdateMembers(mockMembersList);
-        verify(mockPreferencesManager, times(1))
-                .setMemberLastModified(updatedLastModifiedTimestamp);
+        verify(mockPreferencesManager, times(1)).updateMembersLastModified();
     }
 
     @Test
@@ -245,9 +244,9 @@ public class FetchServiceTest {
 
         spiedFetchService.fetchMembers(token, mockPreferencesManager);
 
-        verify(spiedFetchService, never()).notifyAboutMembersToBeDeleted(anyListOf(Member.class));
+        verify(spiedFetchService, never()).deleteMembersDueToProviderAssignmentEnding(anyListOf(Member.class));
         verify(spiedFetchService, never()).createOrUpdateMembers(anyListOf(Member.class));
-        verify(mockPreferencesManager, never()).setMemberLastModified(anyString());
+        verify(mockPreferencesManager, never()).updateMembersLastModified();
         verifyStatic(never());
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class));
@@ -269,9 +268,9 @@ public class FetchServiceTest {
 
         spiedFetchService.fetchMembers(token, mockPreferencesManager);
 
-        verify(spiedFetchService, never()).notifyAboutMembersToBeDeleted(anyListOf(Member.class));
+        verify(spiedFetchService, never()).deleteMembersDueToProviderAssignmentEnding(anyListOf(Member.class));
         verify(spiedFetchService, never()).createOrUpdateMembers(anyListOf(Member.class));
-        verify(mockPreferencesManager, never()).setMemberLastModified(anyString());
+        verify(mockPreferencesManager, never()).updateMembersLastModified();
         verifyStatic();
         ExceptionManager.requestFailure(
                 "Failed to fetch members", mockRawRequest, mockRawResponse);
@@ -285,7 +284,7 @@ public class FetchServiceTest {
     }
 
     @Test
-    public void notifyAboutMembersToBeDeleted() throws Exception {
+    public void deleteMembersDueToProviderAssignmentEnding() throws Exception {
         Member newMemberOnBackend = mockMember(false);
         Member localOnlySyncedMember = mockMember(true);
         Member unSyncedMember = mockMember(false);
@@ -301,14 +300,14 @@ public class FetchServiceTest {
         whenNew(HashMap.class).withNoArguments().thenReturn(mockParamMap);
         when(mockParamMap.put(anyString(), anyString())).thenReturn(null);
 
-        fetchService.notifyAboutMembersToBeDeleted(fetchedMembers);
+        fetchService.deleteMembersDueToProviderAssignmentEnding(fetchedMembers);
 
-        verify(mockParamMap, times(1)).put("member.id", localOnlySyncedMember.getId().toString());
+        verify(mockParamMap, never()).put("member.id", localOnlySyncedMember.getId().toString());
         verify(mockParamMap, never()).put("member.id", newMemberOnBackend.getId().toString());
         verify(mockParamMap, never()).put("member.id", unSyncedMember.getId().toString());
         verifyStatic();
         ExceptionManager.reportMessage(
-                "Member synced on device but not in backend", "warning", mockParamMap);
+                "Member deleted due to provider assignment ending.", "info", mockParamMap);
     }
 
     @Test
@@ -328,15 +327,15 @@ public class FetchServiceTest {
 
         when(mockPreferencesManager.getBillablesLastModified()).thenReturn(lastModifiedTimestamp);
         when(ApiService.requestBuilder(spiedFetchService)).thenReturn(mockApi);
-        when(mockApi.billables("Token " + token, lastModifiedTimestamp, BuildConfig.PROVIDER_ID))
+        when(mockApi.billables("Token " + token, BuildConfig.PROVIDER_ID))
                 .thenReturn(mockFetchBillablesCall);
         when(mockFetchBillablesCall.execute()).thenReturn(mockFetchBillablesResponse);
-        doNothing().when(mockPreferencesManager).setBillablesLastModified(anyString());
+        doNothing().when(mockPreferencesManager).updateBillableLastModified();
         return mockFetchBillablesResponse;
     }
 
     @Test
-    public void fetchBillables_successfulResponse() throws Exception {
+    public void fetchBillables_successfulResponse_attachedToUnsyncedEncounter() throws Exception {
         FetchService spiedFetchService = spy(FetchService.class);
         String updatedLastModifiedTimestamp = "bar";
         String token = "token";
@@ -346,16 +345,15 @@ public class FetchServiceTest {
         when(mockResponse.body()).thenReturn(mockBillablesList);
         Headers mockHeaders = mock(Headers.class);
         when(mockResponse.headers()).thenReturn(mockHeaders);
-        when(mockHeaders.get("last-modified")).thenReturn(updatedLastModifiedTimestamp);
+        when(mockPreferencesManager.getBillablesLastModified()).thenReturn(updatedLastModifiedTimestamp);
 
         spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic();
-        BillableDao.clearBillablesNotCreatedDuringEncounter();
+        BillableDao.clearBillablesWithoutUnsyncedEncounter();
         verifyStatic();
         BillableDao.createOrUpdate(mockBillablesList);
-        verify(mockPreferencesManager, times(1))
-                .setBillablesLastModified(updatedLastModifiedTimestamp);
+        verify(mockPreferencesManager, times(1)).updateBillableLastModified();
     }
 
     @Test
@@ -371,10 +369,10 @@ public class FetchServiceTest {
         spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic(never());
-        BillableDao.clearBillablesNotCreatedDuringEncounter();
+        BillableDao.clearBillablesWithoutUnsyncedEncounter();
         verifyStatic(never());
         BillableDao.createOrUpdate(anyListOf(Billable.class));
-        verify(mockPreferencesManager, never()).setBillablesLastModified(anyString());
+        verify(mockPreferencesManager, never()).updateBillableLastModified();
         verifyStatic(never());
         ExceptionManager.requestFailure(
                 anyString(), any(Request.class), any(okhttp3.Response.class));
@@ -397,10 +395,10 @@ public class FetchServiceTest {
         spiedFetchService.fetchBillables(token, mockPreferencesManager);
 
         verifyStatic(never());
-        BillableDao.clearBillablesNotCreatedDuringEncounter();
+        BillableDao.clearBillablesWithoutUnsyncedEncounter();
         verifyStatic(never());
         BillableDao.createOrUpdate(anyListOf(Billable.class));
-        verify(mockPreferencesManager, never()).setBillablesLastModified(anyString());
+        verify(mockPreferencesManager, never()).updateBillableLastModified();
         verifyStatic();
         ExceptionManager.requestFailure(
                 "Failed to fetch billables", mockRawRequest, mockRawResponse);

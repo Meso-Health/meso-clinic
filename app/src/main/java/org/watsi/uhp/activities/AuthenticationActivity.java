@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.api.ApiService;
+import org.watsi.uhp.helpers.ActivityHelper;
 import org.watsi.uhp.managers.Authenticator;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
@@ -72,6 +73,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
         });
 
         KeyboardManager.focusAndShowKeyboard(usernameView, this);
+        ActivityHelper.setupBannerIfInTrainingMode(this);
     }
 
     private void authenticate(String username, String password, ProgressDialog spinner) {

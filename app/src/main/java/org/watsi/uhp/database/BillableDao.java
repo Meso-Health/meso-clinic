@@ -1,6 +1,7 @@
 package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
@@ -44,9 +45,26 @@ public class BillableDao {
         getDao().refresh(billable);
     }
 
-    public static void clearBillablesNotCreatedDuringEncounter() throws SQLException {
+    public static void clearBillablesWithoutUnsyncedEncounter() throws SQLException {
         DeleteBuilder<Billable, UUID> deleteBuilder = getDao().deleteBuilder();
-        deleteBuilder.where().eq(Billable.FIELD_NAME_CREATED_DURING_ENCOUNTER, false);
+
+        String rawQuery =
+                "SELECT billables.id\n" +
+                        "FROM billables\n" +
+                        "INNER JOIN encounter_items ON encounter_items.billable_id = billables.id\n" +
+                        "INNER JOIN encounters ON encounters.id = encounter_items.encounter_id\n" +
+                        "WHERE encounters.dirty_fields != \"[]\" \n";
+
+        GenericRawResults<String[]> results = getDao().queryRaw(rawQuery);
+
+        Set<UUID> billableIdsWithUnsyncedEncounter = new HashSet<>();
+        for (String[] result : results) {
+            billableIdsWithUnsyncedEncounter.add(UUID.fromString(result[0]));
+        }
+
+        // we need to protect against the case where the next call to FetchBillables removes existing
+        // new billables, which would cause an error when we query them as part of the encounter sync serialization
+        deleteBuilder.where().notIn(Billable.FIELD_NAME_ID, billableIdsWithUnsyncedEncounter);
         deleteBuilder.delete();
     }
 

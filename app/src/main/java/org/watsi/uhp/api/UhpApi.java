@@ -26,7 +26,6 @@ import retrofit2.http.Path;
 public interface UhpApi {
 
     String AUTHORIZATION_HEADER = "Authorization";
-    String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
 
     @POST("authentication_token")
     Call<AuthenticationToken> getAuthToken(@Header(AUTHORIZATION_HEADER) String authorization);
@@ -34,14 +33,12 @@ public interface UhpApi {
     @GET("providers/{providerId}/members")
     Call<List<Member>> members(
             @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
-            @Header(IF_MODIFIED_SINCE_HEADER) String lastModified,
             @Path("providerId") int providerId
     );
 
     @GET("providers/{providerId}/billables")
     Call<List<Billable>> billables(
             @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
-            @Header(IF_MODIFIED_SINCE_HEADER) String lastModified,
             @Path("providerId") int providerId
     );
 

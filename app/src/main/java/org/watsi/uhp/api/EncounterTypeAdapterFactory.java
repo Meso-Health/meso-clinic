@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -39,7 +40,7 @@ public class EncounterTypeAdapterFactory extends CustomizedTypeAdapterFactory<En
             JsonObject billableJson = encounterItemJson.remove(EncounterItem.FIELD_NAME_BILLABLE_ID)
                     .getAsJsonObject();
             boolean isNewBillable = billableJson.get(Billable.FIELD_NAME_CREATED_DURING_ENCOUNTER)
-                    .getAsBoolean();
+                .getAsBoolean();
             if (isNewBillable) {
                 encounterItemJson.add("billable", billableJson);
             } else {

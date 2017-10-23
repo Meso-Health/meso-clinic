@@ -27,6 +27,7 @@
     <string name="menu_submit_without_copayment">Submit (no copayment)</string>
 
     <!-- General Labels -->
+    <string name="training_mode_label">FOR TRAINING ONLY</string>
     <string name="name_label">Name</string>
     <string name="card_id_label">Card ID</string>
     <string name="phone_number_label">Phone number</string>

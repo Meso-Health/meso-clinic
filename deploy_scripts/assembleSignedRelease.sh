@@ -9,6 +9,12 @@ echo ${VERSION_NAME}
 
 if [ $1 == 'production' ]; then
   ./gradlew assembleProductionRelease
-else
+elif [ $1 == 'training' ]; then
+  ./gradlew assembleTrainingRelease
+elif [ $1 == 'sandbox' ]; then
   ./gradlew assembleSandboxRelease
+elif [ $1 == 'demo' ]; then
+  ./gradlew assembleDemoRelease
+else
+  echo "Invalid argument for assembleSignedRelease.sh: $1"
 fi

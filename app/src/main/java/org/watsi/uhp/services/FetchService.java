@@ -35,8 +35,6 @@ import retrofit2.Response;
  */
 public class FetchService extends AbstractSyncJobService {
 
-    private static String LAST_MODIFIED_HEADER = "last-modified";
-
     @Override
     public boolean performSync() {
         Log.i("UHP", "FetchService.performSync is called");
@@ -76,13 +74,13 @@ public class FetchService extends AbstractSyncJobService {
             throws IOException, SQLException, IllegalStateException {
         String tokenHeader = "Token " + authToken;
         Call<List<Member>> request = ApiService.requestBuilder(this).members(
-                tokenHeader, preferencesManager.getMemberLastModified(), BuildConfig.PROVIDER_ID);
+                tokenHeader, BuildConfig.PROVIDER_ID);
         Response<List<Member>> response = request.execute();
         if (response.isSuccessful()) {
-            List<Member> members = response.body();
-            notifyAboutMembersToBeDeleted(members);
-            createOrUpdateMembers(members);
-            preferencesManager.setMemberLastModified(response.headers().get(LAST_MODIFIED_HEADER));
+            List<Member> fetchedMembers = response.body();
+            deleteMembersDueToProviderAssignmentEnding(fetchedMembers);
+            createOrUpdateMembers(fetchedMembers);
+            preferencesManager.updateMembersLastModified();
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -95,32 +93,33 @@ public class FetchService extends AbstractSyncJobService {
     }
 
     /**
-     * This reports to Rollbar the IDs of any members who are marked as synced
-     * locally on the device, but are not in the list of members returned by
-     * the server.
+     * This deletes the members that are still on the device, but is not contained in the list
+     * returned from backend.
      *
-     * These members should be safe to delete, but for now we are choosing
-     * the safer route of first creating notifications of their existence
      * @param fetchedMembers Most recent list of members returned by server
      * @throws SQLException Error querying data from the db
      */
-    protected void notifyAboutMembersToBeDeleted(List<Member> fetchedMembers) throws SQLException {
+    protected void deleteMembersDueToProviderAssignmentEnding(List<Member> fetchedMembers) throws SQLException {
         Set<UUID> previousMemberIds = MemberDao.allMemberIds();
-        for (Member member : fetchedMembers) {
-            previousMemberIds.remove(member.getId());
+        Set<UUID> fetchedMemberIds = new HashSet<>();
+        for (Member member: fetchedMembers) {
+            fetchedMemberIds.add(member.getId());
         }
-        Set<UUID> unsyncedPrevMembers = new HashSet<>();
+
+        // Should only leave unsynced newborns and members whose ProviderAssignment ended - so in
+        // the next loop, we only delete the ones whose assignment ended by checking if they are synced
+        previousMemberIds.removeAll(fetchedMemberIds);
+
         for (UUID prevMemberId : previousMemberIds) {
-            Member member = MemberDao.findById(prevMemberId);
-            if (!member.isSynced()) unsyncedPrevMembers.add(prevMemberId);
-        }
-        previousMemberIds.removeAll(unsyncedPrevMembers);
-        for (UUID toBeDeleted : previousMemberIds) {
-            Map<String, String> params = new HashMap<>();
-            params.put("member.id", toBeDeleted.toString());
-            ExceptionManager.reportMessage(
-                    "Member synced on device but not in backend",
-                    ExceptionManager.MESSAGE_LEVEL_WARNING, params);
+            Member memberToDelete = MemberDao.findById(prevMemberId);
+            if (memberToDelete.isSynced()) {
+                Map<String, String> params = new HashMap<>();
+                params.put("member.id", memberToDelete.toString());
+                ExceptionManager.reportMessage(
+                        "Member deleted due to provider assignment ending.",
+                        ExceptionManager.MESSAGE_LEVEL_INFO, params);
+                memberToDelete.delete();
+            }
         }
     }
 
@@ -136,16 +135,14 @@ public class FetchService extends AbstractSyncJobService {
     protected void fetchBillables(String authToken, PreferencesManager preferencesManager)
             throws IOException, SQLException {
         String tokenHeader = "Token " + authToken;
-        String lastModifiedTimestamp = preferencesManager.getBillablesLastModified();
         Call<List<Billable>> request = ApiService.requestBuilder(this)
-                .billables(tokenHeader, lastModifiedTimestamp, BuildConfig.PROVIDER_ID);
+                .billables(tokenHeader, BuildConfig.PROVIDER_ID);
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();
-            BillableDao.clearBillablesNotCreatedDuringEncounter();
+            BillableDao.clearBillablesWithoutUnsyncedEncounter();
             BillableDao.createOrUpdate(billables);
-            preferencesManager.setBillablesLastModified(
-                    response.headers().get(LAST_MODIFIED_HEADER));
+            preferencesManager.updateBillableLastModified();
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(

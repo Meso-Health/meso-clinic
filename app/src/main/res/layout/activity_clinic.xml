@@ -8,6 +8,8 @@
     android:layout_height="match_parent"
     tools:context="org.watsi.uhp.activities.ClinicActivity">
 
+    <include layout="@layout/training_banner"/>
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

@@ -25,6 +25,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.FormFragment;
+import org.watsi.uhp.helpers.ActivityHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
@@ -79,6 +80,7 @@ public class ClinicActivity extends AppCompatActivity {
         DatabaseHelper.init(this);
 
         setContentView(R.layout.activity_clinic);
+        ActivityHelper.setupBannerIfInTrainingMode(this);
         setupToolbar();
         mSessionManager = new SessionManager(new PreferencesManager(this), AccountManager.get(this));
         mNavigationManager = new NavigationManager(this);

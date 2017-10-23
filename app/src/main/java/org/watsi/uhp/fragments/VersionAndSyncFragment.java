@@ -20,15 +20,9 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class VersionAndSyncFragment extends BaseFragment {
-
-    private SimpleDateFormat mLastModifiedFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
-    private SimpleDateFormat mDisplayDateFormat = new SimpleDateFormat("hh:mm:ss a  yyyy/M/d");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -60,10 +54,10 @@ public class VersionAndSyncFragment extends BaseFragment {
     private void updateTimestamps(View view) {
         PreferencesManager preferencesManager = new PreferencesManager(getContext());
         ((TextView) view.findViewById(R.id.fetch_members_timestamp))
-                .setText(formatTimestamp(preferencesManager.getMemberLastModified()));
+                .setText(preferencesManager.getMemberLastModified());
 
         ((TextView) view.findViewById(R.id.fetch_billables_timestamp))
-                .setText(formatTimestamp(preferencesManager.getBillablesLastModified()));
+                .setText(preferencesManager.getBillablesLastModified());
     }
 
     private void refreshValues(View view) {
@@ -130,19 +124,6 @@ public class VersionAndSyncFragment extends BaseFragment {
             return getString(R.string.all_synced);
         } else {
             return count + " pending";
-        }
-    }
-
-    private String formatTimestamp(String lastModifiedTimestamp) {
-        try {
-            if (lastModifiedTimestamp == null) {
-                return "Never";
-            } else {
-                Date lastModified = mLastModifiedFormat.parse(lastModifiedTimestamp);
-                return mDisplayDateFormat.format(lastModified);
-            }
-        } catch (ParseException e) {
-            return "Could not parse timestamp";
         }
     }
 }
