@@ -21,7 +21,6 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.database.IdentificationEventDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
@@ -48,7 +47,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.watsi.uhp.CustomMatchers.withMemberId;
 
-
 @RunWith(AndroidJUnit4.class)
 public class IdentificationFlowFeature extends BaseTest {
 
@@ -61,7 +59,7 @@ public class IdentificationFlowFeature extends BaseTest {
 
     @Before
     public void setUpTest() throws SQLException, AbstractModel.ValidationException {
-        member = MemberDao.all().get(0);
+        member = Member.all(Member.class).get(0);
         verifyIntentMatcher =
                 allOf(hasAction(Constants.SIMPRINTS_VERIFY_INTENT),
                         hasExtras(allOf(
@@ -77,7 +75,7 @@ public class IdentificationFlowFeature extends BaseTest {
     @After
     public void cleanUpTest() throws SQLException {
         IdentificationEvent identification = IdentificationEventDao.openCheckIn(member.getId());
-        if (identification != null) identification.delete();
+        if (identification != null) identification.destroy();
     }
 
     public void performSearch(String query) {

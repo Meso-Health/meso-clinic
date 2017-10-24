@@ -11,8 +11,6 @@ import org.watsi.uhp.IdentificationEventFactory;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.database.IdentificationEventDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -56,7 +54,7 @@ public class EncounterFlowFeature extends BaseTest {
 
     @Before
     public void setUpTest() throws SQLException, AbstractModel.ValidationException {
-        member = MemberDao.all().get(0);
+        member = Member.all(Member.class).get(0);
         billableDrug = BillableDao.getBillablesByType(Billable.TypeEnum.DRUG).get(0);
         billableLab = BillableDao.getBillablesByType(Billable.TypeEnum.LAB).get(0);
         billableSupply = BillableDao.getBillablesByType(Billable.TypeEnum.SUPPLY).get(0);
@@ -65,7 +63,7 @@ public class EncounterFlowFeature extends BaseTest {
                 member,
                 30
         );
-        IdentificationEventDao.create(idEvent);
+        idEvent.create();
 
         clinicActivityRule.launchActivity(null);
     }

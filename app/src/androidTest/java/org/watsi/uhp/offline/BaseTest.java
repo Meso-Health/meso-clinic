@@ -9,9 +9,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.watsi.uhp.BillableFactory;
 import org.watsi.uhp.MemberFactory;
-import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AbstractModel;
@@ -77,53 +75,53 @@ class BaseTest {
     }
 
     private static void loadFixtures() throws SQLException, AbstractModel.ValidationException {
-        MemberDao.create(new MemberFactory(
+        new MemberFactory(
                 "Lil Jon",
                 "RWI000000",
                 5,
                 Member.GenderEnum.M
-        ));
+        ).create();
 
-        MemberDao.create(new MemberFactory(
+        new MemberFactory(
                 "Big Jon",
                 "RWI000001",
                 50,
                 Member.GenderEnum.M
-        ));
+        ).create();
 
-        BillableDao.create(new BillableFactory(
+        new BillableFactory(
                 "Consultation",
                 Billable.TypeEnum.SERVICE,
                 2000
-        ));
+        ).create();
 
-        BillableDao.create(new BillableFactory(
+        new BillableFactory(
                 "Medical Form",
                 Billable.TypeEnum.SERVICE,
                 1000
-        ));
+        ).create();
 
-        BillableDao.create(new BillableFactory(
+        new BillableFactory(
                 "Quinine",
                 Billable.TypeEnum.DRUG,
                 "100ml",
                 "syrup",
                 5000
-        ));
+        ).create();
 
-        BillableDao.create(new BillableFactory(
+        new BillableFactory(
                 "Malaria (BS)",
                 Billable.TypeEnum.LAB,
                 2000
-        ));
+        ).create();
 
-        BillableDao.create(new BillableFactory(
+        new BillableFactory(
                 "Sutures",
                 Billable.TypeEnum.SUPPLY,
                 "1",
                 "unit",
                 3000
-        ));
+        ).create();
     }
 
     void assertItemInList(Matcher<Object> matcher, int listId) {
