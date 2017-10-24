@@ -73,7 +73,7 @@ class EncounterItemDaoTest: DaoTest() {
         billable.type = Billable.TypeEnum.SERVICE
         billable.price = 100
         billable.generateId()
-        BillableDao.create(billable)
+        billable.create()
         return billable
     }
 }

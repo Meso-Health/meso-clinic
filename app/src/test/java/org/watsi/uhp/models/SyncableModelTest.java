@@ -345,11 +345,4 @@ public class SyncableModelTest {
 
         assertEquals(response, mockResponse);
     }
-
-    @Test
-    public void delete() throws Exception {
-        doReturn(mockDao).when(memberSpy).getDao();
-        memberSpy.delete();
-        verify(mockDao, times(1)).delete(memberSpy);
-    }
 }

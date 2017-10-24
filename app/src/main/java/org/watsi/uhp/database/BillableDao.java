@@ -6,7 +6,6 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
 
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Billable;
 
 import java.sql.SQLException;
@@ -30,23 +29,10 @@ public class BillableDao {
         return DatabaseHelper.fetchDao(Billable.class);
     }
 
-    public static List<Billable> all() throws SQLException {
-        return getDao().queryForAll();
-    }
-
-    public static void create(Billable billable) throws SQLException {
-        billable.setCreatedAt(Clock.getCurrentTime());
-        getDao().create(billable);
-    }
-
     public static void createOrUpdate(List<Billable> billables) throws SQLException {
         for (Billable billable : billables) {
             getDao().createOrUpdate(billable);
         }
-    }
-
-    public static void refresh(Billable billable) throws SQLException {
-        getDao().refresh(billable);
     }
 
     public static void clearBillablesWithoutUnsyncedEncounter() throws SQLException {
@@ -70,10 +56,6 @@ public class BillableDao {
         // new billables, which would cause an error when we query them as part of the encounter sync serialization
         deleteBuilder.where().notIn(Billable.FIELD_NAME_ID, billableIdsWithUnsyncedEncounter);
         deleteBuilder.delete();
-    }
-
-    public static Billable findById(UUID id) throws SQLException {
-        return getDao().queryForId(id);
     }
 
     public static List<Billable> findByName(String name) throws SQLException {

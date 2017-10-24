@@ -18,7 +18,7 @@ import java.sql.SQLException
 import java.util.*
 
 @DatabaseTable(tableName = Photo.TABLE_NAME)
-open class Photo() : AbstractModel() {
+open class Photo() : AbstractModel<Photo, UUID>() {
 
     companion object {
         const val TABLE_NAME = "photos"
@@ -49,12 +49,6 @@ open class Photo() : AbstractModel() {
     constructor(uri: Uri) : this() {
         url = uri.toString()
     }
-
-    @Throws(SQLException::class)
-    fun create(): Boolean = PhotoDao.create(this)
-
-    @Throws(SQLException::class)
-    fun update(): Boolean = PhotoDao.update(this)
 
     @Throws(FileDeletionException::class)
     open fun delete(context: Context): Boolean {

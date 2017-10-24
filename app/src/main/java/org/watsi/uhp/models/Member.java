@@ -13,7 +13,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.database.IdentificationEventDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 
@@ -232,7 +231,7 @@ public class Member extends SyncableModel {
     }
 
     public void updateFromFetch() throws SQLException {
-        Member persistedMember = MemberDao.findById(getId());
+        Member persistedMember = Member.find(getId(), Member.class);
         if (persistedMember != null) {
             // if the persisted member has not been synced to the back-end, assume it is
             // the most up-to-date and do not update it with the fetched member attributes

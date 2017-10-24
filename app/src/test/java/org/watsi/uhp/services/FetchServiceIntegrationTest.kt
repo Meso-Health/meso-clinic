@@ -6,8 +6,6 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
-import org.watsi.uhp.database.BillableDao
-import org.watsi.uhp.database.MemberDao
 import org.watsi.uhp.managers.Clock
 import org.watsi.uhp.managers.PreferencesManager
 import org.watsi.uhp.models.*
@@ -36,10 +34,10 @@ class FetchServiceIntegrationTest: ReplayTest() {
 
         service.fetchBillables("returns200", preferencesManager)
 
-        assertEquals(BillableDao.all().size, 3)
-        assertNotNull(BillableDao.findById(UUID.fromString("4438d9c5-41c9-4c68-ae3f-febf2ad4369a")))
-        assertNotNull(BillableDao.findById(UUID.fromString("d40eec44-65b9-4202-83ba-d95126b54418")))
-        assertNotNull(BillableDao.findById(billableWithUnsyncedEncounter.id))
+        assertEquals(Billable.all(Billable::class.java).size, 3)
+        assertNotNull(Billable.find(UUID.fromString("4438d9c5-41c9-4c68-ae3f-febf2ad4369a"), Billable::class.java))
+        assertNotNull(Billable.find(UUID.fromString("d40eec44-65b9-4202-83ba-d95126b54418"), Billable::class.java))
+        assertNotNull(Billable.find(billableWithUnsyncedEncounter.id, Billable::class.java))
         verify(preferencesManager).updateBillableLastModified()
     }
 
@@ -51,7 +49,7 @@ class FetchServiceIntegrationTest: ReplayTest() {
 
         service.fetchBillables("returns304", preferencesManager)
 
-        assertEquals(BillableDao.all().size, 2)
+        assertEquals(Billable.all(Billable::class.java).size, 2)
         verify(preferencesManager, never()).updateBillableLastModified()
     }
 
@@ -67,9 +65,9 @@ class FetchServiceIntegrationTest: ReplayTest() {
 
         service.fetchMembers("returns200", preferencesManager)
 
-        assertEquals(MemberDao.all().size, 2)
-        assertNotNull(UUID.fromString("44a4cdc1-a6a0-496a-8224-a4cae870ff97"))
-        assertNotNull(UUID.fromString("0c318af8-6de4-4427-8405-5e4818f86618"))
+        assertEquals(Member.all(Member::class.java).size, 2)
+        assertNotNull(Member.find(UUID.fromString("44a4cdc1-a6a0-496a-8224-a4cae870ff97"), Member::class.java))
+        assertNotNull(Member.find(UUID.fromString("0c318af8-6de4-4427-8405-5e4818f86618"), Member::class.java))
         verify(preferencesManager).updateMembersLastModified()
     }
 
@@ -81,7 +79,7 @@ class FetchServiceIntegrationTest: ReplayTest() {
         service.fetchMembers("returns304", preferencesManager)
         service.fetchMembers("returns304", preferencesManager)
 
-        assertEquals(MemberDao.all().size, 1)
+        assertEquals(Member.all(Member::class.java).size, 1)
         verify(preferencesManager, never()).updateMembersLastModified()
     }
 
@@ -96,7 +94,7 @@ class FetchServiceIntegrationTest: ReplayTest() {
         billable.type = Billable.TypeEnum.SERVICE
         billable.price = 0
         billable.generateId()
-        BillableDao.create(billable)
+        billable.create()
         return billable
     }
 
@@ -104,7 +102,7 @@ class FetchServiceIntegrationTest: ReplayTest() {
         val member = Member()
         member.id = UUID.randomUUID()
         member.fullName = "Foo"
-        MemberDao.create(member)
+        member.create()
         return member
     }
 

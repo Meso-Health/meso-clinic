@@ -77,7 +77,7 @@ class PhotoDaoTest: DaoTest() {
         if (dirty) {
             member.saveChanges("foo")
         } else {
-            MemberDao.create(member)
+            member.create()
         }
     }
 

@@ -34,7 +34,7 @@ class IdentificationEventDaoTest: DaoTest() {
         idEvent.accepted = accepted
         idEvent.dismissed = dismissed
         idEvent.occurredAt = Clock.getCurrentTime()
-        IdentificationEventDao.create(idEvent)
+        idEvent.create()
         return idEvent
     }
 

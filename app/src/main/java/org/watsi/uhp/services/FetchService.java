@@ -116,14 +116,14 @@ public class FetchService extends AbstractSyncJobService {
         previousMemberIds.removeAll(fetchedMemberIds);
 
         for (UUID prevMemberId : previousMemberIds) {
-            Member memberToDelete = MemberDao.findById(prevMemberId);
+            Member memberToDelete = Member.find(prevMemberId, Member.class);
             if (memberToDelete.isSynced()) {
                 Map<String, String> params = new HashMap<>();
                 params.put("member.id", memberToDelete.toString());
                 ExceptionManager.reportMessage(
                         "Member deleted due to provider assignment ending.",
                         ExceptionManager.MESSAGE_LEVEL_INFO, params);
-                memberToDelete.delete();
+                memberToDelete.destroy();
             }
         }
     }

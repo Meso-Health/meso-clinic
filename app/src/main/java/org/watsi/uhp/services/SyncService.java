@@ -2,7 +2,6 @@ package org.watsi.uhp.services;
 
 import android.util.Log;
 
-import org.watsi.uhp.database.EncounterDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Encounter;
@@ -85,7 +84,7 @@ public class SyncService extends AbstractSyncJobService {
     protected void syncEncounterForms(List<EncounterForm> unsyncedEncounterForms)
             throws SQLException, IOException {
         for (EncounterForm encounterForm : unsyncedEncounterForms) {
-            Encounter encounter = EncounterDao.find(encounterForm.getEncounter().getId());
+            Encounter encounter = Encounter.find(encounterForm.getEncounter().getId(), Encounter.class);
             if (!encounter.isSynced()) {
                 // do not push encounter form until related encounter is synced
                 continue;
@@ -95,7 +94,7 @@ public class SyncService extends AbstractSyncJobService {
             if (image == null) {
                 ExceptionManager.reportMessage("Null image for form on encounter: " +
                         encounter.getId().toString());
-                encounterForm.delete();
+                encounterForm.destroy();
                 continue;
             }
             try {

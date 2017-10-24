@@ -131,7 +131,7 @@ class MemberDaoTest: DaoTest() {
         val member = buildMember("photo")
         member.remoteMemberPhotoUrl = photoUrl
         member.croppedPhotoBytes = photoBytes
-        MemberDao.create(member)
+        member.create()
         return member
     }
 
@@ -140,7 +140,7 @@ class MemberDaoTest: DaoTest() {
                              householdId: UUID? = null,
                              age: Int = 18): Member {
         val member = buildMember(name, cardId, householdId, age)
-        MemberDao.create(member)
+        member.create()
         return member
     }
 
@@ -165,7 +165,7 @@ class MemberDaoTest: DaoTest() {
         idEvent.accepted = accepted
         idEvent.dismissed = dismissed
         idEvent.occurredAt = Clock.getCurrentTime()
-        IdentificationEventDao.create(idEvent)
+        idEvent.create()
         return idEvent
     }
 
