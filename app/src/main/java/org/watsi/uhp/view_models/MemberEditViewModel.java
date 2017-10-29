@@ -1,7 +1,6 @@
 package org.watsi.uhp.view_models;
 
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Member;
 
 public class MemberEditViewModel extends MemberViewModel {

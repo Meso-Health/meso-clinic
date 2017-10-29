@@ -14,6 +14,7 @@ import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Member;
 
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class FetchService extends AbstractSyncJobService {
             if (authenticationToken != null) {
                 fetchMembers(authenticationToken, preferencesManager);
                 fetchBillables(authenticationToken, preferencesManager);
+                fetchDiagnoses(authenticationToken, preferencesManager);
             }
             return true;
         } catch (SQLException | IllegalStateException e) {
@@ -155,6 +157,38 @@ public class FetchService extends AbstractSyncJobService {
                         request.request(),
                         response.raw()
                 );
+            }
+        }
+    }
+
+    protected void fetchDiagnoses(String authToken, PreferencesManager preferencesManager)
+            throws IOException, SQLException {
+        String tokenHeader = "Token " + authToken;
+        Call<List<Diagnosis>> request = ApiService.requestBuilder(this).diagnoses(tokenHeader);
+        Response<List<Diagnosis>> response = request.execute();
+        if (response.isSuccessful()) {
+            updateDiagnoses(response.body());
+            preferencesManager.updateDiagnosesLastModified();
+        } else {
+            if (response.code() != 304) {
+                ExceptionManager.requestFailure(
+                        "Failed to fetch diagnoses",
+                        request.request(),
+                        response.raw()
+                );
+            }
+        }
+    }
+
+    private void updateDiagnoses(List<Diagnosis> diagnoses) throws SQLException {
+        Set<Integer> currentDiagnosesIds = new HashSet<>();
+        for (Diagnosis diagnosis : diagnoses) {
+            diagnosis.createOrUpdate();
+            currentDiagnosesIds.add(diagnosis.getId());
+        }
+        for (Diagnosis diagnosis : Diagnosis.all(Diagnosis.class)) {
+            if (!currentDiagnosesIds.contains(diagnosis.getId())) {
+                diagnosis.destroy();
             }
         }
     }

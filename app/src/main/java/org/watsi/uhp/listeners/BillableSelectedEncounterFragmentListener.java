@@ -28,8 +28,16 @@ public class BillableSelectedEncounterFragmentListener implements AdapterView.On
         if (position != 0) {
             Billable billable = (Billable) adapter.getItem(position);
             try {
-                encounterPresenter.addToEncounterItemList(billable);
-                encounterPresenter.scrollToBottom();
+                if (billable.requiresLabResult()) {
+                    encounterPresenter.getLabResultSpinner().setVisibility(View.VISIBLE);
+                    encounterPresenter.getLabResultSpinnerWrapper().setVisibility(View.VISIBLE);
+                    encounterPresenter.getLabResultSpinner().performClick();
+                } else {
+                    encounterPresenter.addToEncounterItemList(billable);
+                    encounterPresenter.getBillableSpinner().setSelection(0);
+                    encounterPresenter.getLabResultSpinner().setVisibility(View.GONE);
+                    encounterPresenter.scrollToBottom();
+                }
             } catch (Encounter.DuplicateBillableException e) {
                 // TODO: make toast message more descriptive
                 Toast.makeText(context, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();

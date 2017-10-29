@@ -27,7 +27,7 @@ public class NewbornBirthdatePickerTest {
 
     @Before
     public void setUp() throws Exception {
-        mMember = new MemberFactory("Salmonella Malaria NewBorn", "RWI123123", 30, Member.GenderEnum.F);
+        mMember = new Member();
         Context context = Robolectric.buildActivity(ClinicActivity.class).create().get();
         mDatePicker = new DatePicker(context);
     }

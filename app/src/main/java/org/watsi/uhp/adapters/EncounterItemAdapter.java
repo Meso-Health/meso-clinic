@@ -56,7 +56,10 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
             final Billable billable = encounterItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
-            if (billable.dosageDetails() == null) {
+            if (encounterItem.getLabResult() != null) {
+                viewHolder.billableDetails.setVisibility(View.VISIBLE);
+                viewHolder.billableDetails.setText(encounterItem.getLabResult().toString());
+            } else if (billable.dosageDetails() == null) {
                 viewHolder.billableDetails.setVisibility(View.GONE);
             } else {
                 viewHolder.billableDetails.setText(billable.dosageDetails());

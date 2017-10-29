@@ -8,8 +8,11 @@ import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.watsi.uhp.BillableFactory;
+import org.watsi.uhp.DiagnosisFactory;
 import org.watsi.uhp.MemberFactory;
+import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
+import org.watsi.uhp.fragments.DiagnosisFragment;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AbstractModel;
@@ -24,6 +27,7 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -75,57 +79,28 @@ class BaseTest {
     }
 
     private static void loadFixtures() throws SQLException, AbstractModel.ValidationException {
-        new MemberFactory(
-                "Lil Jon",
-                "RWI000000",
-                5,
-                Member.GenderEnum.M
-        ).create();
-
-        new MemberFactory(
-                "Big Jon",
-                "RWI000001",
-                50,
-                Member.GenderEnum.M
-        ).create();
-
-        new BillableFactory(
-                "Consultation",
-                Billable.TypeEnum.SERVICE,
-                2000
-        ).create();
-
-        new BillableFactory(
-                "Medical Form",
-                Billable.TypeEnum.SERVICE,
-                1000
-        ).create();
-
-        new BillableFactory(
-                "Quinine",
-                Billable.TypeEnum.DRUG,
-                "100ml",
-                "syrup",
-                5000
-        ).create();
-
-        new BillableFactory(
-                "Malaria (BS)",
-                Billable.TypeEnum.LAB,
-                2000
-        ).create();
-
-        new BillableFactory(
-                "Sutures",
-                Billable.TypeEnum.SUPPLY,
-                "1",
-                "unit",
-                3000
-        ).create();
+        MemberFactory.createMember("Lil Jon", "RWI000000", 5, Member.GenderEnum.M);
+        MemberFactory.createMember("Big Jon", "RWI000001", 50, Member.GenderEnum.M);
+        BillableFactory.createBillable("Consultation", Billable.TypeEnum.SERVICE, 2000, false);
+        BillableFactory.createBillable("Medical Form", Billable.TypeEnum.SERVICE, 1000, false);
+        BillableFactory.createBillable("Quinine", Billable.TypeEnum.DRUG, "100ml", "syrup", 5000, false);
+        BillableFactory.createBillable("Malaria (BS)", Billable.TypeEnum.LAB, 2000, true);
+        BillableFactory.createBillable("CD4", Billable.TypeEnum.LAB, 1500, false);
+        BillableFactory.createBillable("Sutures", Billable.TypeEnum.SUPPLY, "1", "unit", 3000, false);
+        DiagnosisFactory.createDiagnosis(1, "Severe Malaria", "mal s mal smal s. mal");
+        DiagnosisFactory.createDiagnosis(2, "Urinary Tract Infection", "UTI");
+        DiagnosisFactory.createDiagnosis(3, "Upper respiratory tract infection", "URTI");
+        DiagnosisFactory.createDiagnosis(4, "Cushing's syndrome", null);
+        DiagnosisFactory.createDiagnosis(5, "Severe Malaria in Pregnancy", "mal s mal smal s. mal");
+        DiagnosisFactory.createDiagnosis(6, "Malaria in Pregnancy", "MAL");
+        DiagnosisFactory.createDiagnosis(7, "Cough", null);
+        DiagnosisFactory.createDiagnosis(9, "Runners itch", null);
+        DiagnosisFactory.createDiagnosis(11, "SomediagnosiswithMALinit", null);
+        DiagnosisFactory.createDiagnosis(12, "Utirenary", null);
     }
 
     void assertItemInList(Matcher<Object> matcher, int listId) {
-        onData(matcher).inAdapterView(withId(listId)).check(matches(isDisplayed()));
+        onView(withId(listId)).check(matches(withAdaptedData(matcher)));
     }
 
     void assertItemNotInList(Matcher<Object> matcher, int listId) {

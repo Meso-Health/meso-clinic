@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
 
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;

@@ -1,11 +1,10 @@
 package org.watsi.uhp.services
 
-import okreplay.*
-import org.junit.Assert.*
+import okreplay.OkReplay
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.watsi.uhp.managers.Clock
 import org.watsi.uhp.managers.PreferencesManager
 import org.watsi.uhp.models.*

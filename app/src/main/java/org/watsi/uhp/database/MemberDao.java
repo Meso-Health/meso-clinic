@@ -6,7 +6,6 @@ import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
 
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -70,7 +69,6 @@ public class MemberDao {
             throws SQLException {
         List<ExtractedResult> topMatchingNames =
                 FuzzySearch.extractTop(query, allUniqueMemberNames(), 20, 60);
-
         List<Member> topMatchingMembers = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
             String name = result.getString();

@@ -29,6 +29,7 @@ public class LoginFeature {
     private final String username = "klinik";
     private final String password = "123456";
 
+
     @Rule
     public ActivityTestRule<ClinicActivity> clinicActivityRule =
             new ActivityTestRule<>(ClinicActivity.class, false, true);

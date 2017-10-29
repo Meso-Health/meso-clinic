@@ -42,7 +42,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
             public void onClick(View v) {
                 try {
                     Encounter encounter = createUnsavedEncounterWithDefaultItems();
-                    getNavigationManager().setEncounterFragment(encounter);
+                    getNavigationManager().setAdditionalInformationFragment(encounter);
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
                 } catch (IllegalStateException e) {

@@ -36,9 +36,9 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccountManager.class, ApiService.class, Credentials.class,
-        EncounterTypeAdapterFactory.class, GsonBuilder.class, GsonConverterFactory.class,
-        OkHttpClient.Builder.class, OkReplayInterceptor.class, Response.class, Retrofit.class,
-        Retrofit.Builder.class })
+        EncounterTypeAdapterFactory.class, DiagnosisTypeAdapterFactory.class, GsonBuilder.class,
+        GsonConverterFactory.class, OkHttpClient.Builder.class, OkReplayInterceptor.class,
+        Response.class, Retrofit.class, Retrofit.Builder.class })
 public class ApiServiceTest {
 
     @Mock Context mockContext;
@@ -50,6 +50,7 @@ public class ApiServiceTest {
     @Mock NotModifiedInterceptor mockNotModifiedInterceptor;
     @Mock GsonBuilder mockGsonBuilder;
     @Mock EncounterTypeAdapterFactory mockEncounterTypeAdapterFactory;
+    @Mock DiagnosisTypeAdapterFactory mockDiagnosisTypeAdapterFactory;
     @Mock GsonConverterFactory mockGsonConverterFactory;
     @Mock Retrofit.Builder mockRetrofitBuilder;
     @Mock Retrofit mockRetrofit;
@@ -95,10 +96,14 @@ public class ApiServiceTest {
         whenNew(GsonBuilder.class).withNoArguments().thenReturn(mockGsonBuilder);
         whenNew(EncounterTypeAdapterFactory.class).withNoArguments()
                 .thenReturn(mockEncounterTypeAdapterFactory);
+        whenNew(DiagnosisTypeAdapterFactory.class).withNoArguments()
+                .thenReturn(mockDiagnosisTypeAdapterFactory);
         when(mockGsonBuilder.excludeFieldsWithoutExposeAnnotation()).thenReturn(mockGsonBuilder);
         when(mockGsonBuilder.setDateFormat(Clock.ISO_DATE_FORMAT_STRING))
                 .thenReturn(mockGsonBuilder);
         when(mockGsonBuilder.registerTypeAdapterFactory(mockEncounterTypeAdapterFactory))
+                .thenReturn(mockGsonBuilder);
+        when(mockGsonBuilder.registerTypeAdapterFactory(mockDiagnosisTypeAdapterFactory))
                 .thenReturn(mockGsonBuilder);
         when(mockGsonBuilder.create()).thenReturn(gson);
         whenNew(Retrofit.Builder.class).withNoArguments().thenReturn(mockRetrofitBuilder);

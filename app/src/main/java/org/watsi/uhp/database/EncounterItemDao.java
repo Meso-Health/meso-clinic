@@ -2,10 +2,10 @@ package org.watsi.uhp.database;
 
 import com.j256.ormlite.dao.Dao;
 
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.LabResult;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,6 +27,8 @@ public class EncounterItemDao {
         for (EncounterItem encounterItem : encounterItems) {
             encounterItem.setEncounterId(encounterItem.getEncounter().getId());
             encounterItem.getBillable().refresh();
+            LabResult labResult = LabResultDao.findByEncounterItemId(encounterItem.getId());
+            encounterItem.setLabResult(labResult);
         }
         return encounterItems;
     }
@@ -36,10 +38,9 @@ public class EncounterItemDao {
         List<EncounterItem> defaultLineItems = new ArrayList<>();
 
         if (type == IdentificationEvent.ClinicNumberTypeEnum.OPD) {
-            defaultLineItems.add(new EncounterItem(BillableDao.findByName("Consultation").get(0), 1));
-            defaultLineItems.add(new EncounterItem(BillableDao.findByName("Medical Form").get(0), 1));
+            defaultLineItems.add(new EncounterItem(BillableDao.findBillableByName("Consultation"), 1));
+            defaultLineItems.add(new EncounterItem(BillableDao.findBillableByName("Medical Form"), 1));
         }
-
         return defaultLineItems;
     }
 }

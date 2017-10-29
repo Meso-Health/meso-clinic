@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
-import okhttp3.CacheControl;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okreplay.OkReplayInterceptor;
@@ -51,6 +50,7 @@ public class ApiService {
                     .excludeFieldsWithoutExposeAnnotation()
                     .setDateFormat(Clock.ISO_DATE_FORMAT_STRING)
                     .registerTypeAdapterFactory(new EncounterTypeAdapterFactory())
+                    .registerTypeAdapterFactory(new DiagnosisTypeAdapterFactory())
                     .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(BuildConfig.API_HOST)

@@ -4,11 +4,10 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import org.junit.Before
-import org.junit.Test
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
-
+import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Matchers
 import org.mockito.Mockito

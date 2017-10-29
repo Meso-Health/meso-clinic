@@ -56,6 +56,11 @@ public abstract class AbstractModel<T extends AbstractModel<T,K>, K> implements 
         return getDao().update((T) this) == 1;
     }
 
+    public boolean createOrUpdate() throws SQLException {
+        setCreatedAt(Clock.getCurrentTime());
+        return getDao().createOrUpdate((T) this).getNumLinesChanged() == 1;
+    }
+
     public boolean destroy() throws SQLException {
         return getDao().delete((T) this) == 1;
     }

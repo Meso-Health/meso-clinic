@@ -7,11 +7,13 @@ import android.support.v4.app.FragmentManager;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
+import org.watsi.uhp.fragments.PresentingConditionsFragment;
 import org.watsi.uhp.fragments.BarcodeFragment;
 import org.watsi.uhp.fragments.BaseFragment;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentPatientsFragment;
+import org.watsi.uhp.fragments.DiagnosisFragment;
 import org.watsi.uhp.fragments.EncounterFormFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.fragments.EnrollNewbornInfoFragment;
@@ -44,6 +46,7 @@ public class NavigationManager {
     private FragmentActivity mActivity;
     private FragmentProvider mFragmentProvider;
     private String mLastFragmentTransition;
+    private Encounter diagnosisFragment;
 
 
     public NavigationManager(FragmentActivity activity) {
@@ -160,10 +163,22 @@ public class NavigationManager {
         setFragment(mFragmentProvider.createFragment(EncounterFragment.class, bundle));
     }
 
+    public void setDiagnosisFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(DiagnosisFragment.class, bundle));
+    }
+
     public void setEncounterFormFragment(Encounter encounter) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
         setFragment(mFragmentProvider.createFragment(EncounterFormFragment.class, bundle));
+    }
+
+    public void setAdditionalInformationFragment(Encounter encounter) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(SYNCABLE_MODEL_BUNDLE_FIELD, encounter);
+        setFragment(mFragmentProvider.createFragment(PresentingConditionsFragment.class, bundle));
     }
 
     public void setReceiptFragment(Encounter encounter) {

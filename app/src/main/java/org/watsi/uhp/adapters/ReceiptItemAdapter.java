@@ -44,10 +44,13 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
 
         if (encounterItem != null) {
             final Billable billable = encounterItem.getBillable();
-
+            // TODO This is shared code for encounter item adapter.
             viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
             viewHolder.billableName.setText(billable.getName());
-            if (billable.dosageDetails() == null) {
+            if (billable.requiresLabResult()) {
+                viewHolder.billableDetails.setVisibility(View.VISIBLE);
+                viewHolder.billableDetails.setText(encounterItem.getLabResult().getResult().toString());
+            } else if (billable.dosageDetails() == null) {
                 viewHolder.billableDetails.setVisibility(View.GONE);
             } else {
                 viewHolder.billableDetails.setText(billable.dosageDetails());

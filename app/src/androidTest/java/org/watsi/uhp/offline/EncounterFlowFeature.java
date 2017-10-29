@@ -13,7 +13,7 @@ import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.LabResult;
 import org.watsi.uhp.models.Member;
 
 import java.sql.SQLException;
@@ -24,11 +24,14 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -46,6 +49,7 @@ public class EncounterFlowFeature extends BaseTest {
     private Member member;
     private Billable billableDrug;
     private Billable billableLab;
+    private Billable billableLabThatRequiresLabResult;
     private Billable billableSupply;
 
     @Rule
@@ -55,36 +59,43 @@ public class EncounterFlowFeature extends BaseTest {
     @Before
     public void setUpTest() throws SQLException, AbstractModel.ValidationException {
         member = Member.all(Member.class).get(0);
-        billableDrug = BillableDao.getBillablesByType(Billable.TypeEnum.DRUG).get(0);
-        billableLab = BillableDao.getBillablesByType(Billable.TypeEnum.LAB).get(0);
-        billableSupply = BillableDao.getBillablesByType(Billable.TypeEnum.SUPPLY).get(0);
+        billableDrug = BillableDao.findBillableByName("Quinine");
+        billableLab = BillableDao.findBillableByName("CD4");
+        billableLabThatRequiresLabResult = BillableDao.findBillableByName("Malaria (BS)");
+        billableSupply = BillableDao.findBillableByName("Sutures");
 
-        IdentificationEvent idEvent = new IdentificationEventFactory(
-                member,
-                30
-        );
-        idEvent.create();
+        IdentificationEventFactory.createIdentificationEvent(member, 30);
 
         clinicActivityRule.launchActivity(null);
     }
 
-    public void addBillable(Billable billable) {
+    public void addBillable(Billable billable) throws InterruptedException {
         onView(withId(R.id.category_spinner)).perform(click());
         onData(allOf(is(instanceOf(String.class)),
                 is(billable.getType().toString())))
                 .perform(click());
-
         if (billable.getType() == Billable.TypeEnum.DRUG) {
             onView(withId(R.id.drug_search)).perform(typeText(billable.getName()));
+            Thread.sleep(1000);
             onView(withText(billable.getName()))
-                    .inRoot(withDecorView(not(clinicActivityRule.getActivity().getWindow()
-                            .getDecorView())))
+                    .inRoot(withDecorView(not(is(clinicActivityRule.getActivity().getWindow().getDecorView()))))
                     .perform(click());
         } else {
-            onData(allOf(is(instanceOf(Billable.class)),
-                    withBillableName(billable.getName())))
-                    .perform(click());
+            onData(allOf(is(instanceOf(Billable.class)), withBillableName(billable.getName()))).perform(click());
         }
+    }
+
+    public void addBillableLabWithLabResult(Billable billable, LabResult.LabResultEnum labResult) {
+        onView(withId(R.id.category_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(billable.getType().toString())))
+                .perform(click());
+        onData(allOf(is(instanceOf(Billable.class)),
+                withBillableName(billable.getName())))
+                .perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(labResult.toString())))
+                .perform(click());
     }
 
     public void removeBillable(Billable billable) {
@@ -107,6 +118,31 @@ public class EncounterFlowFeature extends BaseTest {
         onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
     }
 
+    private void searchForAndChooseDiagnosis(String query, String fullName) throws InterruptedException {
+        onView(withId(R.id.diagnosis_search)).perform(typeText(query));
+        Thread.sleep(1000);
+        onView(withText(fullName)).inRoot(isPlatformPopup()).perform(click());
+    }
+
+    private void addNewBillable(String name, Billable.TypeEnum type, int price, String units, String composition) {
+        onView(withId(R.id.add_billable_prompt)).perform(click());
+        onView(withId(R.id.type_field)).perform(click());
+        onData(allOf(is(instanceOf(String.class)),
+                is(type.toString())))
+                .perform(click());
+        onView(withId(R.id.name_field)).perform(typeText(name));
+        onView(withId(R.id.price_field)).perform(typeText(String.valueOf(price)));
+        if (units != null) {
+            onView(withId(R.id.unit_field)).perform(typeText(units));
+        }
+
+        if (composition != null) {
+            onView(withId(R.id.list_of_compositions)).perform(click());
+            onView(withText(composition)).inRoot(isPlatformPopup()).perform(click());
+        }
+        onView(withId(R.id.save_button)).perform(click());
+    }
+
     @Test
     public void dismissMemberFlow() {
         // the user can see checked-in members
@@ -121,7 +157,7 @@ public class EncounterFlowFeature extends BaseTest {
     }
 
     @Test
-    public void createEncounter_outpatientEncounterFlow() {
+    public void createEncounter_outpatientEncounterFlow() throws Exception {
         String defaultBillable1 = "Consultation";
         String defaultBillable2 = "Medical Form";
 
@@ -132,9 +168,21 @@ public class EncounterFlowFeature extends BaseTest {
         onView(withText(member.getFullName())).perform(click());
         onView(withText(R.string.detail_fragment_label)).check(matches(isDisplayed()));
 
-        // when the user proceeds to enter encounter information, a list of encounter items
-        // appears with the default billables
+        // when the user proceeds to enter encounter information,
+        // the presenting conditions show up with the fever question
         onView(withText(R.string.detail_create_encounter)).perform(click());
+        onView(withText(R.string.fragment_presenting_conditions)).check(matches(isDisplayed()));
+
+        // User can check and uncheck the fever check box.
+        onView(withId(R.id.fever_checkbox)).check(matches(isNotChecked()));
+        onView(withId(R.id.fever_checkbox)).perform(click());
+        onView(withId(R.id.fever_checkbox)).check(matches(isChecked()));
+        onView(withId(R.id.fever_checkbox)).perform(click());
+        onView(withId(R.id.fever_checkbox)).check(matches(isNotChecked()));
+
+        // when the user clicks next on the presenting conditions fragment
+        // a list of encounter items appears with the default billables
+        onView(withText(R.string.continue_encounter_button)).perform(click());
         onView(withText(R.string.encounter_fragment_label)).check(matches(isDisplayed()));
         assertItemInList(withEncounterItemName(defaultBillable1), R.id.line_items_list);
         assertItemInList(withEncounterItemName(defaultBillable2), R.id.line_items_list);
@@ -148,12 +196,16 @@ public class EncounterFlowFeature extends BaseTest {
         addBillable(billableSupply);
         assertItemInList(withEncounterItemName(billableSupply.getName()), R.id.line_items_list);
 
-        addBillable(billableDrug);
-        assertItemInList(withEncounterItemName(billableDrug.getName()), R.id.line_items_list);
 
         // if the user selects the same billable twice, an error message appears
         addBillable(billableLab);
         assertDisplaysToast(clinicActivityRule, R.string.already_in_list_items);
+
+        addBillable(billableDrug);
+        assertItemInList(withEncounterItemName(billableDrug.getName()), R.id.line_items_list);
+
+        addBillableLabWithLabResult(billableLabThatRequiresLabResult, LabResult.LabResultEnum.POSITIVE);
+        assertItemInList(withEncounterItem(billableLabThatRequiresLabResult.getName(), 2000, "Positive"), R.id.line_items_list);
 
         // the user can remove billables
         removeBillable(billableSupply);
@@ -172,7 +224,7 @@ public class EncounterFlowFeature extends BaseTest {
         addNewBillable("New Vaccine Billable", Billable.TypeEnum.VACCINE, 15000, "128mg", null);
 
         // scroll to the bottom.
-        onData(anything()).inAdapterView(withId(R.id.line_items_list)).atPosition(3).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.line_items_list)).atPosition(5).perform(click());
 
         // make sure billables are displayed correctly in the encounter fragment.
         onView(withText("New Service Billable")).check(matches(isDisplayed()));
@@ -184,6 +236,29 @@ public class EncounterFlowFeature extends BaseTest {
         // TODO: the user cannot change the quantity of non-drugs
 
         // TODO: the user can change the date of the encounter for backfilling
+
+        // the user can continue to choose diagnoses
+        onView(withText(R.string.continue_encounter_button)).perform(click());
+        onView(withText(R.string.diagnosis_fragment_label)).check(matches(isDisplayed()));
+        onView(withId(R.id.diagnosis_search)).perform(click());
+        // TODO: Submit three diagnosis.
+        onView(withText("0 Diagnoses")).check(matches(isDisplayed()));
+        searchForAndChooseDiagnosis("Malaria", "Severe Malaria");
+        onView(withText("Severe Malaria")).check(matches(isDisplayed()));
+        onView(withText("1 Diagnosis")).check(matches(isDisplayed()));
+        searchForAndChooseDiagnosis("Cough", "Cough");
+        onView(withText("Cough")).check(matches(isDisplayed()));
+        onView(withText("2 Diagnoses")).check(matches(isDisplayed()));
+        searchForAndChooseDiagnosis("uti", "Urinary Tract Infection");
+        onView(withText("Urinary Tract Infection")).check(matches(isDisplayed()));
+        onView(withText("3 Diagnoses")).check(matches(isDisplayed()));
+
+        // Remove a diagnosis
+        onData(anything()).inAdapterView(withId(R.id.selected_diagnosis_list)).onChildView(withId(R.id.remove_diagnosis_btn)).atPosition(1).perform(click());
+        onView(withText("2 Diagnoses")).check(matches(isDisplayed()));
+        onView(withText("Severe Malaria")).check(matches(isDisplayed()));
+        onView(withText("Urinary Tract Infection")).check(matches(isDisplayed()));
+        onView(withText("Cough")).check(doesNotExist());
 
         // the user can continue to take a form of the encounter
         onView(withText(R.string.continue_encounter_button)).perform(click());
@@ -197,36 +272,21 @@ public class EncounterFlowFeature extends BaseTest {
         assertItemInList(withEncounterItem(defaultBillable1, 2000, null), R.id.receipt_items);
         assertItemInList(withEncounterItem(defaultBillable2, 1000, null), R.id.receipt_items);
         assertItemInList(withEncounterItem(billableLab.getName(), billableLab.getPrice(), null), R.id.receipt_items);
+        assertItemInList(withEncounterItem(billableLabThatRequiresLabResult.getName(), billableLabThatRequiresLabResult.getPrice(), "Positive"), R.id.receipt_items);
         assertItemInList(withEncounterItem(billableSupply.getName(), billableSupply.getPrice(), null), R.id.receipt_items);
         assertItemInList(withEncounterItem("New Service Billable", 1255, null), R.id.receipt_items);
         assertItemInList(withEncounterItem("New Drug Billable", 1599, null), R.id.receipt_items);
         assertItemInList(withEncounterItem("New Vaccine Billable", 15000, null), R.id.receipt_items);
 
+        // TODO: Check diagnosis in this fragment.
+        onView(withText("2 Diagnoses")).check(matches(isDisplayed()));
+        onView(withText("Severe Malaria")).check(matches(isDisplayed()));
+        onView(withText("Urinary Tract Infection")).check(matches(isDisplayed()));
+        onView(withText("Cough")).check(doesNotExist());
         onView(withText(R.string.save_encounter_button)).perform(click());
 
         // TODO: add quick toast check
         // no checked-in members
         onView(withText(R.string.current_patients_empty_text)).check(matches(isDisplayed()));
-    }
-
-    private void addNewBillable(String name, Billable.TypeEnum type, int price, String units, String composition) {
-        onView(withId(R.id.add_billable_prompt)).perform(click());
-        onView(withId(R.id.type_field)).perform(click());
-        onData(allOf(is(instanceOf(String.class)),
-                is(type.toString())))
-                .perform(click());
-        onView(withId(R.id.name_field)).perform(typeText(name));
-        onView(withId(R.id.price_field)).perform(typeText(String.valueOf(price)));
-        if (units != null) {
-            onView(withId(R.id.unit_field)).perform(typeText(units));
-        }
-
-        if (composition != null) {
-            onView(withId(R.id.list_of_compositions)).perform(click());
-            onView(withText(composition))
-                    .inRoot(isPlatformPopup())
-                    .perform(click());
-        }
-        onView(withId(R.id.save_button)).perform(click());
     }
 }

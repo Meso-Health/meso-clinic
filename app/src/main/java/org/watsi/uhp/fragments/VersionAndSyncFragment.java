@@ -47,7 +47,6 @@ public class VersionAndSyncFragment extends BaseFragment {
         });
 
         refreshValues(view);
-
         return view;
     }
 
@@ -55,9 +54,10 @@ public class VersionAndSyncFragment extends BaseFragment {
         PreferencesManager preferencesManager = new PreferencesManager(getContext());
         ((TextView) view.findViewById(R.id.fetch_members_timestamp))
                 .setText(preferencesManager.getMemberLastModified());
-
         ((TextView) view.findViewById(R.id.fetch_billables_timestamp))
                 .setText(preferencesManager.getBillablesLastModified());
+        ((TextView) view.findViewById(R.id.fetch_diagnoses_timestamp))
+                .setText(preferencesManager.getDiagnosesLastModified());
     }
 
     private void refreshValues(View view) {

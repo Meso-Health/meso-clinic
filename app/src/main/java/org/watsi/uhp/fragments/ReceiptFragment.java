@@ -11,13 +11,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.databinding.FragmentReceiptBinding;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
+import org.watsi.uhp.databinding.FragmentReceiptBinding;
 import org.watsi.uhp.databinding.FragmentReceiptListFooterBinding;
 import org.watsi.uhp.databinding.FragmentReceiptListHeaderBinding;
+import org.watsi.uhp.helpers.ListViewUtils;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.view_models.DiagnosesListViewModel;
 import org.watsi.uhp.view_models.EncounterViewModel;
 
 import java.sql.SQLException;
@@ -69,13 +71,18 @@ public class ReceiptFragment extends FormFragment<Encounter> {
         EncounterViewModel viewModel = new EncounterViewModel(mSyncableModel, getContext());
         binding.setEncounter(viewModel);
 
-        setupListView(view, viewModel);
+        DiagnosesListViewModel diagnosisListViewModel = new DiagnosesListViewModel(getContext(), mSyncableModel, false);
+        binding.setDiagnosesItemListView(diagnosisListViewModel);
+
+        setUpEncounterItemListView(view, viewModel);
+
+        ListViewUtils.setDynamicHeight((ListView) view.findViewById(R.id.receipt_items));
     }
 
     // Android does not let you nest views that scroll and by default ListView is a scrollable view,
     // so in order to have the entire receipt content by scrollable, we have to include it within
     // the ListView by adding the top label and bottom total information as a header/footer
-    private void setupListView(View view, EncounterViewModel viewModel) {
+    private void setUpEncounterItemListView(View view, EncounterViewModel viewModel) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService (Context.LAYOUT_INFLATER_SERVICE);
 
         ListView listView = (ListView) view.findViewById(R.id.receipt_items);

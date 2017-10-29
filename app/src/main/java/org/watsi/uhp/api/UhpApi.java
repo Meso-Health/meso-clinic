@@ -2,6 +2,7 @@ package org.watsi.uhp.api;
 
 import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.IdentificationEvent;
@@ -40,6 +41,11 @@ public interface UhpApi {
     Call<List<Billable>> billables(
             @Header(AUTHORIZATION_HEADER) String tokenAuthorization,
             @Path("providerId") int providerId
+    );
+
+    @GET("diagnoses")
+    Call<List<Diagnosis>> diagnoses(
+            @Header(AUTHORIZATION_HEADER) String tokenAuthorization
     );
 
     @POST("providers/{providerId}/identification_events")

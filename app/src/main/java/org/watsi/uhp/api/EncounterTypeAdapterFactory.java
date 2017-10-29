@@ -1,10 +1,10 @@
 package org.watsi.uhp.api;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
@@ -50,5 +50,7 @@ public class EncounterTypeAdapterFactory extends CustomizedTypeAdapterFactory<En
             convertedEncounterItemsJson.add(encounterItemJson);
         }
         jsonObject.add(Encounter.FIELD_NAME_ENCOUNTER_ITEMS, convertedEncounterItemsJson);
+        String diagnosisIDs = jsonObject.remove(Encounter.FIELD_NAME_DIAGNOSIS_IDS).getAsString();
+        jsonObject.add(Encounter.FIELD_NAME_DIAGNOSIS_IDS, new Gson().fromJson(diagnosisIDs, JsonArray.class));
     }
 }

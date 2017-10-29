@@ -116,6 +116,7 @@ public class EncounterPresenterTest {
         when(encounterPresenter.getDrugSearchView()).thenReturn(searchView);
         when(encounterPresenter.getAddBillablePrompt()).thenReturn(textView);
         when(encounterPresenter.getBackdateEncounterLink()).thenReturn(textView);
+        when(encounterPresenter.getLabResultSpinner()).thenReturn(spinner);
 
         encounterPresenter.setUp();
         Mockito.verify(encounterFragment, Mockito.times(1)).updateBackdateLinkText();
@@ -176,6 +177,9 @@ public class EncounterPresenterTest {
         fakeLab1.setName("fake lab 1");
         fakeLab2.setName("fake lab 2");
         fakeLab3.setName("fake lab 3");
+        fakeLab1.setRequiresLabResult(false);
+        fakeLab2.setRequiresLabResult(false);
+        fakeLab3.setRequiresLabResult(false);
         billables.add(fakeLab1);
         billables.add(fakeLab2);
         billables.add(fakeLab3);

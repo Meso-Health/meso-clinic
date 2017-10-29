@@ -36,7 +36,6 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ApiService.class, EncounterItemDao.class })
 public class EncounterTest {
-
     @Mock
     Context mockContext;
     @Mock
@@ -167,6 +166,24 @@ public class EncounterTest {
 
         encounter.addEncounterItem(item1);
         encounter.addEncounterItem(item2);
+    }
+
+    @Test
+    public void addDiagnosis_doesNotContainDiagnosis_addsItem() throws Exception {
+        Diagnosis diagnosis = new Diagnosis(1, "diagnosis description", null);
+        Diagnosis diagnosis2 = new Diagnosis(2, "diagnosis description", null);
+
+        encounter.addDiagnosis(diagnosis);
+        encounter.addDiagnosis(diagnosis2);
+        assertTrue(encounter.getDiagnoses().contains(diagnosis));
+        assertTrue(encounter.getDiagnoses().contains(diagnosis2));
+    }
+
+    @Test(expected=Encounter.DuplicateDiagnosisException.class)
+    public void addDiagnosis_alreadyContainsDiagnosis_throwsException() throws Exception {
+        Diagnosis d1 = new Diagnosis(1, "description", null);
+        encounter.addDiagnosis(d1);
+        encounter.addDiagnosis(d1);
     }
 
     @Test

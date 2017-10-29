@@ -11,10 +11,12 @@ import com.j256.ormlite.table.TableUtils;
 
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterForm;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.IdentificationEvent;
+import org.watsi.uhp.models.LabResult;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.Photo;
 import org.watsi.uhp.models.User;
@@ -30,7 +32,7 @@ import java.util.UUID;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     private static DatabaseHelper instance;
 
@@ -66,7 +68,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     @Override
-     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
+    public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Member.class);
             TableUtils.createTable(connectionSource, Billable.class);
@@ -76,6 +78,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, EncounterForm.class);
             TableUtils.createTable(connectionSource, User.class);
             TableUtils.createTable(connectionSource, Photo.class);
+            TableUtils.createTable(connectionSource, Diagnosis.class);
+            TableUtils.createTable(connectionSource, LabResult.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -189,6 +193,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     }
                 case 11:
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN copayment_paid BOOLEAN NOT NULL DEFAULT 1;");
+                case 12:
+                    TableUtils.createTable(connectionSource, Diagnosis.class);
+                    TableUtils.createTable(connectionSource, LabResult.class);
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN diagnosis_ids STRING NOT NULL DEFAULT '[]';");
+                    getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN has_fever BOOLEAN;");
+                    getDao(Billable.class).executeRaw("ALTER TABLE `billables` ADD COLUMN requires_lab_result BOOLEAN NOT NULL DEFAULT 0;");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
@@ -208,6 +218,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, EncounterForm.class);
             TableUtils.clearTable(connectionSource, User.class);
             TableUtils.clearTable(connectionSource, Photo.class);
+            TableUtils.clearTable(connectionSource, Diagnosis.class);
+            TableUtils.clearTable(connectionSource, LabResult.class);
         } catch (SQLException e) {
             ExceptionManager.reportException(e);
         }

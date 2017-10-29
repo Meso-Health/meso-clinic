@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.database.BillableDao;
+import org.watsi.uhp.helpers.StringUtils;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -25,6 +26,7 @@ public class Billable extends AbstractModel {
     public static final String FIELD_NAME_PRICE = "price";
     public static final String FIELD_NAME_NAME = "name";
     public static final String FIELD_NAME_CREATED_DURING_ENCOUNTER = "created_during_encounter";
+    public static final String FIELD_NAME_REQUIRES_LAB_RESULT = "requires_lab_result";
 
     public enum TypeEnum {
         @SerializedName("drug") DRUG,
@@ -39,7 +41,7 @@ public class Billable extends AbstractModel {
         }
 
         public String toString() {
-            return name().substring(0,1) + name().substring(1).toLowerCase();
+            return StringUtils.titleCase(name());
         }
     }
 
@@ -77,6 +79,11 @@ public class Billable extends AbstractModel {
     @SerializedName(FIELD_NAME_CREATED_DURING_ENCOUNTER)
     @DatabaseField(columnName = FIELD_NAME_CREATED_DURING_ENCOUNTER, canBeNull = false, defaultValue = "false")
     private Boolean mCreatedDuringEncounter;
+
+    @Expose
+    @SerializedName(FIELD_NAME_REQUIRES_LAB_RESULT)
+    @DatabaseField(columnName = FIELD_NAME_REQUIRES_LAB_RESULT, canBeNull = false, defaultValue = "false")
+    private Boolean mRequiresLabResult;
 
     public Billable() {
         super();
@@ -134,6 +141,10 @@ public class Billable extends AbstractModel {
         return mCreatedDuringEncounter;
     }
 
+    public void setRequiresLabResult(boolean requiresLabResult) {
+        mRequiresLabResult = requiresLabResult;
+    }
+
     public void setCreatedDuringEncounter(Boolean createdDuringEncounter) {
         this.mCreatedDuringEncounter = createdDuringEncounter;
     }
@@ -141,7 +152,9 @@ public class Billable extends AbstractModel {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getName());
-        if (dosageDetails() != null) {
+        if (requiresLabResult()) {
+            sb.append("...");
+        } else if (dosageDetails() != null) {
             sb.append(" - " + dosageDetails());
         }
         return sb.toString();
@@ -213,5 +226,9 @@ public class Billable extends AbstractModel {
 
     public static List<String> getBillableCompositions() throws SQLException {
         return BillableDao.getUniqueBillableCompositions();
+    }
+
+    public boolean requiresLabResult() {
+        return mRequiresLabResult != null && mRequiresLabResult;
     }
 }

@@ -27,12 +27,12 @@ public class EncounterFragment extends FormFragment<Encounter> {
 
     @Override
     public boolean isFirstStep() {
-        return true;
+        return false;
     }
 
     @Override
     public void nextStep() {
-        getNavigationManager().setEncounterFormFragment(mSyncableModel);
+        getNavigationManager().setDiagnosisFragment(mSyncableModel);
     }
 
     @Override

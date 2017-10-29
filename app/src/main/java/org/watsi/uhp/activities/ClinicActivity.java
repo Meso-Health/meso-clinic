@@ -18,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import net.hockeyapp.android.UpdateManager;
 
@@ -27,6 +29,7 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.helpers.ActivityHelper;
 import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
@@ -37,6 +40,8 @@ import org.watsi.uhp.services.FetchService;
 import org.watsi.uhp.services.SyncService;
 
 import java.io.IOException;
+
+import static org.watsi.uhp.managers.KeyboardManager.hideKeyboard;
 
 public class ClinicActivity extends AppCompatActivity {
 
@@ -139,6 +144,7 @@ public class ClinicActivity extends AppCompatActivity {
     }
 
     private void onBackPressedNoConfirmation() {
+        hideKeyboard(this);
         getNavigationManager().setLastFragmentTransitionAsBackPress();
         // Transitioning from one fragment to another requires two fragment manager transactions,
         // as a result, we now need to pop twice on backpress to return to the previous fragment.
@@ -152,8 +158,7 @@ public class ClinicActivity extends AppCompatActivity {
             case android.R.id.home:
                 FragmentManager fm = getSupportFragmentManager();
                 Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
-                if (currentFragment instanceof FormFragment &&
-                        ((FormFragment) currentFragment).isFirstStep()) {
+                if (currentFragment instanceof FormFragment) {
                     showDialogReturnToHomeScreen();
                 } else {
                     getNavigationManager().setCurrentPatientsFragment();
@@ -258,6 +263,7 @@ public class ClinicActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
+                        hideKeyboard(ClinicActivity.this);
                         getNavigationManager().setCurrentPatientsFragment();
                     }
                 }).create().show();

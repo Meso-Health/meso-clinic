@@ -12,7 +12,7 @@ class BillableDaoTest: DaoTest() {
         val billable2 = createBillable("foo")
         val billable3 = createBillable("bar")
 
-        val queriedBillableIds = BillableDao.findByName("foo").map { it.id }
+        val queriedBillableIds = BillableDao.findBillablesByName("foo").map { it.id }
 
         assertTrue(queriedBillableIds.contains(billable1.id))
         assertTrue(queriedBillableIds.contains(billable2.id))
@@ -64,13 +64,14 @@ class BillableDaoTest: DaoTest() {
         createBillable("foo", Billable.TypeEnum.DRUG, "tablet")
         createBillable("bar", Billable.TypeEnum.DRUG, "fluid")
         createBillable("baz", Billable.TypeEnum.DRUG, "tablet")
-        createBillable("supply", Billable.TypeEnum.SUPPLY)
+        createBillable("surgical gloves", Billable.TypeEnum.SUPPLY, "pair")
 
         val uniqueCompositions = BillableDao.getUniqueBillableCompositions()
 
-        assertEquals(uniqueCompositions.size, 2)
+        assertEquals(uniqueCompositions.size, 3)
         assertTrue(uniqueCompositions.contains("fluid"))
         assertTrue(uniqueCompositions.contains("tablet"))
+        assertTrue(uniqueCompositions.contains("pair"))
     }
 
     private fun createBillable(name: String,

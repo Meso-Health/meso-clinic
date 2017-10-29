@@ -78,6 +78,9 @@
         <item quantity="other">%d Household Members</item>
     </plurals>
 
+    <!-- PresentingConditionsFragment -->
+    <string name="fragment_presenting_conditions">Enter presenting conditions</string>
+
     <!-- CheckinMemberDetailFragment -->
     <string name="detail_fragment_label">Member</string>
     <string name="absentee_notification">Needs to complete enrollment</string>
@@ -113,6 +116,16 @@
     <string name="continue_encounter_button">Next</string>
     <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
+
+    <!-- DiagnosisFragment -->
+    <string name="diagnosis_fragment_label"> Enter diagnoses </string>
+    <plurals name="diagnosis_count">
+        <item quantity="zero">No Diagnoses</item>
+        <item quantity="one">%d Diagnosis</item>
+        <item quantity="other">%d Diagnoses</item>
+    </plurals>
+    <string name="search_diagnosis_hint">Search diagnoses</string>
+
 
     <!-- AddNewBillableFragment -->
     <string name="add_new_billable_fragment_label">Add new item</string>
@@ -198,6 +211,7 @@
     <string name="version_label">Version</string>
     <string name="fetch_members_label">Members updated at</string>
     <string name="fetch_billables_label">Pricelist updated at</string>
+    <string name="fetch_diagnoses_label">Diagnoses updated at</string>
     <string name="fetch_member_pictures_label">Member photos</string>
     <string name="sync_edited_members_label">Edited members</string>
     <string name="sync_new_members_label">New members</string>

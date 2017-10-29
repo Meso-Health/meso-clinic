@@ -22,6 +22,7 @@ public class CategorySelectedEncounterFragmentListener implements AdapterView.On
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mEncounterPresenter.getDrugSearchView().setVisibility(View.GONE);
         mEncounterPresenter.getBillableSpinner().setVisibility(View.GONE);
+        mEncounterPresenter.getLabResultSpinner().setVisibility(View.GONE);
 
         if (position != 0) {
             String categoryString = (String) parent.getItemAtPosition(position);

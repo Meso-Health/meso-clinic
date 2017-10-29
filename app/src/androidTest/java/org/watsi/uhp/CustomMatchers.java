@@ -9,12 +9,29 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.watsi.uhp.models.Billable;
+import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.Member;
 
 import java.util.UUID;
 
 public class CustomMatchers {
+    /**
+     * Matches a Diagnosis with a specific description
+     */
+    public static Matcher<Object> withDiagnosisDescription(final String description){
+        return new BoundedMatcher<Object, Diagnosis>(Diagnosis.class){
+            @Override
+            public boolean matchesSafely(Diagnosis diagnosis) {
+                return description.equals(diagnosis.getDescription());
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("with diagnosis name: " + description);
+            }
+        };
+    }
 
     /**
      * Matches a Billable with a specific name
@@ -61,7 +78,11 @@ public class CustomMatchers {
                 Billable billable = encounterItem.getBillable();
                 boolean priceAndNameMatches = billable.getPrice().equals(price) && billable.getName().equals(name);
                 if (description != null) {
-                    return billable.dosageDetails().equals(description) && priceAndNameMatches;
+                    if (billable.requiresLabResult()) {
+                        return description.equals(encounterItem.getLabResult().toString()) && priceAndNameMatches;
+                    } else {
+                        return description.equals(billable.dosageDetails()) && priceAndNameMatches;
+                    }
                 } else {
                     return priceAndNameMatches;
                 }

@@ -3,15 +3,9 @@ package org.watsi.uhp.services
 import android.accounts.AccountManager
 import android.accounts.AccountManagerFuture
 import android.os.Bundle
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.mockito.Mockito.any
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.watsi.uhp.managers.PreferencesManager
 import org.watsi.uhp.managers.SessionManager
 
@@ -30,6 +24,7 @@ class FetchServiceTest {
 
         verify(serviceSpy, never()).fetchMembers(any(), any())
         verify(serviceSpy, never()).fetchBillables(any(), any())
+        verify(serviceSpy, never()).fetchDiagnoses(any(), any())
     }
 
     @Test
@@ -39,11 +34,13 @@ class FetchServiceTest {
         doReturn(mockPreferencesManager).`when`(serviceSpy).fetchPreferencesManager()
         doNothing().`when`(serviceSpy).fetchMembers(any(), any())
         doNothing().`when`(serviceSpy).fetchBillables(any(), any())
+        doNothing().`when`(serviceSpy).fetchDiagnoses(any(), any())
 
         serviceSpy.performSync()
 
         verify(serviceSpy).fetchMembers(token, mockPreferencesManager)
         verify(serviceSpy).fetchBillables(token, mockPreferencesManager)
+        verify(serviceSpy).fetchDiagnoses(token, mockPreferencesManager)
     }
 
 //    TODO: implement when we introduce dependency injection so we can inject mock ExceptionManager

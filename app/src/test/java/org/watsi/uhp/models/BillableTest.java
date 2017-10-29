@@ -17,12 +17,22 @@ public class BillableTest {
     }
 
     @Test
-    public void toString_displaysDescriptive() throws Exception {
+    public void toString_displaysDosage() throws Exception {
         billable.setName("Foo");
         billable.setComposition("Tablet");
         billable.setUnit("30g");
+        billable.setRequiresLabResult(false);
 
         assertEquals(billable.toString(), "Foo - 30g Tablet");
+    }
+
+    @Test
+    public void toString_displaysEllipsis() throws Exception {
+        billable.setName("Foo");
+        billable.setType(Billable.TypeEnum.LAB);
+        billable.setRequiresLabResult(true);
+
+        assertEquals(billable.toString(), "Foo...");
     }
 
     @Test

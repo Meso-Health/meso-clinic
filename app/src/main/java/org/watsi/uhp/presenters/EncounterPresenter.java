@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.MatrixCursor;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -20,12 +21,14 @@ import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.listeners.BillableSearchEncounterFragmentListener;
 import org.watsi.uhp.listeners.BillableSelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.CategorySelectedEncounterFragmentListener;
+import org.watsi.uhp.listeners.LabResultSelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.SuggestionClickEncounterFragmentListener;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.models.LabResult;
 import org.watsi.uhp.runnables.ScrollToBottomRunnable;
 
 import java.sql.SQLException;
@@ -63,6 +66,7 @@ public class EncounterPresenter {
         setBillableSearch();
         setAddBillableLink();
         setBackdateEncounterListener();
+        setLabResultSpinner();
 
         if (mEncounter.getBackdatedOccurredAt()) {
             mEncounterFragment.updateBackdateLinkText();
@@ -75,6 +79,14 @@ public class EncounterPresenter {
 
     public Spinner getBillableSpinner() {
         return (Spinner) mView.findViewById(R.id.billable_spinner);
+    }
+
+    public Spinner getLabResultSpinner() {
+        return (Spinner) mView.findViewById(R.id.lab_result_spinner);
+    }
+
+    public LinearLayout getLabResultSpinnerWrapper() {
+        return (LinearLayout) mView.findViewById(R.id.lab_result_spinner_wrapper);
     }
 
     public SearchView getDrugSearchView() {
@@ -204,7 +216,10 @@ public class EncounterPresenter {
         getLineItemsListView().post(new ScrollToBottomRunnable(getLineItemsListView()));
     }
 
-    // BELOW IS TESTED:
+    public void clearLabResult() {
+        getLabResultSpinnerWrapper().setVisibility(View.GONE);
+        getLabResultSpinner().setSelection(0);
+    }
 
     public void clearDrugSearch() {
         getDrugSearchView().clearFocus();
@@ -219,6 +234,20 @@ public class EncounterPresenter {
         mEncounterItemAdapter.add(encounterItem);
     }
 
+    public void addToEncounterItemList(Billable billable, LabResult.LabResultEnum labResult) throws Encounter.DuplicateBillableException {
+        EncounterItem encounterItem = new EncounterItem();
+        encounterItem.setBillable(billable, labResult);
+
+        mEncounter.addEncounterItem(encounterItem);
+        mEncounterItemAdapter.add(encounterItem);
+    }
+
+    public void setLabResultSpinner() {
+        ArrayAdapter adapter = getLabResultsAdapter("Select a lab result...");
+        getLabResultSpinner().setAdapter(adapter);
+        getLabResultSpinner().setOnItemSelectedListener(new LabResultSelectedEncounterFragmentListener(this, adapter, mContext));
+    }
+
     public void setFormattedBackDate() {
         Date backdate = mEncounter.getOccurredAt();
         mFormattedBackDate = new SimpleDateFormat("MMM d, H:mma").format(backdate);
@@ -226,23 +255,22 @@ public class EncounterPresenter {
 
     protected Billable promptBillable(String category) {
         Billable placeholderBillable = new Billable();
+        placeholderBillable.setRequiresLabResult(false);
         String promptText = "Select a " + category.toLowerCase() + "...";
         placeholderBillable.setName(promptText);
 
         return placeholderBillable;
     }
 
-    protected List<Billable> getBillablesList(Billable.TypeEnum category) throws SQLException {
+    protected List<Billable> getBillablesList(Billable.TypeEnum type) throws SQLException {
         List<Billable> billables = new ArrayList<>();
-        billables.add(promptBillable(category.toString()));
+        billables.add(promptBillable(type.toString()));
 
-        billables.addAll(BillableDao.getBillablesByType(category));
-
+        billables.addAll(BillableDao.getBillablesByType(type));
         return billables;
     }
 
     protected ArrayAdapter<Billable> getEncounterItemAdapter(Billable.TypeEnum category) throws SQLException {
-        // TODO: check that creation of new adapter each time does not have memory implications
         return new ArrayAdapter<>(
                 mContext,
                 android.R.layout.simple_spinner_dropdown_item,
@@ -261,6 +289,23 @@ public class EncounterPresenter {
                 mContext,
                 android.R.layout.simple_spinner_dropdown_item,
                 getCategoriesList(prompt)
+        );
+    }
+
+    protected List<String> getLabResultsList(String prompt) {
+        List<String> labResults = new ArrayList<>();
+        labResults.add(prompt);
+        for (LabResult.LabResultEnum labResult: LabResult.LabResultEnum.values()) {
+            labResults.add(labResult.toString());
+        }
+        return labResults;
+    }
+
+    protected ArrayAdapter<String> getLabResultsAdapter(String prompt) {
+        return new ArrayAdapter<>(
+                mContext,
+                android.R.layout.simple_spinner_dropdown_item,
+                getLabResultsList(prompt)
         );
     }
 }

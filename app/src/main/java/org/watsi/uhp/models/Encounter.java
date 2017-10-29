@@ -16,7 +16,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -30,9 +32,11 @@ public class Encounter extends SyncableModel {
     public static final String FIELD_NAME_MEMBER_ID = "member_id";
     public static final String FIELD_NAME_IDENTIFICATION_EVENT_ID = "identification_event_id";
     public static final String FIELD_NAME_ENCOUNTER_ITEMS = "encounter_items";
-    public static final String FIELD_NAME_ENCOUNTER_FORMS = "encounter_forms";
     public static final String FIELD_NAME_BACKDATED_OCCURRED_AT = "backdated_occurred_at";
     public static final String FIELD_NAME_COPAYMENT_PAID = "copayment_paid";
+    public static final String FIELD_NAME_DIAGNOSES = "diagnoses";
+    public static final String FIELD_NAME_DIAGNOSIS_IDS = "diagnosis_ids";
+    public static final String FIELD_NAME_HAS_FEVER = "has_fever";
 
     public static final DecimalFormat PRICE_FORMAT = new DecimalFormat("#,###,###");
 
@@ -61,15 +65,27 @@ public class Encounter extends SyncableModel {
 
     private final List<EncounterForm> mEncounterForms = new ArrayList<>();
 
+    private final List<Diagnosis> mDiagnoses = new ArrayList<>();
+
     @Expose
     @SerializedName(FIELD_NAME_BACKDATED_OCCURRED_AT)
     @DatabaseField(columnName = FIELD_NAME_BACKDATED_OCCURRED_AT, canBeNull = false, defaultValue = "false")
     private boolean mBackdatedOccurredAt;
 
+    @Expose(deserialize = false)
+    @SerializedName(FIELD_NAME_DIAGNOSIS_IDS)
+    @DatabaseField(columnName = FIELD_NAME_DIAGNOSIS_IDS, canBeNull = false, defaultValue = "[]")
+    private String mDiagnosisIds;
+
     @Expose
     @SerializedName(FIELD_NAME_COPAYMENT_PAID)
     @DatabaseField(columnName = FIELD_NAME_COPAYMENT_PAID)
     private Boolean mCopaymentPaid;
+
+    @Expose
+    @SerializedName(FIELD_NAME_HAS_FEVER)
+    @DatabaseField(columnName = FIELD_NAME_HAS_FEVER)
+    private Boolean mHasFever;
 
     public Encounter() {
         super();
@@ -90,6 +106,7 @@ public class Encounter extends SyncableModel {
         //  as a dirty field when the models are diffed in the sync logic
         Encounter responseEncounter = (Encounter) response;
         responseEncounter.setEncounterItems(getEncounterItems());
+        responseEncounter.setDiagnosisIds(mDiagnosisIds);
     }
 
     @Override
@@ -111,6 +128,9 @@ public class Encounter extends SyncableModel {
             }
             encounterItem.setEncounter(this);
             encounterItem.create();
+            if (encounterItem.getLabResult() != null) {
+                encounterItem.getLabResult().create();
+            }
         }
         for (EncounterForm encounterForm : getEncounterForms()) {
             encounterForm.saveChanges(getToken());
@@ -120,6 +140,10 @@ public class Encounter extends SyncableModel {
     @Override
     protected Call patchApiCall(Context context) throws SQLException, SyncException {
         throw new SyncException("Tried to patch an Encounter with dirty fields: " + getDirtyFields().toString());
+    }
+
+    public void setDiagnosisIds(String diagnosisIds) {
+        this.mDiagnosisIds = diagnosisIds;
     }
 
     public Date getOccurredAt() {
@@ -188,6 +212,37 @@ public class Encounter extends SyncableModel {
         getEncounterForms().add(encounterForm);
     }
 
+    public List<Diagnosis> getDiagnoses() {
+        return mDiagnoses;
+    }
+
+    public void addDiagnosis(Diagnosis diagnosis) throws DuplicateDiagnosisException {
+        if (containsDiagnosis(diagnosis)) throw new DuplicateDiagnosisException();
+        getDiagnoses().add(diagnosis);
+        updateDiagnosisIds();
+    }
+
+    public void removeDiagnosis(Diagnosis diagnosis) {
+        getDiagnoses().remove(diagnosis);
+        updateDiagnosisIds();
+    }
+
+    public void updateDiagnosisIds() {
+        List<Integer> diagnosisIds = new ArrayList<>();
+        for (Diagnosis diagnosis: getDiagnoses()) {
+            diagnosisIds.add(diagnosis.getId());
+        }
+        mDiagnosisIds = diagnosisIds.toString();
+    }
+
+    public void setHasFever(boolean hasFever) {
+        mHasFever = hasFever;
+    }
+
+    public Boolean getHasFever() {
+        return mHasFever;
+    }
+
     public Boolean getCopaymentPaid() {
         return mCopaymentPaid;
     }
@@ -226,9 +281,25 @@ public class Encounter extends SyncableModel {
         return false;
     }
 
+    public boolean containsDiagnosis(Diagnosis diagnosis) {
+        for (Diagnosis existingDiagnosis : getDiagnoses()) {
+            Integer existingDiagnosisId = existingDiagnosis.getId();
+            if (diagnosis.getId() != null && existingDiagnosisId.equals(diagnosis.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static class DuplicateBillableException extends Exception {
         public DuplicateBillableException() {
             super("Cannot add two encounter items with same billable");
+        }
+    }
+
+    public static class DuplicateDiagnosisException extends Exception {
+        public DuplicateDiagnosisException() {
+            super("Cannot add two of the same diagnoses");
         }
     }
 }

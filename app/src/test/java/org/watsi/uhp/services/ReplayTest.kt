@@ -1,6 +1,9 @@
 package org.watsi.uhp.services
 
-import okreplay.*
+import okreplay.MatchRules
+import okreplay.OkReplayConfig
+import okreplay.Recorder
+import okreplay.TapeMode
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith

@@ -2,27 +2,49 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable name="encounter" type="org.watsi.uhp.view_models.EncounterViewModel"/>
+        <variable name="diagnosesItemListView" type="org.watsi.uhp.view_models.DiagnosesListViewModel"/>
     </data>
 
-    <RelativeLayout
-        android:orientation="vertical"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="460dp"
+            android:fillViewport="true" >
 
-        <ListView
-            android:id="@+id/receipt_items"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="48dp"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dip" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{diagnosesItemListView.formattedCount}"
+                    android:layout_marginTop="@dimen/fragment_vertical_margin" />
+
+                <ListView
+                    android:id="@+id/diagnoses_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@{diagnosesItemListView.selectedDiagnoses}"
+                    android:layout_marginTop="@dimen/fragment_vertical_margin"/>
+
+                <ListView
+                    android:id="@+id/receipt_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/fragment_vertical_margin"/>
+            </LinearLayout>
+        </ScrollView>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white" >
+            android:gravity="bottom">
 
             <Button
                 android:id="@+id/save_button"
@@ -31,5 +53,5 @@
                 style="@style/PrimaryButton"
                 android:text="@string/save_encounter_button" />
         </RelativeLayout>
-    </RelativeLayout>
+    </LinearLayout>
 </layout>

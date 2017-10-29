@@ -1,18 +1,17 @@
 package org.watsi.uhp.services
 
+import junit.framework.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import org.watsi.uhp.models.Photo
-
-import junit.framework.Assert.assertTrue
 import org.junit.runner.RunWith
-import org.mockito.Mockito.spy
+import org.mockito.Mockito
 import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.spy
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.watsi.uhp.database.PhotoDao
+import org.watsi.uhp.models.Photo
 
 @RunWith(PowerMockRunner::class)
 @PrepareForTest(DeleteFetchedPhotoService::class, PhotoDao::class)

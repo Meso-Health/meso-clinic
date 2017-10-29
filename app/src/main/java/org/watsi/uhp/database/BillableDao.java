@@ -58,10 +58,20 @@ public class BillableDao {
         deleteBuilder.delete();
     }
 
-    public static List<Billable> findByName(String name) throws SQLException {
+    public static Billable findBillableByName(String name) throws SQLException {
+        List<Billable> billables = findBillablesByName(name);
+        if (billables.size() != 1) {
+            throw new SQLException("Found " + billables.size() + " billable with name: " + name);
+        } else {
+            return billables.get(0);
+        }
+    }
+
+    public static List<Billable> findBillablesByName(String name) throws SQLException {
         Map<String,Object> queryMap = new HashMap<>();
         queryMap.put(Billable.FIELD_NAME_NAME, new SelectArg(name));
         return getDao().queryForFieldValues(queryMap);
+
     }
 
     public static Set<String> allUniqueDrugNames() throws SQLException {
@@ -87,7 +97,7 @@ public class BillableDao {
         List<Billable> topMatchingDrugs = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
             String name = result.getString();
-            List<Billable> billablesWithMatchingName = findByName(name);
+            List<Billable> billablesWithMatchingName = findBillablesByName(name);
             for (Billable billable : billablesWithMatchingName) {
                 if (billable.getType().equals(Billable.TypeEnum.DRUG)) {
                     topMatchingDrugs.add(billable);
@@ -99,9 +109,15 @@ public class BillableDao {
     }
 
     public static List<Billable> getBillablesByType(Billable.TypeEnum type) throws SQLException {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(Billable.FIELD_NAME_TYPE, type);
-        return getDao().queryForFieldValues(queryMap);
+        PreparedQuery<Billable> pq = getDao()
+                .queryBuilder()
+                .orderBy(Billable.FIELD_NAME_NAME, true)
+                .where()
+                .eq(Billable.FIELD_NAME_TYPE, type)
+                .prepare();
+
+        List<Billable> billables = getDao().query(pq);
+        return billables;
     }
 
     public static List<String> getUniqueBillableCompositions() throws SQLException {
