@@ -32,7 +32,7 @@ public abstract class BaseFragment extends Fragment {
                 supportBar.setDisplayHomeAsUpEnabled(false);
             } else if (this instanceof FormFragment) {
                 supportBar.setDisplayHomeAsUpEnabled(true);
-                supportBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
+                supportBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_48dp);
             } else {
                 supportBar.setDisplayHomeAsUpEnabled(true);
                 // 0 uses the default drawable from the theme.
