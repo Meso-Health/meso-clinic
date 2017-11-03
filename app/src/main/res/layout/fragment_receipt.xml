@@ -30,6 +30,7 @@
                     android:id="@+id/diagnoses_items"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="19dp"
                     android:entries="@{diagnosesItemListView.selectedDiagnoses}"
                     android:layout_marginTop="@dimen/fragment_vertical_margin"/>
 
