@@ -28,7 +28,7 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
         try {
             fetchMemberPhotos();
             return true;
-        } catch (SQLException | IllegalStateException e) {
+        } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return false;
         }

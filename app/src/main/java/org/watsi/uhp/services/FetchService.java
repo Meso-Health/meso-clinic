@@ -46,7 +46,7 @@ public class FetchService extends AbstractSyncJobService {
                 fetchDiagnoses(authenticationToken, preferencesManager);
             }
             return true;
-        } catch (SQLException | IllegalStateException e) {
+        } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return false;
         } catch (IOException e) {

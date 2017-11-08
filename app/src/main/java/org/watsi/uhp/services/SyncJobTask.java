@@ -3,7 +3,9 @@ package org.watsi.uhp.services;
 import android.app.job.JobParameters;
 import android.os.AsyncTask;
 
-public class SyncJobTask extends AsyncTask<Void, Void, Boolean> {
+import org.watsi.uhp.managers.ExceptionManager;
+
+class SyncJobTask extends AsyncTask<Void, Void, Boolean> {
 
     private final JobParameters mJobParameters;
     private final AbstractSyncJobService mService;
@@ -15,7 +17,12 @@ public class SyncJobTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        return mService.performSync();
+        try {
+            return mService.performSync();
+        } catch (RuntimeException e) {
+            ExceptionManager.reportException(e);
+            return false;
+        }
     }
 
     @Override
