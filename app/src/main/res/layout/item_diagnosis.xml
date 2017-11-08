@@ -8,7 +8,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp">
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
         <LinearLayout
             android:id="@+id/diagnosis_item_wrapper"
             android:layout_width="280dp"
@@ -20,9 +22,9 @@
 
             <TextView
                 android:id="@+id/parent_diagnoses"
-                android:theme="@style/Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/title"
                 android:text="@{diagnosisItem.diagnosisDescription}"/>
         </LinearLayout>
 
