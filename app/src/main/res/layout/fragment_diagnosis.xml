@@ -33,6 +33,7 @@
                     android:drawableLeft="@drawable/search_icon_small"
                     android:maxLines="1"
                     android:inputType="textFilter"
+                    android:imeOptions="actionSearch"
                     android:queryHint="@string/search_diagnosis_hint" />
             </LinearLayout>
 
