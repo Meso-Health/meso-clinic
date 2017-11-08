@@ -14,28 +14,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput
+                android:id="@+id/diagnosis_fuzzy_search_input"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/spinner_vertical_margin"
-                android:layout_marginBottom="@dimen/spinner_vertical_margin"
-                android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-                android:layout_marginRight="@dimen/fragment_horizontal_margin"
-                android:background="@drawable/view_outline_rectangle" >
-
-                <org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput
-                    android:id="@+id/diagnosis_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:backgroundTint="@color/transparent"
-                    android:hint="@string/search_diagnosis_hint"
-                    android:drawableLeft="@drawable/search_icon_small"
-                    android:maxLines="1"
-                    android:inputType="textFilter"
-                    android:imeOptions="actionSearch"
-                    android:queryHint="@string/search_diagnosis_hint" />
-            </LinearLayout>
+                />
 
             <View
                 android:id="@+id/divider"

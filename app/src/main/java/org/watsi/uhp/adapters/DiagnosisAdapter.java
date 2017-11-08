@@ -37,7 +37,7 @@ public class DiagnosisAdapter extends ArrayAdapter<Diagnosis> {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Diagnosis> ds = new ArrayList<>();
-            if (constraint.length() >= MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS) {
+            if (constraint != null && constraint.length() >= MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS) {
                 try {
                     ds = updateSearchResults(constraint.toString());
                 } catch (SQLException e) {
