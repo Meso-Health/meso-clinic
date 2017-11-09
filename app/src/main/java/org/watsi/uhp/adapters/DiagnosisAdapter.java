@@ -31,17 +31,13 @@ public class DiagnosisAdapter extends ArrayAdapter<Diagnosis> {
         return mFilter;
     }
 
-    public List<Diagnosis> onSearchWithQueryString(String queryString) throws SQLException {
-        return DiagnosisDao.searchByFuzzyDescriptionAndSearchAlias(queryString);
-    }
-
     public class DiagnosisListFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Diagnosis> ds = new ArrayList<>();
             if (constraint != null && constraint.length() >= MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS) {
                 try {
-                    ds = onSearchWithQueryString(constraint.toString());
+                    ds = DiagnosisDao.searchByFuzzyDescriptionAndSearchAlias(constraint.toString());
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
                 }
