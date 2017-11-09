@@ -12,7 +12,6 @@
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="460dp"
-            android:nestedScrollingEnabled="false"
             android:fillViewport="true" >
 
             <LinearLayout
