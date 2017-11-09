@@ -29,7 +29,7 @@ public class SyncService extends AbstractSyncJobService {
             syncEncounterForms(EncounterForm.unsynced(EncounterForm.class));
             syncMembers(Member.unsynced(Member.class));
             return true;
-        } catch (SQLException | IllegalStateException e) {
+        } catch (SQLException e) {
             ExceptionManager.reportException(e);
             return false;
         } catch (IOException e) {
