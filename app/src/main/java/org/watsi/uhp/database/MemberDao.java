@@ -51,22 +51,23 @@ public class MemberDao {
         return getDao().query(pq);
     }
 
-    private static List<String> allUniqueMemberNames() throws SQLException {
-        String rawQuery = "SELECT DISTINCT members.full_name FROM members";
-        GenericRawResults<String> rawResults =
-                getDao().queryRaw(rawQuery,
-                        new RawRowMapper<String>() {
-                            public String mapRow(String[] columnNames, String[] resultColumns) {
-                                return resultColumns[0];
-                            }
-                        });
+    private static Set<String> allUniqueMemberNames() throws SQLException {
+        PreparedQuery<Member> pq = getDao()
+                .queryBuilder()
+                .selectColumns(Member.FIELD_NAME_FULL_NAME)
+                .prepare();
 
-        return rawResults.getResults();
+        List<Member> members = getDao().query(pq);
+        List<String> names = new ArrayList<>();
+        for (Member m: members) {
+            names.add(m.getFullName());
+        }
+        return new HashSet<>(names);
     }
 
     public static List<Member> fuzzySearchMembers(String query)
             throws SQLException {
-        List<String> allUniqueNames = allUniqueMemberNames();
+        Set<String> allUniqueNames = allUniqueMemberNames();
         List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, allUniqueNames, 20, 60);
         List<Member> topMatchingMembers = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
