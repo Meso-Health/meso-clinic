@@ -68,11 +68,11 @@ public class MemberDao {
             throws SQLException {
         List<String> allUniqueNames = allUniqueMemberNames();
         List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, allUniqueNames, 20, 60);
-        List<Member> members = new ArrayList<>();
+        List<Member> topMatchingMembers = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
-            members.addAll(findByName(result.getString()));
+            topMatchingMembers.addAll(findByName(result.getString()));
         }
-        return members;
+        return topMatchingMembers;
     }
 
     public static List<Member> getCheckedInMembers() throws SQLException {
