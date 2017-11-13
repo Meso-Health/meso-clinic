@@ -1,7 +1,5 @@
 package org.watsi.uhp.database;
 
-import android.util.Log;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
@@ -53,23 +51,22 @@ public class MemberDao {
         return getDao().query(pq);
     }
 
-    private static Set<String> allUniqueMemberNames() throws SQLException {
-        PreparedQuery<Member> pq = getDao()
-                .queryBuilder()
-                .selectColumns(Member.FIELD_NAME_FULL_NAME)
-                .prepare();
+    private static List<String> allUniqueMemberNames() throws SQLException {
+        String rawQuery = "SELECT DISTINCT members.full_name FROM members";
+        GenericRawResults<String> rawResults =
+                getDao().queryRaw(rawQuery,
+                        new RawRowMapper<String>() {
+                            public String mapRow(String[] columnNames, String[] resultColumns) {
+                                return resultColumns[0];
+                            }
+                        });
 
-        List<Member> members = getDao().query(pq);
-        List<String> names = new ArrayList<>();
-        for (Member m : members) {
-            names.add(m.getFullName());
-        }
-        return new HashSet<>(names);
+        return rawResults.getResults();
     }
 
     public static List<Member> fuzzySearchMembers(String query)
             throws SQLException {
-        Set<String> allUniqueNames = allUniqueMemberNames();
+        List<String> allUniqueNames = allUniqueMemberNames();
         List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, allUniqueNames, 20, 60);
         List<Member> members = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
