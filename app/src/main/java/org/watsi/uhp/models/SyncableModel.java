@@ -43,7 +43,7 @@ public abstract class SyncableModel<T extends SyncableModel<T>> extends Abstract
     @DatabaseField(columnName = FIELD_NAME_TOKEN)
     private String mToken;
 
-    @DatabaseField(columnName = FIELD_NAME_DIRTY_FIELDS, defaultValue = "[]", canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_DIRTY_FIELDS, defaultValue = "[]", canBeNull = false, index = true)
     private String mDirtyFields = "[]";
 
     public UUID getId() {

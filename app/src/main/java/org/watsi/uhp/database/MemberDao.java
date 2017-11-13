@@ -1,5 +1,7 @@
 package org.watsi.uhp.database;
 
+import android.util.Log;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
@@ -67,15 +69,13 @@ public class MemberDao {
 
     public static List<Member> fuzzySearchMembers(String query)
             throws SQLException {
-        List<ExtractedResult> topMatchingNames =
-                FuzzySearch.extractTop(query, allUniqueMemberNames(), 20, 60);
-        List<Member> topMatchingMembers = new ArrayList<>();
+        Set<String> allUniqueNames = allUniqueMemberNames();
+        List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, allUniqueNames, 20, 60);
+        List<Member> members = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
-            String name = result.getString();
-            topMatchingMembers.addAll(findByName(name));
+            members.addAll(findByName(result.getString()));
         }
-
-        return topMatchingMembers;
+        return members;
     }
 
     public static List<Member> getCheckedInMembers() throws SQLException {

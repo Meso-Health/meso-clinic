@@ -3,6 +3,7 @@ package org.watsi.uhp.presenters
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.AsyncTask
+import android.util.Log
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
