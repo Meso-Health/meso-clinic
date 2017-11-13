@@ -60,7 +60,7 @@ class MemberDaoTest: DaoTest() {
 
         val memberIds = MemberDao.fuzzySearchMembers("jon").map { it.id }
 
-        assertEquals(memberIds.size, 3)
+        assertEquals(memberIds.size, 4)
         assertTrue(memberIds.contains(member1.id))
         assertTrue(memberIds.contains(member2.id))
         assertTrue(memberIds.contains(member3.id))
