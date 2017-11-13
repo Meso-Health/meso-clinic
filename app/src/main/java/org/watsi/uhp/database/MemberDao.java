@@ -59,7 +59,7 @@ public class MemberDao {
 
         List<Member> members = getDao().query(pq);
         List<String> names = new ArrayList<>();
-        for (Member m: members) {
+        for (Member m : members) {
             names.add(m.getFullName());
         }
         return new HashSet<>(names);
