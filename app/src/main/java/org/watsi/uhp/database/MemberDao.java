@@ -67,14 +67,12 @@ public class MemberDao {
 
     public static List<Member> fuzzySearchMembers(String query)
             throws SQLException {
-        List<ExtractedResult> topMatchingNames =
-                FuzzySearch.extractTop(query, allUniqueMemberNames(), 20, 60);
+        Set<String> allUniqueNames = allUniqueMemberNames();
+        List<ExtractedResult> topMatchingNames = FuzzySearch.extractTop(query, allUniqueNames, 20, 60);
         List<Member> topMatchingMembers = new ArrayList<>();
         for (ExtractedResult result : topMatchingNames) {
-            String name = result.getString();
-            topMatchingMembers.addAll(findByName(name));
+            topMatchingMembers.addAll(findByName(result.getString()));
         }
-
         return topMatchingMembers;
     }
 

@@ -32,7 +32,7 @@ import java.util.UUID;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "org.watsi.db";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     private static DatabaseHelper instance;
 
@@ -199,6 +199,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN diagnosis_ids STRING NOT NULL DEFAULT '[]';");
                     getDao(Encounter.class).executeRaw("ALTER TABLE `encounters` ADD COLUMN has_fever BOOLEAN;");
                     getDao(Billable.class).executeRaw("ALTER TABLE `billables` ADD COLUMN requires_lab_result BOOLEAN NOT NULL DEFAULT 0;");
+                case 13:
+                    getDao(Member.class).executeRaw("CREATE INDEX `members_full_name_idx` ON `members` ( `full_name` )");
+                    getDao(Member.class).executeRaw("CREATE INDEX `members_dirty_fields_idx` ON `members` ( `dirty_fields` )");
+                    getDao(Encounter.class).executeRaw("CREATE INDEX `encounters_dirty_fields_idx` ON `encounters` ( `dirty_fields` )");
+                    getDao(IdentificationEvent.class).executeRaw("CREATE INDEX `identification_events_dirty_fields_idx` ON `identifications` ( `dirty_fields` )");
             }
             ExceptionManager.reportMessage("Migration run from version " + oldVersion + " to " +
                     newVersion);
