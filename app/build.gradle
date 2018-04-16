@@ -2,8 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
 
     // building string config fields requires a double-quoted string
     // For non-strings in buildConfigField, use System.getenv instead of ENV.
@@ -22,7 +21,7 @@ android {
         versionName System.getenv("VERSION_NAME") as String
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
+        buildConfigField "Integer", "PROVIDER_ID", "1"
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
         buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
@@ -47,6 +46,7 @@ android {
             signingConfig signingConfigs.releaseConfig
         }
     }
+    flavorDimensions "default"
     productFlavors {
         development {
             applicationIdSuffix ".development"
@@ -131,7 +131,7 @@ android {
                     appIcon: "@mipmap/ic_launcher_training"
             ]
 
-            buildConfigField "Integer", "PROVIDER_ID", System.getenv("TRAINING_PROVIDER_ID")
+            buildConfigField "Integer", "PROVIDER_ID", "1"
             buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("TRAINING_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
@@ -172,17 +172,17 @@ dependencies {
     compile 'com.rollbar:rollbar-android:0.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.android.support:design:25.4.0'
-    compile 'com.android.support:support-v4:25.4.0'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:cardview-v7:25.4.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:support-v4:26.1.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
     compile 'com.google.android.gms:play-services-vision:9.4.0'
     compile 'me.xdrop:fuzzywuzzy:1.1.9'
     compile 'me.philio:pinentryview:1.0.6'
     compile 'com.simprints:LibSimprints:1.0.11'
     compile 'net.hockeyapp.android:HockeySDK:4.1.2'
     compile 'com.google.guava:guava:20.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     compile 'com.github.bumptech.glide:glide:3.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
 
