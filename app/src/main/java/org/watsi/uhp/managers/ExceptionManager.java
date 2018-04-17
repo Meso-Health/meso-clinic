@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.rollbar.android.Rollbar;
-import com.squareup.leakcanary.LeakCanary;
 
 import org.watsi.uhp.BuildConfig;
 
@@ -26,13 +25,6 @@ public class ExceptionManager {
         if (BuildConfig.REPORT_TO_ROLLBAR && !Rollbar.isInit()) {
             Rollbar.init(application, BuildConfig.ROLLBAR_API_KEY, BuildConfig.FLAVOR);
         }
-
-        if (LeakCanary.isInAnalyzerProcess(application)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(application);
     }
 
     public static void requestFailure(
