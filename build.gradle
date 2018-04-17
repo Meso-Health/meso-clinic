@@ -1,6 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.kotlin_version = '1.2.31'
     repositories {
         google()
         jcenter()
@@ -14,6 +15,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -27,6 +29,41 @@ allprojects {
     }
 }
 
+// This block encapsulates custom properties and makes them available to all
+// modules in the project.
+ext {
+    minSdkVersion = 24
+    targetSdkVersion = 26
+    compileSdkVersion = 26
+    applicationId = "org.watsi.uhp"
+    versionCode = 1
+    versionName = "1.0"
+}
+
+// This adds more custom properties from the dependencies.gradle file and makes them available to
+// all modules in the project.
+apply from: 'dependencies.gradle'
+
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task runDomainUnitTests(dependsOn: [':domain:test']) {
+    description 'Run unit tests for the domain module.'
+}
+
+task runDeviceUnitTests(dependsOn: [':device:test']) {
+    description 'Run unit tests for the device module.'
+}
+
+task runAppUnitTests(dependsOn: [':app:test']) {
+    description 'Run unit tests for the app module.'
+}
+
+task runUnitTests(dependsOn: ['runDomainUnitTests', 'runDeviceUnitTests', 'runAppUnitTests']) {
+    description 'Run unit tests for all modules.'
+}
+
+task runAppInstrumentationTests(dependsOn: [':app:connectedAndroidTest']) {
+    description 'Run instrumentation tests for the app module.'
 }

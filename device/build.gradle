@@ -1,0 +1,89 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+    }
+
+    defaultConfig {
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+        // all buildTypes used in the app gradle file must be present here as well
+        sandbox {}
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            maxHeapSize = '3200m'
+        }
+    }
+}
+
+dependencies {
+    def dependencies = rootProject.ext.dependencies
+    def testDependencies = rootProject.ext.testDependencies
+
+    implementation project(":domain")
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Support libraries
+    implementation dependencies.kotlin
+    implementation dependencies.kotlinReflect
+    implementation dependencies.androidSupportLibrary
+    implementation dependencies.gson
+    implementation dependencies.gmsVision
+
+    // Time
+    implementation dependencies.threeTenBackport
+
+    // API
+    implementation dependencies.retrofit
+    implementation dependencies.retrofitRxJava
+    implementation dependencies.gsonConverter
+
+    // GPS
+    implementation dependencies.gmsLocation
+
+    // Simprints
+    implementation dependencies.simprints
+
+    // AAC
+    implementation dependencies.aacLifecycleExtensions
+    implementation dependencies.roomRuntime
+    implementation dependencies.roomRxJava
+    kapt dependencies.roomCompiler
+
+    // RX Java
+    implementation dependencies.rxJava
+    implementation dependencies.rxAndroid
+
+    // Testing
+    testImplementation project(path: ":domain", configuration: "testOutput")
+    testImplementation testDependencies.junit
+    testImplementation testDependencies.mockito
+    testImplementation testDependencies.mockitoKotlin
+    testImplementation testDependencies.aacTesting
+    testImplementation testDependencies.robolectric
+    testImplementation testDependencies.okReplayJUnit
+    debugImplementation testDependencies.okReplay
+}
+repositories {
+    mavenCentral()
+}
