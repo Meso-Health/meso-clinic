@@ -227,7 +227,7 @@ public class ClinicActivity extends DaggerAppCompatActivity {
         @Override
         protected void onPostExecute(String token) {
             if (token == null) {
-                startActivityForResult(new Intent(mClinicActivity, OldAuthenticationActivity.class), 0);
+                startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
             } else {
                 mClinicActivity.setAuthenticationToken(token);
                 Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
