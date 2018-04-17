@@ -70,7 +70,7 @@ public class Member extends SyncableModel {
 
     @Expose
     @SerializedName(FIELD_NAME_FULL_NAME)
-    @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false)
+    @DatabaseField(columnName = FIELD_NAME_FULL_NAME, canBeNull = false, index = true)
     protected String mFullName;
 
     @Expose

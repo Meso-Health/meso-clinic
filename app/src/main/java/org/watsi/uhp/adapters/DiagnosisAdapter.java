@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 
 import org.watsi.uhp.database.DiagnosisDao;
@@ -29,17 +31,13 @@ public class DiagnosisAdapter extends ArrayAdapter<Diagnosis> {
         return mFilter;
     }
 
-    public List<Diagnosis> updateSearchResults(String queryString) throws SQLException {
-        return DiagnosisDao.searchByFuzzyDescriptionAndSearchAlias(queryString);
-    }
-
     public class DiagnosisListFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Diagnosis> ds = new ArrayList<>();
-            if (constraint.length() >= MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS) {
+            if (constraint != null && constraint.length() >= MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS) {
                 try {
-                    ds = updateSearchResults(constraint.toString());
+                    ds = DiagnosisDao.searchByFuzzyDescriptionAndSearchAlias(constraint.toString());
                 } catch (SQLException e) {
                     ExceptionManager.reportException(e);
                 }

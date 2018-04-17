@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments;
 
 import android.databinding.DataBindingUtil;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
@@ -46,7 +47,7 @@ public class DiagnosisFragment extends FormFragment<Encounter> {
     }
 
     public DiagnosisFuzzySearchInput getDiagnosisFuzzySearchInput() {
-        return (DiagnosisFuzzySearchInput) mView.findViewById(R.id.diagnosis_search);
+        return (DiagnosisFuzzySearchInput) mView.findViewById(R.id.diagnosis_fuzzy_search_input);
     }
 
     public void onDiagnosisChosen(Diagnosis diagnosis) {

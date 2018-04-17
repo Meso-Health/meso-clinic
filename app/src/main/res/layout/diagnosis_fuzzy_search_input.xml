@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/spinner_vertical_margin"
+    android:layout_marginBottom="@dimen/spinner_vertical_margin"
+    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+    android:layout_marginRight="@dimen/fragment_horizontal_margin"
+    android:background="@drawable/view_outline_rectangle">
+        <android.support.v7.widget.AppCompatAutoCompleteTextView
+            android:id="@+id/diagnosis_search"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:backgroundTint="@color/transparent"
+            android:hint="@string/search_diagnosis_hint"
+            android:drawableLeft="@drawable/search_icon_small"
+            android:maxLines="1"
+            android:inputType="textFilter"
+            android:imeOptions="actionSearch"
+            android:queryHint="@string/search_diagnosis_hint" />
+
+        <Button
+            android:id="@+id/diagnosis_search_clear"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="-40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_clear_black_24dp"
+            android:visibility="invisible"
+            />
+    </LinearLayout>

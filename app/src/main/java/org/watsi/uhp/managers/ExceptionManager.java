@@ -107,7 +107,7 @@ public class ExceptionManager {
     }
 
     public static void reportMessage(String message) {
-        reportMessage(message, MESSAGE_LEVEL_INFO, null);
+        reportMessage(message, MESSAGE_LEVEL_INFO, new HashMap<String, String>());
     }
 
     static void setPersonData(String id, String username) {
