@@ -50,7 +50,7 @@ android {
             ]
 
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
-            buildConfigField "String", "API_HOST", ENV("DEVELOPMENT_API_HOST")
+            buildConfigField "String", "API_HOST", "\"http://localhost:5000\""
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
             buildConfigField "String", "ROLLBAR_API_KEY", "null"

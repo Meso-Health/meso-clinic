@@ -1,6 +1,8 @@
 package org.watsi.uhp.activities
 
+import android.accounts.AccountAuthenticatorActivity
 import android.accounts.AccountManager
+import android.app.Activity
 import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
@@ -11,18 +13,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import dagger.android.support.DaggerAppCompatActivity
 import me.philio.pinentry.PinEntryView
 import org.watsi.uhp.R
 import org.watsi.uhp.api.ApiService
 import org.watsi.uhp.helpers.ActivityHelper
+import org.watsi.uhp.managers.Authenticator
 import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.PreferencesManager
 import org.watsi.uhp.managers.SessionManager
 import java.util.HashMap
 
-class AuthenticationActivity : DaggerAppCompatActivity() {
+class AuthenticationActivity : AccountAuthenticatorActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +58,7 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                     authenticate(username, password, spinner)
                     return null
                 }
-            }
+            }.execute()
         }
 
         KeyboardManager.focusAndShowKeyboard(usernameView, this)
@@ -96,13 +98,14 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
 
             SessionManager(PreferencesManager(this), accountManager)
                     .setUserAsLoggedIn(authToken!!.user, password, authToken.token)
-//            val result = Bundle()
-//            result.putString(AccountManager.KEY_ACCOUNT_NAME, username)
-//            result.putString(AccountManager.KEY_ACCOUNT_TYPE, Authenticator.ACCOUNT_TYPE)
-//            result.putString(AccountManager.KEY_AUTHTOKEN, authToken.token)
-//            setAccountAuthenticatorResult(result)
-//            setResult(Activity.RESULT_OK)
-//            finish()
+
+            val result = Bundle()
+            result.putString(AccountManager.KEY_ACCOUNT_NAME, username)
+            result.putString(AccountManager.KEY_ACCOUNT_TYPE, Authenticator.ACCOUNT_TYPE)
+            result.putString(AccountManager.KEY_AUTHTOKEN, authToken.token)
+            setAccountAuthenticatorResult(result)
+            setResult(Activity.RESULT_OK)
+            finish()
         }
     }
 
