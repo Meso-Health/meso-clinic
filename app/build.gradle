@@ -167,7 +167,19 @@ android {
 }
 
 dependencies {
+    def dependencies = rootProject.ext.dependencies
+    def testDependencies = rootProject.ext.testDependencies
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Dependency injection
+    implementation dependencies.dagger
+    implementation dependencies.daggerAndroidSupport
+    kapt dependencies.daggerAndroidProcessor
+    kapt dependencies.daggerCompiler
+    kaptTest dependencies.daggerCompiler
+    kaptAndroidTest dependencies.daggerCompiler
+
     implementation 'com.j256.ormlite:ormlite-core:5.0'
     implementation 'com.j256.ormlite:ormlite-android:5.0'
     implementation 'com.rollbar:rollbar-android:0.2.0'

@@ -29,7 +29,7 @@ import java.util.Map;
 import me.philio.pinentry.PinEntryView;
 import retrofit2.Response;
 
-public class AuthenticationActivity extends AccountAuthenticatorActivity {
+public class OldAuthenticationActivity extends AccountAuthenticatorActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class AuthenticationActivity extends AccountAuthenticatorActivity {
                 final String username = usernameView.getText().toString();
                 final String password = passwordView.getText().toString();
                 final ProgressDialog spinner = new ProgressDialog(
-                        AuthenticationActivity.this, ProgressDialog.STYLE_SPINNER);
+                        OldAuthenticationActivity.this, ProgressDialog.STYLE_SPINNER);
                 spinner.setCancelable(false);
                 spinner.setMessage(getBaseContext().getString(R.string.login_progress_message));
                 spinner.show();

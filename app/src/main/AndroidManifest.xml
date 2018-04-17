@@ -68,7 +68,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AuthenticationActivity"
+            android:name=".activities.OldAuthenticationActivity"
             android:label="@string/main_activity_label"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop"

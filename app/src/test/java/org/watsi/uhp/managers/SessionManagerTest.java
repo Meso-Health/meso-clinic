@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.activities.AuthenticationActivity;
+import org.watsi.uhp.activities.OldAuthenticationActivity;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.User;
@@ -137,7 +137,7 @@ public class SessionManagerTest {
     public void logout() throws Exception {
         Intent mockIntent = mock(Intent.class);
 
-        whenNew(Intent.class).withArguments(mockActivity, AuthenticationActivity.class)
+        whenNew(Intent.class).withArguments(mockActivity, OldAuthenticationActivity.class)
                 .thenReturn(mockIntent);
         when(mockActivity.getSupportFragmentManager()).thenReturn(mockFragmentManager);
 

@@ -12,7 +12,7 @@ import android.os.Bundle;
 import com.google.common.base.Strings;
 
 import org.watsi.uhp.BuildConfig;
-import org.watsi.uhp.activities.AuthenticationActivity;
+import org.watsi.uhp.activities.OldAuthenticationActivity;
 
 /**
  * A component used for working with Android accounts.
@@ -95,7 +95,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
             return result;
         } else {
             // no stored AuthenticationToken, so prompt user to login via the AuthenticationActivity
-            final Intent intent = new Intent(mContext, AuthenticationActivity.class);
+            final Intent intent = new Intent(mContext, OldAuthenticationActivity.class);
             intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
             intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, account.type);
             intent.putExtra(KEY_AUTH_TYPE, authTokenType);

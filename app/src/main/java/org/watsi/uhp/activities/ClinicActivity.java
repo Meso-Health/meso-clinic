@@ -18,8 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import net.hockeyapp.android.UpdateManager;
 
@@ -29,7 +27,6 @@ import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.helpers.ActivityHelper;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.managers.MenuNavigationManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
@@ -229,7 +226,7 @@ public class ClinicActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String token) {
             if (token == null) {
-                startActivityForResult(new Intent(mClinicActivity, AuthenticationActivity.class), 0);
+                startActivityForResult(new Intent(mClinicActivity, OldAuthenticationActivity.class), 0);
             } else {
                 mClinicActivity.setAuthenticationToken(token);
                 Fragment currentFragment = mClinicActivity.getSupportFragmentManager()
