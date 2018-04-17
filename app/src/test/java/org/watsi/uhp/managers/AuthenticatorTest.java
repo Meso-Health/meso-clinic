@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.watsi.uhp.activities.OldAuthenticationActivity;
+import org.watsi.uhp.activities.AuthenticationActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -82,7 +82,7 @@ public class AuthenticatorTest {
         whenNew(Bundle.class).withNoArguments().thenReturn(mockBundle);
         doNothing().when(mockBundle).putString(anyString(), anyString());
         whenNew(Intent.class)
-                .withArguments(mockContext, OldAuthenticationActivity.class).thenReturn(mockIntent);
+                .withArguments(mockContext, AuthenticationActivity.class).thenReturn(mockIntent);
         when(mockIntent.putExtra(any(String.class), any(String.class))).thenReturn(mockIntent);
         when(mockIntent.putExtra(any(String.class), any(Parcelable.class))).thenReturn(mockIntent);
 

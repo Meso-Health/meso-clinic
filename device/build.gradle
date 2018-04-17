@@ -24,6 +24,8 @@ android {
     buildTypes {
         // all buildTypes used in the app gradle file must be present here as well
         sandbox {}
+        demo {}
+        training {}
     }
 
     testOptions {
@@ -83,7 +85,4 @@ dependencies {
     testImplementation testDependencies.robolectric
     testImplementation testDependencies.okReplayJUnit
     debugImplementation testDependencies.okReplay
-}
-repositories {
-    mavenCentral()
 }

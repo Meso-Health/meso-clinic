@@ -6,6 +6,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 import org.watsi.uhp.BaseApplication
 import org.watsi.uhp.di.modules.ActivityModule
 import org.watsi.uhp.di.modules.ApplicationBindingModule
+import org.watsi.uhp.di.modules.DbModule
 import org.watsi.uhp.di.modules.DeviceModule
 import javax.inject.Singleton
 
@@ -14,7 +15,8 @@ import javax.inject.Singleton
     AndroidSupportInjectionModule::class,
     ApplicationBindingModule::class,
     ActivityModule::class,
-    DeviceModule::class
+    DeviceModule::class,
+    DbModule::class
 ])
 interface AppComponent : AndroidInjector<BaseApplication> {
 

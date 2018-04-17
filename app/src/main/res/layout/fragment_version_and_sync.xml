@@ -317,13 +317,11 @@
         android:id="@+id/refresh_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:fabSize="normal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
         android:src="@drawable/ic_autorenew_white_24dp"
-        android:clickable="true"
         app:backgroundTint="@color/colorPrimary"/>
 
 </RelativeLayout>
