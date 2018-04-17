@@ -14,7 +14,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,9 +37,11 @@ import org.watsi.uhp.services.SyncService;
 
 import java.io.IOException;
 
+import dagger.android.support.DaggerAppCompatActivity;
+
 import static org.watsi.uhp.managers.KeyboardManager.hideKeyboard;
 
-public class ClinicActivity extends AppCompatActivity {
+public class ClinicActivity extends DaggerAppCompatActivity {
 
     private static int FETCH_SERVICE_JOB_ID = 0;
     private static int SYNC_SERVICE_JOB_ID = 1;

@@ -25,8 +25,8 @@ android {
         buildConfigField "Integer", "PROVIDER_ID", "1"
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
+        buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
     }
     signingConfigs {
         releaseConfig {
@@ -38,18 +38,6 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
-            versionNameSuffix '-debug'
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releaseConfig
-        }
-    }
-    flavorDimensions "default"
-    productFlavors {
-        development {
             applicationIdSuffix ".development"
             versionNameSuffix "-development"
             resValue "string", "app_name", "UHP Dev"
@@ -64,7 +52,6 @@ android {
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
             buildConfigField "String", "API_HOST", ENV("DEVELOPMENT_API_HOST")
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
             buildConfigField "String", "ROLLBAR_API_KEY", "null"
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
@@ -84,27 +71,8 @@ android {
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
-        spec {
-            applicationIdSuffix ".spec"
-            versionNameSuffix "-spec"
-            resValue "string", "app_name", "UHP Spec"
-            resValue "string", "main_activity_label", "UHP Spec"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#F4C2C2" // pink
-            resValue "color", "colorPrimaryDark", "#E09F9F"
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_spec"
-            ]
-
-            buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
-            buildConfigField "String", "API_HOST", ENV("SPEC_API_HOST")
-            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
-            buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
-            buildConfigField "String", "ROLLBAR_API_KEY", "null"
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
-        }
         demo {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
             resValue "string", "app_name", "UHP Demo"
@@ -119,8 +87,10 @@ android {
             buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("DEMO_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
         training {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".training"
             versionNameSuffix "-training"
             resValue "string", "app_name", "UHP Training"
@@ -136,8 +106,10 @@ android {
             buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("TRAINING_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
-        production {
+        release {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".production"
             versionNameSuffix "-production"
             resValue "string", "app_name", "UHP"
@@ -152,6 +124,7 @@ android {
             buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
     }
 
