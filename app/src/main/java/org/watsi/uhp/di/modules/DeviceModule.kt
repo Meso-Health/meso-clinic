@@ -1,5 +1,7 @@
 package org.watsi.uhp.di.modules
 
+import android.content.Context
+import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.Module
 import dagger.Provides
 import org.threeten.bp.Clock
@@ -8,5 +10,8 @@ import org.threeten.bp.Clock
 class DeviceModule {
 
     @Provides
-    fun provideClock(): Clock = Clock.systemDefaultZone()
+    fun provideClock(context: Context): Clock {
+        AndroidThreeTen.init(context)
+        return Clock.systemDefaultZone()
+    }
 }

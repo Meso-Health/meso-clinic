@@ -156,6 +156,8 @@ dependencies {
     implementation dependencies.kotlin
     implementation dependencies.kotlinReflect
     implementation dependencies.androidSupportLibrary
+    implementation dependencies.supportDesign
+    implementation dependencies.cardView
     implementation dependencies.gson
     implementation dependencies.gmsVision
 
