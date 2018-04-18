@@ -6,10 +6,10 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.watsi.domain.entities.AuthenticationToken;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.AuthenticationToken;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

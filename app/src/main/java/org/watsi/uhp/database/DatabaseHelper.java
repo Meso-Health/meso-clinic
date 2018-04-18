@@ -19,7 +19,6 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.LabResult;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.Photo;
-import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -76,7 +75,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Encounter.class);
             TableUtils.createTable(connectionSource, EncounterItem.class);
             TableUtils.createTable(connectionSource, EncounterForm.class);
-            TableUtils.createTable(connectionSource, User.class);
             TableUtils.createTable(connectionSource, Photo.class);
             TableUtils.createTable(connectionSource, Diagnosis.class);
             TableUtils.createTable(connectionSource, LabResult.class);
@@ -221,7 +219,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.clearTable(connectionSource, Encounter.class);
             TableUtils.clearTable(connectionSource, EncounterItem.class);
             TableUtils.clearTable(connectionSource, EncounterForm.class);
-            TableUtils.clearTable(connectionSource, User.class);
             TableUtils.clearTable(connectionSource, Photo.class);
             TableUtils.clearTable(connectionSource, Diagnosis.class);
             TableUtils.clearTable(connectionSource, LabResult.class);

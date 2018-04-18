@@ -14,10 +14,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.domain.entities.User;
 import org.watsi.uhp.activities.AuthenticationActivity;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.models.AuthenticationToken;
-import org.watsi.uhp.models.User;
 
 import static junit.framework.Assert.assertNull;
 import static org.mockito.Matchers.any;
@@ -39,13 +38,9 @@ public class SessionManagerTest {
     @Mock
     PreferencesManager mockPreferencesManager;
     @Mock
-    AuthenticationToken mockAuthenticationToken;
-    @Mock
     AccountManager mockAccountManager;
     @Mock
     Account mockAccount;
-    @Mock
-    User mockUser;
     @Mock
     ClinicActivity mockActivity;
     @Mock
@@ -57,6 +52,7 @@ public class SessionManagerTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockStatic(Rollbar.class);
+
         sessionManager = new SessionManager(mockPreferencesManager, mockAccountManager);
     }
 
@@ -68,15 +64,14 @@ public class SessionManagerTest {
         String username = "username";
         String password = "password";
         String token = "token";
+        User user = new User(id, username, password, User.Role.PROVIDER, 1);
 
         mockStatic(ExceptionManager.class);
-        when(mockUser.getId()).thenReturn(id);
-        when(mockUser.getUsername()).thenReturn(username);
         whenNew(Account.class).withArguments(username, Authenticator.ACCOUNT_TYPE)
                 .thenReturn(mockAccount);
         doNothing().when(spiedSessionManager).addAccount(any(Account.class), any(String.class));
 
-        spiedSessionManager.setUserAsLoggedIn(mockUser, password, token);
+        spiedSessionManager.setUserAsLoggedIn(user, password, token);
 
         verify(spiedSessionManager, times(1)).addAccount(mockAccount, password);
         verify(mockAccountManager, times(1)).setAuthToken(

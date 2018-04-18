@@ -7,19 +7,17 @@ import android.support.test.rule.ActivityTestRule;
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.watsi.domain.entities.AuthenticationToken;
+import org.watsi.domain.entities.User;
 import org.watsi.uhp.BillableFactory;
 import org.watsi.uhp.DiagnosisFactory;
 import org.watsi.uhp.MemberFactory;
-import org.watsi.uhp.R;
 import org.watsi.uhp.database.DatabaseHelper;
-import org.watsi.uhp.fragments.DiagnosisFragment;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AbstractModel;
-import org.watsi.uhp.models.AuthenticationToken;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.User;
 
 import java.sql.SQLException;
 
@@ -27,7 +25,6 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -59,16 +56,9 @@ class BaseTest {
     }
 
     private static void login(Context context) {
-        User u = new User();
-        u.setId(1);
-        u.setUsername(TEST_USER_NAME);
-        u.setName("test_name");
-        u.setRole("provider");
+        User u = new User(1, TEST_USER_NAME, "test_name", User.Role.PROVIDER, 1);
 
-        AuthenticationToken authToken = new AuthenticationToken();
-        authToken.setToken("test_token");
-        authToken.setExpiresAt("never");
-        authToken.setUser(u);
+        AuthenticationToken authToken = new AuthenticationToken("test_token", "never", u);
 
         new SessionManager(new PreferencesManager(context), AccountManager.get(context))
                 .setUserAsLoggedIn(authToken.getUser(), "test_password", authToken.getToken());

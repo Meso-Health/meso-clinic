@@ -13,9 +13,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.domain.entities.AuthenticationToken;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.managers.Clock;
-import org.watsi.uhp.models.AuthenticationToken;
 
 import java.util.concurrent.TimeUnit;
 

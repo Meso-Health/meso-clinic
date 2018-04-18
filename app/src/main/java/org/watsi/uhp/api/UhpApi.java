@@ -1,6 +1,6 @@
 package org.watsi.uhp.api;
 
-import org.watsi.uhp.models.AuthenticationToken;
+import org.watsi.domain.entities.AuthenticationToken;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Encounter;

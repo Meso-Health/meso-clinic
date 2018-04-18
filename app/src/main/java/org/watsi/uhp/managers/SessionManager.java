@@ -9,9 +9,9 @@ import android.support.v4.app.FragmentManager;
 
 import com.rollbar.android.Rollbar;
 
+import org.watsi.domain.entities.User;
 import org.watsi.uhp.activities.AuthenticationActivity;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.models.User;
 
 import java.util.Arrays;
 
