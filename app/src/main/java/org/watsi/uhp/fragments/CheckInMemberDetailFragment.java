@@ -9,11 +9,18 @@ import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
+import org.watsi.uhp.repositories.MemberRepository;
 
 import java.sql.SQLException;
 
+import javax.inject.Inject;
+
 public class CheckInMemberDetailFragment extends MemberDetailFragment {
     CheckInMemberDetailPresenter checkInMemberDetailPresenter;
+
+    @Inject MemberRepository memberRepository;
+    @Inject IdentificationEventRepository identificationEventRepository;
 
     @Override
     protected MemberDetailPresenter getPresenter() {
@@ -31,7 +38,9 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
                 view,
                 getContext(),
                 member,
-                idEvent
+                idEvent,
+                identificationEventRepository,
+                memberRepository
         );
     }
 

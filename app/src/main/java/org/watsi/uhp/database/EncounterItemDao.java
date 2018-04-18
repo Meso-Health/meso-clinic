@@ -20,18 +20,18 @@ public class EncounterItemDao {
         return DatabaseHelper.fetchDao(EncounterItem.class);
     }
 
-    public static List<EncounterItem> fromEncounter(Encounter encounter) throws SQLException {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put(EncounterItem.FIELD_NAME_ENCOUNTER_ID, encounter.getId());
-        List<EncounterItem> encounterItems = getDao().queryForFieldValues(queryMap);
-        for (EncounterItem encounterItem : encounterItems) {
-            encounterItem.setEncounterId(encounterItem.getEncounter().getId());
-            encounterItem.getBillable().refresh();
-            LabResult labResult = LabResultDao.findByEncounterItemId(encounterItem.getId());
-            encounterItem.setLabResult(labResult);
-        }
-        return encounterItems;
-    }
+//    public static List<EncounterItem> fromEncounter(Encounter encounter) throws SQLException {
+//        Map<String, Object> queryMap = new HashMap<>();
+//        queryMap.put(EncounterItem.FIELD_NAME_ENCOUNTER_ID, encounter.getId());
+//        List<EncounterItem> encounterItems = getDao().queryForFieldValues(queryMap);
+//        for (EncounterItem encounterItem : encounterItems) {
+//            encounterItem.setEncounterId(encounterItem.getEncounter().getId());
+//            encounterItem.getBillable().refresh();
+//            LabResult labResult = LabResultDao.findByEncounterItemId(encounterItem.getId());
+//            encounterItem.setLabResult(labResult);
+//        }
+//        return encounterItems;
+//    }
 
     public static List<EncounterItem> getDefaultEncounterItems(
             IdentificationEvent.ClinicNumberTypeEnum type) throws SQLException {

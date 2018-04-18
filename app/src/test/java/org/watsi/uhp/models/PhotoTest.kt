@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Matchers
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -50,10 +49,8 @@ class PhotoTest {
         `when`(mockContentResolver.query(
                 Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any()))
                 .thenReturn(mockCursor)
-        doReturn(true).`when`(photo).update()
 
         assertTrue(photo.delete(mockContext))
         assertTrue(photo.deleted)
-        Mockito.verify(photo).update()
     }
 }

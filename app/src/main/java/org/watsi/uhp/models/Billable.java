@@ -5,10 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.helpers.StringUtils;
 
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -222,10 +220,6 @@ public class Billable extends AbstractModel {
             }
         }
         return categories;
-    }
-
-    public static List<String> getBillableCompositions() throws SQLException {
-        return BillableDao.getUniqueBillableCompositions();
     }
 
     public boolean requiresLabResult() {

@@ -5,17 +5,19 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.Photo;
+import org.watsi.uhp.repositories.MemberRepository;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
+import javax.inject.Inject;
 
 public class EnrollNewbornPhotoFragment extends PhotoFragment<Member> {
+
+    @Inject MemberRepository memberRepository;
 
     @Override
     int getTitleLabelId() {
@@ -34,15 +36,10 @@ public class EnrollNewbornPhotoFragment extends PhotoFragment<Member> {
 
     @Override
     public void nextStep() {
-        try {
-            mSyncableModel.saveChanges(getAuthenticationToken());
-            IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-            getNavigationManager().setCheckInMemberDetailFragmentAfterEnrollNewborn(mSyncableModel, idEvent);
-            Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
-        } catch (SQLException | AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " +  mSyncableModel.getId());
-            Toast.makeText(getContext(), "Failed to save photo", Toast.LENGTH_LONG).show();
-        }
+        memberRepository.save(mSyncableModel);
+        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        getNavigationManager().setCheckInMemberDetailFragmentAfterEnrollNewborn(mSyncableModel, idEvent);
+        Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
     }
 
     @Override

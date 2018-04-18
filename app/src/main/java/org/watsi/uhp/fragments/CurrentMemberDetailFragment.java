@@ -8,9 +8,18 @@ import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CurrentMemberDetailPresenter;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
+import org.watsi.uhp.repositories.BillableRepository;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
+import org.watsi.uhp.repositories.MemberRepository;
+
+import javax.inject.Inject;
 
 public class CurrentMemberDetailFragment extends MemberDetailFragment {
     private CurrentMemberDetailPresenter currentMemberDetailPresenter;
+
+    @Inject MemberRepository memberRepository;
+    @Inject BillableRepository billableRepository;
+    @Inject IdentificationEventRepository identificationEventRepository;
 
     @Override
     protected MemberDetailPresenter getPresenter() {
@@ -20,8 +29,14 @@ public class CurrentMemberDetailFragment extends MemberDetailFragment {
     @Override
     protected void setUpFragment(View view) {
         Member member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-        currentMemberDetailPresenter = new CurrentMemberDetailPresenter(getNavigationManager(),
-                view, getContext(), member);
+        currentMemberDetailPresenter = new CurrentMemberDetailPresenter(
+                getNavigationManager(),
+                view,
+                getContext(),
+                member,
+                identificationEventRepository,
+                billableRepository,
+                memberRepository);
         currentMemberDetailPresenter.setUp();
     }
 

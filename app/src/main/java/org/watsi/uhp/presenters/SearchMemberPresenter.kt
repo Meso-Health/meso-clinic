@@ -7,11 +7,12 @@ import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.database.MemberDao
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.models.IdentificationEvent
 import org.watsi.uhp.models.Member
+import org.watsi.uhp.repositories.IdentificationEventRepository
+import org.watsi.uhp.repositories.MemberRepository
 
 class SearchMemberPresenter(
         private val mProgressDialog: ProgressDialog,
@@ -19,11 +20,9 @@ class SearchMemberPresenter(
         private val mEmptyView: TextView,
         private val mSearchView: SearchView,
         private val mContext: Context,
-        private val mNavigationManager: NavigationManager) {
-
-    fun String.containsDigit(): Boolean {
-        return this.matches(Regex(".*\\d+.*"))
-    }
+        private val mNavigationManager: NavigationManager,
+        private val memberRepository: MemberRepository,
+        private val identificationEventRepository: IdentificationEventRepository) {
 
     fun setupSearchListeners() {
         // necessary to automatically show the search keyboard when requestFocus() is called
@@ -56,18 +55,18 @@ class SearchMemberPresenter(
         val idMethod: IdentificationEvent.SearchMethodEnum
         val matchingMembers: List<Member>
 
-        if (query.containsDigit()) {
-            matchingMembers = MemberDao.withCardIdLike(query)
+        if (query.matches(Regex(".*\\d+.*"))) {
+            matchingMembers = memberRepository.fuzzySearchByCardId(query)
             idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_ID
         } else {
-            matchingMembers = MemberDao.fuzzySearchMembers(query)
+            matchingMembers = memberRepository.fuzzySearchByName(query)
             idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_NAME
         }
         return Pair(idMethod, matchingMembers)
     }
 
     fun displayMembersResult(searchMethod: IdentificationEvent.SearchMethodEnum, members: List<Member>) {
-        val adapter = MemberAdapter(mContext, members, false)
+        val adapter = MemberAdapter(mContext, members, false, identificationEventRepository)
         mListView.adapter = adapter
         mListView.emptyView = mEmptyView
         mListView.setOnItemClickListener { parent, _, position, _ ->

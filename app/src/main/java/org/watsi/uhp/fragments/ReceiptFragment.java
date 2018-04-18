@@ -16,15 +16,16 @@ import org.watsi.uhp.databinding.FragmentReceiptBinding;
 import org.watsi.uhp.databinding.FragmentReceiptListFooterBinding;
 import org.watsi.uhp.databinding.FragmentReceiptListHeaderBinding;
 import org.watsi.uhp.helpers.ListViewUtils;
-import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.repositories.EncounterRepository;
 import org.watsi.uhp.view_models.DiagnosesListViewModel;
 import org.watsi.uhp.view_models.EncounterViewModel;
 
-import java.sql.SQLException;
+import javax.inject.Inject;
 
 public class ReceiptFragment extends FormFragment<Encounter> {
+
+    @Inject EncounterRepository encounterRepository;
 
     @Override
     int getTitleLabelId() {
@@ -44,17 +45,10 @@ public class ReceiptFragment extends FormFragment<Encounter> {
     @Override
     public void nextStep() {
         String toastMessage;
-        try {
-            mSyncableModel.saveChanges(getAuthenticationToken());
-            getNavigationManager().setCurrentPatientsFragment();
+        encounterRepository.create(mSyncableModel);
+        getNavigationManager().setCurrentPatientsFragment();
 
-            toastMessage = mSyncableModel.getMember()
-                    .getFullName() + getString(R.string.encounter_submitted);
-        } catch (SQLException | AbstractModel.ValidationException e) {
-            toastMessage = "Failed to save data, contact support.";
-            ExceptionManager.reportException(e);
-        }
-
+        toastMessage = mSyncableModel.getMember().getFullName() + getString(R.string.encounter_submitted);
         Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
 

@@ -2,7 +2,6 @@ package org.watsi.uhp.fragments;
 
 import android.databinding.DataBindingUtil;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
@@ -10,11 +9,16 @@ import org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput;
 import org.watsi.uhp.databinding.FragmentDiagnosisBinding;
 import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.repositories.DiagnosisRepository;
 import org.watsi.uhp.view_models.DiagnosesListViewModel;
+
+import javax.inject.Inject;
 
 public class DiagnosisFragment extends FormFragment<Encounter> {
     private DiagnosesListViewModel mDiagnosesListViewModel;
     private View mView;
+
+    @Inject DiagnosisRepository diagnosisRepository;
 
     @Override
     int getTitleLabelId() {
@@ -43,7 +47,8 @@ public class DiagnosisFragment extends FormFragment<Encounter> {
         mDiagnosesListViewModel = new DiagnosesListViewModel(getContext(), mSyncableModel, true);
         binding.setDiagnosisListView(mDiagnosesListViewModel);
 
-        getDiagnosisFuzzySearchInput().setDiagnosisChosenListener(this);
+
+        getDiagnosisFuzzySearchInput().setDiagnosisChosenListener(this, diagnosisRepository);
     }
 
     public DiagnosisFuzzySearchInput getDiagnosisFuzzySearchInput() {

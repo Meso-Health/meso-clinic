@@ -17,9 +17,11 @@ import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Photo;
 import org.watsi.uhp.models.SyncableModel;
+import org.watsi.uhp.repositories.PhotoRepository;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
+import javax.inject.Inject;
 
 public abstract class PhotoFragment<T extends SyncableModel> extends FormFragment<T> {
 
@@ -31,6 +33,8 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
     abstract void handleSetupFailure();
     abstract void additionalSetup(View view);
     abstract void onPhotoCaptured(Photo photo) throws IOException;
+
+    @Inject PhotoRepository photoRepository;
 
     @Override
     void setUpFragment(View view) {
@@ -60,7 +64,7 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
 
                 Photo photo = new Photo();
                 photo.setUrl(mUri.toString());
-                photo.create();
+                photoRepository.create(photo);
 
                 onPhotoCaptured(photo);
             } else {
@@ -68,7 +72,7 @@ public abstract class PhotoFragment<T extends SyncableModel> extends FormFragmen
                 Toast.makeText(getContext(), R.string.image_capture_failed, Toast.LENGTH_LONG).show();
             }
 
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             ExceptionManager.reportException(e);
             Toast.makeText(getContext(), R.string.image_failed_to_save, Toast.LENGTH_LONG).show();
         }

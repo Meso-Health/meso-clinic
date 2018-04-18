@@ -74,26 +74,21 @@ public class EncounterForm extends SyncableModel {
         // no-op
     }
 
-    @Override
-    public void handleUpdateFromSync(SyncableModel responseModel) throws SQLException {
-        // set the ID, URL and encounter ID from the model onto the response so that they do
-        //  not get marked as dirty fields when the models are diffed in the sync logic
-        EncounterForm response = (EncounterForm) responseModel;
-        response.setId(getId());
-        response.setEncounterId(getEncounterId());
-        ((EncounterForm) responseModel).setPhoto(getPhoto());
-    }
+//    @Override
+//    public void handleUpdateFromSync(SyncableModel responseModel) throws SQLException {
+//        // set the ID, URL and encounter ID from the model onto the response so that they do
+//        //  not get marked as dirty fields when the models are diffed in the sync logic
+//        EncounterForm response = (EncounterForm) responseModel;
+//        response.setId(getId());
+//        response.setEncounterId(getEncounterId());
+//        ((EncounterForm) responseModel).setPhoto(getPhoto());
+//    }
 
     @Override
     protected Call postApiCall(Context context) throws SQLException {
         RequestBody body = RequestBody.create(MediaType.parse("image/jpg"), getPhoto().bytes(context));
         return ApiService.requestBuilder(context).syncEncounterForm(
                 getTokenAuthHeaderString(), getEncounter().getId(), body);
-    }
-
-    @Override
-    protected void persistAssociations() {
-        // no-op
     }
 
     @Override

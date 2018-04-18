@@ -26,6 +26,8 @@ import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
+import org.watsi.uhp.repositories.MemberRepository;
 
 import java.sql.SQLException;
 
@@ -40,8 +42,16 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     private final Button mScanFingerprintsBtn;
     private final TextView mScanResult;
 
-    public CheckInMemberDetailPresenter(NavigationManager navigationManager, SessionManager sessionManager, CheckInMemberDetailFragment checkInMemberDetailFragment, View view, Context context, Member member, IdentificationEvent idEvent) {
-        super(view, context, member, navigationManager);
+    public CheckInMemberDetailPresenter(NavigationManager navigationManager,
+                                        SessionManager sessionManager,
+                                        CheckInMemberDetailFragment checkInMemberDetailFragment,
+                                        View view,
+                                        Context context,
+                                        Member member,
+                                        IdentificationEvent idEvent,
+                                        IdentificationEventRepository identificationEventRepository,
+                                        MemberRepository memberRepository) {
+        super(view, context, member, navigationManager, memberRepository, identificationEventRepository);
         mCheckInMemberDetailFragment = checkInMemberDetailFragment;
         mIdEvent = idEvent;
         mSimprintsHelper = new SimprintsHelper(sessionManager.getCurrentLoggedInUsername(), mCheckInMemberDetailFragment);
@@ -165,7 +175,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         mIdEvent.setAccepted(true);
         mIdEvent.setOccurredAt(Clock.getCurrentTime());
         mIdEvent.setPhotoVerified(getMember().hasMemberPhoto());
-        mIdEvent.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
+        identificationEventRepository.create(mIdEvent);
         displayIdentificationSuccessfulToast();
         navigateToCurrentPatientsFragment();
     }

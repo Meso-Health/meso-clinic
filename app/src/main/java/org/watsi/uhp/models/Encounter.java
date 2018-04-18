@@ -9,16 +9,13 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
-import org.watsi.uhp.database.EncounterItemDao;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -100,42 +97,42 @@ public class Encounter extends SyncableModel {
         // no-op
     }
 
-    @Override
-    public void handleUpdateFromSync(SyncableModel response) {
-        // set the encounter items on the response so that encounter_items is not still marked
-        //  as a dirty field when the models are diffed in the sync logic
-        Encounter responseEncounter = (Encounter) response;
-        responseEncounter.setEncounterItems(getEncounterItems());
-        responseEncounter.setDiagnosisIds(mDiagnosisIds);
-    }
+//    @Override
+//    public void handleUpdateFromSync(SyncableModel response) {
+//        // set the encounter items on the response so that encounter_items is not still marked
+//        //  as a dirty field when the models are diffed in the sync logic
+//        Encounter responseEncounter = (Encounter) response;
+//        responseEncounter.setEncounterItems(getEncounterItems());
+//        responseEncounter.setDiagnosisIds(mDiagnosisIds);
+//    }
 
     @Override
     protected Call postApiCall(Context context) throws SQLException {
         setMemberId(getMember().getId());
         setIdentificationEventId(getIdentificationEvent().getId());
-        setEncounterItems(EncounterItemDao.fromEncounter(this));
+        // TODO: handle inflating encounter items
         return ApiService.requestBuilder(context).syncEncounter(
                 getTokenAuthHeaderString(), BuildConfig.PROVIDER_ID, this);
     }
 
-    @Override
-    protected void persistAssociations() throws SQLException, ValidationException {
-        for (EncounterItem encounterItem : getEncounterItems()) {
-            Billable billable = encounterItem.getBillable();
-            if (billable.getId() == null) {
-                billable.generateId();
-                billable.create();
-            }
-            encounterItem.setEncounter(this);
-            encounterItem.create();
-            if (encounterItem.getLabResult() != null) {
-                encounterItem.getLabResult().create();
-            }
-        }
-        for (EncounterForm encounterForm : getEncounterForms()) {
-            encounterForm.saveChanges(getToken());
-        }
-    }
+//    @Override
+//    protected void persistAssociations() throws SQLException, ValidationException {
+//        for (EncounterItem encounterItem : getEncounterItems()) {
+//            Billable billable = encounterItem.getBillable();
+//            if (billable.getId() == null) {
+//                billable.generateId();
+//                billable.create();
+//            }
+//            encounterItem.setEncounter(this);
+//            encounterItem.create();
+//            if (encounterItem.getLabResult() != null) {
+//                encounterItem.getLabResult().create();
+//            }
+//        }
+//        for (EncounterForm encounterForm : getEncounterForms()) {
+//            encounterForm.saveChanges(getToken());
+//        }
+//    }
 
     @Override
     protected Call patchApiCall(Context context) throws SQLException, SyncException {

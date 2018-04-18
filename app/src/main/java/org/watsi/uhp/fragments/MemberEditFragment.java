@@ -9,16 +9,17 @@ import android.widget.Toast;
 import org.watsi.uhp.R;
 import org.watsi.uhp.databinding.FragmentMemberEditBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.MemberRepository;
 import org.watsi.uhp.view_models.MemberEditViewModel;
 
-import java.sql.SQLException;
+import javax.inject.Inject;
 
 public class MemberEditFragment extends FormFragment<Member> {
+
+    @Inject MemberRepository memberRepository;
 
     @Override
     int getTitleLabelId() {
@@ -43,12 +44,7 @@ public class MemberEditFragment extends FormFragment<Member> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String toastMessage = mSyncableModel.getFullName() + "'s information has been updated.";
-                try {
-                    mSyncableModel.saveChanges(getAuthenticationToken());
-                } catch (SQLException | AbstractModel.ValidationException e) {
-                    ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " + mSyncableModel.getId());
-                    toastMessage = "Failed to update the member information.";
-                }
+                memberRepository.save(mSyncableModel);
                 IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                 if (idEvent != null) {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);

@@ -112,16 +112,12 @@ public class NavigationManager {
     }
 
     public void setMemberDetailFragment(Member member, IdentificationEvent idEvent) {
-        try {
-            if (member.currentCheckIn() == null) {
-                setCheckInMemberDetailFragment(member, idEvent, null);
-                return;
-            }
-        // TODO do not want to have to do catch here - I'd prefer the current check in to be already loaded on the Member to avoid the lookup
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
+        // TODO: make sure checking for null idEvent is all we need to do here
+        if (idEvent != null) {
+            setCheckInMemberDetailFragment(member, idEvent, null);
+        } else {
+            setCurrentMemberDetailFragment(member);
         }
-        setCurrentMemberDetailFragment(member);
     }
 
     public void setCheckInMemberDetailFragmentAfterEnrollNewborn(Member member, IdentificationEvent idEvent) {

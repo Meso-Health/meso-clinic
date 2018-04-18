@@ -11,18 +11,19 @@ import android.widget.ArrayAdapter;
 
 import org.watsi.uhp.managers.KeyboardManager;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 
 public class BillableCompositionInput extends AppCompatAutoCompleteTextView {
     public BillableCompositionInput(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public void setCompositionChoices(List<String> compositionChoices) {
+    public void setCompositionChoices(Set<String> compositionChoices) {
         ArrayAdapter<String> adapter = new ArrayAdapter(
                     getContext(),
                     android.R.layout.simple_list_item_1,
-                    compositionChoices
+                    new ArrayList<>(compositionChoices)
         );
         setAdapter(adapter);
         setThreshold(1);

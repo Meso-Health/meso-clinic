@@ -6,19 +6,20 @@ import android.view.View;
 import org.watsi.uhp.R;
 import org.watsi.uhp.custom_components.BillableCompositionInput;
 import org.watsi.uhp.databinding.FragmentAddNewBillableBinding;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
+import org.watsi.uhp.repositories.BillableRepository;
 import org.watsi.uhp.view_models.BillableViewModel;
 
-import java.sql.SQLException;
-
+import javax.inject.Inject;
 
 public class AddNewBillableFragment extends FormFragment<Encounter> {
     private BillableViewModel mBillableViewModel;
     private BillableCompositionInput mCompositionNameTextView;
+
+    @Inject BillableRepository billableRepository;
 
     @Override
     int getTitleLabelId() {
@@ -54,11 +55,7 @@ public class AddNewBillableFragment extends FormFragment<Encounter> {
         mBillableViewModel = new BillableViewModel(this);
         binding.setBillable(mBillableViewModel);
 
-        try {
-            mCompositionNameTextView = (BillableCompositionInput) view.findViewById(R.id.list_of_compositions);
-            mCompositionNameTextView.setCompositionChoices(Billable.getBillableCompositions());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
+        mCompositionNameTextView = (BillableCompositionInput) view.findViewById(R.id.list_of_compositions);
+        mCompositionNameTextView.setCompositionChoices(billableRepository.uniqueCompositions());
     }
 }

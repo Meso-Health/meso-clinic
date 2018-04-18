@@ -177,6 +177,9 @@ dependencies {
     // Simprints
     implementation dependencies.simprints
 
+    // Time
+    implementation dependencies.threeTenAndroidBackport
+
     // Old architecture dependencies
     implementation 'com.j256.ormlite:ormlite-core:5.0'
     implementation 'com.j256.ormlite:ormlite-android:5.0'

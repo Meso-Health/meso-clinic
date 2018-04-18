@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.util.*
+import java.util.UUID
 
 @DatabaseTable(tableName = Photo.TABLE_NAME)
 open class Photo() : AbstractModel<Photo, UUID>() {
@@ -55,7 +55,6 @@ open class Photo() : AbstractModel<Photo, UUID>() {
         if (cursor != null) {
             deleted = if (cursor.count > 0) context.contentResolver.delete(uri, null, null) > 0 else true
         }
-        if (deleted) update()
         return deleted
     }
 

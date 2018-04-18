@@ -11,9 +11,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.models.Billable;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -25,7 +22,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({ Billable.class })
 public class BillableViewModelTest {
     private BillableViewModel billableViewModel;
-    private final List<String> COMPOSITIONS = Arrays.asList("vial", "tablet", "syrup", "fluid");
     private final int TYPE_DRUG_INDEX = 1;
     private final int TYPE_SERVICE_INDEX = 2;
     private final int TYPE_LAB_INDEX = 3;
@@ -39,7 +35,6 @@ public class BillableViewModelTest {
     public void setup() throws Exception {
         initMocks(this);
         mockStatic(Billable.class);
-        when(Billable.getBillableCompositions()).thenReturn(COMPOSITIONS);
         when(Billable.getBillableTypes()).thenCallRealMethod();
         billableViewModel = new BillableViewModel(mockFormFragment);
     }

@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
-import org.watsi.uhp.database.BillableDao;
 import org.watsi.uhp.fragments.BackdateEncounterDialogFragment;
 import org.watsi.uhp.fragments.EncounterFragment;
 import org.watsi.uhp.listeners.BillableSearchEncounterFragmentListener;
@@ -29,6 +28,7 @@ import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.LabResult;
+import org.watsi.uhp.repositories.BillableRepository;
 import org.watsi.uhp.runnables.ScrollToBottomRunnable;
 
 import java.sql.SQLException;
@@ -50,13 +50,22 @@ public class EncounterPresenter {
 
     private SimpleCursorAdapter billableCursorAdapter;
 
-    public EncounterPresenter(Encounter encounter, View view, Context context, EncounterItemAdapter encounterItemAdapter, NavigationManager navigationManager, EncounterFragment encounterFragment) {
+    private final BillableRepository billableRepository;
+
+    public EncounterPresenter(Encounter encounter,
+                              View view,
+                              Context context,
+                              EncounterItemAdapter encounterItemAdapter,
+                              NavigationManager navigationManager,
+                              EncounterFragment encounterFragment,
+                              BillableRepository billableRepository) {
         mEncounter = encounter;
         mView = view;
         mContext = context;
         mEncounterItemAdapter = encounterItemAdapter;
         mNavigationManager = navigationManager;
         mEncounterFragment = encounterFragment;
+        this.billableRepository = billableRepository;
     }
 
     public void setUp() {
@@ -146,17 +155,14 @@ public class EncounterPresenter {
                 Billable.FIELD_NAME_ID
         };
         MatrixCursor cursor = new MatrixCursor(cursorColumns);
-        try {
-            for (Billable billable: BillableDao.fuzzySearchDrugs(query)) {
-                cursor.addRow(new Object[] {
-                        billable.getId().getMostSignificantBits(),
-                        billable.getName(),
-                        billable.dosageDetails(),
-                        billable.getId().toString()
-                });
-            }
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
+
+        for (Billable billable: billableRepository.fuzzySearchDrugsByName(query)) {
+            cursor.addRow(new Object[] {
+                    billable.getId().getMostSignificantBits(),
+                    billable.getName(),
+                    billable.dosageDetails(),
+                    billable.getId().toString()
+            });
         }
 
         return new SimpleCursorAdapter(
@@ -178,15 +184,12 @@ public class EncounterPresenter {
         MatrixCursor cursor = (MatrixCursor) billableCursorAdapter.getItem(position);
         String uuidString = cursor.getString(cursor.getColumnIndex(Billable.FIELD_NAME_ID));
         try {
-            Billable billable = Billable.find(UUID.fromString(uuidString), Billable.class);
+            Billable billable = billableRepository.find(UUID.fromString(uuidString));
             addToEncounterItemList(billable);
             clearDrugSearch();
             scrollToBottom();
         } catch (Encounter.DuplicateBillableException e) {
             Toast.makeText(mContext, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            Toast.makeText(mContext, R.string.generic_error_message, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -266,7 +269,7 @@ public class EncounterPresenter {
         List<Billable> billables = new ArrayList<>();
         billables.add(promptBillable(type.toString()));
 
-        billables.addAll(BillableDao.getBillablesByType(type));
+        billables.addAll(billableRepository.findByType(type));
         return billables;
     }
 

@@ -16,14 +16,15 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.MemberRepository;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
+import javax.inject.Inject;
 
 public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callback {
 
@@ -31,6 +32,8 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     private Button mSearchMemberButton;
     private Toast mErrorToast;
     private ScanPurposeEnum mScanPurpose;
+
+    @Inject MemberRepository memberRepository;
 
     public enum ScanPurposeEnum { ID, MEMBER_EDIT, NEWBORN }
 
@@ -102,37 +105,28 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                 if (barcodes.size() > 0) {
                     Barcode barcode = barcodes.valueAt(0);
                     if (barcode != null) {
-                        try {
-                            Member member;
-                            IdentificationEvent idEvent;
-                            switch (mScanPurpose) {
-                                case ID:
-                                    member = MemberDao.findByCardId(barcode.displayValue);
-                                    idEvent = new IdentificationEvent(member, IdentificationEvent.SearchMethodEnum.SCAN_BARCODE, null);
-                                    getNavigationManager().setMemberDetailFragment(member, idEvent);
-                                    break;
-                                case MEMBER_EDIT:
-                                    member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                                    if (handleCardIdScan(member, barcode.displayValue)) {
-                                        getNavigationManager().setMemberEditFragment(member, idEvent);
-                                    }
-                                    break;
-                                case NEWBORN:
-                                    member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                    idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
-                                    if (handleCardIdScan(member, barcode.displayValue)) {
-                                        getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
-                                    }
-                                    break;
-                            }
-                        } catch (SQLException e) {
-                            displayFailureToast();
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e1) {
-                                ExceptionManager.reportExceptionWarning(e1);
-                            }
+                        Member member;
+                        IdentificationEvent idEvent;
+                        switch (mScanPurpose) {
+                            case ID:
+                                member = memberRepository.findByCardId(barcode.displayValue);
+                                idEvent = new IdentificationEvent(member, IdentificationEvent.SearchMethodEnum.SCAN_BARCODE, null);
+                                getNavigationManager().setMemberDetailFragment(member, idEvent);
+                                break;
+                            case MEMBER_EDIT:
+                                member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                                if (handleCardIdScan(member, barcode.displayValue)) {
+                                    getNavigationManager().setMemberEditFragment(member, idEvent);
+                                }
+                                break;
+                            case NEWBORN:
+                                member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+                                idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                                if (handleCardIdScan(member, barcode.displayValue)) {
+                                    getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
+                                }
+                                break;
                         }
                     }
                 }

@@ -6,16 +6,19 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.os.Bundle;
 
+import org.watsi.domain.entities.Delta;
+import org.watsi.domain.repositories.DeltaRepository;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
-import org.watsi.uhp.database.BillableDao;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.BillableRepository;
+import org.watsi.uhp.repositories.DiagnosisRepository;
+import org.watsi.uhp.repositories.MemberRepository;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -27,6 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -34,6 +39,11 @@ import retrofit2.Response;
  * Service class that polls the UHP API and updates the device with updated member and billables data
  */
 public class FetchService extends AbstractSyncJobService {
+
+    @Inject BillableRepository billableRepository;
+    @Inject MemberRepository memberRepository;
+    @Inject DiagnosisRepository diagnosisRepository;
+    @Inject DeltaRepository deltaRepository;
 
     @Override
     public boolean performSync() {
@@ -107,7 +117,7 @@ public class FetchService extends AbstractSyncJobService {
      * @throws SQLException Error querying data from the db
      */
     protected void deleteMembersDueToProviderAssignmentEnding(List<Member> fetchedMembers) throws SQLException {
-        Set<UUID> previousMemberIds = MemberDao.allMemberIds();
+        Set<UUID> previousMemberIds = memberRepository.allIds();
         Set<UUID> fetchedMemberIds = new HashSet<>();
         for (Member member: fetchedMembers) {
             fetchedMemberIds.add(member.getId());
@@ -117,15 +127,23 @@ public class FetchService extends AbstractSyncJobService {
         // the next loop, we only delete the ones whose assignment ended by checking if they are synced
         previousMemberIds.removeAll(fetchedMemberIds);
 
+        List<Delta> unsyncedMembers = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet();
+        Set<UUID> unsyncedMemberIds = new HashSet<>();
+        for (Delta delta : unsyncedMembers) {
+            unsyncedMemberIds.add(delta.getModelId());
+        }
+
         for (UUID prevMemberId : previousMemberIds) {
-            Member memberToDelete = Member.find(prevMemberId, Member.class);
-            if (memberToDelete.isSynced()) {
+            if (!unsyncedMemberIds.contains(prevMemberId)) {
+                Member memberToDelete = memberRepository.find(prevMemberId);
                 Map<String, String> params = new HashMap<>();
-                params.put("member.id", memberToDelete.toString());
-                ExceptionManager.reportMessage(
-                        "Member deleted due to provider assignment ending.",
-                        ExceptionManager.MESSAGE_LEVEL_INFO, params);
-                memberToDelete.destroy();
+                if (memberToDelete != null) {
+                    params.put("member.id", memberToDelete.toString());
+                    ExceptionManager.reportMessage(
+                            "Member deleted due to provider assignment ending.",
+                            ExceptionManager.MESSAGE_LEVEL_INFO, params);
+                    memberRepository.destroy(memberToDelete);
+                }
             }
         }
     }
@@ -134,7 +152,7 @@ public class FetchService extends AbstractSyncJobService {
         Iterator<Member> iterator = fetchedMembers.iterator();
         while (iterator.hasNext()) {
             Member fetchedMember = iterator.next();
-            fetchedMember.updateFromFetch();
+            memberRepository.updateFromFetch(fetchedMember);
             iterator.remove();
         }
     }
@@ -147,9 +165,13 @@ public class FetchService extends AbstractSyncJobService {
         Response<List<Billable>> response = request.execute();
         if (response.isSuccessful()) {
             List<Billable> billables = response.body();
-            BillableDao.clearBillablesWithoutUnsyncedEncounter();
-            BillableDao.createOrUpdate(billables);
-            preferencesManager.updateBillableLastModified();
+            if (billables != null) {
+                billableRepository.clearBillablesWithoutUnsyncedEncounter();
+                for (Billable billable : billables) {
+                    billableRepository.createOrUpdate(billable);
+                }
+                preferencesManager.updateBillableLastModified();
+            }
         } else {
             if (response.code() != 304) {
                 ExceptionManager.requestFailure(
@@ -183,12 +205,12 @@ public class FetchService extends AbstractSyncJobService {
     private void updateDiagnoses(List<Diagnosis> diagnoses) throws SQLException {
         Set<Integer> currentDiagnosesIds = new HashSet<>();
         for (Diagnosis diagnosis : diagnoses) {
-            diagnosis.createOrUpdate();
+            diagnosisRepository.createOrUpdate(diagnosis);
             currentDiagnosesIds.add(diagnosis.getId());
         }
-        for (Diagnosis diagnosis : Diagnosis.all(Diagnosis.class)) {
+        for (Diagnosis diagnosis : diagnosisRepository.all()) {
             if (!currentDiagnosesIds.contains(diagnosis.getId())) {
-                diagnosis.destroy();
+                diagnosisRepository.destroy(diagnosis);
             }
         }
     }

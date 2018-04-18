@@ -13,6 +13,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
 import org.watsi.uhp.repositories.MemberRepository;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 public class CurrentPatientsFragment extends BaseFragment {
 
     @Inject MemberRepository memberRepository;
+    @Inject IdentificationEventRepository identificationEventRepository;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.current_patients_fragment_label);
@@ -43,7 +45,10 @@ public class CurrentPatientsFragment extends BaseFragment {
             currentPatientsLabel.setText(getActivity().getResources().getQuantityString(
                     R.plurals.current_patients_label, currentPatients.size(), currentPatients.size()));
 
-            listView.setAdapter(new MemberAdapter(getContext(), currentPatients, true));
+            listView.setAdapter(new MemberAdapter(getContext(),
+                                                  currentPatients,
+                                                  true,
+                                                  identificationEventRepository));
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

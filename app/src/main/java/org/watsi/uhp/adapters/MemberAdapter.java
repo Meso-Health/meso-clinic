@@ -12,19 +12,24 @@ import android.widget.TextView;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
-import org.watsi.uhp.managers.ExceptionManager;
+import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class MemberAdapter extends ArrayAdapter<Member> {
 
     private Boolean showClinicNumber;
+    private final IdentificationEventRepository identificationEventRepository;
 
-    public MemberAdapter(Context context, List<Member> memberList, boolean showClinicNumber) {
+    public MemberAdapter(Context context,
+                         List<Member> memberList,
+                         boolean showClinicNumber,
+                         IdentificationEventRepository identificationEventRepository) {
         super(context, R.layout.item_member_list, memberList);
         this.showClinicNumber = showClinicNumber;
+        this.identificationEventRepository = identificationEventRepository;
     }
 
     @Override
@@ -62,11 +67,10 @@ public class MemberAdapter extends ArrayAdapter<Member> {
             if (showClinicNumber) {
                 viewHolder.phone_number.setVisibility(View.GONE);
                 viewHolder.clinic_number.setVisibility(View.VISIBLE);
-                try {
-                    // TODO not cool to have to do a lookup here... we need to store this on the model
-                    viewHolder.clinic_number.setText(member.currentCheckIn().getFormattedClinicNumber());
-                } catch (SQLException e) {
-                    ExceptionManager.reportException(e);
+                IdentificationEvent currentCheckIn = identificationEventRepository
+                        .openCheckIn(member.getId());
+                if (currentCheckIn != null) {
+                    viewHolder.clinic_number.setText(currentCheckIn.getFormattedClinicNumber());
                 }
             }
 

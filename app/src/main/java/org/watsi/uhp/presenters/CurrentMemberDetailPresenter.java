@@ -8,23 +8,35 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.database.EncounterItemDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.Encounter;
+import org.watsi.uhp.models.EncounterItem;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.models.SyncableModel;
+import org.watsi.uhp.repositories.BillableRepository;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
+import org.watsi.uhp.repositories.MemberRepository;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
-    public CurrentMemberDetailPresenter(NavigationManager navigationManager, View view, Context context, Member member) {
-        super(view, context, member, navigationManager);
+    private final BillableRepository billableRepository;
+
+    public CurrentMemberDetailPresenter(NavigationManager navigationManager,
+                                        View view,
+                                        Context context,
+                                        Member member,
+                                        IdentificationEventRepository identificationEventRepository,
+                                        BillableRepository billableRepository,
+                                        MemberRepository memberRepository) {
+        super(view, context, member, navigationManager, memberRepository, identificationEventRepository);
+        this.billableRepository = billableRepository;
     }
 
     @Override
@@ -65,14 +77,13 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     private Encounter createUnsavedEncounterWithDefaultItems() throws SQLException {
         Encounter encounter = new Encounter();
-        IdentificationEvent checkIn = getMember().currentCheckIn();
+        IdentificationEvent checkIn = identificationEventRepository.openCheckIn(getMember().getId());
         if (checkIn != null) {
             encounter.setCopaymentPaid(true);
             encounter.setOccurredAt(Clock.getCurrentTime());
             encounter.setMember(getMember());
             encounter.setIdentificationEvent(checkIn);
-            encounter.setEncounterItems(
-                    EncounterItemDao.getDefaultEncounterItems(checkIn.getClinicNumberType()));
+            encounter.setEncounterItems(getDefaultEncounterItems(checkIn.getClinicNumberType()));
             return encounter;
         } else {
             throw new IllegalStateException("Current member does not have a current IdentificationEvent. Member id is: " + getMember().getId());
@@ -81,29 +92,17 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     private void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
             throws SyncableModel.UnauthenticatedException, SQLException {
-        IdentificationEvent checkIn = getMember().currentCheckIn();
+        IdentificationEvent checkIn = identificationEventRepository.openCheckIn(getMember().getId());
         checkIn.setDismissalReason(dismissReason);
 
-        try {
-            checkIn.saveChanges(((ClinicActivity) getContext()).getAuthenticationToken());
-            getNavigationManager().setCurrentPatientsFragment();
-            showCheckedOutSuccessfulToast();
-        } catch (SQLException | AbstractModel.ValidationException e) {
-            ExceptionManager.reportException(e);
-            showFailedToCheckOutToast();
-        }
+        identificationEventRepository.update(checkIn);
+        getNavigationManager().setCurrentPatientsFragment();
+        showCheckedOutSuccessfulToast();
     }
 
     private void showGenericFailedToast() {
         Toast.makeText(getContext(),
                 getContext().getString(R.string.generic_enter_treatment_info_failure),
-                Toast.LENGTH_LONG).
-                show();
-    }
-
-    private void showFailedToCheckOutToast() {
-        Toast.makeText(getContext(),
-                getContext().getString(R.string.identification_dismissed_failure),
                 Toast.LENGTH_LONG).
                 show();
     }
@@ -135,5 +134,15 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                                 }
                             }
                         }).create().show();
+    }
+
+    private List<EncounterItem> getDefaultEncounterItems(IdentificationEvent.ClinicNumberTypeEnum type) {
+        List<EncounterItem> defaultLineItems = new ArrayList<>();
+
+        if (type == IdentificationEvent.ClinicNumberTypeEnum.OPD) {
+            defaultLineItems.add(new EncounterItem(billableRepository.findByName("Consultation"), 1));
+            defaultLineItems.add(new EncounterItem(billableRepository.findByName("Medical Form"), 1));
+        }
+        return defaultLineItems;
     }
 }

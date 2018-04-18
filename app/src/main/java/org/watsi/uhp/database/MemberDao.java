@@ -100,7 +100,7 @@ public class MemberDao {
 
         List<Member> members = new ArrayList<>();
         for (String id : rawResults.getResults()) {
-            members.add(Member.find(UUID.fromString(id), Member.class));
+            members.add(getDao().queryForId(UUID.fromString(id)));
         }
         return members;
     }

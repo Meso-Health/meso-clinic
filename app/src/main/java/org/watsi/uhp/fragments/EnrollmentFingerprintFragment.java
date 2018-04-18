@@ -12,13 +12,14 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
+import org.watsi.uhp.repositories.MemberRepository;
 
-import java.sql.SQLException;
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     private IdentificationEvent mIdEvent;
@@ -26,6 +27,8 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     private View mFailedMessageView;
     private EnrollmentPresenter enrollmentPresenter;
     private SimprintsHelper mSimprintsHelper;
+
+    @Inject MemberRepository memberRepository;
 
     @Override
     int getTitleLabelId() {
@@ -49,14 +52,9 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                try {
-                    mSyncableModel.saveChanges(getAuthenticationToken());
-                    getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
-                    enrollmentPresenter.confirmationToast().show();
-                } catch (SQLException | AbstractModel.ValidationException e) {
-                    ExceptionManager.reportException(e, "Failed to save changes to a member that has invalid fields for member id: " + mSyncableModel.getId());
-                    Toast.makeText(getContext(), "Failed to save fingerprint", Toast.LENGTH_LONG).show();
-                }
+                memberRepository.save(mSyncableModel);
+                getNavigationManager().setMemberDetailFragment(mSyncableModel, mIdEvent);
+                enrollmentPresenter.confirmationToast().show();
             }
         });
         builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

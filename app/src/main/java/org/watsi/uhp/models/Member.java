@@ -12,7 +12,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
-import org.watsi.uhp.database.IdentificationEventDao;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 
@@ -209,62 +208,56 @@ public class Member extends SyncableModel {
         }
     }
 
-    @Override
-    public void handleUpdateFromSync(SyncableModel response) throws SQLException, IOException {
-        Member memberResponse = (Member) response;
-        String photoUrlFromResponse = memberResponse.getRemoteMemberPhotoUrl();
-        String nationalIdPhotoUrlFromResponse = memberResponse.getRemoteNationalIdPhotoUrl();
+//    @Override
+//    public void handleUpdateFromSync(SyncableModel response) throws SQLException, IOException {
+//        Member memberResponse = (Member) response;
+//        String photoUrlFromResponse = memberResponse.getRemoteMemberPhotoUrl();
+//        String nationalIdPhotoUrlFromResponse = memberResponse.getRemoteNationalIdPhotoUrl();
+//
+//        if (photoUrlFromResponse != null) {
+//            setRemoteMemberPhotoUrl(photoUrlFromResponse);
+//            fetchAndSetPhotoFromUrl(new OkHttpClient()); // async?
+//
+//            if (getLocalMemberPhoto() != null) {
+//                memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
+//            }
+//        }
+//
+//        // TODO need to handle edge case where the response has a URL for a photo that is different then the locally stored photo
+//        if (nationalIdPhotoUrlFromResponse != null && getLocalNationalIdPhoto() != null) {
+//            memberResponse.setLocalNationalIdPhoto(getLocalNationalIdPhoto());
+//        }
+//    }
 
-        if (photoUrlFromResponse != null) {
-            setRemoteMemberPhotoUrl(photoUrlFromResponse);
-            fetchAndSetPhotoFromUrl(new OkHttpClient()); // async?
-
-            if (getLocalMemberPhoto() != null) {
-                memberResponse.setLocalMemberPhoto(getLocalMemberPhoto());
-            }
-        }
-
-        // TODO need to handle edge case where the response has a URL for a photo that is different then the locally stored photo
-        if (nationalIdPhotoUrlFromResponse != null && getLocalNationalIdPhoto() != null) {
-            memberResponse.setLocalNationalIdPhoto(getLocalNationalIdPhoto());
-        }
-    }
-
-    public void updateFromFetch() throws SQLException {
-        Member persistedMember = Member.find(getId(), Member.class);
-        if (persistedMember != null) {
-            // if the persisted member has not been synced to the back-end, assume it is
-            // the most up-to-date and do not update it with the fetched member attributes
-            if (!persistedMember.isSynced()) {
-                return;
-            }
-
-            // if the existing member record has a photo and the fetched member record has
-            // the same photo url as the existing record, copy the photo to the new record
-            // so we do not have to re-download it
-            if (persistedMember.getCroppedPhotoBytes() != null &&
-                    persistedMember.getRemoteMemberPhotoUrl() != null &&
-                    persistedMember.getRemoteMemberPhotoUrl().equals(getRemoteMemberPhotoUrl())) {
-                setCroppedPhotoBytes(persistedMember.getCroppedPhotoBytes());
-            }
-
-            if (getRemoteMemberPhotoUrl() != null &&
-                    !getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
-                setCroppedPhotoBytes(null);
-            }
-        }
-        getDao().createOrUpdate(this);
-    }
+//    public void updateFromFetch() throws SQLException {
+//        Member persistedMember = Member.find(getId(), Member.class);
+//        if (persistedMember != null) {
+//            // if the persisted member has not been synced to the back-end, assume it is
+//            // the most up-to-date and do not update it with the fetched member attributes
+//            if (!persistedMember.isSynced()) {
+//                return;
+//            }
+//
+//            // if the existing member record has a photo and the fetched member record has
+//            // the same photo url as the existing record, copy the photo to the new record
+//            // so we do not have to re-download it
+//            if (persistedMember.getCroppedPhotoBytes() != null &&
+//                    persistedMember.getRemoteMemberPhotoUrl() != null &&
+//                    persistedMember.getRemoteMemberPhotoUrl().equals(getRemoteMemberPhotoUrl())) {
+//                setCroppedPhotoBytes(persistedMember.getCroppedPhotoBytes());
+//            }
+//
+//            if (getRemoteMemberPhotoUrl() != null &&
+//                    !getRemoteMemberPhotoUrl().equals(persistedMember.getRemoteMemberPhotoUrl())) {
+//                setCroppedPhotoBytes(null);
+//            }
+//        }
+//    }
 
     @Override
     protected Call postApiCall(Context context) throws SQLException {
         return ApiService.requestBuilder(context).enrollMember(
                 getTokenAuthHeaderString(), formatPostRequest(context));
-    }
-
-    @Override
-    protected void persistAssociations() {
-        // no-op
     }
 
     @Override
@@ -663,10 +656,6 @@ public class Member extends SyncableModel {
         } else {
             return null;
         }
-    }
-
-    public IdentificationEvent currentCheckIn() throws SQLException {
-        return IdentificationEventDao.openCheckIn(getId());
     }
 
     public Member createNewborn() {

@@ -10,10 +10,15 @@ import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
 import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
+import org.watsi.uhp.repositories.BillableRepository;
+
+import javax.inject.Inject;
 
 public class EncounterFragment extends FormFragment<Encounter> {
 
     private EncounterPresenter encounterPresenter;
+
+    @Inject BillableRepository billableRepository;
 
     @Override
     int getTitleLabelId() {
@@ -40,9 +45,13 @@ public class EncounterFragment extends FormFragment<Encounter> {
         EncounterItemAdapter encounterItemAdapter =
                 new EncounterItemAdapter(getContext(), mSyncableModel);
 
-        encounterPresenter = new EncounterPresenter(
-                mSyncableModel, view, getContext(), encounterItemAdapter,
-                ((ClinicActivity) getActivity()).getNavigationManager(), this);
+        encounterPresenter = new EncounterPresenter(mSyncableModel,
+                                                    view,
+                                                    getContext(),
+                                                    encounterItemAdapter,
+                                                    ((ClinicActivity) getActivity()).getNavigationManager(),
+                                                    this,
+                                                    billableRepository);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 

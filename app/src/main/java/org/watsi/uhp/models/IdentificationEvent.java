@@ -304,11 +304,6 @@ public class IdentificationEvent extends SyncableModel {
     }
 
     @Override
-    public void handleUpdateFromSync(SyncableModel responseModel) {
-        // no-op
-    }
-
-    @Override
     protected Call postApiCall(Context context) throws SQLException {
         if (getThroughMember() != null) {
             setThroughMemberId(getThroughMember().getId());
@@ -324,10 +319,5 @@ public class IdentificationEvent extends SyncableModel {
         }
         return ApiService.requestBuilder(context).patchIdentificationEvent(
                 getTokenAuthHeaderString(), getId(), formatPatchRequest());
-    }
-
-    @Override
-    protected void persistAssociations() {
-        // no-op
     }
 }

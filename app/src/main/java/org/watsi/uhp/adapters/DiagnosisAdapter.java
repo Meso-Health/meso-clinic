@@ -4,16 +4,12 @@ import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Filter;
 
-import org.watsi.uhp.database.DiagnosisDao;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.models.Diagnosis;
+import org.watsi.uhp.repositories.DiagnosisRepository;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +17,12 @@ public class DiagnosisAdapter extends ArrayAdapter<Diagnosis> {
     public final Integer MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS = 2;
     Filter mFilter;
 
-    public DiagnosisAdapter(@NonNull Context context, @LayoutRes int resource, @IdRes int textViewResourceId) {
+    public DiagnosisAdapter(@NonNull Context context,
+                            @LayoutRes int resource,
+                            @IdRes int textViewResourceId,
+                            DiagnosisRepository diagnosisRepository) {
         super(context, resource, textViewResourceId);
-        mFilter = new DiagnosisListFilter();
+        this.mFilter = new DiagnosisListFilter(diagnosisRepository);
     }
 
     @Override
@@ -32,15 +31,18 @@ public class DiagnosisAdapter extends ArrayAdapter<Diagnosis> {
     }
 
     public class DiagnosisListFilter extends Filter {
+
+        private final DiagnosisRepository diagnosisRepository;
+
+        DiagnosisListFilter(DiagnosisRepository diagnosisRepository) {
+            this.diagnosisRepository = diagnosisRepository;
+        }
+
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Diagnosis> ds = new ArrayList<>();
             if (constraint != null && constraint.length() >= MIN_LENGTH_BEFORE_DISPLAY_SEARCH_RESULTS) {
-                try {
-                    ds = DiagnosisDao.searchByFuzzyDescriptionAndSearchAlias(constraint.toString());
-                } catch (SQLException e) {
-                    ExceptionManager.reportException(e);
-                }
+                diagnosisRepository.fuzzySearchByName(constraint.toString());
             }
             FilterResults results = new FilterResults();
             results.values = ds;

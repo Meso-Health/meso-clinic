@@ -10,19 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.watsi.domain.entities.Delta;
+import org.watsi.domain.repositories.DeltaRepository;
 import org.watsi.uhp.R;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterForm;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.MemberRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class VersionAndSyncFragment extends BaseFragment {
+
+    @Inject MemberRepository memberRepository;
+    @Inject DeltaRepository deltaRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -72,26 +74,25 @@ public class VersionAndSyncFragment extends BaseFragment {
             @Override
             protected int[] doInBackground(String... params) {
                 int[] counts = new int[6];
-                try {
-                    counts[0] = MemberDao.membersWithPhotosToFetch().size();
-                    List<Member> unsyncedMembers = Member.unsynced(Member.class);
-                    int newMembersCount = 0;
-                    int editedMembersCount = 0;
-                    for (Member member : unsyncedMembers) {
-                        if (member.isNew()) {
-                            newMembersCount++;
-                        } else {
-                            editedMembersCount++;
-                        }
+                counts[0] = memberRepository.membersWithPhotosToFetch().size();
+                List<Delta> unsyncedMembers = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet();
+                int newMembersCount = 0;
+                int editedMembersCount = 0;
+                for (Delta delta : unsyncedMembers) {
+                    if (delta.getAction().equals(Delta.Action.ADD)) {
+                        newMembersCount++;
+                    } else {
+                        editedMembersCount++;
                     }
-                    counts[1] = newMembersCount;
-                    counts[2] = editedMembersCount;
-                    counts[3] = IdentificationEvent.unsynced(IdentificationEvent.class).size();
-                    counts[4] = Encounter.unsynced(Encounter.class).size();
-                    counts[5] = EncounterForm.unsynced(EncounterForm.class).size();
-                } catch (SQLException | IllegalStateException e) {
-                    ExceptionManager.reportException(e);
                 }
+                counts[1] = newMembersCount;
+                counts[2] = editedMembersCount;
+                counts[3] = deltaRepository.unsynced(Delta.ModelName.IDENTIFICATION_EVENT)
+                        .blockingGet().size();
+                counts[4] = deltaRepository.unsynced(Delta.ModelName.ENCOUNTER)
+                        .blockingGet().size();
+                counts[5] = deltaRepository.unsynced(Delta.ModelName.ENCOUNTER_FORM)
+                        .blockingGet().size();
                 return counts;
             }
 

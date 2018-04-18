@@ -1,11 +1,19 @@
 package org.watsi.uhp.repositories
 
 import org.watsi.uhp.database.BillableDao
+import org.watsi.uhp.database.DatabaseHelper
 import org.watsi.uhp.models.Billable
+import java.util.UUID
 
 class BillableRepositoryImpl : BillableRepository {
+
+    override fun find(id: UUID): Billable? {
+        return DatabaseHelper.fetchDao(Billable::class.java).queryForId(id) as Billable?
+    }
+
     override fun createOrUpdate(billable: Billable) {
-        billable.createOrUpdate()
+        // TODO: set token, validate, set ID (if necessary)
+        DatabaseHelper.fetchDao(Billable::class.java).createOrUpdate(billable)
     }
 
     override fun clearBillablesWithoutUnsyncedEncounter() {
@@ -20,7 +28,7 @@ class BillableRepositoryImpl : BillableRepository {
         return BillableDao.allUniqueDrugNames()
     }
 
-    override fun fuzzySearchByName(query: String): List<Billable> {
+    override fun fuzzySearchDrugsByName(query: String): List<Billable> {
         return BillableDao.fuzzySearchDrugs(query)
     }
 

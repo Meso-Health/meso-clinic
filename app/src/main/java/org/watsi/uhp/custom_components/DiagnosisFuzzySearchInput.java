@@ -17,6 +17,7 @@ import org.watsi.uhp.adapters.DiagnosisAdapter;
 import org.watsi.uhp.fragments.DiagnosisFragment;
 import org.watsi.uhp.managers.KeyboardManager;
 import org.watsi.uhp.models.Diagnosis;
+import org.watsi.uhp.repositories.DiagnosisRepository;
 
 public class DiagnosisFuzzySearchInput extends LinearLayout {
     DiagnosisAdapter mDiagnosisAdapter;
@@ -31,11 +32,15 @@ public class DiagnosisFuzzySearchInput extends LinearLayout {
         inflater.inflate(R.layout.diagnosis_fuzzy_search_input, this);
     }
 
-    public void setDiagnosisChosenListener(DiagnosisFragment fragment) {
+    public void setDiagnosisChosenListener(DiagnosisFragment fragment,
+                                           DiagnosisRepository diagnosisRepository) {
         mFragment = fragment;
         mAutoCompleteTextView = (AppCompatAutoCompleteTextView) findViewById(R.id.diagnosis_search);
         mClearButton = (Button) findViewById(R.id.diagnosis_search_clear);
-        mDiagnosisAdapter = new DiagnosisAdapter(getContext(), R.layout.item_diagnosis_search_suggestion, R.id.diagnosis_description);
+        mDiagnosisAdapter = new DiagnosisAdapter(getContext(),
+                                                 R.layout.item_diagnosis_search_suggestion,
+                                                 R.id.diagnosis_description,
+                                                 diagnosisRepository);
 
         mAutoCompleteTextView.setAdapter(mDiagnosisAdapter);
         mAutoCompleteTextView.addTextChangedListener(new TextWatcher() {

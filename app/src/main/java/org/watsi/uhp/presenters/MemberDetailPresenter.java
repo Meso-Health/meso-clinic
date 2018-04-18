@@ -11,14 +11,13 @@ import android.widget.TextView;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.custom_components.NotificationBar;
-import org.watsi.uhp.database.MemberDao;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
-import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.models.IdentificationEvent;
 import org.watsi.uhp.models.Member;
+import org.watsi.uhp.repositories.IdentificationEventRepository;
+import org.watsi.uhp.repositories.MemberRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public abstract class MemberDetailPresenter {
@@ -27,16 +26,22 @@ public abstract class MemberDetailPresenter {
     private final Context mContext;
     private final Member mMember;
 
-    MemberDetailPresenter(View view, Context context, Member member, NavigationManager navigationManager) {
+    private final MemberRepository memberRepository;
+    protected final IdentificationEventRepository identificationEventRepository;
+
+    MemberDetailPresenter(View view,
+                          Context context,
+                          Member member,
+                          NavigationManager navigationManager,
+                          MemberRepository memberRepository,
+                          IdentificationEventRepository identificationEventRepository) {
         mView = view;
         mContext = context;
         mMember = member;
         mNavigationManager = navigationManager;
-        try {
-            member.refresh();
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-        }
+        this.memberRepository = memberRepository;
+        this.identificationEventRepository = identificationEventRepository;
+        memberRepository.refresh(member);
     }
 
     public void setUp() {
@@ -66,10 +71,9 @@ public abstract class MemberDetailPresenter {
     }
 
     void setBottomListView() {
-        List<Member> householdMembers = getMembersForBottomListView();
-        if (householdMembers != null) {
-            setBottomListWithMembers(householdMembers);
-        }
+        List<Member> householdMembers = memberRepository
+                .remainingHouseholdMembers(mMember.getHouseholdId(), mMember.getId());
+        setBottomListWithMembers(householdMembers);
     }
 
     void setPatientCardPhoto() {
@@ -91,7 +95,10 @@ public abstract class MemberDetailPresenter {
         int householdSize = householdMembers.size() + 1;
 
         householdListLabel.setText(formatQuantityStringFromHouseholdSize(householdSize));
-        householdListView.setAdapter(new MemberAdapter(getContext(), householdMembers, false));
+        householdListView.setAdapter(new MemberAdapter(getContext(),
+                                                       householdMembers,
+                                                       false,
+                                                       identificationEventRepository));
         householdListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -104,13 +111,7 @@ public abstract class MemberDetailPresenter {
     }
 
     List<Member> getMembersForBottomListView() {
-        try {
-            return MemberDao.getRemainingHouseholdMembers(
-                    mMember.getHouseholdId(), mMember.getId());
-        } catch (SQLException e) {
-            ExceptionManager.reportException(e);
-            return null;
-        }
+        return memberRepository.remainingHouseholdMembers(mMember.getHouseholdId(), mMember.getId());
     }
 
     TextView getHouseholdMembersLabelTextView() {
