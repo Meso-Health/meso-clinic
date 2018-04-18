@@ -8,6 +8,7 @@ import org.watsi.uhp.di.modules.ActivityModule
 import org.watsi.uhp.di.modules.ApplicationBindingModule
 import org.watsi.uhp.di.modules.DbModule
 import org.watsi.uhp.di.modules.DeviceModule
+import org.watsi.uhp.di.modules.ServiceModule
 import javax.inject.Singleton
 
 @Singleton
@@ -15,6 +16,7 @@ import javax.inject.Singleton
     AndroidSupportInjectionModule::class,
     ApplicationBindingModule::class,
     ActivityModule::class,
+    ServiceModule::class,
     DeviceModule::class,
     DbModule::class
 ])

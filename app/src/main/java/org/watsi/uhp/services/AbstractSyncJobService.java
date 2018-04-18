@@ -10,11 +10,19 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 
+import dagger.android.AndroidInjection;
+
 public abstract class AbstractSyncJobService extends JobService {
 
     private static int SYNC_INTERVAL = 15 * 60 * 1000; // 15 minutes (JobScheduler minimum)
 
     private SyncJobTask mSyncJobTask = null;
+
+    @Override
+    public void onCreate() {
+        AndroidInjection.inject(this);
+        super.onCreate();
+    }
 
     @Override
     public boolean onStartJob(JobParameters params) {
