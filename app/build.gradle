@@ -183,12 +183,9 @@ dependencies {
     implementation dependencies.threeTenAndroidBackport
 
     // Old architecture dependencies
-    implementation 'com.j256.ormlite:ormlite-core:5.0'
-    implementation 'com.j256.ormlite:ormlite-android:5.0'
     implementation 'com.rollbar:rollbar-android:0.2.0'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'me.xdrop:fuzzywuzzy:1.1.9'
     implementation 'me.philio:pinentryview:1.0.6'
     implementation 'net.hockeyapp.android:HockeySDK:4.1.2'
     implementation 'com.google.guava:guava:20.0'

@@ -6,17 +6,17 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.os.Bundle;
 
+import org.watsi.domain.entities.Billable;
 import org.watsi.domain.entities.Delta;
+import org.watsi.domain.repositories.BillableRepository;
 import org.watsi.domain.repositories.DeltaRepository;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.models.Diagnosis;
 import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.BillableRepository;
 import org.watsi.uhp.repositories.DiagnosisRepository;
 import org.watsi.uhp.repositories.MemberRepository;
 

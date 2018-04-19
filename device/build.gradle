@@ -76,6 +76,9 @@ dependencies {
     implementation dependencies.rxJava
     implementation dependencies.rxAndroid
 
+    // Application support
+    implementation 'me.xdrop:fuzzywuzzy:1.1.9'
+
     // Testing
     testImplementation project(path: ":domain", configuration: "testOutput")
     testImplementation testDependencies.junit

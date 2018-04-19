@@ -1,15 +1,15 @@
-package org.watsi.uhp.repositories
+package org.watsi.domain.repositories
 
-import org.watsi.uhp.models.Billable
+import org.watsi.domain.entities.Billable
 import java.util.UUID
 
 interface BillableRepository {
-    fun find(id: UUID): Billable?
+    fun find(id: UUID): Billable
     fun createOrUpdate(billable: Billable)
     fun clearBillablesWithoutUnsyncedEncounter()
-    fun findByName(name: String): Billable
-    fun findByType(type: Billable.TypeEnum): List<Billable>
-    fun uniqueDrugNames(): Set<String>
+    fun findByName(name: String): List<Billable>
+    fun findByType(type: Billable.Type): List<Billable>
     fun uniqueCompositions(): Set<String>
     fun fuzzySearchDrugsByName(query: String): List<Billable>
+    fun fetch()
 }
