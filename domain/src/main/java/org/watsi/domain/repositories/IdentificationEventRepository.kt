@@ -1,7 +1,7 @@
-package org.watsi.uhp.repositories
+package org.watsi.domain.repositories
 
 import org.watsi.domain.entities.Delta
-import org.watsi.uhp.models.IdentificationEvent
+import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
 interface IdentificationEventRepository {

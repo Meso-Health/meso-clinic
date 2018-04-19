@@ -11,21 +11,22 @@ import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
+import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
 import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
 import org.watsi.device.db.repositories.EncounterFormRepositoryImpl
 import org.watsi.device.db.repositories.EncounterRepositoryImpl
+import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
+import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.PhotoRepository
-import org.watsi.uhp.repositories.IdentificationEventRepository
-import org.watsi.uhp.repositories.IdentificationEventRepositoryImpl
 import org.watsi.uhp.repositories.MemberRepository
 import org.watsi.uhp.repositories.MemberRepositoryImpl
 import javax.inject.Singleton
@@ -63,6 +64,11 @@ class DbModule {
 
     @Singleton
     @Provides
+    fun provideIdentificationEventDao(db: AppDatabase): IdentificationEventDao =
+            db.identificationEventDao()
+
+    @Singleton
+    @Provides
     fun providePhotoDao(db: AppDatabase): PhotoDao = db.photoDao()
 
     @Provides
@@ -86,6 +92,12 @@ class DbModule {
     fun provideEncounterFormRepository(encounterFormDao: EncounterDao,
                                        clock: Clock): EncounterFormRepository =
             EncounterFormRepositoryImpl()
+
+    @Provides
+    fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
+                                             clock: Clock): IdentificationEventRepository {
+        return IdentificationEventRepositoryImpl(identificationEventDao, clock)
+    }
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,
