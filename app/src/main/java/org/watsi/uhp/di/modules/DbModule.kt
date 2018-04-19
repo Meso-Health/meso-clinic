@@ -10,16 +10,17 @@ import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.daos.EncounterFormDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
 import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
+import org.watsi.device.db.repositories.EncounterFormRepositoryImpl
 import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.DiagnosisRepository
+import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
-import org.watsi.uhp.repositories.EncounterFormRepository
-import org.watsi.uhp.repositories.EncounterFormRepositoryImpl
 import org.watsi.uhp.repositories.IdentificationEventRepository
 import org.watsi.uhp.repositories.IdentificationEventRepositoryImpl
 import org.watsi.uhp.repositories.MemberRepository
@@ -55,6 +56,10 @@ class DbModule {
     @Provides
     fun provideEncounterDao(db: AppDatabase): EncounterDao = db.encounterDao()
 
+    @Singleton
+    @Provides
+    fun provideEncounterFormDao(db: AppDatabase): EncounterFormDao = db.encounterFormDao()
+
     @Provides
     fun provideBillableRepository(billableDao: BillableDao, clock: Clock): BillableRepository =
             BillableRepositoryImpl(billableDao, clock)
@@ -72,6 +77,10 @@ class DbModule {
     fun provideEncounterRepository(encounterDao: EncounterDao, clock: Clock): EncounterRepository =
             EncounterRepositoryImpl(encounterDao, clock)
 
+    @Provides
+    fun provideEncounterFormRepository(encounterFormDao: EncounterDao,
+                                       clock: Clock): EncounterFormRepository =
+            EncounterFormRepositoryImpl()
 
     @Provides
     fun provideIdentificationEventRepository(db: DatabaseHelper): IdentificationEventRepository =

@@ -1,4 +1,4 @@
-package org.watsi.uhp.repositories
+package org.watsi.domain.repositories
 
 import org.watsi.domain.entities.Delta
 
