@@ -8,15 +8,16 @@ import org.threeten.bp.Clock
 import org.watsi.device.db.AppDatabase
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
+import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
+import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
 import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterRepository
-import org.watsi.uhp.repositories.DiagnosisRepository
-import org.watsi.uhp.repositories.DiagnosisRepositoryImpl
 import org.watsi.uhp.repositories.EncounterFormRepository
 import org.watsi.uhp.repositories.EncounterFormRepositoryImpl
 import org.watsi.uhp.repositories.IdentificationEventRepository
@@ -44,23 +45,33 @@ class DbModule {
 
     @Singleton
     @Provides
-    fun provideEncounterDao(db: AppDatabase): EncounterDao = db.encounterDao()
+    fun provideDeltaDao(db: AppDatabase): DeltaDao = db.deltaDao()
 
     @Singleton
     @Provides
-    fun provideDeltaDao(db: AppDatabase): DeltaDao = db.deltaDao()
+    fun provideDiagonsisDao(db: AppDatabase): DiagnosisDao = db.diagnosisDao()
+
+    @Singleton
+    @Provides
+    fun provideEncounterDao(db: AppDatabase): EncounterDao = db.encounterDao()
 
     @Provides
     fun provideBillableRepository(billableDao: BillableDao, clock: Clock): BillableRepository =
             BillableRepositoryImpl(billableDao, clock)
 
     @Provides
+    fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
+        return DeltaRepositoryImpl(deltaDao, clock)
+    }
+
+    @Provides
+    fun provideDiagnosisRepository(diagnosisDao: DiagnosisDao, clock: Clock): DiagnosisRepository =
+            DiagnosisRepositoryImpl(diagnosisDao, clock)
+
+    @Provides
     fun provideEncounterRepository(encounterDao: EncounterDao, clock: Clock): EncounterRepository =
             EncounterRepositoryImpl(encounterDao, clock)
 
-    @Provides
-    fun provideDiagnosisRepository(db: DatabaseHelper): DiagnosisRepository =
-            DiagnosisRepositoryImpl()
 
     @Provides
     fun provideIdentificationEventRepository(db: DatabaseHelper): IdentificationEventRepository =
@@ -75,9 +86,4 @@ class DbModule {
 
     @Provides
     fun providePhotoRepository(db: DatabaseHelper): PhotoRepository = PhotoRepositoryImpl()
-
-    @Provides
-    fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
-        return DeltaRepositoryImpl(deltaDao, clock)
-    }
 }
