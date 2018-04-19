@@ -36,7 +36,7 @@ class PhotoRepositoryImpl(private val photoDao: PhotoDao,
         return deleted
     }
 
-    private fun bytes(photo: Photo): ByteArray? {
+    private fun localImageBytes(photo: Photo): ByteArray? {
         var iStream: InputStream? = null
         var byteStream: ByteArrayOutputStream? = null
         try {

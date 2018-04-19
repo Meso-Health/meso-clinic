@@ -12,6 +12,7 @@ import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
 import org.watsi.device.db.daos.IdentificationEventDao
+import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
@@ -19,6 +20,7 @@ import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
 import org.watsi.device.db.repositories.EncounterFormRepositoryImpl
 import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
+import org.watsi.device.db.repositories.MemberRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
@@ -26,9 +28,8 @@ import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
-import org.watsi.uhp.repositories.MemberRepository
-import org.watsi.uhp.repositories.MemberRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -69,6 +70,10 @@ class DbModule {
 
     @Singleton
     @Provides
+    fun provideMemberDao(db: AppDatabase): MemberDao = db.memberDao()
+
+    @Singleton
+    @Provides
     fun providePhotoDao(db: AppDatabase): PhotoDao = db.photoDao()
 
     @Provides
@@ -100,21 +105,13 @@ class DbModule {
     }
 
     @Provides
+    fun provideMemberRepository(memberDao: MemberDao, clock: Clock): MemberRepository =
+            MemberRepositoryImpl(memberDao, clock)
+
+    @Provides
     fun providePhotoRepository(photoDao: PhotoDao,
                                clock: Clock,
                                context: Context): PhotoRepository {
         return PhotoRepositoryImpl(photoDao, clock, context.contentResolver)
     }
-
-    @Provides
-    fun provideIdentificationEventRepository(db: DatabaseHelper): IdentificationEventRepository =
-            IdentificationEventRepositoryImpl()
-
-    @Provides
-    fun provideMemberRepository(db: DatabaseHelper): MemberRepository = MemberRepositoryImpl()
-
-    @Provides
-    fun provideEncounterFormRepository(db: DatabaseHelper): EncounterFormRepository =
-            EncounterFormRepositoryImpl()
-
 }

@@ -1,11 +1,12 @@
 package org.watsi.device.db.models
 
+import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
-data class IdentificationEventModel(val id: UUID,
+data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                     val createdAt: Instant,
                                     val updatedAt: Instant,
                                     val memberId: UUID,

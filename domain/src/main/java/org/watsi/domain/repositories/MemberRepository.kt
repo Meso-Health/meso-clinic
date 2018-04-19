@@ -1,16 +1,15 @@
-package org.watsi.uhp.repositories
+package org.watsi.domain.repositories
 
 import org.watsi.domain.entities.Delta
-import org.watsi.uhp.models.Member
+import org.watsi.domain.entities.Member
 import java.util.UUID
 
 interface MemberRepository {
-    fun find(id: UUID): Member?
+    fun find(id: UUID): Member
     fun save(member: Member)
-    fun refresh(member: Member)
     fun destroy(member: Member)
     fun updateFromFetch(member: Member)
-    fun findByCardId(cardId: String): Member?
+    fun findByCardId(cardId: String): Member
     fun fuzzySearchByCardId(query: String): List<Member>
     fun fuzzySearchByName(query: String): List<Member>
     fun checkedInMembers(): List<Member>

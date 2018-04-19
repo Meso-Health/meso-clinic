@@ -1,0 +1,58 @@
+package org.watsi.device.db.models
+
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.watsi.domain.entities.Member
+import java.util.UUID
+
+@Entity(tableName = "members")
+data class MemberModel(@PrimaryKey val id: UUID,
+                       val createdAt: Instant,
+                       val updatedAt: Instant,
+                       val householdId: UUID,
+                       val photoId: UUID?,
+                       val thumbnailPhotoId: UUID?,
+                       val cardId: String?,
+                       val name: String,
+                       val gender: Member.Gender,
+                       val birthdate: LocalDate,
+                       val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
+                       val fingerprintsGuid: UUID?,
+                       val phoneNumber: String?) {
+
+    fun toMember(): Member {
+        return Member(id = id,
+                      householdId = householdId,
+                      photoId = photoId,
+                      thumbnailPhotoId = thumbnailPhotoId,
+                      cardId = cardId,
+                      name = name,
+                      gender = gender,
+                      birthdate = birthdate,
+                      birthdateAccuracy = birthdateAccuracy,
+                      fingerprintsGuid = fingerprintsGuid,
+                      phoneNumber = phoneNumber)
+    }
+
+    companion object {
+        fun fromMember(member: Member, clock: Clock): MemberModel {
+            val now = clock.instant()
+            return MemberModel(id = member.id,
+                               createdAt = now,
+                               updatedAt = now,
+                               householdId = member.householdId,
+                               photoId = member.photoId,
+                               thumbnailPhotoId = member.thumbnailPhotoId,
+                               cardId = member.cardId,
+                               name = member.name,
+                               gender = member.gender,
+                               birthdate = member.birthdate,
+                               birthdateAccuracy = member.birthdateAccuracy,
+                               fingerprintsGuid = member.fingerprintsGuid,
+                               phoneNumber = member.phoneNumber)
+        }
+    }
+}
