@@ -43,13 +43,19 @@ class CurrentPatientsFragment : DaggerFragment() {
                     R.plurals.current_patients_label, checkedInMembers.size, checkedInMembers.size)
 
             current_patients.adapter = MemberAdapter(context,
-                    checkedInMembers,
+                                                     checkedInMembers,
                                                      true,
                                                      identificationEventRepository)
 
             current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
                 val member = parent.getItemAtPosition(position) as Member
-                // TODO: navigate to MemberDetailFragment
+                val openCheckIn = identificationEventRepository.openCheckIn(member.id)
+                if (openCheckIn == null) {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
+                } else {
+                    navigationManager.goTo(
+                            CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
+                }
             }
         }
 
