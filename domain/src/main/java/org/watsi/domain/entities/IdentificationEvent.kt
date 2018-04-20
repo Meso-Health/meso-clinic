@@ -1,6 +1,7 @@
 package org.watsi.domain.entities
 
 import org.threeten.bp.Instant
+import java.io.Serializable
 import java.util.UUID
 
 data class IdentificationEvent(val id: UUID,
@@ -15,7 +16,7 @@ data class IdentificationEvent(val id: UUID,
                                val dismissalReason: DismissalReason?,
                                val fingerprintsVerificationResultCode: Int,
                                val fingerprintsVerificationConfidence: Float?,
-                               val fingerprintsVerificationTier: String?) {
+                               val fingerprintsVerificationTier: String?) : Serializable {
 
     enum class ClinicNumberType { OPD, DELIVERY }
 

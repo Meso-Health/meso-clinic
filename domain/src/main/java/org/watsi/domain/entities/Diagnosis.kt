@@ -1,7 +1,5 @@
 package org.watsi.domain.entities
 
-import java.util.UUID
-
-data class Diagnosis(val id: UUID,
+data class Diagnosis(val id: Int = 0,
                      val description: String,
                      val searchAliases: List<String>)

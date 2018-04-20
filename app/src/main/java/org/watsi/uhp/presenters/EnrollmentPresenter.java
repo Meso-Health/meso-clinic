@@ -3,7 +3,8 @@ package org.watsi.uhp.presenters;
 import android.content.Context;
 import android.widget.Toast;
 
-import org.watsi.uhp.models.Member;
+import org.threeten.bp.Clock;
+import org.watsi.domain.entities.Member;
 
 public class EnrollmentPresenter {
 
@@ -16,7 +17,7 @@ public class EnrollmentPresenter {
     }
 
     public Toast confirmationToast() {
-        if (mMember.isAbsentee()) {
+        if (mMember.isAbsentee(Clock.systemDefaultZone())) {
             return Toast.makeText(mContext, "Any updates successfully saved", Toast.LENGTH_LONG);
         } else {
             return Toast.makeText(mContext, "Enrollment completed", Toast.LENGTH_LONG);

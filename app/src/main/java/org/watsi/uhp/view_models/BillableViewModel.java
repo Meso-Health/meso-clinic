@@ -7,9 +7,9 @@ import android.databinding.InverseBindingMethods;
 import android.view.View;
 import android.widget.Spinner;
 
+import org.watsi.domain.entities.Billable;
 import org.watsi.uhp.BR;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.models.Billable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,12 +108,13 @@ public class BillableViewModel extends BaseObservable {
     public void setSelectedTypeIndex(Integer i) {
         mSelectedTypeIndex = i;
         if (i > 0) {
-            Billable.TypeEnum selectedType = Billable.TypeEnum.fromString(mBillableTypeChoices.get(mSelectedTypeIndex));
+            // TODO: fix valueOf logic
+            Billable.Type selectedType = Billable.Type.valueOf(mBillableTypeChoices.get(mSelectedTypeIndex));
             mBillable.setType(selectedType);
-            if (selectedType.equals(Billable.TypeEnum.VACCINE)) {
+            if (selectedType.equals(Billable.Type.VACCINE)) {
                 // According to our DB, all vaccines are of composition "vial".
                 mBillable.setComposition("vial");
-            } else if (selectedType.equals(Billable.TypeEnum.DRUG)) {
+            } else if (selectedType.equals(Billable.Type.DRUG)) {
                 clearCompositionAndUnit();
             } else {
                 clearCompositionAndUnit();
@@ -146,7 +147,7 @@ public class BillableViewModel extends BaseObservable {
 
     @Bindable
     public int getShowComposition() {
-        if (mBillable.getType() != null && mBillable.getType().equals(Billable.TypeEnum.DRUG)) {
+        if (mBillable.getType() != null && mBillable.getType().equals(Billable.Type.DRUG)) {
             return View.VISIBLE;
         } else {
             return View.GONE;
@@ -155,7 +156,7 @@ public class BillableViewModel extends BaseObservable {
 
     @Bindable
     public int getShowUnit() {
-        if (mBillable.getType() != null && (mBillable.getType().equals(Billable.TypeEnum.DRUG) || mBillable.getType().equals(Billable.TypeEnum.VACCINE))) {
+        if (mBillable.getType() != null && (mBillable.getType().equals(Billable.Type.DRUG) || mBillable.getType().equals(Billable.Type.VACCINE))) {
             return View.VISIBLE;
         } else {
             return View.GONE;

@@ -15,12 +15,12 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.io.IOException;
 
@@ -33,7 +33,8 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     private Toast mErrorToast;
     private ScanPurposeEnum mScanPurpose;
 
-    @Inject MemberRepository memberRepository;
+    @Inject
+    MemberRepository memberRepository;
 
     public enum ScanPurposeEnum { ID, MEMBER_EDIT, NEWBORN }
 
@@ -110,7 +111,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                         switch (mScanPurpose) {
                             case ID:
                                 member = memberRepository.findByCardId(barcode.displayValue);
-                                idEvent = new IdentificationEvent(member, IdentificationEvent.SearchMethodEnum.SCAN_BARCODE, null);
+                                idEvent = new IdentificationEvent(member, IdentificationEvent.SearchMethod.SCAN_BARCODE, null);
                                 getNavigationManager().setMemberDetailFragment(member, idEvent);
                                 break;
                             case MEMBER_EDIT:
@@ -151,7 +152,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
     }
 
     private boolean handleCardIdScan(Member member, String barcodeDisplayValue) {
-        if (Member.validNonNullCardId(barcodeDisplayValue)) {
+        if (Member.Companion.validCardId(barcodeDisplayValue)) {
             member.setCardId(barcodeDisplayValue);
             return true;
         } else {

@@ -2,10 +2,10 @@ package org.watsi.uhp.services;
 
 import android.util.Log;
 
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.io.IOException;
 import java.sql.SQLException;

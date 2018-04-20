@@ -10,9 +10,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.entities.Photo;
 import org.watsi.uhp.R;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.Photo;
 
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doCallRealMethod;

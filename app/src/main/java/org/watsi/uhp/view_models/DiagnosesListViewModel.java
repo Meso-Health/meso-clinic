@@ -9,11 +9,11 @@ import android.widget.ListView;
 
 import com.android.databinding.library.baseAdapters.BR;
 
+import org.watsi.domain.entities.Diagnosis;
+import org.watsi.domain.entities.Encounter;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.DiagnosisItemAdapter;
 import org.watsi.uhp.helpers.ListViewUtils;
-import org.watsi.uhp.models.Diagnosis;
-import org.watsi.uhp.models.Encounter;
 
 import java.util.ArrayList;
 import java.util.List;

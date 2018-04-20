@@ -13,21 +13,20 @@ import android.widget.Toast;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Verification;
 
+import org.threeten.bp.Clock;
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberDialogFragment;
 import org.watsi.uhp.helpers.SimprintsHelper;
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.AbstractModel;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.sql.SQLException;
 
@@ -169,11 +168,11 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
         clinicNumberDialog.setTargetFragment(mCheckInMemberDetailFragment, 0);
     }
 
-    public void saveIdentificationEventAndCheckIn(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException, AbstractModel.ValidationException {
+    public void saveIdentificationEventAndCheckIn(IdentificationEvent.ClinicNumberType clinicNumberType, int clinicNumber) throws SQLException, AbstractModel.ValidationException {
         mIdEvent.setClinicNumber(clinicNumber);
         mIdEvent.setClinicNumberType(clinicNumberType);
         mIdEvent.setAccepted(true);
-        mIdEvent.setOccurredAt(Clock.getCurrentTime());
+        mIdEvent.setOccurredAt(Clock.systemDefaultZone().instant());
         mIdEvent.setPhotoVerified(getMember().hasMemberPhoto());
         identificationEventRepository.create(mIdEvent);
         displayIdentificationSuccessfulToast();

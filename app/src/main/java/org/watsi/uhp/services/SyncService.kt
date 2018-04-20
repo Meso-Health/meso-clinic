@@ -2,10 +2,10 @@ package org.watsi.uhp.services
 
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
-import org.watsi.uhp.repositories.EncounterFormRepository
-import org.watsi.uhp.repositories.EncounterRepository
-import org.watsi.uhp.repositories.IdentificationEventRepository
-import org.watsi.uhp.repositories.MemberRepository
+import org.watsi.domain.repositories.EncounterFormRepository
+import org.watsi.domain.repositories.EncounterRepository
+import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.MemberRepository
 
 import javax.inject.Inject
 

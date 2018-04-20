@@ -7,8 +7,8 @@ import android.support.annotation.NonNull;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 
-import org.watsi.uhp.models.Diagnosis;
-import org.watsi.uhp.repositories.DiagnosisRepository;
+import org.watsi.domain.entities.Diagnosis;
+import org.watsi.domain.repositories.DiagnosisRepository;
 
 import java.util.ArrayList;
 import java.util.List;

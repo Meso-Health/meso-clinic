@@ -10,8 +10,9 @@ data class Billable(val id: UUID,
                     val price: Int,
                     val name: String) {
 
-    fun formattedPrice(): String {
-        return DecimalFormat("#,###").format(price)
+    @JvmOverloads
+    fun formattedPrice(quantity: Int = 1): String {
+        return DecimalFormat("#,###").format(price * quantity)
     }
 
     fun dosageDetails(): String? {

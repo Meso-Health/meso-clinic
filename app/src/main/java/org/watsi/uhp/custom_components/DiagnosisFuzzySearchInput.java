@@ -12,12 +12,12 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import org.watsi.domain.entities.Diagnosis;
+import org.watsi.domain.repositories.DiagnosisRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.DiagnosisAdapter;
 import org.watsi.uhp.fragments.DiagnosisFragment;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.models.Diagnosis;
-import org.watsi.uhp.repositories.DiagnosisRepository;
 
 public class DiagnosisFuzzySearchInput extends LinearLayout {
     DiagnosisAdapter mDiagnosisAdapter;

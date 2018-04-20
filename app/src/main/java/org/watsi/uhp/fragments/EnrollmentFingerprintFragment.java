@@ -7,15 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.util.UUID;
 

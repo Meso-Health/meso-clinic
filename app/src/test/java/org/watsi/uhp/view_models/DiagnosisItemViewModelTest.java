@@ -8,8 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.domain.entities.Diagnosis;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.Diagnosis;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.MockitoAnnotations.initMocks;

@@ -6,13 +6,13 @@ import android.os.AsyncTask
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
+import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.entities.Member
+import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.models.IdentificationEvent
-import org.watsi.uhp.models.Member
-import org.watsi.uhp.repositories.IdentificationEventRepository
-import org.watsi.uhp.repositories.MemberRepository
 
 class SearchMemberPresenter(
         private val mProgressDialog: ProgressDialog,
@@ -51,21 +51,21 @@ class SearchMemberPresenter(
         mProgressDialog.show()
     }
 
-    internal fun performQuery(query: String): Pair<IdentificationEvent.SearchMethodEnum, List<Member>> {
-        val idMethod: IdentificationEvent.SearchMethodEnum
+    internal fun performQuery(query: String): Pair<IdentificationEvent.SearchMethod, List<Member>> {
+        val idMethod: IdentificationEvent.SearchMethod
         val matchingMembers: List<Member>
 
         if (query.matches(Regex(".*\\d+.*"))) {
             matchingMembers = memberRepository.fuzzySearchByCardId(query)
-            idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_ID
+            idMethod = IdentificationEvent.SearchMethod.SEARCH_ID
         } else {
             matchingMembers = memberRepository.fuzzySearchByName(query)
-            idMethod = IdentificationEvent.SearchMethodEnum.SEARCH_NAME
+            idMethod = IdentificationEvent.SearchMethod.SEARCH_NAME
         }
         return Pair(idMethod, matchingMembers)
     }
 
-    fun displayMembersResult(searchMethod: IdentificationEvent.SearchMethodEnum, members: List<Member>) {
+    fun displayMembersResult(searchMethod: IdentificationEvent.SearchMethod, members: List<Member>) {
         val adapter = MemberAdapter(mContext, members, false, identificationEventRepository)
         mListView.adapter = adapter
         mListView.emptyView = mEmptyView
@@ -81,18 +81,18 @@ class SearchMemberPresenter(
         mSearchView.requestFocus()
     }
 
-    inner class SearchMembersTask : AsyncTask<String, Void, Pair<IdentificationEvent.SearchMethodEnum, List<Member>>>() {
+    inner class SearchMembersTask : AsyncTask<String, Void, Pair<IdentificationEvent.SearchMethod, List<Member>>>() {
 
         override fun onPreExecute() {
             this@SearchMemberPresenter.startSpinner()
         }
 
         override fun doInBackground(vararg params: String):
-                Pair<IdentificationEvent.SearchMethodEnum, List<Member>> {
+                Pair<IdentificationEvent.SearchMethod, List<Member>> {
             return this@SearchMemberPresenter.performQuery(params[0])
         }
 
-        override fun onPostExecute(pair: Pair<IdentificationEvent.SearchMethodEnum, List<Member>>) {
+        override fun onPostExecute(pair: Pair<IdentificationEvent.SearchMethod, List<Member>>) {
             this@SearchMemberPresenter.displayMembersResult(pair.first, pair.second)
         }
     }

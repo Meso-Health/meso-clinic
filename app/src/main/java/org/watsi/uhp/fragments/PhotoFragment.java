@@ -11,19 +11,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.Photo;
+import org.watsi.domain.repositories.PhotoRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.listeners.CapturePhotoClickListener;
 import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.Photo;
-import org.watsi.uhp.models.SyncableModel;
-import org.watsi.uhp.repositories.PhotoRepository;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
 
-public abstract class PhotoFragment<T extends SyncableModel> extends FormFragment<T> {
+public abstract class PhotoFragment<T> extends FormFragment<T> {
 
     private static int CAPTURE_PHOTO_INTENT = 111;
     private static int DELETE_GALLERY_PHOTO_INTERVAL_IN_MS = 60000;

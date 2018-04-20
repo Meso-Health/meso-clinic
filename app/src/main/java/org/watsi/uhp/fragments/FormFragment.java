@@ -10,9 +10,8 @@ import android.widget.Button;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.SyncableModel;
 
-public abstract class FormFragment<T extends SyncableModel> extends BaseFragment {
+public abstract class FormFragment<T> extends BaseFragment {
 
     protected T mSyncableModel;
     protected Button mSaveBtn;

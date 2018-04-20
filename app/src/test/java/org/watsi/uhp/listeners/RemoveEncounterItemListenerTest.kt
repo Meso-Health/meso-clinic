@@ -4,9 +4,9 @@ import android.view.View
 
 import org.junit.Test
 import org.mockito.Mockito.*
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.EncounterItem
 import org.watsi.uhp.adapters.EncounterItemAdapter
-import org.watsi.uhp.models.Encounter
-import org.watsi.uhp.models.EncounterItem
 
 class RemoveEncounterItemListenerTest {
 

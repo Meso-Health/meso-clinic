@@ -5,8 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import org.watsi.uhp.models.Diagnosis;
-
+import org.watsi.domain.entities.Diagnosis;
 
 public class DiagnosisTypeAdapterFactory extends CustomizedTypeAdapterFactory<Diagnosis> {
     public DiagnosisTypeAdapterFactory() {

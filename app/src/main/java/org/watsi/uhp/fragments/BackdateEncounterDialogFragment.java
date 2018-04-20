@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import org.watsi.domain.entities.Encounter;
 import org.watsi.uhp.R;
-import org.watsi.uhp.models.Encounter;
 
 import java.util.Calendar;
 

@@ -5,7 +5,7 @@ import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import org.watsi.uhp.models.Diagnosis;
+import org.watsi.domain.entities.Diagnosis;
 
 public class DiagnosisItemViewModel extends BaseObservable {
     private Diagnosis mDiagnosis;

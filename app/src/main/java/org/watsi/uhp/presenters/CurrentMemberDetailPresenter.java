@@ -7,18 +7,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.threeten.bp.Clock;
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.entities.EncounterItem;
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.BillableRepository;
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterItem;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.SyncableModel;
-import org.watsi.uhp.repositories.BillableRepository;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -80,7 +79,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         IdentificationEvent checkIn = identificationEventRepository.openCheckIn(getMember().getId());
         if (checkIn != null) {
             encounter.setCopaymentPaid(true);
-            encounter.setOccurredAt(Clock.getCurrentTime());
+            encounter.setOccurredAt(Clock.systemDefaultZone().instant());
             encounter.setMember(getMember());
             encounter.setIdentificationEvent(checkIn);
             encounter.setEncounterItems(getDefaultEncounterItems(checkIn.getClinicNumberType()));
@@ -90,7 +89,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
         }
     }
 
-    private void dismissIdentification(IdentificationEvent.DismissalReasonEnum dismissReason)
+    private void dismissIdentification(IdentificationEvent.DismissalReason dismissReason)
             throws SyncableModel.UnauthenticatedException, SQLException {
         IdentificationEvent checkIn = identificationEventRepository.openCheckIn(getMember().getId());
         checkIn.setDismissalReason(dismissReason);
@@ -109,7 +108,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     private void showCheckedOutSuccessfulToast() {
         Toast.makeText(getContext(),
-                getMember().getFullName() + " " + getContext().getString(R.string.identification_dismissed),
+                getMember().getName() + " " + getContext().getString(R.string.identification_dismissed),
                 Toast.LENGTH_LONG).
                 show();
     }
@@ -124,7 +123,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
                                     dismissIdentification(IdentificationEvent
-                                            .DismissalReasonEnum.values()[which]);
+                                            .DismissalReason.values()[which]);
                                 } catch (SQLException | SyncableModel.UnauthenticatedException e) {
                                     ExceptionManager.reportException(e);
                                     Toast.makeText(getContext(),
@@ -136,10 +135,10 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
                         }).create().show();
     }
 
-    private List<EncounterItem> getDefaultEncounterItems(IdentificationEvent.ClinicNumberTypeEnum type) {
+    private List<EncounterItem> getDefaultEncounterItems(IdentificationEvent.ClinicNumberType type) {
         List<EncounterItem> defaultLineItems = new ArrayList<>();
 
-        if (type == IdentificationEvent.ClinicNumberTypeEnum.OPD) {
+        if (type == IdentificationEvent.ClinicNumberType.OPD) {
             defaultLineItems.add(new EncounterItem(billableRepository.findByName("Consultation"), 1));
             defaultLineItems.add(new EncounterItem(billableRepository.findByName("Medical Form"), 1));
         }

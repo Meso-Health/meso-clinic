@@ -6,10 +6,10 @@ import android.support.annotation.IdRes;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.BR;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.models.Member;
 
 public abstract class MemberViewModel extends BaseObservable {
     // Putting these variables here so that unit tests can not depend on android system.

@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
 import org.watsi.uhp.fragments.AddNewBillableFragment;
 import org.watsi.uhp.fragments.PresentingConditionsFragment;
@@ -26,11 +29,6 @@ import org.watsi.uhp.fragments.MemberEditFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
 import org.watsi.uhp.fragments.SearchMemberFragment;
 import org.watsi.uhp.fragments.VersionAndSyncFragment;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-
-import java.sql.SQLException;
 
 /**
  * Helper class for managing navigation between fragments

@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.watsi.domain.entities.Billable;
+import org.watsi.domain.entities.EncounterItem;
 import org.watsi.uhp.R;
-import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.EncounterItem;
 
 import java.util.List;
 
@@ -47,20 +47,17 @@ public class ReceiptItemAdapter extends ArrayAdapter<EncounterItem> {
             // TODO This is shared code for encounter item adapter.
             viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
             viewHolder.billableName.setText(billable.getName());
-            if (billable.requiresLabResult()) {
-                viewHolder.billableDetails.setVisibility(View.VISIBLE);
-                viewHolder.billableDetails.setText(encounterItem.getLabResult().getResult().toString());
-            } else if (billable.dosageDetails() == null) {
+            if (billable.dosageDetails() == null) {
                 viewHolder.billableDetails.setVisibility(View.GONE);
             } else {
                 viewHolder.billableDetails.setText(billable.dosageDetails());
                 viewHolder.billableDetails.setVisibility(View.VISIBLE);
             }
 
-            if (billable.getType() == Billable.TypeEnum.SERVICE || billable.getType() == Billable.TypeEnum.LAB) {
-                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(billable.getPrice()));
+            if (billable.getType() == Billable.Type.SERVICE || billable.getType() == Billable.Type.LAB) {
+                viewHolder.billablePriceOfQuantity.setText(billable.formattedPrice());
             } else {
-                viewHolder.billablePriceOfQuantity.setText(Billable.priceDecorator(encounterItem.getQuantity() * billable.getPrice()));
+                viewHolder.billablePriceOfQuantity.setText(billable.formattedPrice(encounterItem.getQuantity()));
             }
         }
         return convertView;

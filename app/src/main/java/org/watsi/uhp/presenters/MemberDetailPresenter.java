@@ -8,15 +8,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.custom_components.NotificationBar;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.util.List;
 
@@ -37,11 +37,10 @@ public abstract class MemberDetailPresenter {
                           IdentificationEventRepository identificationEventRepository) {
         mView = view;
         mContext = context;
-        mMember = member;
+        mMember = memberRepository.find(member.getId());
         mNavigationManager = navigationManager;
         this.memberRepository = memberRepository;
         this.identificationEventRepository = identificationEventRepository;
-        memberRepository.refresh(member);
     }
 
     public void setUp() {
@@ -82,10 +81,10 @@ public abstract class MemberDetailPresenter {
     }
 
     void setPatientCardTextFields() {
-        getMemberNameDetailTextView().setText(mMember.getFullName());
+        getMemberNameDetailTextView().setText(mMember.getName());
         getMemberAgeAndGenderTextView().setText(mMember.getFormattedAgeAndGender());
         getMemberCardIdDetailTextView().setText(mMember.getFormattedCardId());
-        getMemberPhoneNumberTextView().setText(mMember.getFormattedPhoneNumber());
+        getMemberPhoneNumberTextView().setText(mMember.formattedPhoneNumber());
     }
 
     void setBottomListWithMembers(List<Member> householdMembers) {
@@ -104,7 +103,7 @@ public abstract class MemberDetailPresenter {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Member member = (Member) parent.getItemAtPosition(position);
                 IdentificationEvent idEvent = new IdentificationEvent(member,
-                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, mMember);
+                        IdentificationEvent.SearchMethod.THROUGH_HOUSEHOLD, mMember);
                 getNavigationManager().setMemberDetailFragment(member, idEvent);
             }
         });

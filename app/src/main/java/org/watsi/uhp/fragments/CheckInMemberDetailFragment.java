@@ -3,14 +3,13 @@ package org.watsi.uhp.fragments;
 import android.content.Intent;
 import android.view.View;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.AbstractModel;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CheckInMemberDetailPresenter;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.sql.SQLException;
 
@@ -49,7 +48,7 @@ public class CheckInMemberDetailFragment extends MemberDetailFragment {
         checkInMemberDetailPresenter.handleOnActivityResult(requestCode, resultCode, data);
     }
 
-    public void completeIdentification(IdentificationEvent.ClinicNumberTypeEnum clinicNumberType, int clinicNumber) throws SQLException, AbstractModel.ValidationException {
+    public void completeIdentification(IdentificationEvent.ClinicNumberType clinicNumberType, int clinicNumber) throws SQLException, AbstractModel.ValidationException {
         checkInMemberDetailPresenter.saveIdentificationEventAndCheckIn(clinicNumberType, clinicNumber);
     }
 }

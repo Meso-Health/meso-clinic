@@ -10,10 +10,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.presenters.SearchMemberPresenter;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import javax.inject.Inject;
 

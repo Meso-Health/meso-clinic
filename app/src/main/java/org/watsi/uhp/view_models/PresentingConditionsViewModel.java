@@ -4,8 +4,8 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.view.View;
 
+import org.watsi.domain.entities.Encounter;
 import org.watsi.uhp.BR;
-import org.watsi.uhp.models.Encounter;
 
 public class PresentingConditionsViewModel extends BaseObservable {
     private Encounter mEncounter;

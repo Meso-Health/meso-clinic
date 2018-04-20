@@ -10,11 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.IdentificationEventRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
 
 import java.util.List;
 
@@ -60,10 +60,10 @@ public class MemberAdapter extends ArrayAdapter<Member> {
         Member member = getItem(position);
 
         if (member != null) {
-            viewHolder.name.setText(member.getFullName());
+            viewHolder.name.setText(member.getName());
             viewHolder.age_and_gender.setText(member.getFormattedAgeAndGender());
             viewHolder.card_id.setText(member.getFormattedCardId());
-            viewHolder.phone_number.setText(member.getFormattedPhoneNumber());
+            viewHolder.phone_number.setText(member.formattedPhoneNumber());
             if (showClinicNumber) {
                 viewHolder.phone_number.setVisibility(View.GONE);
                 viewHolder.clinic_number.setVisibility(View.VISIBLE);

@@ -12,11 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.Billable;
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.entities.EncounterItem;
 import org.watsi.uhp.R;
 import org.watsi.uhp.listeners.RemoveEncounterItemListener;
-import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterItem;
 
 import java.util.ArrayList;
 
@@ -56,10 +56,7 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
             final Billable billable = encounterItem.getBillable();
 
             viewHolder.billableName.setText(billable.getName());
-            if (encounterItem.getLabResult() != null) {
-                viewHolder.billableDetails.setVisibility(View.VISIBLE);
-                viewHolder.billableDetails.setText(encounterItem.getLabResult().toString());
-            } else if (billable.dosageDetails() == null) {
+            if (billable.dosageDetails() == null) {
                 viewHolder.billableDetails.setVisibility(View.GONE);
             } else {
                 viewHolder.billableDetails.setText(billable.dosageDetails());
@@ -86,8 +83,8 @@ public class EncounterItemAdapter extends ArrayAdapter<EncounterItem> {
             });
             viewHolder.billableQuantity.setText(String.valueOf(encounterItem.getQuantity()));
 
-            if (billable.getType().equals(Billable.TypeEnum.SERVICE) ||
-                    billable.getType().equals(Billable.TypeEnum.LAB)) {
+            if (billable.getType().equals(Billable.Type.SERVICE) ||
+                    billable.getType().equals(Billable.Type.LAB)) {
 
                 viewHolder.billableQuantity.setEnabled(false);
 

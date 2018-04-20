@@ -4,12 +4,12 @@ import android.databinding.DataBindingUtil;
 import android.view.View;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.Diagnosis;
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.repositories.DiagnosisRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput;
 import org.watsi.uhp.databinding.FragmentDiagnosisBinding;
-import org.watsi.uhp.models.Diagnosis;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.repositories.DiagnosisRepository;
 import org.watsi.uhp.view_models.DiagnosesListViewModel;
 
 import javax.inject.Inject;

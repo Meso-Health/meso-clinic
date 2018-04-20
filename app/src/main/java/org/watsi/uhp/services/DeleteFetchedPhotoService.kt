@@ -1,7 +1,6 @@
 package org.watsi.uhp.services
 
-import org.watsi.uhp.managers.ExceptionManager
-import org.watsi.uhp.repositories.PhotoRepository
+import org.watsi.domain.repositories.PhotoRepository
 import javax.inject.Inject
 
 open class DeleteFetchedPhotoService : AbstractSyncJobService() {
@@ -11,11 +10,8 @@ open class DeleteFetchedPhotoService : AbstractSyncJobService() {
     override fun performSync(): Boolean {
 
         photoRepository.canBeDeleted().forEach {
-            if (!it.delete(this)) {
-                ExceptionManager.reportErrorMessage("Failed to delete photo at: " + it.url)
-                it.deleted = true
-            }
-            photoRepository.update(it)
+            // TODO: handle case where it fails to delete
+            photoRepository.deleteLocalImage(it)
         }
 
         return true

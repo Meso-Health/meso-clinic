@@ -5,10 +5,9 @@ import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Diagnosis
-import java.util.UUID
 
 @Entity(tableName = "diagnoses")
-data class DiagnosisModel(@PrimaryKey val id: UUID,
+data class DiagnosisModel(@PrimaryKey val id: Int,
                           val createdAt: Instant,
                           val updatedAt: Instant,
                           val description: String,

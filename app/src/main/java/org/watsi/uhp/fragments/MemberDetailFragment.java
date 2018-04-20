@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
 
 public abstract class MemberDetailFragment extends BaseFragment {

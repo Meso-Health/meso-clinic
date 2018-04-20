@@ -5,12 +5,12 @@ import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.view.WindowManager;
 
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.repositories.BillableRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.adapters.EncounterItemAdapter;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
-import org.watsi.uhp.repositories.BillableRepository;
 
 import javax.inject.Inject;
 

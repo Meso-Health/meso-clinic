@@ -5,13 +5,13 @@ import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.MemberDetailFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 
 public class MenuNavigationManager {
 
@@ -37,7 +37,7 @@ public class MenuNavigationManager {
                 Member member = getMemberFromFragmentIfExists(currentFragment);
                 Member newborn = member.createNewborn();
                 IdentificationEvent idEvent = new IdentificationEvent(newborn,
-                        IdentificationEvent.SearchMethodEnum.THROUGH_HOUSEHOLD, member);
+                        IdentificationEvent.SearchMethod.THROUGH_HOUSEHOLD, member);
                 mNavigationManager.setEnrollNewbornInfoFragment(newborn, idEvent);
                 break;
             case R.id.menu_version:

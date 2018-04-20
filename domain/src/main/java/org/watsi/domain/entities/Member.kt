@@ -3,6 +3,7 @@ package org.watsi.domain.entities
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
 import org.watsi.domain.utils.DateUtils
+import java.io.Serializable
 import java.util.UUID
 
 data class Member(val id: UUID,
@@ -15,7 +16,7 @@ data class Member(val id: UUID,
                   val birthdate: LocalDate,
                   val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
                   val fingerprintsGuid: UUID?,
-                  val phoneNumber: String?) {
+                  val phoneNumber: String?) : Serializable {
 
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }

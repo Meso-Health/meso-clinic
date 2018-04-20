@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import org.watsi.domain.entities.Delta;
 import org.watsi.domain.repositories.DeltaRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.util.List;
 

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 
+import org.watsi.domain.entities.Billable;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.models.Billable;
 import org.watsi.uhp.presenters.EncounterPresenter;
 
 public class CategorySelectedEncounterFragmentListener implements AdapterView.OnItemSelectedListener {
@@ -26,8 +26,9 @@ public class CategorySelectedEncounterFragmentListener implements AdapterView.On
 
         if (position != 0) {
             String categoryString = (String) parent.getItemAtPosition(position);
-            Billable.TypeEnum selectedCategory = Billable.TypeEnum.fromString(categoryString);
-            if (selectedCategory.equals(Billable.TypeEnum.DRUG)) {
+            // TODO: fix valueOf logic
+            Billable.Type selectedCategory = Billable.Type.valueOf(categoryString);
+            if (selectedCategory.equals(Billable.Type.DRUG)) {
                 mEncounterPresenter.getDrugSearchView().setVisibility(View.VISIBLE);
                 KeyboardManager.focusAndForceShowKeyboard(mEncounterPresenter.getDrugSearchView(), mContext);
             } else {

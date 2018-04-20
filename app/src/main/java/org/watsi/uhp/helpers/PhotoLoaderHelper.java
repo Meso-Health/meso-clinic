@@ -5,8 +5,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
-import org.watsi.uhp.models.Member;
 
 /**
  * This class contains photo helper methods that would help with loading images smoothly using Glide.

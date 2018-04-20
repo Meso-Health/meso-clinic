@@ -16,11 +16,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.IdentificationEvent;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.KeyboardManager;
-import org.watsi.uhp.models.AbstractModel;
-import org.watsi.uhp.models.IdentificationEvent;
 
 import java.sql.SQLException;
 
@@ -43,8 +42,8 @@ public class ClinicNumberDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         RadioButton selectedRadioButton = (RadioButton) ((AlertDialog) dialog)
                                 .findViewById(mClinicNumberRadioGroup.getCheckedRadioButtonId());
-                        IdentificationEvent.ClinicNumberTypeEnum clinicNumberType =
-                                IdentificationEvent.ClinicNumberTypeEnum.valueOf(
+                        IdentificationEvent.ClinicNumberType clinicNumberType =
+                                IdentificationEvent.ClinicNumberType.valueOf(
                                         selectedRadioButton.getText().toString().toUpperCase());
                         int clinicNumber = Integer.valueOf(mClinicNumberView.getText().toString());
 

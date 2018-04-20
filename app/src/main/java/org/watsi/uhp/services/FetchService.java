@@ -8,17 +8,17 @@ import android.os.Bundle;
 
 import org.watsi.domain.entities.Billable;
 import org.watsi.domain.entities.Delta;
+import org.watsi.domain.entities.Diagnosis;
+import org.watsi.domain.entities.Member;
 import org.watsi.domain.repositories.BillableRepository;
 import org.watsi.domain.repositories.DeltaRepository;
+import org.watsi.domain.repositories.DiagnosisRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.api.ApiService;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
-import org.watsi.uhp.models.Diagnosis;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.DiagnosisRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.io.IOException;
 import java.sql.SQLException;

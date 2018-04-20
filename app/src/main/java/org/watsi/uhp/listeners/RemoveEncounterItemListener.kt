@@ -1,10 +1,10 @@
 package org.watsi.uhp.listeners
 
 import android.view.View
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.EncounterItem
 
 import org.watsi.uhp.adapters.EncounterItemAdapter
-import org.watsi.uhp.models.Encounter
-import org.watsi.uhp.models.EncounterItem
 
 class RemoveEncounterItemListener(
         private val mEncounter: Encounter,

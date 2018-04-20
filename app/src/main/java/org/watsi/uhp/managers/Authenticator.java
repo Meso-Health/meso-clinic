@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.common.base.Strings;
-
 import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.activities.AuthenticationActivity;
 
@@ -86,7 +84,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
         String authToken = mAccountManager.peekAuthToken(account, authTokenType);
 
-        if (!Strings.isNullOrEmpty(authToken)) {
+        if (!(authToken == null || authToken.isEmpty())) {
             // AuthenticationToken is present, so return it directly
             final Bundle result = new Bundle();
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);

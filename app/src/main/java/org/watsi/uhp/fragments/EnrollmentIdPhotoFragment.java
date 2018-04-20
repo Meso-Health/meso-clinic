@@ -4,11 +4,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.entities.Photo;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.models.Photo;
 
 import java.io.IOException;
 

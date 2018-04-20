@@ -6,9 +6,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.Billable;
+import org.watsi.domain.entities.Encounter;
 import org.watsi.uhp.R;
-import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.presenters.EncounterPresenter;
 
 public class BillableSelectedEncounterFragmentListener implements AdapterView.OnItemSelectedListener {
@@ -28,16 +28,10 @@ public class BillableSelectedEncounterFragmentListener implements AdapterView.On
         if (position != 0) {
             Billable billable = (Billable) adapter.getItem(position);
             try {
-                if (billable.requiresLabResult()) {
-                    encounterPresenter.getLabResultSpinner().setVisibility(View.VISIBLE);
-                    encounterPresenter.getLabResultSpinnerWrapper().setVisibility(View.VISIBLE);
-                    encounterPresenter.getLabResultSpinner().performClick();
-                } else {
-                    encounterPresenter.addToEncounterItemList(billable);
-                    encounterPresenter.getBillableSpinner().setSelection(0);
-                    encounterPresenter.getLabResultSpinner().setVisibility(View.GONE);
-                    encounterPresenter.scrollToBottom();
-                }
+                encounterPresenter.addToEncounterItemList(billable);
+                encounterPresenter.getBillableSpinner().setSelection(0);
+                encounterPresenter.getLabResultSpinner().setVisibility(View.GONE);
+                encounterPresenter.scrollToBottom();
             } catch (Encounter.DuplicateBillableException e) {
                 // TODO: make toast message more descriptive
                 Toast.makeText(context, R.string.already_in_list_items, Toast.LENGTH_SHORT).show();

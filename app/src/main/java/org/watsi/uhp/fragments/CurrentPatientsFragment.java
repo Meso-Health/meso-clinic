@@ -9,12 +9,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
-import org.watsi.uhp.models.Member;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import java.util.List;
 

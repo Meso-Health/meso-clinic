@@ -1,12 +1,12 @@
 package org.watsi.uhp.api;
 
 import org.watsi.domain.entities.AuthenticationToken;
-import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Diagnosis;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterForm;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
+import org.watsi.domain.entities.Billable;
+import org.watsi.domain.entities.Diagnosis;
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.entities.EncounterForm;
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
 
 import java.util.List;
 import java.util.Map;

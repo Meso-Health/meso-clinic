@@ -4,13 +4,13 @@ import android.databinding.DataBindingUtil;
 import android.view.View;
 import android.widget.DatePicker;
 
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
 import org.watsi.uhp.custom_components.NewbornBirthdatePicker;
 import org.watsi.uhp.databinding.FragmentEnrollNewbornBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.view_models.EnrollNewbornViewModel;
 
 public class EnrollNewbornInfoFragment extends FormFragment<Member> {

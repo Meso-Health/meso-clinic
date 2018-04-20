@@ -11,14 +11,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.entities.IdentificationEvent;
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment;
 import org.watsi.uhp.fragments.ReceiptFragment;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.IdentificationEvent;
-import org.watsi.uhp.models.Member;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;

@@ -3,14 +3,14 @@ package org.watsi.uhp.fragments;
 import android.view.Menu;
 import android.view.View;
 
+import org.watsi.domain.entities.Member;
+import org.watsi.domain.repositories.BillableRepository;
+import org.watsi.domain.repositories.IdentificationEventRepository;
+import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.NavigationManager;
-import org.watsi.uhp.models.Member;
 import org.watsi.uhp.presenters.CurrentMemberDetailPresenter;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
-import org.watsi.uhp.repositories.BillableRepository;
-import org.watsi.uhp.repositories.IdentificationEventRepository;
-import org.watsi.uhp.repositories.MemberRepository;
 
 import javax.inject.Inject;
 

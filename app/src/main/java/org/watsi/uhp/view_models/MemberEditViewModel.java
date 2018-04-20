@@ -1,7 +1,7 @@
 package org.watsi.uhp.view_models;
 
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.fragments.FormFragment;
-import org.watsi.uhp.models.Member;
 
 public class MemberEditViewModel extends MemberViewModel {
 

@@ -10,14 +10,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.repositories.EncounterRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.ReceiptItemAdapter;
 import org.watsi.uhp.databinding.FragmentReceiptBinding;
 import org.watsi.uhp.databinding.FragmentReceiptListFooterBinding;
 import org.watsi.uhp.databinding.FragmentReceiptListHeaderBinding;
 import org.watsi.uhp.helpers.ListViewUtils;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.repositories.EncounterRepository;
 import org.watsi.uhp.view_models.DiagnosesListViewModel;
 import org.watsi.uhp.view_models.EncounterViewModel;
 
@@ -25,7 +25,8 @@ import javax.inject.Inject;
 
 public class ReceiptFragment extends FormFragment<Encounter> {
 
-    @Inject EncounterRepository encounterRepository;
+    @Inject
+    EncounterRepository encounterRepository;
 
     @Override
     int getTitleLabelId() {

@@ -5,9 +5,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.watsi.uhp.models.Billable;
-import org.watsi.uhp.models.Encounter;
-import org.watsi.uhp.models.EncounterItem;
+import org.watsi.domain.entities.Billable;
+import org.watsi.domain.entities.Encounter;
+import org.watsi.domain.entities.EncounterItem;
 
 import java.util.Iterator;
 

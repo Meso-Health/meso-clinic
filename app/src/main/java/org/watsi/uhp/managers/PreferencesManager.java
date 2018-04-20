@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.threeten.bp.Clock;
+
 import java.text.SimpleDateFormat;
 
 public class PreferencesManager {
@@ -22,7 +24,8 @@ public class PreferencesManager {
     }
 
     public void updateMembersLastModified() {
-        setValue(MEMBERS_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(Clock.getCurrentTime()));
+        setValue(MEMBERS_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(
+                Clock.systemDefaultZone().instant()));
     }
 
     public String getMemberLastModified() {
@@ -30,11 +33,13 @@ public class PreferencesManager {
     }
 
     public void updateBillableLastModified() {
-        setValue(BILLABLES_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(Clock.getCurrentTime()));
+        setValue(BILLABLES_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(
+                Clock.systemDefaultZone().instant()));
     }
 
     public void updateDiagnosesLastModified() {
-        setValue(DIAGNOSES_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(Clock.getCurrentTime()));
+        setValue(DIAGNOSES_LAST_MODIFIED_PREF_KEY, LAST_MODIFIED_DATE_FORMAT.format(
+                Clock.systemDefaultZone().instant()));
     }
 
     public String getBillablesLastModified() {

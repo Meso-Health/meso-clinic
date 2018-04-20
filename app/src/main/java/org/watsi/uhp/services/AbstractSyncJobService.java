@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.os.AsyncTask;
 
 import org.watsi.uhp.BuildConfig;
-import org.watsi.uhp.database.DatabaseHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 
 import dagger.android.AndroidInjection;
@@ -26,7 +25,6 @@ public abstract class AbstractSyncJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        DatabaseHelper.init(this);
         mSyncJobTask = new SyncJobTask(this, params);
         mSyncJobTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return true;

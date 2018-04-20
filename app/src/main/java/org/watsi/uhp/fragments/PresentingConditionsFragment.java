@@ -3,9 +3,9 @@ package org.watsi.uhp.fragments;
 import android.databinding.DataBindingUtil;
 import android.view.View;
 
+import org.watsi.domain.entities.Encounter;
 import org.watsi.uhp.R;
 import org.watsi.uhp.databinding.FragmentPresentingConditionsBinding;
-import org.watsi.uhp.models.Encounter;
 import org.watsi.uhp.view_models.PresentingConditionsViewModel;
 
 public class PresentingConditionsFragment extends FormFragment<Encounter> {

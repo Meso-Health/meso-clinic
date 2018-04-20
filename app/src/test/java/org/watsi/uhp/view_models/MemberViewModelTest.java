@@ -6,9 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.watsi.domain.entities.Member;
 import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.models.Member;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
