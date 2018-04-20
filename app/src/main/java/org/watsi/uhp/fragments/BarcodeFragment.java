@@ -20,7 +20,7 @@ import org.watsi.domain.entities.Member;
 import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 import java.io.IOException;
 
@@ -115,15 +115,15 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
                                 getNavigationManager().setMemberDetailFragment(member, idEvent);
                                 break;
                             case MEMBER_EDIT:
-                                member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                                member = (Member) getArguments().getSerializable(LegacyNavigationManager.MEMBER_BUNDLE_FIELD);
+                                idEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                                 if (handleCardIdScan(member, barcode.displayValue)) {
                                     getNavigationManager().setMemberEditFragment(member, idEvent);
                                 }
                                 break;
                             case NEWBORN:
-                                member = (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
-                                idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                                member = (Member) getArguments().getSerializable(LegacyNavigationManager.MEMBER_BUNDLE_FIELD);
+                                idEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                                 if (handleCardIdScan(member, barcode.displayValue)) {
                                     getNavigationManager().setEnrollNewbornInfoFragment(member, idEvent);
                                 }
@@ -177,7 +177,7 @@ public class BarcodeFragment extends BaseFragment implements SurfaceHolder.Callb
 
     private ScanPurposeEnum getScanPurposeFromArguments() {
         return ScanPurposeEnum.valueOf(
-                getArguments().getString(NavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
+                getArguments().getString(LegacyNavigationManager.SCAN_PURPOSE_BUNDLE_FIELD, ""));
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.watsi.domain.entities.IdentificationEvent;
 import org.watsi.domain.entities.Member;
 import org.watsi.domain.entities.Photo;
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ public class EnrollmentIdPhotoFragment extends PhotoFragment<Member> {
     void additionalSetup(View view) {
         ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_id_photo_btn);
 
-        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
     }
 
     @Override

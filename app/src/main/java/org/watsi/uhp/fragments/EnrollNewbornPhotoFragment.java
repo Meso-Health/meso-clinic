@@ -9,7 +9,7 @@ import org.watsi.domain.entities.Member;
 import org.watsi.domain.entities.Photo;
 import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class EnrollNewbornPhotoFragment extends PhotoFragment<Member> {
     @Override
     public void nextStep() {
         memberRepository.save(mSyncableModel);
-        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
         getNavigationManager().setCheckInMemberDetailFragmentAfterEnrollNewborn(mSyncableModel, idEvent);
         Toast.makeText(getContext(), "Enrollment completed", Toast.LENGTH_LONG).show();
     }

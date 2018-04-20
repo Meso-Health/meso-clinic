@@ -12,7 +12,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.managers.KeyboardManager
-import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.managers.LegacyNavigationManager
 
 class SearchMemberPresenter(
         private val mProgressDialog: ProgressDialog,
@@ -20,7 +20,7 @@ class SearchMemberPresenter(
         private val mEmptyView: TextView,
         private val mSearchView: SearchView,
         private val mContext: Context,
-        private val mNavigationManager: NavigationManager,
+        private val mNavigationManager: LegacyNavigationManager,
         private val memberRepository: MemberRepository,
         private val identificationEventRepository: IdentificationEventRepository) {
 

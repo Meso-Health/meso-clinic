@@ -48,7 +48,7 @@ public class MenuNavigationManagerTest {
     @Mock private ClinicActivity mockClinicActivity;
     @Mock private Member mockMember;
     @Mock private Member mockNewBorn;
-    @Mock private NavigationManager mockNavigationManager;
+    @Mock private LegacyNavigationManager mockNavigationManager;
 
     private MenuNavigationManager menuNavigationManager;
 

@@ -4,10 +4,10 @@ import android.view.View
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.fragments.BarcodeFragment
-import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.managers.LegacyNavigationManager
 
 class SetBarcodeFragmentListener(
-        private val mNavigationManager: NavigationManager,
+        private val mNavigationManager: LegacyNavigationManager,
         private val mScanPurpose: BarcodeFragment.ScanPurposeEnum,
         private val mMember: Member?,
         private val mIdEvent: IdentificationEvent?) : View.OnClickListener {

@@ -10,7 +10,7 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.custom_components.NewbornBirthdatePicker;
 import org.watsi.uhp.databinding.FragmentEnrollNewbornBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.view_models.EnrollNewbornViewModel;
 
 public class EnrollNewbornInfoFragment extends FormFragment<Member> {
@@ -46,7 +46,7 @@ public class EnrollNewbornInfoFragment extends FormFragment<Member> {
         binding.setMember(enrollNewbornViewModel);
 
         mView = view;
-        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
         mNewbornBirthdatePicker = new NewbornBirthdatePicker((DatePicker) mView.findViewById(R.id.birthdate), mSyncableModel);
         setUpScanCardListener();
     }

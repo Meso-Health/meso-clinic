@@ -17,7 +17,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository;
 import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class CurrentMemberDetailPresenter extends MemberDetailPresenter {
 
     private final BillableRepository billableRepository;
 
-    public CurrentMemberDetailPresenter(NavigationManager navigationManager,
+    public CurrentMemberDetailPresenter(LegacyNavigationManager navigationManager,
                                         View view,
                                         Context context,
                                         Member member,

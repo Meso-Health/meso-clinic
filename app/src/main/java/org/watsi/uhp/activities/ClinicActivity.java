@@ -26,7 +26,7 @@ import org.watsi.uhp.fragments.FormFragment;
 import org.watsi.uhp.helpers.ActivityHelper;
 import org.watsi.uhp.managers.ExceptionManager;
 import org.watsi.uhp.managers.MenuNavigationManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.managers.PreferencesManager;
 import org.watsi.uhp.managers.SessionManager;
 import org.watsi.uhp.services.DeleteFetchedPhotoService;
@@ -48,7 +48,7 @@ public class ClinicActivity extends DaggerAppCompatActivity {
     private static int DELETE_PHOTOS_SERVICE_JOB_ID = 3;
 
     private SessionManager mSessionManager;
-    private NavigationManager mNavigationManager;
+    private LegacyNavigationManager mNavigationManager;
     private String authenticationToken;
 
     @Override
@@ -83,14 +83,14 @@ public class ClinicActivity extends DaggerAppCompatActivity {
         ActivityHelper.setupBannerIfInTrainingMode(this);
         setupToolbar();
         mSessionManager = new SessionManager(new PreferencesManager(this), AccountManager.get(this));
-        mNavigationManager = new NavigationManager(this);
+        mNavigationManager = new LegacyNavigationManager(this);
     }
 
     public SessionManager getSessionManager() {
         return mSessionManager;
     }
 
-    public NavigationManager getNavigationManager() {
+    public LegacyNavigationManager getNavigationManager() {
         return mNavigationManager;
     }
 

@@ -33,7 +33,7 @@ import org.watsi.uhp.fragments.VersionAndSyncFragment;
 /**
  * Helper class for managing navigation between fragments
  */
-public class NavigationManager {
+public class LegacyNavigationManager {
     public static String IDENTIFICATION_EVENT_BUNDLE_FIELD = "identificationEvent";
     public static String SCAN_PURPOSE_BUNDLE_FIELD = "scanPurpose";
     public static String MEMBER_BUNDLE_FIELD = "member";
@@ -47,7 +47,7 @@ public class NavigationManager {
     private Encounter diagnosisFragment;
 
 
-    public NavigationManager(FragmentActivity activity) {
+    public LegacyNavigationManager(FragmentActivity activity) {
         this.mActivity = activity;
         this.mFragmentProvider = new FragmentProvider();
         this.mLastFragmentTransition = "";

@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.watsi.uhp.R;
 import org.watsi.uhp.activities.ClinicActivity;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.managers.SessionManager;
 
 import dagger.android.support.DaggerFragment;
@@ -16,7 +16,7 @@ public abstract class BaseFragment extends DaggerFragment {
         return ((ClinicActivity) getActivity()).getSessionManager();
     }
 
-    protected NavigationManager getNavigationManager() {
+    protected LegacyNavigationManager getNavigationManager() {
         return ((ClinicActivity) getActivity()).getNavigationManager();
     }
 

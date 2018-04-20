@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.MatrixCursor;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -26,7 +25,7 @@ import org.watsi.uhp.listeners.BillableSelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.CategorySelectedEncounterFragmentListener;
 import org.watsi.uhp.listeners.SuggestionClickEncounterFragmentListener;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.runnables.ScrollToBottomRunnable;
 
 import java.sql.SQLException;
@@ -42,7 +41,7 @@ public class EncounterPresenter {
     private final View mView;
     private final Context mContext;
     private final EncounterItemAdapter mEncounterItemAdapter;
-    private final NavigationManager mNavigationManager;
+    private final LegacyNavigationManager mNavigationManager;
     private final EncounterFragment mEncounterFragment;
     public String mFormattedBackDate;
 
@@ -54,7 +53,7 @@ public class EncounterPresenter {
                               View view,
                               Context context,
                               EncounterItemAdapter encounterItemAdapter,
-                              NavigationManager navigationManager,
+                              LegacyNavigationManager navigationManager,
                               EncounterFragment encounterFragment,
                               BillableRepository billableRepository) {
         mEncounter = encounter;

@@ -11,7 +11,7 @@ import org.watsi.domain.entities.Member;
 import org.watsi.domain.entities.Photo;
 import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
 
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class EnrollmentMemberPhotoFragment extends PhotoFragment<Member> {
     @Override
     void additionalSetup(View view) {
         ((Button) view.findViewById(R.id.photo_btn)).setText(R.string.enrollment_member_photo_btn);
-        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
         if (!mSyncableModel.shouldCaptureFingerprint()) {
             mSaveBtn.setText(R.string.enrollment_complete_btn);

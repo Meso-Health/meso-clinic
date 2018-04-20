@@ -16,7 +16,7 @@ import org.watsi.uhp.fragments.ReceiptFragment;
 public class MenuNavigationManager {
 
     private SessionManager mSessionManager;
-    private NavigationManager mNavigationManager;
+    private LegacyNavigationManager mNavigationManager;
     private ClinicActivity mClinicActivity;
 
     public MenuNavigationManager(ClinicActivity clinicActivity) {
@@ -92,7 +92,7 @@ public class MenuNavigationManager {
                 }).create().show();
     }
 
-    public NavigationManager getNavigationManager() {
+    public LegacyNavigationManager getNavigationManager() {
         return mNavigationManager;
     }
 }

@@ -14,7 +14,7 @@ import org.watsi.uhp.BuildConfig;
 import org.watsi.uhp.R;
 import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.presenters.EnrollmentPresenter;
 
 import java.util.UUID;
@@ -70,7 +70,7 @@ public class EnrollmentFingerprintFragment extends FormFragment<Member> {
     void setUpFragment(View view) {
         mSuccessMessageView = view.findViewById(R.id.enrollment_fingerprint_success_message);
         mFailedMessageView = view.findViewById(R.id.enrollment_fingerprint_failed_message);
-        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
         mSimprintsHelper = new SimprintsHelper(getSessionManager().getCurrentLoggedInUsername(), this);
 
         Button fingerprintBtn = (Button) view.findViewById(R.id.enrollment_fingerprint_capture_btn);

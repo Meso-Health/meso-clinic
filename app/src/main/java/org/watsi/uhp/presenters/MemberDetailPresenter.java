@@ -16,12 +16,12 @@ import org.watsi.uhp.R;
 import org.watsi.uhp.adapters.MemberAdapter;
 import org.watsi.uhp.custom_components.NotificationBar;
 import org.watsi.uhp.helpers.PhotoLoaderHelper;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 import java.util.List;
 
 public abstract class MemberDetailPresenter {
-    private final NavigationManager mNavigationManager;
+    private final LegacyNavigationManager mNavigationManager;
     private final View mView;
     private final Context mContext;
     private final Member mMember;
@@ -32,7 +32,7 @@ public abstract class MemberDetailPresenter {
     MemberDetailPresenter(View view,
                           Context context,
                           Member member,
-                          NavigationManager navigationManager,
+                          LegacyNavigationManager navigationManager,
                           MemberRepository memberRepository,
                           IdentificationEventRepository identificationEventRepository) {
         mView = view;
@@ -192,7 +192,7 @@ public abstract class MemberDetailPresenter {
         return mView;
     }
 
-    public NavigationManager getNavigationManager() {
+    public LegacyNavigationManager getNavigationManager() {
         return mNavigationManager;
     }
 }

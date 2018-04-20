@@ -9,7 +9,7 @@ import android.view.WindowManager;
 
 import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.presenters.MemberDetailPresenter;
 
 public abstract class MemberDetailFragment extends BaseFragment {
@@ -54,7 +54,7 @@ public abstract class MemberDetailFragment extends BaseFragment {
     }
 
     private Member getSerializedMember() {
-        return (Member) getArguments().getSerializable(NavigationManager.MEMBER_BUNDLE_FIELD);
+        return (Member) getArguments().getSerializable(LegacyNavigationManager.MEMBER_BUNDLE_FIELD);
     }
 
     @Override

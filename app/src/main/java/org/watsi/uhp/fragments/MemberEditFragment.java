@@ -12,7 +12,7 @@ import org.watsi.domain.repositories.MemberRepository;
 import org.watsi.uhp.R;
 import org.watsi.uhp.databinding.FragmentMemberEditBinding;
 import org.watsi.uhp.listeners.SetBarcodeFragmentListener;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.view_models.MemberEditViewModel;
 
 import javax.inject.Inject;
@@ -46,7 +46,7 @@ public class MemberEditFragment extends FormFragment<Member> {
             public void onClick(DialogInterface dialog, int which) {
                 String toastMessage = mSyncableModel.getName() + "'s information has been updated.";
                 memberRepository.save(mSyncableModel);
-                IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+                IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
                 if (idEvent != null) {
                     getNavigationManager().setMemberDetailFragment(mSyncableModel, idEvent);
                 } else {
@@ -70,7 +70,7 @@ public class MemberEditFragment extends FormFragment<Member> {
         MemberEditViewModel memberEditFragmentMemberView = new MemberEditViewModel(this, mSyncableModel);
         binding.setMember(memberEditFragmentMemberView);
 
-        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        IdentificationEvent idEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
 
         view.findViewById(R.id.scan_card).setOnClickListener(new SetBarcodeFragmentListener(
                 getNavigationManager(), BarcodeFragment.ScanPurposeEnum.MEMBER_EDIT,

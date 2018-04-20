@@ -6,7 +6,7 @@ import android.widget.EditText;
 import org.watsi.domain.entities.IdentificationEvent;
 import org.watsi.domain.entities.Member;
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 public class EnrollmentContactInfoFragment extends FormFragment<Member> {
 
@@ -31,7 +31,7 @@ public class EnrollmentContactInfoFragment extends FormFragment<Member> {
     @Override
     void setUpFragment(View view) {
         mPhoneNumberView = (EditText) view.findViewById(R.id.phone_number);
-        mIdEvent = (IdentificationEvent) getArguments().getSerializable(NavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
+        mIdEvent = (IdentificationEvent) getArguments().getSerializable(LegacyNavigationManager.IDENTIFICATION_EVENT_BUNDLE_FIELD);
     }
 
     @Override

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.watsi.uhp.R;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 
 public abstract class FormFragment<T> extends BaseFragment {
 
@@ -20,7 +20,7 @@ public abstract class FormFragment<T> extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(getTitleLabelId());
 
-        mSyncableModel = (T) getArguments().getSerializable(NavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
+        mSyncableModel = (T) getArguments().getSerializable(LegacyNavigationManager.SYNCABLE_MODEL_BUNDLE_FIELD);
 
         final View view = inflater.inflate(getFragmentLayoutId(), container, false);
 

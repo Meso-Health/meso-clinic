@@ -25,7 +25,7 @@ import org.watsi.uhp.fragments.CheckInMemberDetailFragment;
 import org.watsi.uhp.fragments.ClinicNumberDialogFragment;
 import org.watsi.uhp.helpers.SimprintsHelper;
 import org.watsi.uhp.managers.ExceptionManager;
-import org.watsi.uhp.managers.NavigationManager;
+import org.watsi.uhp.managers.LegacyNavigationManager;
 import org.watsi.uhp.managers.SessionManager;
 
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ public class CheckInMemberDetailPresenter extends MemberDetailPresenter {
     private final Button mScanFingerprintsBtn;
     private final TextView mScanResult;
 
-    public CheckInMemberDetailPresenter(NavigationManager navigationManager,
+    public CheckInMemberDetailPresenter(LegacyNavigationManager navigationManager,
                                         SessionManager sessionManager,
                                         CheckInMemberDetailFragment checkInMemberDetailFragment,
                                         View view,
