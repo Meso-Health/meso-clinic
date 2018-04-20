@@ -27,8 +27,8 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         // TODO: implement
     }
 
-    override fun findByCardId(cardId: String): Member {
-        return memberDao.findByCardId(cardId).toMember()
+    override fun findByCardId(cardId: String): Member? {
+        return memberDao.findByCardId(cardId)?.toMember()
     }
 
     override fun fuzzySearchByCardId(query: String): List<Member> {

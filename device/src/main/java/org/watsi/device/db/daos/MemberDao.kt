@@ -24,7 +24,7 @@ interface MemberDao {
     fun find(id: UUID): MemberModel
 
     @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
-    fun findByCardId(cardId: String): MemberModel
+    fun findByCardId(cardId: String): MemberModel?
 
     @Query("SELECT * FROM members where name = :name")
     fun findByName(name: String): List<MemberModel>

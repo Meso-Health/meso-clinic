@@ -51,6 +51,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                 val member = parent.getItemAtPosition(position) as Member
                 val openCheckIn = identificationEventRepository.openCheckIn(member.id)
                 if (openCheckIn == null) {
+                    // TODO: this code path technically should not happen...
                     navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
                 } else {
                     navigationManager.goTo(

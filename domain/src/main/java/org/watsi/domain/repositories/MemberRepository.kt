@@ -9,7 +9,7 @@ interface MemberRepository {
     fun save(member: Member)
     fun destroy(member: Member)
     fun updateFromFetch(member: Member)
-    fun findByCardId(cardId: String): Member
+    fun findByCardId(cardId: String): Member?
     fun fuzzySearchByCardId(query: String): List<Member>
     fun fuzzySearchByName(query: String): List<Member>
     fun checkedInMembers(): List<Member>
