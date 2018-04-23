@@ -6,7 +6,6 @@ import org.watsi.uhp.fragments.AddNewBillableFragment
 import org.watsi.uhp.fragments.BackdateEncounterDialogFragment
 import org.watsi.uhp.fragments.BarcodeFragment
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment
-import org.watsi.uhp.fragments.ClinicNumberDialogFragment
 import org.watsi.uhp.fragments.CurrentMemberDetailFragment
 import org.watsi.uhp.fragments.CurrentPatientsFragment
 import org.watsi.uhp.fragments.DiagnosisFragment
@@ -30,7 +29,6 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindBackdateEncounterDialogFragment(): BackdateEncounterDialogFragment
     @ContributesAndroidInjector abstract fun bindBarcodeFragment(): BarcodeFragment
     @ContributesAndroidInjector abstract fun bindCheckInMemberDetailFragment(): CheckInMemberDetailFragment
-    @ContributesAndroidInjector abstract fun bindClinicNumberDialogFragment(): ClinicNumberDialogFragment
     @ContributesAndroidInjector abstract fun bindCurrentMemberDetailFragment(): CurrentMemberDetailFragment
     @ContributesAndroidInjector abstract fun bindCurrentPatientsFragment(): CurrentPatientsFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment

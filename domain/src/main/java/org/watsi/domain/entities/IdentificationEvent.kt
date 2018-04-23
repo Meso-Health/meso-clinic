@@ -12,9 +12,9 @@ data class IdentificationEvent(val id: UUID,
                                val searchMethod: SearchMethod,
                                val clinicNumber: Int,
                                val clinicNumberType: ClinicNumberType,
-                               val dismissed: Boolean,
-                               val dismissalReason: DismissalReason?,
-                               val fingerprintsVerificationResultCode: Int,
+                               val dismissed: Boolean = false,
+                               val dismissalReason: DismissalReason? = null,
+                               val fingerprintsVerificationResultCode: Int?,
                                val fingerprintsVerificationConfidence: Float?,
                                val fingerprintsVerificationTier: String?) : Serializable {
 

@@ -5,34 +5,46 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
 import android.widget.Toast
 import com.simprints.libsimprints.Constants
 import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.dialog_clinic_number.clinic_number_field
+import kotlinx.android.synthetic.main.dialog_clinic_number.radio_group_clinic_number
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
+import org.threeten.bp.Clock
+import org.watsi.domain.entities.IdentificationEvent
 
 import org.watsi.domain.entities.Member
+import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
+import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
+import java.util.*
 
 import javax.inject.Inject
 
 class CheckInMemberDetailFragment : DaggerFragment() {
 
+    @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var simprintsHelper: SimprintsHelper
+    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
 
     lateinit var member: Member
+    private var verificationDetails: FingerprintVerificationDetails? = null
 
     companion object {
         const val PARAM_MEMBER = "member"
@@ -75,9 +87,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
         member_action_button.text = getString(R.string.check_in)
         member_action_button.setOnClickListener {
-            // TODO: open clinic number dialog
-            // completing clinic number dialog should persist IdentificationEvent and navigate
-            // back to the CurrentPatientsFragment
+            launchClinicNumberDialog()
         }
 
         if (member.fingerprintsGuid != null) {
@@ -92,6 +102,52 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         }
     }
 
+    private fun launchClinicNumberDialog() {
+        val builder = AlertDialog.Builder(activity)
+        builder.setView(R.layout.dialog_clinic_number)
+                .setMessage(R.string.clinic_number_prompt)
+                .setPositiveButton(R.string.clinic_number_button) { _, _ ->
+                    createIdentificationEvent()
+                    navigationManager.popTo(CurrentPatientsFragment())
+                }
+
+        val dialog = builder.create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+
+            KeyboardManager.focusAndForceShowKeyboard(clinic_number_field, context)
+        }
+
+        dialog.show()
+    }
+
+    private fun createIdentificationEvent() {
+        val selectedRadioButton = view?.findViewById<RadioButton>(
+                radio_group_clinic_number.checkedRadioButtonId)
+        val clinicNumberType = IdentificationEvent.ClinicNumberType.valueOf(
+                selectedRadioButton?.text.toString().toUpperCase())
+        val clinicNumber = Integer.valueOf(clinic_number_field.text.toString())
+
+        val idEvent = IdentificationEvent(id = UUID.randomUUID(),
+                                          memberId = member.id,
+                                          occurredAt = clock.instant(),
+                                          accepted = true,
+                                          searchMethod =
+                                            IdentificationEvent.SearchMethod.SCAN_BARCODE, // TODO
+                                          throughMemberId = null,
+                                          clinicNumber = clinicNumber,
+                                          clinicNumberType = clinicNumberType,
+                                          fingerprintsVerificationTier =
+                                             verificationDetails?.tier.toString(),
+                                          fingerprintsVerificationConfidence =
+                                            verificationDetails?.confidence,
+                                          fingerprintsVerificationResultCode =
+                                            verificationDetails?.resultCode)
+        identificationEventRepository.create(idEvent)
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         try {
             val verification = simprintsHelper.onActivityResultFromVerify(requestCode, resultCode, data)
@@ -99,7 +155,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 val fingerprintTier = verification.tier
                 val fingerprintConfidence = verification.confidence
 
-                // TODO: should store the verification details so they can be persisted in the IdentificationEvent
+                verificationDetails = FingerprintVerificationDetails(
+                        fingerprintTier, fingerprintConfidence, resultCode)
+
                 if (fingerprintTier == Tier.TIER_5) {
                     setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorRed), R.string.bad_scan_indicator)
                 } else {
@@ -133,4 +191,8 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         scan_fingerprints_btn.visibility = View.GONE
         scan_result.visibility = View.VISIBLE
     }
+
+    private data class FingerprintVerificationDetails(val tier: Tier?,
+                                                      val confidence: Float?,
+                                                      val resultCode: Int)
 }
