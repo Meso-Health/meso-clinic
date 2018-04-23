@@ -23,11 +23,13 @@ import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
+import org.watsi.uhp.managers.NavigationManager
 
 import javax.inject.Inject
 
 class CheckInMemberDetailFragment : DaggerFragment() {
 
+    @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var simprintsHelper: SimprintsHelper
 
     lateinit var member: Member
@@ -65,7 +67,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         if (member.cardId == null) {
             replace_card_notification.visibility = View.VISIBLE
             replace_card_notification.setOnClickListener {
-                // TODO: navigate to MemberEditFragment
+                navigationManager.goTo(MemberEditFragment.forMember(member))
             }
         }
 

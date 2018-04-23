@@ -15,10 +15,12 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
+import org.watsi.uhp.managers.NavigationManager
 import javax.inject.Inject
 
 class CurrentMemberDetailFragment : DaggerFragment() {
 
+    @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var memberRepository: MemberRepository
 
@@ -60,7 +62,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         if (member.cardId == null) {
             replace_card_notification.visibility = View.VISIBLE
             replace_card_notification.setOnClickListener {
-                // TODO: navigate to MemberEditFragment
+                navigationManager.goTo(MemberEditFragment.forMember(member))
             }
         }
 
