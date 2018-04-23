@@ -56,7 +56,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         if (member.isAbsentee()) {
             absentee_notification.visibility = View.VISIBLE
             absentee_notification.setOnActionClickListener {
-                navigationManager.goTo(EnrollmentContactInfoFragment.forMember(member))
+                navigationManager.goTo(EnrollmentMemberPhotoFragment.forMember(member))
             }
         }
         if (member.cardId == null) {

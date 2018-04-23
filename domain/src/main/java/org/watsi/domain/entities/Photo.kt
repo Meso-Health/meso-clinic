@@ -7,7 +7,7 @@ import java.util.UUID
 data class Photo(val id: UUID,
                  val bytes: ByteArray?,
                  val url: String,
-                 val deleted: Boolean) {
+                 val deleted: Boolean = false) {
 
     override fun equals(other: Any?): Boolean{
         if (this === other) return true
