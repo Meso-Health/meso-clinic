@@ -10,8 +10,12 @@ import kotlinx.android.synthetic.main.fragment_enrollment_contact_info.save_butt
 
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
+import org.watsi.uhp.managers.NavigationManager
+import javax.inject.Inject
 
 class EnrollmentContactInfoFragment : DaggerFragment() {
+
+    @Inject lateinit var navigationManager: NavigationManager
 
     lateinit var member: Member
 
@@ -45,11 +49,8 @@ class EnrollmentContactInfoFragment : DaggerFragment() {
             if (phoneNumber.isNotBlank() && !Member.validPhoneNumber(phoneNumber)) {
                 phone_number.error = getString(R.string.phone_number_validation_error)
             } else {
-                if (phoneNumber.isBlank()) {
-                    // TODO: navigate to enroll fingerprint fragment with null phone number
-                } else {
-                    // TODO: navigate to enroll fingerprint fragment with phone number
-                }
+                val updatedMember = if (phoneNumber.isBlank()) member else member.copy(phoneNumber = phoneNumber)
+                navigationManager.goTo(EnrollmentFingerprintFragment.forMember(updatedMember))
             }
         }
     }
