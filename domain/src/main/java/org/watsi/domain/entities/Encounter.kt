@@ -1,6 +1,7 @@
 package org.watsi.domain.entities
 
 import org.threeten.bp.Instant
+import java.io.Serializable
 import java.util.UUID
 
 data class Encounter(val id: UUID,
@@ -8,4 +9,4 @@ data class Encounter(val id: UUID,
                      val identificationEventId: UUID,
                      val occurredAt: Instant,
                      val backdatedOccurredAt: Instant?,
-                     val copaymentPaid: Boolean)
+                     val copaymentPaid: Boolean = false) : Serializable

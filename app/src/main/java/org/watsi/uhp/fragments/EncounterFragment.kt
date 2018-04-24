@@ -18,13 +18,16 @@ import kotlinx.android.synthetic.main.fragment_encounter.category_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
+import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.entities.Encounter
 
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.managers.KeyboardManager
+import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.runnables.ScrollToBottomRunnable
 import java.util.UUID
 
@@ -32,6 +35,8 @@ import javax.inject.Inject
 
 class EncounterFragment : DaggerFragment() {
 
+    @Inject lateinit var clock: Clock
+    @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var billableRepository: BillableRepository
 
     lateinit var identificationEvent: IdentificationEvent
@@ -111,7 +116,12 @@ class EncounterFragment : DaggerFragment() {
         }
 
         save_button.setOnClickListener {
-            // TODO: create encounter and navigate to DiagnosisFragment
+            val encounter = Encounter(id = UUID.randomUUID(),
+                                      memberId = identificationEvent.memberId,
+                                      identificationEventId = identificationEvent.id,
+                                      occurredAt = clock.instant(),
+                                      backdatedOccurredAt = null)
+            navigationManager.goTo(DiagnosisFragment.forEncounter(encounter))
         }
     }
 

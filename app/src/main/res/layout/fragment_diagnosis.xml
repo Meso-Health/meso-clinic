@@ -1,73 +1,65 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <data>
-        <variable name="diagnosisListView" type="org.watsi.uhp.view_models.DiagnosesListViewModel"/>
-    </data>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusableInTouchMode="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput
+            android:id="@+id/diagnosis_fuzzy_search_input"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/divider" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin"
             android:orientation="vertical">
 
-            <org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput
-                android:id="@+id/diagnosis_fuzzy_search_input"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-
-            <View
-                android:id="@+id/divider"
+            <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="1dip"
-                android:background="@color/divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-                android:layout_marginRight="@dimen/fragment_horizontal_margin"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{diagnosisListView.formattedCount}"
-                    android:layout_marginTop="@dimen/fragment_vertical_margin" />
-
-                <ScrollView
-                    android:layout_width="fill_parent"
-                    android:layout_height="300dp"
-                    android:fillViewport="true" >
-                    <ListView
-                        android:id="@+id/selected_diagnosis_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:theme="@style/Title"
-                        android:entries="@{diagnosisListView.selectedDiagnoses}"
-                        />
-                </ScrollView>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center|bottom">
-
-            <Button
-                android:id="@+id/save_button"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                style="@style/PrimaryButton"
-                android:text="@string/continue_encounter_button" />
+                android:layout_marginTop="@dimen/fragment_vertical_margin" />
+
+            <ScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="300dp"
+                android:fillViewport="true" >
+
+                <ListView
+                    android:id="@+id/selected_diagnosis_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:theme="@style/Title" />
+            </ScrollView>
         </LinearLayout>
     </LinearLayout>
-</layout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center|bottom">
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/PrimaryButton"
+            android:text="@string/continue_encounter_button" />
+    </LinearLayout>
+</LinearLayout>
