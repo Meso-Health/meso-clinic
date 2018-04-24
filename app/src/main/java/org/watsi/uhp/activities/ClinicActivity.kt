@@ -97,8 +97,9 @@ class ClinicActivity : DaggerAppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.setOnMenuItemClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            val menuNavigationManager = MenuNavigationManager(this)
-            menuNavigationManager.nextStep(currentFragment, it)
+            val menuNavigationManager = MenuNavigationManager(
+                    sessionManager, navigationManager, this)
+            menuNavigationManager.handle(currentFragment.arguments, it)
         }
     }
 
