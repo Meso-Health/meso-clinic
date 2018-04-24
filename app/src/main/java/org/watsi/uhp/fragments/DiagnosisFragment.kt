@@ -11,14 +11,17 @@ import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.uhp.R
+import org.watsi.uhp.managers.NavigationManager
 
 import javax.inject.Inject
 
 class DiagnosisFragment : DaggerFragment() {
 
+    @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var diagnosisRepository: DiagnosisRepository
 
     lateinit var diagnosesList: MutableList<Diagnosis>
@@ -58,7 +61,8 @@ class DiagnosisFragment : DaggerFragment() {
         // TODO: support removing diagnoses
 
         save_button.setOnClickListener {
-            // TODO: navigate to EncounterForm page
+            navigationManager.goTo(EncounterFormFragment.forEncounter(
+                    EncounterWithItemsAndForms(encounter, emptyList(), emptyList())))
         }
     }
 
