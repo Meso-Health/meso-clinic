@@ -23,12 +23,14 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 
 import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.runnables.ScrollToBottomRunnable
+import java.io.Serializable
 import java.util.UUID
 
 import javax.inject.Inject
@@ -43,11 +45,17 @@ class EncounterFragment : DaggerFragment() {
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
+        const val PARAM_ENCOUNTER_ITEMS = "encounter_items"
+        const val PARAM_BILLABLE = "billable"
 
-        fun forIdentificationEvent(idEvent: IdentificationEvent): EncounterFragment {
+        fun forIdentificationEvent(idEvent: IdentificationEvent,
+                                   encounterItems: List<EncounterItemWithBillable> = emptyList(),
+                                   billable: Billable? = null): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
+                putSerializable(PARAM_ENCOUNTER_ITEMS, encounterItems as Serializable)
+                putSerializable(PARAM_BILLABLE, billable)
             }
             return fragment
         }
@@ -108,7 +116,9 @@ class EncounterFragment : DaggerFragment() {
         drug_search.queryHint = getString(R.string.search_drug_hint)
 
         add_billable_prompt.setOnClickListener {
-            // TODO: navigate to add billable fragment
+            // TODO: pass current encounter item list
+            navigationManager.goTo(AddNewBillableFragment.forIdentificationEvent(
+                    identificationEvent, emptyList()))
         }
 
         backdate_encounter.setOnClickListener {

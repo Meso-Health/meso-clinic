@@ -1,149 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:layout_marginTop="@dimen/fragment_vertical_margin"
+    android:layout_marginBottom="@dimen/fragment_vertical_margin"
+    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+    android:layout_marginRight="@dimen/fragment_horizontal_margin">
 
-    <data>
-        <variable name="billable" type="org.watsi.uhp.view_models.BillableViewModel"/>
-    </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/view_outline_rectangle">
+        <Spinner
+            android:id="@+id/type_field"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/add_new_billable_name_label"
+        android:labelFor="@+id/name_field" />
+
+    <EditText
+        android:id="@+id/name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:imeOptions="actionDone"
+        android:inputType="text" />
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        android:layout_marginTop="@dimen/fragment_vertical_margin"
-        android:layout_marginBottom="@dimen/fragment_vertical_margin"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/view_outline_rectangle">
-            <Spinner
-                android:id="@+id/type_field"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:entries="@{billable.typeSelections}"
-                android:selectedItemPosition="@={billable.selectedTypeIndex}" />
-        </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/add_new_billable_name_label"
-            android:labelFor="@+id/name_field" />
+            android:layout_weight="1"
+            android:labelFor="@id/name_field"
+            android:text="@string/add_new_billable_unit_label" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:labelFor="@id/price_field"
+            android:text="@string/add_new_billable_price_label" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <EditText
-                android:id="@+id/name_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={billable.name}"
-                android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-            />
+            android:id="@+id/unit_field"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:labelFor="@+id/name_field"
-                android:text="@string/add_new_billable_unit_label"
-                android:visibility="@{billable.showUnit}" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:labelFor="@+id/price_field"
-                android:text="@string/add_new_billable_price_label" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/unit_field"
-                android:layout_width="match_parent"
+                android:id="@+id/price_field"
+                android:layout_width="156dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:text="@={billable.unit}"
-                android:visibility="@{billable.showUnit}" />
+                android:inputType="number"
+                android:gravity="start"
+                android:imeOptions="actionDone" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/ugx"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/price_field"
-                    android:layout_width="156dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:gravity="left"
-                    android:imeOptions="actionDone"
-                    android:text="@={billable.price}" />
-
-                <TextView
-                    android:id="@+id/ugx"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:gravity="center_vertical"
-                    android:text="@string/UGX"
-                    android:theme="@style/LargeLabel" />
-            </LinearLayout>
-
+                android:layout_weight="3"
+                android:gravity="center_vertical"
+                android:text="@string/UGX"
+                android:theme="@style/LargeLabel" />
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/add_new_billable_composition"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/add_new_billable_composition_label"
-            android:visibility="@{billable.showComposition}"
-            />
-
-        <org.watsi.uhp.custom_components.BillableCompositionInput
-            android:id="@+id/list_of_compositions"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@+id/member_name"
-            android:maxLines="1"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:focusableInTouchMode="true"
-            android:text="@={billable.composition}"
-            android:visibility="@{billable.showComposition}"/>
-
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/form_item_vertical_margin"
-            style="@style/PrimaryButton"
-            android:text="@string/add_new_billable"
-            android:enabled="@{billable.saveEnabled}"
-            android:onClick="@{() -> billable.onClickSave()}"
-            android:textAllCaps="true"
-            android:layout_below="@id/price_field" />
     </LinearLayout>
-</layout>
+
+    <TextView
+        android:id="@+id/add_new_billable_composition"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/add_new_billable_composition_label" />
+
+    <org.watsi.uhp.custom_components.BillableCompositionInput
+        android:id="@+id/list_of_compositions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/member_name"
+        android:maxLines="1"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:focusableInTouchMode="true" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/form_item_vertical_margin"
+        style="@style/PrimaryButton"
+        android:text="@string/add_new_billable"
+        android:textAllCaps="true" />
+</LinearLayout>

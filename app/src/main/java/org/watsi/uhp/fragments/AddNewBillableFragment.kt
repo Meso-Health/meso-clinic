@@ -1,57 +1,80 @@
 package org.watsi.uhp.fragments
 
-import android.databinding.DataBindingUtil
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-
+import android.view.ViewGroup
+import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_add_new_billable.list_of_compositions
+import kotlinx.android.synthetic.main.fragment_add_new_billable.name_field
+import kotlinx.android.synthetic.main.fragment_add_new_billable.price_field
+import kotlinx.android.synthetic.main.fragment_add_new_billable.save_button
+import kotlinx.android.synthetic.main.fragment_add_new_billable.type_field
+import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.entities.Encounter
-import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.relations.EncounterItemWithBillable
+
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.uhp.R
-import org.watsi.uhp.custom_components.BillableCompositionInput
-import org.watsi.uhp.databinding.FragmentAddNewBillableBinding
 import org.watsi.uhp.managers.KeyboardManager
-import org.watsi.uhp.view_models.BillableViewModel
+import org.watsi.uhp.managers.NavigationManager
+import java.io.Serializable
+import java.util.UUID
 
 import javax.inject.Inject
 
-class AddNewBillableFragment : FormFragment<Encounter>() {
-    private var mBillableViewModel: BillableViewModel? = null
-    private var mCompositionNameTextView: BillableCompositionInput? = null
+class AddNewBillableFragment : DaggerFragment() {
 
-    @Inject
-    internal var billableRepository: BillableRepository? = null
+    @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var billableRepository: BillableRepository
 
-    internal override fun getTitleLabelId(): Int {
-        return R.string.add_new_billable_fragment_label
+    lateinit var identificationEvent: IdentificationEvent
+    lateinit var encounterItems: List<EncounterItemWithBillable>
+
+    companion object {
+        const val PARAM_IDENTIFICATION_EVENT = "identification_event"
+        const val PARAM_ENCOUNTER_ITEMS = "encounter_items"
+
+        fun forIdentificationEvent(idEvent: IdentificationEvent,
+                                   encounterItems: List<EncounterItemWithBillable>): AddNewBillableFragment {
+            val fragment = AddNewBillableFragment()
+            fragment.arguments = Bundle().apply {
+                putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
+                putSerializable(PARAM_ENCOUNTER_ITEMS, encounterItems as Serializable)
+            }
+            return fragment
+        }
     }
 
-    internal override fun getFragmentLayoutId(): Int {
-        return R.layout.fragment_add_new_billable
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        identificationEvent = arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
+        encounterItems = arguments.getSerializable(PARAM_ENCOUNTER_ITEMS) as List<EncounterItemWithBillable>
     }
 
-    override fun isFirstStep(): Boolean {
-        return false
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        activity.setTitle(R.string.add_new_billable_fragment_label)
+        return inflater?.inflate(R.layout.fragment_add_new_billable, container, false)
     }
 
-    override fun nextStep() {
-        val billable = mBillableViewModel!!.billable
-        billable.setCreatedDuringEncounter(true)
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
-        val encounterItem = EncounterItem()
-        encounterItem.setBillable(billable)
+        list_of_compositions.setCompositionChoices(billableRepository.uniqueCompositions())
 
-        mSyncableModel.getEncounterItems().add(encounterItem)
-        KeyboardManager.hideKeyboard(view, context)
-        navigationManager.setEncounterFragment(mSyncableModel)
-    }
+        save_button.setOnClickListener {
+            // TODO: handle empty field values
+            val billable = Billable(id = UUID.randomUUID(),
+                                    type = Billable.Type.valueOf(type_field.selectedItem.toString()),
+                                    composition = list_of_compositions.text.toString(),
+                                    unit = unit_field.text.toString(),
+                                    price = price_field.text.toString().toInt(),
+                                    name = name_field.text.toString())
 
-    internal override fun setUpFragment(view: View) {
-        val binding = DataBindingUtil.bind<FragmentAddNewBillableBinding>(view)
-        mBillableViewModel = BillableViewModel(this)
-        binding!!.billable = mBillableViewModel
-
-        mCompositionNameTextView = view.findViewById<View>(R.id.list_of_compositions) as BillableCompositionInput
-        mCompositionNameTextView!!.setCompositionChoices(billableRepository!!.uniqueCompositions())
+            KeyboardManager.hideKeyboard(view, context)
+            navigationManager.popTo(EncounterFragment.forIdentificationEvent(
+                    identificationEvent, encounterItems, billable))
+        }
     }
 }

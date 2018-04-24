@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notifi
 import org.watsi.domain.entities.IdentificationEvent
 
 import org.watsi.domain.entities.Member
-import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class CurrentMemberDetailFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
-    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var memberRepository: MemberRepository
 
     lateinit var member: Member

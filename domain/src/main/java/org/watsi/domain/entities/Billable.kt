@@ -1,5 +1,6 @@
 package org.watsi.domain.entities
 
+import java.io.Serializable
 import java.text.DecimalFormat
 import java.util.UUID
 
@@ -8,7 +9,7 @@ data class Billable(val id: UUID,
                     val composition: String?,
                     val unit: String?,
                     val price: Int,
-                    val name: String) {
+                    val name: String) : Serializable {
 
     @JvmOverloads
     fun formattedPrice(quantity: Int = 1): String {
