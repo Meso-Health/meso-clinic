@@ -77,7 +77,8 @@ class EncounterFormFragment : DaggerFragment() {
 
         finish_button.setOnClickListener {
             createEncounterForm()
-            // TODO: navigate to receipt fragment
+            navigationManager.goTo(ReceiptFragment.forEncounter(
+                    encounter.copy(encounterForms = updatedEncounterFormList())))
         }
     }
 
