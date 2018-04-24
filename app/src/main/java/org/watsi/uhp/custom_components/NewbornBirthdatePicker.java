@@ -2,6 +2,7 @@ package org.watsi.uhp.custom_components;
 
 import android.widget.DatePicker;
 
+import org.threeten.bp.LocalDate;
 import org.watsi.domain.entities.Member;
 
 import java.util.Calendar;
@@ -19,21 +20,18 @@ public class NewbornBirthdatePicker {
     }
 
     private void setDatePickerInitializerAndListener() {
-        if (mMember.getBirthdate() == null) {
-            mMember.setBirthdate(makeCalendarToday().getTime());
-        }
-        Calendar selectedBirthdate = Calendar.getInstance();
-        selectedBirthdate.setTime(mMember.getBirthdate());
-        mDatePicker.init(selectedBirthdate.get(Calendar.YEAR), selectedBirthdate.get(Calendar.MONTH), selectedBirthdate.get(Calendar.DAY_OF_MONTH),
-                new DatePicker.OnDateChangedListener() {
-                    @Override
-                    public void onDateChanged(DatePicker datePicker, int year, int month, int day) {
-                        Calendar cal = makeCalendarToday();
-                        cal.set(year, month, day);
-                        mMember.setBirthdate(cal.getTime());
-                    }
-                }
-        );
+        // TODO: re-implement
+//        mDatePicker.init(selectedBirthdate.get(Calendar.YEAR), selectedBirthdate.get(Calendar.MONTH), selectedBirthdate.get(Calendar.DAY_OF_MONTH),
+//                new DatePicker.OnDateChangedListener() {
+//                    @Override
+//                    public void onDateChanged(DatePicker datePicker, int year, int month, int day) {
+//
+//                        Calendar cal = makeCalendarToday();
+//                        cal.set(year, month, day);
+//                        mMember.setBirthdate(cal.getTime());
+//                    }
+//                }
+//        );
     }
 
     private void setDatePickerBounds() {

@@ -15,6 +15,9 @@ interface DiagnosisDao {
     @Delete
     fun delete(model: DiagnosisModel)
 
+    @Query("SELECT * FROM diagnoses")
+    fun all(): List<DiagnosisModel>
+
     @Query("SELECT * FROM diagnoses WHERE searchAliases LIKE :query")
     fun searchAliasLike(query: String): List<DiagnosisModel>
 

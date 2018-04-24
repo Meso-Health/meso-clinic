@@ -60,9 +60,10 @@ public class MemberAdapter extends ArrayAdapter<Member> {
         Member member = getItem(position);
 
         if (member != null) {
+            // TODO: clean up formatting
             viewHolder.name.setText(member.getName());
-            viewHolder.age_and_gender.setText(member.getFormattedAgeAndGender());
-            viewHolder.card_id.setText(member.getFormattedCardId());
+            viewHolder.age_and_gender.setText(member.getGender().toString());
+            viewHolder.card_id.setText(member.getCardId());
             viewHolder.phone_number.setText(member.formattedPhoneNumber());
             if (showClinicNumber) {
                 viewHolder.phone_number.setVisibility(View.GONE);
@@ -70,7 +71,7 @@ public class MemberAdapter extends ArrayAdapter<Member> {
                 IdentificationEvent currentCheckIn = identificationEventRepository
                         .openCheckIn(member.getId());
                 if (currentCheckIn != null) {
-                    viewHolder.clinic_number.setText(currentCheckIn.getFormattedClinicNumber());
+                    viewHolder.clinic_number.setText(currentCheckIn.getClinicNumber());
                 }
             }
 

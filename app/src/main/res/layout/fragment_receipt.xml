@@ -1,57 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <data>
-        <variable name="encounter" type="org.watsi.uhp.view_models.EncounterViewModel"/>
-        <variable name="diagnosesItemListView" type="org.watsi.uhp.view_models.DiagnosesListViewModel"/>
-    </data>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="460dp"
-            android:fillViewport="true" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="460dp"
+        android:fillViewport="true" >
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dip" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{diagnosesItemListView.formattedCount}"
-                    android:layout_marginTop="@dimen/fragment_vertical_margin" />
-
-                <ListView
-                    android:id="@+id/diagnoses_items"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@{diagnosesItemListView.selectedDiagnoses}"
-                    android:layout_marginTop="@dimen/fragment_vertical_margin"/>
-
-                <ListView
-                    android:id="@+id/receipt_items"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/fragment_vertical_margin"/>
-            </LinearLayout>
-        </ScrollView>
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom">
+            android:orientation="vertical"
+            android:padding="10dip" >
 
-            <Button
-                android:id="@+id/save_button"
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fragment_vertical_margin" />
+
+            <ListView
+                android:id="@+id/diagnoses_items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/PrimaryButton"
-                android:text="@string/save_encounter_button" />
-        </RelativeLayout>
-    </LinearLayout>
-</layout>
+                android:layout_marginTop="@dimen/fragment_vertical_margin"/>
+
+            <ListView
+                android:id="@+id/receipt_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fragment_vertical_margin"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/PrimaryButton"
+            android:text="@string/save_encounter_button" />
+    </RelativeLayout>
+</LinearLayout>

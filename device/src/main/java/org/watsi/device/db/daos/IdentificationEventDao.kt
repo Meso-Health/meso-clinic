@@ -16,11 +16,11 @@ interface IdentificationEventDao {
     @Update
     fun update(model: IdentificationEventModel)
 
-    @Query("SELECT identification_events.id\n" +
+    @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +
-            "LEFT OUTER JOIN encounters ON encounters.identification_event_id = identification_events.id\n" +
-            "WHERE encounters.identification_event_id IS NULL\n" +
-            "AND identification_events.member_id = :memberId\n" +
+            "LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +
+            "WHERE encounters.identificationEventId IS NULL\n" +
+            "AND identification_events.memberId = :memberId\n" +
             "AND identification_events.dismissed = 0 " +
             "AND identification_events.accepted = 1")
     fun openCheckIn(memberId: UUID): IdentificationEventModel?

@@ -21,6 +21,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.managers.SessionManager
 
 import java.util.UUID
 
@@ -29,11 +30,12 @@ import javax.inject.Inject
 class EnrollmentFingerprintFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
-    @Inject lateinit var simprintsHelper: SimprintsHelper
+    @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
 
     lateinit var member: Member
+    lateinit var simprintsHelper: SimprintsHelper
     private var fingerprintsGuid: UUID? = null
 
     companion object {
@@ -50,7 +52,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        simprintsHelper = SimprintsHelper(sessionManager.currentLoggedInUsername, this)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
     }
 

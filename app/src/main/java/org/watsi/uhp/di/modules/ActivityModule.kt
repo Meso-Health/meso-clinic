@@ -10,7 +10,7 @@ import org.watsi.uhp.di.ActivityScope
 abstract class ActivityModule {
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [FragmentModule::class])
+    @ContributesAndroidInjector(modules = [ClinicActivityModule::class, FragmentModule::class])
     abstract fun bindMainActivity(): ClinicActivity
 
     @ActivityScope

@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 
 import org.watsi.domain.entities.AuthenticationToken;
 import org.watsi.uhp.BuildConfig;
-import org.watsi.uhp.managers.Clock;
 import org.watsi.uhp.managers.ExceptionManager;
 
 import java.io.IOException;
@@ -44,9 +43,6 @@ public class ApiService {
                     .retryOnConnectionFailure(false);
             Gson gson = new GsonBuilder()
                     .excludeFieldsWithoutExposeAnnotation()
-                    .setDateFormat(Clock.ISO_DATE_FORMAT_STRING)
-                    .registerTypeAdapterFactory(new EncounterTypeAdapterFactory())
-                    .registerTypeAdapterFactory(new DiagnosisTypeAdapterFactory())
                     .create();
             Retrofit builder = new Retrofit.Builder()
                     .baseUrl(BuildConfig.API_HOST)

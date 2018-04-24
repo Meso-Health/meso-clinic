@@ -17,18 +17,18 @@ class MenuNavigationManager(private val sessionManager: SessionManager,
                             private val navigationManager: NavigationManager,
                             private val clinicActivity: ClinicActivity) {
 
-    fun handle(arguments: Bundle, menuItem: MenuItem): Boolean {
+    fun handle(arguments: Bundle?, menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.menu_dismiss_member -> {
                 // TODO: create dismissed IdentificationEvent
                 navigationManager.popTo(CurrentPatientsFragment())
             }
             R.id.menu_member_edit -> {
-                val member = arguments.getSerializable(PARAM_MEMBER) as Member
+                val member = arguments?.getSerializable(PARAM_MEMBER) as Member
                 navigationManager.goTo(MemberEditFragment.forMember(member))
             }
             R.id.menu_enroll_newborn -> {
-                val member = arguments.getSerializable(PARAM_MEMBER) as Member
+                val member = arguments?.getSerializable(PARAM_MEMBER) as Member
                 navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
             }
             R.id.menu_version -> {

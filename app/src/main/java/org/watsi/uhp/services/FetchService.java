@@ -137,13 +137,11 @@ public class FetchService extends AbstractSyncJobService {
             if (!unsyncedMemberIds.contains(prevMemberId)) {
                 Member memberToDelete = memberRepository.find(prevMemberId);
                 Map<String, String> params = new HashMap<>();
-                if (memberToDelete != null) {
-                    params.put("member.id", memberToDelete.toString());
-                    ExceptionManager.reportMessage(
-                            "Member deleted due to provider assignment ending.",
-                            ExceptionManager.MESSAGE_LEVEL_INFO, params);
-                    memberRepository.destroy(memberToDelete);
-                }
+                params.put("member.id", memberToDelete.toString());
+                ExceptionManager.reportMessage(
+                        "Member deleted due to provider assignment ending.",
+                        ExceptionManager.MESSAGE_LEVEL_INFO, params);
+                memberRepository.destroy(memberToDelete);
             }
         }
     }

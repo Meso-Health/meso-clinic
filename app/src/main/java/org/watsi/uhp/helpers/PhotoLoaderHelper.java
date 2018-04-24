@@ -19,10 +19,14 @@ public class PhotoLoaderHelper {
     public static void loadMemberPhoto(Context context, Member member, ImageView imageView, int width, int height) {
         int adjustedWidth = getWidthFromDimensionResource(context, width);
         int adjustedHeight = getHeightFromDimensionResource(context, height);
-        if (member.getLocalMemberPhoto() != null) {
-            loadPhotoFromContentUri(context, imageView, member.getLocalMemberPhoto().getUrl(), adjustedWidth, adjustedHeight);
+        if (member.getThumbnailPhotoId() != null) {
+            // TODO: load photo from thumbnail
+//            loadPhotoFromBytes(context, imageView, member.getCroppedPhotoBytes(), adjustedWidth, adjustedHeight);
         } else {
-            loadPhotoFromBytes(context, imageView, member.getCroppedPhotoBytes(), adjustedWidth, adjustedHeight);
+            if (member.getPhotoId() != null) {
+                // TODO: load photo from URL
+//                loadPhotoFromContentUri(context, imageView, member.getLocalMemberPhoto().getUrl(), adjustedWidth, adjustedHeight);
+            }
         }
     }
 

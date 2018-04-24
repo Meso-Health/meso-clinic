@@ -32,6 +32,7 @@ import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.managers.SessionManager
 import java.util.*
 
 import javax.inject.Inject
@@ -40,10 +41,11 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
-    @Inject lateinit var simprintsHelper: SimprintsHelper
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var sessionManager: SessionManager
 
     lateinit var member: Member
+    lateinit var simprintsHelper: SimprintsHelper
     private var verificationDetails: FingerprintVerificationDetails? = null
 
     companion object {
@@ -61,6 +63,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
+        simprintsHelper = SimprintsHelper(sessionManager.currentLoggedInUsername, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

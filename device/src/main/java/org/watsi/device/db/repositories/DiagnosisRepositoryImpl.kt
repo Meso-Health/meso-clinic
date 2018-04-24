@@ -10,6 +10,10 @@ import org.watsi.domain.repositories.DiagnosisRepository
 class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                               private val clock: Clock) : DiagnosisRepository {
 
+    override fun all(): List<Diagnosis> {
+        return diagnosisDao.all().map { it.toDiagnosis() }
+    }
+
     override fun createOrUpdate(diagnosis: Diagnosis) {
         diagnosisDao.insert(DiagnosisModel.fromDiagnosis(diagnosis, clock))
         // TODO: handle updating if it already exists

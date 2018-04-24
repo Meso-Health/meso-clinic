@@ -38,15 +38,15 @@ interface MemberDao {
     @Query("SELECT members.*\n" +
             "FROM members\n" +
             "INNER JOIN (\n" +
-            "   SELECT id, member_id, max(occurred_at) AS occurred_at\n" +
+            "   SELECT id, memberId, max(occurredAt) AS occurredAt\n" +
             "   FROM identification_events\n" +
             "   WHERE accepted = 1\n" +
             "   AND dismissed = 0\n" +
-            "   GROUP BY member_id\n" +
-            ") last_identifications on last_identifications.member_id = members.id\n" +
-            "LEFT OUTER JOIN encounters ON encounters.identification_event_id = last_identifications.id\n" +
-            "WHERE encounters.identification_event_id IS NULL\n" +
-            "ORDER BY last_identifications.occurred_at")
+            "   GROUP BY memberId\n" +
+            ") last_identifications on last_identifications.memberId = members.id\n" +
+            "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
+            "WHERE encounters.identificationEventId IS NULL\n" +
+            "ORDER BY last_identifications.occurredAt")
     fun checkedInMembers(): List<MemberModel>
 
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")

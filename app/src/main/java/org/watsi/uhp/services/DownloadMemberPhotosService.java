@@ -47,20 +47,21 @@ public class DownloadMemberPhotosService extends AbstractSyncJobService {
                 .build();
         int fetchFailures = 0;
         while (iterator.hasNext()) {
-            Member member = iterator.next();
-            try {
-                member.fetchAndSetPhotoFromUrl(okHttpClient);
-                memberRepository.updateFromFetch(member);
-            } catch (IOException e) {
-                // count fetch failures so we can abort fetching early if it is consistently failing
-                fetchFailures++;
-                ExceptionManager.reportException(e);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e1) {
-                    ExceptionManager.reportExceptionWarning(e1);
-                }
-            }
+            // TODO: fetch photo
+//            Member member = iterator.next();
+//            try {
+//                member.fetchAndSetPhotoFromUrl(okHttpClient);
+//                memberRepository.updateFromFetch(member);
+//            } catch (IOException e) {
+//                // count fetch failures so we can abort fetching early if it is consistently failing
+//                fetchFailures++;
+//                ExceptionManager.reportException(e);
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e1) {
+//                    ExceptionManager.reportExceptionWarning(e1);
+//                }
+//            }
 
             iterator.remove();
             if (fetchFailures == MAX_FETCH_FAILURE_ATTEMPTS) {

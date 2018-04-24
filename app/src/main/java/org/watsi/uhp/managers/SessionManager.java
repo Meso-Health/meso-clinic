@@ -81,7 +81,6 @@ public class SessionManager {
      */
     public void logout(ClinicActivity activity) {
         mPreferencesManager.clearUsername();
-        activity.setAuthenticationToken(null);
         if (Rollbar.isInit()) Rollbar.setPersonData(null);
         activity.startActivityForResult(new Intent(activity, AuthenticationActivity.class), 0);
         // clear backstack so new user lands on CurrentPatients fragment
