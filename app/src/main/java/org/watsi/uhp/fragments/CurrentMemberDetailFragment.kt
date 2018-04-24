@@ -70,7 +70,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
         member_action_button.text = getString(R.string.detail_create_encounter)
         member_action_button.setOnClickListener {
-            // TODO: navigate to EncounterFragment (or PresentingCondition if we are still doing that)
+            navigationManager.goTo(EncounterFragment.forIdentificationEvent(identificationEvent))
         }
     }
 
