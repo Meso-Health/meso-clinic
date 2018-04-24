@@ -51,7 +51,8 @@ class MemberEditFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         scan_card.setOnClickListener {
-            // TODO: navigate to barcode fragment
+            navigationManager.goTo(BarcodeFragment.forPurpose(
+                    BarcodeFragment.ScanPurpose.MEMBER_EDIT, member))
         }
 
         save_button.setOnClickListener {

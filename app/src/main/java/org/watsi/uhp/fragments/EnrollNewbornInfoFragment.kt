@@ -47,7 +47,9 @@ class EnrollNewbornInfoFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         scan_card.setOnClickListener {
-            navigationManager.goTo(BarcodeFragment())
+            // TODO: need to pass newborn info as well
+            navigationManager.goTo(
+                    BarcodeFragment.forPurpose(BarcodeFragment.ScanPurpose.NEWBORN, parent))
         }
 
         save_button.setOnClickListener {

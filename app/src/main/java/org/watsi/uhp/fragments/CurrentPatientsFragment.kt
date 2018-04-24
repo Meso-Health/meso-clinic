@@ -61,7 +61,7 @@ class CurrentPatientsFragment : DaggerFragment() {
         }
 
         identification_button.setOnClickListener {
-            // TODO: navigate to BarcodeFragment
+            navigationManager.goTo(BarcodeFragment.forPurpose(BarcodeFragment.ScanPurpose.ID))
         }
     }
 

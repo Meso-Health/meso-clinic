@@ -32,19 +32,31 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
 
     lateinit var scanPurpose: ScanPurpose
+    var member: Member? = null
     var cameraSource: CameraSource? = null
+
+    companion object {
+        const val PARAM_SCAN_PURPOSE = "scan_purpose"
+        const val PARAM_MEMBER = "member"
+
+        fun forPurpose(purpose: ScanPurpose, member: Member? = null): BarcodeFragment {
+            val fragment = BarcodeFragment()
+            fragment.arguments = Bundle().apply {
+                putSerializable(PARAM_SCAN_PURPOSE, purpose)
+                putSerializable(PARAM_MEMBER, member)
+            }
+            return fragment
+        }
+    }
 
     enum class ScanPurpose {
         ID, MEMBER_EDIT, NEWBORN
     }
 
-    companion object {
-        const val PARAM_SCAN_PURPOSE = "scan_purpose"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scanPurpose = ScanPurpose.valueOf(arguments.getString(PARAM_SCAN_PURPOSE))
+        member = arguments.getSerializable(PARAM_MEMBER) as Member?
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -127,10 +139,19 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
                                 }
                             }
                             ScanPurpose.MEMBER_EDIT -> {
-                                // TODO: navigate to edit member fragment
+                                // TODO: handle null member case
+                                member?.let {
+                                    navigationManager.popTo(
+                                            MemberEditFragment.forMember(it.copy(cardId = barcode)))
+                                }
                             }
                             ScanPurpose.NEWBORN -> {
-                                // TODO: navigate to EnrollNewbornFragment
+                                // TODO: handle null member
+                                member?.let {
+                                    // TODO: don't set card
+                                    navigationManager.popTo(
+                                            EnrollNewbornInfoFragment.forParent(it))
+                                }
                             }
                         }
                     }
