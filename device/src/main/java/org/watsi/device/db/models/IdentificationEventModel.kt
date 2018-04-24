@@ -1,11 +1,13 @@
 package org.watsi.device.db.models
 
+import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
+@Entity(tableName = "identification_events")
 data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                     val createdAt: Instant,
                                     val updatedAt: Instant,
@@ -18,7 +20,7 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                     val clinicNumberType: IdentificationEvent.ClinicNumberType,
                                     val dismissed: Boolean,
                                     val dismissalReason: IdentificationEvent.DismissalReason?,
-                                    val fingerprintsVerificationResultCode: Int,
+                                    val fingerprintsVerificationResultCode: Int?,
                                     val fingerprintsVerificationConfidence: Float?,
                                     val fingerprintsVerificationTier: String?) {
 

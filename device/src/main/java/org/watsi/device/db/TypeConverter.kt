@@ -4,11 +4,15 @@ import android.arch.persistence.room.TypeConverter
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.entities.Member
 import java.util.UUID
 
 class TypeConverter {
     private val formatter = DateTimeFormatter.ISO_DATE
+    private val LIST_DELIMITER = ","
 
     @TypeConverter
     fun fromUuid(uuid: UUID?): String? = uuid?.toString()
@@ -29,38 +33,68 @@ class TypeConverter {
     fun toLocalDate(string: String?): LocalDate? = if (string == null) null else LocalDate.parse(string, formatter)
 
     @TypeConverter
-    fun toAction(value: String?): Delta.Action? {
-        return if (value != null) {
-            Delta.Action.valueOf(value)
-        } else {
-            null
-        }
+    fun toAction(value: String?): Delta.Action? = value?.let { Delta.Action.valueOf(it) }
+
+    @TypeConverter
+    fun fromAction(action: Delta.Action?): String? = action?.toString()
+
+    @TypeConverter
+    fun toModelName(value: String?): Delta.ModelName? = value?.let { Delta.ModelName.valueOf(value) }
+
+    @TypeConverter
+    fun fromModelName(modelName: Delta.ModelName?): String? = modelName?.toString()
+
+    @TypeConverter
+    fun toBillableType(value: String?): Billable.Type? = value?.let { Billable.Type.valueOf(value) }
+
+    @TypeConverter
+    fun fromBillableType(type: Billable.Type?): String? = type?.toString()
+
+    @TypeConverter
+    fun toClinicNumberType(value: String?): IdentificationEvent.ClinicNumberType? {
+        return value?.let { IdentificationEvent.ClinicNumberType.valueOf(it) }
     }
 
     @TypeConverter
-    fun fromAction(action: Delta.Action?): String? {
-        return if (action != null) {
-            return action.toString()
-        } else {
-            null
-        }
+    fun fromClinicNumberType(type: IdentificationEvent.ClinicNumberType?): String? = type?.toString()
+
+    @TypeConverter
+    fun toSearchMethod(value: String?): IdentificationEvent.SearchMethod? {
+        return value?.let { IdentificationEvent.SearchMethod.valueOf(value) }
     }
 
     @TypeConverter
-    fun toModelName(value: String?): Delta.ModelName? {
-        return if (value != null) {
-            Delta.ModelName.valueOf(value)
-        } else {
-            null
-        }
+    fun fromSearchMethod(searchMethod: IdentificationEvent.SearchMethod?): String? {
+        return searchMethod?.toString()
     }
 
     @TypeConverter
-    fun fromModelName(modelName: Delta.ModelName?): String? {
-        return if (modelName != null) {
-            modelName.toString()
-        } else {
-            null
-        }
+    fun toDismissalReason(value: String?): IdentificationEvent.DismissalReason? {
+        return value?.let { IdentificationEvent.DismissalReason.valueOf(value) }
     }
+
+    @TypeConverter
+    fun fromDismissalReason(reason: IdentificationEvent.DismissalReason?): String? {
+        return reason?.toString()
+    }
+
+    @TypeConverter
+    fun toGender(value: String?): Member.Gender? = value?.let { Member.Gender.valueOf(value) }
+
+    @TypeConverter
+    fun fromGender(gender: Member.Gender?): String? = gender?.toString()
+
+    @TypeConverter
+    fun toDateAccuracy(value: String?): Member.DateAccuracy? {
+        return value?.let { Member.DateAccuracy.valueOf(value) }
+    }
+
+    @TypeConverter
+    fun fromDateAccuracy(accuracy: Member.DateAccuracy?): String? = accuracy?.toString()
+
+    @TypeConverter
+    fun fromList(list: List<String>?): String? = list?.joinToString(LIST_DELIMITER)
+
+    @TypeConverter
+    fun toList(string: String?): List<String>? = string?.split(LIST_DELIMITER)
 }

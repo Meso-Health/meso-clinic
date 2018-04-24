@@ -31,8 +31,8 @@ interface BillableDao {
     fun findByType(type: Billable.Type): List<BillableModel>
 
     @Query("SELECT DISTINCT(name) FROM billables WHERE type = 'drug'")
-    fun distinctDrugNames(): Set<String>
+    fun distinctDrugNames(): List<String>
 
     @Query("SELECT DISTINCT(composition) FROM billables")
-    fun distinctCompositions(): Set<String>
+    fun distinctCompositions(): List<String>
 }

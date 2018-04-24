@@ -19,6 +19,7 @@ interface PhotoDao {
     @Query("SELECT * FROM photos WHERE id = :id LIMIT 1")
     fun find(id: UUID): PhotoModel
 
+    // TODO: test this query
     @Query("SELECT photos.*\n" +
             "FROM photos\n" +
             "LEFT OUTER JOIN members ON (\n" +
@@ -26,9 +27,6 @@ interface PhotoDao {
             "members.local_national_id_photo_id = photos.id)\n" +
             "LEFT OUTER JOIN encounter_forms ON photos.id = encounter_forms.photo_id\n" +
             "WHERE photos.deleted = 0 AND\n" +
-            // delete if the associated member or encounter form does not have a dirty photo field
-            "(((members.id IS NOT NULL AND members.dirty_fields NOT LIKE '%photo%') OR\n" +
-            "(encounter_forms.id IS NOT NULL AND encounter_forms.dirty_fields NOT LIKE '%photo_id%')) OR\n" +
             // or if not associated with any member encounter form model
             //  this occurs when a photo is taken but is never associated with another model
             //  (e.g. user exits the complete enrollment flow after photo but before saving)

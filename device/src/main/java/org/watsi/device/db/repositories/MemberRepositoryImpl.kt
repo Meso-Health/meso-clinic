@@ -55,7 +55,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun allIds(): Set<UUID> {
-        return memberDao.allIds()
+        return memberDao.allIds().toSet()
     }
 
     override fun sync(deltas: List<Delta>) {

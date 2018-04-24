@@ -33,7 +33,7 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
     }
 
     override fun uniqueCompositions(): Set<String> {
-        return billableDao.distinctCompositions()
+        return billableDao.distinctCompositions().toSet()
     }
 
     override fun fuzzySearchDrugsByName(query: String): List<Billable> {

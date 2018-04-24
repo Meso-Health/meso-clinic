@@ -29,17 +29,17 @@ interface MemberDao {
     @Query("SELECT * FROM members where name = :name")
     fun findByName(name: String): List<MemberModel>
 
-    @Query("SELECT * FROM members WHERE cardId LIKE :cardId")
+    @Query("SELECT * FROM members WHERE cardId LIKE :query")
     fun cardIdLike(query: String): List<MemberModel>
 
     @Query("SELECT DISTINCT(name) FROM members")
-    fun uniqueNames(): Set<String>
+    fun uniqueNames(): List<String>
 
     @Query("SELECT members.*\n" +
             "FROM members\n" +
             "INNER JOIN (\n" +
             "   SELECT id, member_id, max(occurred_at) AS occurred_at\n" +
-            "   FROM identifications\n" +
+            "   FROM identification_events\n" +
             "   WHERE accepted = 1\n" +
             "   AND dismissed = 0\n" +
             "   GROUP BY member_id\n" +
@@ -53,5 +53,5 @@ interface MemberDao {
     fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): List<MemberModel>
 
     @Query("SELECT id FROM members")
-    fun allIds(): Set<UUID>
+    fun allIds(): List<UUID>
 }

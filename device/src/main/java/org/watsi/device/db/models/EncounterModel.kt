@@ -1,13 +1,14 @@
 package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import java.util.UUID
 
 @Entity(tableName = "encounters")
-data class EncounterModel(val id: UUID,
+data class EncounterModel(@PrimaryKey val id: UUID,
                           val createdAt: Instant,
                           val updatedAt: Instant,
                           val memberId: UUID,

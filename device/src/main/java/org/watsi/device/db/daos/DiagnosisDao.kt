@@ -19,7 +19,7 @@ interface DiagnosisDao {
     fun searchAliasLike(query: String): List<DiagnosisModel>
 
     @Query("SELECT DISTINCT(description) FROM diagnoses")
-    fun uniqueDescriptions(): Set<String>
+    fun uniqueDescriptions(): List<String>
 
     @Query("SELECT * FROM diagnoses WHERE description = :description")
     fun findByDescription(description: String): List<DiagnosisModel>
