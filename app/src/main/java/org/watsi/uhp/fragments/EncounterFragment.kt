@@ -3,13 +3,16 @@ package org.watsi.uhp.fragments
 import android.app.SearchManager
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.DatePicker
 import android.widget.SimpleCursorAdapter
+import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.backdate_encounter
@@ -19,6 +22,10 @@ import kotlinx.android.synthetic.main.fragment_encounter.drug_search
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZoneOffset
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 
@@ -31,6 +38,7 @@ import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.runnables.ScrollToBottomRunnable
 import java.io.Serializable
+import java.util.Calendar
 import java.util.UUID
 
 import javax.inject.Inject
@@ -42,6 +50,7 @@ class EncounterFragment : DaggerFragment() {
     @Inject lateinit var billableRepository: BillableRepository
 
     lateinit var identificationEvent: IdentificationEvent
+    private var backdatedOccurredAt: Instant? = null
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
@@ -122,7 +131,7 @@ class EncounterFragment : DaggerFragment() {
         }
 
         backdate_encounter.setOnClickListener {
-            // TODO: open backdate encounter dialog
+            launchBackdateDialog()
         }
 
         save_button.setOnClickListener {
@@ -199,5 +208,47 @@ class EncounterFragment : DaggerFragment() {
                 scrollToBottomOfList()
             }
         }
+    }
+
+    private fun launchBackdateDialog() {
+        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_backdate_encounter, null)
+
+        val datePicker = dialogView.findViewById<View>(R.id.date_picker) as DatePicker
+        val yesterday = Calendar.getInstance()
+        yesterday.add(Calendar.DAY_OF_MONTH, -1)
+        datePicker.maxDate = yesterday.timeInMillis
+
+        val timePicker = dialogView.findViewById<View>(R.id.time_picker) as TimePicker
+
+
+        backdatedOccurredAt?.let {
+            val ldt = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
+            datePicker.updateDate(ldt.year, ldt.monthValue, ldt.dayOfMonth)
+            timePicker.currentHour = ldt.hour
+            timePicker.currentMinute = ldt.minute
+        }
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+
+        dialogView.findViewById<View>(R.id.done).setOnClickListener {
+            backdatedOccurredAt = LocalDateTime.of(
+                    datePicker.year,
+                    datePicker.month,
+                    datePicker.dayOfMonth,
+                    timePicker.currentHour,
+                    timePicker.currentMinute
+            ).toInstant(ZoneOffset.UTC) // TODO: fix offset calculation
+            // TODO: update backdated link text
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<View>(R.id.cancel).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }
