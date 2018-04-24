@@ -9,6 +9,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.fragments.CheckInMemberDetailFragment.Companion.PARAM_MEMBER
 import org.watsi.uhp.fragments.CurrentPatientsFragment
+import org.watsi.uhp.fragments.EnrollNewbornInfoFragment
 import org.watsi.uhp.fragments.MemberEditFragment
 import org.watsi.uhp.fragments.VersionAndSyncFragment
 
@@ -28,7 +29,7 @@ class MenuNavigationManager(private val sessionManager: SessionManager,
             }
             R.id.menu_enroll_newborn -> {
                 val member = arguments.getSerializable(PARAM_MEMBER) as Member
-                // TODO: navigate to enroll newborn fragment
+                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
             }
             R.id.menu_version -> {
                 navigationManager.goTo(VersionAndSyncFragment())
