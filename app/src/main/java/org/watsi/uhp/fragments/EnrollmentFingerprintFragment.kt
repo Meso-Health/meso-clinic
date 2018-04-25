@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_failed_message
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_success_message
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.save_button
+import org.watsi.device.managers.SessionManager
 
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
@@ -21,7 +22,6 @@ import org.watsi.uhp.R
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.managers.SessionManager
 
 import java.util.UUID
 
@@ -52,7 +52,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        simprintsHelper = SimprintsHelper(sessionManager.currentLoggedInUsername, this)
+        simprintsHelper = SimprintsHelper(sessionManager.currentToken()?.user?.username, this)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
     }
 

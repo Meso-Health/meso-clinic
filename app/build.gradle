@@ -177,16 +177,25 @@ dependencies {
     implementation dependencies.reactiveStreams
     kapt dependencies.roomCompiler
 
+    // API
+    implementation dependencies.retrofit
+    implementation dependencies.retrofitRxJava
+    implementation dependencies.gsonConverter
+
     // Simprints
     implementation dependencies.simprints
 
     // Time
     implementation dependencies.threeTenAndroidBackport
 
+    // RX Java
+    implementation dependencies.rxJava
+    implementation dependencies.rxAndroid
+
+    // Exception reporting
+    implementation dependencies.rollbar
+
     // Old architecture dependencies
-    implementation 'com.rollbar:rollbar-android:0.2.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'me.philio:pinentryview:1.0.6'
     implementation 'net.hockeyapp.android:HockeySDK:4.1.2'
     implementation 'com.github.bumptech.glide:glide:3.8.0'

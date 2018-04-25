@@ -1,13 +1,16 @@
 package org.watsi.uhp.di.modules
 
-import android.accounts.AccountManager
 import android.content.Context
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.Module
 import dagger.Provides
 import org.threeten.bp.Clock
-import org.watsi.uhp.managers.PreferencesManager
-import org.watsi.uhp.managers.SessionManager
+import org.watsi.device.api.CoverageApi
+import org.watsi.device.managers.PreferencesManager
+import org.watsi.device.managers.PreferencesManagerImpl
+import org.watsi.device.managers.SessionManager
+import org.watsi.device.managers.SessionManagerImpl
+import javax.inject.Singleton
 
 @Module
 class DeviceModule {
@@ -18,8 +21,16 @@ class DeviceModule {
         return Clock.systemDefaultZone()
     }
 
+    @Singleton
     @Provides
-    fun provideSessionManager(context: Context): SessionManager {
-        return SessionManager(PreferencesManager(context), AccountManager.get(context))
+    fun providePreferencesManager(context: Context): PreferencesManager {
+        return PreferencesManagerImpl(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSessionManager(preferencesManager: PreferencesManager,
+                              api: CoverageApi): SessionManager {
+        return SessionManagerImpl(preferencesManager, api)
     }
 }

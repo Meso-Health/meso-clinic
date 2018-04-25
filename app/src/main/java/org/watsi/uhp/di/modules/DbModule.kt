@@ -5,6 +5,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.threeten.bp.Clock
+import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.AppDatabase
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
@@ -22,6 +23,8 @@ import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
 import org.watsi.device.db.repositories.MemberRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
+import org.watsi.device.managers.PreferencesManager
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.DiagnosisRepository
@@ -105,8 +108,12 @@ class DbModule {
     }
 
     @Provides
-    fun provideMemberRepository(memberDao: MemberDao, clock: Clock): MemberRepository =
-            MemberRepositoryImpl(memberDao, clock)
+    fun provideMemberRepository(memberDao: MemberDao,
+                                api: CoverageApi,
+                                sessionManager: SessionManager,
+                                preferencesManager: PreferencesManager,
+                                clock: Clock): MemberRepository =
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,

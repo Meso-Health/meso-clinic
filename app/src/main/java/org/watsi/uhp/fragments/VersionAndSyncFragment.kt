@@ -19,18 +19,19 @@ import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_encounters_
 import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_id_events_quantity
 import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_new_members_quantity
 import kotlinx.android.synthetic.main.fragment_version_and_sync.version_number
+import org.watsi.device.managers.PreferencesManager
 
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.ExceptionManager
-import org.watsi.uhp.managers.PreferencesManager
 
 import javax.inject.Inject
 
 class VersionAndSyncFragment : DaggerFragment() {
 
+    @Inject lateinit var preferencesManager: PreferencesManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var deltaRepository: DeltaRepository
 
@@ -55,10 +56,9 @@ class VersionAndSyncFragment : DaggerFragment() {
     }
 
     private fun updateTimestamps() {
-        val preferencesManager = PreferencesManager(activity)
-        fetch_members_timestamp.text = preferencesManager.memberLastModified
-        fetch_billables_timestamp.text = preferencesManager.billablesLastModified
-        fetch_diagnoses_timestamp.text = preferencesManager.diagnosesLastModified
+        fetch_members_timestamp.text = preferencesManager.getMemberLastFetched().toString()
+        fetch_billables_timestamp.text = preferencesManager.getBillablesLastFetched().toString()
+        fetch_diagnoses_timestamp.text = preferencesManager.getDiagnosesLastFetched().toString()
     }
 
     private fun refreshValues() {

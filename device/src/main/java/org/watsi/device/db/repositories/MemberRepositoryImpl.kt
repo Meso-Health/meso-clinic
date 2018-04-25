@@ -1,14 +1,20 @@
 package org.watsi.device.db.repositories
 
 import org.threeten.bp.Clock
+import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.managers.PreferencesManager
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.MemberRepository
 import java.util.UUID
 
 class MemberRepositoryImpl(private val memberDao: MemberDao,
+                           private val api: CoverageApi,
+                           private val sessionManager: SessionManager,
+                           private val preferencesManager: PreferencesManager,
                            private val clock: Clock) : MemberRepository {
 
     override fun find(id: UUID): Member {
@@ -19,12 +25,28 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.insert(MemberModel.fromMember(member, clock))
     }
 
-    override fun destroy(member: Member) {
-        memberDao.destroy(MemberModel.fromMember(member, clock))
-    }
-
-    override fun updateFromFetch(member: Member) {
-        // TODO: implement
+    override fun fetch() {
+        if (!memberDao.allIds().isEmpty()) {
+            // TODO: don't re-fetch until we properly implement updating fetched members
+            return
+        }
+        sessionManager.currentToken()?.let { token ->
+            api.members(token.getHeaderString(), token.user.providerId).execute()?.let { response ->
+                // TODO: handle null body
+                if (response.isSuccessful) {
+                    response.body()?.let { updatedMembers ->
+                        updatedMembers.forEach {
+                            memberDao.insert(MemberModel.fromMember(it.toMember(), clock))
+                        }
+                    }
+                    preferencesManager.updateMemberLastFetched(clock.instant())
+                } else {
+                    // something
+                }
+                // TODO: handle null response
+            }
+            // TODO: handle logged out case
+        }
     }
 
     override fun findByCardId(cardId: String): Member? {
@@ -52,10 +74,6 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     override fun membersWithPhotosToFetch(): List<Member> {
         // TODO: implement
         return emptyList()
-    }
-
-    override fun allIds(): Set<UUID> {
-        return memberDao.allIds().toSet()
     }
 
     override fun sync(deltas: List<Delta>) {

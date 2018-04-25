@@ -6,19 +6,9 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <!--
-        Required for application to automatically download google play vision libraries on install
-        ref: https://developers.google.com/vision/android/multi-tracker-tutorial#querying_the_detector_operational_status
-    -->
-    <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
 
     <application
         android:name=".BaseApplication"
@@ -26,8 +16,14 @@
         android:icon="${appIcon}"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:launchMode="singleTop"
         android:theme="@style/mainTheme">
+
+        <!--
+            Required for application to automatically download google play vision libraries on install
+            ref: https://developers.google.com/vision/android/multi-tracker-tutorial#querying_the_detector_operational_status
+        -->
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
+
         <service
             android:name=".services.DownloadMemberPhotosService"
             android:permission="android.permission.BIND_JOB_SERVICE"
@@ -44,15 +40,6 @@
             android:name=".services.DeleteFetchedPhotoService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
-        <service
-            android:name=".services.AuthenticationService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -64,10 +51,8 @@
         </provider>
         <activity
             android:name=".activities.ClinicActivity"
-            android:label="@string/main_activity_label"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop"
-            android:configChanges="orientation"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,10 +61,8 @@
         </activity>
         <activity
             android:name=".activities.AuthenticationActivity"
-            android:label="@string/main_activity_label"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop"
-            android:configChanges="orientation"
             android:screenOrientation="portrait" >
         </activity>
     </application>

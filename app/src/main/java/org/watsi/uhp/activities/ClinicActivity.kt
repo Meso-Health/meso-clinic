@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -17,13 +18,13 @@ import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.MenuNavigationManager
-import org.watsi.uhp.managers.SessionManager
 import org.watsi.uhp.services.DeleteFetchedPhotoService
 import org.watsi.uhp.services.DownloadMemberPhotosService
 import org.watsi.uhp.services.FetchService
 import org.watsi.uhp.services.SyncService
 
 import dagger.android.support.DaggerAppCompatActivity
+import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.fragments.CurrentPatientsFragment
 
 import org.watsi.uhp.managers.NavigationManager
@@ -67,6 +68,8 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
         if (!hasPermissions) {
             ActivityCompat.requestPermissions(this, requiredPermissions, 0)
+        } else if (sessionManager.currentToken() == null) {
+            navigateToAuthenticationActivity()
         }
     }
 
@@ -134,5 +137,9 @@ class ClinicActivity : DaggerAppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun navigateToAuthenticationActivity() {
+        startActivity(Intent(this, AuthenticationActivity::class.java))
     }
 }

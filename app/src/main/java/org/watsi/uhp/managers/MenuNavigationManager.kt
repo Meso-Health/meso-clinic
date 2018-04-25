@@ -3,6 +3,7 @@ package org.watsi.uhp.managers
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.MenuItem
+import org.watsi.device.managers.SessionManager
 
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
@@ -39,7 +40,8 @@ class MenuNavigationManager(private val sessionManager: SessionManager,
                         .setTitle(R.string.log_out_alert)
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes) { _, _ ->
-                            sessionManager.logout(clinicActivity)
+                            sessionManager.logout()
+                            clinicActivity.navigateToAuthenticationActivity()
                         }.create().show()
 
             }

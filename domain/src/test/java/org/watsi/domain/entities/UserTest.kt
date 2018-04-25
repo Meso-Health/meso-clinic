@@ -7,7 +7,7 @@ class UserTest {
 
     @Test
     fun foo() {
-        val user = User(1, "foo", "bar", User.Role.PROVIDER, 1)
+        val user = User(1, "foo", "bar", 1)
         assertEquals(1, user.id)
     }
 }

@@ -61,6 +61,12 @@
             app:digitWidth="35dp"
             app:digitHeight="35dp"/>
 
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
         <Button
             android:id="@+id/login_button"
             android:layout_height="wrap_content"

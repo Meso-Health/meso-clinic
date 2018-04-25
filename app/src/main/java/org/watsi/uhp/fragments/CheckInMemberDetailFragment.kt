@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notifi
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
 import org.threeten.bp.Clock
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
 
 import org.watsi.domain.entities.Member
@@ -32,8 +33,7 @@ import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.managers.SessionManager
-import java.util.*
+import java.util.UUID
 
 import javax.inject.Inject
 
@@ -63,7 +63,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
-        simprintsHelper = SimprintsHelper(sessionManager.currentLoggedInUsername, this)
+        simprintsHelper = SimprintsHelper(sessionManager.currentToken()?.user?.username, this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
