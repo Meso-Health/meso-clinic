@@ -18,30 +18,31 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val clock: Clock) : MemberRepository {
 
     override fun find(id: UUID): Member {
-        return memberDao.find(id).toMember()
+        return memberDao.find(id)!!.toMember()
     }
 
     override fun save(member: Member) {
-        return memberDao.insert(MemberModel.fromMember(member, clock))
+        if (memberDao.find(member.id) != null) {
+            memberDao.update(MemberModel.fromMember(member, clock))
+        } else {
+            memberDao.insert(MemberModel.fromMember(member, clock))
+        }
     }
 
     override fun fetch() {
-        if (!memberDao.allIds().isEmpty()) {
-            // TODO: don't re-fetch until we properly implement updating fetched members
-            return
-        }
         sessionManager.currentToken()?.let { token ->
             api.members(token.getHeaderString(), token.user.providerId).execute()?.let { response ->
                 // TODO: handle null body
                 if (response.isSuccessful) {
                     response.body()?.let { updatedMembers ->
-                        updatedMembers.forEach {
-                            memberDao.insert(MemberModel.fromMember(it.toMember(), clock))
-                        }
+                        updatedMembers.forEach { save(it.toMember()) }
+                        // TODO: more efficient way of saving?
+                        // TODO: clean up any members not returned in the fetch
+                        // TODO: do not overwrite unsynced member data
                     }
                     preferencesManager.updateMemberLastFetched(clock.instant())
                 } else {
-                    // something
+                    // TODO: log
                 }
                 // TODO: handle null response
             }
