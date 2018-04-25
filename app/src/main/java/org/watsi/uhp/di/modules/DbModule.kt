@@ -80,8 +80,12 @@ class DbModule {
     fun providePhotoDao(db: AppDatabase): PhotoDao = db.photoDao()
 
     @Provides
-    fun provideBillableRepository(billableDao: BillableDao, clock: Clock): BillableRepository =
-            BillableRepositoryImpl(billableDao, clock)
+    fun provideBillableRepository(billableDao: BillableDao,
+                                  api: CoverageApi,
+                                  sessionManager: SessionManager,
+                                  preferencesManager: PreferencesManager,
+                                  clock: Clock): BillableRepository =
+            BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {

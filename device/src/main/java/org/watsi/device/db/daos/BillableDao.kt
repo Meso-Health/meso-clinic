@@ -22,7 +22,7 @@ interface BillableDao {
     fun delete(model: BillableModel)
 
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
-    fun find(id: UUID): BillableModel
+    fun find(id: UUID): BillableModel?
 
     @Query("SELECT * FROM billables where name = :name")
     fun findByName(name: String): List<BillableModel>

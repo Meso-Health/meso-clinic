@@ -3,8 +3,8 @@ package org.watsi.device.api
 import io.reactivex.Single
 import okhttp3.RequestBody
 import org.watsi.device.api.models.AuthenticationTokenApi
+import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.MemberApi
-import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
@@ -39,7 +39,7 @@ interface CoverageApi {
     fun billables(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int
-    ): Call<List<Billable>>
+    ): Call<List<BillableApi>>
 
     @GET("diagnoses")
     fun diagnoses(

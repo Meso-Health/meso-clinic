@@ -5,11 +5,10 @@ import java.util.UUID
 
 interface BillableRepository {
     fun find(id: UUID): Billable
-    fun createOrUpdate(billable: Billable)
-    fun clearBillablesWithoutUnsyncedEncounter()
+    fun create(billable: Billable)
+    fun fetch()
     fun findByName(name: String): List<Billable>
     fun findByType(type: Billable.Type): List<Billable>
     fun uniqueCompositions(): Set<String>
     fun fuzzySearchDrugsByName(query: String): List<Billable>
-    fun fetch()
 }
