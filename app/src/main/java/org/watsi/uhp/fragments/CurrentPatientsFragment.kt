@@ -44,8 +44,7 @@ class CurrentPatientsFragment : DaggerFragment() {
 
             current_patients.adapter = MemberAdapter(context,
                                                      checkedInMembers,
-                                                     true,
-                                                     identificationEventRepository)
+                                                     true)
 
             current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
                 val member = parent.getItemAtPosition(position) as Member

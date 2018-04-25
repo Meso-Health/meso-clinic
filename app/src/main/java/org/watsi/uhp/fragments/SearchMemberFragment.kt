@@ -12,17 +12,19 @@ import kotlinx.android.synthetic.main.fragment_member_search.member_search
 import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-
 import org.watsi.domain.repositories.IdentificationEventRepository
+
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.managers.KeyboardManager
+import org.watsi.uhp.managers.NavigationManager
 
 import javax.inject.Inject
 
 class SearchMemberFragment : DaggerFragment() {
 
+    @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
 
@@ -32,11 +34,11 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        member_search.setOnQueryTextFocusChangeListener { view, hasFocus ->
+        member_search.setOnQueryTextFocusChangeListener { searchView, hasFocus ->
             if (hasFocus) {
                 // for SearchViews, in order to properly show the search keyboard, we need to
                 // use findFocus() to grab and pass a view *inside* of the SearchView
-                KeyboardManager.showKeyboard(view.findFocus(), activity)
+                KeyboardManager.showKeyboard(searchView.findFocus(), activity)
             }
         }
 
@@ -73,13 +75,19 @@ class SearchMemberFragment : DaggerFragment() {
         }
 
         override fun onPostExecute(pair: Pair<IdentificationEvent.SearchMethod, List<Member>>) {
-            val adapter = MemberAdapter(activity, pair.second, false, identificationEventRepository)
+            val adapter = MemberAdapter(activity, pair.second, false)
 
             member_search_results.adapter = adapter
             member_search_results.emptyView = member_no_search_results_text
             member_search_results.setOnItemClickListener { parent, _, position, _ ->
                 val member = parent.getItemAtPosition(position) as Member
-                // TODO: navigate to MemberDetailFragment
+                val openCheckIn = identificationEventRepository.openCheckIn(member.id)
+                if (openCheckIn != null) {
+                    navigationManager.goTo(
+                            CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
+                } else {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
+                }
             }
             // TODO: dismiss ProgressDialog
             member_search_results.requestFocus()
