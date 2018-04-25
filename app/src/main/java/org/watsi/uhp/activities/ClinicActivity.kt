@@ -1,9 +1,12 @@
 package org.watsi.uhp.activities
 
+import android.Manifest
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -37,6 +40,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
         private val SYNC_SERVICE_JOB_ID = 1
         private val DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID = 2
         private val DELETE_PHOTOS_SERVICE_JOB_ID = 3
+        val requiredPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.INTERNET)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +61,13 @@ class ClinicActivity : DaggerAppCompatActivity() {
     override fun onPostResume() {
         super.onPostResume()
 
-        // TODO: launch AuthenticationActivity if not logged in
+        val hasPermissions = requiredPermissions.all {
+            ActivityCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (!hasPermissions) {
+            ActivityCompat.requestPermissions(this, requiredPermissions, 0)
+        }
     }
 
     override fun onStart() {

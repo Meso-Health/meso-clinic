@@ -14,6 +14,12 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!--
+        Required for application to automatically download google play vision libraries on install
+        ref: https://developers.google.com/vision/android/multi-tracker-tutorial#querying_the_detector_operational_status
+    -->
+    <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
+
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"

@@ -1,15 +1,16 @@
 package org.watsi.uhp.fragments
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 
-import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_barcode.barcode_preview_surface
 import kotlinx.android.synthetic.main.fragment_barcode.search_member
@@ -18,10 +19,8 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
-import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.NavigationManager
-
-import java.io.IOException
+import org.watsi.uhp.managers.QrCodeDetectorManager
 
 import javax.inject.Inject
 
@@ -31,9 +30,9 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
 
+    lateinit var qrCodeDetectorManager: QrCodeDetectorManager
     lateinit var scanPurpose: ScanPurpose
     var member: Member? = null
-    var cameraSource: CameraSource? = null
 
     companion object {
         const val PARAM_SCAN_PURPOSE = "scan_purpose"
@@ -42,7 +41,7 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
         fun forPurpose(purpose: ScanPurpose, member: Member? = null): BarcodeFragment {
             val fragment = BarcodeFragment()
             fragment.arguments = Bundle().apply {
-                putSerializable(PARAM_SCAN_PURPOSE, purpose)
+                putString(PARAM_SCAN_PURPOSE, purpose.name)
                 putSerializable(PARAM_MEMBER, member)
             }
             return fragment
@@ -57,6 +56,12 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
         super.onCreate(savedInstanceState)
         scanPurpose = ScanPurpose.valueOf(arguments.getString(PARAM_SCAN_PURPOSE))
         member = arguments.getSerializable(PARAM_MEMBER) as Member?
+        qrCodeDetectorManager = QrCodeDetectorManager(activity)
+
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED) {
+            throw Exception("Camera permission not granted")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,31 +76,17 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
             search_member.visibility = View.GONE
         } else {
             search_member.setOnClickListener {
-                // TODO: navigate to SearchMemberFragment
+                navigationManager.goTo(SearchMemberFragment())
             }
         }
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        try {
-            val barcodeDetector = BarcodeDetector.Builder(context)
-                    .setBarcodeFormats(Barcode.QR_CODE)
-                    .build()
-
-            while (!barcodeDetector.isOperational) {
-                try {
-                    Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    ExceptionManager.reportExceptionWarning(e)
-                }
-            }
-
-            setBarcodeProcessor(barcodeDetector)
-            cameraSource?.start(holder)
-        } catch (e: IOException) {
-            ExceptionManager.reportException(e)
-        } catch (e: SecurityException) {
-            ExceptionManager.reportException(e)
+        if (qrCodeDetectorManager.isOperational()) {
+            qrCodeDetectorManager.start(QrCodeDetector(), holder)
+        } else {
+            // TODO: handle better
+            throw Exception("BatcodeDetector is not operational")
         }
     }
 
@@ -104,65 +95,57 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        cameraSource?.release()
+        qrCodeDetectorManager.releaseResources()
     }
 
-    private fun setBarcodeProcessor(barcodeDetector: BarcodeDetector) {
-        barcodeDetector.setProcessor(object : Detector.Processor<Barcode> {
-            override fun release() {
-                // no-op
-            }
+    inner class QrCodeDetector : Detector.Processor<Barcode> {
+        override fun release() {
+            // no-op
+        }
 
-            override fun receiveDetections(detections: Detector.Detections<Barcode>) {
-                val barcodes = detections.detectedItems
-                if (barcodes.size() > 0) {
-                    val barcode = barcodes.valueAt(0)?.displayValue ?: return
-                    if (!Member.validCardId(barcode)) {
-                        // TODO: show invalid card ID error notification
-                    } else {
-                        when (scanPurpose) {
-                            // TODO: probably want to restructure this Fragment into an Activity
-                        // that returns this as a result - will hopefully simplify the call-out
-                        // and back-stack complexity of this screen
-                            ScanPurpose.ID -> {
-                                val member = memberRepository.findByCardId(barcode)
-                                if (member == null) {
-                                    // TODO: show member not found error
+        override fun receiveDetections(detections: Detector.Detections<Barcode>?) {
+            val barcodes = detections?.detectedItems
+            if (barcodes != null && barcodes.size() > 0) {
+                val barcode = barcodes.valueAt(0)?.displayValue ?: return
+                if (!Member.validCardId(barcode)) {
+                    // TODO: show invalid card ID error notification
+                } else {
+                    when (scanPurpose) {
+                    // TODO: probably want to restructure this Fragment into an Activity
+                    // that returns this as a result - will hopefully simplify the call-out
+                    // and back-stack complexity of this screen
+                        ScanPurpose.ID -> {
+                            val member = memberRepository.findByCardId(barcode)
+                            if (member == null) {
+                                // TODO: show member not found error
+                            } else {
+                                val openCheckIn = identificationEventRepository.openCheckIn(member.id)
+                                if (openCheckIn == null) {
+                                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
                                 } else {
-                                    val openCheckIn = identificationEventRepository.openCheckIn(member.id)
-                                    if (openCheckIn == null) {
-                                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                                    } else {
-                                        navigationManager.goTo(
-                                                CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
-                                    }
+                                    navigationManager.goTo(
+                                            CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
                                 }
                             }
-                            ScanPurpose.MEMBER_EDIT -> {
-                                // TODO: handle null member case
-                                member?.let {
-                                    navigationManager.popTo(
-                                            MemberEditFragment.forMember(it.copy(cardId = barcode)))
-                                }
+                        }
+                        ScanPurpose.MEMBER_EDIT -> {
+                            // TODO: handle null member case
+                            member?.let {
+                                navigationManager.popTo(
+                                        MemberEditFragment.forMember(it.copy(cardId = barcode)))
                             }
-                            ScanPurpose.NEWBORN -> {
-                                // TODO: handle null member
-                                member?.let {
-                                    // TODO: don't set card
-                                    navigationManager.popTo(
-                                            EnrollNewbornInfoFragment.forParent(it))
-                                }
+                        }
+                        ScanPurpose.NEWBORN -> {
+                            // TODO: handle null member
+                            member?.let {
+                                // TODO: don't set card
+                                navigationManager.popTo(
+                                        EnrollNewbornInfoFragment.forParent(it))
                             }
                         }
                     }
                 }
             }
-        })
-
-        cameraSource = CameraSource.Builder(context, barcodeDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedFps(15.0f)
-                .setAutoFocusEnabled(true)
-                .build()
+        }
     }
 }
