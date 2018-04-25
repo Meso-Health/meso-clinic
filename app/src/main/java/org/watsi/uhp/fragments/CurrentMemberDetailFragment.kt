@@ -8,19 +8,29 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
+import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
+import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
+import kotlinx.android.synthetic.main.fragment_member_detail.member_name_detail_fragment
+import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
+import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
+import org.threeten.bp.Clock
 import org.watsi.domain.entities.IdentificationEvent
 
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
+import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.managers.NavigationManager
 import javax.inject.Inject
 
 class CurrentMemberDetailFragment : DaggerFragment() {
 
+    @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var memberRepository: MemberRepository
+    @Inject lateinit var photoRepository: PhotoRepository
 
     lateinit var member: Member
     lateinit var identificationEvent: IdentificationEvent
@@ -57,6 +67,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 navigationManager.goTo(EnrollmentMemberPhotoFragment.forMember(member))
             }
         }
+
         if (member.cardId == null) {
             replace_card_notification.visibility = View.VISIBLE
             replace_card_notification.setOnClickListener {
@@ -64,7 +75,12 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             }
         }
 
-        // TODO: need to set fragment views with member information
+        member_name_detail_fragment.text = member.name
+        member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
+        member_card_id_detail_fragment.text = member.cardId
+        member_phone_number.text = member.phoneNumber
+        PhotoLoaderHelper(activity, photoRepository).loadMemberPhoto(
+                member, member_photo, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height)
 
         member_action_button.text = getString(R.string.detail_create_encounter)
         member_action_button.setOnClickListener {

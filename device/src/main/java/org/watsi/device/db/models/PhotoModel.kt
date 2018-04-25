@@ -15,7 +15,7 @@ data class PhotoModel(@PrimaryKey val id: UUID,
                       val createdAt: Instant,
                       val updatedAt: Instant,
                       @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val bytes: ByteArray?,
-                      val url: String,
+                      val url: String?,
                       val deleted: Boolean) {
 
     fun toPhoto(): Photo {

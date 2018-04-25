@@ -11,10 +11,15 @@ import org.watsi.domain.repositories.PhotoRepository
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.util.UUID
 
 class PhotoRepositoryImpl(private val photoDao: PhotoDao,
                           private val clock: Clock,
                           private val contentResolver: ContentResolver) : PhotoRepository {
+
+    override fun find(id: UUID): Photo {
+        return photoDao.find(id).toPhoto()
+    }
 
     override fun create(photo: Photo) {
         photoDao.insert(PhotoModel.fromPhoto(photo, clock))

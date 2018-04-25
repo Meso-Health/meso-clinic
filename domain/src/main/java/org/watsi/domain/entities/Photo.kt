@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class Photo(val id: UUID,
                  val bytes: ByteArray?,
-                 val url: String,
+                 val url: String?,
                  val deleted: Boolean = false) {
 
     override fun equals(other: Any?): Boolean{

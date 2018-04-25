@@ -39,15 +39,15 @@ public class PhotoLoaderHelperTest {
     public void loadMemberPhoto_nonLocalPhoto() throws Exception {
         byte[] photoBytes = new byte[]{(byte)0xe0};
         when(mockMember.getCroppedPhotoBytes()).thenReturn(photoBytes);
-        when(PhotoLoaderHelper.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
-        when(PhotoLoaderHelper.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
+        when(PhotoLoaderHelper.INSTANCE.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
+        when(PhotoLoaderHelper.INSTANCE.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
 
         doCallRealMethod().when(PhotoLoaderHelper.class, "loadMemberPhoto", mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
-        PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        PhotoLoaderHelper.INSTANCE.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.loadPhotoFromBytes(mockContext, mockImageView, photoBytes, 90, 120);
+        PhotoLoaderHelper.INSTANCE.loadPhotoFromBytes(mockContext, mockImageView, photoBytes, 90, 120);
     }
 
     @Test
@@ -56,14 +56,14 @@ public class PhotoLoaderHelperTest {
         photo.setUrl("random-local-full-size-image-url");
         when(mockMember.getLocalMemberPhoto()).thenReturn(photo);
         when(mockMember.getCroppedPhotoBytes()).thenReturn(null);
-        when(PhotoLoaderHelper.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
-        when(PhotoLoaderHelper.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
+        when(PhotoLoaderHelper.INSTANCE.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
+        when(PhotoLoaderHelper.INSTANCE.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
 
         doCallRealMethod().when(PhotoLoaderHelper.class, "loadMemberPhoto", mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
-        PhotoLoaderHelper.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        PhotoLoaderHelper.INSTANCE.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.loadPhotoFromContentUri(mockContext, mockImageView, "random-local-full-size-image-url", 90, 120);
+        PhotoLoaderHelper.INSTANCE.loadPhotoFromContentUri(mockContext, mockImageView, "random-local-full-size-image-url", 90, 120);
     }
 }

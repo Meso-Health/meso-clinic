@@ -16,9 +16,13 @@ import android.widget.Toast
 import com.simprints.libsimprints.Constants
 import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.dialog_clinic_number.radio_group_clinic_number
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
+import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
+import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
+import kotlinx.android.synthetic.main.fragment_member_detail.member_name_detail_fragment
+import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
+import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
@@ -28,8 +32,10 @@ import org.watsi.domain.entities.IdentificationEvent
 
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
+import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.KeyboardManager
@@ -42,8 +48,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
-    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var photoRepository: PhotoRepository
 
     lateinit var member: Member
     lateinit var simprintsHelper: SimprintsHelper
@@ -80,6 +87,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 navigationManager.goTo(EnrollmentMemberPhotoFragment.forMember(member))
             }
         }
+
         if (member.cardId == null) {
             replace_card_notification.visibility = View.VISIBLE
             replace_card_notification.setOnClickListener {
@@ -87,7 +95,12 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             }
         }
 
-        // TODO: need to set fragment views with member information
+        member_name_detail_fragment.text = member.name
+        member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
+        member_card_id_detail_fragment.text = member.cardId
+        member_phone_number.text = member.phoneNumber
+        PhotoLoaderHelper(activity, photoRepository).loadMemberPhoto(
+                member, member_photo, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height)
 
         member_action_button.text = getString(R.string.check_in)
         member_action_button.setOnClickListener {

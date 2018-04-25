@@ -15,8 +15,10 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 
@@ -27,6 +29,7 @@ class SearchMemberFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var photoRepository: PhotoRepository
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.member_search_fragment_label)
@@ -75,7 +78,8 @@ class SearchMemberFragment : DaggerFragment() {
         }
 
         override fun onPostExecute(pair: Pair<IdentificationEvent.SearchMethod, List<Member>>) {
-            val adapter = MemberAdapter(activity, pair.second, false)
+            val photoLoaderHelper = PhotoLoaderHelper(activity, photoRepository)
+            val adapter = MemberAdapter(activity, pair.second, photoLoaderHelper, false)
 
             member_search_results.adapter = adapter
             member_search_results.emptyView = member_no_search_results_text

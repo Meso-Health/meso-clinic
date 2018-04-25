@@ -14,6 +14,7 @@ import org.watsi.uhp.helpers.PhotoLoaderHelper
 
 class MemberAdapter(context: Context,
                     memberList: List<Member>,
+                    private val photoLoaderHelper: PhotoLoaderHelper,
                     private val showClinicNumber: Boolean
 ) : ArrayAdapter<Member>(context, R.layout.item_member_list, memberList) {
 
@@ -55,7 +56,7 @@ class MemberAdapter(context: Context,
 //                viewHolder.clinic_number?.text = currentCheckIn.clinicNumber.toString()
             }
 
-            PhotoLoaderHelper.loadMemberPhoto(context, member, viewHolder.photo, R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height)
+            photoLoaderHelper.loadMemberPhoto(member, viewHolder.photo!!, R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height)
         }
 
         return convertView
