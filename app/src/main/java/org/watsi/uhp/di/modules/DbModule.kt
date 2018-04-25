@@ -93,8 +93,12 @@ class DbModule {
     }
 
     @Provides
-    fun provideDiagnosisRepository(diagnosisDao: DiagnosisDao, clock: Clock): DiagnosisRepository =
-            DiagnosisRepositoryImpl(diagnosisDao, clock)
+    fun provideDiagnosisRepository(diagnosisDao: DiagnosisDao,
+                                   api: CoverageApi,
+                                   sessionManager: SessionManager,
+                                   preferencesManager: PreferencesManager,
+                                   clock: Clock): DiagnosisRepository =
+            DiagnosisRepositoryImpl(diagnosisDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun provideEncounterRepository(encounterDao: EncounterDao, clock: Clock): EncounterRepository =

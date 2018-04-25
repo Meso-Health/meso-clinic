@@ -18,6 +18,7 @@ class FetchService : AbstractSyncJobService() {
     override fun performSync(): Boolean {
         memberRepository.fetch()
         billableRepository.fetch()
+        diagnosisRepository.fetch()
         return true
     }
 }

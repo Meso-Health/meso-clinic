@@ -4,8 +4,8 @@ import io.reactivex.Single
 import okhttp3.RequestBody
 import org.watsi.device.api.models.AuthenticationTokenApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.MemberApi
-import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.IdentificationEvent
@@ -44,7 +44,7 @@ interface CoverageApi {
     @GET("diagnoses")
     fun diagnoses(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String
-    ): Call<List<Diagnosis>>
+    ): Call<List<DiagnosisApi>>
 
     @POST("providers/{providerId}/identification_events")
     fun postIdentificationEvent(
