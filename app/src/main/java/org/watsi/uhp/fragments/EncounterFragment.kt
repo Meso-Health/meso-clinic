@@ -79,6 +79,12 @@ class EncounterFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        billableTypeOptions = arrayOf(getString(prompt_category)).union(Billable.Type.values().map {
+            it.toString()
+        }).toTypedArray()
+        billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
+        lineItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
+
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
         lineItemsFromArgs = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
         observable = viewModel.getObservable(lineItemsFromArgs ?: emptyList())
@@ -122,12 +128,6 @@ class EncounterFragment : DaggerFragment() {
                 }
             }
         })
-        val billableTypes = Billable.Type.values()
-        billableTypeOptions = arrayOf(getString(prompt_category)).union(billableTypes.map {
-            it.toString()
-        }).toTypedArray()
-        billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
-        lineItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
