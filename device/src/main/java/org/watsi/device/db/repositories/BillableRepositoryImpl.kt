@@ -54,12 +54,8 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }
     }
 
-    override fun findByName(name: String): List<Billable> {
-        return billableDao.findByName(name).map { it.toBillable() }
-    }
-
     override fun findByType(type: Billable.Type): List<Billable> {
-        return billableDao.findByType(type).map { it.toBillable() }
+        return billableDao.findByType(type).map { it.toBillable() }.sortedBy { it.name }
     }
 
     override fun uniqueCompositions(): Set<String> {
@@ -74,5 +70,9 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         return topMatchingNames.map { result ->
             findByName(result.string).filter { it.type == Billable.Type.DRUG }
         }.flatten()
+    }
+
+    private fun findByName(name: String): List<Billable> {
+        return billableDao.findByName(name).map { it.toBillable() }
     }
 }

@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.fragment_add_new_billable.type_field
 import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.relations.EncounterItemWithBillable
 
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.uhp.R
@@ -29,29 +28,19 @@ class AddNewBillableFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var billableRepository: BillableRepository
 
-    lateinit var identificationEvent: IdentificationEvent
-    lateinit var encounterItems: List<EncounterItemWithBillable>
-
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
-        const val PARAM_ENCOUNTER_ITEMS = "encounter_items"
+        const val PARAM_LINE_ITEMS = "line_items"
 
         fun forIdentificationEvent(idEvent: IdentificationEvent,
-                                   encounterItems: List<EncounterItemWithBillable>): AddNewBillableFragment {
+                                   lineItems: List<Pair<Billable, Int>>): AddNewBillableFragment {
             val fragment = AddNewBillableFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
-                putSerializable(PARAM_ENCOUNTER_ITEMS, encounterItems as Serializable)
+                putSerializable(PARAM_LINE_ITEMS, lineItems as Serializable)
             }
             return fragment
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        identificationEvent = arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
-        encounterItems = arguments.getSerializable(PARAM_ENCOUNTER_ITEMS) as List<EncounterItemWithBillable>
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -72,9 +61,13 @@ class AddNewBillableFragment : DaggerFragment() {
                                     price = price_field.text.toString().toInt(),
                                     name = name_field.text.toString())
 
+            val identificationEvent =
+                    arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
+            val lineItems = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>
+
             KeyboardManager.hideKeyboard(view, context)
             navigationManager.popTo(EncounterFragment.forIdentificationEvent(
-                    identificationEvent, encounterItems, billable))
+                    identificationEvent, lineItems, billable))
         }
     }
 }

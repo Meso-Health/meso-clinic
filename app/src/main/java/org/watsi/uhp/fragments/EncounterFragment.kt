@@ -11,13 +11,16 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
+import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
 import kotlinx.android.synthetic.main.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.EncounterItem
 
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.EncounterItemWithBillable
@@ -39,19 +42,23 @@ class EncounterFragment : DaggerFragment() {
 
     lateinit var viewModel: EncounterViewModel
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
+    lateinit var billableTypeOptions: Array<String>
+    lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
+    lateinit var lineItemAdapter: ArrayAdapter<LineItemPresenter>
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
-        const val PARAM_ENCOUNTER_ITEMS = "encounter_items"
+        const val PARAM_LINE_ITEMS = "line_items"
         const val PARAM_BILLABLE = "billable"
 
         fun forIdentificationEvent(idEvent: IdentificationEvent,
-                                   encounterItems: List<EncounterItemWithBillable> = emptyList(),
+                                   lineItems: List<Pair<Billable, Int>> = emptyList(),
                                    billable: Billable? = null): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
-                putSerializable(PARAM_ENCOUNTER_ITEMS, encounterItems as Serializable)
+                // TODO: this Serializable cast is probably broken
+                putSerializable(PARAM_LINE_ITEMS, lineItems as Serializable)
                 putSerializable(PARAM_BILLABLE, billable)
             }
             return fragment
@@ -62,9 +69,13 @@ class EncounterFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        observable = viewModel.getObservable(emptyList())
+        val previousLineItems = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
+        observable = viewModel.getObservable(previousLineItems ?: emptyList())
         observable.observe(this, Observer {
             it?.let { viewState ->
+                if (viewState.type == null) {
+                    type_spinner.setSelection(0)
+                }
                 when (viewState.type) {
                     null -> {
                         billable_spinner.visibility = View.GONE
@@ -75,12 +86,30 @@ class EncounterFragment : DaggerFragment() {
                         drug_search.visibility = View.VISIBLE
                     }
                     else -> {
+                        val billableOptions = viewState.selectableBillables.map {
+                            BillablePresenter(it)
+                        }.toMutableList()
+                        billableOptions.add(0, BillablePresenter(null))
+                        billableAdapter.clear()
+                        billableAdapter.addAll(billableOptions)
+                        billable_spinner.setSelection(0)
                         billable_spinner.visibility = View.VISIBLE
                         drug_search.visibility = View.GONE
                     }
                 }
+
+                viewState.lineItems.let {
+                    lineItemAdapter.clear()
+                    lineItemAdapter.addAll(it.map { LineItemPresenter(it.first, it.second) })
+                }
             }
         })
+        val billableTypes = Billable.Type.values()
+        billableTypeOptions = arrayOf(getString(prompt_category)).union(billableTypes.map {
+            it.toString()
+        }).toTypedArray()
+        billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
+        lineItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -89,11 +118,12 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val billableTypes = Billable.Type.values()
-        val typeSpinnerOptions = arrayOf(getString(prompt_category)).union(billableTypes.map { it.toString() })
+        val identificationEvent =
+                arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
+
 
         type_spinner.adapter = ArrayAdapter<String>(
-                activity, android.R.layout.simple_spinner_item, typeSpinnerOptions.toTypedArray())
+                activity, android.R.layout.simple_spinner_item, billableTypeOptions)
 
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -101,36 +131,56 @@ class EncounterFragment : DaggerFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.selectType(if (position > 0) billableTypes[position - 1] else null)
+                val selectedType = if (position > 0) {
+                    Billable.Type.valueOf(billableTypeOptions[position])
+                } else {
+                    null
+                }
+                viewModel.selectType(selectedType)
             }
         }
 
+        billable_spinner.adapter = billableAdapter
+
+        billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                /* no-op */
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
+            }
+        }
+
+        line_items_list.adapter = lineItemAdapter
+
+        add_billable_prompt.setOnClickListener {
+            // TODO: pass current encounter item list
+            navigationManager.goTo(AddNewBillableFragment.forIdentificationEvent(
+                    identificationEvent, emptyList()))
+        }
+
         save_button.setOnClickListener {
-            val identificationEvent =
-                    arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
             val encounter = Encounter(id = UUID.randomUUID(),
                     memberId = identificationEvent.memberId,
                     identificationEventId = identificationEvent.id,
                     occurredAt = clock.instant(),
                     backdatedOccurredAt = observable.value?.backdatedOccurredAt)
-            val encounterItems = observable.value?.encounterItems ?: emptyList()
+            val encounterItems = observable.value?.lineItems?.map {
+                val encounterItem = EncounterItem(
+                        UUID.randomUUID(), encounter.id, it.first.id, it.second)
+                EncounterItemWithBillable(encounterItem, it.first)
+            }
 
-            navigationManager.goTo(DiagnosisFragment.forEncounter(
-                    EncounterWithItemsAndForms(encounter, encounterItems, emptyList())))
+            if (encounterItems == null) {
+                // TODO: do not allow submitting without any encounter items
+            } else {
+                navigationManager.goTo(DiagnosisFragment.forEncounter(
+                        EncounterWithItemsAndForms(encounter, encounterItems, emptyList())))
+            }
         }
+    }
 
-//        line_items_list.adapter = EncounterItemAdapter(
-//                context, R.layout.item_encounter_item_list, emptyList())
-//
-//        val prompt = getString(R.string.prompt_category)
-//        val categoriesArray = arrayOf(prompt).union(Billable.Type.values().map { it.toString() }).toMutableList()
-//
-//        val categoriesAdapter = ArrayAdapter<String>(
-//                activity, android.R.layout.simple_spinner_dropdown_item, categoriesArray)
-//
-//        category_spinner.adapter = categoriesAdapter
-//        category_spinner.tag = "category"
-//        category_spinner.onItemSelectedListener = CategoryListener()
 //
 //        drug_search.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
 //            override fun onQueryTextSubmit(query: String?): Boolean = true
@@ -160,17 +210,11 @@ class EncounterFragment : DaggerFragment() {
 //        })
 //        drug_search.queryHint = getString(R.string.search_drug_hint)
 //
-//        add_billable_prompt.setOnClickListener {
-//            // TODO: pass current encounter item list
-//            navigationManager.goTo(AddNewBillableFragment.forIdentificationEvent(
-//                    identificationEvent, emptyList()))
-//        }
 //
 //        backdate_encounter.setOnClickListener {
 //            launchBackdateDialog()
 //        }
 
-    }
 
 //    private fun createBillableCursorAdapter(query: String): SimpleCursorAdapter {
 //        val cursorColumns = arrayOf("_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2, "id")
@@ -192,50 +236,8 @@ class EncounterFragment : DaggerFragment() {
 //                0)
 //    }
 //
-//    private fun createBillableAdapter(category: Billable.Type): ArrayAdapter<Billable> {
-//        val promptString = "Select a " + category.toString().toLowerCase() + "..."
-//        val promptBillable = Billable(UUID.randomUUID(), Billable.Type.DRUG, null, null, 0, promptString)
-//        val billables = arrayOf(promptBillable).union(billableRepository.findByType(category)).toList()
-//        return ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, billables)
-//    }
-//
 //    private fun scrollToBottomOfList() {
 //        line_items_list.post(ScrollToBottomRunnable(line_items_list))
-//    }
-//
-//    inner class CategoryListener : AdapterView.OnItemSelectedListener {
-//        override fun onNothingSelected(parent: AdapterView<*>?)  {/* no-op */ }
-//
-//        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            drug_search.visibility = View.GONE
-//            billable_spinner.visibility = View.GONE
-//
-//            if (position != 0) {
-//                val category = Billable.Type.valueOf(parent?.getItemAtPosition(position).toString())
-//                if (category == Billable.Type.DRUG) {
-//                    drug_search.visibility = View.VISIBLE
-//                    KeyboardManager.focusAndForceShowKeyboard(drug_search, activity)
-//                } else {
-//                    billable_spinner.adapter = createBillableAdapter(category)
-//                    billable_spinner.onItemSelectedListener = BillableListener()
-//                    billable_spinner.visibility = View.VISIBLE
-//                    billable_spinner.performClick()
-//                }
-//            }
-//        }
-//    }
-//
-//    inner class BillableListener : AdapterView.OnItemSelectedListener {
-//        override fun onNothingSelected(parent: AdapterView<*>?) { /* no-op */ }
-//
-//        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            if (position != 0) {
-//                val billable = parent?.adapter?.getItem(position)
-//                // TODO: add to encounter item list
-//                billable_spinner.setSelection(0)
-//                scrollToBottomOfList()
-//            }
-//        }
 //    }
 //
 //    private fun launchBackdateDialog() {
@@ -279,4 +281,16 @@ class EncounterFragment : DaggerFragment() {
 //
 //        dialog.show()
 //    }
+    /**
+     * Used to customize toString behavior for use in an ArrayAdapter
+     */
+    data class BillablePresenter(val billable: Billable?) {
+        override fun toString(): String = billable?.name ?: "Select..."
+    }
+
+    data class LineItemPresenter(val billable: Billable, val quantity: Int) {
+        override fun toString(): String {
+            return "${billable.name} - $quantity"
+        }
+    }
 }

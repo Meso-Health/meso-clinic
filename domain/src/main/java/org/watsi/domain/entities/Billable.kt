@@ -1,7 +1,6 @@
 package org.watsi.domain.entities
 
 import java.io.Serializable
-import java.text.DecimalFormat
 import java.util.UUID
 
 data class Billable(val id: UUID,
@@ -10,11 +9,6 @@ data class Billable(val id: UUID,
                     val unit: String?,
                     val price: Int,
                     val name: String) : Serializable {
-
-    @JvmOverloads
-    fun formattedPrice(quantity: Int = 1): String {
-        return DecimalFormat("#,###").format(price * quantity)
-    }
 
     fun dosageDetails(): String? {
         return if (composition != null) {
@@ -28,5 +22,5 @@ data class Billable(val id: UUID,
         }
     }
 
-    enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE, UNSPECIFIED }
+    enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE }
 }
