@@ -24,13 +24,4 @@ interface DiagnosisDao {
 
     @Query("SELECT * FROM diagnoses")
     fun all(): List<DiagnosisModel>
-
-    @Query("SELECT * FROM diagnoses WHERE searchAliases LIKE :query")
-    fun searchAliasLike(query: String): List<DiagnosisModel>
-
-    @Query("SELECT DISTINCT(description) FROM diagnoses")
-    fun uniqueDescriptions(): List<String>
-
-    @Query("SELECT * FROM diagnoses WHERE description = :description")
-    fun findByDescription(description: String): List<DiagnosisModel>
 }

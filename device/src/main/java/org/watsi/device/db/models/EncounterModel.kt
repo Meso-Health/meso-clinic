@@ -15,7 +15,8 @@ data class EncounterModel(@PrimaryKey val id: UUID,
                           val identificationEventId: UUID,
                           val occurredAt: Instant,
                           val backdatedOccurredAt: Instant?,
-                          val copaymentPaid: Boolean) {
+                          val copaymentPaid: Boolean,
+                          val diagnoses: List<Int>) {
 
     fun toEncounter(): Encounter {
         return Encounter(id = id,
@@ -23,7 +24,8 @@ data class EncounterModel(@PrimaryKey val id: UUID,
                          identificationEventId = identificationEventId,
                          occurredAt = occurredAt,
                          backdatedOccurredAt = backdatedOccurredAt,
-                         copaymentPaid = copaymentPaid)
+                         copaymentPaid = copaymentPaid,
+                         diagnoses = diagnoses)
     }
 
     companion object {
@@ -36,7 +38,8 @@ data class EncounterModel(@PrimaryKey val id: UUID,
                                   identificationEventId = encounter.identificationEventId,
                                   occurredAt = encounter.occurredAt,
                                   backdatedOccurredAt = encounter.backdatedOccurredAt,
-                                  copaymentPaid = encounter.copaymentPaid)
+                                  copaymentPaid = encounter.copaymentPaid,
+                                  diagnoses = encounter.diagnoses)
         }
     }
 }

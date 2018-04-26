@@ -167,7 +167,6 @@ class EncounterFragment : DaggerFragment() {
             }
         }
 
-        drug_search.queryHint = getString(R.string.search_drug_hint)
         drug_search.suggestionsAdapter = SimpleCursorAdapter(
                 activity, R.layout.item_billable_search_suggestion, null,
                 arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2),
@@ -176,9 +175,7 @@ class EncounterFragment : DaggerFragment() {
             override fun onQueryTextSubmit(query: String?): Boolean = true
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    viewModel.updateQuery(newText)
-                }
+                newText?.let { viewModel.updateQuery(it) }
                 return true
             }
         })

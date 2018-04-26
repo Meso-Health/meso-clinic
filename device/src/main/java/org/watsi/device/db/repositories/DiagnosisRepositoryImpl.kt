@@ -14,6 +14,9 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                               private val sessionManager: SessionManager,
                               private val preferencesManager: PreferencesManager,
                               private val clock: Clock) : DiagnosisRepository {
+    override fun all(): List<Diagnosis> {
+        return diagnosisDao.all().map { it.toDiagnosis() }
+    }
 
     private fun save(diagnosis: Diagnosis) {
         if (diagnosisDao.find(diagnosis.id) != null) {
@@ -42,28 +45,5 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
 
             }
         }
-    }
-
-    override fun fuzzySearchByName(query: String): List<Diagnosis> {
-        return emptyList()
-//        val topMatchingDescriptions = FuzzySearch.extractTop(
-//                query, diagnosisDao.uniqueDescriptions(), 6, 60)
-//
-//        // This sorts the fuzzy search results by decreasing score, increasing alphabetical order.
-//        topMatchingDescriptions.sortWith(Comparator { o1, o2 ->
-//            if (o2.score == o1.score)
-//                o1.string.compareTo(o2.string)
-//            else
-//                Integer.compare(o2.score, o1.score)
-//        })
-//
-//        val matchingSearchAliasesDiagnoses = diagnosisDao.searchAliasLike("%$query%")
-//        val matchingDescriptionDiagnoses = topMatchingDescriptions.map {
-//            diagnosisDao.findByDescription(it.string)
-//        }.flatten()
-//
-//        return (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses)
-//                .distinct()
-//                .map { it.toDiagnosis() }
     }
 }

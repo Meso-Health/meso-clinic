@@ -50,6 +50,8 @@ class EncounterViewModel @Inject constructor(billableRepository: BillableReposit
             }.flatten().sortedBy { it.name }
 
             observable.value = observable.value?.copy(selectableBillables = matchingBillables)
+        } else {
+            observable.value = observable.value?.copy(selectableBillables = emptyList())
         }
     }
 

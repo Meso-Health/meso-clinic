@@ -10,11 +10,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <org.watsi.uhp.custom_components.DiagnosisFuzzySearchInput
-            android:id="@+id/diagnosis_fuzzy_search_input"
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spinner_vertical_margin"
+            android:layout_marginBottom="@dimen/spinner_vertical_margin"
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin"
+            android:background="@drawable/view_outline_rectangle">
+
+            <SearchView
+                android:id="@+id/diagnosis_search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:iconifiedByDefault="false"
+                android:queryHint="@string/search_diagnosis_hint"
+                android:inputType="textFilter" />
+        </LinearLayout>
 
         <View
             android:id="@+id/divider"

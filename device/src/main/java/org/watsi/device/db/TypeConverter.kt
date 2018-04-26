@@ -93,8 +93,14 @@ class TypeConverter {
     fun fromDateAccuracy(accuracy: Member.DateAccuracy?): String? = accuracy?.toString()
 
     @TypeConverter
-    fun fromList(list: List<String>?): String? = list?.joinToString(LIST_DELIMITER)
+    fun fromStringList(list: List<String>?): String? = list?.joinToString(LIST_DELIMITER)
 
     @TypeConverter
-    fun toList(string: String?): List<String>? = string?.split(LIST_DELIMITER)
+    fun toStringList(string: String?): List<String>? = string?.split(LIST_DELIMITER)
+
+    @TypeConverter
+    fun fromIntList(list: List<Int>?): String? = list?.joinToString(LIST_DELIMITER)
+
+    @TypeConverter
+    fun toIntList(string: String?): List<Int>? = string?.split(LIST_DELIMITER)?.map { it.toInt() }
 }
