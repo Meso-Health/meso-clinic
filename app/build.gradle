@@ -195,7 +195,8 @@ dependencies {
     // Exception reporting
     implementation dependencies.rollbar
 
-    // Old architecture dependencies
+    // Application dependencies
+    implementation 'me.xdrop:fuzzywuzzy:1.1.9'
     implementation 'me.philio:pinentryview:1.0.6'
     implementation 'net.hockeyapp.android:HockeySDK:4.1.2'
     implementation 'com.github.bumptech.glide:glide:3.8.0'

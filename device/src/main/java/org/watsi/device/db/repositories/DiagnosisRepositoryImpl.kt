@@ -1,6 +1,5 @@
 package org.watsi.device.db.repositories
 
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.DiagnosisDao
@@ -46,24 +45,25 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
     }
 
     override fun fuzzySearchByName(query: String): List<Diagnosis> {
-        val topMatchingDescriptions = FuzzySearch.extractTop(
-                query, diagnosisDao.uniqueDescriptions(), 6, 60)
-
-        // This sorts the fuzzy search results by decreasing score, increasing alphabetical order.
-        topMatchingDescriptions.sortWith(Comparator { o1, o2 ->
-            if (o2.score == o1.score)
-                o1.string.compareTo(o2.string)
-            else
-                Integer.compare(o2.score, o1.score)
-        })
-
-        val matchingSearchAliasesDiagnoses = diagnosisDao.searchAliasLike("%$query%")
-        val matchingDescriptionDiagnoses = topMatchingDescriptions.map {
-            diagnosisDao.findByDescription(it.string)
-        }.flatten()
-
-        return (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses)
-                .distinct()
-                .map { it.toDiagnosis() }
+        return emptyList()
+//        val topMatchingDescriptions = FuzzySearch.extractTop(
+//                query, diagnosisDao.uniqueDescriptions(), 6, 60)
+//
+//        // This sorts the fuzzy search results by decreasing score, increasing alphabetical order.
+//        topMatchingDescriptions.sortWith(Comparator { o1, o2 ->
+//            if (o2.score == o1.score)
+//                o1.string.compareTo(o2.string)
+//            else
+//                Integer.compare(o2.score, o1.score)
+//        })
+//
+//        val matchingSearchAliasesDiagnoses = diagnosisDao.searchAliasLike("%$query%")
+//        val matchingDescriptionDiagnoses = topMatchingDescriptions.map {
+//            diagnosisDao.findByDescription(it.string)
+//        }.flatten()
+//
+//        return (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses)
+//                .distinct()
+//                .map { it.toDiagnosis() }
     }
 }

@@ -1,6 +1,5 @@
 package org.watsi.device.db.repositories
 
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.BillableDao
@@ -19,6 +18,10 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
 
     override fun find(id: UUID): Billable {
         return billableDao.find(id)!!.toBillable()
+    }
+
+    override fun all(): List<Billable> {
+        return billableDao.all().map { it.toBillable() }
     }
 
     override fun create(billable: Billable) {
@@ -54,25 +57,7 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }
     }
 
-    override fun findByType(type: Billable.Type): List<Billable> {
-        return billableDao.findByType(type).map { it.toBillable() }.sortedBy { it.name }
-    }
-
     override fun uniqueCompositions(): Set<String> {
         return billableDao.distinctCompositions().toSet()
-    }
-
-    override fun fuzzySearchDrugsByName(query: String): List<Billable> {
-        val uniqueDrugNames = billableDao.distinctDrugNames()
-
-        val topMatchingNames = FuzzySearch.extractTop(query, uniqueDrugNames, 5, 50)
-
-        return topMatchingNames.map { result ->
-            findByName(result.string).filter { it.type == Billable.Type.DRUG }
-        }.flatten()
-    }
-
-    private fun findByName(name: String): List<Billable> {
-        return billableDao.findByName(name).map { it.toBillable() }
     }
 }
