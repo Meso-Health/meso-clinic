@@ -52,7 +52,7 @@ class EncounterFragment : DaggerFragment() {
 
     lateinit var viewModel: EncounterViewModel
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
-    lateinit var billableTypeOptions: Array<String>
+    lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var lineItemAdapter: ArrayAdapter<LineItemPresenter>
     private var lineItemsFromArgs: List<Pair<Billable, Int>>? = null
@@ -79,9 +79,10 @@ class EncounterFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        billableTypeOptions = arrayOf(getString(prompt_category)).union(Billable.Type.values().map {
-            it.toString()
-        }).toTypedArray()
+        val billableTypeOptions = Billable.Type.values().map { it.toString() }.toMutableList()
+        billableTypeOptions.add(0, getString(prompt_category))
+        billableTypeAdapter = ArrayAdapter(
+                activity, android.R.layout.simple_list_item_1, billableTypeOptions)
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
         lineItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
@@ -139,10 +140,7 @@ class EncounterFragment : DaggerFragment() {
         val identificationEvent =
                 arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
 
-
-        type_spinner.adapter = ArrayAdapter<String>(
-                activity, android.R.layout.simple_spinner_item, billableTypeOptions)
-
+        type_spinner.adapter = billableTypeAdapter
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 /* no-op */
@@ -150,7 +148,7 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedType = if (position > 0) {
-                    Billable.Type.valueOf(billableTypeOptions[position])
+                    Billable.Type.valueOf(billableTypeAdapter.getItem(position))
                 } else {
                     null
                 }
@@ -159,7 +157,6 @@ class EncounterFragment : DaggerFragment() {
         }
 
         billable_spinner.adapter = billableAdapter
-
         billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 /* no-op */
@@ -171,7 +168,10 @@ class EncounterFragment : DaggerFragment() {
         }
 
         drug_search.queryHint = getString(R.string.search_drug_hint)
-
+        drug_search.suggestionsAdapter = SimpleCursorAdapter(
+                activity, R.layout.item_billable_search_suggestion, null,
+                arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2),
+                intArrayOf(R.id.text1, R.id.text2), 0)
         drug_search.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
 
@@ -182,7 +182,6 @@ class EncounterFragment : DaggerFragment() {
                 return true
             }
         })
-
         drug_search.setOnSuggestionListener(object : android.widget.SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean = true
 
@@ -194,11 +193,6 @@ class EncounterFragment : DaggerFragment() {
                 return true
             }
         })
-
-        drug_search.suggestionsAdapter = SimpleCursorAdapter(
-                activity, R.layout.item_billable_search_suggestion, null,
-                arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2),
-                intArrayOf(R.id.text1, R.id.text2), 0)
 
         line_items_list.adapter = lineItemAdapter
 

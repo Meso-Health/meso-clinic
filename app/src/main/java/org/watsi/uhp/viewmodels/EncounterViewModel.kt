@@ -24,7 +24,7 @@ class EncounterViewModel @Inject constructor(billableRepository: BillableReposit
     fun selectType(type: Billable.Type?) {
         val selectableBillables = if (type != null && type != Billable.Type.DRUG) {
             val currentBillables = observable.value?.lineItems?.map { it.first } ?: emptyList()
-            billablesByType[type]!!.filter {  it -> !currentBillables.contains(it) }
+            billablesByType[type]!!.filter {  it -> !currentBillables.contains(it) }.sortedBy { it.name }
         } else {
             emptyList()
         }
@@ -47,7 +47,7 @@ class EncounterViewModel @Inject constructor(billableRepository: BillableReposit
 
             val matchingBillables = topMatchingNames.map { result ->
                 billablesByType[Billable.Type.DRUG]!!.filter { it.name == result.string }
-            }.flatten()
+            }.flatten().sortedBy { it.name }
 
             observable.value = observable.value?.copy(selectableBillables = matchingBillables)
         }
