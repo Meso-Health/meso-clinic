@@ -45,6 +45,7 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeOptions: Array<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var lineItemAdapter: ArrayAdapter<LineItemPresenter>
+    private var lineItemsFromArgs: List<Pair<Billable, Int>>? = null
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
@@ -69,8 +70,8 @@ class EncounterFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        val previousLineItems = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
-        observable = viewModel.getObservable(previousLineItems ?: emptyList())
+        lineItemsFromArgs = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
+        observable = viewModel.getObservable(lineItemsFromArgs ?: emptyList())
         observable.observe(this, Observer {
             it?.let { viewState ->
                 if (viewState.type == null) {
@@ -155,9 +156,8 @@ class EncounterFragment : DaggerFragment() {
         line_items_list.adapter = lineItemAdapter
 
         add_billable_prompt.setOnClickListener {
-            // TODO: pass current encounter item list
             navigationManager.goTo(AddNewBillableFragment.forIdentificationEvent(
-                    identificationEvent, emptyList()))
+                    identificationEvent, lineItemsFromArgs ?: emptyList()))
         }
 
         save_button.setOnClickListener {
