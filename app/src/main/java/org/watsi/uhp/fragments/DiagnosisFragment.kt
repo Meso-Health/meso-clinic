@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_fuzzy_search_
 import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 import org.watsi.domain.repositories.DiagnosisRepository
@@ -26,12 +25,12 @@ class DiagnosisFragment : DaggerFragment() {
 
     lateinit var diagnosesList: MutableList<Diagnosis>
     lateinit var adapter: ArrayAdapter<Diagnosis>
-    lateinit var encounter: Encounter
+    lateinit var encounter: EncounterWithItemsAndForms
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: Encounter): DiagnosisFragment {
+        fun forEncounter(encounter: EncounterWithItemsAndForms): DiagnosisFragment {
             val fragment = DiagnosisFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -43,7 +42,7 @@ class DiagnosisFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounter = arguments.getSerializable(PARAM_ENCOUNTER) as Encounter
+        encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
         diagnosesList = mutableListOf()
     }
 
@@ -55,14 +54,13 @@ class DiagnosisFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         diagnosis_fuzzy_search_input.setDiagnosisChosenListener(this, diagnosisRepository)
 
-        adapter = ArrayAdapter<Diagnosis>(
-                activity, android.R.layout.simple_list_item_1, diagnosesList)
+        adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, diagnosesList)
         selected_diagnosis_list.adapter = adapter
         // TODO: support removing diagnoses
 
         save_button.setOnClickListener {
-            navigationManager.goTo(EncounterFormFragment.forEncounter(
-                    EncounterWithItemsAndForms(encounter, emptyList(), emptyList())))
+            // TODO: associate diagnoses with encounter
+            navigationManager.goTo(EncounterFormFragment.forEncounter(encounter))
         }
     }
 

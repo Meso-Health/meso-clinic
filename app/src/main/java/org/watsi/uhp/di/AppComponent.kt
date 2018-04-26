@@ -10,6 +10,7 @@ import org.watsi.uhp.di.modules.ApplicationBindingModule
 import org.watsi.uhp.di.modules.DbModule
 import org.watsi.uhp.di.modules.DeviceModule
 import org.watsi.uhp.di.modules.ServiceModule
+import org.watsi.uhp.di.modules.ViewModelModule
 import javax.inject.Singleton
 
 @Singleton
@@ -20,7 +21,8 @@ import javax.inject.Singleton
     ServiceModule::class,
     DeviceModule::class,
     ApiModule::class,
-    DbModule::class
+    DbModule::class,
+    ViewModelModule::class
 ])
 interface AppComponent : AndroidInjector<BaseApplication> {
 

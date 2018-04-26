@@ -27,7 +27,7 @@
                 android:layout_marginRight="@dimen/fragment_horizontal_margin" >
     
                 <Spinner
-                    android:id="@+id/category_spinner"
+                    android:id="@+id/type_spinner"
                     android:layout_width="fill_parent"
                     android:layout_height="40dp" />
             </RelativeLayout>
@@ -55,22 +55,6 @@
                     android:queryHint="@string/search_drug_hint"
                     android:inputType="textFilter"
                     android:visibility="gone" />
-            </LinearLayout>
-    
-            <LinearLayout
-                android:id="@+id/lab_result_spinner_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spinner_vertical_margin"
-                android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-                android:layout_marginRight="@dimen/fragment_horizontal_margin"
-                android:background="@drawable/view_outline_rectangle"
-                android:visibility="gone">
-    
-                <Spinner
-                    android:id="@+id/lab_result_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp" />
             </LinearLayout>
         </LinearLayout>
     
