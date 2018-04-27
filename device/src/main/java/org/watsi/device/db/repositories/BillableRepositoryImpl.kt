@@ -57,7 +57,7 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }
     }
 
-    override fun uniqueCompositions(): Set<String> {
-        return billableDao.distinctCompositions().toSet()
+    override fun uniqueCompositions(): List<String> {
+        return billableDao.distinctCompositions()
     }
 }

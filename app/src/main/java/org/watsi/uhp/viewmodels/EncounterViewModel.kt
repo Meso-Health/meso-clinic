@@ -4,12 +4,22 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.BillableRepository
+import java.util.UUID
 import javax.inject.Inject
 
-class EncounterViewModel @Inject constructor(billableRepository: BillableRepository) : ViewModel() {
+class EncounterViewModel @Inject constructor(
+        billableRepository: BillableRepository,
+        private val clock: Clock
+) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
     private val billables = billableRepository.all()
@@ -57,6 +67,21 @@ class EncounterViewModel @Inject constructor(billableRepository: BillableReposit
 
     fun updateBackdatedOccurredAt(instant: Instant) {
         observable.value = observable.value?.copy(backdatedOccurredAt = instant)
+    }
+
+    fun buildEncounterWithItemsAndForms(identificationEvent: IdentificationEvent): EncounterWithItemsAndForms? {
+        val encounter = Encounter(id = UUID.randomUUID(),
+                memberId = identificationEvent.memberId,
+                identificationEventId = identificationEvent.id,
+                occurredAt = clock.instant(),
+                backdatedOccurredAt = observable.value?.backdatedOccurredAt)
+        return observable.value?.lineItems?.map {
+            val encounterItem = EncounterItem(
+                    UUID.randomUUID(), encounter.id, it.first.id, it.second)
+            EncounterItemWithBillable(encounterItem, it.first)
+        }?.let { encounterItems ->
+            EncounterWithItemsAndForms(encounter, encounterItems, emptyList())
+        }
     }
 
     data class ViewState(val type: Billable.Type? = null,

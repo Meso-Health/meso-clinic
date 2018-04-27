@@ -8,5 +8,5 @@ interface BillableRepository {
     fun all(): List<Billable>
     fun create(billable: Billable)
     fun fetch()
-    fun uniqueCompositions(): Set<String>
+    fun uniqueCompositions(): List<String>
 }

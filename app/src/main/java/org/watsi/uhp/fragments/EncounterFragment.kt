@@ -29,18 +29,13 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZoneOffset
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.entities.Encounter
-import org.watsi.domain.entities.EncounterItem
 
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import java.io.Serializable
-import java.util.UUID
 
 import javax.inject.Inject
 
@@ -203,22 +198,13 @@ class EncounterFragment : DaggerFragment() {
         }
 
         save_button.setOnClickListener {
-            val encounter = Encounter(id = UUID.randomUUID(),
-                    memberId = identificationEvent.memberId,
-                    identificationEventId = identificationEvent.id,
-                    occurredAt = clock.instant(),
-                    backdatedOccurredAt = observable.value?.backdatedOccurredAt)
-            val encounterItems = observable.value?.lineItems?.map {
-                val encounterItem = EncounterItem(
-                        UUID.randomUUID(), encounter.id, it.first.id, it.second)
-                EncounterItemWithBillable(encounterItem, it.first)
-            }
+            val encounterWithItemAndForms =
+                    viewModel.buildEncounterWithItemsAndForms(identificationEvent)
 
-            if (encounterItems == null) {
+            if (encounterWithItemAndForms == null) {
                 // TODO: do not allow submitting without any encounter items
             } else {
-                navigationManager.goTo(DiagnosisFragment.forEncounter(
-                        EncounterWithItemsAndForms(encounter, encounterItems, emptyList())))
+                navigationManager.goTo(DiagnosisFragment.forEncounter(encounterWithItemAndForms))
             }
         }
     }

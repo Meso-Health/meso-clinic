@@ -22,5 +22,11 @@ data class Billable(val id: UUID,
         }
     }
 
+    companion object {
+        fun requiresQuantity(type: Billable.Type): Boolean {
+            return type == Type.DRUG || type == Type.SUPPLY || type == Type.VACCINE
+        }
+    }
+
     enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE }
 }

@@ -6,12 +6,18 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import org.watsi.uhp.di.ViewModelKey
+import org.watsi.uhp.viewmodels.AddNewBillableViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 
 @Module
 abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddNewBillableViewModel::class)
+    abstract fun bindAddNewBillableViewModel(viewModel: AddNewBillableViewModel): ViewModel
 
     @Binds
     @IntoMap

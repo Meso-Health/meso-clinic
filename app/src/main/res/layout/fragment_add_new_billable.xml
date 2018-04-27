@@ -15,8 +15,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@drawable/view_outline_rectangle">
+
         <Spinner
-            android:id="@+id/type_field"
+            android:id="@+id/type_spinner"
             android:layout_width="fill_parent"
             android:layout_height="40dp" />
     </RelativeLayout>
@@ -98,22 +99,31 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/add_new_billable_composition"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/composition_field"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/add_new_billable_composition_label" />
+        android:orientation="vertical">
 
-    <org.watsi.uhp.custom_components.BillableCompositionInput
-        android:id="@+id/list_of_compositions"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:labelFor="@+id/member_name"
-        android:maxLines="1"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        android:focusableInTouchMode="true" />
+        <TextView
+            android:id="@+id/add_new_billable_composition"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/add_new_billable_composition_label" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/view_outline_rectangle">
+
+            <Spinner
+                android:id="@+id/composition_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <Button
         android:id="@+id/save_button"
