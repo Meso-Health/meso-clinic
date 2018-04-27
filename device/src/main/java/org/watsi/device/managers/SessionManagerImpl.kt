@@ -10,16 +10,13 @@ class SessionManagerImpl(
         private val api: CoverageApi
 ) : SessionManager {
 
-    private var token: AuthenticationToken? = null
-
-    init {
-        token = preferencesManager.getAuthenticationToken()
-    }
+    private var token: AuthenticationToken? = preferencesManager.getAuthenticationToken()
 
     override fun login(username: String, password: String): Completable {
         val apiAuthorizationHeader = Credentials.basic(username, password)
         return api.getAuthToken(apiAuthorizationHeader).flatMapCompletable {
-            preferencesManager.setAuthenticationToken(it.toAuthenticationToken())
+            token = it.toAuthenticationToken()
+            preferencesManager.setAuthenticationToken(token)
             Completable.complete()
         }
     }
