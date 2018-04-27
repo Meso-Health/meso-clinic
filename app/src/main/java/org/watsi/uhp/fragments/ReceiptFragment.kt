@@ -51,8 +51,7 @@ class ReceiptFragment : DaggerFragment() {
         // TODO: populate view
 
         save_button.setOnClickListener {
-            encounterRepository.create(encounter.encounter)
-            // TODO: persist associated models
+            encounterRepository.create(encounter)
             navigationManager.popTo(CurrentPatientsFragment())
             Toast.makeText(activity, "Claim submitted", Toast.LENGTH_LONG).show()
         }

@@ -15,6 +15,7 @@ import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.db.models.EncounterFormModel
+import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
@@ -25,6 +26,7 @@ import org.watsi.device.db.models.PhotoModel
     DeltaModel::class,
     DiagnosisModel::class,
     EncounterModel::class,
+    EncounterItemModel::class,
     EncounterFormModel::class,
     IdentificationEventModel::class,
     MemberModel::class,

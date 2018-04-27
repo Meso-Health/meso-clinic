@@ -1,9 +1,9 @@
 package org.watsi.domain.repositories
 
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 interface EncounterRepository {
-    fun create(encounter: Encounter)
+    fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms)
     fun sync(deltas: List<Delta>)
 }
