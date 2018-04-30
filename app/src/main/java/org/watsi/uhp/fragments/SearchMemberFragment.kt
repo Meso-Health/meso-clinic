@@ -85,13 +85,16 @@ class SearchMemberFragment : DaggerFragment() {
             member_search_results.emptyView = member_no_search_results_text
             member_search_results.setOnItemClickListener { parent, _, position, _ ->
                 val member = parent.getItemAtPosition(position) as Member
-                val openCheckIn = identificationEventRepository.openCheckIn(member.id)
-                if (openCheckIn != null) {
-                    navigationManager.goTo(
-                            CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
-                } else {
-                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                }
+                identificationEventRepository.openCheckIn(member.id).subscribe({
+                    if (it != null) {
+                        navigationManager.goTo(
+                                CurrentMemberDetailFragment.forIdentificationEvent(it))
+                    } else {
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
+                    }
+                }, {
+                    // TODO: handle error
+                })
             }
             // TODO: dismiss ProgressDialog
             member_search_results.requestFocus()

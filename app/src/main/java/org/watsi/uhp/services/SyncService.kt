@@ -18,6 +18,11 @@ class SyncService : AbstractSyncJobService() {
     @Inject lateinit var deltaRepository: DeltaRepository
 
     override fun performSync(): Boolean {
+        val unsyncedMembers = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
+        unsyncedMembers.groupBy { it.modelId }.forEach { _, deltas ->
+            memberRepository.sync(deltas)
+        }
+
         val unsyncedIdentificationEvents = deltaRepository
                 .unsynced(Delta.ModelName.IDENTIFICATION_EVENT).blockingGet()
         unsyncedIdentificationEvents.groupBy { it.modelId }.forEach { _, deltas ->
@@ -32,11 +37,6 @@ class SyncService : AbstractSyncJobService() {
         val unsyncedEncounterForms = deltaRepository.unsynced(Delta.ModelName.ENCOUNTER_FORM).blockingGet()
         unsyncedEncounterForms.groupBy { it.modelId }.forEach { _, deltas ->
             encounterFormRepository.sync(deltas)
-        }
-
-        val unsyncedMembers = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
-        unsyncedMembers.groupBy { it.modelId }.forEach { _, deltas ->
-            memberRepository.sync(deltas)
         }
 
         return true

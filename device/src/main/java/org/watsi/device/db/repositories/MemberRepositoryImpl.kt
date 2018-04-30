@@ -1,5 +1,6 @@
 package org.watsi.device.db.repositories
 
+import io.reactivex.Flowable
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.MemberDao
@@ -64,8 +65,8 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return emptyList()
     }
 
-    override fun checkedInMembers(): List<Member> {
-        return memberDao.checkedInMembers().map { it.toMember() }
+    override fun checkedInMembers(): Flowable<List<Member>> {
+        return memberDao.checkedInMembers().map { it.map { it.toMember() } }
     }
 
     override fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): List<Member> {

@@ -24,7 +24,7 @@ ext {
     okReplayVersion = '1.4.0'
 
     dependencies = [
-            kotlin:                 "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion",
+            kotlin:                 "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion",
             kotlinReflect:          "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
             androidSupportLibrary:  "com.android.support:appcompat-v7:$androidSupportLibraryVersion",
             recyclerView:           "com.android.support:recyclerview-v7:$androidSupportLibraryVersion",

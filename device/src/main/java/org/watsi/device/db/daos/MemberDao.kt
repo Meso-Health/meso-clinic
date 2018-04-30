@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
+import io.reactivex.Flowable
 import org.watsi.device.db.models.MemberModel
 import java.util.UUID
 
@@ -47,7 +48,7 @@ interface MemberDao {
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
             "WHERE encounters.identificationEventId IS NULL\n" +
             "ORDER BY last_identifications.occurredAt")
-    fun checkedInMembers(): List<MemberModel>
+    fun checkedInMembers(): Flowable<List<MemberModel>>
 
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")
     fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): List<MemberModel>

@@ -119,13 +119,16 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
                             if (member == null) {
                                 // TODO: show member not found error
                             } else {
-                                val openCheckIn = identificationEventRepository.openCheckIn(member.id)
-                                if (openCheckIn == null) {
-                                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                                } else {
-                                    navigationManager.goTo(
-                                            CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
-                                }
+                                identificationEventRepository.openCheckIn(member.id).subscribe({
+                                    if (it == null) {
+                                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
+                                    } else {
+                                        navigationManager.goTo(
+                                                CurrentMemberDetailFragment.forIdentificationEvent(it))
+                                    }
+                                }, {
+                                    // TODO: handle error
+                                })
                             }
                         }
                         ScanPurpose.MEMBER_EDIT -> {

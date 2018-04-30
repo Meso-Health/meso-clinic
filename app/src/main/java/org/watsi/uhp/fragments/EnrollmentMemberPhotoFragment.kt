@@ -91,12 +91,15 @@ class EnrollmentMemberPhotoFragment : DaggerFragment() {
                 builder.setPositiveButton(android.R.string.yes) { _, _ ->
                     memberRepository.save(updatedMember)
 
-                    val openCheckIn = identificationEventRepository.openCheckIn(member.id)
-                    if (openCheckIn != null) {
-                        navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(openCheckIn))
-                    } else {
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(updatedMember))
-                    }
+                    identificationEventRepository.openCheckIn(member.id).subscribe({
+                        if (it != null) {
+                            navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                        } else {
+                            navigationManager.goTo(CheckInMemberDetailFragment.forMember(updatedMember))
+                        }
+                    }, {
+                        // TODO: handle error
+                    })
 
                     Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
                 }

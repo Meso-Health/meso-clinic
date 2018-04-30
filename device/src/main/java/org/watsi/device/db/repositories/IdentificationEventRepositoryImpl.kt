@@ -1,5 +1,7 @@
 package org.watsi.device.db.repositories
 
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.models.IdentificationEventModel
@@ -21,8 +23,9 @@ class IdentificationEventRepositoryImpl(private val identificationEventDao: Iden
                 IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock))
     }
 
-    override fun openCheckIn(memberId: UUID): IdentificationEvent? {
-        return identificationEventDao.openCheckIn(memberId)?.toIdentificationEvent()
+    override fun openCheckIn(memberId: UUID): Single<IdentificationEvent?> {
+        return identificationEventDao.openCheckIn(memberId).map { it.toIdentificationEvent() }
+                .subscribeOn(Schedulers.io())
     }
 
     override fun sync(deltas: List<Delta>) {

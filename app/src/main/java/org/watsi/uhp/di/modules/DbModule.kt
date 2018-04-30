@@ -41,9 +41,7 @@ class DbModule {
     @Singleton
     @Provides
     fun provideDatabase(context: Context): AppDatabase {
-        val builder = Room.databaseBuilder(context, AppDatabase::class.java, "submission")
-        builder.allowMainThreadQueries()
-        return builder.build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "submission").build()
     }
 
     @Singleton
