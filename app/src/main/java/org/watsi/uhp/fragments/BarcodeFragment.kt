@@ -120,14 +120,12 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
                                 // TODO: show member not found error
                             } else {
                                 identificationEventRepository.openCheckIn(member.id).subscribe({
-                                    if (it == null) {
-                                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                                    } else {
-                                        navigationManager.goTo(
-                                                CurrentMemberDetailFragment.forIdentificationEvent(it))
-                                    }
+                                    navigationManager.goTo(
+                                            CurrentMemberDetailFragment.forIdentificationEvent(it))
                                 }, {
                                     // TODO: handle error
+                                }, {
+                                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
                                 })
                             }
                         }

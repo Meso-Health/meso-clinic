@@ -13,7 +13,6 @@ data class IdentificationEvent(val id: UUID,
                                val clinicNumber: Int,
                                val clinicNumberType: ClinicNumberType,
                                val dismissed: Boolean = false,
-                               val dismissalReason: DismissalReason? = null,
                                val fingerprintsVerificationResultCode: Int?,
                                val fingerprintsVerificationConfidence: Float?,
                                val fingerprintsVerificationTier: String?) : Serializable {
@@ -21,11 +20,4 @@ data class IdentificationEvent(val id: UUID,
     enum class ClinicNumberType { OPD, DELIVERY }
 
     enum class SearchMethod { SCAN_BARCODE, SEARCH_ID, SEARCH_NAME, THROUGH_HOUSEHOLD }
-
-    enum class DismissalReason {
-        MEMBER_ON_OTHER_PHONE,
-        ACCIDENTAL_IDENTIFICATION,
-        MEMBER_LEFT_BEFORE_CARE,
-        MEMBER_LEFT_AFTER_CARE
-    }
 }

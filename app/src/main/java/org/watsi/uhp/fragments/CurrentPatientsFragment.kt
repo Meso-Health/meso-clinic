@@ -70,16 +70,12 @@ class CurrentPatientsFragment : DaggerFragment() {
         current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             val member = parent.getItemAtPosition(position) as Member
             viewModel.getIdentificationEvent(member).subscribe({
-                if (it == null) {
-                    // TODO: this code path technically should not happen...
-                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                } else {
-                    navigationManager.goTo(
-                            CurrentMemberDetailFragment.forIdentificationEvent(it))
-                }
+                navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
             }, {
                 // TODO: handle error
-
+            }, {
+                // TODO: this code path technically should not happen...
+                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
             })
         }
 

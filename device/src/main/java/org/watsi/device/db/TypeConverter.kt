@@ -69,16 +69,6 @@ class TypeConverter {
     }
 
     @TypeConverter
-    fun toDismissalReason(value: String?): IdentificationEvent.DismissalReason? {
-        return value?.let { IdentificationEvent.DismissalReason.valueOf(value) }
-    }
-
-    @TypeConverter
-    fun fromDismissalReason(reason: IdentificationEvent.DismissalReason?): String? {
-        return reason?.toString()
-    }
-
-    @TypeConverter
     fun toGender(value: String?): Member.Gender? = value?.let { Member.Gender.valueOf(value) }
 
     @TypeConverter

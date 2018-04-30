@@ -86,14 +86,12 @@ class SearchMemberFragment : DaggerFragment() {
             member_search_results.setOnItemClickListener { parent, _, position, _ ->
                 val member = parent.getItemAtPosition(position) as Member
                 identificationEventRepository.openCheckIn(member.id).subscribe({
-                    if (it != null) {
-                        navigationManager.goTo(
-                                CurrentMemberDetailFragment.forIdentificationEvent(it))
-                    } else {
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                    }
+                    navigationManager.goTo(
+                            CurrentMemberDetailFragment.forIdentificationEvent(it))
                 }, {
                     // TODO: handle error
+                }, {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
                 })
             }
             // TODO: dismiss ProgressDialog

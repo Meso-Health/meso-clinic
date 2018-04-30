@@ -1,13 +1,14 @@
 package org.watsi.domain.repositories
 
-import io.reactivex.Single
+import io.reactivex.Completable
+import io.reactivex.Maybe
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
 interface IdentificationEventRepository {
-    fun create(identificationEvent: IdentificationEvent)
-    fun update(identificationEvent: IdentificationEvent)
-    fun openCheckIn(memberId: UUID): Single<IdentificationEvent?>
-    fun sync(deltas: List<Delta>)
+    fun create(identificationEvent: IdentificationEvent): Completable
+    fun dismiss(identificationEvent: IdentificationEvent): Completable
+    fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent>
+    fun sync(deltas: List<Delta>): Completable
 }

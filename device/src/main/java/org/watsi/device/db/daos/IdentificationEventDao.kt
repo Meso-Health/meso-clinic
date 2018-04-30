@@ -4,7 +4,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
-import io.reactivex.Single
+import io.reactivex.Maybe
 import org.watsi.device.db.models.IdentificationEventModel
 import java.util.UUID
 
@@ -24,5 +24,5 @@ interface IdentificationEventDao {
             "AND identification_events.memberId = :memberId\n" +
             "AND identification_events.dismissed = 0 " +
             "AND identification_events.accepted = 1")
-    fun openCheckIn(memberId: UUID): Single<IdentificationEventModel?>
+    fun openCheckIn(memberId: UUID): Maybe<IdentificationEventModel>
 }

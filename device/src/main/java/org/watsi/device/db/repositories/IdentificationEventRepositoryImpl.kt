@@ -1,6 +1,7 @@
 package org.watsi.device.db.repositories
 
-import io.reactivex.Single
+import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.IdentificationEventDao
@@ -13,22 +14,28 @@ import java.util.UUID
 class IdentificationEventRepositoryImpl(private val identificationEventDao: IdentificationEventDao,
                                         private val clock: Clock) : IdentificationEventRepository {
 
-    override fun create(identificationEvent: IdentificationEvent) {
-        identificationEventDao.insert(
-                IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock))
+    override fun create(identificationEvent: IdentificationEvent): Completable {
+        return Completable.fromAction {
+            identificationEventDao.insert(
+                    IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock))
+        }.subscribeOn(Schedulers.io())
     }
 
-    override fun update(identificationEvent: IdentificationEvent) {
-        identificationEventDao.update(
-                IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock))
+    override fun dismiss(identificationEvent: IdentificationEvent): Completable {
+        return Completable.fromAction {
+            identificationEventDao.update(IdentificationEventModel.fromIdentificationEvent(
+                    identificationEvent.copy(dismissed = true), clock))
+        }.subscribeOn(Schedulers.io())
     }
 
-    override fun openCheckIn(memberId: UUID): Single<IdentificationEvent?> {
-        return identificationEventDao.openCheckIn(memberId).map { it.toIdentificationEvent() }
+    override fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent> {
+        return identificationEventDao.openCheckIn(memberId)
+                .map { it.toIdentificationEvent() }
                 .subscribeOn(Schedulers.io())
     }
 
-    override fun sync(deltas: List<Delta>) {
+    override fun sync(deltas: List<Delta>): Completable {
         // TODO: implement
+        return Completable.complete()
     }
 }

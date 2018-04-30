@@ -37,6 +37,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var photoRepository: PhotoRepository
 
     lateinit var identificationEvent: IdentificationEvent
+    lateinit var viewModel: CurrentMemberDetailViewModel
     private var member: Member? = null
 
     companion object {
@@ -55,7 +56,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         identificationEvent = arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
 
-        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentMemberDetailViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentMemberDetailViewModel::class.java)
         viewModel.getObservable(identificationEvent.memberId).observe(this, Observer {
             it?.let { viewState ->
                 val member = viewState.member
@@ -115,8 +116,11 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
             }
             R.id.menu_dismiss_member -> {
-                // TODO: create dismissed IdentificationEvent
-                navigationManager.popTo(CurrentPatientsFragment())
+                viewModel.dismiss(identificationEvent).subscribe({
+                    navigationManager.popTo(CurrentPatientsFragment())
+                }, {
+                    // TODO: handle error
+                })
             }
             else -> super.onOptionsItemSelected(item)
         }

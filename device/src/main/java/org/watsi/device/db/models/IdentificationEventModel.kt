@@ -19,7 +19,6 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                     val clinicNumber: Int,
                                     val clinicNumberType: IdentificationEvent.ClinicNumberType,
                                     val dismissed: Boolean,
-                                    val dismissalReason: IdentificationEvent.DismissalReason?,
                                     val fingerprintsVerificationResultCode: Int?,
                                     val fingerprintsVerificationConfidence: Float?,
                                     val fingerprintsVerificationTier: String?) {
@@ -34,7 +33,6 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                    clinicNumber = clinicNumber,
                                    clinicNumberType = clinicNumberType,
                                    dismissed = dismissed,
-                                   dismissalReason = dismissalReason,
                                    fingerprintsVerificationResultCode = fingerprintsVerificationResultCode,
                                    fingerprintsVerificationConfidence = fingerprintsVerificationConfidence,
                                    fingerprintsVerificationTier = fingerprintsVerificationTier)
@@ -55,7 +53,6 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                             clinicNumber = idEvent.clinicNumber,
                                             clinicNumberType = idEvent.clinicNumberType,
                                             dismissed = idEvent.dismissed,
-                                            dismissalReason = idEvent.dismissalReason,
                                             fingerprintsVerificationResultCode =
                                                 idEvent.fingerprintsVerificationResultCode,
                                             fingerprintsVerificationConfidence =

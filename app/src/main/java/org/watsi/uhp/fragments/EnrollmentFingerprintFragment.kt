@@ -81,13 +81,11 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
                 memberRepository.save(member.copy(fingerprintsGuid = fingerprintsGuid))
 
                 identificationEventRepository.openCheckIn(member.id).subscribe({
-                    if (it != null) {
-                        navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
-                    } else {
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-                    }
+                    navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
                 }, {
                     // TODO: handle error
+                }, {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
                 })
 
                 Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()

@@ -18,6 +18,7 @@ import android.widget.Toast
 import com.simprints.libsimprints.Constants
 import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
+import io.reactivex.Completable
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
@@ -126,8 +127,11 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         builder.setView(R.layout.dialog_clinic_number)
                 .setMessage(R.string.clinic_number_prompt)
                 .setPositiveButton(R.string.clinic_number_button) { dialog, _ ->
-                    createIdentificationEvent(dialog as AlertDialog)
-                    navigationManager.popTo(CurrentPatientsFragment())
+                    createIdentificationEvent(dialog as AlertDialog).subscribe({
+                        navigationManager.popTo(CurrentPatientsFragment())
+                    }, {
+                        // TODO: handle error
+                    })
                 }
 
         val dialog = builder.create()
@@ -140,7 +144,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         dialog.show()
     }
 
-    private fun createIdentificationEvent(dialog: AlertDialog) {
+    private fun createIdentificationEvent(dialog: AlertDialog): Completable {
         val radioGroupView = dialog.findViewById<RadioGroup>(R.id.radio_group_clinic_number)
         val selectedRadioButton = dialog.findViewById<RadioButton>(radioGroupView?.checkedRadioButtonId!!)
         val clinicNumberField = dialog.findViewById<EditText>(R.id.clinic_number_field)
@@ -164,8 +168,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                                             verificationDetails?.confidence,
                                           fingerprintsVerificationResultCode =
                                             verificationDetails?.resultCode)
-        identificationEventRepository.create(idEvent)
-
+        return identificationEventRepository.create(idEvent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

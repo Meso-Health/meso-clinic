@@ -92,13 +92,11 @@ class EnrollmentMemberPhotoFragment : DaggerFragment() {
                     memberRepository.save(updatedMember)
 
                     identificationEventRepository.openCheckIn(member.id).subscribe({
-                        if (it != null) {
-                            navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
-                        } else {
-                            navigationManager.goTo(CheckInMemberDetailFragment.forMember(updatedMember))
-                        }
+                        navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
                     }, {
                         // TODO: handle error
+                    }, {
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(updatedMember))
                     })
 
                     Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
