@@ -13,10 +13,17 @@ class AddNewBillableViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
-    private val compositions = billableRepository.uniqueCompositions()
+
+    init {
+        observable.value = ViewState()
+        billableRepository.uniqueCompositions().subscribe({
+            observable.postValue(observable.value?.copy(compositions = it))
+        }, {
+            // TODO: handle error
+        })
+    }
 
     fun getObservable(): LiveData<ViewState> {
-        observable.value = ViewState(compositions = compositions)
         return observable
     }
 
@@ -59,7 +66,7 @@ class AddNewBillableViewModel @Inject constructor(
         }
     }
 
-    data class ViewState(val compositions: List<String>,
+    data class ViewState(val compositions: List<String> = emptyList(),
                          val composition: String? = null,
                          val unit: String? = null,
                          val price: Int? = null,

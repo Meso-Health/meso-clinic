@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
+import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
 import java.util.UUID
 
@@ -24,8 +25,8 @@ interface BillableDao {
     fun find(id: UUID): BillableModel?
 
     @Query("SELECT * FROM billables")
-    fun all(): List<BillableModel>
+    fun all(): Single<List<BillableModel>>
 
     @Query("SELECT DISTINCT(composition) FROM billables")
-    fun distinctCompositions(): List<String>
+    fun distinctCompositions(): Single<List<String>>
 }

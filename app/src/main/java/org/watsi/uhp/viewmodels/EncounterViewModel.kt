@@ -22,9 +22,17 @@ class EncounterViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
-    private val billables = billableRepository.all()
-    private val billablesByType = billables.groupBy { it.type }
-    private val uniqueDrugNames = billablesByType[Billable.Type.DRUG]!!.map { it.name }.distinct()
+    private var billablesByType: Map<Billable.Type, List<Billable>> = emptyMap()
+    private var uniqueDrugNames: List<String> = emptyList()
+
+    init {
+        billableRepository.all().subscribe({
+            billablesByType = it.groupBy { it.type }
+            uniqueDrugNames = billablesByType[Billable.Type.DRUG]!!.map { it.name }.distinct()
+        }, {
+            // TODO: handle error
+        })
+    }
 
     fun getObservable(initialLineItems: List<Pair<Billable, Int>>): LiveData<ViewState> {
         observable.value = ViewState(lineItems = initialLineItems)
@@ -82,6 +90,10 @@ class EncounterViewModel @Inject constructor(
         }?.let { encounterItems ->
             EncounterWithItemsAndForms(encounter, encounterItems, emptyList())
         }
+    }
+
+    fun currentLineItems(): List<Pair<Billable, Int>> {
+        return observable.value?.lineItems ?: emptyList()
     }
 
     data class ViewState(val type: Billable.Type? = null,

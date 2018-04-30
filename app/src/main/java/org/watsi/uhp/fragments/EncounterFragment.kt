@@ -50,22 +50,18 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var lineItemAdapter: ArrayAdapter<LineItemPresenter>
-    private var lineItemsFromArgs: List<Pair<Billable, Int>>? = null
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
         const val PARAM_LINE_ITEMS = "line_items"
-        const val PARAM_BILLABLE = "billable"
 
         fun forIdentificationEvent(idEvent: IdentificationEvent,
-                                   lineItems: List<Pair<Billable, Int>> = emptyList(),
-                                   billable: Billable? = null): EncounterFragment {
+                                   lineItems: List<Pair<Billable, Int>> = emptyList()): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
                 // TODO: this Serializable cast is probably broken
                 putSerializable(PARAM_LINE_ITEMS, lineItems as Serializable)
-                putSerializable(PARAM_BILLABLE, billable)
             }
             return fragment
         }
@@ -82,7 +78,7 @@ class EncounterFragment : DaggerFragment() {
         lineItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        lineItemsFromArgs = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
+        val lineItemsFromArgs = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
         observable = viewModel.getObservable(lineItemsFromArgs ?: emptyList())
         observable.observe(this, Observer {
             it?.let { viewState ->
@@ -190,7 +186,7 @@ class EncounterFragment : DaggerFragment() {
 
         add_billable_prompt.setOnClickListener {
             navigationManager.goTo(AddNewBillableFragment.forIdentificationEvent(
-                    identificationEvent, lineItemsFromArgs ?: emptyList()))
+                    identificationEvent, viewModel.currentLineItems()))
         }
 
         backdate_encounter.setOnClickListener {

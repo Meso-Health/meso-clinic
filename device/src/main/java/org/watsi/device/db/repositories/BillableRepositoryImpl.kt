@@ -1,5 +1,8 @@
 package org.watsi.device.db.repositories
 
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.BillableDao
@@ -8,7 +11,6 @@ import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.repositories.BillableRepository
-import java.util.UUID
 
 class BillableRepositoryImpl(private val billableDao: BillableDao,
                              private val api: CoverageApi,
@@ -16,16 +18,14 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
                              private val preferencesManager: PreferencesManager,
                              private val clock: Clock) : BillableRepository {
 
-    override fun find(id: UUID): Billable {
-        return billableDao.find(id)!!.toBillable()
+    override fun all(): Single<List<Billable>> {
+        return billableDao.all().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
     }
 
-    override fun all(): List<Billable> {
-        return billableDao.all().map { it.toBillable() }
-    }
-
-    override fun create(billable: Billable) {
-        billableDao.insert(BillableModel.fromBillable(billable, clock))
+    override fun create(billable: Billable): Completable {
+        return Completable.fromAction {
+            billableDao.insert(BillableModel.fromBillable(billable, clock))
+        }.subscribeOn(Schedulers.io())
     }
 
     private fun save(billable: Billable) {
@@ -36,7 +36,7 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }
     }
 
-    override fun fetch() {
+    override fun fetch(): Completable {
         sessionManager.currentToken()?.let { token ->
             api.billables(token.getHeaderString(), token.user.providerId).execute()?.let { response ->
                 // TODO: handle null body
@@ -55,9 +55,11 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
 
             }
         }
+        // TODO: complete when finished
+        return Completable.complete()
     }
 
-    override fun uniqueCompositions(): List<String> {
-        return billableDao.distinctCompositions()
+    override fun uniqueCompositions(): Single<List<String>> {
+        return billableDao.distinctCompositions().subscribeOn(Schedulers.io())
     }
 }

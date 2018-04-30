@@ -118,9 +118,11 @@ class AddNewBillableFragment : DaggerFragment() {
                 val identificationEvent =
                         arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
                 val lineItems = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>
+                val lineItemsWithNewBillable = lineItems.toMutableList()
+                lineItemsWithNewBillable.add(Pair(billable, 1))
 
                 navigationManager.popTo(EncounterFragment.forIdentificationEvent(
-                        identificationEvent, lineItems, billable))
+                        identificationEvent, lineItemsWithNewBillable))
             }
         }
     }
