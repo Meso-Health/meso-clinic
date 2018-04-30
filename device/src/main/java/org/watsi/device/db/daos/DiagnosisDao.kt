@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
+import io.reactivex.Single
 import org.watsi.device.db.models.DiagnosisModel
 
 @Dao
@@ -23,5 +24,5 @@ interface DiagnosisDao {
     fun find(id: Int): DiagnosisModel?
 
     @Query("SELECT * FROM diagnoses")
-    fun all(): List<DiagnosisModel>
+    fun all(): Single<List<DiagnosisModel>>
 }

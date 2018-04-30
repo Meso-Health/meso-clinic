@@ -11,13 +11,20 @@ import javax.inject.Inject
 class DiagnosisViewModel @Inject constructor(diagnosisRepository: DiagnosisRepository) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
-    private val diagnoses = diagnosisRepository.all()
-    private val uniqueDescriptions = diagnoses.map { it.description }.distinct()
+    private var diagnoses: List<Diagnosis> = emptyList()
+    private var uniqueDescriptions: List<String> = emptyList()
 
-    fun getObservable(): LiveData<ViewState> {
+    init {
         observable.value = ViewState()
-        return observable
+        diagnosisRepository.all().subscribe({
+            diagnoses = it
+            uniqueDescriptions = diagnoses.map { it.description }.distinct()
+        }, {
+            // TODO: handle error
+        })
     }
+
+    fun getObservable(): LiveData<ViewState> = observable
 
     fun addDiagnosis(diagnosis: Diagnosis) {
         val diagnoses = observable.value?.selectedDiagnoses?.toMutableList() ?: mutableListOf()

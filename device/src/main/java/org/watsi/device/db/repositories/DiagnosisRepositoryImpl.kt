@@ -1,5 +1,8 @@
 package org.watsi.device.db.repositories
 
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.DiagnosisDao
@@ -14,8 +17,10 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                               private val sessionManager: SessionManager,
                               private val preferencesManager: PreferencesManager,
                               private val clock: Clock) : DiagnosisRepository {
-    override fun all(): List<Diagnosis> {
-        return diagnosisDao.all().map { it.toDiagnosis() }
+    override fun all(): Single<List<Diagnosis>> {
+        return diagnosisDao.all()
+                .map { it.map { it.toDiagnosis() } }
+                .subscribeOn(Schedulers.io())
     }
 
     private fun save(diagnosis: Diagnosis) {
@@ -26,7 +31,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
         }
     }
 
-    override fun fetch() {
+    override fun fetch(): Completable {
         sessionManager.currentToken()?.let { token ->
             api.diagnoses(token.getHeaderString()).execute()?.let { response ->
                 // TODO: handle null body
@@ -35,7 +40,6 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                         diagnoses.forEach { save(it.toDiagnosis()) }
                         // TODO: more efficient way of saving?
                         // TODO: clean up any diagnoses not returned in the fetch
-                        // TODO: do not overwrite unsynced diagnosis data
                     }
                     preferencesManager.updateDiagnosesLastFetched(clock.instant())
                 } else {
@@ -45,5 +49,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
 
             }
         }
+        // TODO: complete after the fetch finishes
+        return Completable.complete()
     }
 }

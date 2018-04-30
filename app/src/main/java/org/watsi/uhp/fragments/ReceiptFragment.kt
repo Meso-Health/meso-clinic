@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import dagger.android.support.DaggerFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_receipt.save_button
 
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -53,8 +54,13 @@ class ReceiptFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             encounterRepository.create(encounter)
-            navigationManager.popTo(CurrentPatientsFragment())
-            Toast.makeText(activity, "Claim submitted", Toast.LENGTH_LONG).show()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        navigationManager.popTo(CurrentPatientsFragment())
+                        Toast.makeText(activity, "Claim submitted", Toast.LENGTH_LONG).show()
+                    }, {
+                        // TODO: handle error
+                    })
         }
     }
 
