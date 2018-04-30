@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -213,4 +215,23 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     private data class FingerprintVerificationDetails(val tier: Tier?,
                                                       val confidence: Float?,
                                                       val resultCode: Int)
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        menu!!.findItem(R.id.menu_member_edit).isVisible = true
+        menu.findItem(R.id.menu_enroll_newborn).isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_member_edit -> {
+                navigationManager.goTo(MemberEditFragment.forMember(member))
+            }
+            R.id.menu_enroll_newborn -> {
+                val member = arguments?.getSerializable(PARAM_MEMBER) as Member
+                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
+    }
 }

@@ -17,7 +17,6 @@ import net.hockeyapp.android.UpdateManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
-import org.watsi.uhp.managers.MenuNavigationManager
 import org.watsi.uhp.services.DeleteFetchedPhotoService
 import org.watsi.uhp.services.DownloadMemberPhotosService
 import org.watsi.uhp.services.FetchService
@@ -108,12 +107,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.showOverflowMenu()
         setSupportActionBar(toolbar)
-        toolbar.setOnMenuItemClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            val menuNavigationManager = MenuNavigationManager(
-                    sessionManager, navigationManager, this)
-            menuNavigationManager.handle(currentFragment.arguments, it)
-        }
     }
 
     private fun checkForUpdates() {

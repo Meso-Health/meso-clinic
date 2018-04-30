@@ -3,6 +3,7 @@ package org.watsi.uhp.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -58,7 +59,16 @@ class ReceiptFragment : DaggerFragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.menu_submit_without_copayment).isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_submit_without_copayment -> {
+                // TODO: handle submit without copayment
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
     }
 }

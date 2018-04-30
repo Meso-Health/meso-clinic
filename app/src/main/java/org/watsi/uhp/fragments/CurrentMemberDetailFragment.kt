@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.entities.Member
 
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
@@ -35,6 +37,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var photoRepository: PhotoRepository
 
     lateinit var identificationEvent: IdentificationEvent
+    private var member: Member? = null
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
@@ -56,6 +59,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         viewModel.getObservable(identificationEvent.memberId).observe(this, Observer {
             it?.let { viewState ->
                 val member = viewState.member
+                this.member = member
                 if (member.isAbsentee()) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
@@ -94,7 +98,28 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.findItem(R.id.menu_dismiss_member).isVisible = true
-        // TODO: need to add listener/logic for dismiss member
+        menu!!.findItem(R.id.menu_member_edit).isVisible = true
+        menu.findItem(R.id.menu_enroll_newborn).isVisible = true
+        menu.findItem(R.id.menu_dismiss_member).isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_member_edit -> {
+                member?.let {
+                    navigationManager.goTo(MemberEditFragment.forMember(it))
+                }
+            }
+            R.id.menu_enroll_newborn -> {
+                val member = arguments?.getSerializable(CheckInMemberDetailFragment.PARAM_MEMBER) as Member
+                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
+            }
+            R.id.menu_dismiss_member -> {
+                // TODO: create dismissed IdentificationEvent
+                navigationManager.popTo(CurrentPatientsFragment())
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
     }
 }
