@@ -6,7 +6,7 @@ import org.watsi.domain.entities.Member
 import java.util.UUID
 
 interface MemberRepository {
-    fun find(id: UUID): Member
+    fun find(id: UUID): Flowable<Member>
     fun save(member: Member)
     fun fetch()
     fun findByCardId(cardId: String): Member?

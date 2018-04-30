@@ -18,12 +18,12 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val preferencesManager: PreferencesManager,
                            private val clock: Clock) : MemberRepository {
 
-    override fun find(id: UUID): Member {
-        return memberDao.find(id)!!.toMember()
+    override fun find(id: UUID): Flowable<Member> {
+        return memberDao.find(id).map { it.toMember() }
     }
 
     override fun save(member: Member) {
-        if (memberDao.find(member.id) != null) {
+        if (memberDao.exists(member.id) != null) {
             memberDao.update(MemberModel.fromMember(member, clock))
         } else {
             memberDao.insert(MemberModel.fromMember(member, clock))

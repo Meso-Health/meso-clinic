@@ -22,7 +22,10 @@ interface MemberDao {
     fun destroy(model: MemberModel)
 
     @Query("SELECT * FROM members where id = :id LIMIT 1")
-    fun find(id: UUID): MemberModel?
+    fun find(id: UUID): Flowable<MemberModel?>
+
+    @Query("SELECT id FROM members where id = :id LIMIT 1")
+    fun exists(id: UUID): UUID?
 
     @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): MemberModel?
