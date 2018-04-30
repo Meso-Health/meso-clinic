@@ -102,8 +102,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
         member_card_id_detail_fragment.text = member.cardId
         member_phone_number.text = member.phoneNumber
-        PhotoLoaderHelper(activity, photoRepository).loadMemberPhoto(
-                member, member_photo, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height)
+        // TODO: re-implement when we fix photo logic
+//        PhotoLoaderHelper(activity, photoRepository).loadMemberPhoto(
+//                member, member_photo, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height)
 
         member_action_button.text = getString(R.string.check_in)
         member_action_button.setOnClickListener {

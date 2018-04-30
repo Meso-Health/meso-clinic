@@ -115,19 +115,21 @@ class BarcodeFragment : DaggerFragment(), SurfaceHolder.Callback {
                     // that returns this as a result - will hopefully simplify the call-out
                     // and back-stack complexity of this screen
                         ScanPurpose.ID -> {
-                            val member = memberRepository.findByCardId(barcode)
-                            if (member == null) {
-                                // TODO: show member not found error
-                            } else {
-                                identificationEventRepository.openCheckIn(member.id).subscribe({
+                            memberRepository.findByCardId(barcode).subscribe({
+                                identificationEventRepository.openCheckIn(it.id).subscribe({
                                     navigationManager.goTo(
                                             CurrentMemberDetailFragment.forIdentificationEvent(it))
                                 }, {
                                     // TODO: handle error
                                 }, {
-                                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
+                                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
                                 })
-                            }
+
+                            }, {
+                                // TODO: handle error
+                            }, {
+                                // TODO: show member not found error
+                            })
                         }
                         ScanPurpose.MEMBER_EDIT -> {
                             // TODO: handle null member case

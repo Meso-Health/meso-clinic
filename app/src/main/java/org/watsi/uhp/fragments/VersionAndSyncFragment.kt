@@ -85,7 +85,9 @@ class VersionAndSyncFragment : DaggerFragment() {
             AsyncTask<String, Void, IntArray>() {
         override fun doInBackground(vararg params: String): IntArray {
             val counts = IntArray(6)
-            counts[0] = memberRepository.membersWithPhotosToFetch().size
+            counts[0] = 0
+            // TODO: implement in background
+//            counts[0] = memberRepository.membersWithPhotosToFetch().size
             val unsyncedMembers = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
             var newMembersCount = 0
             var editedMembersCount = 0

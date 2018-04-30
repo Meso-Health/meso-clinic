@@ -12,6 +12,7 @@ import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
+import org.watsi.uhp.viewmodels.SearchMemberViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -40,6 +41,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EncounterViewModel::class)
     abstract fun bindEncounterViewModel(viewModel: EncounterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchMemberViewModel::class)
+    abstract fun bindSearchMemberViewModel(viewModel: SearchMemberViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory

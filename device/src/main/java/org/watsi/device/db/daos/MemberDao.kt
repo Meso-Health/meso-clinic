@@ -6,6 +6,8 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import org.watsi.device.db.models.MemberModel
 import java.util.UUID
 
@@ -24,17 +26,17 @@ interface MemberDao {
     @Query("SELECT * FROM members where id = :id LIMIT 1")
     fun find(id: UUID): Flowable<MemberModel?>
 
+    @Query("SELECT * FROM members")
+    fun all(): Flowable<List<MemberModel>>
+
     @Query("SELECT id FROM members where id = :id LIMIT 1")
     fun exists(id: UUID): UUID?
 
     @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
-    fun findByCardId(cardId: String): MemberModel?
+    fun findByCardId(cardId: String): Maybe<MemberModel>
 
     @Query("SELECT * FROM members where name = :name")
     fun findByName(name: String): List<MemberModel>
-
-    @Query("SELECT * FROM members WHERE cardId LIKE :query")
-    fun cardIdLike(query: String): List<MemberModel>
 
     @Query("SELECT DISTINCT(name) FROM members")
     fun uniqueNames(): List<String>
@@ -54,7 +56,7 @@ interface MemberDao {
     fun checkedInMembers(): Flowable<List<MemberModel>>
 
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")
-    fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): List<MemberModel>
+    fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
 
     @Query("SELECT id FROM members")
     fun allIds(): List<UUID>

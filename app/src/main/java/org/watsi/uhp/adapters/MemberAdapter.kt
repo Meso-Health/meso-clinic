@@ -56,7 +56,8 @@ class MemberAdapter(context: Context,
 //                viewHolder.clinic_number?.text = currentCheckIn.clinicNumber.toString()
             }
 
-            photoLoaderHelper.loadMemberPhoto(member, viewHolder.photo!!, R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height)
+            // TODO: un-comment when we fix photo handling
+//            photoLoaderHelper.loadMemberPhoto(member, viewHolder.photo!!, R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height)
         }
 
         return convertView

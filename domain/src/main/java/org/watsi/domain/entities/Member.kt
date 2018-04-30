@@ -40,8 +40,10 @@ data class Member(val id: UUID,
 
     fun formattedPhoneNumber(): String? {
         return when (phoneNumber?.length) {
-            10 -> "(0) $phoneNumber.substring(1, 4) $phoneNumber.substring(4, 7) $phoneNumber.substring(7)"
-            0 -> "(0) $phoneNumber.substring(0, 3) $phoneNumber.substring(3, 6) $phoneNumber.substring(6)"
+            10 -> "(0) ${phoneNumber.substring(1, 4)} ${phoneNumber.substring(4, 7)} " +
+                    "${phoneNumber.substring(7)}"
+            0 -> "(0) ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
+                    "${phoneNumber.substring(6)}"
             else -> null
         }
     }

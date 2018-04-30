@@ -1,6 +1,9 @@
 package org.watsi.device.db.repositories
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.MemberDao
@@ -18,19 +21,25 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val preferencesManager: PreferencesManager,
                            private val clock: Clock) : MemberRepository {
 
+    override fun all(): Flowable<List<Member>> {
+        return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
+    }
+
     override fun find(id: UUID): Flowable<Member> {
         return memberDao.find(id).map { it.toMember() }
     }
 
-    override fun save(member: Member) {
-        if (memberDao.exists(member.id) != null) {
-            memberDao.update(MemberModel.fromMember(member, clock))
-        } else {
-            memberDao.insert(MemberModel.fromMember(member, clock))
-        }
+    override fun save(member: Member): Completable {
+        return Completable.fromAction {
+            if (memberDao.exists(member.id) != null) {
+                memberDao.update(MemberModel.fromMember(member, clock))
+            } else {
+                memberDao.insert(MemberModel.fromMember(member, clock))
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
-    override fun fetch() {
+    override fun fetch(): Completable {
         sessionManager.currentToken()?.let { token ->
             api.members(token.getHeaderString(), token.user.providerId).execute()?.let { response ->
                 // TODO: handle null body
@@ -49,36 +58,31 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
             }
             // TODO: handle logged out case
         }
+        // TODO: complete when fetch finishes
+        return Completable.complete()
     }
 
-    override fun findByCardId(cardId: String): Member? {
-        return memberDao.findByCardId(cardId)?.toMember()
-    }
-
-    override fun fuzzySearchByCardId(query: String): List<Member> {
-        // TODO: implement
-        return emptyList()
-    }
-
-    override fun fuzzySearchByName(query: String): List<Member> {
-        // TODO: implement
-        return emptyList()
+    override fun findByCardId(cardId: String): Maybe<Member> {
+        return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
     override fun checkedInMembers(): Flowable<List<Member>> {
         return memberDao.checkedInMembers().map { it.map { it.toMember() } }
     }
 
-    override fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): List<Member> {
-        return memberDao.remainingHouseholdMembers(householdId, memberId).map { it.toMember() }
+    override fun remainingHouseholdMembers(householdId: UUID,
+                                           memberId: UUID): Flowable<List<Member>> {
+        return memberDao.remainingHouseholdMembers(householdId, memberId)
+                .map { it.map { it.toMember() } }
     }
 
-    override fun membersWithPhotosToFetch(): List<Member> {
+    override fun fetchPhotos(): Completable {
         // TODO: implement
-        return emptyList()
+        return Completable.complete()
     }
 
-    override fun sync(deltas: List<Delta>) {
+    override fun sync(deltas: List<Delta>): Completable {
         // TODO: implement
+        return Completable.complete()
     }
 }
