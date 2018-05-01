@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_failed_message
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_success_message
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.save_button
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 
 import org.watsi.domain.entities.Member
@@ -20,7 +21,6 @@ import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.SimprintsHelper
-import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.NavigationManager
 
 import java.util.UUID
@@ -33,6 +33,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var logger: Logger
 
     lateinit var member: Member
     lateinit var simprintsHelper: SimprintsHelper
@@ -69,7 +70,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
             try {
                 simprintsHelper.enroll(BuildConfig.PROVIDER_ID.toString(), member.id.toString())
             } catch (e: SimprintsHelper.SimprintsInvalidIntentException) {
-                ExceptionManager.reportException(e)
+                logger.error(e)
                 Toast.makeText(activity, R.string.simprints_not_installed, Toast.LENGTH_LONG).show()
             }
         }
@@ -99,7 +100,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
         try {
             fingerprintsGuid = simprintsHelper.onActivityResultFromEnroll(requestCode, resultCode, data)
         } catch (e: SimprintsHelper.SimprintsHelperException) {
-            ExceptionManager.reportException(e)
+            logger.error(e)
         }
 
         if (fingerprintsGuid != null) {

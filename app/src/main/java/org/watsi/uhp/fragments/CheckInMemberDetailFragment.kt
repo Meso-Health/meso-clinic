@@ -25,11 +25,11 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gend
 import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
 import kotlinx.android.synthetic.main.fragment_member_detail.member_name_detail_fragment
 import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
-import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
 import org.threeten.bp.Clock
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
 
@@ -38,9 +38,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.helpers.SimprintsHelper
-import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import java.util.UUID
@@ -54,6 +52,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var logger: Logger
 
     lateinit var member: Member
     lateinit var simprintsHelper: SimprintsHelper
@@ -193,7 +192,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
             }
         } catch (e: SimprintsHelper.SimprintsHelperException) {
-            ExceptionManager.reportException(e)
+            logger.error(e)
             Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
         }
 

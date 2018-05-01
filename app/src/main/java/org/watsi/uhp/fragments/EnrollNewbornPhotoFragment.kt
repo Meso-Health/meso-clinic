@@ -14,6 +14,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_capture_photo.save_button
 import kotlinx.android.synthetic.main.fragment_encounter_form.photo_btn
 import org.threeten.bp.Clock
+import org.watsi.device.managers.Logger
 
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
@@ -22,7 +23,6 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.FileProviderHelper
 import org.watsi.uhp.listeners.CapturePhotoClickListener
-import org.watsi.uhp.managers.ExceptionManager
 import org.watsi.uhp.managers.NavigationManager
 
 import java.io.IOException
@@ -36,6 +36,7 @@ class EnrollNewbornPhotoFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var memberRepository: MemberRepository
+    @Inject lateinit var logger: Logger
 
     lateinit var newborn: Member
     lateinit var photoUri: Uri
@@ -92,12 +93,12 @@ class EnrollNewbornPhotoFragment : DaggerFragment() {
                 photo = Photo(id = UUID.randomUUID(), bytes = null, url = photoUri.toString())
                 photo?.let { photoRepository.create(it) }
             } else {
-                ExceptionManager.reportErrorMessage("Image capture intent failed")
+                logger.error("Image capture intent failed")
                 Toast.makeText(context, R.string.image_capture_failed, Toast.LENGTH_LONG).show()
             }
 
         } catch (e: IOException) {
-            ExceptionManager.reportException(e)
+            logger.error(e)
             Toast.makeText(context, R.string.image_failed_to_save, Toast.LENGTH_LONG).show()
         }
     }

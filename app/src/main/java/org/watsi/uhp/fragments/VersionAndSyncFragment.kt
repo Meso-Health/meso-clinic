@@ -19,13 +19,13 @@ import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_encounters_
 import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_id_events_quantity
 import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_new_members_quantity
 import kotlinx.android.synthetic.main.fragment_version_and_sync.version_number
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.PreferencesManager
 
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
-import org.watsi.uhp.managers.ExceptionManager
 
 import javax.inject.Inject
 
@@ -34,6 +34,7 @@ class VersionAndSyncFragment : DaggerFragment() {
     @Inject lateinit var preferencesManager: PreferencesManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var deltaRepository: DeltaRepository
+    @Inject lateinit var logger: Logger
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.version_and_sync_label)
@@ -45,7 +46,7 @@ class VersionAndSyncFragment : DaggerFragment() {
             val pInfo = activity.packageManager.getPackageInfo(activity.packageName, 0)
             version_number.text = pInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
-            ExceptionManager.reportException(e)
+            logger.error(e)
         }
 
         refreshValues()

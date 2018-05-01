@@ -28,35 +28,31 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun save(billable: Billable) {
-        if (billableDao.find(billable.id) != null) {
-            billableDao.update(BillableModel.fromBillable(billable, clock))
-        } else {
-            billableDao.insert(BillableModel.fromBillable(billable, clock))
+    private fun save(billable: Billable): Completable {
+        return Completable.fromAction {
+            if (billableDao.find(billable.id) != null) {
+                billableDao.update(BillableModel.fromBillable(billable, clock))
+            } else {
+                billableDao.insert(BillableModel.fromBillable(billable, clock))
+            }
         }
     }
 
     override fun fetch(): Completable {
-        sessionManager.currentToken()?.let { token ->
-            api.billables(token.getHeaderString(), token.user.providerId).execute()?.let { response ->
-                // TODO: handle null body
-                if (response.isSuccessful) {
-                    response.body()?.let { billables ->
-                        billables.forEach { save(it.toBillable()) }
-                        // TODO: more efficient way of saving?
-                        // TODO: clean up any billables not returned in the fetch
-                        // TODO: do not overwrite unsynced billable data
-                    }
-                    preferencesManager.updateBillablesLastFetched(clock.instant())
-                } else {
-                    // TODO: log
-                }
-                // TODO: handle null response
-
+        val token = sessionManager.currentToken()
+        return if (token == null) {
+            Completable.complete()
+        } else {
+            api.billables(token.getHeaderString(),
+                          token.user.providerId).flatMapCompletable { updatedBillables ->
+                // TODO: more efficient saving
+                // TODO: clean-up billables not returned
+                // TODO: don't remove unsynced billables created during encounter
+                Completable.concat(updatedBillables.map { save(it.toBillable()) })
+            }.andThen {
+                preferencesManager.updateBillablesLastFetched(clock.instant())
             }
         }
-        // TODO: complete when finished
-        return Completable.complete()
     }
 
     override fun uniqueCompositions(): Single<List<String>> {

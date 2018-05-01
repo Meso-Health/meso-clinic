@@ -1,11 +1,12 @@
 package org.watsi.domain.repositories
 
+import io.reactivex.Completable
+import io.reactivex.Single
 import org.watsi.domain.entities.Photo
 import java.util.UUID
 
 interface PhotoRepository {
-    fun find(id: UUID): Photo
-    fun create(photo: Photo)
-    fun canBeDeleted(): List<Photo>
-    fun deleteLocalImage(photo: Photo): Boolean
+    fun find(id: UUID): Single<Photo>
+    fun create(photo: Photo): Completable
+    fun cleanSynced(): Completable
 }

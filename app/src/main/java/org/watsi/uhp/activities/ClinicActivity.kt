@@ -1,9 +1,6 @@
 package org.watsi.uhp.activities
 
 import android.Manifest
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -27,7 +24,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.fragments.CurrentPatientsFragment
 
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.services.AbstractSyncJobService
+import org.watsi.uhp.services.DaggerJobService
 import javax.inject.Inject
 
 class ClinicActivity : DaggerAppCompatActivity() {
@@ -89,18 +86,14 @@ class ClinicActivity : DaggerAppCompatActivity() {
     }
 
     private fun startServices() {
-        val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        jobScheduler.schedule(AbstractSyncJobService.buildJobInfo(
-                FETCH_SERVICE_JOB_ID, ComponentName(this, FetchService::class.java)))
-        jobScheduler.schedule(AbstractSyncJobService.buildJobInfo(
-                SYNC_SERVICE_JOB_ID, ComponentName(this, SyncService::class.java)))
-        jobScheduler.schedule(AbstractSyncJobService.buildJobInfo(
-                DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID,
-                ComponentName(this, DownloadMemberPhotosService::class.java)))
-        jobScheduler.schedule(AbstractSyncJobService.buildJobInfo(
-                DELETE_PHOTOS_SERVICE_JOB_ID,
-                ComponentName(this, DeleteFetchedPhotoService::class.java),
-                false))
+        DaggerJobService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
+        DaggerJobService.schedule(SYNC_SERVICE_JOB_ID, this, SyncService::class.java)
+        DaggerJobService.schedule(DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID,
+                                  this,
+                                  DownloadMemberPhotosService::class.java)
+        DaggerJobService.schedule(DELETE_PHOTOS_SERVICE_JOB_ID,
+                                  this,
+                                  DeleteFetchedPhotoService::class.java)
     }
 
     private fun setupToolbar() {

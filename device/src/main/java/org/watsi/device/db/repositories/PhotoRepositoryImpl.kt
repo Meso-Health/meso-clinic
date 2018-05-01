@@ -3,6 +3,9 @@ package org.watsi.device.db.repositories
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.MediaStore
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.PhotoModel
@@ -17,19 +20,17 @@ class PhotoRepositoryImpl(private val photoDao: PhotoDao,
                           private val clock: Clock,
                           private val contentResolver: ContentResolver) : PhotoRepository {
 
-    override fun find(id: UUID): Photo {
-        return photoDao.find(id).toPhoto()
+    override fun find(id: UUID): Single<Photo> {
+        return photoDao.find(id).map { it.toPhoto() }.subscribeOn(Schedulers.io())
     }
 
-    override fun create(photo: Photo) {
-        photoDao.insert(PhotoModel.fromPhoto(photo, clock))
+    override fun create(photo: Photo): Completable {
+        return Completable.fromAction {
+            photoDao.insert(PhotoModel.fromPhoto(photo, clock))
+        }.subscribeOn(Schedulers.io())
     }
 
-    override fun canBeDeleted(): List<Photo> {
-        return photoDao.canBeDeleted().map { it.toPhoto() }
-    }
-
-    override fun deleteLocalImage(photo: Photo): Boolean {
+    private fun deleteLocalImage(photo: Photo): Boolean {
         val uri = Uri.parse(photo.url)
         val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media._ID), null, null, null)
         var deleted = false
@@ -39,6 +40,12 @@ class PhotoRepositoryImpl(private val photoDao: PhotoDao,
         }
         photoDao.update(PhotoModel.fromPhoto(photo.copy(deleted = deleted), clock))
         return deleted
+    }
+
+    override fun cleanSynced(): Completable {
+        //photoDao.canBeDeleted().map { it.toPhoto() }
+        // TODO: finish implementing
+        return Completable.complete()
     }
 
     private fun localImageBytes(photo: Photo): ByteArray? {

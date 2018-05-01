@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
+import io.reactivex.Single
 import org.watsi.device.db.models.PhotoModel
 import java.util.UUID
 
@@ -17,7 +18,7 @@ interface PhotoDao {
     fun update(model: PhotoModel)
 
     @Query("SELECT * FROM photos WHERE id = :id LIMIT 1")
-    fun find(id: UUID): PhotoModel
+    fun find(id: UUID): Single<PhotoModel>
 
     // TODO: fix this query
     @Query("SELECT * FROM photos")

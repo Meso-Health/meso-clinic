@@ -19,16 +19,17 @@ class PhotoLoaderHelper(private val context: Context, private val photoRepositor
     fun loadMemberPhoto(member: Member, imageView: ImageView, width: Int, height: Int) {
         val adjustedWidth = getWidthFromDimensionResource(context, width)
         val adjustedHeight = getHeightFromDimensionResource(context, height)
+        // TODO: fix when we fix photo handling logic
         if (member.thumbnailPhotoId != null) {
             member.thumbnailPhotoId?.let { photoId ->
-                val photo = photoRepository.find(photoId)
-                loadPhotoFromBytes(imageView, photo.bytes, adjustedWidth, adjustedHeight)
+//                val photo = photoRepository.find(photoId)
+//                loadPhotoFromBytes(imageView, photo.bytes, adjustedWidth, adjustedHeight)
             }
         } else if (member.photoId != null) {
             member.photoId?.let { photoId ->
-                photoRepository.find(photoId).url?.let { photoUrl ->
-                    loadPhotoFromContentUri(imageView, photoUrl, adjustedWidth, adjustedHeight)
-                }
+//                photoRepository.find(photoId).url?.let { photoUrl ->
+//                    loadPhotoFromContentUri(imageView, photoUrl, adjustedWidth, adjustedHeight)
+//                }
             }
         }
     }

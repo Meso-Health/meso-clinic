@@ -40,26 +40,20 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun fetch(): Completable {
-        sessionManager.currentToken()?.let { token ->
-            api.members(token.getHeaderString(), token.user.providerId).execute()?.let { response ->
-                // TODO: handle null body
-                if (response.isSuccessful) {
-                    response.body()?.let { updatedMembers ->
-                        updatedMembers.forEach { save(it.toMember()) }
-                        // TODO: more efficient way of saving?
-                        // TODO: clean up any members not returned in the fetch
-                        // TODO: do not overwrite unsynced member data
-                    }
-                    preferencesManager.updateMemberLastFetched(clock.instant())
-                } else {
-                    // TODO: log
-                }
-                // TODO: handle null response
-            }
-            // TODO: handle logged out case
+        val token = sessionManager.currentToken()
+        return if (token == null) {
+            Completable.complete()
+        } else {
+            api.members(token.getHeaderString(),
+                        token.user.providerId).flatMapCompletable { updatedMembers ->
+                // TODO: more efficient way of saving?
+                // TODO: clean up any members not returned in the fetch
+                // TODO: do not overwrite unsynced member data
+                Completable.concat(updatedMembers.map { save(it.toMember()) })
+            }.andThen {
+                preferencesManager.updateMemberLastFetched(clock.instant())
+            }.subscribeOn(Schedulers.io())
         }
-        // TODO: complete when fetch finishes
-        return Completable.complete()
     }
 
     override fun findByCardId(cardId: String): Maybe<Member> {

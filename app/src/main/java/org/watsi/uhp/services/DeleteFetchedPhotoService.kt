@@ -1,19 +1,19 @@
 package org.watsi.uhp.services
 
+import android.app.job.JobParameters
 import org.watsi.domain.repositories.PhotoRepository
 import javax.inject.Inject
 
-open class DeleteFetchedPhotoService : AbstractSyncJobService() {
+open class DeleteFetchedPhotoService : DaggerJobService() {
 
     @Inject lateinit var photoRepository: PhotoRepository
 
-    override fun performSync(): Boolean {
+    override fun onStartJob(params: JobParameters?): Boolean {
+        photoRepository.cleanSynced()
+        return true
+    }
 
-        photoRepository.canBeDeleted().forEach {
-            // TODO: handle case where it fails to delete
-            photoRepository.deleteLocalImage(it)
-        }
-
+    override fun onStopJob(params: JobParameters?): Boolean {
         return true
     }
 }

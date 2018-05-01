@@ -23,33 +23,28 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                 .subscribeOn(Schedulers.io())
     }
 
-    private fun save(diagnosis: Diagnosis) {
-        if (diagnosisDao.find(diagnosis.id) != null) {
-            diagnosisDao.update(DiagnosisModel.fromDiagnosis(diagnosis, clock))
-        } else {
-            diagnosisDao.insert(DiagnosisModel.fromDiagnosis(diagnosis, clock))
+    private fun save(diagnosis: Diagnosis): Completable {
+        return Completable.fromAction {
+            if (diagnosisDao.find(diagnosis.id) != null) {
+                diagnosisDao.update(DiagnosisModel.fromDiagnosis(diagnosis, clock))
+            } else {
+                diagnosisDao.insert(DiagnosisModel.fromDiagnosis(diagnosis, clock))
+            }
         }
     }
 
     override fun fetch(): Completable {
-        sessionManager.currentToken()?.let { token ->
-            api.diagnoses(token.getHeaderString()).execute()?.let { response ->
-                // TODO: handle null body
-                if (response.isSuccessful) {
-                    response.body()?.let { diagnoses ->
-                        diagnoses.forEach { save(it.toDiagnosis()) }
-                        // TODO: more efficient way of saving?
-                        // TODO: clean up any diagnoses not returned in the fetch
-                    }
-                    preferencesManager.updateDiagnosesLastFetched(clock.instant())
-                } else {
-                    // TODO: log
-                }
-                // TODO: handle null response
-
+        val token = sessionManager.currentToken()
+        return if (token == null) {
+            Completable.complete()
+        } else {
+            api.diagnoses(token.getHeaderString()).flatMapCompletable { updatedDiagnoses ->
+                // TODO: more efficient way of saving?
+                // TODO: clean up any diagnoses not returned in the fetch
+                Completable.concat(updatedDiagnoses.map { save(it.toDiagnosis()) })
+            }.andThen {
+                preferencesManager.updateDiagnosesLastFetched(clock.instant())
             }
         }
-        // TODO: complete after the fetch finishes
-        return Completable.complete()
     }
 }

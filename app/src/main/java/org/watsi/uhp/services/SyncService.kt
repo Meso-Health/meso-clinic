@@ -1,5 +1,6 @@
 package org.watsi.uhp.services
 
+import android.app.job.JobParameters
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterFormRepository
@@ -9,7 +10,7 @@ import org.watsi.domain.repositories.MemberRepository
 
 import javax.inject.Inject
 
-class SyncService : AbstractSyncJobService() {
+class SyncService : DaggerJobService() {
 
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var encounterRepository: EncounterRepository
@@ -17,7 +18,7 @@ class SyncService : AbstractSyncJobService() {
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var deltaRepository: DeltaRepository
 
-    override fun performSync(): Boolean {
+    override fun onStartJob(params: JobParameters?): Boolean {
         val unsyncedMembers = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
         unsyncedMembers.groupBy { it.modelId }.forEach { _, deltas ->
             memberRepository.sync(deltas)
@@ -39,6 +40,10 @@ class SyncService : AbstractSyncJobService() {
             encounterFormRepository.sync(deltas)
         }
 
+        return true
+    }
+
+    override fun onStopJob(params: JobParameters?): Boolean {
         return true
     }
 }

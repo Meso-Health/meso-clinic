@@ -33,18 +33,18 @@ interface CoverageApi {
     fun members(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int
-    ): Call<List<MemberApi>>
+    ): Single<List<MemberApi>>
 
     @GET("providers/{providerId}/billables")
     fun billables(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int
-    ): Call<List<BillableApi>>
+    ): Single<List<BillableApi>>
 
     @GET("diagnoses")
     fun diagnoses(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String
-    ): Call<List<DiagnosisApi>>
+    ): Single<List<DiagnosisApi>>
 
     @POST("providers/{providerId}/identification_events")
     fun postIdentificationEvent(
