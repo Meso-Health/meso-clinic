@@ -9,8 +9,64 @@
     <color name="notificationGray">#EEEEEE</color>
     <color name="disabledButton">#D6D6D6</color>
     <color name="disabledButtonText">#A5A5A5</color>
+    <color name="translucentOverlay">#55000000</color>
 
     <color name="title">#212121</color>
     <color name="text">#747474</color>
     <color name="divider">#DADADA</color>
+
+    <color name="gray0">#f8f9fa</color>
+    <color name="gray1">#f1f3f5</color>
+    <color name="gray2">#e9ecef</color>
+    <color name="gray3">#dee2e6</color>
+    <color name="gray4">#ced4da</color>
+    <color name="gray5">#adb5bd</color>
+    <color name="gray6">#868e96</color>
+    <color name="gray7">#495057</color>
+    <color name="gray8">#343a40</color>
+    <color name="gray9">#212529</color>
+
+    <color name="blue0">#e8f7ff</color>
+    <color name="blue1">#ccedff</color>
+    <color name="blue2">#a3daff</color>
+    <color name="blue3">#72c3fc</color>
+    <color name="blue4">#4dadf7</color>
+    <color name="blue5">#329af0</color>
+    <color name="blue6">#228ae6</color>
+    <color name="blue7">#1c7cd6</color>
+    <color name="blue8">#1b6ec2</color>
+    <color name="blue9">#1862ab</color>
+
+    <color name="green0">#ebfbee</color>
+    <color name="green1">#d3f9d8</color>
+    <color name="green2">#b2f2bb</color>
+    <color name="green3">#8ce99a</color>
+    <color name="green4">#69db7c</color>
+    <color name="green5">#51cf66</color>
+    <color name="green6">#40c057</color>
+    <color name="green7">#37b24d</color>
+    <color name="green8">#2f9e44</color>
+    <color name="green9">#2b8a3e</color>
+
+    <color name="yellow0">#fff9db</color>
+    <color name="yellow1">#fff3bf</color>
+    <color name="yellow2">#ffec99</color>
+    <color name="yellow3">#ffe066</color>
+    <color name="yellow4">#ffd43b</color>
+    <color name="yellow5">#fcc419</color>
+    <color name="yellow6">#fab005</color>
+    <color name="yellow7">#f59f00</color>
+    <color name="yellow8">#f08c00</color>
+    <color name="yellow9">#e67700</color>
+
+    <color name="red0">#fff5f5</color>
+    <color name="red1">#ffe3e3</color>
+    <color name="red2">#ffc9c9</color>
+    <color name="red3">#ffa8a8</color>
+    <color name="red4">#ff8787</color>
+    <color name="red5">#ff6b6b</color>
+    <color name="red6">#fa5252</color>
+    <color name="red7">#f03e3e</color>
+    <color name="red8">#e03131</color>
+    <color name="red9">#c92a2a</color>
 </resources>

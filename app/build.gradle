@@ -161,6 +161,7 @@ dependencies {
     implementation dependencies.cardView
     implementation dependencies.gson
     implementation dependencies.gmsVision
+    implementation dependencies.constraintLayout
 
     // Dependency injection
     implementation dependencies.dagger

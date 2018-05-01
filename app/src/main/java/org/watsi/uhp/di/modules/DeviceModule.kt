@@ -35,8 +35,9 @@ class DeviceModule {
     @Singleton
     @Provides
     fun provideSessionManager(preferencesManager: PreferencesManager,
-                              api: CoverageApi): SessionManager {
-        return SessionManagerImpl(preferencesManager, api)
+                              api: CoverageApi,
+                              logger: Logger): SessionManager {
+        return SessionManagerImpl(preferencesManager, api, logger)
     }
 
     @Singleton

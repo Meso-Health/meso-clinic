@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".BaseApplication"
@@ -40,6 +41,7 @@
             android:name=".services.DeleteFetchedPhotoService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -49,6 +51,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/image_path" />
         </provider>
+
         <activity
             android:name=".activities.ClinicActivity"
             android:windowSoftInputMode="adjustPan"
@@ -61,6 +64,12 @@
         </activity>
         <activity
             android:name=".activities.AuthenticationActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activities.ScanNewCardActivity"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >

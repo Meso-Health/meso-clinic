@@ -67,6 +67,7 @@
     <string name="barcode_fragment_label">Scan ID</string>
     <string name="search_member_hint">Search member name or ID</string>
     <string name="id_not_found_toast">Card not found. Try searching by name.</string>
+    <string name="scan_member_card">Scan member card</string>
 
     <!-- SearchMemberFragment -->
     <string name="member_search_fragment_label">Search</string>
