@@ -10,14 +10,12 @@ import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.device.api.CoverageApi
-import org.watsi.device.api.NotModifiedInterceptor
 import org.watsi.uhp.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import kotlin.reflect.jvm.internal.impl.resolve.constants.EnumValue
 
 @Module
 class ApiModule {
@@ -34,7 +32,6 @@ class ApiModule {
                 .connectTimeout(httpTimeoutInSeconds, TimeUnit.SECONDS)
                 .readTimeout(httpTimeoutInSeconds, TimeUnit.SECONDS)
                 .writeTimeout(httpTimeoutInSeconds, TimeUnit.SECONDS)
-                .addInterceptor(NotModifiedInterceptor())
                 .retryOnConnectionFailure(false)
                 .build()
     }
