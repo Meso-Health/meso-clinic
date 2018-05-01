@@ -19,7 +19,6 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
-import org.watsi.uhp.activities.QrCodeActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
 import org.watsi.uhp.managers.NavigationManager
 
@@ -98,7 +97,7 @@ class MemberEditFragment : DaggerFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val (cardId, error) = QrCodeActivity.parseResult(resultCode, data, logger)
+        val (cardId, error) = ScanNewCardActivity.parseResult(resultCode, data, logger)
         cardId?.let {
             card_id.setText(it)
         }

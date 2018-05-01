@@ -7,19 +7,19 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
 
-class ScanNewCardActivity : QrCodeActivity() {
+class SearchByMemberCardActivity : QrCodeActivity() {
 
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var logger: Logger
 
     companion object {
         const val RESULT_LOOKUP_FAILED = 3
-        const val CARD_ID_RESULT_KEY = "card_id"
+        const val MEMBER_RESULT_KEY = "member"
 
-        fun parseResult(resultCode: Int, data: Intent?, logger: Logger): Pair<String?, String?> {
+        fun parseResult(resultCode: Int, data: Intent?, logger: Logger): Pair<Member?, String?> {
             return when (resultCode) {
                 Activity.RESULT_OK -> {
-                    Pair(data?.getStringExtra(CARD_ID_RESULT_KEY), null)
+                    Pair(data?.getSerializableExtra(MEMBER_RESULT_KEY) as Member?, null)
                 }
                 else -> {
                     if (resultCode != Activity.RESULT_CANCELED) {
@@ -37,17 +37,18 @@ class ScanNewCardActivity : QrCodeActivity() {
             setErrorMessage("Not a valid member card")
         } else {
             memberRepository.findByCardId(qrCode).subscribe({
-                setErrorMessage("Card ID is already assigned to a different member")
-            }, {
-                logger.error(it)
-                finishAsFailure(RESULT_LOOKUP_FAILED)
-            }, {
                 val resultIntent = Intent().apply {
-                    putExtra(CARD_ID_RESULT_KEY, qrCode)
+                    putExtra(MEMBER_RESULT_KEY, it)
                 }
                 setResult(RESULT_OK, resultIntent)
                 vibrate()
                 finish()
+
+            }, {
+                logger.error(it)
+                finishAsFailure(RESULT_LOOKUP_FAILED)
+            }, {
+                setErrorMessage("This card is not associated with a member")
             })
         }
     }

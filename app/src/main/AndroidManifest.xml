@@ -74,5 +74,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".activities.SearchByMemberCardActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 </manifest>

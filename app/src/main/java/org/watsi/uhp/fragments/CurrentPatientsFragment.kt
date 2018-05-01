@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,12 +16,14 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients_label
 import kotlinx.android.synthetic.main.fragment_current_patients.identification_button
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.managers.NavigationManager
@@ -34,8 +37,13 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var logger: Logger
 
     lateinit var viewModel: CurrentPatientsViewModel
+
+    companion object {
+        const val SCAN_CARD_INTENT = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,13 +88,14 @@ class CurrentPatientsFragment : DaggerFragment() {
         }
 
         identification_button.setOnClickListener {
-            navigationManager.goTo(BarcodeFragment.forPurpose(BarcodeFragment.ScanPurpose.ID))
+            startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         menu!!.findItem(R.id.menu_logout).isVisible = true
         menu.findItem(R.id.menu_version).isVisible = true
+        menu.findItem(R.id.menu_search_by_name_or_id).isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -103,8 +112,28 @@ class CurrentPatientsFragment : DaggerFragment() {
                             (activity as ClinicActivity).navigateToAuthenticationActivity()
                         }.create().show()
             }
+            R.id.menu_search_by_name_or_id -> {
+                navigationManager.goTo(SearchMemberFragment())
+            }
             else -> super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
+        member?.let {
+            viewModel.getIdentificationEvent(it).subscribe({
+                navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+            }, {
+                // TODO: handle error
+            }, {
+                // TODO: this code path technically should not happen...
+                navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
+            })
+        }
+        error?.let {
+            // TODO: display error?
+        }
     }
 }

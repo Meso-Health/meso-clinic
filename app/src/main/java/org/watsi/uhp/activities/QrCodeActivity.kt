@@ -1,7 +1,6 @@
 package org.watsi.uhp.activities
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,7 +17,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_qr_code.cancel_container
 import kotlinx.android.synthetic.main.activity_qr_code.scan_card_error
 import kotlinx.android.synthetic.main.activity_qr_code.surface
-import org.watsi.device.managers.Logger
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.QrCodeDetectorManager
 import java.util.concurrent.TimeUnit
@@ -30,24 +28,9 @@ abstract class QrCodeActivity : DaggerAppCompatActivity(), SurfaceHolder.Callbac
     companion object {
         const val RESULT_NEEDS_PERMISSION = 1
         const val RESULT_BARCODE_DETECTOR_NOT_OPERATIONAL = 2
-        const val QR_CODE_RESULT_KEY = "qr_code"
         const val DURATION_TO_SHOW_ERROR_MESSAGES_IN_MS: Long = 1000
         const val MIN_TIME_BETWEEN_SCANS_IN_MS: Long = 1000
         const val CONFIRMATION_VIBRATION_LENGTH_IN_MS: Long = 150
-
-        fun parseResult(resultCode: Int, data: Intent?, logger: Logger): Pair<String?, String?> {
-            return when (resultCode) {
-                Activity.RESULT_OK -> {
-                    Pair(data?.getStringExtra(QrCodeActivity.QR_CODE_RESULT_KEY), null)
-                }
-                else -> {
-                    if (resultCode != Activity.RESULT_CANCELED) {
-                        logger.error("QrCodeActivity.parseResult called with resultCode: $resultCode")
-                    }
-                    Pair(null, "failed")
-                }
-            }
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

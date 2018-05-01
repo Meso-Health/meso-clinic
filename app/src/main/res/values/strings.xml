@@ -63,10 +63,8 @@
         <item quantity="other">%d Current Members</item>
     </plurals>
 
-    <!-- BarcodeFragment -->
-    <string name="barcode_fragment_label">Scan ID</string>
+    <!-- QrCodeActivity -->
     <string name="search_member_hint">Search member name or ID</string>
-    <string name="id_not_found_toast">Card not found. Try searching by name.</string>
     <string name="scan_member_card">Scan member card</string>
 
     <!-- SearchMemberFragment -->

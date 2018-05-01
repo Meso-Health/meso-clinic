@@ -21,9 +21,9 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_logout"
+        android:id="@+id/menu_search_by_name_or_id"
         android:orderInCategory="105"
-        android:title="@string/menu_logout_label"
+        android:title="@string/search_member_hint"
         app:showAsAction="never"
         android:visible="false" />
     <item
@@ -33,8 +33,14 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_submit_without_copayment"
+        android:id="@+id/menu_logout"
         android:orderInCategory="107"
+        android:title="@string/menu_logout_label"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_submit_without_copayment"
+        android:orderInCategory="108"
         android:title="@string/menu_submit_without_copayment"
         app:showAsAction="never"
         android:visible="false" />
