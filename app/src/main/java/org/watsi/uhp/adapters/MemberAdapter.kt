@@ -7,43 +7,40 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 import org.watsi.domain.entities.Member
+import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.PhotoLoaderHelper
+import org.watsi.uhp.helpers.PhotoLoader
 
 class MemberAdapter(context: Context,
                     memberList: List<Member>,
-                    private val photoLoaderHelper: PhotoLoaderHelper,
+                    private val photoRepository: PhotoRepository,
                     private val showClinicNumber: Boolean
 ) : ArrayAdapter<Member>(context, R.layout.item_member_list, memberList) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        val viewHolder: ViewHolder
-        if (convertView == null) {
-            val layoutInflater = (context as Activity).layoutInflater
-            convertView = layoutInflater.inflate(R.layout.item_member_list, parent, false)
-
-            viewHolder = ViewHolder()
-            viewHolder.name = convertView!!.findViewById(R.id.member_name)
-            viewHolder.age_and_gender = convertView.findViewById(R.id.member_age_and_gender)
-            viewHolder.card_id = convertView.findViewById(R.id.member_card_id)
-            viewHolder.phone_number = convertView.findViewById(R.id.member_phone_number)
-            viewHolder.photo = convertView.findViewById(R.id.member_photo)
+        val view = convertView ?: (context as Activity).layoutInflater.inflate(
+                R.layout.item_member_list, parent, false)
+        val viewHolder = if (convertView == null) {
+            val holder = ViewHolder()
+            holder.name = view!!.findViewById(R.id.member_name)
+            holder.age_and_gender = view.findViewById(R.id.member_age_and_gender)
+            holder.card_id = view.findViewById(R.id.member_card_id)
+            holder.phone_number = view.findViewById(R.id.member_phone_number)
+            holder.photo = view.findViewById(R.id.member_photo)
             if (showClinicNumber) {
-                viewHolder.clinic_number = convertView.findViewById(R.id.member_clinic_number)
+                holder.clinic_number = view.findViewById(R.id.member_clinic_number)
             }
 
-            convertView.tag = viewHolder
+            view.tag = holder
+            holder
         } else {
-            viewHolder = convertView.tag as ViewHolder
+            convertView.tag as ViewHolder
         }
 
-        val member = getItem(position)
-
-        if (member != null) {
-            // TODO: clean up formatting
+        getItem(position)?.let { member ->
             viewHolder.name?.text = member.name
             viewHolder.age_and_gender?.text = member.gender.toString()
             viewHolder.card_id?.text = member.cardId
@@ -56,11 +53,24 @@ class MemberAdapter(context: Context,
 //                viewHolder.clinic_number?.text = currentCheckIn.clinicNumber.toString()
             }
 
-            // TODO: un-comment when we fix photo handling
-//            photoLoaderHelper.loadMemberPhoto(member, viewHolder.photo!!, R.dimen.item_member_list_photo_width, R.dimen.item_member_list_photo_height)
+            viewHolder.photo?.let { imageView ->
+                // TODO: should pre-load photo with Member
+                member.thumbnailPhotoId?.let { photoId ->
+                    photoRepository.find(photoId)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({ photo ->
+                        photo.bytes?.let {
+                            PhotoLoader.loadMemberPhoto(it, imageView, context)
+                        }
+                    }, {
+                        // TODO: handle error
+                        val foo = 2
+                    })
+                }
+            }
         }
 
-        return convertView
+        return view
     }
 
     private class ViewHolder {

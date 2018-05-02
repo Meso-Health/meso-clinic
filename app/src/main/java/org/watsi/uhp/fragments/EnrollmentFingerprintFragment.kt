@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import dagger.android.support.DaggerFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_capture_btn
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_failed_message
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment_fingerprint_success_message
@@ -79,17 +80,22 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage(R.string.enrollment_fingerprint_confirm_completion)
             builder.setPositiveButton(android.R.string.yes) { _, _ ->
-                memberRepository.save(member.copy(fingerprintsGuid = fingerprintsGuid))
-
-                identificationEventRepository.openCheckIn(member.id).subscribe({
-                    navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                val updatedMember = member.copy(fingerprintsGuid = fingerprintsGuid)
+                memberRepository.save(updatedMember).subscribe({
+                    identificationEventRepository.openCheckIn(updatedMember.id)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                        navigationManager.popTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                        Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
+                    }, {
+                        // TODO: handle error
+                    }, {
+                        navigationManager.popTo(CheckInMemberDetailFragment.forMember(updatedMember))
+                        Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
+                    })
                 }, {
                     // TODO: handle error
-                }, {
-                    navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
                 })
-
-                Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
             }
             builder.setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
             builder.show()

@@ -80,11 +80,11 @@ class MemberEditFragment : DaggerFragment() {
                                                 cardId = updatedCardId)
                 memberRepository.save(updatedMember).subscribe({
                     identificationEventRepository.openCheckIn(member.id).subscribe({
-                        navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                        navigationManager.popTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
                     }, {
                         // TODO: handle error
                     }, {
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(updatedMember))
+                        navigationManager.popTo(CheckInMemberDetailFragment.forMember(updatedMember))
                     })
                     Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show()
                 }, {

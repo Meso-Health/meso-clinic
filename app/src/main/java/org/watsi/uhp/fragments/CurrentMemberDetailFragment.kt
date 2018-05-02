@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
@@ -24,7 +25,7 @@ import org.watsi.domain.entities.Member
 
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.PhotoLoaderHelper
+import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import javax.inject.Inject
@@ -79,8 +80,17 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
-                PhotoLoaderHelper(activity, photoRepository).loadMemberPhoto(
-                        member, member_photo, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height)
+                member.thumbnailPhotoId?.let { photoId ->
+                    photoRepository.find(photoId)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({ photo ->
+                        photo.bytes?.let {
+                            PhotoLoader.loadMemberPhoto(it, member_photo, activity)
+                        }
+                    }, {
+                        // TODO: handle error
+                    })
+                }
             }
         })
     }
