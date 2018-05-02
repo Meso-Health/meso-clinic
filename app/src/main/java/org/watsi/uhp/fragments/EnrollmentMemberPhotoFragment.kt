@@ -87,7 +87,7 @@ class EnrollmentMemberPhotoFragment : DaggerFragment() {
                 builder.setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
                 builder.show()
             } else {
-                navigationManager.goTo(EnrollmentContactInfoFragment.forMember(updatedMember))
+                navigationManager.goTo(EnrollmentFingerprintFragment.forMember(updatedMember))
             }
         }
     }

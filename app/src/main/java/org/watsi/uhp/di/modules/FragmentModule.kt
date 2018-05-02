@@ -11,7 +11,6 @@ import org.watsi.uhp.fragments.EncounterFormFragment
 import org.watsi.uhp.fragments.EncounterFragment
 import org.watsi.uhp.fragments.EnrollNewbornInfoFragment
 import org.watsi.uhp.fragments.EnrollNewbornPhotoFragment
-import org.watsi.uhp.fragments.EnrollmentContactInfoFragment
 import org.watsi.uhp.fragments.EnrollmentFingerprintFragment
 import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment
 import org.watsi.uhp.fragments.MemberEditFragment
@@ -28,7 +27,6 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment
     @ContributesAndroidInjector abstract fun bindEncounterFormFragment(): EncounterFormFragment
     @ContributesAndroidInjector abstract fun bindEncounterFragment(): EncounterFragment
-    @ContributesAndroidInjector abstract fun bindEnrollmentContactInfoFragment(): EnrollmentContactInfoFragment
     @ContributesAndroidInjector abstract fun bindEnrollmentFingerprintFragment(): EnrollmentFingerprintFragment
     @ContributesAndroidInjector abstract fun bindEnrollmentMemberPhotoFragment(): EnrollmentMemberPhotoFragment
     @ContributesAndroidInjector abstract fun bindEnrollNewbornInfoFragment(): EnrollNewbornInfoFragment
