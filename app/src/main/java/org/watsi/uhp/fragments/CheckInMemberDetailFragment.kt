@@ -19,12 +19,14 @@ import com.simprints.libsimprints.Constants
 import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
 import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
 import kotlinx.android.synthetic.main.fragment_member_detail.member_name_detail_fragment
 import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
+import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
@@ -38,6 +40,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
+import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -101,9 +104,19 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
         member_card_id_detail_fragment.text = member.cardId
         member_phone_number.text = member.phoneNumber
-        // TODO: re-implement when we fix photo logic
-//        PhotoLoaderHelper(activity, photoRepository).loadMemberPhoto(
-//                member, member_photo, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height)
+        member_phone_number.text = member.phoneNumber
+        member_phone_number.text = member.phoneNumber
+        member.thumbnailPhotoId?.let { photoId ->
+            photoRepository.find(photoId)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ photo ->
+                        photo.bytes?.let {
+                            PhotoLoader.loadMemberPhoto(it, member_photo, activity)
+                        }
+                    }, {
+                        // TODO: handle error
+                    })
+        }
 
         member_action_button.text = getString(R.string.check_in)
         member_action_button.setOnClickListener {

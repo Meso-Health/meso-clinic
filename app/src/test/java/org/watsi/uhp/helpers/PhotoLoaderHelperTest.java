@@ -20,7 +20,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ PhotoLoaderHelper.class })
+@PrepareForTest({ PhotoLoader.class })
 public class PhotoLoaderHelperTest {
     @Mock
     Context mockContext;
@@ -32,22 +32,22 @@ public class PhotoLoaderHelperTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        mockStatic(PhotoLoaderHelper.class);
+        mockStatic(PhotoLoader.class);
     }
 
     @Test
     public void loadMemberPhoto_nonLocalPhoto() throws Exception {
         byte[] photoBytes = new byte[]{(byte)0xe0};
         when(mockMember.getCroppedPhotoBytes()).thenReturn(photoBytes);
-        when(PhotoLoaderHelper.INSTANCE.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
-        when(PhotoLoaderHelper.INSTANCE.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
+        when(PhotoLoader.INSTANCE.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
+        when(PhotoLoader.INSTANCE.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
 
-        doCallRealMethod().when(PhotoLoaderHelper.class, "loadMemberPhoto", mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        doCallRealMethod().when(PhotoLoader.class, "loadMemberPhoto", mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
-        PhotoLoaderHelper.INSTANCE.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        PhotoLoader.INSTANCE.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.INSTANCE.loadPhotoFromBytes(mockContext, mockImageView, photoBytes, 90, 120);
+        PhotoLoader.INSTANCE.loadPhotoFromBytes(mockContext, mockImageView, photoBytes, 90, 120);
     }
 
     @Test
@@ -56,14 +56,14 @@ public class PhotoLoaderHelperTest {
         photo.setUrl("random-local-full-size-image-url");
         when(mockMember.getLocalMemberPhoto()).thenReturn(photo);
         when(mockMember.getCroppedPhotoBytes()).thenReturn(null);
-        when(PhotoLoaderHelper.INSTANCE.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
-        when(PhotoLoaderHelper.INSTANCE.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
+        when(PhotoLoader.INSTANCE.getWidthFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_width)).thenReturn(90);
+        when(PhotoLoader.INSTANCE.getHeightFromDimensionResource(mockContext, R.dimen.detail_fragment_photo_height)).thenReturn(120);
 
-        doCallRealMethod().when(PhotoLoaderHelper.class, "loadMemberPhoto", mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        doCallRealMethod().when(PhotoLoader.class, "loadMemberPhoto", mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
-        PhotoLoaderHelper.INSTANCE.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
+        PhotoLoader.INSTANCE.loadMemberPhoto(mockContext, mockMember, mockImageView, R.dimen.detail_fragment_photo_width, R.dimen.detail_fragment_photo_height);
 
         verifyStatic();
-        PhotoLoaderHelper.INSTANCE.loadPhotoFromContentUri(mockContext, mockImageView, "random-local-full-size-image-url", 90, 120);
+        PhotoLoader.INSTANCE.loadPhotoFromContentUri(mockContext, mockImageView, "random-local-full-size-image-url", 90, 120);
     }
 }

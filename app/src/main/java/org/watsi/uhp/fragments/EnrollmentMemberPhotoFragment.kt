@@ -73,16 +73,20 @@ class EnrollmentMemberPhotoFragment : DaggerFragment() {
                 builder.setMessage(R.string.enrollment_fingerprint_confirm_completion)
                 builder.setPositiveButton(android.R.string.yes) { _, _ ->
                     memberRepository.save(updatedMember)
-
-                    identificationEventRepository.openCheckIn(member.id).subscribe({
-                        navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
-                    }, {
-                        // TODO: handle error
-                    }, {
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(updatedMember))
-                    })
-
-                    Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                identificationEventRepository.openCheckIn(member.id).subscribe({
+                                    navigationManager.popTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                                    Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
+                                }, {
+                                    // TODO: handle error
+                                }, {
+                                    navigationManager.popTo(CheckInMemberDetailFragment.forMember(updatedMember))
+                                    Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
+                                })
+                            }, {
+                                // TODO: handle error
+                            })
                 }
                 builder.setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
                 builder.show()

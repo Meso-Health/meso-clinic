@@ -58,10 +58,9 @@ class SavePhotoActivity : PhotoActivity() {
 
     override fun processImage(bytes: ByteArray) {
         val photo = Photo(id = UUID.randomUUID(), bytes = bytes, url = null)
-        val croppedPhoto = Photo(
-                id = UUID.randomUUID(),
-                bytes = BitmapHelper.cropByteArray(bytes, CROP_WIDTH, CROP_HEIGHT),
-                url = null)
+        val croppedPhoto = Photo(id = UUID.randomUUID(),
+                                 bytes = BitmapHelper.cropByteArray(bytes, CROP_WIDTH, CROP_HEIGHT),
+                                 url = null)
 
         Completable.concatArray(
                 photoRepository.create(photo),

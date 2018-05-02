@@ -20,12 +20,12 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 
 import org.watsi.domain.entities.Member
+import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 
@@ -37,6 +37,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var logger: Logger
 
     lateinit var viewModel: CurrentPatientsViewModel
@@ -60,7 +61,7 @@ class CurrentPatientsFragment : DaggerFragment() {
 
                     current_patients.adapter = MemberAdapter(context,
                             checkedInMembers,
-                            PhotoLoaderHelper(activity, photoRepository),
+                            photoRepository,
                             true)
                 }
             }

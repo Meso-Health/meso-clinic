@@ -18,7 +18,6 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.PhotoLoaderHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
@@ -42,7 +41,7 @@ class SearchMemberFragment : DaggerFragment() {
             it?.let { viewState ->
                 val adapter = MemberAdapter(activity,
                                             viewState.searchResults,
-                                            PhotoLoaderHelper(activity, photoRepository),
+                                            photoRepository,
                                             false)
 
                 member_search_results.adapter = adapter

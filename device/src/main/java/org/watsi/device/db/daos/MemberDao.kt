@@ -7,7 +7,6 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.Single
 import org.watsi.device.db.models.MemberModel
 import java.util.UUID
 
