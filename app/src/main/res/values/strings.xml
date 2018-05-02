@@ -218,4 +218,8 @@
     <string name="sync_encounters_label">Encounters</string>
     <string name="sync_encounter_forms_label">Treatment Forms</string>
     <string name="all_synced">All synced</string>
+
+    <!-- PhotoActivity -->
+    <string name="member_photo_overlay_text">Take photo of member</string>
+
 </resources>
