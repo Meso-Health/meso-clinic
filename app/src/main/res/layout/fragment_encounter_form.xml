@@ -32,19 +32,9 @@
         android:gravity="bottom" >
 
         <Button
-            android:id="@+id/add_another_button"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:theme="@style/SecondaryButton"
-            android:text="@string/encounter_form_add_btn"
-            android:enabled="false" />
-
-        <Button
             android:id="@+id/finish_button"
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
             style="@style/PrimaryButton"
             android:text="@string/encounter_form_finish_btn" />
     </LinearLayout>
