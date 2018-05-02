@@ -10,6 +10,7 @@ data class Member(val id: UUID,
                   val householdId: UUID,
                   val photoId: UUID?,
                   val thumbnailPhotoId: UUID?,
+                  val photoUrl: String?,
                   val cardId: String?,
                   val name: String,
                   val gender: Gender,
@@ -22,7 +23,7 @@ data class Member(val id: UUID,
     enum class DateAccuracy { Y, M, D }
 
     fun isAbsentee(clock: Clock = Clock.systemDefaultZone()): Boolean {
-        return (photoId == null && thumbnailPhotoId == null) ||
+        return (photoUrl == null && thumbnailPhotoId == null) ||
                 (requiresFingerprint(clock) && fingerprintsGuid == null)
     }
 

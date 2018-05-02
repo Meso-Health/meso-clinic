@@ -14,12 +14,10 @@ import java.util.UUID
 data class PhotoModel(@PrimaryKey val id: UUID,
                       val createdAt: Instant,
                       val updatedAt: Instant,
-                      @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val bytes: ByteArray?,
-                      val url: String?,
-                      val deleted: Boolean) {
+                      @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val bytes: ByteArray?) {
 
     fun toPhoto(): Photo {
-        return Photo(id = id, bytes = bytes, url = url, deleted = deleted)
+        return Photo(id = id, bytes = bytes)
     }
 
     override fun equals(other: Any?): Boolean{
@@ -31,13 +29,10 @@ data class PhotoModel(@PrimaryKey val id: UUID,
         return id == other.id &&
                 createdAt == other.createdAt &&
                 updatedAt == other.updatedAt &&
-                Arrays.equals(bytes, other.bytes) &&
-                url == other.url &&
-                deleted == other.deleted
-    }
+                Arrays.equals(bytes, other.bytes)    }
 
     override fun hashCode(): Int{
-        return Objects.hash(id, createdAt, updatedAt, Arrays.hashCode(bytes), url, deleted)
+        return Objects.hash(id, createdAt, updatedAt, Arrays.hashCode(bytes))
     }
 
     companion object {
@@ -46,9 +41,7 @@ data class PhotoModel(@PrimaryKey val id: UUID,
             return PhotoModel(id = photo.id,
                               createdAt = now,
                               updatedAt = now,
-                              bytes = photo.bytes,
-                              url = photo.url,
-                              deleted = photo.deleted)
+                              bytes = photo.bytes)
         }
     }
 }

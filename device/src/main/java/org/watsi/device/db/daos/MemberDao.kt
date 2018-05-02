@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
+import io.reactivex.Single
 import org.watsi.device.db.models.MemberModel
 import java.util.UUID
 
@@ -59,4 +60,7 @@ interface MemberDao {
 
     @Query("SELECT id FROM members")
     fun allIds(): List<UUID>
+
+    @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
+    fun needPhotoDownload(): Single<List<MemberModel>>
 }

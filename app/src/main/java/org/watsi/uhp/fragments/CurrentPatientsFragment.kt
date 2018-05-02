@@ -20,7 +20,6 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 
 import org.watsi.domain.entities.Member
-import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -37,7 +36,6 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var photoRepository: PhotoRepository
-    @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var logger: Logger
 
     lateinit var viewModel: CurrentPatientsViewModel

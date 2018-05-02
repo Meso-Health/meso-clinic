@@ -8,5 +8,5 @@ import java.util.UUID
 interface PhotoRepository {
     fun find(id: UUID): Single<Photo>
     fun create(photo: Photo): Completable
-    fun cleanSynced(): Completable
+    fun deleteSynced(): Completable
 }

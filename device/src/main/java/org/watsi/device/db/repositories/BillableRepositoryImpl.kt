@@ -39,20 +39,19 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
     }
 
     override fun fetch(): Completable {
-        val token = sessionManager.currentToken()
-        return if (token == null) {
-            Completable.complete()
-        } else {
+        return sessionManager.currentToken()?.let { token ->
             api.billables(token.getHeaderString(),
                           token.user.providerId).flatMapCompletable { updatedBillables ->
                 // TODO: more efficient saving
                 // TODO: clean-up billables not returned
                 // TODO: don't remove unsynced billables created during encounter
-                Completable.concat(updatedBillables.map { save(it.toBillable()) })
-            }.andThen {
-                preferencesManager.updateBillablesLastFetched(clock.instant())
-            }
-        }
+                Completable.concat(updatedBillables.map {
+                    save(it.toBillable())
+                }.plus(Completable.fromAction {
+                    preferencesManager.updateBillablesLastFetched(clock.instant())
+                }))
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 
     override fun uniqueCompositions(): Single<List<String>> {

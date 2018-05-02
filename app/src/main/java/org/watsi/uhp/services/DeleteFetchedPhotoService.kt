@@ -9,7 +9,7 @@ open class DeleteFetchedPhotoService : DaggerJobService() {
     @Inject lateinit var photoRepository: PhotoRepository
 
     override fun onStartJob(params: JobParameters?): Boolean {
-        photoRepository.cleanSynced()
+        photoRepository.deleteSynced()
         return true
     }
 

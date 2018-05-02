@@ -28,6 +28,7 @@ class EncounterViewModel @Inject constructor(
     init {
         billableRepository.all().subscribe({
             billablesByType = it.groupBy { it.type }
+            // TOOD: handle no billables case?
             uniqueDrugNames = billablesByType[Billable.Type.DRUG]!!.map { it.name }.distinct()
         }, {
             // TODO: handle error

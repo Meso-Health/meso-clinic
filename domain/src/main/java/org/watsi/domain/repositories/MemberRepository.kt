@@ -13,9 +13,9 @@ interface MemberRepository {
     fun find(id: UUID): Flowable<Member>
     fun save(member: Member): Completable
     fun fetch(): Completable
-    fun fetchPhotos(): Completable
     fun findByCardId(cardId: String): Maybe<Member>
     fun checkedInMembers(): Flowable<List<Member>>
     fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<Member>>
     fun sync(deltas: List<Delta>): Completable
+    fun downloadPhotos(): Completable
 }

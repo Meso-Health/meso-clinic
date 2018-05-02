@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "33f2d96f2ccf867b1b9df9e7b7bca1ed",
+    "identityHash": "bdfc8f4a551980f57127440bcb583674",
     "entities": [
       {
         "tableName": "billables",
@@ -434,7 +434,7 @@
       },
       {
         "tableName": "members",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `householdId` TEXT NOT NULL, `photoId` TEXT, `thumbnailPhotoId` TEXT, `cardId` TEXT, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `birthdate` TEXT NOT NULL, `birthdateAccuracy` TEXT NOT NULL, `fingerprintsGuid` TEXT, `phoneNumber` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `householdId` TEXT NOT NULL, `photoId` TEXT, `thumbnailPhotoId` TEXT, `photoUrl` TEXT, `cardId` TEXT, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `birthdate` TEXT NOT NULL, `birthdateAccuracy` TEXT NOT NULL, `fingerprintsGuid` TEXT, `phoneNumber` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -469,6 +469,12 @@
           {
             "fieldPath": "thumbnailPhotoId",
             "columnName": "thumbnailPhotoId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "photoUrl",
+            "columnName": "photoUrl",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -526,7 +532,7 @@
       },
       {
         "tableName": "photos",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `bytes` BLOB, `url` TEXT, `deleted` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `bytes` BLOB, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -551,18 +557,6 @@
             "columnName": "bytes",
             "affinity": "BLOB",
             "notNull": false
-          },
-          {
-            "fieldPath": "url",
-            "columnName": "url",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "deleted",
-            "columnName": "deleted",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -577,7 +571,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"33f2d96f2ccf867b1b9df9e7b7bca1ed\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"bdfc8f4a551980f57127440bcb583674\")"
     ]
   }
 }

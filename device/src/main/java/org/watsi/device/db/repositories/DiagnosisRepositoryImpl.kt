@@ -34,17 +34,16 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
     }
 
     override fun fetch(): Completable {
-        val token = sessionManager.currentToken()
-        return if (token == null) {
-            Completable.complete()
-        } else {
+        return sessionManager.currentToken()?.let { token ->
             api.diagnoses(token.getHeaderString()).flatMapCompletable { updatedDiagnoses ->
                 // TODO: more efficient way of saving?
                 // TODO: clean up any diagnoses not returned in the fetch
-                Completable.concat(updatedDiagnoses.map { save(it.toDiagnosis()) })
-            }.andThen {
-                preferencesManager.updateDiagnosesLastFetched(clock.instant())
-            }
-        }
+                Completable.concat(updatedDiagnoses.map {
+                    save(it.toDiagnosis())
+                }.plus(Completable.fromAction {
+                    preferencesManager.updateDiagnosesLastFetched(clock.instant())
+                }))
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 }

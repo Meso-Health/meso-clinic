@@ -16,7 +16,6 @@ import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.services.DeleteFetchedPhotoService
 import org.watsi.uhp.services.DownloadMemberPhotosService
-import org.watsi.uhp.services.FetchService
 import org.watsi.uhp.services.SyncService
 
 import dagger.android.support.DaggerAppCompatActivity
@@ -25,6 +24,7 @@ import org.watsi.uhp.fragments.CurrentPatientsFragment
 
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.DaggerJobService
+import org.watsi.uhp.services.FetchService
 import javax.inject.Inject
 
 class ClinicActivity : DaggerAppCompatActivity() {
