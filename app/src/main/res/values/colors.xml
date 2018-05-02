@@ -10,6 +10,7 @@
     <color name="disabledButton">#D6D6D6</color>
     <color name="disabledButtonText">#A5A5A5</color>
     <color name="translucentOverlay">#55000000</color>
+    <color name="translucentWhite">#7FFFFFFF</color>
 
     <color name="title">#212121</color>
     <color name="text">#747474</color>
