@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Member
-import org.watsi.domain.entities.Photo
 import java.util.UUID
 
 data class MemberApi(@SerializedName("id") val id: UUID,
@@ -21,13 +20,12 @@ data class MemberApi(@SerializedName("id") val id: UUID,
                      @SerializedName("photo_url") val photoUrl: String?) {
 
     fun toMember(): Member {
-        val thumbnailPhotoId = if (photoUrl != null) {
-            Photo(id = UUID.randomUUID(), bytes = null, url = photoUrl).id
-            // TODO: need to persist model
+        // necessary because when running locally, URL is returned relative to app directory
+        val convertedPhotoUrl = if (photoUrl?.first() == '/') {
+            "http://localhost:5000$photoUrl"
         } else {
-            null
+            photoUrl
         }
-
         return Member(id = id,
                       householdId = householdId,
                       cardId = cardId,
@@ -38,6 +36,7 @@ data class MemberApi(@SerializedName("id") val id: UUID,
                       fingerprintsGuid = fingerprintsGuid,
                       phoneNumber = phoneNumber,
                       photoId = null,
-                      thumbnailPhotoId = thumbnailPhotoId)
+                      thumbnailPhotoId = null,
+                      photoUrl = convertedPhotoUrl)
     }
 }

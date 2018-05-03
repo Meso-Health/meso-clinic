@@ -4,6 +4,7 @@ import android.arch.persistence.room.Room
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.AppDatabase
@@ -118,13 +119,15 @@ class DbModule {
                                 api: CoverageApi,
                                 sessionManager: SessionManager,
                                 preferencesManager: PreferencesManager,
+                                httpClient: OkHttpClient,
+                                photoDao: PhotoDao,
                                 clock: Clock): MemberRepository =
-            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, clock)
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager,
+                    photoDao, httpClient, clock)
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,
-                               clock: Clock,
-                               context: Context): PhotoRepository {
-        return PhotoRepositoryImpl(photoDao, clock, context.contentResolver)
+                               clock: Clock): PhotoRepository {
+        return PhotoRepositoryImpl(photoDao, clock)
     }
 }

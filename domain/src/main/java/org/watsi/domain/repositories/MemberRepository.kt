@@ -15,9 +15,9 @@ interface MemberRepository {
     fun update(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
     fun saveAfterFetch(member: Member): Completable
-    fun fetchPhotos(): Completable
     fun findByCardId(cardId: String): Maybe<Member>
     fun checkedInMembers(): Flowable<List<Member>>
     fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<Member>>
     fun sync(deltas: List<Delta>): Completable
+    fun downloadPhotos(): Completable
 }

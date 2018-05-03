@@ -63,7 +63,8 @@ class EnrollNewbornInfoFragment : DaggerFragment() {
                                  birthdate = birthdate,
                                  birthdateAccuracy = Member.DateAccuracy.D,
                                  fingerprintsGuid = null,
-                                 phoneNumber = null)
+                                 phoneNumber = null,
+                                 photoUrl = null)
             navigationManager.goTo(EnrollNewbornPhotoFragment.forNewborn(newborn))
         }
     }

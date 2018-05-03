@@ -10,6 +10,7 @@ import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import org.watsi.device.db.models.DeltaModel
+import io.reactivex.Single
 import org.watsi.device.db.models.MemberModel
 import java.util.UUID
 
@@ -73,5 +74,9 @@ abstract class MemberDao {
     abstract fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
 
     @Query("SELECT id FROM members")
+
     abstract fun allIds(): List<UUID>
+
+    @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
+    abstract fun needPhotoDownload(): Single<List<MemberModel>>
 }
