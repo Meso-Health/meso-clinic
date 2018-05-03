@@ -16,10 +16,13 @@ interface IdentificationEventDao {
     fun insert(model: IdentificationEventModel)
 
     @Insert
-    fun insertWithDelta(identificationEvent: IdentificationEventModel, deltaModel: DeltaModel)
+    fun insertWithDelta(model: IdentificationEventModel, delta: DeltaModel)
 
     @Update
     fun update(model: IdentificationEventModel)
+
+    @Update
+    fun updateWithDelta(model: IdentificationEventModel, delta: DeltaModel)
 
     @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +

@@ -22,5 +22,5 @@ interface EncounterDao {
                          items: List<EncounterItemModel>,
                          createdBillables: List<BillableModel>,
                          forms: List<EncounterFormModel>,
-                         deltaModels: List<DeltaModel>)
+                         deltas: List<DeltaModel>)
 }
