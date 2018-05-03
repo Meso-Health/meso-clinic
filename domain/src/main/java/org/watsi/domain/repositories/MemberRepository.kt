@@ -11,8 +11,10 @@ import java.util.UUID
 interface MemberRepository {
     fun all(): Flowable<List<Member>>
     fun find(id: UUID): Flowable<Member>
-    fun save(member: Member): Completable
+    fun create(member: Member, deltas: List<Delta>): Completable
+    fun update(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
+    fun saveAfterFetch(member: Member): Completable
     fun findByCardId(cardId: String): Maybe<Member>
     fun checkedInMembers(): Flowable<List<Member>>
     fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<Member>>

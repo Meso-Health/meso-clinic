@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
@@ -14,7 +15,8 @@ import org.watsi.domain.repositories.EncounterRepository
 class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                               private val clock: Clock) : EncounterRepository {
 
-    override fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+    override fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms,
+                        deltas: List<Delta>): Completable {
         val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
         val encounterItemModels = encounterWithItemsAndForms.encounterItems.map {
             EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
@@ -25,10 +27,11 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         }
 
         return Completable.fromAction {
-            encounterDao.insert(encounterModel,
+            encounterDao.insertWithDeltas(encounterModel,
                     encounterItemModels,
                     emptyList(),
-                    encounterFormModels)
+                    encounterFormModels,
+                    deltas.map { DeltaModel.fromDelta(it, clock) })
         }.subscribeOn(Schedulers.io())
     }
 
