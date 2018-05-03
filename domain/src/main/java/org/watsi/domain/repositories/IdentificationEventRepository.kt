@@ -7,7 +7,7 @@ import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
 interface IdentificationEventRepository {
-    fun create(identificationEvent: IdentificationEvent): Completable
+    fun create(identificationEvent: IdentificationEvent, delta: Delta): Completable
     fun dismiss(identificationEvent: IdentificationEvent): Completable
     fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent>
     fun sync(deltas: List<Delta>): Completable

@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.MemberDao
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
@@ -29,13 +30,17 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.find(id).map { it.toMember() }
     }
 
-    override fun save(member: Member): Completable {
+    override fun create(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
-            if (memberDao.exists(member.id) != null) {
-                memberDao.update(MemberModel.fromMember(member, clock))
-            } else {
-                memberDao.insert(MemberModel.fromMember(member, clock))
-            }
+            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            memberDao.insertWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun update(member: Member, deltas: List<Delta>): Completable {
+        return Completable.fromAction {
+            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            memberDao.updateWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
         }.subscribeOn(Schedulers.io())
     }
 
@@ -49,11 +54,21 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 // TODO: more efficient way of saving?
                 // TODO: clean up any members not returned in the fetch
                 // TODO: do not overwrite unsynced member data
-                Completable.concat(updatedMembers.map { save(it.toMember()) })
+                Completable.concat(updatedMembers.map { saveAfterFetch(it.toMember()) })
             }.andThen {
                 preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         }
+    }
+
+    override fun saveAfterFetch(member: Member): Completable {
+        return Completable.fromAction {
+            if (memberDao.exists(member.id) != null) {
+                memberDao.update(MemberModel.fromMember(member, clock))
+            } else {
+                memberDao.insert(MemberModel.fromMember(member, clock))
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun findByCardId(cardId: String): Maybe<Member> {

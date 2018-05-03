@@ -1,5 +1,6 @@
 package org.watsi.domain.entities
 
+import com.google.gson.Gson
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
 import org.watsi.domain.utils.DateUtils
@@ -45,6 +46,19 @@ data class Member(val id: UUID,
             0 -> "(0) ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
                     "${phoneNumber.substring(6)}"
             else -> null
+        }
+    }
+
+    fun diff(previous: Member): List<Delta> {
+        val gson = Gson()
+        val previousMap = gson.fromJson(gson.toJson(previous), Map::class.java) as Map<String, Any?>
+        val currentMap = gson.fromJson(gson.toJson(this), Map::class.java) as Map<String, Any?>
+        val diffFields = currentMap.keys.filter { currentMap[it] != previousMap[it] }
+        return diffFields.map {
+            Delta(action = Delta.Action.EDIT,
+                  modelName = Delta.ModelName.MEMBER,
+                  modelId = id,
+                  field = it)
         }
     }
 
