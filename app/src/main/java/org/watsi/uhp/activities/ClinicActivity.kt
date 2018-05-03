@@ -8,23 +8,19 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-
+import dagger.android.support.DaggerAppCompatActivity
 import net.hockeyapp.android.UpdateManager
-
+import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.ActivityHelper
-import org.watsi.uhp.services.DeleteFetchedPhotoService
-import org.watsi.uhp.services.DownloadMemberPhotosService
-import org.watsi.uhp.services.SyncService
-
-import dagger.android.support.DaggerAppCompatActivity
-import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.fragments.CurrentPatientsFragment
-
+import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.DaggerJobService
+import org.watsi.uhp.services.DeleteFetchedPhotoService
+import org.watsi.uhp.services.DownloadMemberPhotosService
 import org.watsi.uhp.services.FetchService
+import org.watsi.uhp.services.SyncService
 import javax.inject.Inject
 
 class ClinicActivity : DaggerAppCompatActivity() {

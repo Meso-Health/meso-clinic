@@ -2,7 +2,6 @@ package org.watsi.uhp.custom_components;
 
 import android.widget.DatePicker;
 
-import org.threeten.bp.LocalDate;
 import org.watsi.domain.entities.Member;
 
 import java.util.Calendar;

@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.save_button
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
-
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
