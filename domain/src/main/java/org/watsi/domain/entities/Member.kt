@@ -31,10 +31,6 @@ data class Member(val id: UUID,
         return getAgeYears(clock) >= 6
     }
 
-    fun getAgeMonths(clock: Clock = Clock.systemDefaultZone()): Int {
-        return DateUtils.getMonthsAgo(birthdate, clock)
-    }
-
     fun getAgeYears(clock: Clock = Clock.systemDefaultZone()): Int {
         return DateUtils.getYearsAgo(birthdate, clock)
     }
