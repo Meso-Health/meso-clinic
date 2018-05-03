@@ -5,6 +5,7 @@ import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.IdentificationEventDao
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.IdentificationEvent
@@ -14,17 +15,19 @@ import java.util.UUID
 class IdentificationEventRepositoryImpl(private val identificationEventDao: IdentificationEventDao,
                                         private val clock: Clock) : IdentificationEventRepository {
 
-    override fun create(identificationEvent: IdentificationEvent): Completable {
+    override fun create(identificationEvent: IdentificationEvent, delta: Delta): Completable {
         return Completable.fromAction {
-            identificationEventDao.insert(
-                    IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock))
+            identificationEventDao.insertWithDelta(
+                    IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock),
+                    DeltaModel.fromDelta(delta, clock))
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun dismiss(identificationEvent: IdentificationEvent): Completable {
+    override fun dismiss(identificationEvent: IdentificationEvent, delta: Delta): Completable {
         return Completable.fromAction {
-            identificationEventDao.update(IdentificationEventModel.fromIdentificationEvent(
-                    identificationEvent.copy(dismissed = true), clock))
+            identificationEventDao.updateWithDelta(
+                    IdentificationEventModel.fromIdentificationEvent(identificationEvent.copy(dismissed = true), clock),
+                    DeltaModel.fromDelta(delta, clock))
         }.subscribeOn(Schedulers.io())
     }
 

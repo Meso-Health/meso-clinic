@@ -5,6 +5,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Maybe
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.IdentificationEventModel
 import java.util.UUID
 
@@ -14,8 +15,14 @@ interface IdentificationEventDao {
     @Insert
     fun insert(model: IdentificationEventModel)
 
+    @Insert
+    fun insertWithDelta(model: IdentificationEventModel, delta: DeltaModel)
+
     @Update
     fun update(model: IdentificationEventModel)
+
+    @Update
+    fun updateWithDelta(model: IdentificationEventModel, delta: DeltaModel)
 
     @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +
