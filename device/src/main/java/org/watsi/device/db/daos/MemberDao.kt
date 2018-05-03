@@ -74,7 +74,6 @@ abstract class MemberDao {
     abstract fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
 
     @Query("SELECT id FROM members")
-
     abstract fun allIds(): List<UUID>
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
