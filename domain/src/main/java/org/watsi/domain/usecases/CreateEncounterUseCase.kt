@@ -14,7 +14,7 @@ class CreateEncounterUseCase(private val encounterRepository: EncounterRepositor
                 modelName = Delta.ModelName.ENCOUNTER,
                 modelId = encounterWithItemsAndForms.encounter.id))
 
-        encounterWithItemsAndForms.encounterForms.forEach{
+        if (encounterWithItemsAndForms.encounterForms.isNotEmpty()) {
             // use encounter ID in encounter form delta because it allows a more simple pattern
             // for querying the delta and creating the sync request
             deltas.add(Delta(
