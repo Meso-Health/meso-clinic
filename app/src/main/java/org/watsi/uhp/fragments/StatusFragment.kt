@@ -1,6 +1,7 @@
 package org.watsi.uhp.fragments
 
 import android.app.ProgressDialog
+import android.arch.lifecycle.ViewModelProvider
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
@@ -8,17 +9,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_version_and_sync.fetch_billables_timestamp
-import kotlinx.android.synthetic.main.fragment_version_and_sync.fetch_diagnoses_timestamp
-import kotlinx.android.synthetic.main.fragment_version_and_sync.fetch_member_pictures_quantity
-import kotlinx.android.synthetic.main.fragment_version_and_sync.fetch_members_timestamp
-import kotlinx.android.synthetic.main.fragment_version_and_sync.refresh_button
-import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_edited_members_quantity
-import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_encounter_forms_quantity
-import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_encounters_quantity
-import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_id_events_quantity
-import kotlinx.android.synthetic.main.fragment_version_and_sync.sync_new_members_quantity
-import kotlinx.android.synthetic.main.fragment_version_and_sync.version_number
+import kotlinx.android.synthetic.main.fragment_status.fetch_billables_timestamp
+import kotlinx.android.synthetic.main.fragment_status.fetch_diagnoses_timestamp
+import kotlinx.android.synthetic.main.fragment_status.fetch_member_pictures_quantity
+import kotlinx.android.synthetic.main.fragment_status.fetch_members_timestamp
+import kotlinx.android.synthetic.main.fragment_status.refresh_button
+import kotlinx.android.synthetic.main.fragment_status.sync_edited_members_quantity
+import kotlinx.android.synthetic.main.fragment_status.sync_encounter_forms_quantity
+import kotlinx.android.synthetic.main.fragment_status.sync_encounters_quantity
+import kotlinx.android.synthetic.main.fragment_status.sync_id_events_quantity
+import kotlinx.android.synthetic.main.fragment_status.sync_new_members_quantity
+import kotlinx.android.synthetic.main.fragment_status.version_number
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.PreferencesManager
 
@@ -29,16 +30,17 @@ import org.watsi.uhp.R
 
 import javax.inject.Inject
 
-class VersionAndSyncFragment : DaggerFragment() {
+class StatusFragment : DaggerFragment() {
 
     @Inject lateinit var preferencesManager: PreferencesManager
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var deltaRepository: DeltaRepository
     @Inject lateinit var logger: Logger
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.version_and_sync_label)
-        return inflater?.inflate(R.layout.fragment_version_and_sync, container, false)
+        return inflater?.inflate(R.layout.fragment_status, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
