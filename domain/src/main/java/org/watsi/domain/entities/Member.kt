@@ -1,6 +1,6 @@
 package org.watsi.domain.entities
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
 import org.watsi.domain.utils.DateUtils
@@ -32,10 +32,6 @@ data class Member(val id: UUID,
         return getAgeYears(clock) >= 6
     }
 
-    fun getAgeMonths(clock: Clock = Clock.systemDefaultZone()): Int {
-        return DateUtils.getMonthsAgo(birthdate, clock)
-    }
-
     fun getAgeYears(clock: Clock = Clock.systemDefaultZone()): Int {
         return DateUtils.getYearsAgo(birthdate, clock)
     }
@@ -44,14 +40,14 @@ data class Member(val id: UUID,
         return when (phoneNumber?.length) {
             10 -> "(0) ${phoneNumber.substring(1, 4)} ${phoneNumber.substring(4, 7)} " +
                     "${phoneNumber.substring(7)}"
-            0 -> "(0) ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
+            9 -> "(0) ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
                     "${phoneNumber.substring(6)}"
             else -> null
         }
     }
 
     fun diff(previous: Member): List<Delta> {
-        val gson = Gson()
+        val gson = GsonBuilder().serializeNulls().create()
         val previousMap = gson.fromJson(gson.toJson(previous), Map::class.java) as Map<String, Any?>
         val currentMap = gson.fromJson(gson.toJson(this), Map::class.java) as Map<String, Any?>
         val diffFields = currentMap.keys.filter { currentMap[it] != previousMap[it] }
