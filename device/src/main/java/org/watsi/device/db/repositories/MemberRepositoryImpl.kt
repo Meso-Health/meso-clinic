@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
+import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.daos.PhotoDao
@@ -53,7 +54,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
 
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.members(token.getHeaderString(),
+            api.getMembers(token.getHeaderString(),
                         token.user.providerId).flatMapCompletable { memberApiResults ->
                 // TODO: more efficient way of saving?
                 // TODO: clean up any members not returned in the fetch
@@ -92,8 +93,16 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun sync(deltas: List<Delta>): Completable {
-        // TODO: implement
-        return Completable.complete()
+        val authToken = sessionManager.currentToken()!!
+
+        return memberDao.find(deltas.first().modelId).flatMapCompletable {
+            val member = it.toMember()
+            if (deltas.any { it.action == Delta.Action.ADD }) {
+                api.postMember(authToken.getHeaderString(), MemberApi(member))
+            } else {
+                api.patchMember(authToken.getHeaderString(), member.id, MemberApi.patch(member, deltas))
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun downloadPhotos(): Completable {

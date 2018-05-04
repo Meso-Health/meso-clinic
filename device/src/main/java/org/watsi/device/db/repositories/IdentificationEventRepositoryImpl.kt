@@ -4,16 +4,23 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
+import org.watsi.device.api.CoverageApi
+import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.IdentificationEventModel
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.repositories.IdentificationEventRepository
 import java.util.UUID
 
-class IdentificationEventRepositoryImpl(private val identificationEventDao: IdentificationEventDao,
-                                        private val clock: Clock) : IdentificationEventRepository {
+class IdentificationEventRepositoryImpl(
+        private val identificationEventDao: IdentificationEventDao,
+        private val api: CoverageApi,
+        private val sessionManager: SessionManager,
+        private val clock: Clock
+) : IdentificationEventRepository {
 
     override fun create(identificationEvent: IdentificationEvent, delta: Delta): Completable {
         return Completable.fromAction {
@@ -38,7 +45,19 @@ class IdentificationEventRepositoryImpl(private val identificationEventDao: Iden
     }
 
     override fun sync(deltas: List<Delta>): Completable {
-        // TODO: implement
-        return Completable.complete()
+        val authToken = sessionManager.currentToken()!!
+
+        return identificationEventDao.find(deltas.first().modelId).flatMapCompletable {
+            val identificationEvent = it.toIdentificationEvent()
+            if (deltas.any { it.action == Delta.Action.ADD }) {
+                api.postIdentificationEvent(authToken.getHeaderString(), authToken.user.providerId,
+                        IdentificationEventApi(identificationEvent)
+                )
+            } else {
+                api.patchIdentificationEvent(authToken.getHeaderString(), identificationEvent.id,
+                        IdentificationEventApi.patch(identificationEvent, deltas)
+                )
+            }
+        }.subscribeOn(Schedulers.io())
     }
 }
