@@ -1,6 +1,5 @@
 package org.watsi.device.db.daos
 
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
@@ -35,9 +34,7 @@ class MemberDaoTest : DaoBaseTest() {
                 dismissed = false)
         EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
 
-        val checkedInMembers = memberDao.checkedInMembers().blockingFirst()
-
-        assertEquals(listOf(memberWithOpenCheckIn), checkedInMembers)
+        memberDao.checkedInMembers().test().assertValue(listOf(memberWithOpenCheckIn))
     }
 
     @Test
@@ -48,12 +45,9 @@ class MemberDaoTest : DaoBaseTest() {
         val householdMember3 = MemberModelFactory.create(memberDao, householdId = householdId)
         MemberModelFactory.create(memberDao)
 
-        val remainingHouseholdMembers =
-                memberDao.remainingHouseholdMembers(householdId, householdMember1.id).blockingFirst()
-
-        assertEquals(2, remainingHouseholdMembers.size)
-        assert(remainingHouseholdMembers.contains(householdMember2))
-        assert(remainingHouseholdMembers.contains(householdMember3))
+        memberDao.remainingHouseholdMembers(householdId, householdMember1.id)
+                .test()
+                .assertValue(listOf(householdMember2, householdMember3))
     }
 
     @Test
@@ -64,8 +58,6 @@ class MemberDaoTest : DaoBaseTest() {
         // does not have photo
         MemberModelFactory.create(memberDao, photoUrl = null)
 
-        val needPhotoDownload = memberDao.needPhotoDownload().blockingGet()
-
-        assertEquals(listOf(needsPhoto), needPhotoDownload)
+        memberDao.needPhotoDownload().test().assertValue(listOf(needsPhoto))
     }
 }

@@ -12,15 +12,9 @@ import org.watsi.device.db.models.EncounterModel
 interface EncounterDao {
 
     @Insert
-    fun insert(encounters: EncounterModel,
+    fun insert(encounter: EncounterModel,
                items: List<EncounterItemModel>,
                createdBillables: List<BillableModel>,
-               forms: List<EncounterFormModel>)
-
-    @Insert
-    fun insertWithDeltas(encounter: EncounterModel,
-                         items: List<EncounterItemModel>,
-                         createdBillables: List<BillableModel>,
-                         forms: List<EncounterFormModel>,
-                         deltas: List<DeltaModel>)
+               forms: List<EncounterFormModel>,
+               deltas: List<DeltaModel>)
 }

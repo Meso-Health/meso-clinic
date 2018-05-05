@@ -27,11 +27,11 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         }
 
         return Completable.fromAction {
-            encounterDao.insertWithDeltas(encounterModel,
-                    encounterItemModels,
-                    emptyList(),
-                    encounterFormModels,
-                    deltas.map { DeltaModel.fromDelta(it, clock) })
+            encounterDao.insert(encounterModel,
+                                encounterItemModels,
+                                emptyList(),
+                                encounterFormModels,
+                                deltas.map { DeltaModel.fromDelta(it, clock) })
         }.subscribeOn(Schedulers.io())
     }
 

@@ -1,7 +1,5 @@
 package org.watsi.device.db.daos
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
@@ -35,9 +33,9 @@ class IdentificationEventDaoTest : DaoBaseTest() {
                 dismissed = false)
         EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
 
-        assertEquals(openCheckIn, identificationEventDao.openCheckIn(memberWithOpenCheckIn.id).blockingGet())
-        assertNull(identificationEventDao.openCheckIn(memberWithDismissedCheckIn.id).blockingGet())
-        assertNull(identificationEventDao.openCheckIn(memberWithEncounter.id).blockingGet())
-        assertNull(identificationEventDao.openCheckIn(memberWithNoCheckIn.id).blockingGet())
+        identificationEventDao.openCheckIn(memberWithOpenCheckIn.id).test().assertValue(openCheckIn)
+        identificationEventDao.openCheckIn(memberWithDismissedCheckIn.id).test().assertNoValues()
+        identificationEventDao.openCheckIn(memberWithEncounter.id).test().assertNoValues()
+        identificationEventDao.openCheckIn(memberWithNoCheckIn.id).test().assertNoValues()
     }
 }
