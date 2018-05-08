@@ -15,6 +15,7 @@ import org.watsi.device.db.AppDatabase
 abstract class DaoBaseTest {
     lateinit var database: AppDatabase
     lateinit var deltaDao: DeltaDao
+    lateinit var diagnosisDao: DiagnosisDao
     lateinit var encounterDao: EncounterDao
     lateinit var encounterFormDao: EncounterFormDao
     lateinit var identificationEventDao: IdentificationEventDao
@@ -31,6 +32,7 @@ abstract class DaoBaseTest {
                 .allowMainThreadQueries()
                 .build()
         deltaDao = database.deltaDao()
+        diagnosisDao = database.diagnosisDao()
         encounterDao = database.encounterDao()
         encounterFormDao = database.encounterFormDao()
         identificationEventDao = database.identificationEventDao()
