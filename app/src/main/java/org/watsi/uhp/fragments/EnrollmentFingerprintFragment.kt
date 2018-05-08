@@ -15,10 +15,10 @@ import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.enrollment
 import kotlinx.android.synthetic.main.fragment_enrollment_fingerprint.save_button
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
-
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.usecases.UpdateMemberUseCase
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.SimprintsHelper
@@ -34,6 +34,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var updateMemberUseCase: UpdateMemberUseCase
     @Inject lateinit var logger: Logger
 
     lateinit var member: Member
@@ -81,7 +82,7 @@ class EnrollmentFingerprintFragment : DaggerFragment() {
             builder.setMessage(R.string.enrollment_fingerprint_confirm_completion)
             builder.setPositiveButton(android.R.string.yes) { _, _ ->
                 val updatedMember = member.copy(fingerprintsGuid = fingerprintsGuid)
-                memberRepository.save(updatedMember).subscribe({
+                updateMemberUseCase.execute(updatedMember).subscribe({
                     identificationEventRepository.openCheckIn(updatedMember.id)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({

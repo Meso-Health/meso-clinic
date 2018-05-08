@@ -12,7 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_receipt.save_button
 
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.repositories.EncounterRepository
+import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
 
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class ReceiptFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
-    @Inject lateinit var encounterRepository: EncounterRepository
+    @Inject lateinit var createEncounterUseCase: CreateEncounterUseCase
 
     lateinit var encounter: EncounterWithItemsAndForms
 
@@ -53,7 +53,7 @@ class ReceiptFragment : DaggerFragment() {
         // TODO: populate view
 
         save_button.setOnClickListener {
-            encounterRepository.create(encounter)
+            createEncounterUseCase.execute(encounter)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         navigationManager.popTo(CurrentPatientsFragment())

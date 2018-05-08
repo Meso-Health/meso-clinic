@@ -28,7 +28,7 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun save(billable: Billable): Completable {
+    internal fun save(billable: Billable): Completable {
         return Completable.fromAction {
             if (billableDao.find(billable.id) != null) {
                 billableDao.update(BillableModel.fromBillable(billable, clock))

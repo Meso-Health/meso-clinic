@@ -3,6 +3,7 @@ package org.watsi.device.db.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import org.watsi.device.db.models.BillableModel
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
@@ -11,8 +12,9 @@ import org.watsi.device.db.models.EncounterModel
 interface EncounterDao {
 
     @Insert
-    fun insert(encounters: EncounterModel,
+    fun insert(encounter: EncounterModel,
                items: List<EncounterItemModel>,
                createdBillables: List<BillableModel>,
-               forms: List<EncounterFormModel>)
+               forms: List<EncounterFormModel>,
+               deltas: List<DeltaModel>)
 }

@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.fragment_enroll_newborn.save_button
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.scan_card
 import org.threeten.bp.LocalDate
 import org.watsi.device.managers.Logger
-
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ScanNewCardActivity

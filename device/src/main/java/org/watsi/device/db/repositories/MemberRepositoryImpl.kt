@@ -4,11 +4,10 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.MemberDao
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
@@ -25,7 +24,6 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val sessionManager: SessionManager,
                            private val preferencesManager: PreferencesManager,
                            private val photoDao: PhotoDao,
-                           private val httpClient: OkHttpClient,
                            private val clock: Clock) : MemberRepository {
 
     override fun all(): Flowable<List<Member>> {
@@ -36,13 +34,17 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.find(id).map { it.toMember() }
     }
 
-    override fun save(member: Member): Completable {
+    override fun create(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
-            if (memberDao.exists(member.id) != null) {
-                memberDao.update(MemberModel.fromMember(member, clock))
-            } else {
-                memberDao.insert(MemberModel.fromMember(member, clock))
-            }
+            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            memberDao.insertWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun update(member: Member, deltas: List<Delta>): Completable {
+        return Completable.fromAction {
+            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            memberDao.updateWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
         }.subscribeOn(Schedulers.io())
     }
 
@@ -54,12 +56,22 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 // TODO: clean up any members not returned in the fetch
                 // TODO: do not overwrite unsynced member data
                 Completable.concat(memberApiResults.map {
-                    save(it.toMember())
+                    saveAfterFetch(it.toMember())
                 }.plus(Completable.fromAction {
                     preferencesManager.updateMemberLastFetched(clock.instant())
                 }))
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
+    }
+
+    private fun saveAfterFetch(member: Member): Completable {
+        return Completable.fromAction {
+            if (memberDao.exists(member.id) != null) {
+                memberDao.update(MemberModel.fromMember(member, clock))
+            } else {
+                memberDao.insert(MemberModel.fromMember(member, clock))
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun findByCardId(cardId: String): Maybe<Member> {
@@ -70,9 +82,8 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.checkedInMembers().map { it.map { it.toMember() } }
     }
 
-    override fun remainingHouseholdMembers(householdId: UUID,
-                                           memberId: UUID): Flowable<List<Member>> {
-        return memberDao.remainingHouseholdMembers(householdId, memberId)
+    override fun remainingHouseholdMembers(member: Member): Flowable<List<Member>> {
+        return memberDao.remainingHouseholdMembers(member.householdId, member.id)
                 .map { it.map { it.toMember() } }
     }
 
@@ -85,23 +96,12 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
             Completable.concat(memberModels.map { memberModel ->
                 val member = memberModel.toMember()
-                val httpRequest = Request.Builder().url(member.photoUrl!!).build()
-                val response = httpClient.newCall(httpRequest).execute()
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body == null) {
-                        // TODO: warn
-                        Completable.complete()
-                    } else {
-                        Completable.fromAction {
-                            val photo = Photo(UUID.randomUUID(), body.bytes())
-                            photoDao.insert(PhotoModel.fromPhoto(photo, clock))
-                            memberDao.update(memberModel.copy(thumbnailPhotoId = photo.id))
-                        }
+                api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
+                    Completable.fromAction {
+                        val photo = Photo(UUID.randomUUID(), it.bytes())
+                        photoDao.insert(PhotoModel.fromPhoto(photo, clock))
+                        memberDao.update(memberModel.copy(thumbnailPhotoId = photo.id))
                     }
-                } else {
-                    // TODO: warn
-                    Completable.complete()
                 }
             })
         }.subscribeOn(Schedulers.io())

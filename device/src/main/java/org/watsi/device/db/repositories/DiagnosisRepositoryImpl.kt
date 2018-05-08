@@ -23,7 +23,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                 .subscribeOn(Schedulers.io())
     }
 
-    private fun save(diagnosis: Diagnosis): Completable {
+    internal fun save(diagnosis: Diagnosis): Completable {
         return Completable.fromAction {
             if (diagnosisDao.find(diagnosis.id) != null) {
                 diagnosisDao.update(DiagnosisModel.fromDiagnosis(diagnosis, clock))

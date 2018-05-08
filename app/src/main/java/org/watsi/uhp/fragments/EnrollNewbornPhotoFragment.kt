@@ -14,16 +14,14 @@ import kotlinx.android.synthetic.main.fragment_capture_photo.photo_btn
 import kotlinx.android.synthetic.main.fragment_capture_photo.save_button
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
-
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.managers.NavigationManager
-
 import java.util.UUID
-
 import javax.inject.Inject
 
 class EnrollNewbornPhotoFragment : DaggerFragment() {
@@ -32,6 +30,7 @@ class EnrollNewbornPhotoFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var memberRepository: MemberRepository
+    @Inject lateinit var createMemberUseCase: CreateMemberUseCase
     @Inject lateinit var logger: Logger
 
     private var photoIds: Pair<UUID, UUID>? = null
@@ -61,7 +60,7 @@ class EnrollNewbornPhotoFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             val newborn = arguments.getSerializable(PARAM_MEMBER) as Member
-            memberRepository.save(newborn.copy(photoId = photoIds?.first))
+            createMemberUseCase.execute(newborn.copy(photoId = photoIds?.first))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                 navigationManager.popTo(CurrentPatientsFragment())

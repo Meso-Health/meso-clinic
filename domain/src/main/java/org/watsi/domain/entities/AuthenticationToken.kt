@@ -1,6 +1,8 @@
 package org.watsi.domain.entities
 
-data class AuthenticationToken(val token: String, val expiresAt: String, val user: User) {
+import org.threeten.bp.Instant
+
+data class AuthenticationToken(val token: String, val expiresAt: Instant, val user: User) {
 
     fun getHeaderString() = "Token $token"
 }

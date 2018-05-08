@@ -8,10 +8,6 @@ android {
     // For non-strings in buildConfigField, use System.getenv instead of ENV.
     def ENV = { k -> "\"${System.getenv(k)}\"" }
 
-    dataBinding {
-        enabled = true
-    }
-
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {

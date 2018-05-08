@@ -18,6 +18,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.usecases.UpdateMemberUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ScanNewCardActivity
 import org.watsi.uhp.managers.NavigationManager
@@ -28,6 +29,7 @@ class MemberEditFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var memberRepository: MemberRepository
+    @Inject lateinit var updateMemberUseCase: UpdateMemberUseCase
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var logger: Logger
 
@@ -78,7 +80,7 @@ class MemberEditFragment : DaggerFragment() {
                 val updatedMember = member.copy(name = updatedName,
                                                 phoneNumber = updatedPhoneNumber,
                                                 cardId = updatedCardId)
-                memberRepository.save(updatedMember).subscribe({
+                updateMemberUseCase.execute(updatedMember).subscribe({
                     identificationEventRepository.openCheckIn(member.id).subscribe({
                         navigationManager.popTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
                     }, {

@@ -15,6 +15,9 @@ import org.watsi.device.db.AppDatabase
 abstract class DaoBaseTest {
     lateinit var database: AppDatabase
     lateinit var deltaDao: DeltaDao
+    lateinit var encounterDao: EncounterDao
+    lateinit var identificationEventDao: IdentificationEventDao
+    lateinit var memberDao: MemberDao
 
     // Instantly execute all DB operations in Dao tests
     @Rule
@@ -26,6 +29,9 @@ abstract class DaoBaseTest {
                 .allowMainThreadQueries()
                 .build()
         deltaDao = database.deltaDao()
+        encounterDao = database.encounterDao()
+        identificationEventDao = database.identificationEventDao()
+        memberDao = database.memberDao()
     }
 
     @After

@@ -14,13 +14,11 @@ import kotlinx.android.synthetic.main.fragment_encounter_form.photo_btn
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.EncounterForm
-
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.managers.NavigationManager
-
 import java.util.UUID
 import javax.inject.Inject
 

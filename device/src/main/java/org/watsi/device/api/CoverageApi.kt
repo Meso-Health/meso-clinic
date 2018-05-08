@@ -2,6 +2,7 @@ package org.watsi.device.api
 
 import io.reactivex.Single
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import org.watsi.device.api.models.AuthenticationTokenApi
 import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.DiagnosisApi
@@ -20,6 +21,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
+import retrofit2.http.Url
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Authorization"
@@ -90,4 +92,7 @@ interface CoverageApi {
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @PartMap params: Map<String, RequestBody>
     ): Call<Member>
+
+    @GET
+    fun fetchPhoto(@Url photoUrl: String): Single<ResponseBody>
 }

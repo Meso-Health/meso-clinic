@@ -15,17 +15,15 @@ import kotlinx.android.synthetic.main.fragment_capture_photo.photo_btn
 import kotlinx.android.synthetic.main.fragment_capture_photo.save_button
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
-
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.usecases.UpdateMemberUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.managers.NavigationManager
-
 import java.util.UUID
-
 import javax.inject.Inject
 
 class EnrollmentMemberPhotoFragment : DaggerFragment() {
@@ -35,6 +33,7 @@ class EnrollmentMemberPhotoFragment : DaggerFragment() {
     @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var updateMemberUseCase: UpdateMemberUseCase
     @Inject lateinit var logger: Logger
 
     private var photoIds: Pair<UUID, UUID>? = null
@@ -72,7 +71,7 @@ class EnrollmentMemberPhotoFragment : DaggerFragment() {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage(R.string.enrollment_fingerprint_confirm_completion)
                 builder.setPositiveButton(android.R.string.yes) { _, _ ->
-                    memberRepository.save(updatedMember)
+                    updateMemberUseCase.execute(updatedMember)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({
                                 identificationEventRepository.openCheckIn(member.id).subscribe({

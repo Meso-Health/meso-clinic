@@ -34,10 +34,9 @@ import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
-
 import org.watsi.domain.entities.Member
-import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.PhotoLoader
@@ -45,7 +44,6 @@ import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import java.util.UUID
-
 import javax.inject.Inject
 
 class CheckInMemberDetailFragment : DaggerFragment() {
@@ -53,7 +51,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
-    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var logger: Logger
 
@@ -181,7 +179,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                                             verificationDetails?.confidence,
                                           fingerprintsVerificationResultCode =
                                             verificationDetails?.resultCode)
-        return identificationEventRepository.create(idEvent)
+        return createIdentificationEventUseCase.execute(idEvent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
