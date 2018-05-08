@@ -26,6 +26,9 @@ interface PhotoDao {
 
     // strftime('%s', 'now') returns the current UNIX time, so we multiply by 1000
     // to convert to milliseconds since epoch which is how our Instant types are stored
+    // also include a 30 minute window before considering a photo safe to delete to handle
+    // scenario where model is created, but not yet assigned to a member / encounter form
+    // due to user being in the process of entering data
     @Query("SELECT photos.*\n" +
             "FROM photos\n" +
             "LEFT OUTER JOIN members ON\n" +
