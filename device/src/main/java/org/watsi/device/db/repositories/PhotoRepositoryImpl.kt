@@ -3,8 +3,6 @@ package org.watsi.device.db.repositories
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.PhotoModel
@@ -26,7 +24,12 @@ class PhotoRepositoryImpl(private val photoDao: PhotoDao,
     }
 
     override fun deleteSynced(): Completable {
-        // TODO: finish implementing
-        return Completable.complete()
+        return photoDao.canBeDeleted().flatMapCompletable {
+            Completable.fromAction {
+                it.forEach { model ->
+                    photoDao.destroy(model)
+                }
+            }
+        }
     }
 }
