@@ -99,18 +99,25 @@ class DbModule {
             DiagnosisRepositoryImpl(diagnosisDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
-    fun provideEncounterRepository(encounterDao: EncounterDao, clock: Clock): EncounterRepository =
-            EncounterRepositoryImpl(encounterDao, clock)
+    fun provideEncounterRepository(encounterDao: EncounterDao,
+                                   api: CoverageApi,
+                                   sessionManager: SessionManager,
+                                   clock: Clock): EncounterRepository =
+            EncounterRepositoryImpl(encounterDao, api, sessionManager, clock)
 
     @Provides
-    fun provideEncounterFormRepository(encounterFormDao: EncounterDao,
-                                       clock: Clock): EncounterFormRepository =
-            EncounterFormRepositoryImpl()
+    fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,
+                                       photoDao: PhotoDao,
+                                       api: CoverageApi,
+                                       sessionManager: SessionManager): EncounterFormRepository =
+            EncounterFormRepositoryImpl(encounterFormDao, photoDao, api, sessionManager)
 
     @Provides
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
+                                             api: CoverageApi,
+                                             sessionManager: SessionManager,
                                              clock: Clock): IdentificationEventRepository {
-        return IdentificationEventRepositoryImpl(identificationEventDao, clock)
+        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
     }
 
     @Provides
@@ -123,8 +130,11 @@ class DbModule {
             MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
 
     @Provides
-    fun providePhotoRepository(photoDao: PhotoDao,
+    fun providePhotoRepository(memberDao: MemberDao,
+                               photoDao: PhotoDao,
+                               api: CoverageApi,
+                               sessionManager: SessionManager,
                                clock: Clock): PhotoRepository {
-        return PhotoRepositoryImpl(photoDao, clock)
+        return PhotoRepositoryImpl(memberDao, photoDao, api, sessionManager, clock)
     }
 }

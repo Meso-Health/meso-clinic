@@ -40,7 +40,7 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
 
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.billables(token.getHeaderString(),
+            api.getBillables(token.getHeaderString(),
                           token.user.providerId).flatMapCompletable { updatedBillables ->
                 // TODO: more efficient saving
                 // TODO: clean-up billables not returned
