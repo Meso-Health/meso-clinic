@@ -1,6 +1,7 @@
 package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
@@ -13,6 +14,10 @@ class DeltaRepositoryImpl(
         private val deltaDao: DeltaDao,
         private val clock: Clock
 ) : DeltaRepository {
+    override fun syncStatus(): Flowable<DeltaRepository.SyncStatus> {
+        // TODO implememnt these on deltaDao.
+        return Flowable.never()
+    }
 
     override fun unsynced(modelName: Delta.ModelName): Single<List<Delta>> {
         return deltaDao.unsynced(modelName).map { deltaModels ->
