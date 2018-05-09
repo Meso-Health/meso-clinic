@@ -2,6 +2,7 @@ package org.watsi.uhp.fragments
 
 import android.app.ProgressDialog
 import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
@@ -27,6 +28,7 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
+import org.watsi.uhp.viewmodels.StatusViewModel
 
 import javax.inject.Inject
 
@@ -38,6 +40,15 @@ class StatusFragment : DaggerFragment() {
     @Inject lateinit var deltaRepository: DeltaRepository
     @Inject lateinit var logger: Logger
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(StatusViewModel::class.java)
+        viewModel.getObservable().observe(this, Observer {
+
+
+        )
+    }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.version_and_sync_label)
         return inflater?.inflate(R.layout.fragment_status, container, false)

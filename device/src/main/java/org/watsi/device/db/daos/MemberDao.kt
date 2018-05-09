@@ -78,4 +78,7 @@ abstract class MemberDao {
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     abstract fun needPhotoDownload(): Single<List<MemberModel>>
+
+    @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
+    abstract fun needPhotoDownloadCount(): Flowable<Int>
 }

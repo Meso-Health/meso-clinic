@@ -7,8 +7,8 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.MemberDao
-import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.daos.PhotoDao
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.managers.PreferencesManager
@@ -17,7 +17,7 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.repositories.MemberRepository
-import java.util.UUID
+import java.util.*
 
 class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val api: CoverageApi,
@@ -25,7 +25,6 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val preferencesManager: PreferencesManager,
                            private val photoDao: PhotoDao,
                            private val clock: Clock) : MemberRepository {
-
     override fun all(): Flowable<List<Member>> {
         return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
     }
@@ -105,5 +104,9 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 }
             })
         }.subscribeOn(Schedulers.io())
+    }
+
+    override fun withPhotosToFetchCount(): Flowable<Int> {
+        return memberDao.needPhotoDownloadCount()
     }
 }
