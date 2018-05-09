@@ -17,32 +17,25 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                               private val sessionManager: SessionManager,
                               private val preferencesManager: PreferencesManager,
                               private val clock: Clock) : DiagnosisRepository {
+
     override fun all(): Single<List<Diagnosis>> {
-        return diagnosisDao.all()
-                .map { it.map { it.toDiagnosis() } }
-                .subscribeOn(Schedulers.io())
+        return diagnosisDao.all().map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
     }
 
-    internal fun save(diagnosis: Diagnosis): Completable {
-        return Completable.fromAction {
-            if (diagnosisDao.find(diagnosis.id) != null) {
-                diagnosisDao.update(DiagnosisModel.fromDiagnosis(diagnosis, clock))
-            } else {
-                diagnosisDao.insert(DiagnosisModel.fromDiagnosis(diagnosis, clock))
-            }
-        }
-    }
-
+    /**
+     * Removes any persisted diagnoses that are not returned in the API results and overwrites
+     * any persisted data if the API response contains updated data
+     */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.diagnoses(token.getHeaderString()).flatMapCompletable { updatedDiagnoses ->
-                // TODO: more efficient way of saving?
-                // TODO: clean up any diagnoses not returned in the fetch
-                Completable.concat(updatedDiagnoses.map {
-                    save(it.toDiagnosis())
-                }.plus(Completable.fromAction {
+            api.diagnoses(token.getHeaderString()).flatMapCompletable { fetchedDiagnoses ->
+                Completable.fromAction {
+                    diagnosisDao.deleteNotInList(fetchedDiagnoses.map { it.id })
+                    diagnosisDao.insert(fetchedDiagnoses.map { diagnosisApi ->
+                        DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
+                    })
                     preferencesManager.updateDiagnosesLastFetched(clock.instant())
-                }))
+                }
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
