@@ -7,7 +7,7 @@ import org.watsi.device.db.models.DiagnosisModel
 
 object DiagnosisModelFactory {
 
-    fun build(id: Int = 1,
+    fun build(id: Int = 0,
               description: String = "Malaria",
               searchAliases: List<String> = listOf("Mal"),
               createdAt: Instant? = null,
@@ -22,7 +22,7 @@ object DiagnosisModelFactory {
     }
 
     fun create(diagnosisDao: DiagnosisDao,
-               id: Int = 1,
+               id: Int = 0,
                description: String = "Malaria",
                searchAliases: List<String> = listOf("Mal"),
                createdAt: Instant? = null,
