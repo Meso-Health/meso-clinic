@@ -8,12 +8,12 @@ import org.watsi.domain.entities.Delta
 class BillableDaoTest : DaoBaseTest() {
 
     @Test
-    fun insert_multipleModels_replacesOnConflict() {
+    fun upsert() {
         val persistedBillable = BillableModelFactory.create(billableDao)
         val newBillable = BillableModelFactory.build()
         val updatedBillable = persistedBillable.copy(price = 500)
 
-        billableDao.insert(listOf(updatedBillable, newBillable))
+        billableDao.upsert(listOf(updatedBillable, newBillable))
 
         billableDao.all().test().assertValue(listOf(updatedBillable, newBillable))
     }

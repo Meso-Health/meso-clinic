@@ -32,11 +32,12 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         return sessionManager.currentToken()?.let { token ->
             api.billables(token.getHeaderString(),
                           token.user.providerId).flatMapCompletable { fetchedBillables ->
-                billableDao.unsynced().flatMapCompletable {
+                billableDao.unsynced().flatMapCompletable { unsyncedBillables->
                     Completable.fromAction {
-                        val fetchedAndUnsyncedIds = fetchedBillables.map { it.id } + it.map { it.id }
+                        val fetchedAndUnsyncedIds =
+                                fetchedBillables.map { it.id } + unsyncedBillables.map { it.id }
                         billableDao.deleteNotInList(fetchedAndUnsyncedIds)
-                        billableDao.insert(fetchedBillables.map { billableApi ->
+                        billableDao.upsert(fetchedBillables.map { billableApi ->
                             BillableModel.fromBillable(billableApi.toBillable(), clock)
                         })
                         preferencesManager.updateBillablesLastFetched(clock.instant())

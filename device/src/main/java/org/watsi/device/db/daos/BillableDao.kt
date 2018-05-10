@@ -16,7 +16,7 @@ interface BillableDao {
     fun insert(model: BillableModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(models: List<BillableModel>)
+    fun upsert(models: List<BillableModel>)
 
     @Delete
     fun delete(model: BillableModel)

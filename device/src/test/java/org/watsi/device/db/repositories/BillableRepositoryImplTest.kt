@@ -88,7 +88,7 @@ class BillableRepositoryImplTest {
 
         verify(mockApi).billables(authToken.getHeaderString(), authToken.user.providerId)
         verify(mockDao).deleteNotInList(listOf(fetchedModel.id, unsyncedModel.id))
-        verify(mockDao).insert(listOf(fetchedModel))
+        verify(mockDao).upsert(listOf(fetchedModel))
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())
     }
 }
