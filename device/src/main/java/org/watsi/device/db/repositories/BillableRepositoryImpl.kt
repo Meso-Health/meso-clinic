@@ -28,28 +28,21 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
         }.subscribeOn(Schedulers.io())
     }
 
-    internal fun save(billable: Billable): Completable {
-        return Completable.fromAction {
-            if (billableDao.find(billable.id) != null) {
-                billableDao.update(BillableModel.fromBillable(billable, clock))
-            } else {
-                billableDao.insert(BillableModel.fromBillable(billable, clock))
-            }
-        }
-    }
-
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             api.billables(token.getHeaderString(),
-                          token.user.providerId).flatMapCompletable { updatedBillables ->
-                // TODO: more efficient saving
-                // TODO: clean-up billables not returned
-                // TODO: don't remove unsynced billables created during encounter
-                Completable.concat(updatedBillables.map {
-                    save(it.toBillable())
-                }.plus(Completable.fromAction {
-                    preferencesManager.updateBillablesLastFetched(clock.instant())
-                }))
+                          token.user.providerId).flatMapCompletable { fetchedBillables ->
+                billableDao.unsynced().flatMapCompletable { unsyncedBillables->
+                    Completable.fromAction {
+                        val fetchedAndUnsyncedIds =
+                                fetchedBillables.map { it.id } + unsyncedBillables.map { it.id }
+                        billableDao.deleteNotInList(fetchedAndUnsyncedIds)
+                        billableDao.upsert(fetchedBillables.map { billableApi ->
+                            BillableModel.fromBillable(billableApi.toBillable(), clock)
+                        })
+                        preferencesManager.updateBillablesLastFetched(clock.instant())
+                    }
+                }
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
