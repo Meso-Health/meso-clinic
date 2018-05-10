@@ -6,7 +6,13 @@ import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
-import org.watsi.domain.usecases.*
+import org.watsi.domain.usecases.CreateEncounterUseCase
+import org.watsi.domain.usecases.CreateIdentificationEventUseCase
+import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.usecases.DismissIdentificationEventUseCase
+import org.watsi.domain.usecases.FetchStatusUseCase
+import org.watsi.domain.usecases.SyncStatusUseCase
+import org.watsi.domain.usecases.UpdateMemberUseCase
 
 @Module
 class DomainModule {
