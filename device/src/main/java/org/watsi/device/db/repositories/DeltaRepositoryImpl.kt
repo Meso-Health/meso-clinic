@@ -16,7 +16,7 @@ class DeltaRepositoryImpl(
 ) : DeltaRepository {
     override fun syncStatus(): Flowable<DeltaRepository.SyncStatus> {
         // TODO implememnt these on deltaDao.
-        return Flowable.never()
+        return Flowable.just(DeltaRepository.SyncStatus(1, 2, 2,3, 4))
     }
 
     override fun unsynced(modelName: Delta.ModelName): Single<List<Delta>> {
