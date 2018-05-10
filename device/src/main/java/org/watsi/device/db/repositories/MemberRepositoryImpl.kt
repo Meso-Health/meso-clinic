@@ -1,5 +1,6 @@
 package org.watsi.device.db.repositories
 
+import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -57,6 +58,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 Completable.concat(memberApiResults.map {
                     saveAfterFetch(it.toMember())
                 }.plus(Completable.fromAction {
+                    Log.i("coverage", "oman update member last fetched is called")
                     preferencesManager.updateMemberLastFetched(clock.instant())
                 }))
             }.subscribeOn(Schedulers.io())

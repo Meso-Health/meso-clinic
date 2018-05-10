@@ -2,6 +2,7 @@ package org.watsi.device.managers
 
 import android.content.Context
 import android.preference.PreferenceManager
+import android.util.Log
 import com.google.gson.Gson
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -10,7 +11,6 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.AuthenticationToken
 
 class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) : PreferencesManager {
-
     companion object {
         private const val AUTHENTICATION_TOKEN_KEY = "authentication_token"
         private const val MEMBERS_LAST_FETCHED_KEY = "members_last_fetched"
@@ -40,6 +40,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
     }
 
     override fun updateMemberLastFetched(instant: Instant) {
+        Log.i("coverage", "oman last fetched")
         sharedPreferences.edit().putLong(MEMBERS_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
         memberLastFetchedObservable.onNext(instant)
     }

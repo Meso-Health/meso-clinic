@@ -11,9 +11,10 @@ interface DeltaRepository {
     fun syncStatus(): Flowable<SyncStatus>
 
     data class SyncStatus(
+            val unsyncedNewMemberCount: Int? = null,
+            val unsyncedEditedMemberCount: Int? = null,
             val unsyncedIdEventCount: Int? = null,
             val unsyncedEncounterCount: Int? = null,
-            val unsyncedEncounterFormCount: Int? = null,
-            val unfetchedPhotos: Int? = null
+            val unsyncedEncounterFormCount: Int? = null
     )
 }
