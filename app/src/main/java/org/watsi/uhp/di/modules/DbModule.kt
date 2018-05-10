@@ -130,11 +130,10 @@ class DbModule {
             MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
 
     @Provides
-    fun providePhotoRepository(memberDao: MemberDao,
-                               photoDao: PhotoDao,
+    fun providePhotoRepository(photoDao: PhotoDao,
                                api: CoverageApi,
                                sessionManager: SessionManager,
                                clock: Clock): PhotoRepository {
-        return PhotoRepositoryImpl(memberDao, photoDao, api, sessionManager, clock)
+        return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
     }
 }
