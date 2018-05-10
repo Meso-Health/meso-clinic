@@ -14,6 +14,7 @@ import org.watsi.device.db.AppDatabase
 @RunWith(RobolectricTestRunner::class)
 abstract class DaoBaseTest {
     lateinit var database: AppDatabase
+    lateinit var billableDao: BillableDao
     lateinit var deltaDao: DeltaDao
     lateinit var diagnosisDao: DiagnosisDao
     lateinit var encounterDao: EncounterDao
@@ -31,6 +32,7 @@ abstract class DaoBaseTest {
         database = Room.inMemoryDatabaseBuilder(RuntimeEnvironment.application.baseContext, AppDatabase::class.java)
                 .allowMainThreadQueries()
                 .build()
+        billableDao = database.billableDao()
         deltaDao = database.deltaDao()
         diagnosisDao = database.diagnosisDao()
         encounterDao = database.encounterDao()
