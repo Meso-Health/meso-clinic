@@ -7,7 +7,7 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.Diagnosis
 
 @Entity(tableName = "diagnoses")
-data class DiagnosisModel(@PrimaryKey val id: Int,
+data class DiagnosisModel(@PrimaryKey val id: Int = 0,
                           val createdAt: Instant,
                           val updatedAt: Instant,
                           val description: String,

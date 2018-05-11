@@ -10,5 +10,6 @@ data class Delta(val id: Int = 0,
                  val synced: Boolean = false) {
 
     enum class Action { ADD, EDIT }
-    enum class ModelName { MEMBER, PHOTO, IDENTIFICATION_EVENT, ENCOUNTER, ENCOUNTER_FORM }
+    enum class ModelName {
+        MEMBER, PHOTO, IDENTIFICATION_EVENT, ENCOUNTER, ENCOUNTER_FORM, BILLABLE }
 }

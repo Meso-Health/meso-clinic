@@ -49,26 +49,6 @@ class DiagnosisRepositoryImplTest {
     }
 
     @Test
-    fun save_diagnosisExists_updates() {
-        val model = DiagnosisModelFactory.build(clock = clock)
-        whenever(mockDao.find(model.id)).thenReturn(model)
-
-        repository.save(model.toDiagnosis()).test().assertComplete()
-
-        verify(mockDao).update(model)
-    }
-
-    @Test
-    fun save_diagnosisDoesNotExist_insert() {
-        val model = DiagnosisModelFactory.build(clock = clock)
-        whenever(mockDao.find(model.id)).thenReturn(null)
-
-        repository.save(model.toDiagnosis()).test().assertComplete()
-
-        verify(mockDao).insert(model)
-    }
-
-    @Test
     fun fetch_noCurrentToken_completes() {
         whenever(mockSessionManager.currentToken()).thenReturn(null)
 
@@ -86,7 +66,8 @@ class DiagnosisRepositoryImplTest {
         repository.fetch().test().assertComplete()
 
         verify(mockApi).diagnoses(authToken.getHeaderString())
-        verify(mockDao).insert(model)
+        verify(mockDao).deleteNotInList(listOf(model.id))
+        verify(mockDao).insert(listOf(model))
         verify(mockPreferencesManager).updateDiagnosesLastFetched(clock.instant())
     }
 }

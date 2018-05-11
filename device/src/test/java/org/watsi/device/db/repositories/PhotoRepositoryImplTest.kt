@@ -15,6 +15,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.PhotoModel
+import org.watsi.device.factories.PhotoModelFactory
 import org.watsi.domain.factories.PhotoFactory
 
 @RunWith(MockitoJUnitRunner::class)
@@ -46,5 +47,15 @@ class PhotoRepositoryImplTest {
         repository.create(photo).test().assertComplete()
 
         verify(mockDao).insert(PhotoModel.fromPhoto(photo, clock))
+    }
+
+    @Test
+    fun deleteSynced() {
+        val model = PhotoModelFactory.build()
+        whenever(mockDao.canBeDeleted()).thenReturn(Single.just(listOf(model)))
+
+        repository.deleteSynced().test().assertComplete()
+
+        verify(mockDao).destroy(model)
     }
 }

@@ -58,23 +58,11 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun save_billableExists_updates() {
-        val model = BillableModelFactory.build(clock = clock)
-        whenever(mockDao.find(model.id)).thenReturn(model)
+    fun uniqueCompositions() {
+        val compositions = listOf("tablet", "vial")
+        whenever(mockDao.distinctCompositions()).thenReturn(Single.just(compositions))
 
-        repository.save(model.toBillable()).test().assertComplete()
-
-        verify(mockDao).update(model)
-    }
-
-    @Test
-    fun save_billableDoesNotExist_insert() {
-        val model = BillableModelFactory.build(clock = clock)
-        whenever(mockDao.find(model.id)).thenReturn(null)
-
-        repository.save(model.toBillable()).test().assertComplete()
-
-        verify(mockDao).insert(model)
+        repository.uniqueCompositions().test().assertValue(compositions)
     }
 
     @Test
@@ -87,24 +75,20 @@ class BillableRepositoryImplTest {
     @Test
     fun fetch_hasToken_savesResponse() {
         val authToken = AuthenticationTokenFactory.build()
-        val model = BillableModelFactory.build(clock = clock)
+        val fetchedModel = BillableModelFactory.build(clock = clock)
+        val unsyncedModel = BillableModelFactory.build()
         val apiResponse = BillableApi(
-                model.id, model.type.toString(), model.composition, model.unit, model.price,model.name)
+                fetchedModel.id, fetchedModel.type.toString(), fetchedModel.composition,
+                fetchedModel.unit, fetchedModel.price, fetchedModel.name)
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
         whenever(mockApi.billables(any(), any())).thenReturn(Single.just(listOf(apiResponse)))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedModel)))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).billables(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao).insert(model)
+        verify(mockDao).deleteNotInList(listOf(fetchedModel.id, unsyncedModel.id))
+        verify(mockDao).upsert(listOf(fetchedModel))
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())
-    }
-
-    @Test
-    fun uniqueCompositions() {
-        val compositions = listOf("tablet", "vial")
-        whenever(mockDao.distinctCompositions()).thenReturn(Single.just(compositions))
-
-        repository.uniqueCompositions().test().assertValue(compositions)
     }
 }
