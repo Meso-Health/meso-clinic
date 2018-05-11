@@ -2,11 +2,7 @@ package org.watsi.device.managers
 
 import android.content.Context
 import android.preference.PreferenceManager
-import android.util.Log
 import com.google.gson.Gson
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.subjects.PublishSubject
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.AuthenticationToken
 
@@ -19,9 +15,6 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    internal var memberLastFetchedObservable = PublishSubject.create<Instant>()
-    internal var billablesLastFetchedObservable = PublishSubject.create<Instant>()
-    internal var diagnosesLastFetchedObservable = PublishSubject.create<Instant>()
 
     override fun getAuthenticationToken(): AuthenticationToken? {
         val tokenJson = sharedPreferences.getString(AUTHENTICATION_TOKEN_KEY, null)
@@ -33,37 +26,27 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         sharedPreferences.edit().putString(AUTHENTICATION_TOKEN_KEY, tokenJson).apply()
     }
 
-    override fun getMemberLastFetched(): Flowable<Instant> {
-        return memberLastFetchedObservable
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .startWith(Instant.ofEpochMilli(sharedPreferences.getLong(MEMBERS_LAST_FETCHED_KEY, 0)))
+    override fun getMemberLastFetched(): Instant {
+        return Instant.ofEpochMilli(sharedPreferences.getLong(MEMBERS_LAST_FETCHED_KEY, 0))
     }
 
     override fun updateMemberLastFetched(instant: Instant) {
-        Log.i("coverage", "oman last fetched")
         sharedPreferences.edit().putLong(MEMBERS_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
-        memberLastFetchedObservable.onNext(instant)
     }
 
-    override fun getBillablesLastFetched(): Flowable<Instant> {
-        return billablesLastFetchedObservable
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .startWith(Instant.ofEpochMilli(sharedPreferences.getLong(BILLABLES_LAST_FETCHED_KEY, 0)))
+    override fun getBillablesLastFetched(): Instant {
+        return Instant.ofEpochMilli(sharedPreferences.getLong(BILLABLES_LAST_FETCHED_KEY, 0))
     }
 
     override fun updateBillablesLastFetched(instant: Instant) {
         sharedPreferences.edit().putLong(BILLABLES_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
-        billablesLastFetchedObservable.onNext(instant)
     }
 
-    override fun getDiagnosesLastFetched(): Flowable<Instant> {
-        return diagnosesLastFetchedObservable
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .startWith(Instant.ofEpochMilli(sharedPreferences.getLong(DIAGNOSES_LAST_FETCHED_KEY, 0)))
+    override fun getDiagnosesLastFetched(): Instant {
+        return Instant.ofEpochMilli(sharedPreferences.getLong(DIAGNOSES_LAST_FETCHED_KEY, 0))
     }
 
     override fun updateDiagnosesLastFetched(instant: Instant) {
         sharedPreferences.edit().putLong(DIAGNOSES_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
-        diagnosesLastFetchedObservable.onNext(instant)
     }
 }

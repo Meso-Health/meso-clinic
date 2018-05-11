@@ -25,22 +25,15 @@ class StatusViewModel @Inject constructor (
     }
 
     fun getObservable(): LiveData<ViewState> {
-        val flowables = listOf(
-                syncStatusUseCase.execute(),
-                fetchStatusUseCase.execute(),
-                preferencesManager.getMemberLastFetched(),
-                preferencesManager.getBillablesLastFetched(),
-                preferencesManager.getDiagnosesLastFetched()
-        )
+        val flowables = listOf(syncStatusUseCase.execute(), fetchStatusUseCase.execute())
 
         return LiveDataReactiveStreams.fromPublisher(
             Flowable.zip(flowables, { results ->
                 ViewState(results[0] as DeltaRepository.SyncStatus,
                           results[1] as Int,
-                          results[2] as Instant, // last member fetched at
-                          results[3] as Instant, // last billable fetched at
-                          results[4] as Instant  // last diagnoses fetched at
-                )
+                          preferencesManager.getMemberLastFetched(),
+                          preferencesManager.getBillablesLastFetched(),
+                          preferencesManager.getDiagnosesLastFetched())
             })
         )
     }
