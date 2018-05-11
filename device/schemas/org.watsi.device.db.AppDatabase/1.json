@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bdfc8f4a551980f57127440bcb583674",
+    "identityHash": "ad5553608500b315f57d63edf5e09fe4",
     "entities": [
       {
         "tableName": "billables",
@@ -532,7 +532,7 @@
       },
       {
         "tableName": "photos",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `bytes` BLOB, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `bytes` BLOB NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -556,7 +556,7 @@
             "fieldPath": "bytes",
             "columnName": "bytes",
             "affinity": "BLOB",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -571,7 +571,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"bdfc8f4a551980f57127440bcb583674\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ad5553608500b315f57d63edf5e09fe4\")"
     ]
   }
 }

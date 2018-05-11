@@ -59,13 +59,10 @@ class MemberAdapter(context: Context,
                     photoRepository.find(photoId)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({ photo ->
-                        photo.bytes?.let {
-                            PhotoLoader.loadMemberPhoto(it, imageView, context)
-                        }
-                    }, {
-                        // TODO: handle error
-                        val foo = 2
-                    })
+                                PhotoLoader.loadMemberPhoto(photo.bytes, imageView, context)
+                            }, {
+                                // TODO: handle error
+                            })
                 }
             }
         }

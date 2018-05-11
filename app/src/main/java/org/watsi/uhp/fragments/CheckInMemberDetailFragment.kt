@@ -108,9 +108,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             photoRepository.find(photoId)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ photo ->
-                        photo.bytes?.let {
-                            PhotoLoader.loadMemberPhoto(it, member_photo, activity)
-                        }
+                        PhotoLoader.loadMemberPhoto(photo.bytes, member_photo, activity)
                     }, {
                         // TODO: handle error
                     })

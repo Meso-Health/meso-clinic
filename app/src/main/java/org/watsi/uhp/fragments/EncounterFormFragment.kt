@@ -72,10 +72,9 @@ class EncounterFormFragment : DaggerFragment() {
             this.photoIds = it
             photoRepository.find(it.second).observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ thumbnailPhoto ->
-                        thumbnailPhoto.bytes?.let { photoBytes ->
-                            val thumbnailBitmap = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.size)
-                            photo.setImageBitmap(thumbnailBitmap)
-                        }
+                        val thumbnailBitmap = BitmapFactory.decodeByteArray(
+                                thumbnailPhoto.bytes, 0, thumbnailPhoto.bytes.size)
+                        photo.setImageBitmap(thumbnailBitmap)
                     }, {
                         // TODO: handle error
                     })

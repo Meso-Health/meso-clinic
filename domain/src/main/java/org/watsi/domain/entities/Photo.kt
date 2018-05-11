@@ -5,7 +5,7 @@ import java.util.Objects
 import java.util.UUID
 
 data class Photo(val id: UUID,
-                 val bytes: ByteArray?,
+                 val bytes: ByteArray,
                  val deleted: Boolean = false) {
 
     override fun equals(other: Any?): Boolean{

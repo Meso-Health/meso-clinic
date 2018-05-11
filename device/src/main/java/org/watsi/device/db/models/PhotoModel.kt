@@ -14,7 +14,7 @@ import java.util.UUID
 data class PhotoModel(@PrimaryKey val id: UUID,
                       val createdAt: Instant,
                       val updatedAt: Instant,
-                      @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val bytes: ByteArray?) {
+                      @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val bytes: ByteArray) {
 
     fun toPhoto(): Photo {
         return Photo(id = id, bytes = bytes)
