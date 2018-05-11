@@ -100,7 +100,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_version -> {
-                navigationManager.goTo(VersionAndSyncFragment())
+                navigationManager.goTo(StatusFragment())
             }
             R.id.menu_logout -> {
                 AlertDialog.Builder(activity)

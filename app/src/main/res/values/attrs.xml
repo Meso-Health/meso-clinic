@@ -4,4 +4,7 @@
         <attr name="message" format="string"/>
         <attr name="action" format="string"/>
     </declare-styleable>
+    <declare-styleable name="StatusField">
+        <attr name="android:text" />
+    </declare-styleable>
 </resources>

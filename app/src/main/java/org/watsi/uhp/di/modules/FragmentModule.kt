@@ -16,7 +16,7 @@ import org.watsi.uhp.fragments.EnrollmentMemberPhotoFragment
 import org.watsi.uhp.fragments.MemberEditFragment
 import org.watsi.uhp.fragments.ReceiptFragment
 import org.watsi.uhp.fragments.SearchMemberFragment
-import org.watsi.uhp.fragments.VersionAndSyncFragment
+import org.watsi.uhp.fragments.StatusFragment
 
 @Module
 abstract class FragmentModule {
@@ -34,5 +34,5 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindMemberEditFragment(): MemberEditFragment
     @ContributesAndroidInjector abstract fun bindReceiptFragment(): ReceiptFragment
     @ContributesAndroidInjector abstract fun bindSearchMemberFragment(): SearchMemberFragment
-    @ContributesAndroidInjector abstract fun bindVersionAndSyncFragment(): VersionAndSyncFragment
+    @ContributesAndroidInjector abstract fun bindStatusFragment(): StatusFragment
 }
