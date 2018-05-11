@@ -13,7 +13,6 @@ import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
@@ -23,8 +22,8 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                               private val sessionManager: SessionManager,
                               private val clock: Clock) : EncounterRepository {
 
-    override fun find(id: UUID): Single<Encounter> {
-        return encounterDao.find(id).map { it.toEncounter() }.subscribeOn(Schedulers.io())
+    override fun find(id: UUID): Single<EncounterWithItemsAndForms> {
+        return encounterDao.find(id).map { it.toEncounterWithItemsAndForms() }.subscribeOn(Schedulers.io())
     }
 
     override fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms,
@@ -51,13 +50,9 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         val authToken = sessionManager.currentToken()!!
 
         // TODO: create EncounterWithItems relation entity to avoid extra query
-        return encounterDao.find(deltas.first().modelId).flatMapCompletable { encounterModel ->
-            val encounter = encounterModel.toEncounter()
-            encounterDao.findEncounterItems(encounter.id).flatMapCompletable { encounterItemModels ->
-                api.postEncounter(authToken.getHeaderString(), authToken.user.providerId,
-                        EncounterApi(encounter, encounterItemModels.map { it.toEncounterItem() })
-                )
-            }
+        return find(deltas.first().modelId).flatMapCompletable {
+            api.postEncounter(authToken.getHeaderString(), authToken.user.providerId,
+                    EncounterApi(it.encounter, it.encounterItems))
         }.subscribeOn(Schedulers.io())
     }
 }

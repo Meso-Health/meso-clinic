@@ -2,7 +2,7 @@ package org.watsi.device.api.models
 
 import com.google.gson.annotations.SerializedName
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.relations.EncounterItemWithBillable
 import java.util.UUID
 
 /**
@@ -22,7 +22,7 @@ data class EncounterApi(
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>
 ) {
 
-    constructor (encounter: Encounter, encounterItems: List<EncounterItem>) :
+    constructor (encounter: Encounter, encounterItems: List<EncounterItemWithBillable>) :
             this(id = encounter.id,
                  memberId = encounter.memberId,
                  identificationEventId = encounter.identificationEventId,
