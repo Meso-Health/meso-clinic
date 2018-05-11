@@ -24,10 +24,10 @@ interface DeltaDao {
     @Query("SELECT * FROM deltas WHERE synced = 0 AND modelName = :modelName")
     fun unsynced(modelName: Delta.ModelName): Single<List<DeltaModel>>
 
-    @Query("SELECT COUNT(*) from deltas WHERE synced = 0 AND modelName = :modelName AND action = :action")
+    @Query("SELECT COUNT(DISTINCT(modelId)) from deltas WHERE synced = 0 AND modelName = :modelName AND action = :action")
     fun unsyncedCount(modelName: Delta.ModelName, action: Delta.Action): Flowable<Int>
 
-    @Query("SELECT COUNT(*) from deltas WHERE synced = 0 AND modelName = :modelName")
+    @Query("SELECT COUNT(DISTINCT(modelId)) from deltas WHERE synced = 0 AND modelName = :modelName")
     fun unsyncedCount(modelName: Delta.ModelName): Flowable<Int>
 
     @Query("SELECT updatedAt FROM deltas WHERE synced = 1 ORDER BY updatedAt DESC LIMIT 1")
