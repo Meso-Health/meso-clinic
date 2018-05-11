@@ -15,20 +15,21 @@ class SyncEncounterFormUseCase(
                     .filter { it.action == Delta.Action.ADD }
                     .map { it.modelId }
                     .distinct()
-            deltaRepository.unsynced(Delta.ModelName.ENCOUNTER_FORM)
-                    .flatMapCompletable { encounterFormDeltas ->
+            deltaRepository.unsynced(Delta.ModelName.ENCOUNTER_FORM).flatMapCompletable { encounterFormDeltas ->
+                Completable.concat(encounterFormDeltas.map { encounterFormDelta ->
+                    encounterFormRepository.find(encounterFormDelta.modelId).flatMapCompletable {
                         // filter out deltas that correspond to a Encounter that has not been synced yet
-                        val encounterFormDeltasThatCanBeSynced = encounterFormDeltas
-                                .filter { !unsyncedEncounterIds.contains(it.modelId) }
-                                .groupBy { it.modelId }
-                                .values
-                        Completable.concat(encounterFormDeltasThatCanBeSynced.map { deltas ->
-                            Completable.concat(listOf(
-                                    encounterFormRepository.sync(deltas),
-                                    deltaRepository.markAsSynced(deltas)
-                            ))
-                        })
+                         if (!unsyncedEncounterIds.contains(it.encounter.id)) {
+                             Completable.concat(listOf(
+                                encounterFormRepository.sync(encounterFormDelta),
+                                deltaRepository.markAsSynced(listOf(encounterFormDelta))
+                             ))
+                        } else {
+                            Completable.complete()
+                        }
                     }
+                })
+            }
         }
     }
 }

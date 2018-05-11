@@ -107,10 +107,9 @@ class DbModule {
 
     @Provides
     fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,
-                                       photoDao: PhotoDao,
                                        api: CoverageApi,
                                        sessionManager: SessionManager): EncounterFormRepository =
-            EncounterFormRepositoryImpl(encounterFormDao, photoDao, api, sessionManager)
+            EncounterFormRepositoryImpl(encounterFormDao, api, sessionManager)
 
     @Provides
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
