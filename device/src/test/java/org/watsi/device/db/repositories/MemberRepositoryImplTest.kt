@@ -26,7 +26,9 @@ import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.PhotoModel
+import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
@@ -128,10 +130,13 @@ class MemberRepositoryImplTest {
 
     @Test
     fun checkedInMembers() {
-        val modelList = listOf(MemberModelFactory.build())
-        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(modelList))
+        val memberModel = MemberModelFactory.build()
+        val idEventModel = IdentificationEventModelFactory.build(memberId = memberModel.id)
+        val memberRelation = MemberWithIdEventAndThumbnailPhotoModel(memberModel, listOf(idEventModel))
+        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(listOf(memberRelation)))
 
-        repository.checkedInMembers().test().assertValue(modelList.map { it.toMember() })
+        repository.checkedInMembers().test().assertValue(
+                listOf(memberRelation.toMemberWithIdEventAndThumbnailPhoto()))
     }
 
     @Test

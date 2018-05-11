@@ -39,10 +39,7 @@ class SearchMemberFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchMemberViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
-                val adapter = MemberAdapter(activity,
-                                            viewState.searchResults,
-                                            photoRepository,
-                                            false)
+                val adapter = MemberAdapter(activity, viewState.searchResults, false)
 
                 member_search_results.adapter = adapter
                 member_search_results.requestFocus()

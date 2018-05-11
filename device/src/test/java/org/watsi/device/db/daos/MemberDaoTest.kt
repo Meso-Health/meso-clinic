@@ -1,22 +1,26 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
+import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
+import org.watsi.device.factories.PhotoModelFactory
 import java.util.UUID
 
 class MemberDaoTest : DaoBaseTest() {
 
     @Test
     fun checkedInMembers() {
-        val memberWithOpenCheckIn = MemberModelFactory.create(memberDao)
+        val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
+        val memberWithOpenCheckIn = MemberModelFactory.create(
+                memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
         val memberWithDismissedCheckIn = MemberModelFactory.create(memberDao)
         val memberWithEncounter = MemberModelFactory.create(memberDao)
         MemberModelFactory.create(memberDao)
 
         // open identification event
-        IdentificationEventModelFactory.create(identificationEventDao,
+        val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
                 memberId = memberWithOpenCheckIn.id,
                 accepted = true,
                 dismissed = false)
@@ -34,7 +38,11 @@ class MemberDaoTest : DaoBaseTest() {
                 dismissed = false)
         EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
 
-        memberDao.checkedInMembers().test().assertValue(listOf(memberWithOpenCheckIn))
+        val memberWithOpenCheckInRelation = MemberWithIdEventAndThumbnailPhotoModel(
+                memberWithOpenCheckIn,
+                listOf(openCheckIn),
+                listOf(memberThumbnailPhoto))
+        memberDao.checkedInMembers().test().assertValue(listOf(memberWithOpenCheckInRelation))
     }
 
     @Test

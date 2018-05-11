@@ -7,18 +7,15 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import io.reactivex.android.schedulers.AndroidSchedulers
 
-import org.watsi.domain.entities.Member
-import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.PhotoLoader
 
 class MemberAdapter(context: Context,
-                    memberList: List<Member>,
-                    private val photoRepository: PhotoRepository,
+                    memberList: List<MemberWithIdEventAndThumbnailPhoto>,
                     private val showClinicNumber: Boolean
-) : ArrayAdapter<Member>(context, R.layout.item_member_list, memberList) {
+) : ArrayAdapter<MemberWithIdEventAndThumbnailPhoto>(context, R.layout.item_member_list, memberList) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: (context as Activity).layoutInflater.inflate(
@@ -40,32 +37,23 @@ class MemberAdapter(context: Context,
             convertView.tag as ViewHolder
         }
 
-        getItem(position)?.let { member ->
+        getItem(position)?.let { memberWithIdEventAndPhoto ->
+            val member = memberWithIdEventAndPhoto.member
             viewHolder.name?.text = member.name
             viewHolder.age_and_gender?.text = member.gender.toString()
             viewHolder.card_id?.text = member.cardId
             viewHolder.phone_number?.text = member.formattedPhoneNumber()
             if (showClinicNumber) {
+                val idEvent = memberWithIdEventAndPhoto.identificationEvent
+
                 viewHolder.phone_number?.visibility = View.GONE
                 viewHolder.clinic_number?.visibility = View.VISIBLE
-
-                // TODO: figure out efficient way to get clinic number
-//                viewHolder.clinic_number?.text = currentCheckIn.clinicNumber.toString()
+                viewHolder.clinic_number?.text = idEvent?.clinicNumber.toString()
             }
 
             viewHolder.photo?.let { imageView ->
-                // TODO: should pre-load photo with Member
-                member.thumbnailPhotoId?.let { photoId ->
-                    photoRepository.find(photoId)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({ photo ->
-                        photo.bytes?.let {
-                            PhotoLoader.loadMemberPhoto(it, imageView, context)
-                        }
-                    }, {
-                        // TODO: handle error
-                        val foo = 2
-                    })
+                memberWithIdEventAndPhoto.thumbnailPhoto?.let {
+                    PhotoLoader.loadMemberPhoto(it.bytes!!, imageView, context)
                 }
             }
         }

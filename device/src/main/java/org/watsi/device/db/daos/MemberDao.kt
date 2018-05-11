@@ -1,7 +1,6 @@
 package org.watsi.device.db.daos
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
@@ -12,6 +11,7 @@ import io.reactivex.Maybe
 import org.watsi.device.db.models.DeltaModel
 import io.reactivex.Single
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import java.util.UUID
 
 @Dao
@@ -35,9 +35,6 @@ abstract class MemberDao {
         insertDeltas(deltas)
     }
 
-    @Delete
-    abstract fun destroy(model: MemberModel)
-
     @Query("SELECT * FROM members where id = :id LIMIT 1")
     abstract fun find(id: UUID): Flowable<MemberModel?>
 
@@ -56,6 +53,12 @@ abstract class MemberDao {
     @Query("SELECT DISTINCT(name) FROM members")
     abstract fun uniqueNames(): List<String>
 
+    @Query("SELECT * FROM members\n" +
+            "LEFT JOIN photos ON photos.id = members.thumbnailPhotoId\n" +
+            "LEFT JOIN identification_events ON identification_events.memberId = members.id\n" +
+            "WHERE members.id IN (:ids)")
+    abstract fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+
     @Query("SELECT members.*\n" +
             "FROM members\n" +
             "INNER JOIN (\n" +
@@ -68,7 +71,7 @@ abstract class MemberDao {
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
             "WHERE encounters.identificationEventId IS NULL\n" +
             "ORDER BY last_identifications.occurredAt")
-    abstract fun checkedInMembers(): Flowable<List<MemberModel>>
+    abstract fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")
     abstract fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>

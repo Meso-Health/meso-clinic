@@ -57,10 +57,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                     current_patients_label.text = activity.resources.getQuantityString(
                             R.plurals.current_patients_label, checkedInMembers.size, checkedInMembers.size)
 
-                    current_patients.adapter = MemberAdapter(context,
-                            checkedInMembers,
-                            photoRepository,
-                            true)
+                    current_patients.adapter = MemberAdapter(context, checkedInMembers, true)
                 }
             }
         })
