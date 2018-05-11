@@ -4,7 +4,8 @@ import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import kotlinx.android.synthetic.main.view_status_field.view.*
+import kotlinx.android.synthetic.main.view_status_field.view.status_key
+import kotlinx.android.synthetic.main.view_status_field.view.status_value
 import org.watsi.uhp.R
 
 class StatusField @JvmOverloads constructor(
