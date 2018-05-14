@@ -7,7 +7,6 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.AuthenticationToken
 
 class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) : PreferencesManager {
-
     companion object {
         private const val AUTHENTICATION_TOKEN_KEY = "authentication_token"
         private const val MEMBERS_LAST_FETCHED_KEY = "members_last_fetched"

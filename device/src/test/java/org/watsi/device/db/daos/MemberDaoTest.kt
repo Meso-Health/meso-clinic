@@ -60,4 +60,15 @@ class MemberDaoTest : DaoBaseTest() {
 
         memberDao.needPhotoDownload().test().assertValue(listOf(needsPhoto))
     }
+
+    @Test
+    fun needPhotoDownloadCount() {
+        val needsPhoto = MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
+        // photo downloaded
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
+        // does not have photo
+        MemberModelFactory.create(memberDao, photoUrl = null)
+
+        memberDao.needPhotoDownloadCount().test().assertValue(1)
+    }
 }

@@ -205,7 +205,7 @@
     <!-- EnrollNewbornPhotoFragment -->
     <string name="enroll_newborn_photo_label">Newborn photo</string>
 
-    <!-- VersionAndSyncFragment -->
+    <!-- StatusFragment -->
     <string name="version_and_sync_label">Status</string>
     <string name="version_label">Version</string>
     <string name="fetch_members_label">Members updated at</string>

@@ -12,11 +12,13 @@ import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DismissIdentificationEventUseCase
+import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
 import org.watsi.domain.usecases.SyncIdentificationEventUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
 import org.watsi.domain.usecases.SyncPhotoUseCase
+import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 
 @Module
@@ -70,5 +72,15 @@ class DomainModule {
     @Provides
     fun provideSyncPhotoUseCase(photoRepository: PhotoRepository, deltaRepository: DeltaRepository): SyncPhotoUseCase {
         return SyncPhotoUseCase(photoRepository, deltaRepository)
+    }
+  
+    @Provides
+    fun provideSyncStatusUseCase(deltaRepository: DeltaRepository): SyncStatusUseCase {
+        return SyncStatusUseCase(deltaRepository)
+    }
+
+    @Provides
+    fun provideFetchStatusUseCase(memberRepository: MemberRepository): FetchStatusUseCase {
+        return FetchStatusUseCase(memberRepository)
     }
 }
