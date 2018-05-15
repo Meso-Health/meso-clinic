@@ -10,7 +10,6 @@ object IdentificationEventFactory {
               memberId: UUID = UUID.randomUUID(),
               throughMemberId: UUID = UUID.randomUUID(),
               occurredAt: Instant = Instant.now(),
-              accepted: Boolean = true,
               searchMethod: IdentificationEvent.SearchMethod =
                       IdentificationEvent.SearchMethod.SCAN_BARCODE,
               clinicNumber: Int = 1,
@@ -24,7 +23,6 @@ object IdentificationEventFactory {
                                    memberId = memberId,
                                    throughMemberId = throughMemberId,
                                    occurredAt = occurredAt,
-                                   accepted = accepted,
                                    searchMethod = searchMethod,
                                    clinicNumber = clinicNumber,
                                    clinicNumberType = clinicNumberType,

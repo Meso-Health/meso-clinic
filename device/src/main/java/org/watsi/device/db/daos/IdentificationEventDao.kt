@@ -33,7 +33,6 @@ interface IdentificationEventDao {
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +
             "WHERE encounters.identificationEventId IS NULL\n" +
             "AND identification_events.memberId = :memberId\n" +
-            "AND identification_events.dismissed = 0 " +
-            "AND identification_events.accepted = 1")
+            "AND identification_events.dismissed = 0")
     fun openCheckIn(memberId: UUID): Maybe<IdentificationEventModel>
 }

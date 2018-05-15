@@ -9,8 +9,8 @@ import android.arch.persistence.room.Transaction
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import org.watsi.device.db.models.DeltaModel
 import io.reactivex.Single
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import java.util.UUID
 
@@ -61,8 +61,7 @@ abstract class MemberDao {
             "INNER JOIN (\n" +
             "   SELECT id, memberId, max(occurredAt) AS occurredAt\n" +
             "   FROM identification_events\n" +
-            "   WHERE accepted = 1\n" +
-            "   AND dismissed = 0\n" +
+            "   WHERE dismissed = 0\n" +
             "   GROUP BY memberId\n" +
             ") last_identifications on last_identifications.memberId = members.id\n" +
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
