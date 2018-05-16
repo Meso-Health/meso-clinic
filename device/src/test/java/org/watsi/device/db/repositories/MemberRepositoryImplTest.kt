@@ -34,6 +34,7 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.MemberFactory
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class MemberRepositoryImplTest {
@@ -75,20 +76,9 @@ class MemberRepositoryImplTest {
         val member = MemberFactory.build()
         val delta = DeltaFactory.build(modelName = Delta.ModelName.MEMBER)
 
-        repository.create(member, listOf(delta)).test().assertComplete()
+        repository.save(member, listOf(delta)).test().assertComplete()
 
-        verify(mockDao).insertWithDeltas(
-                MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))
-    }
-
-    @Test
-    fun update() {
-        val member = MemberFactory.build()
-        val delta = DeltaFactory.build(modelName = Delta.ModelName.MEMBER)
-
-        repository.update(member, listOf(delta)).test().assertComplete()
-
-        verify(mockDao).updateWithDeltas(
+        verify(mockDao).upsert(
                 MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))
     }
 
@@ -102,17 +92,26 @@ class MemberRepositoryImplTest {
     @Test
     fun fetch_hasToken_savesResponse() {
         val authToken = AuthenticationTokenFactory.build()
-        val model = MemberModelFactory.build(clock = clock)
-        val apiResponse = MemberApi(model.id, model.householdId, model.cardId, model.name,
-                model.gender, model.birthdate, model.birthdateAccuracy, model.fingerprintsGuid,
-                model.phoneNumber, model.photoUrl)
+        val fetchedModel = MemberModelFactory.build(clock = clock)
+        val thumbnailPhotoId = UUID.randomUUID()
+        val syncedModel = MemberModelFactory.build(id = fetchedModel.id,
+                                                   thumbnailPhotoId = thumbnailPhotoId,
+                                                   photoUrl = null)
+        val unsyncedModel = MemberModelFactory.build()
+        val apiResponse = MemberApi(fetchedModel.id, fetchedModel.householdId, fetchedModel.cardId,
+                fetchedModel.name, fetchedModel.gender, fetchedModel.birthdate,
+                fetchedModel.birthdateAccuracy, fetchedModel.fingerprintsGuid,
+                fetchedModel.phoneNumber, fetchedModel.photoUrl)
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
         whenever(mockApi.members(any(), any())).thenReturn(Single.just(listOf(apiResponse)))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedModel)))
+        whenever(mockDao.allSingle()).thenReturn(Single.just(listOf(syncedModel, unsyncedModel)))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).members(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao).insert(model)
+        verify(mockDao).deleteNotInList(listOf(fetchedModel.id, unsyncedModel.id))
+        verify(mockDao).upsert(listOf(fetchedModel.copy(thumbnailPhotoId = thumbnailPhotoId)))
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
 
@@ -160,6 +159,6 @@ class MemberRepositoryImplTest {
         verify(mockPhotoDao).insert(captor.capture())
         val photo = captor.firstValue
         assert(Arrays.equals(photoBytes, photo.bytes))
-        verify(mockDao).update(MemberModel.fromMember(member.copy(thumbnailPhotoId = photo.id), clock))
+        verify(mockDao).upsert(MemberModel.fromMember(member.copy(thumbnailPhotoId = photo.id), clock))
     }
 }
