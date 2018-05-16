@@ -40,12 +40,16 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                  photoUrl = member.photoUrl
             )
 
-    fun toMember(): Member {
+    fun toMember(persistedMember: Member?): Member {
         // necessary because when running locally, URL is returned relative to app directory
         val convertedPhotoUrl = if (photoUrl?.first() == '/') {
             "http://localhost:5000$photoUrl"
         } else {
             photoUrl
+        }
+        // do not overwrite the local thumbnail photo if the fetched photo is not different
+        val thumbnailPhotoId = persistedMember?.let {
+            if (it.photoUrl == photoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
         return Member(id = id,
                       householdId = householdId,
@@ -56,8 +60,8 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                       birthdateAccuracy = birthdateAccuracy,
                       fingerprintsGuid = fingerprintsGuid,
                       phoneNumber = phoneNumber,
-                      photoId = null,
-                      thumbnailPhotoId = null,
+                      photoId = persistedMember?.photoId,
+                      thumbnailPhotoId = thumbnailPhotoId,
                       photoUrl = convertedPhotoUrl)
     }
 
