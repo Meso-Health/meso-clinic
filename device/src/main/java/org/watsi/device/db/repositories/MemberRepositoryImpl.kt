@@ -33,44 +33,37 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.find(id).map { it.toMember() }
     }
 
-    override fun create(member: Member, deltas: List<Delta>): Completable {
+    override fun save(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
             val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
-            memberDao.insertWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
-        }.subscribeOn(Schedulers.io())
-    }
-
-    override fun update(member: Member, deltas: List<Delta>): Completable {
-        return Completable.fromAction {
-            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
-            memberDao.updateWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
+            memberDao.upsert(MemberModel.fromMember(member, clock), deltaModels)
         }.subscribeOn(Schedulers.io())
     }
 
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             api.members(token.getHeaderString(),
-                        token.user.providerId).flatMapCompletable { memberApiResults ->
-                // TODO: more efficient way of saving?
-                // TODO: clean up any members not returned in the fetch
-                // TODO: do not overwrite unsynced member data
-                Completable.concat(memberApiResults.map {
-                    saveAfterFetch(it.toMember())
-                }.plus(Completable.fromAction {
-                    preferencesManager.updateMemberLastFetched(clock.instant())
-                }))
+                        token.user.providerId).flatMapCompletable { fetchedMembers ->
+                memberDao.unsynced().flatMapCompletable { unsyncedMembers ->
+                    val unsyncedIds = unsyncedMembers.map { it.id }
+                    memberDao.allSingle().flatMapCompletable { persistedMembers ->
+                        val membersById = persistedMembers.groupBy { it.id }
+                        Completable.fromAction {
+                            val fetchedAndUnsyncedIds = fetchedMembers.map { it.id } + unsyncedIds
+                            memberDao.deleteNotInList(fetchedAndUnsyncedIds.distinct())
+                            val fetchedMembersWithoutUnsynced = fetchedMembers.filter {
+                                !unsyncedIds.contains(it.id)
+                            }
+                            memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
+                                val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
+                                MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+                            })
+                            preferencesManager.updateMemberLastFetched(clock.instant())
+                        }
+                    }
+                }
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
-    }
-
-    private fun saveAfterFetch(member: Member): Completable {
-        return Completable.fromAction {
-            if (memberDao.exists(member.id) != null) {
-                memberDao.update(MemberModel.fromMember(member, clock))
-            } else {
-                memberDao.insert(MemberModel.fromMember(member, clock))
-            }
-        }.subscribeOn(Schedulers.io())
     }
 
     override fun findByCardId(cardId: String): Maybe<Member> {
@@ -99,7 +92,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                     Completable.fromAction {
                         val photo = Photo(UUID.randomUUID(), it.bytes())
                         photoDao.insert(PhotoModel.fromPhoto(photo, clock))
-                        memberDao.update(memberModel.copy(thumbnailPhotoId = photo.id))
+                        memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
                     }
                 }
             })

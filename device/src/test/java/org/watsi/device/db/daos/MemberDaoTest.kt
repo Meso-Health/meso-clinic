@@ -1,9 +1,11 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
+import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
+import org.watsi.domain.entities.Delta
 import java.util.UUID
 
 class MemberDaoTest : DaoBaseTest() {
@@ -62,8 +64,33 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun deleteNotInList() {
+        MemberModelFactory.create(memberDao)
+        val model = MemberModelFactory.create(memberDao)
+
+        memberDao.deleteNotInList(listOf(model.id))
+
+        memberDao.all().test().assertValue(listOf(model))
+    }
+
+    @Test
+    fun unsynced() {
+        val unsyncedMember = MemberModelFactory.create(memberDao)
+        val syncedMember = MemberModelFactory.create(memberDao)
+        MemberModelFactory.create(memberDao)
+
+        DeltaModelFactory.create(deltaDao,
+                modelName = Delta.ModelName.MEMBER, modelId = unsyncedMember.id, synced = false)
+        DeltaModelFactory.create(deltaDao,
+                modelName = Delta.ModelName.MEMBER, modelId = syncedMember.id, synced = true)
+
+        memberDao.unsynced().test().assertValue(listOf(unsyncedMember))
+    }
+
+    @Test
     fun needPhotoDownloadCount() {
-        val needsPhoto = MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
+        // awaiting photo download
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
         // photo downloaded
         MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
         // does not have photo

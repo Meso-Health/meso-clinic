@@ -30,6 +30,6 @@ class PhotoRepositoryImpl(private val photoDao: PhotoDao,
                     photoDao.destroy(model)
                 }
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 }

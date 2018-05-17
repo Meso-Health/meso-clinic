@@ -23,6 +23,6 @@ class CreateMemberUseCase(private val memberRepository: MemberRepository) {
                     modelId = member.id))
         }
 
-        return memberRepository.create(member, deltas)
+        return memberRepository.save(member, deltas)
     }
 }
