@@ -122,8 +122,9 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 }
             }
             R.id.menu_enroll_newborn -> {
-                val member = arguments?.getSerializable(CheckInMemberDetailFragment.PARAM_MEMBER) as Member
-                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
+                member?.let {
+                    navigationManager.goTo(EnrollNewbornInfoFragment.forParent(it))
+                }
             }
             R.id.menu_dismiss_member -> {
                 viewModel.dismiss(identificationEvent).subscribe({
