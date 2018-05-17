@@ -6,7 +6,6 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.MemberRepository
-
 import javax.inject.Inject
 
 /**
