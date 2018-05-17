@@ -86,11 +86,17 @@ class TypeConverter {
     fun fromStringList(list: List<String>?): String? = list?.joinToString(LIST_DELIMITER)
 
     @TypeConverter
-    fun toStringList(string: String?): List<String>? = string?.split(LIST_DELIMITER)
+    fun toStringList(string: String?): List<String>? {
+        return string?.let { if (it.isEmpty()) emptyList() else it.split(LIST_DELIMITER) }
+    }
 
     @TypeConverter
     fun fromIntList(list: List<Int>?): String? = list?.joinToString(LIST_DELIMITER)
 
     @TypeConverter
-    fun toIntList(string: String?): List<Int>? = string?.split(LIST_DELIMITER)?.map { it.toInt() }
+    fun toIntList(string: String?): List<Int>? {
+        return string?.let {
+            if (it.isEmpty()) emptyList() else it.split(LIST_DELIMITER).map { it.toInt() }
+        }
+    }
 }
