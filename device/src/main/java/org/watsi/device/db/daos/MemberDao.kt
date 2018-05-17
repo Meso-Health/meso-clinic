@@ -29,9 +29,6 @@ interface MemberDao {
     @Query("SELECT * FROM members")
     fun all(): Flowable<List<MemberModel>>
 
-    @Query("SELECT * FROM members")
-    fun allSingle(): Single<List<MemberModel>>
-
     @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): Maybe<MemberModel>
 

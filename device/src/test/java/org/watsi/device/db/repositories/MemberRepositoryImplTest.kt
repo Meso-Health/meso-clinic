@@ -2,6 +2,7 @@ package org.watsi.device.db.repositories
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import edu.emory.mathcs.backport.java.util.Arrays
@@ -90,29 +91,53 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_savesResponse() {
+    fun fetch_hasToken_succeeds_updatesMembers() {
         val authToken = AuthenticationTokenFactory.build()
-        val fetchedModel = MemberModelFactory.build(clock = clock)
-        val thumbnailPhotoId = UUID.randomUUID()
-        val syncedModel = MemberModelFactory.build(id = fetchedModel.id,
-                                                   thumbnailPhotoId = thumbnailPhotoId,
+        val syncedModel = MemberModelFactory.build(clock = clock,
+                                                   thumbnailPhotoId = UUID.randomUUID(),
                                                    photoUrl = null)
-        val unsyncedModel = MemberModelFactory.build()
-        val apiResponse = MemberApi(fetchedModel.id, fetchedModel.householdId, fetchedModel.cardId,
-                fetchedModel.name, fetchedModel.gender, fetchedModel.birthdate,
-                fetchedModel.birthdateAccuracy, fetchedModel.fingerprintsGuid,
-                fetchedModel.phoneNumber, fetchedModel.photoUrl)
+        val syncedModelPhotoUrl = "https://watsi.org/photo"
+        val syncedModelApi = MemberApi(syncedModel.id, syncedModel.householdId, syncedModel.cardId,
+                syncedModel.name, syncedModel.gender, syncedModel.birthdate,
+                syncedModel.birthdateAccuracy, syncedModel.fingerprintsGuid,
+                syncedModel.phoneNumber, syncedModelPhotoUrl)
+        val inactiveMember = MemberModelFactory.build(clock = clock)
+        val newMember = MemberModelFactory.build(clock = clock)
+        val newMemberApi = MemberApi(newMember.id, newMember.householdId, newMember.cardId,
+                newMember.name, newMember.gender, newMember.birthdate, newMember.birthdateAccuracy,
+                newMember.fingerprintsGuid, newMember.phoneNumber, newMember.photoUrl)
+        val unsyncedMember = MemberModelFactory.build(clock = clock)
+        val unsyncedMemberApi = MemberApi(unsyncedMember.id, unsyncedMember.householdId,
+                unsyncedMember.cardId, unsyncedMember.name, unsyncedMember.gender,
+                unsyncedMember.birthdate, unsyncedMember.birthdateAccuracy,
+                unsyncedMember.fingerprintsGuid, unsyncedMember.phoneNumber, unsyncedMember.photoUrl)
+
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.members(any(), any())).thenReturn(Single.just(listOf(apiResponse)))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedModel)))
-        whenever(mockDao.allSingle()).thenReturn(Single.just(listOf(syncedModel, unsyncedModel)))
+        whenever(mockApi.members(any(), any())).thenReturn(
+                Single.just(listOf(syncedModelApi, newMemberApi, unsyncedMemberApi)))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedMember)))
+        whenever(mockDao.all()).thenReturn(
+                Flowable.just(listOf(syncedModel, inactiveMember, unsyncedMember)))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).members(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao).deleteNotInList(listOf(fetchedModel.id, unsyncedModel.id))
-        verify(mockDao).upsert(listOf(fetchedModel.copy(thumbnailPhotoId = thumbnailPhotoId)))
+        verify(mockDao).deleteNotInList(listOf(syncedModel.id, newMember.id, unsyncedMember.id))
+        verify(mockDao).upsert(listOf(syncedModel.copy(photoUrl = syncedModelPhotoUrl), newMember))
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
+    }
+
+    @Test
+    fun fetch_hasToken_fails_returnsError() {
+        val authToken = AuthenticationTokenFactory.build()
+        val exception = Exception()
+        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockApi.members(any(), any())).then { throw exception }
+
+        repository.fetch().test().assertError(exception)
+
+        verify(mockApi).members(authToken.getHeaderString(), authToken.user.providerId)
+        verify(mockDao, never()).unsynced()
     }
 
     @Test

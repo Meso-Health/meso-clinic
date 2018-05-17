@@ -43,23 +43,23 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
 
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.getMembers(token.getHeaderString(),
-                        token.user.providerId).flatMapCompletable { fetchedMembers ->
-                memberDao.unsynced().flatMapCompletable { unsyncedMembers ->
-                    memberDao.allSingle().flatMapCompletable { persistedMembers ->
-                        val membersById = persistedMembers.groupBy { it.id }
-                        Completable.fromAction {
-                            val fetchedAndUnsyncedIds =
-                                    fetchedMembers.map { it.id } + unsyncedMembers.map { it.id }
-                            memberDao.deleteNotInList(fetchedAndUnsyncedIds)
-                            memberDao.upsert(fetchedMembers.map { memberApi ->
-                                val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
-                                MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
-                            })
-                            preferencesManager.updateMemberLastFetched(clock.instant())
-                        }
-                    }
+            Completable.fromAction {
+                val fetchedMembers = api.getMembers(token.getHeaderString(), token.user.providerId)
+                        .blockingGet()
+                val unsyncedMembers = memberDao.unsynced().blockingGet()
+                val unsyncedIds = unsyncedMembers.map { it.id }
+                val persistedMembers = memberDao.all().blockingFirst()
+                val membersById = persistedMembers.groupBy { it.id }
+                val fetchedAndUnsyncedIds = fetchedMembers.map { it.id } + unsyncedIds
+                memberDao.deleteNotInList(fetchedAndUnsyncedIds.distinct())
+                val fetchedMembersWithoutUnsynced = fetchedMembers.filter {
+                    !unsyncedIds.contains(it.id)
                 }
+                memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
+                    val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
+                    MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+                })
+                preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
