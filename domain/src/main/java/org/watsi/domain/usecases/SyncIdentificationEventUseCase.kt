@@ -11,10 +11,10 @@ class SyncIdentificationEventUseCase(
 ) {
     fun execute(): Completable {
         return deltaRepository.unsynced(Delta.ModelName.IDENTIFICATION_EVENT).flatMapCompletable { idEventDeltas ->
-            Completable.concat(idEventDeltas.groupBy { it.modelId }.values.map { groupedDeltas ->
+            Completable.concat(idEventDeltas.map { idEventDelta ->
                 Completable.concat(listOf(
-                        identificationEventRepository.sync(groupedDeltas),
-                        deltaRepository.markAsSynced(groupedDeltas)
+                        identificationEventRepository.sync(idEventDelta),
+                        deltaRepository.markAsSynced(listOf(idEventDelta))
                 ))
             })
         }

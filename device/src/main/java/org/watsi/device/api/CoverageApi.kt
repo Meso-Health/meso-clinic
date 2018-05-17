@@ -76,13 +76,6 @@ interface CoverageApi {
             @Body unsyncedEvent: IdentificationEventApi
     ): Completable
 
-    @PATCH("identification_events/{identificationEventId}")
-    fun patchIdentificationEvent(
-            @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
-            @Path("identificationEventId") identificationEventId: UUID,
-            @Body patchParams: JsonObject
-    ): Completable
-
     @POST("providers/{providerId}/encounters")
     fun postEncounter(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,

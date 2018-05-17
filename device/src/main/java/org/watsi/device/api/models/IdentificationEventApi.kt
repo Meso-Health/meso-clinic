@@ -1,8 +1,6 @@
 package org.watsi.device.api.models
 
-import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
@@ -17,10 +15,9 @@ data class IdentificationEventApi(
         @SerializedName("member_id") val memberId: UUID,
         @SerializedName("through_member_id") val throughMemberId: UUID?,
         @SerializedName("occurred_at") val occurredAt: String,
-        @SerializedName("search_method") val searchMethod: IdentificationEvent.SearchMethod,
+        @SerializedName("search_method") val searchMethod: String,
         @SerializedName("clinic_number") val clinicNumber: Int,
-        @SerializedName("clinic_number_type") val clinicNumberType: IdentificationEvent.ClinicNumberType,
-        @SerializedName("dismissed") val dismissed: Boolean = false,
+        @SerializedName("clinic_number_type") val clinicNumberType: String,
         @SerializedName("fingerprints_verification_result_code") val fingerprintsVerificationResultCode: Int?,
         @SerializedName("fingerprints_verification_confidence") val fingerprintsVerificationConfidence: Float?,
         @SerializedName("fingerprints_verification_tier") val fingerprintsVerificationTier: String?
@@ -31,25 +28,11 @@ data class IdentificationEventApi(
                  memberId = idEvent.memberId,
                  throughMemberId = idEvent.throughMemberId,
                  occurredAt = idEvent.occurredAt.toString(),
-                 searchMethod = idEvent.searchMethod,
+                 searchMethod = idEvent.searchMethod.toString().toLowerCase(),
                  clinicNumber = idEvent.clinicNumber,
-                 clinicNumberType = idEvent.clinicNumberType,
-                 dismissed = idEvent.dismissed,
+                 clinicNumberType = idEvent.clinicNumberType.toString().toLowerCase(),
                  fingerprintsVerificationResultCode = idEvent.fingerprintsVerificationResultCode,
                  fingerprintsVerificationConfidence = idEvent.fingerprintsVerificationConfidence,
                  fingerprintsVerificationTier = idEvent.fingerprintsVerificationTier
             )
-
-    companion object {
-        fun patch(identificationEvent: IdentificationEvent, deltas: List<Delta>): JsonObject {
-            val patchParams = JsonObject()
-            deltas.forEach { delta ->
-                when (delta.field) {
-                    "dismissed" -> patchParams.addProperty("dismissed", identificationEvent.dismissed)
-                    null -> Unit
-                }
-            }
-            return patchParams
-        }
-    }
 }

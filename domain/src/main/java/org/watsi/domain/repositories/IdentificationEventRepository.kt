@@ -10,5 +10,5 @@ interface IdentificationEventRepository {
     fun create(identificationEvent: IdentificationEvent, delta: Delta): Completable
     fun dismiss(identificationEvent: IdentificationEvent, delta: Delta): Completable
     fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent>
-    fun sync(deltas: List<Delta>): Completable
+    fun sync(delta: Delta): Completable
 }
