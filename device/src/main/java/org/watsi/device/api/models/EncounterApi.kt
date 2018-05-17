@@ -1,5 +1,7 @@
 package org.watsi.device.api.models
 
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.annotations.SerializedName
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterItemWithBillable
@@ -18,7 +20,7 @@ data class EncounterApi(
         @SerializedName("occurred_at") val occurredAt: String,
         @SerializedName("backdated_occurred_at") val backdatedOccurredAt: String?,
         @SerializedName("copayment_paid") val copaymentPaid: Boolean = false,
-        @SerializedName("diagnosis_ids") val diagnoses: String,
+        @SerializedName("diagnosis_ids") val diagnoses: JsonArray,
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>
 ) {
 
@@ -29,7 +31,7 @@ data class EncounterApi(
                  occurredAt = encounter.occurredAt.toString(),
                  backdatedOccurredAt = encounter.backdatedOccurredAt.toString(),
                  copaymentPaid  = encounter.copaymentPaid,
-                 diagnoses = encounter.diagnoses.toString(),
+                 diagnoses = Gson().fromJson(encounter.diagnoses.toString(), JsonArray::class.java),
                  encounterItems = encounterItems.map { EncounterItemApi(it) }
             )
 }
