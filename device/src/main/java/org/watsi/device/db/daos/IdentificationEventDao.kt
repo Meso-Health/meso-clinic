@@ -25,9 +25,6 @@ interface IdentificationEventDao {
     @Update
     fun update(model: IdentificationEventModel)
 
-    @Update
-    fun updateWithDelta(model: IdentificationEventModel, delta: DeltaModel)
-
     @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +

@@ -30,11 +30,10 @@ class IdentificationEventRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun dismiss(identificationEvent: IdentificationEvent, delta: Delta): Completable {
+    override fun dismiss(identificationEvent: IdentificationEvent): Completable {
         return Completable.fromAction {
-            identificationEventDao.updateWithDelta(
-                    IdentificationEventModel.fromIdentificationEvent(identificationEvent.copy(dismissed = true), clock),
-                    DeltaModel.fromDelta(delta, clock))
+            identificationEventDao.update(IdentificationEventModel.fromIdentificationEvent(
+                    identificationEvent.copy(dismissed = true), clock))
         }.subscribeOn(Schedulers.io())
     }
 

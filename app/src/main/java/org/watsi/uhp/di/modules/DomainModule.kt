@@ -11,7 +11,6 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
-import org.watsi.domain.usecases.DismissIdentificationEventUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
@@ -42,11 +41,6 @@ class DomainModule {
     @Provides
     fun provideCreateIdentificationEventUseCase(identificationEventRepository: IdentificationEventRepository): CreateIdentificationEventUseCase {
         return CreateIdentificationEventUseCase(identificationEventRepository)
-    }
-
-    @Provides
-    fun provideDismissIdentificationEventUseCase(identificationEventRepository: IdentificationEventRepository): DismissIdentificationEventUseCase {
-        return DismissIdentificationEventUseCase(identificationEventRepository)
     }
 
     @Provides

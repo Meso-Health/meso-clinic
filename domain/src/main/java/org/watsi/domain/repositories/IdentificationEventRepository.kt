@@ -8,7 +8,7 @@ import java.util.UUID
 
 interface IdentificationEventRepository {
     fun create(identificationEvent: IdentificationEvent, delta: Delta): Completable
-    fun dismiss(identificationEvent: IdentificationEvent, delta: Delta): Completable
+    fun dismiss(identificationEvent: IdentificationEvent): Completable
     fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent>
     fun sync(delta: Delta): Completable
 }
