@@ -16,8 +16,8 @@ class DeltaRepositoryImpl(
 ) : DeltaRepository {
     override fun syncStatus(): Flowable<DeltaRepository.SyncStatus> {
         val syncFlowables = listOf(
-                deltaDao.unsyncedCount(Delta.ModelName.MEMBER, Delta.Action.EDIT),
                 deltaDao.unsyncedCount(Delta.ModelName.MEMBER, Delta.Action.ADD),
+                deltaDao.unsyncedCount(Delta.ModelName.MEMBER, Delta.Action.EDIT),
                 deltaDao.unsyncedCount(Delta.ModelName.IDENTIFICATION_EVENT),
                 deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER),
                 deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER_FORM)
@@ -32,7 +32,7 @@ class DeltaRepositoryImpl(
                     results[4] as Int
             )
         })
-}
+    }
 
     override fun unsynced(modelName: Delta.ModelName): Single<List<Delta>> {
         return deltaDao.unsynced(modelName).map { deltaModels ->
