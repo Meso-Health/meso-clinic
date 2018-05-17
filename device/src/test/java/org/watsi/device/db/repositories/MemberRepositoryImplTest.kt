@@ -2,6 +2,7 @@ package org.watsi.device.db.repositories
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import edu.emory.mathcs.backport.java.util.Arrays
@@ -90,7 +91,7 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_savesResponse() {
+    fun fetch_hasToken_succeeds_updatesMembers() {
         val authToken = AuthenticationTokenFactory.build()
         val syncedModel = MemberModelFactory.build(clock = clock,
                                                    thumbnailPhotoId = UUID.randomUUID(),
@@ -115,8 +116,8 @@ class MemberRepositoryImplTest {
         whenever(mockApi.members(any(), any())).thenReturn(
                 Single.just(listOf(syncedModelApi, newMemberApi, unsyncedMemberApi)))
         whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedMember)))
-        whenever(mockDao.allSingle()).thenReturn(
-                Single.just(listOf(syncedModel, inactiveMember, unsyncedMember)))
+        whenever(mockDao.all()).thenReturn(
+                Flowable.just(listOf(syncedModel, inactiveMember, unsyncedMember)))
 
         repository.fetch().test().assertComplete()
 
@@ -124,6 +125,19 @@ class MemberRepositoryImplTest {
         verify(mockDao).deleteNotInList(listOf(syncedModel.id, newMember.id, unsyncedMember.id))
         verify(mockDao).upsert(listOf(syncedModel.copy(photoUrl = syncedModelPhotoUrl), newMember))
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
+    }
+
+    @Test
+    fun fetch_hasToken_fails_returnsError() {
+        val authToken = AuthenticationTokenFactory.build()
+        val exception = Exception()
+        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockApi.members(any(), any())).then { throw exception }
+
+        repository.fetch().test().assertError(exception)
+
+        verify(mockApi).members(authToken.getHeaderString(), authToken.user.providerId)
+        verify(mockDao, never()).unsynced()
     }
 
     @Test
