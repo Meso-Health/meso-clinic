@@ -51,7 +51,10 @@ class EncounterFormFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         photo_btn.setOnClickListener {
-            startActivityForResult(Intent(activity, SavePhotoActivity::class.java), CAPTURE_PHOTO_INTENT)
+            val intent = Intent(activity, SavePhotoActivity::class.java).apply {
+                putExtra(SavePhotoActivity.FOR_FORM_KEY, true)
+            }
+            startActivityForResult(intent, CAPTURE_PHOTO_INTENT)
         }
 
         finish_button.setOnClickListener {

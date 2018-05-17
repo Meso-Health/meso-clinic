@@ -3,13 +3,18 @@ package org.watsi.uhp.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_photo.cancel_container
+import kotlinx.android.synthetic.main.activity_photo.guide
+import kotlinx.android.synthetic.main.activity_photo.photo_hint
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.uhp.R
+import org.watsi.uhp.R.string.member_photo_overlay_text
 import org.watsi.uhp.helpers.BitmapHelper
 import java.util.UUID
 import javax.inject.Inject
@@ -19,6 +24,7 @@ class SavePhotoActivity : PhotoActivity() {
     @Inject lateinit var photoRepository: PhotoRepository
 
     companion object {
+        const val FOR_FORM_KEY = "form"
         const val PHOTO_ID_RESULT_KEY = "photo_id"
         const val CROPPED_PHOTO_ID_RESULT_KEY = "cropped_photo_id"
         const val CROP_HEIGHT = 240
@@ -53,6 +59,13 @@ class SavePhotoActivity : PhotoActivity() {
 
         cancel_container.setOnClickListener {
             finishAsFailure(RESULT_CANCELED)
+        }
+
+        if (intent.getBooleanExtra(FOR_FORM_KEY, false)) {
+            photo_hint.text = getString(R.string.form_photo_overlay_text)
+            guide.visibility = View.GONE
+        } else {
+            photo_hint.text = getString(member_photo_overlay_text)
         }
     }
 
