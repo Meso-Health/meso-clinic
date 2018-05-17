@@ -115,8 +115,8 @@ class MemberRepositoryImplTest {
         whenever(mockApi.members(any(), any())).thenReturn(
                 Single.just(listOf(syncedModelApi, newMemberApi, unsyncedMemberApi)))
         whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedMember)))
-        whenever(mockDao.allSingle()).thenReturn(
-                Single.just(listOf(syncedModel, inactiveMember, unsyncedMember)))
+        whenever(mockDao.all()).thenReturn(
+                Flowable.just(listOf(syncedModel, inactiveMember, unsyncedMember)))
 
         repository.fetch().test().assertComplete()
 
