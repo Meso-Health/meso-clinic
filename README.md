@@ -28,11 +28,10 @@ $ open -a /Applications/Android\ Studio.app /your/working/dir
 
 ## Build variants
 
-Our application has 2 build types (debug and release) and 5 build flavors (development, spec, sandbox,
-demo, and production), for a total of 10 [build variants](https://developer.android.com/studio/build/build-variants.html#build-types). You can create any one of these build
+Our app has several different [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) to represent different environments. You can create any one of these build
 variants locally by selecting the "Build Variants" tab located at the bottom-left of Android Studio.
 
-### Types
+### Default build types
 
 - **Debug**
   - created quickly and allows for usb debugging
@@ -43,27 +42,18 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
   - signed with a real keystore; secure
   - requires all update apks to have the same signature - otherwise, the existing app will be uninstalled and the data will be wiped
 
-### Flavors
+### Summary
 
-- **Development**
-  - hits local server as API endpoint
-  - used for development
-- **Spec**
-  - hits local server as API endpoint
-  - used for running tests
-  - this is the flavor used by circleci
-- **Sandbox** 
-  - hits sandbox server (which mimics production DB)
-  - used for QA
-- **Demo**
-  - hits demo server (which holds fake data)
-  - used only to demo to funders; should not be touched otherwise
-- **Production** 
-  - hits production server (which holds real patient data)
+| Variant              | Purpose                  | Color  | Endpoint                       | Simprints API | Error Reporting | Deployment and Updates | Deployed after green run on… |
+|----------------------|--------------------------|--------|--------------------------------|---------------|-----------------|------------------------|------------------------------|
+| Dev (Debug)          | developing               | gray   | http://localhost:5000          | sandbox       | none            | manual                 | -                            |
+| Spec                 | local tests and CI tests | pink   | http://localhost:8000          | sandbox       | none            | manual                 | -                            |
+| Sandbox              | QA and beta-testing      | yellow | https://uhp-sandbox.watsi.org/ | sandbox       | Rollbar         | automatic (HockeyApp)  | master                       |
+| Training             | training                 | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | automatic (HockeyApp)  | production, training         |
+| Demo                 | demo’ing to funders      | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | automatic (HockeyApp)  | production                   |
+| Production (Release) | live use                 | blue   | https://uhp.watsi.org/         | production    | Rollbar         | automatic (HockeyApp)  | production                   |
 
-See the `build.gradle` file for more details on configuration changes between the different flavors.
-
-We do most of our local development with the **developmentDebug** build variant, run tests with the **specDebug** build variant, QA with the **sandboxRelease** variant, and final launch to users with the **productionRelease** variant.
+See `build.gradle` for full details on configuration differences between the different variants.
 
 ### Running vs Building
 
@@ -176,8 +166,22 @@ buildConfigField "String", "API_HOST", "\"http://10.0.2.2:8000\""
 
 ## Continuous Deployment
 
-We use Circle CI as our continous integration tool. A green run on `master` automatically creates a signed **sandboxRelease** build and pushes it to Android devices via [Hockey App](https://www.hockeyapp.net/). Similarly, a green run on the `production` branch automatically creates a signed **productionRelease** build and pushes via Hockey App.
+We use Circle CI and [HockeyApp](https://rink.hockeyapp.net/manage/dashboard) as our continous deployment tools. When Circle CI tests pass on the relevant branch, the following is done automatically:
 
+1. Keystore is downloaded from Dropbox.
+    - This requires the following [env variables](https://circleci.com/gh/Watsi/uhp-android-app/edit#env-vars) to be set in Circle:
+      - ANDROID_SIGNING_KEY_URI
+      - ANDROID_SIGNING_KEY_SAVE_PATH
+2. APK is built and signed with the keystore.
+    - The build variant is determined by the github branch (see summary table above)
+    - The app's VERSION_CODE is determined by the CIRCLE_BUILD_NUM
+    - The app's VERSION_NAME is determined by the CURRENT_BUILD_MAJOR and CURRENT_BUILD_MINOR env variables set in Circle
+3. APK is deployed to HockeyApp.
+    - This requires the following env variables to be set in Circle:
+      - HOCKEYAPP_ACCESS_TOKEN
+      - HOCKEYAPP_APP_ID (different for each app)
+
+(See `circle.yml` for source code)
 
 ### Deploy to production via hockeyapp
 

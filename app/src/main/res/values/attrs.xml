@@ -4,6 +4,10 @@
         <attr name="message" format="string"/>
         <attr name="action" format="string"/>
     </declare-styleable>
+    <declare-styleable name="ButtonWithPreview">
+        <attr name="buttonText" format="reference" localization="suggested" />
+        <attr name="icon" format="reference" localization="suggested" />
+    </declare-styleable>
     <declare-styleable name="StatusField">
         <attr name="android:text" />
     </declare-styleable>

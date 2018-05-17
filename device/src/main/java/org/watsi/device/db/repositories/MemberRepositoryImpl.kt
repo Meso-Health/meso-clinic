@@ -16,6 +16,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
+import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.MemberRepository
 import java.util.UUID
 
@@ -30,7 +31,11 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun find(id: UUID): Flowable<Member> {
-        return memberDao.find(id).map { it.toMember() }
+        return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
+    }
+
+    override fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail> {
+        return memberDao.findFlowableMemberWithThumbnail(id).map { it.toMemberWithThumbnail() }
     }
 
     override fun save(member: Member, deltas: List<Delta>): Completable {

@@ -5,7 +5,7 @@ import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.entities.Member
+import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.usecases.DismissIdentificationEventUseCase
 import java.util.UUID
@@ -17,7 +17,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun getObservable(memberId: UUID): LiveData<ViewState> {
-        val transformedFlowable = memberRepository.find(memberId).map { ViewState(it) }
+        val transformedFlowable = memberRepository.findMemberWithThumbnailFlowable(memberId).map { ViewState(it) }
         return LiveDataReactiveStreams.fromPublisher(transformedFlowable)
     }
 
@@ -25,5 +25,5 @@ class CurrentMemberDetailViewModel @Inject constructor(
         return dismissIdentificationEventUseCase.execute(identificationEvent)
     }
 
-    data class ViewState(val member: Member)
+    data class ViewState(val memberWIthThumbnail: MemberWithThumbnail)
 }

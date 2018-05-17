@@ -18,6 +18,17 @@
 
     <dimen name="cornerRadius">4dp</dimen>
 
+    <!-- Photo dimensions scale -->
+    <dimen name="thumbnailHeight28">28dp</dimen>
+    <dimen name="thumbnailWidth28">28dp</dimen>
+    <dimen name="thumbnailHeight52">52dp</dimen>
+    <dimen name="thumbnailWidth52">52dp</dimen>
+    <dimen name="thumbnailHeight120">120dp</dimen>
+    <dimen name="thumbnailWidth120">120dp</dimen>
+
+    <!-- View dimensions scale -->
+    <dimen name="viewHeight120">120dp</dimen>
+
     <!-- left and right margins on all fragments -->
     <dimen name="fragment_horizontal_margin">16dp</dimen>
 
@@ -52,4 +63,5 @@
     <!-- dimensions for photo on detail view -->
     <dimen name="detail_fragment_photo_height">208dp</dimen>
     <dimen name="detail_fragment_photo_width">156dp</dimen>
+
 </resources>
