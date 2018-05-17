@@ -9,7 +9,7 @@ import java.util.UUID
 object PhotoModelFactory {
 
     fun build(id: UUID = UUID.randomUUID(),
-              bytes: ByteArray? = ByteArray(1, { 0xa }),
+              bytes: ByteArray = ByteArray(1, { 0xa }),
               createdAt: Instant? = null,
               updatedAt: Instant? = null,
               clock: Clock = Clock.systemUTC()) : PhotoModel {
@@ -22,7 +22,7 @@ object PhotoModelFactory {
 
     fun create(photoDao: PhotoDao,
                id: UUID = UUID.randomUUID(),
-               bytes: ByteArray? = ByteArray(1, { 0xa }),
+               bytes: ByteArray = ByteArray(1, { 0xa }),
                createdAt: Instant? = null,
                updatedAt: Instant? = null,
                clock: Clock = Clock.systemUTC()) : PhotoModel {

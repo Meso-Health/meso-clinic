@@ -21,8 +21,7 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.entities.Member
-
+import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.PhotoLoader
@@ -39,7 +38,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
     lateinit var identificationEvent: IdentificationEvent
     lateinit var viewModel: CurrentMemberDetailViewModel
-    private var member: Member? = null
+    private var memberWithThumbnail: MemberWithThumbnail? = null
 
     companion object {
         const val PARAM_IDENTIFICATION_EVENT = "identification_event"
@@ -60,12 +59,14 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentMemberDetailViewModel::class.java)
         viewModel.getObservable(identificationEvent.memberId).observe(this, Observer {
             it?.let { viewState ->
-                val member = viewState.member
-                this.member = member
+                val memberWithThumbnail = viewState.memberWIthThumbnail
+                this.memberWithThumbnail = memberWithThumbnail
+
+                val member = memberWithThumbnail.member
                 if (member.isAbsentee()) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
-                        navigationManager.goTo(EnrollmentMemberPhotoFragment.forMember(member))
+                        navigationManager.goTo(CompleteEnrollmentFragment.forMember(member.id))
                     }
                 }
 
@@ -117,12 +118,12 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_member_edit -> {
-                member?.let {
+                memberWithThumbnail?.member?.let {
                     navigationManager.goTo(MemberEditFragment.forMember(it))
                 }
             }
             R.id.menu_enroll_newborn -> {
-                member?.let {
+                memberWithThumbnail?.member?.let {
                     navigationManager.goTo(EnrollNewbornInfoFragment.forParent(it))
                 }
             }
