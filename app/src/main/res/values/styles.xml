@@ -17,6 +17,11 @@
         <item name="android:textColor">@color/title</item>
     </style>
 
+    <style name="Label" parent="Base.TextAppearance.AppCompat">
+        <item name="android:textColor">@color/gray6</item>
+        <item name="android:textSize">@dimen/fontSize12</item>
+    </style>
+
     <style name="LargeLabel">
         <item name="android:textSize">18sp</item>
     </style>
@@ -29,6 +34,14 @@
 
     <style name="SecondaryButton" parent="Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/white</item>
+    </style>
+
+    <style name="PanelHeader">
+        <item name="android:textColor">@color/gray8</item>
+        <item name="android:textSize">@dimen/fontSize14</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.05</item>
     </style>
 
     <style name="StatusKey">

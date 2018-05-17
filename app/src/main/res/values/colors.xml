@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primary">#50A9F2</color>
+    <color name="primaryDark">#3B91DF</color>
+
     <color name="alertRed">#FF0000</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>

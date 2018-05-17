@@ -5,6 +5,8 @@ import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
+
+import org.watsi.device.factories.MemberWithThumbnailModelFactory
 import org.watsi.domain.entities.Delta
 import java.util.UUID
 
@@ -94,5 +96,20 @@ class MemberDaoTest : DaoBaseTest() {
         MemberModelFactory.create(memberDao, photoUrl = null)
 
         memberDao.needPhotoDownloadCount().test().assertValue(1)
+    }
+
+    @Test
+    fun findFlowableMemberWithThumbnail() {
+        val memberId = UUID.randomUUID()
+        val memberModel = MemberModelFactory.build(id = memberId)
+        val memberWithThumbnailModel = MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findFlowableMemberWithThumbnail(memberId)
+                .test()
+                .assertValue(memberWithThumbnailModel)
+
+        memberDao.findFlowableMemberWithThumbnail(UUID.randomUUID())
+                .test()
+                .assertEmpty()
     }
 }

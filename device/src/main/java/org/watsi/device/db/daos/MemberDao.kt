@@ -9,6 +9,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.relations.MemberWithThumbnailModel
 import java.util.UUID
 
 @Dao
@@ -22,6 +23,9 @@ interface MemberDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(models: List<MemberModel>)
+
+    @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
+    fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
     @Query("SELECT * FROM members where id = :id LIMIT 1")
     fun find(id: UUID): Flowable<MemberModel?>

@@ -87,7 +87,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         if (member.isAbsentee()) {
             absentee_notification.visibility = View.VISIBLE
             absentee_notification.setOnActionClickListener {
-                navigationManager.goTo(EnrollmentMemberPhotoFragment.forMember(member))
+                navigationManager.goTo(CompleteEnrollmentFragment.forMember(member.id))
             }
         }
 
@@ -125,7 +125,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 try {
                     simprintsHelper.verify(BuildConfig.PROVIDER_ID.toString(), member.fingerprintsGuid)
                 } catch (e: SimprintsHelper.SimprintsInvalidIntentException) {
-                    Toast.makeText(context, R.string.simprints_not_installed, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.fingerprints_not_installed_error_message, Toast.LENGTH_LONG).show()
                 }
             }
         }
