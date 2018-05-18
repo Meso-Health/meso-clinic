@@ -10,6 +10,8 @@ import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.name
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.save_button
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.scan_card
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
@@ -21,6 +23,7 @@ import javax.inject.Inject
 
 class EnrollNewbornInfoFragment : DaggerFragment() {
 
+    @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var logger: Logger
 
@@ -53,6 +56,7 @@ class EnrollNewbornInfoFragment : DaggerFragment() {
             val birthdate = LocalDate.now()
             val cardId = card_id.text.toString()
             val newborn = Member(id = UUID.randomUUID(),
+                                 enrolledAt = Instant.now(clock),
                                  photoId = null,
                                  householdId = parent.householdId,
                                  thumbnailPhotoId = null,

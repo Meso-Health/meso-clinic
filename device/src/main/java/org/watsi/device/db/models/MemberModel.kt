@@ -10,6 +10,7 @@ import java.util.UUID
 
 @Entity(tableName = "members")
 data class MemberModel(@PrimaryKey val id: UUID,
+                       val enrolledAt: Instant,
                        val createdAt: Instant,
                        val updatedAt: Instant,
                        val householdId: UUID,
@@ -26,6 +27,7 @@ data class MemberModel(@PrimaryKey val id: UUID,
 
     fun toMember(): Member {
         return Member(id = id,
+                      enrolledAt = enrolledAt,
                       householdId = householdId,
                       photoId = photoId,
                       thumbnailPhotoId = thumbnailPhotoId,
@@ -43,6 +45,7 @@ data class MemberModel(@PrimaryKey val id: UUID,
         fun fromMember(member: Member, clock: Clock): MemberModel {
             val now = clock.instant()
             return MemberModel(id = member.id,
+                               enrolledAt = member.enrolledAt,
                                createdAt = now,
                                updatedAt = now,
                                householdId = member.householdId,

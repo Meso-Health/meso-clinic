@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import org.threeten.bp.LocalDate
+import org.threeten.bp.ZonedDateTime
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import java.util.UUID
@@ -15,6 +16,7 @@ import java.util.UUID
  * classes to a format our API accepts.
  */
 data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
+                     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: String,
                      @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID,
                      @SerializedName(CARD_ID_FIELD) val cardId: String?,
                      @SerializedName(NAME_FIELD) val name: String,
@@ -29,6 +31,7 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
 
     constructor (member: Member) :
             this(id = member.id,
+                 enrolledAt = member.enrolledAt.toString(),
                  householdId = member.householdId,
                  cardId = member.cardId,
                  name = member.name,
@@ -52,6 +55,7 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
             if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
         return Member(id = id,
+                      enrolledAt = ZonedDateTime.parse(enrolledAt).toInstant(),
                       householdId = householdId,
                       cardId = cardId,
                       name = name,
@@ -67,6 +71,7 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
 
     companion object {
         const val ID_FIELD = "id"
+        const val ENROLLED_AT_FIELD = "enrolled_at"
         const val HOUSEHOLD_ID_FIELD = "household_id"
         const val CARD_ID_FIELD = "card_id"
         const val NAME_FIELD = "full_name"
