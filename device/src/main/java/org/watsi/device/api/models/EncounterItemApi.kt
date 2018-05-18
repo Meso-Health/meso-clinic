@@ -14,7 +14,7 @@ data class EncounterItemApi(
     constructor (encounterItemWithBillable: EncounterItemWithBillable) :
             this(id = encounterItemWithBillable.encounterItem.id,
                  encounterId = encounterItemWithBillable.encounterItem.encounterId,
-                 billable_id = encounterItemWithBillable.billable.id,
+                 billable_id = encounterItemWithBillable.encounterItem.billableId,
                  quantity = encounterItemWithBillable.encounterItem.quantity
             )
 }

@@ -49,7 +49,6 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
     override fun sync(deltas: List<Delta>): Completable {
         val authToken = sessionManager.currentToken()!!
 
-        // TODO: create EncounterWithItems relation entity to avoid extra query
         return find(deltas.first().modelId).flatMapCompletable {
             api.postEncounter(authToken.getHeaderString(), authToken.user.providerId,
                     EncounterApi(it.encounter, it.encounterItems))
