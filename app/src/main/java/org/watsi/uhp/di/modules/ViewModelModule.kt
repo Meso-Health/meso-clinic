@@ -15,6 +15,7 @@ import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
+import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -28,6 +29,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CurrentMemberDetailViewModel::class)
     abstract fun bindCurrentMemberDetailViewModel(viewModel: CurrentMemberDetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CheckInMemberDetailViewModel::class)
+    abstract fun bindCheckInMemberDetailViewModel(viewModel: CheckInMemberDetailViewModel): ViewModel
 
     @Binds
     @IntoMap

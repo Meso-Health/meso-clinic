@@ -1,5 +1,8 @@
 package org.watsi.uhp.fragments
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.VectorDrawable
@@ -30,11 +33,13 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
+import kotlinx.android.synthetic.main.item_member_list.*
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.BuildConfig
@@ -43,6 +48,7 @@ import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
 import java.util.UUID
 import javax.inject.Inject
 
@@ -53,9 +59,12 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
 
+    lateinit var viewModel: CheckInMemberDetailViewModel
     lateinit var member: Member
+    lateinit var memberWithThumbnail: MemberWithThumbnail
     lateinit var simprintsHelper: SimprintsHelper
     private var verificationDetails: FingerprintVerificationDetails? = null
 
@@ -75,6 +84,37 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
         simprintsHelper = SimprintsHelper(sessionManager.currentToken()?.user?.username, this)
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CheckInMemberDetailViewModel::class.java)
+        viewModel.getObservable(member.id).observe(this, Observer {
+            it?.let { viewState ->
+                val memberWithThumbnail = viewState.memberWIthThumbnail
+                this.memberWithThumbnail = memberWithThumbnail
+
+                val member = memberWithThumbnail.member
+                if (member.isAbsentee()) {
+                    absentee_notification.visibility = View.VISIBLE
+                    absentee_notification.setOnActionClickListener {
+                        navigationManager.goTo(CompleteEnrollmentFragment.forMember(member.id))
+                    }
+                }
+
+                if (member.cardId == null) {
+                    replace_card_notification.visibility = View.VISIBLE
+                    replace_card_notification.setOnClickListener {
+                        navigationManager.goTo(MemberEditFragment.forMember(member))
+                    }
+                }
+
+                member_name_detail_fragment.text = member.name
+                member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
+                member_card_id_detail_fragment.text = member.cardId
+                member_phone_number.text = member.phoneNumber
+                memberWithThumbnail.photo?.bytes?.let {
+                    PhotoLoader.loadMemberPhoto(it, member_photo, activity)
+                }
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,38 +124,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        if (member.isAbsentee()) {
-            absentee_notification.visibility = View.VISIBLE
-            absentee_notification.setOnActionClickListener {
-                navigationManager.goTo(CompleteEnrollmentFragment.forMember(member.id))
-            }
-        }
-
-        if (member.cardId == null) {
-            replace_card_notification.visibility = View.VISIBLE
-            replace_card_notification.setOnClickListener {
-                navigationManager.goTo(MemberEditFragment.forMember(member))
-            }
-        }
-
-        member_name_detail_fragment.text = member.name
-        member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
-        member_card_id_detail_fragment.text = member.cardId
-        member_phone_number.text = member.phoneNumber
-        member_phone_number.text = member.phoneNumber
-        member_phone_number.text = member.phoneNumber
-        member.thumbnailPhotoId?.let { photoId ->
-            photoRepository.find(photoId)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ photo ->
-                        photo.bytes?.let {
-                            PhotoLoader.loadMemberPhoto(it, member_photo, activity)
-                        }
-                    }, {
-                        // TODO: handle error
-                    })
-        }
-
         member_action_button.text = getString(R.string.check_in)
         member_action_button.setOnClickListener {
             launchClinicNumberDialog()
