@@ -32,7 +32,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun find(id: UUID): Flowable<Member> {
-        return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
+        return memberDao.findFlowable(id).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
     override fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail> {

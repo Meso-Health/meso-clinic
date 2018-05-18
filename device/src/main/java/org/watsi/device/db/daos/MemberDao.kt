@@ -28,7 +28,10 @@ interface MemberDao {
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
     @Query("SELECT * FROM members where id = :id LIMIT 1")
-    fun find(id: UUID): Flowable<MemberModel?>
+    fun findFlowable(id: UUID): Flowable<MemberModel>
+
+    @Query("SELECT * FROM members where id = :id LIMIT 1")
+    fun find(id: UUID): Single<MemberModel>
 
     @Query("SELECT * FROM members")
     fun all(): Flowable<List<MemberModel>>

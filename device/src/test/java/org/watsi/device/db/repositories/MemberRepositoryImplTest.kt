@@ -67,7 +67,7 @@ class MemberRepositoryImplTest {
     @Test
     fun find() {
         val model = MemberModelFactory.build()
-        whenever(mockDao.find(model.id)).thenReturn(Flowable.just(model))
+        whenever(mockDao.findFlowable(model.id)).thenReturn(Flowable.just(model))
 
         repository.find(model.id).test().assertValue(model.toMember())
     }
