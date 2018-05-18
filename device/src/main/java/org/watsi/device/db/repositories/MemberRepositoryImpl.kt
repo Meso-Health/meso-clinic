@@ -18,6 +18,7 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
+import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.MemberRepository
 import java.util.UUID
 
@@ -33,47 +34,41 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun find(id: UUID): Flowable<Member> {
-        return memberDao.find(id).map { it.toMember() }
+        return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
-    override fun create(member: Member, deltas: List<Delta>): Completable {
-        return Completable.fromAction {
-            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
-            memberDao.insertWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
-        }.subscribeOn(Schedulers.io())
+    override fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail> {
+        return memberDao.findFlowableMemberWithThumbnail(id).map { it.toMemberWithThumbnail() }
     }
 
-    override fun update(member: Member, deltas: List<Delta>): Completable {
+    override fun save(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
             val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
-            memberDao.updateWithDeltas(MemberModel.fromMember(member, clock), deltaModels)
+            memberDao.upsert(MemberModel.fromMember(member, clock), deltaModels)
         }.subscribeOn(Schedulers.io())
     }
 
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.members(token.getHeaderString(),
-                        token.user.providerId).flatMapCompletable { memberApiResults ->
-                // TODO: more efficient way of saving?
-                // TODO: clean up any members not returned in the fetch
-                // TODO: do not overwrite unsynced member data
-                Completable.concat(memberApiResults.map {
-                    saveAfterFetch(it.toMember())
-                }.plus(Completable.fromAction {
-                    preferencesManager.updateMemberLastFetched(clock.instant())
-                }))
+            Completable.fromAction {
+                val fetchedMembers = api.members(token.getHeaderString(), token.user.providerId)
+                        .blockingGet()
+                val unsyncedMembers = memberDao.unsynced().blockingGet()
+                val unsyncedIds = unsyncedMembers.map { it.id }
+                val persistedMembers = memberDao.all().blockingFirst()
+                val membersById = persistedMembers.groupBy { it.id }
+                val fetchedAndUnsyncedIds = fetchedMembers.map { it.id } + unsyncedIds
+                memberDao.deleteNotInList(fetchedAndUnsyncedIds.distinct())
+                val fetchedMembersWithoutUnsynced = fetchedMembers.filter {
+                    !unsyncedIds.contains(it.id)
+                }
+                memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
+                    val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
+                    MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+                })
+                preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
-    }
-
-    private fun saveAfterFetch(member: Member): Completable {
-        return Completable.fromAction {
-            if (memberDao.exists(member.id) != null) {
-                memberDao.update(MemberModel.fromMember(member, clock))
-            } else {
-                memberDao.insert(MemberModel.fromMember(member, clock))
-            }
-        }.subscribeOn(Schedulers.io())
     }
 
     override fun findByCardId(cardId: String): Maybe<Member> {
@@ -110,7 +105,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                     Completable.fromAction {
                         val photo = Photo(UUID.randomUUID(), it.bytes())
                         photoDao.insert(PhotoModel.fromPhoto(photo, clock))
-                        memberDao.update(memberModel.copy(thumbnailPhotoId = photo.id))
+                        memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
                     }
                 }
             })

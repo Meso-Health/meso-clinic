@@ -44,6 +44,18 @@
     <string name="cancel">Cancel</string>
     <string name="price_with_currency">%1$s UGX</string>
 
+    <!-- Form -->
+    <string name="photo_field_label">Photo</string>
+    <string name="missing_information_panel_header_text">Missing Information</string>
+    <string name="take_photo_button_text">Take photo</string>
+    <string name="fingerprints_age_requirement_message">Fingerprint scans are only for members older than 6 years.</string>
+    <string name="fingerprints_field_label">Fingerprints</string>
+    <string name="scan_fingerprints_button_text">Scan fingerprints</string>
+    <string name="fingerprints_success_message">Fingerprints captured</string>
+    <string name="complete_enrollment">Complete Enrollment</string>
+    <string name="fingerprints_error_message">There was an error and fingerprints will not be able to be scanned for any members. Please contact the Watsi team to fix this.</string>
+    <string name="fingerprints_not_installed_error_message">Could not find the Simprints app. Check that it is installed before continuing.</string>
+
     <!-- AuthenticationActivity -->
     <string name="authentication_activity_label">User Login</string>
     <string name="login_username_label">Username</string>
@@ -160,31 +172,6 @@
         <item quantity="other">%d forms attached</item>
     </plurals>
 
-    <!-- Enrollment -->
-    <string name="enrollment_complete_btn">Complete enrollment</string>
-    <string name="enrollment_next_step_btn">Continue</string>
-
-    <!-- EnrollmentMemberPhotoFragment -->
-    <string name="enrollment_member_photo_fragment_label">Member photo</string>
-    <string name="enrollment_member_photo_btn">Take member photo</string>
-
-    <!-- EnrollmentIdPhotoFragment -->
-    <string name="enrollment_id_photo_fragment_label">National ID photo</string>
-    <string name="enrollment_id_photo_btn">Take national ID photo</string>
-    <string name="enrollment_id_photo_description">ID photo</string>
-
-    <!-- EnrollmentContactInfoFragment -->
-    <string name="enrollment_contact_info_label">Contact information</string>
-    <string name="enrollment_contact_info_phone_number_label">Phone number</string>
-
-    <!-- EnrollmentFingerprintFragment -->
-    <string name="enrollment_fingerprint_label">Fingerprint</string>
-    <string name="enrollment_fingerprint_button">Capture fingerprint</string>
-    <string name="simprints_not_installed">Simprints app is not installed</string>
-    <string name="enrollment_fingerprint_simprints_succeeded">Success!</string>
-    <string name="enrollment_fingerprint_simprints_failed">Scan failed</string>
-    <string name="enrollment_fingerprint_confirm_completion">Complete enrollment</string>
-
     <!-- MemberEditFragment -->
     <string name="member_edit_label">Edit member details</string>
     <string name="member_edit_save">Save</string>
@@ -221,5 +208,6 @@
 
     <!-- PhotoActivity -->
     <string name="member_photo_overlay_text">Take photo of member</string>
+    <string name="form_photo_overlay_text">Take photo of form</string>
 
 </resources>

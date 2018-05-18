@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import org.watsi.uhp.di.ViewModelKey
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
+import org.watsi.uhp.viewmodels.CompleteEnrollmentViewModel
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
@@ -52,6 +53,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(StatusViewModel::class)
     abstract fun bindStatusViewModel(viewModel: StatusViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CompleteEnrollmentViewModel::class)
+    abstract fun bindCompleteEnrollmentViewModel(viewModel: CompleteEnrollmentViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory

@@ -6,6 +6,10 @@ import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PhotoModelFactory
+import org.watsi.device.factories.DeltaModelFactory
+
+import org.watsi.device.factories.MemberWithThumbnailModelFactory
+import org.watsi.domain.entities.Delta
 import java.util.UUID
 
 class MemberDaoTest : DaoBaseTest() {
@@ -70,13 +74,53 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun deleteNotInList() {
+        MemberModelFactory.create(memberDao)
+        val model = MemberModelFactory.create(memberDao)
+
+        memberDao.deleteNotInList(listOf(model.id))
+
+        memberDao.all().test().assertValue(listOf(model))
+    }
+
+    @Test
+    fun unsynced() {
+        val unsyncedMember = MemberModelFactory.create(memberDao)
+        val syncedMember = MemberModelFactory.create(memberDao)
+        MemberModelFactory.create(memberDao)
+
+        DeltaModelFactory.create(deltaDao,
+                modelName = Delta.ModelName.MEMBER, modelId = unsyncedMember.id, synced = false)
+        DeltaModelFactory.create(deltaDao,
+                modelName = Delta.ModelName.MEMBER, modelId = syncedMember.id, synced = true)
+
+        memberDao.unsynced().test().assertValue(listOf(unsyncedMember))
+    }
+
+    @Test
     fun needPhotoDownloadCount() {
-        val needsPhoto = MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
+        // awaiting photo download
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
         // photo downloaded
         MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
         // does not have photo
         MemberModelFactory.create(memberDao, photoUrl = null)
 
         memberDao.needPhotoDownloadCount().test().assertValue(1)
+    }
+
+    @Test
+    fun findFlowableMemberWithThumbnail() {
+        val memberId = UUID.randomUUID()
+        val memberModel = MemberModelFactory.build(id = memberId)
+        val memberWithThumbnailModel = MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findFlowableMemberWithThumbnail(memberId)
+                .test()
+                .assertValue(memberWithThumbnailModel)
+
+        memberDao.findFlowableMemberWithThumbnail(UUID.randomUUID())
+                .test()
+                .assertEmpty()
     }
 }

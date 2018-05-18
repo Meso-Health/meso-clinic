@@ -4,60 +4,44 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Transaction
-import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import org.watsi.device.db.models.DeltaModel
 import io.reactivex.Single
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
+import org.watsi.device.db.relations.MemberWithThumbnailModel
 import java.util.UUID
 
 @Dao
-abstract class MemberDao {
+interface MemberDao {
 
     @Insert
-    abstract fun insert(model: MemberModel)
+    fun insert(model: MemberModel)
 
-    @Insert(onConflict = OnConflictStrategy.ROLLBACK)
-    abstract fun insertDeltas(deltas: List<DeltaModel>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upsert(model: MemberModel, deltas: List<DeltaModel> = emptyList())
 
-    @Insert
-    abstract fun insertWithDeltas(memberModel: MemberModel, deltas: List<DeltaModel>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upsert(models: List<MemberModel>)
 
-    @Update
-    abstract fun update(model: MemberModel)
-
-    @Transaction
-    open fun updateWithDeltas(member: MemberModel, deltas: List<DeltaModel>) {
-        update(member)
-        insertDeltas(deltas)
-    }
+    @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
+    fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
     @Query("SELECT * FROM members where id = :id LIMIT 1")
-    abstract fun find(id: UUID): Flowable<MemberModel?>
+    fun find(id: UUID): Flowable<MemberModel?>
 
     @Query("SELECT * FROM members")
-    abstract fun all(): Flowable<List<MemberModel>>
-
-    @Query("SELECT id FROM members where id = :id LIMIT 1")
-    abstract fun exists(id: UUID): UUID?
+    fun all(): Flowable<List<MemberModel>>
 
     @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
-    abstract fun findByCardId(cardId: String): Maybe<MemberModel>
-
-    @Query("SELECT * FROM members where name = :name")
-    abstract fun findByName(name: String): List<MemberModel>
-
-    @Query("SELECT DISTINCT(name) FROM members")
-    abstract fun uniqueNames(): List<String>
+    fun findByCardId(cardId: String): Maybe<MemberModel>
 
     @Query("SELECT * FROM members\n" +
             "LEFT JOIN photos ON photos.id = members.thumbnailPhotoId\n" +
             "LEFT JOIN identification_events ON identification_events.memberId = members.id\n" +
             "WHERE members.id IN (:ids)")
-    abstract fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+    fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Query("SELECT members.*\n" +
             "FROM members\n" +
@@ -71,17 +55,24 @@ abstract class MemberDao {
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
             "WHERE encounters.identificationEventId IS NULL\n" +
             "ORDER BY last_identifications.occurredAt")
-    abstract fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
+    fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")
-    abstract fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
-
-    @Query("SELECT id FROM members")
-    abstract fun allIds(): List<UUID>
+    fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
-    abstract fun needPhotoDownload(): Single<List<MemberModel>>
+    fun needPhotoDownload(): Single<List<MemberModel>>
+
+    @Query("SELECT members.* FROM members\n" +
+            "INNER JOIN deltas ON\n" +
+            "(members.id = deltas.modelId AND\n" +
+            "deltas.synced = 0 AND\n" +
+            "deltas.modelName = 'MEMBER')")
+    fun unsynced(): Single<List<MemberModel>>
+
+    @Query("DELETE FROM members WHERE id NOT IN (:ids)")
+    fun deleteNotInList(ids: List<UUID>)
 
     @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
-    abstract fun needPhotoDownloadCount(): Flowable<Int>
+    fun needPhotoDownloadCount(): Flowable<Int>
 }

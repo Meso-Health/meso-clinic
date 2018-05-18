@@ -7,13 +7,14 @@ import io.reactivex.Single
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
+import org.watsi.domain.relations.MemberWithThumbnail
 import java.util.UUID
 
 interface MemberRepository {
     fun all(): Flowable<List<Member>>
+    fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun find(id: UUID): Flowable<Member>
-    fun create(member: Member, deltas: List<Delta>): Completable
-    fun update(member: Member, deltas: List<Delta>): Completable
+    fun save(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
     fun findByCardId(cardId: String): Maybe<Member>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>

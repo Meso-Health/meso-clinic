@@ -9,9 +9,7 @@ import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
 
-class SearchMemberViewModel @Inject constructor (
-        private val memberRepository: MemberRepository
-) : ViewModel() {
+class SearchMemberViewModel @Inject constructor (memberRepository: MemberRepository) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
     private var members: List<Member> = emptyList()

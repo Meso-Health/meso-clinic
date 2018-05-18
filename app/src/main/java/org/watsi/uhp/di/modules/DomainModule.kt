@@ -11,6 +11,7 @@ import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DismissIdentificationEventUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
+import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 
@@ -50,5 +51,10 @@ class DomainModule {
     @Provides
     fun provideFetchStatusUseCase(memberRepository: MemberRepository): FetchStatusUseCase {
         return FetchStatusUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideLoadMemberUseCase(memberRepository: MemberRepository): LoadMemberUseCase {
+        return LoadMemberUseCase(memberRepository)
     }
 }
