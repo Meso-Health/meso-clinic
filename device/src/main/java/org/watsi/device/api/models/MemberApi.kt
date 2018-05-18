@@ -28,7 +28,7 @@ data class MemberApi(@SerializedName("id") val id: UUID,
         }
         // do not overwrite the local thumbnail photo if the fetched photo is not different
         val thumbnailPhotoId = persistedMember?.let {
-            if (it.photoUrl == photoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
+            if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
         return Member(id = id,
                       householdId = householdId,
