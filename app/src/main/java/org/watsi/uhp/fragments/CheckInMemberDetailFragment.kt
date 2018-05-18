@@ -22,7 +22,6 @@ import com.simprints.libsimprints.Constants
 import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
@@ -33,7 +32,6 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
-import kotlinx.android.synthetic.main.item_member_list.*
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
