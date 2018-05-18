@@ -8,15 +8,16 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.usecases.DismissIdentificationEventUseCase
+import org.watsi.domain.usecases.LoadMemberUseCase
 import java.util.UUID
 import javax.inject.Inject
 
 class CheckInMemberDetailViewModel @Inject constructor(
-        private val memberRepository: MemberRepository
+        private val loadMemberUseCase: LoadMemberUseCase
 ) : ViewModel() {
 
     fun getObservable(memberId: UUID): LiveData<ViewState> {
-        val transformedFlowable = memberRepository.findMemberWithThumbnailFlowable(memberId).map { ViewState(it) }
+        val transformedFlowable = loadMemberUseCase.execute(memberId).map { ViewState(it)}
         return LiveDataReactiveStreams.fromPublisher(transformedFlowable)
     }
 
