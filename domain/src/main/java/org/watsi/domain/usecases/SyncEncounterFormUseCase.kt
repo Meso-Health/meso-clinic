@@ -10,11 +10,8 @@ class SyncEncounterFormUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsynced(Delta.ModelName.ENCOUNTER).flatMapCompletable { encounterDeltas ->
-            val unsyncedEncounterIds = encounterDeltas
-                    .filter { it.action == Delta.Action.ADD }
-                    .map { it.modelId }
-                    .distinct()
+        return deltaRepository.unsyncedModelIds(Delta.ModelName.ENCOUNTER, Delta.Action.ADD).flatMapCompletable {
+            unsyncedEncounterIds ->
             deltaRepository.unsynced(Delta.ModelName.ENCOUNTER_FORM).flatMapCompletable { encounterFormDeltas ->
                 Completable.concat(encounterFormDeltas.map { encounterFormDelta ->
                     encounterFormRepository.find(encounterFormDelta.modelId).flatMapCompletable {

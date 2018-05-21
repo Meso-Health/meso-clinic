@@ -10,13 +10,23 @@ class SyncEncounterUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsynced(Delta.ModelName.ENCOUNTER).flatMapCompletable { encounterDeltas ->
-            Completable.concat(encounterDeltas.groupBy { it.modelId }.values.map { groupedDeltas ->
-                Completable.concat(listOf(
-                        encounterRepository.sync(groupedDeltas),
-                        deltaRepository.markAsSynced(groupedDeltas)
-                ))
-            })
+        return deltaRepository.unsyncedModelIds(Delta.ModelName.IDENTIFICATION_EVENT, Delta.Action.ADD).flatMapCompletable {
+            unsyncedIdEventIds ->
+            deltaRepository.unsynced(Delta.ModelName.ENCOUNTER).flatMapCompletable { encounterDeltas ->
+                Completable.concat(encounterDeltas.map { encounterDelta ->
+                    encounterRepository.find(encounterDelta.modelId).flatMapCompletable {
+                        // filter out deltas that correspond to an IdEvent that has not been synced yet
+                        if (!unsyncedIdEventIds.contains(it.encounter.identificationEventId)) {
+                            Completable.concat(listOf(
+                                    encounterRepository.sync(encounterDelta),
+                                    deltaRepository.markAsSynced(listOf(encounterDelta))
+                            ))
+                        } else {
+                            Completable.complete()
+                        }
+                    }
+                })
+            }
         }
     }
 }

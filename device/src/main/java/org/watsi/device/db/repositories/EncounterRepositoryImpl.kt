@@ -46,10 +46,10 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun sync(deltas: List<Delta>): Completable {
+    override fun sync(delta: Delta): Completable {
         val authToken = sessionManager.currentToken()!!
 
-        return find(deltas.first().modelId).flatMapCompletable {
+        return find(delta.modelId).flatMapCompletable {
             api.postEncounter(authToken.getHeaderString(), authToken.user.providerId,
                     EncounterApi(it.encounter, it.encounterItems))
         }.subscribeOn(Schedulers.io())

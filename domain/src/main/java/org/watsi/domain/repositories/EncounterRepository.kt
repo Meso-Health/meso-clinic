@@ -9,5 +9,5 @@ import java.util.UUID
 interface EncounterRepository {
     fun find(id: UUID): Single<EncounterWithItemsAndForms>
     fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable
-    fun sync(deltas: List<Delta>): Completable
+    fun sync(delta: Delta): Completable
 }

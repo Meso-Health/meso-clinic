@@ -9,6 +9,7 @@ import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
+import java.util.UUID
 
 class DeltaRepositoryImpl(
         private val deltaDao: DeltaDao,
@@ -38,6 +39,10 @@ class DeltaRepositoryImpl(
         return deltaDao.unsynced(modelName).map { deltaModels ->
             deltaModels.map { it.toDelta() }
         }.subscribeOn(Schedulers.io())
+    }
+
+    override fun unsyncedModelIds(modelName: Delta.ModelName, action: Delta.Action): Single<List<UUID>> {
+        return deltaDao.unsyncedModelIds(modelName, action).subscribeOn(Schedulers.io())
     }
 
     override fun markAsSynced(deltas: List<Delta>): Completable {
