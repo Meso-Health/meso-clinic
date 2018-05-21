@@ -35,3 +35,6 @@ captures/
 
 # Environment variables
 .env
+
+# Signing keys
+*.jks
