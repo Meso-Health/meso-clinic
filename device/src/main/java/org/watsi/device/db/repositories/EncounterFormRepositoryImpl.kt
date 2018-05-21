@@ -9,7 +9,7 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.EncounterFormDao
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.relations.EncounterFormWithEncounterAndPhoto
+import org.watsi.domain.relations.EncounterFormWithPhoto
 import org.watsi.domain.repositories.EncounterFormRepository
 import java.util.UUID
 
@@ -18,9 +18,8 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
                                   private val sessionManager: SessionManager
 ) : EncounterFormRepository {
 
-    override fun find(id: UUID): Single<EncounterFormWithEncounterAndPhoto> {
-        return encounterFormDao.find(id)
-                .map { it.toEncounterFormWithEncounterAndPhoto() }
+    override fun find(id: UUID): Single<EncounterFormWithPhoto> {
+        return encounterFormDao.find(id).map { it.toEncounterFormWithPhoto() }
                 .subscribeOn(Schedulers.io())
     }
 
@@ -29,7 +28,7 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
 
         return find(delta.modelId).flatMapCompletable {
             val requestBody = RequestBody.create(MediaType.parse("image/jpg"), it.photo.bytes)
-            api.patchEncounterForm(authToken.getHeaderString(), it.encounter.id, requestBody)
+            api.patchEncounterForm(authToken.getHeaderString(), it.encounterForm.encounterId, requestBody)
         }
     }
 }
