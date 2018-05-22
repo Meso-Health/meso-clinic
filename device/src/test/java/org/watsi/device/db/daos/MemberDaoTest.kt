@@ -123,4 +123,17 @@ class MemberDaoTest : DaoBaseTest() {
                 .test()
                 .assertEmpty()
     }
+
+    @Test
+    fun byIds() {
+        val photoModel = PhotoModelFactory.create(photoDao)
+        val memberModel = MemberModelFactory.create(memberDao, thumbnailPhotoId = photoModel.id)
+        val idEventModel = IdentificationEventModelFactory.create(
+                identificationEventDao, memberId = memberModel.id)
+
+        val expectedRelationModel = MemberWithIdEventAndThumbnailPhotoModel(
+                memberModel, listOf(idEventModel), listOf(photoModel))
+
+        memberDao.byIds(listOf(memberModel.id)).test().assertValue(listOf(expectedRelationModel))
+    }
 }

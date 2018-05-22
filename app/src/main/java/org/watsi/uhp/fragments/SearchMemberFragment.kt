@@ -12,7 +12,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_member_search.member_no_search_results_text
 import kotlinx.android.synthetic.main.fragment_member_search.member_search
 import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
-import org.watsi.domain.entities.Member
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.IdentificationEventRepository
 
 import org.watsi.domain.repositories.PhotoRepository
@@ -38,8 +38,8 @@ class SearchMemberFragment : DaggerFragment() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchMemberViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
-            it?.let { viewState ->
-                val adapter = MemberAdapter(activity, viewState.searchResults, false)
+            it?.let { searchResults ->
+                val adapter = MemberAdapter(activity, searchResults, false)
 
                 member_search_results.adapter = adapter
                 member_search_results.requestFocus()
@@ -74,7 +74,8 @@ class SearchMemberFragment : DaggerFragment() {
         member_search_results.emptyView = member_no_search_results_text
 
         member_search_results.setOnItemClickListener { parent, _, position, _ ->
-            val member = parent.getItemAtPosition(position) as Member
+            val memberRelation = parent.getItemAtPosition(position) as MemberWithIdEventAndThumbnailPhoto
+            val member = memberRelation.member
             identificationEventRepository.openCheckIn(member.id).subscribe({
                 navigationManager.goTo(
                         CurrentMemberDetailFragment.forIdentificationEvent(it))

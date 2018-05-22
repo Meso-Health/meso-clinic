@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_current_patients.identification_b
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 
-import org.watsi.domain.entities.Member
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -72,7 +72,8 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
         current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
-            val member = parent.getItemAtPosition(position) as Member
+            val memberRelation = parent.getItemAtPosition(position) as MemberWithIdEventAndThumbnailPhoto
+            val member = memberRelation.member
             viewModel.getIdentificationEvent(member).subscribe({
                 navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
             }, {

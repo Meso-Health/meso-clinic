@@ -15,8 +15,8 @@ data class MemberWithIdEventAndThumbnailPhotoModel(
         memberModel?.let { memberModel ->
             return MemberWithIdEventAndThumbnailPhoto(
                     memberModel.toMember(),
-                    identificationEventModels?.firstOrNull()?.toIdentificationEvent(),
-                    photoModels?.first()?.toPhoto())
+                    identificationEventModels?.lastOrNull()?.toIdentificationEvent(),
+                    photoModels?.firstOrNull()?.toPhoto())
         }
         throw IllegalStateException("MemberModel cannot be null")
     }

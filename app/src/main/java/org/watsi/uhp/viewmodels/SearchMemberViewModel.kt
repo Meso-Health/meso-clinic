@@ -13,12 +13,12 @@ class SearchMemberViewModel @Inject constructor (
         private val memberRepository: MemberRepository
 ) : ViewModel() {
 
-    private val observable = MutableLiveData<ViewState>()
+    private val observable = MutableLiveData<List<MemberWithIdEventAndThumbnailPhoto>>()
     private var members: List<Member> = emptyList()
     private var memberNames: List<String> = emptyList()
 
     init {
-        observable.value = ViewState()
+        observable.value = emptyList()
         // TODO: check performance consequence of storing all members
         memberRepository.all().subscribe({
             members = it
@@ -28,13 +28,13 @@ class SearchMemberViewModel @Inject constructor (
         })
     }
 
-    fun getObservable(): LiveData<ViewState> = observable
+    fun getObservable(): LiveData<List<MemberWithIdEventAndThumbnailPhoto>> = observable
 
     fun updateQuery(query: String) {
         if (query.matches(Regex(".*\\d+.*"))) {
             members.filter { it.cardId?.contains(query) == true }.sortedBy { it.cardId }.let {
                 memberRepository.byIds(it.map { it.id }).subscribe({
-                    observable.value = observable.value?.copy(searchResults = it)
+                    observable.postValue(it)
                 }, {
                     // TODO: handle error
                 })
@@ -44,13 +44,12 @@ class SearchMemberViewModel @Inject constructor (
                     .map { it.string }
             members.filter { topMatchingNames.contains(it.name) }.sortedBy { it.name }.let {
                 memberRepository.byIds(it.map { it.id }).subscribe({
-                    observable.value = observable.value?.copy(searchResults = it)
+                    observable.postValue(it)
                 }, {
                     // TODO: handle error
+                    val foo = 2
                 })
             }
         }
     }
-
-    data class ViewState(val searchResults: List<MemberWithIdEventAndThumbnailPhoto> = emptyList())
 }

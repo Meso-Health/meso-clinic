@@ -37,10 +37,7 @@ interface MemberDao {
     @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): Maybe<MemberModel>
 
-    @Query("SELECT * FROM members\n" +
-            "LEFT JOIN photos ON photos.id = members.thumbnailPhotoId\n" +
-            "LEFT JOIN identification_events ON identification_events.memberId = members.id\n" +
-            "WHERE members.id IN (:ids)")
+    @Query("SELECT * FROM members WHERE members.id IN (:ids)")
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Query("SELECT members.*\n" +
