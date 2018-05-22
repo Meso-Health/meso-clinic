@@ -13,9 +13,7 @@ import kotlinx.android.synthetic.main.fragment_member_search.member_no_search_re
 import kotlinx.android.synthetic.main.fragment_member_search.member_search
 import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.repositories.IdentificationEventRepository
 
-import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.managers.KeyboardManager
@@ -28,8 +26,6 @@ class SearchMemberFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
-    @Inject lateinit var photoRepository: PhotoRepository
 
     lateinit var viewModel: SearchMemberViewModel
 
@@ -76,14 +72,14 @@ class SearchMemberFragment : DaggerFragment() {
         member_search_results.setOnItemClickListener { parent, _, position, _ ->
             val memberRelation = parent.getItemAtPosition(position) as MemberWithIdEventAndThumbnailPhoto
             val member = memberRelation.member
-            identificationEventRepository.openCheckIn(member.id).subscribe({
-                navigationManager.goTo(
-                        CurrentMemberDetailFragment.forIdentificationEvent(it))
-            }, {
-                // TODO: handle error
-            }, {
+            if (memberRelation.identificationEvent != null) {
+                memberRelation.identificationEvent?.let {
+                    navigationManager.goTo(
+                            CurrentMemberDetailFragment.forMemberAndIdEvent(member, it))
+                }
+            } else {
                 navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-            })
+            }
         }
     }
 

@@ -87,9 +87,12 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         }
     }
 
-    override fun remainingHouseholdMembers(member: Member): Flowable<List<Member>> {
-        return memberDao.remainingHouseholdMembers(member.householdId, member.id)
-                .map { it.map { it.toMember() } }
+    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>> {
+        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithThumbnailModels ->
+            memberWithThumbnailModels.map { memberWithThumbnailModel ->
+                memberWithThumbnailModel.toMemberWithThumbnail()
+            }
+        }
     }
 
     override fun sync(deltas: List<Delta>): Completable {

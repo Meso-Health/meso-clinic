@@ -30,6 +30,7 @@ import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.factories.IdentificationEventModelFactory
+import org.watsi.device.db.relations.MemberWithThumbnailModel
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
@@ -37,6 +38,8 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.MemberFactory
+import org.watsi.domain.factories.PhotoFactory
+import org.watsi.domain.relations.MemberWithThumbnail
 import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
@@ -166,9 +169,17 @@ class MemberRepositoryImplTest {
     @Test
     fun remainingHouseholdMembers() {
         val member = MemberFactory.build()
-        val householdMembers = listOf(MemberFactory.build(householdId = member.householdId))
-        whenever(mockDao.remainingHouseholdMembers(member.householdId, member.id)).thenReturn(
-                Flowable.just(householdMembers.map { MemberModel.fromMember(it, clock) }))
+        val householdMembers = listOf(
+                MemberWithThumbnail(member = MemberFactory.build(householdId = member.householdId),
+                                    photo = PhotoFactory.build())
+        )
+        whenever(mockDao.remainingHouseholdMembers(member.id, member.householdId)).thenReturn(
+                Flowable.just(householdMembers.map {
+                    MemberWithThumbnailModel(
+                            memberModel = MemberModel.fromMember(it.member, clock),
+                            photoModels = listOf(PhotoModel.fromPhoto(it.photo!!, clock))
+                    )
+                }))
 
         repository.remainingHouseholdMembers(member).test().assertValue(householdMembers)
     }
