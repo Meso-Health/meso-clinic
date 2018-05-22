@@ -6,8 +6,8 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import org.watsi.device.db.models.DeltaModel
 import io.reactivex.Single
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.relations.MemberWithThumbnailModel
 import java.util.UUID
@@ -50,8 +50,8 @@ interface MemberDao {
             "ORDER BY last_identifications.occurredAt")
     fun checkedInMembers(): Flowable<List<MemberModel>>
 
-    @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")
-    fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
+    @Query("SELECT * FROM members WHERE householdId = :householdId AND id != :memberId")
+    fun remainingHouseholdMembers(memberId: UUID, householdId: UUID): Flowable<List<MemberWithThumbnailModel>>
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     fun needPhotoDownload(): Single<List<MemberModel>>

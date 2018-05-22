@@ -9,9 +9,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
+import kotlinx.android.synthetic.main.fragment_member_detail.household_members
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
 import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
@@ -21,8 +22,7 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.relations.MemberWithThumbnail
-import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.managers.NavigationManager
@@ -34,19 +34,20 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var photoRepository: PhotoRepository
 
+    lateinit var member: Member
     lateinit var identificationEvent: IdentificationEvent
     lateinit var viewModel: CurrentMemberDetailViewModel
-    private var memberWithThumbnail: MemberWithThumbnail? = null
 
     companion object {
-        const val PARAM_IDENTIFICATION_EVENT = "identification_event"
+        const val PARAM_MEMBER = "member"
+        const val PARAM_IDENTIFICAITON_EVENT = "identification_event"
 
-        fun forIdentificationEvent(idEvent: IdentificationEvent): CurrentMemberDetailFragment {
+        fun forMemberAndIdEvent(member: Member, identificationEvent: IdentificationEvent): CurrentMemberDetailFragment {
             val fragment = CurrentMemberDetailFragment()
             fragment.arguments = Bundle().apply {
-                putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
+                putSerializable(PARAM_MEMBER, member)
+                putSerializable(PARAM_IDENTIFICAITON_EVENT, identificationEvent)
             }
             return fragment
         }
@@ -54,15 +55,14 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        identificationEvent = arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
+        member = arguments.getSerializable(PARAM_MEMBER) as Member
+        identificationEvent = arguments.getSerializable(PARAM_IDENTIFICAITON_EVENT) as IdentificationEvent
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentMemberDetailViewModel::class.java)
-        viewModel.getObservable(identificationEvent.memberId).observe(this, Observer {
-            it?.let { viewState ->
-                val memberWithThumbnail = viewState.memberWIthThumbnail
-                this.memberWithThumbnail = memberWithThumbnail
+        viewModel.getObservable(member).observe(this, Observer {
+            it?.member?.let { member ->
+                this.member = member
 
-                val member = memberWithThumbnail.member
                 if (member.isAbsentee()) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
@@ -81,17 +81,15 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
-                member.thumbnailPhotoId?.let { photoId ->
-                    photoRepository.find(photoId)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({ photo ->
-                        photo.bytes?.let {
-                            PhotoLoader.loadMemberPhoto(it, member_photo, activity)
-                        }
-                    }, {
-                        // TODO: handle error
-                    })
-                }
+            }
+            
+            it?.householdMembers?.let { householdMembers ->
+                // TODO: Make this take a list of MemberWithThumbnail.
+                household_members.adapter = ArrayAdapter<Member>(context, android.R.layout.simple_list_item_1, householdMembers.map { it.member })
+            }
+
+            it?.memberThumbnail?.bytes?.let { bytes ->
+                PhotoLoader.loadMemberPhoto(bytes, member_photo, context)
             }
         })
     }
@@ -118,14 +116,10 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_member_edit -> {
-                memberWithThumbnail?.member?.let {
-                    navigationManager.goTo(MemberEditFragment.forMember(it))
-                }
+                navigationManager.goTo(MemberEditFragment.forMember(member))
             }
             R.id.menu_enroll_newborn -> {
-                memberWithThumbnail?.member?.let {
-                    navigationManager.goTo(EnrollNewbornInfoFragment.forParent(it))
-                }
+                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
             }
             R.id.menu_dismiss_member -> {
                 viewModel.dismiss(identificationEvent).subscribe({

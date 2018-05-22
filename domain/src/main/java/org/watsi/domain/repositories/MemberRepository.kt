@@ -3,7 +3,6 @@ package org.watsi.domain.repositories
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.Single
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithThumbnail
@@ -17,7 +16,7 @@ interface MemberRepository {
     fun fetch(): Completable
     fun findByCardId(cardId: String): Maybe<Member>
     fun checkedInMembers(): Flowable<List<Member>>
-    fun remainingHouseholdMembers(member: Member): Flowable<List<Member>>
+    fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>>
     fun sync(deltas: List<Delta>): Completable
     fun downloadPhotos(): Completable
     fun withPhotosToFetchCount(): Flowable<Int>
