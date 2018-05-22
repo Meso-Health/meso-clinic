@@ -5,7 +5,7 @@ import com.google.gson.JsonArray
 import com.google.gson.annotations.SerializedName
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.entities.EncounterItem
 import java.util.UUID
 
 /**
@@ -25,7 +25,7 @@ data class EncounterApi(
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>
 ) {
 
-    constructor (encounter: Encounter, encounterItems: List<EncounterItemWithBillable>) :
+    constructor (encounter: Encounter, encounterItems: List<EncounterItem>) :
             this(id = encounter.id,
                  memberId = encounter.memberId,
                  identificationEventId = encounter.identificationEventId,

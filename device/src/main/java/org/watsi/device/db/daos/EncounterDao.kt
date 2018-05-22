@@ -10,7 +10,7 @@ import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
-import org.watsi.device.db.models.EncounterWithItemsAndFormsModel
+import org.watsi.device.db.models.EncounterWithItemsModel
 import java.util.UUID
 
 @Dao
@@ -18,7 +18,7 @@ interface EncounterDao {
 
     @Transaction
     @Query("SELECT * FROM encounters WHERE id = :id LIMIT 1")
-    fun find(id: UUID): Single<EncounterWithItemsAndFormsModel>
+    fun find(id: UUID): Single<EncounterWithItemsModel>
 
     @Insert
     fun insert(encounter: EncounterModel,

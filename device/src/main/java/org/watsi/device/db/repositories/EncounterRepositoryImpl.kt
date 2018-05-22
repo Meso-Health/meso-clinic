@@ -13,6 +13,7 @@ import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
@@ -22,8 +23,8 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                               private val sessionManager: SessionManager,
                               private val clock: Clock) : EncounterRepository {
 
-    override fun find(id: UUID): Single<EncounterWithItemsAndForms> {
-        return encounterDao.find(id).map { it.toEncounterWithItemsAndForms() }.subscribeOn(Schedulers.io())
+    override fun find(id: UUID): Single<EncounterWithItems> {
+        return encounterDao.find(id).map { it.toEncounterWithItems() }.subscribeOn(Schedulers.io())
     }
 
     override fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms,

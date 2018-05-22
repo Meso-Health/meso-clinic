@@ -1,7 +1,7 @@
 package org.watsi.device.api.models
 
 import com.google.gson.annotations.SerializedName
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.entities.EncounterItem
 import java.util.UUID
 
 data class EncounterItemApi(
@@ -11,10 +11,10 @@ data class EncounterItemApi(
         @SerializedName("quantity") val quantity: Int
 ) {
 
-    constructor (encounterItemWithBillable: EncounterItemWithBillable) :
-            this(id = encounterItemWithBillable.encounterItem.id,
-                 encounterId = encounterItemWithBillable.encounterItem.encounterId,
-                 billableId = encounterItemWithBillable.encounterItem.billableId,
-                 quantity = encounterItemWithBillable.encounterItem.quantity
+    constructor (encounterItem: EncounterItem) :
+            this(id = encounterItem.id,
+                 encounterId = encounterItem.encounterId,
+                 billableId = encounterItem.billableId,
+                 quantity = encounterItem.quantity
             )
 }
