@@ -53,7 +53,7 @@ class MemberAdapter(context: Context,
 
             viewHolder.photo?.let { imageView ->
                 memberWithIdEventAndPhoto.thumbnailPhoto?.let {
-                    PhotoLoader.loadMemberPhoto(it.bytes!!, imageView, context)
+                    PhotoLoader.loadMemberPhoto(it.bytes, imageView, context)
                 }
             }
         }
