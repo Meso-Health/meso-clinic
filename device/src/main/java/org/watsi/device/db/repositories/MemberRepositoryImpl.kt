@@ -108,8 +108,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         // to make this querying and formatting of the sync request simpler
         return photoDao.findMemberWithRawPhoto(memberId).flatMapCompletable { memberWithRawPhotoModel ->
             val memberWithRawPhoto = memberWithRawPhotoModel.toMemberWithRawPhoto()
-            val requestBody = RequestBody.create(
-                    MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
+            val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
             api.patchPhoto(authToken.getHeaderString(), memberId, requestBody)
         }
     }
