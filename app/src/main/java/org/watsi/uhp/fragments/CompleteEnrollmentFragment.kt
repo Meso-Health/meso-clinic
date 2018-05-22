@@ -100,8 +100,8 @@ class CompleteEnrollmentFragment : DaggerFragment() {
         complete_enrollment_button.setOnClickListener {
             identificationEventRepository.openCheckIn(memberId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    navigationManager.popTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                .subscribe({idEvent ->
+                    navigationManager.popTo(CurrentMemberDetailFragment.forMemberAndIdEvent(member, idEvent))
                     Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
                 }, {
                     // TODO: handle error

@@ -1,6 +1,7 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
+import org.watsi.device.db.relations.MemberWithThumbnailModel
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
@@ -41,12 +42,12 @@ class MemberDaoTest : DaoBaseTest() {
     @Test
     fun remainingHouseholdMembers() {
         val householdId = UUID.randomUUID()
-        val householdMember1 = MemberModelFactory.create(memberDao, householdId = householdId)
-        val householdMember2 = MemberModelFactory.create(memberDao, householdId = householdId)
-        val householdMember3 = MemberModelFactory.create(memberDao, householdId = householdId)
+        val householdMember1 = MemberWithThumbnailModel(memberModel = MemberModelFactory.create(memberDao, householdId = householdId))
+        val householdMember2 = MemberWithThumbnailModel(memberModel = MemberModelFactory.create(memberDao, householdId = householdId))
+        val householdMember3 = MemberWithThumbnailModel(memberModel = MemberModelFactory.create(memberDao, householdId = householdId))
         MemberModelFactory.create(memberDao)
 
-        memberDao.remainingHouseholdMembers(householdId, householdMember1.id)
+        memberDao.remainingHouseholdMembers(householdMember1.memberModel!!.id, householdId)
                 .test()
                 .assertValue(listOf(householdMember2, householdMember3))
     }

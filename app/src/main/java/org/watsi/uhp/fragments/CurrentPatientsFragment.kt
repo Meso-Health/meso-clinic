@@ -76,8 +76,8 @@ class CurrentPatientsFragment : DaggerFragment() {
 
         current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
             val member = parent.getItemAtPosition(position) as Member
-            viewModel.getIdentificationEvent(member).subscribe({
-                navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+            viewModel.getIdentificationEvent(member).subscribe({idEvent ->
+                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(member, idEvent))
             }, {
                 // TODO: handle error
             }, {
@@ -121,14 +121,14 @@ class CurrentPatientsFragment : DaggerFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
-        member?.let {
-            viewModel.getIdentificationEvent(it).subscribe({
-                navigationManager.goTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+        member?.let {member ->
+            viewModel.getIdentificationEvent(member).subscribe({idEvent ->
+                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(member, idEvent))
             }, {
                 // TODO: handle error
             }, {
                 // TODO: this code path technically should not happen...
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
+                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
             })
         }
         error?.let {

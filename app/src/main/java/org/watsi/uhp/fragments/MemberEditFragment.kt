@@ -81,8 +81,8 @@ class MemberEditFragment : DaggerFragment() {
                                                 phoneNumber = updatedPhoneNumber,
                                                 cardId = updatedCardId)
                 updateMemberUseCase.execute(updatedMember).subscribe({
-                    identificationEventRepository.openCheckIn(member.id).subscribe({
-                        navigationManager.popTo(CurrentMemberDetailFragment.forIdentificationEvent(it))
+                    identificationEventRepository.openCheckIn(member.id).subscribe({idEvent ->
+                        navigationManager.popTo(CurrentMemberDetailFragment.forMemberAndIdEvent(updatedMember, idEvent))
                     }, {
                         // TODO: handle error
                     }, {

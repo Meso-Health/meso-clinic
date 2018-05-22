@@ -52,8 +52,8 @@ interface MemberDao {
             "ORDER BY last_identifications.occurredAt")
     fun checkedInMembers(): Flowable<List<MemberModel>>
 
-    @Query("SELECT * FROM members WHERE householdId = :householdId AND id <> :memberId")
-    fun remainingHouseholdMembers(householdId: UUID, memberId: UUID): Flowable<List<MemberModel>>
+    @Query("SELECT * FROM members WHERE householdId = :householdId AND id != :memberId")
+    fun remainingHouseholdMembers(memberId: UUID, householdId: UUID): Flowable<List<MemberWithThumbnailModel>>
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     fun needPhotoDownload(): Single<List<MemberModel>>
