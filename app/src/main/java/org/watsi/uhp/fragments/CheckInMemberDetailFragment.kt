@@ -85,9 +85,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CheckInMemberDetailViewModel::class.java)
         viewModel.getObservable(member.id).observe(this, Observer {
-            it?.let { viewState ->
-                val memberWithThumbnail = viewState.memberWIthThumbnail
+            it?.let { memberWithThumbnail ->
                 this.memberWithThumbnail = memberWithThumbnail
+                this.member = memberWithThumbnail.member
 
                 val member = memberWithThumbnail.member
                 if (member.isAbsentee()) {
