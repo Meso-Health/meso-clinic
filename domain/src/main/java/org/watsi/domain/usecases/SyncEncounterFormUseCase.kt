@@ -16,7 +16,7 @@ class SyncEncounterFormUseCase(
                 Completable.concat(encounterFormDeltas.map { encounterFormDelta ->
                     encounterFormRepository.find(encounterFormDelta.modelId).flatMapCompletable {
                         // filter out deltas that correspond to a Encounter that has not been synced yet
-                         if (!unsyncedEncounterIds.contains(it.encounter.id)) {
+                         if (!unsyncedEncounterIds.contains(it.encounterForm.encounterId)) {
                              Completable.concat(listOf(
                                 encounterFormRepository.sync(encounterFormDelta),
                                 deltaRepository.markAsSynced(listOf(encounterFormDelta))
