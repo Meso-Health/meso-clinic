@@ -3,6 +3,7 @@ package org.watsi.device.db.repositories
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
@@ -16,6 +17,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.MemberRepository
 import java.util.UUID
@@ -26,6 +28,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                            private val preferencesManager: PreferencesManager,
                            private val photoDao: PhotoDao,
                            private val clock: Clock) : MemberRepository {
+
     override fun all(): Flowable<List<Member>> {
         return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
     }
@@ -72,8 +75,16 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
-    override fun checkedInMembers(): Flowable<List<Member>> {
-        return memberDao.checkedInMembers().map { it.map { it.toMember() } }
+    override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.byIds(ids).map {
+            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.checkedInMembers().map {
+            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        }
     }
 
     override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>> {
