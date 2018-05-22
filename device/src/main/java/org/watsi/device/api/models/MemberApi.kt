@@ -3,8 +3,8 @@ package org.watsi.device.api.models
 import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
-import org.threeten.bp.ZonedDateTime
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import java.util.UUID
@@ -16,12 +16,12 @@ import java.util.UUID
  * classes to a format our API accepts.
  */
 data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
-                     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: String,
+                     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
                      @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID,
                      @SerializedName(CARD_ID_FIELD) val cardId: String?,
                      @SerializedName(NAME_FIELD) val name: String,
                      @SerializedName(GENDER_FIELD) val gender: Member.Gender,
-                     @SerializedName(BIRTHDATE_FIELD) val birthdate: String,
+                     @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
                      @SerializedName(BIRTHDATE_ACCURACY_FIELD)
                      val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
                      @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
@@ -31,12 +31,12 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
 
     constructor (member: Member) :
             this(id = member.id,
-                 enrolledAt = member.enrolledAt.toString(),
+                 enrolledAt = member.enrolledAt,
                  householdId = member.householdId,
                  cardId = member.cardId,
                  name = member.name,
                  gender = member.gender,
-                 birthdate = member.birthdate.toString(),
+                 birthdate = member.birthdate,
                  birthdateAccuracy = member.birthdateAccuracy,
                  fingerprintsGuid = member.fingerprintsGuid,
                  phoneNumber = member.phoneNumber,
@@ -55,12 +55,12 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
             if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
         return Member(id = id,
-                      enrolledAt = ZonedDateTime.parse(enrolledAt).toInstant(),
+                      enrolledAt = enrolledAt,
                       householdId = householdId,
                       cardId = cardId,
                       name = name,
                       gender = gender,
-                      birthdate = LocalDate.parse(birthdate),
+                      birthdate = birthdate,
                       birthdateAccuracy = birthdateAccuracy,
                       fingerprintsGuid = fingerprintsGuid,
                       phoneNumber = phoneNumber,

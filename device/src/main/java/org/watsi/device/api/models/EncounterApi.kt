@@ -3,6 +3,7 @@ package org.watsi.device.api.models
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.annotations.SerializedName
+import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterItemWithBillable
 import java.util.UUID
@@ -17,8 +18,8 @@ data class EncounterApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("member_id") val memberId: UUID,
         @SerializedName("identification_event_id") val identificationEventId: UUID,
-        @SerializedName("occurred_at") val occurredAt: String,
-        @SerializedName("backdated_occurred_at") val backdatedOccurredAt: String?,
+        @SerializedName("occurred_at") val occurredAt: Instant,
+        @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Instant?,
         @SerializedName("copayment_paid") val copaymentPaid: Boolean = false,
         @SerializedName("diagnosis_ids") val diagnoses: JsonArray,
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>
@@ -28,8 +29,8 @@ data class EncounterApi(
             this(id = encounter.id,
                  memberId = encounter.memberId,
                  identificationEventId = encounter.identificationEventId,
-                 occurredAt = encounter.occurredAt.toString(),
-                 backdatedOccurredAt = encounter.backdatedOccurredAt.toString(),
+                 occurredAt = encounter.occurredAt,
+                 backdatedOccurredAt = encounter.backdatedOccurredAt,
                  copaymentPaid  = encounter.copaymentPaid,
                  diagnoses = Gson().fromJson(encounter.diagnoses.toString(), JsonArray::class.java),
                  encounterItems = encounterItems.map { EncounterItemApi(it) }

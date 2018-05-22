@@ -3,12 +3,15 @@ package org.watsi.uhp.di.modules
 import android.content.Context
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializer
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.ZonedDateTime
 import org.watsi.device.api.CoverageApi
 import org.watsi.uhp.BuildConfig
 import retrofit2.Retrofit
@@ -39,11 +42,19 @@ class ApiModule {
     @Provides
     fun provideCoverageApi(httpClient: OkHttpClient): CoverageApi {
         val gson = GsonBuilder()
+                .registerTypeAdapter(LocalDate::class.javaObjectType, JsonSerializer<LocalDate> { src, _, _ ->
+                    JsonPrimitive(src.toString())
+                })
                 .registerTypeAdapter(LocalDate::class.javaObjectType, JsonDeserializer<LocalDate> { json, _, _ ->
                     LocalDate.parse(json.asJsonPrimitive.asString)
                 })
+                .registerTypeAdapter(Instant::class.javaObjectType, JsonSerializer<Instant> { src, _, _ ->
+                    JsonPrimitive(src.toString())
+                })
                 .registerTypeAdapter(Instant::class.javaObjectType, JsonDeserializer<Instant> { json, _, _ ->
-                    Instant.parse(json.asJsonPrimitive.asString)
+                    // need to parse using ZonedDateTime because Instant.parse does not
+                    // understand the ISO 8061 format with timezone returned from the server
+                    ZonedDateTime.parse(json.asJsonPrimitive.asString).toInstant()
                 })
                 .create()
 
