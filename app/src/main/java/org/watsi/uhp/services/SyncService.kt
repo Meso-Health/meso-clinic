@@ -7,14 +7,14 @@ import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
 import org.watsi.domain.usecases.SyncIdentificationEventUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
-import org.watsi.domain.usecases.SyncPhotoUseCase
+import org.watsi.domain.usecases.SyncMemberPhotoUseCase
 
 import javax.inject.Inject
 
 class SyncService : DaggerJobService() {
 
     @Inject lateinit var syncMemberUseCase: SyncMemberUseCase
-    @Inject lateinit var syncPhotoUseCase: SyncPhotoUseCase
+    @Inject lateinit var syncMemberPhotoUseCase: SyncMemberPhotoUseCase
     @Inject lateinit var syncIdentificationEventUseCase: SyncIdentificationEventUseCase
     @Inject lateinit var syncEncounterUseCase: SyncEncounterUseCase
     @Inject lateinit var syncEncounterFormUseCase: SyncEncounterFormUseCase
@@ -23,7 +23,7 @@ class SyncService : DaggerJobService() {
     override fun onStartJob(params: JobParameters?): Boolean {
         Completable.concatArray(
                 syncMemberUseCase.execute(),
-                syncPhotoUseCase.execute(),
+                syncMemberPhotoUseCase.execute(),
                 syncIdentificationEventUseCase.execute(),
                 syncEncounterUseCase.execute(),
                 syncEncounterFormUseCase.execute()

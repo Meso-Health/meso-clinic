@@ -18,6 +18,7 @@ interface MemberRepository {
     fun checkedInMembers(): Flowable<List<Member>>
     fun remainingHouseholdMembers(member: Member): Flowable<List<Member>>
     fun sync(deltas: List<Delta>): Completable
+    fun syncPhotos(deltas: List<Delta>): Completable
     fun downloadPhotos(): Completable
     fun withPhotosToFetchCount(): Flowable<Int>
 }

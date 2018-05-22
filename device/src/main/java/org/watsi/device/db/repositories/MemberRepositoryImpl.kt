@@ -4,6 +4,8 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
@@ -93,6 +95,20 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 api.patchMember(authToken.getHeaderString(), member.id, MemberApi.patch(member, deltas))
             }
         }.subscribeOn(Schedulers.io())
+    }
+
+    override fun syncPhotos(deltas: List<Delta>): Completable {
+        val authToken = sessionManager.currentToken()!!
+        val memberId = deltas.first().modelId
+
+        // the modelId in a photo delta corresponds to the member ID and not the photo ID
+        // to make this querying and formatting of the sync request simpler
+        return photoDao.findMemberWithRawPhoto(memberId).flatMapCompletable { memberWithRawPhotoModel ->
+            val memberWithRawPhoto = memberWithRawPhotoModel.toMemberWithRawPhoto()
+            val requestBody = RequestBody.create(
+                    MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
+            api.patchPhoto(authToken.getHeaderString(), memberId, requestBody)
+        }
     }
 
     override fun downloadPhotos(): Completable {

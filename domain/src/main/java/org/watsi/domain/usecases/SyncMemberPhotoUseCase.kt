@@ -3,10 +3,10 @@ package org.watsi.domain.usecases
 import io.reactivex.Completable
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
-import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.repositories.MemberRepository
 
-class SyncPhotoUseCase(
-        private val photoRepository: PhotoRepository,
+class SyncMemberPhotoUseCase(
+        private val memberRepository: MemberRepository,
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
@@ -20,7 +20,7 @@ class SyncPhotoUseCase(
                         .values
                 Completable.concat(photoDeltasThatCanBeSynced.map { deltas ->
                     Completable.concat(listOf(
-                            photoRepository.sync(deltas),
+                            memberRepository.syncPhotos(deltas),
                             deltaRepository.markAsSynced(deltas)
                     ))
                 })

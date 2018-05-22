@@ -7,7 +7,6 @@ import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
-import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -16,8 +15,8 @@ import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
 import org.watsi.domain.usecases.SyncIdentificationEventUseCase
+import org.watsi.domain.usecases.SyncMemberPhotoUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
-import org.watsi.domain.usecases.SyncPhotoUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 
@@ -65,8 +64,8 @@ class DomainModule {
     }
 
     @Provides
-    fun provideSyncPhotoUseCase(photoRepository: PhotoRepository, deltaRepository: DeltaRepository): SyncPhotoUseCase {
-        return SyncPhotoUseCase(photoRepository, deltaRepository)
+    fun provideSyncMemberPhotoUseCase(memberRepository: MemberRepository, deltaRepository: DeltaRepository): SyncMemberPhotoUseCase {
+        return SyncMemberPhotoUseCase(memberRepository, deltaRepository)
     }
   
     @Provides
