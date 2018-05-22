@@ -47,7 +47,6 @@ class SearchMemberViewModel @Inject constructor (
                     observable.postValue(it)
                 }, {
                     // TODO: handle error
-                    val foo = 2
                 })
             }
         }
