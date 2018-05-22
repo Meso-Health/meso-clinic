@@ -77,6 +77,10 @@ class CurrentPatientsFragment : DaggerFragment() {
                             memberRelation.member, it))
                 }
             } else {
+                // members on the CurrentPatientsFragment shoud always be checked-in, so lor
+                // an error if they do not have a corresponding open IdentificationEvent
+                logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
+                        "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
                 navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
             }
         }
