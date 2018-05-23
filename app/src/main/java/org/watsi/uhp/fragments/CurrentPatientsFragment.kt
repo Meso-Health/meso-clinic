@@ -19,8 +19,7 @@ import kotlinx.android.synthetic.main.fragment_current_patients.identification_b
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 
-import org.watsi.domain.entities.Member
-import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
@@ -35,7 +34,6 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var logger: Logger
 
     lateinit var viewModel: CurrentPatientsViewModel
@@ -57,10 +55,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                     current_patients_label.text = activity.resources.getQuantityString(
                             R.plurals.current_patients_label, checkedInMembers.size, checkedInMembers.size)
 
-                    current_patients.adapter = MemberAdapter(context,
-                            checkedInMembers,
-                            photoRepository,
-                            true)
+                    current_patients.adapter = MemberAdapter(context, checkedInMembers, true)
                 }
             }
         })
@@ -75,15 +70,19 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
         current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
-            val member = parent.getItemAtPosition(position) as Member
-            viewModel.getIdentificationEvent(member).subscribe({idEvent ->
-                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(member, idEvent))
-            }, {
-                // TODO: handle error
-            }, {
-                // TODO: this code path technically should not happen...
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-            })
+            val memberRelation = parent.getItemAtPosition(position) as MemberWithIdEventAndThumbnailPhoto
+            if (memberRelation.identificationEvent != null) {
+                memberRelation.identificationEvent?.let {
+                    navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
+                            memberRelation.member, it))
+                }
+            } else {
+                // members on the CurrentPatientsFragment shoud always be checked-in, so lor
+                // an error if they do not have a corresponding open IdentificationEvent
+                logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
+                        "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
+                navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
+            }
         }
 
         identification_button.setOnClickListener {
@@ -121,14 +120,14 @@ class CurrentPatientsFragment : DaggerFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
-        member?.let {member ->
-            viewModel.getIdentificationEvent(member).subscribe({idEvent ->
-                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(member, idEvent))
+        member?.let {
+            viewModel.getIdentificationEvent(it).subscribe({idEvent ->
+                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(it, idEvent))
             }, {
                 // TODO: handle error
             }, {
                 // TODO: this code path technically should not happen...
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
+                navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
             })
         }
         error?.let {

@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Maybe
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
@@ -28,5 +29,5 @@ class CurrentPatientsViewModel @Inject constructor(
         return identificationEventRepository.openCheckIn(member.id)
     }
 
-    data class ViewState(val checkedInMembers: List<Member>)
+    data class ViewState(val checkedInMembers: List<MemberWithIdEventAndThumbnailPhoto>)
 }
