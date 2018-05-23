@@ -11,6 +11,7 @@ class CreateIdentificationEventUseCase(private val identificationEventRepo: Iden
         return identificationEventRepo.create(identificationEvent, Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.IDENTIFICATION_EVENT,
-                modelId = identificationEvent.id))
+                modelId = identificationEvent.id
+        ))
     }
 }
