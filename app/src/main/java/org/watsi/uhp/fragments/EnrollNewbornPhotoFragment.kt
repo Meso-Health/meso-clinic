@@ -75,6 +75,7 @@ class EnrollNewbornPhotoFragment : DaggerFragment() {
         val (photoIds, error) = SavePhotoActivity.parseResult(resultCode, data, logger)
         photoIds?.let {
             this.photoIds = it
+            // TODO: use PhotoLoader
             photoRepository.find(it.second).observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ thumbnailPhoto ->
                         val thumbnailBitmap = BitmapFactory.decodeByteArray(
