@@ -44,6 +44,30 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.findFlowableMemberWithThumbnail(id).map { it.toMemberWithThumbnail() }
     }
 
+    override fun findByCardId(cardId: String): Maybe<Member> {
+        return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
+    }
+
+    override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.byIds(ids).map {
+            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.checkedInMembers().map {
+            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        }
+    }
+
+    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>> {
+        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithThumbnailModels ->
+            memberWithThumbnailModels.map { memberWithThumbnailModel ->
+                memberWithThumbnailModel.toMemberWithThumbnail()
+            }
+        }
+    }
+
     override fun save(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
             val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
@@ -74,28 +98,23 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         } ?: Completable.complete()
     }
 
-    override fun findByCardId(cardId: String): Maybe<Member> {
-        return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
-    }
-
-    override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.byIds(ids).map {
-            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+    override fun downloadPhotos(): Completable {
+        return memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
+            Completable.concat(memberModels.map { memberModel ->
+                val member = memberModel.toMember()
+                api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
+                    Completable.fromAction {
+                        val photo = Photo(UUID.randomUUID(), it.bytes())
+                        photoDao.insert(PhotoModel.fromPhoto(photo, clock))
+                        memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
+                    }
+                }
+            })
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.checkedInMembers().map {
-            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
-        }
-    }
-
-    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>> {
-        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithThumbnailModels ->
-            memberWithThumbnailModels.map { memberWithThumbnailModel ->
-                memberWithThumbnailModel.toMemberWithThumbnail()
-            }
-        }
+    override fun withPhotosToFetchCount(): Flowable<Int> {
+        return memberDao.needPhotoDownloadCount()
     }
 
     override fun sync(deltas: List<Delta>): Completable {
@@ -122,24 +141,5 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
             val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
             api.patchPhoto(authToken.getHeaderString(), memberId, requestBody)
         }
-    }
-
-    override fun downloadPhotos(): Completable {
-        return memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
-            Completable.concat(memberModels.map { memberModel ->
-                val member = memberModel.toMember()
-                api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
-                    Completable.fromAction {
-                        val photo = Photo(UUID.randomUUID(), it.bytes())
-                        photoDao.insert(PhotoModel.fromPhoto(photo, clock))
-                        memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
-                    }
-                }
-            })
-        }.subscribeOn(Schedulers.io())
-    }
-
-    override fun withPhotosToFetchCount(): Flowable<Int> {
-        return memberDao.needPhotoDownloadCount()
     }
 }

@@ -12,16 +12,16 @@ import java.util.UUID
 
 interface MemberRepository {
     fun all(): Flowable<List<Member>>
-    fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun find(id: UUID): Flowable<Member>
-    fun save(member: Member, deltas: List<Delta>): Completable
-    fun fetch(): Completable
+    fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun findByCardId(cardId: String): Maybe<Member>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>>
-    fun sync(deltas: List<Delta>): Completable
-    fun syncPhotos(deltas: List<Delta>): Completable
+    fun save(member: Member, deltas: List<Delta>): Completable
+    fun fetch(): Completable
     fun downloadPhotos(): Completable
     fun withPhotosToFetchCount(): Flowable<Int>
+    fun sync(deltas: List<Delta>): Completable
+    fun syncPhotos(deltas: List<Delta>): Completable
 }
