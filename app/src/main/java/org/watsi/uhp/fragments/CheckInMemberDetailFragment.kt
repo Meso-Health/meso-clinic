@@ -19,8 +19,6 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
-import com.simprints.libsimprints.Constants
-import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
@@ -36,6 +34,7 @@ import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notifi
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
 import org.threeten.bp.Clock
+import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
@@ -43,11 +42,9 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
-import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.PhotoLoader
-import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
@@ -61,17 +58,18 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var fingerprintManager: FingerprintManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
 
     lateinit var viewModel: CheckInMemberDetailViewModel
     lateinit var member: Member
-    lateinit var simprintsHelper: SimprintsHelper
     lateinit var memberAdapter: MemberAdapter
     private var verificationDetails: FingerprintVerificationDetails? = null
 
     companion object {
         const val PARAM_MEMBER = "member"
+        const val VERIFY_FINGERPRINT_INTENT = 1
 
         fun forMember(member: Member): CheckInMemberDetailFragment {
             val fragment = CheckInMemberDetailFragment()
@@ -85,7 +83,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
-        simprintsHelper = SimprintsHelper(sessionManager.currentToken()?.user?.username, this)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CheckInMemberDetailViewModel::class.java)
         viewModel.getObservable(member).observe(this, Observer {
@@ -136,12 +133,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             launchClinicNumberDialog()
         }
 
-        if (member.fingerprintsGuid != null) {
+        member.fingerprintsGuid?.let { guid ->
             scan_fingerprints_btn.visibility = View.VISIBLE
-            scan_fingerprints_btn.setOnClickListener {
-                try {
-                    simprintsHelper.verify(BuildConfig.PROVIDER_ID.toString(), member.fingerprintsGuid)
-                } catch (e: SimprintsHelper.SimprintsInvalidIntentException) {
+            scan_fingerprints_btn.setOnClickListener {view ->
+                if (!fingerprintManager.verifyFingerprint(guid.toString(), this, VERIFY_FINGERPRINT_INTENT)) {
                     Toast.makeText(context, R.string.fingerprints_not_installed_error_message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -174,6 +169,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                         navigationManager.popTo(CurrentPatientsFragment())
                     }, {
                         // TODO: handle error
+                        logger.error("Error launching clinic number dialog")
                     })
                 }
 
@@ -214,32 +210,43 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        try {
-            val verification = simprintsHelper.onActivityResultFromVerify(requestCode, resultCode, data)
-            if (verification != null) {
-                val fingerprintTier = verification.tier
-                val fingerprintConfidence = verification.confidence
+        when (requestCode) {
+            VERIFY_FINGERPRINT_INTENT -> {
+                val fingerprintResponse = fingerprintManager.parseResponseForVerification(resultCode, data)
+                when (fingerprintResponse.status) {
+                    FingerprintManager.FingerprintStatus.SUCCESS -> {
+                        verificationDetails = FingerprintVerificationDetails(
+                                fingerprintResponse.tier,
+                                fingerprintResponse.confidence,
+                                resultCode
+                        )
 
-                verificationDetails = FingerprintVerificationDetails(
-                        fingerprintTier, fingerprintConfidence, resultCode)
+                        val badScan = fingerprintResponse.badScan
 
-                if (fingerprintTier == Tier.TIER_5) {
-                    setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorRed), R.string.bad_scan_indicator)
-                } else {
-                    setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorGreen), R.string.good_scan_indicator)
+                        when (badScan) {
+                            true -> {
+                                setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorRed), R.string.bad_scan_indicator)
+                                Toast.makeText(context, R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show()
+                            } false -> {
+                                setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorGreen), R.string.good_scan_indicator)
+                                Toast.makeText(context, R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show()
+                            } null -> {
+                                Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
+                                logger.error("FingerprintManager returned null badScan on Success $fingerprintResponse")
+                            }
+                        }
+
+                    }
+                    FingerprintManager.FingerprintStatus.FAILURE -> {
+                        setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorNeutral), R.string.no_scan_indicator)
+                        Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
+                    }
+                    FingerprintManager.FingerprintStatus.CANCELLED -> { /* No-op */ }
                 }
-                Toast.makeText(context, R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show()
-                return
-            } else {
-                Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
             }
-        } catch (e: SimprintsHelper.SimprintsHelperException) {
-            logger.error(e)
-            Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
-        }
-
-        if (resultCode != Constants.SIMPRINTS_CANCELLED) {
-            setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorNeutral), R.string.no_scan_indicator)
+            else -> {
+                logger.error("Unknown requestCode called from CheckInMemberDetailFragment: $requestCode")
+            }
         }
     }
 
@@ -257,7 +264,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         scan_result.visibility = View.VISIBLE
     }
 
-    private data class FingerprintVerificationDetails(val tier: Tier?,
+    private data class FingerprintVerificationDetails(val tier: String?,
                                                       val confidence: Float?,
                                                       val resultCode: Int)
 
@@ -280,3 +287,4 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         return true
     }
 }
+

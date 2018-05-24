@@ -116,7 +116,7 @@ class CompleteEnrollmentFragment : DaggerFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             CAPTURE_FINGERPRINT_INTENT -> {
-                val fingerprintResponse = fingerprintManager.parseResponse(resultCode, data)
+                val fingerprintResponse = fingerprintManager.parseResponseForRegistration(resultCode, data)
                 when (fingerprintResponse.status) {
                     FingerprintManager.FingerprintStatus.SUCCESS -> {
                         val fingerprintId = fingerprintResponse.fingerprintId

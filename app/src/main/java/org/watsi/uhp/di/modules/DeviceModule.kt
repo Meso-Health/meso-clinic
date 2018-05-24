@@ -62,7 +62,7 @@ class DeviceModule {
     }
 
     @Provides
-    fun provideFingerprintManager(simHelper: SimHelper): FingerprintManager {
-        return SimprintsManager(simHelper)
+    fun provideFingerprintManager(simHelper: SimHelper, sessionManager: SessionManager): FingerprintManager {
+        return SimprintsManager(simHelper, sessionManager)
     }
 }

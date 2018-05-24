@@ -6,8 +6,17 @@ import java.util.UUID
 
 interface FingerprintManager {
     fun captureFingerprint(memberId: String, fragment: Fragment, requestCode: Int): Boolean
-    fun parseResponse(resultCode: Int, data: Intent?): FingerprintResponse
+    fun verifyFingerprint(guid: String, fragment: Fragment, requestCode: Int): Boolean
+    fun parseResponseForRegistration(resultCode: Int, data: Intent?): FingerprintRequestResponse
+    fun parseResponseForVerification(resultCode: Int, data: Intent?): FingerprintVerificationResponse
 
-    data class FingerprintResponse(val status: FingerprintStatus, val fingerprintId: UUID?)
+    data class FingerprintRequestResponse(
+            val status: FingerprintStatus,
+            val fingerprintId: UUID? = null)
+    data class FingerprintVerificationResponse(
+            val status: FingerprintStatus,
+            val confidence: Float? = null,
+            val tier: String? = null,
+            val badScan: Boolean? = null)
     enum class FingerprintStatus { SUCCESS, CANCELLED, FAILURE }
 }
