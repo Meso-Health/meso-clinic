@@ -10,22 +10,26 @@ import java.util.UUID
 class MemberApiTest {
 
     val member = MemberFactory.build()
-    val memberApi = MemberApi(id = member.id,
-                              householdId = member.householdId,
-                              cardId = member.cardId,
-                              name = member.name,
-                              gender = member.gender,
-                              birthdate = member.birthdate,
-                              birthdateAccuracy = member.birthdateAccuracy,
-                              fingerprintsGuid = member.fingerprintsGuid,
-                              phoneNumber = member.phoneNumber,
-                              photoUrl = member.photoUrl)
+    val memberApi = MemberApi(
+            id = member.id,
+            enrolledAt = member.enrolledAt,
+            householdId = member.householdId,
+            cardId = member.cardId,
+            name = member.name,
+            gender = member.gender,
+            birthdate = member.birthdate,
+            birthdateAccuracy = member.birthdateAccuracy,
+            fingerprintsGuid = member.fingerprintsGuid,
+            phoneNumber = member.phoneNumber,
+            photoUrl = member.photoUrl
+    )
 
     @Test
     fun toMember_copiesAttributes() {
         val parsedMember = memberApi.toMember(null)
 
         assertEquals(memberApi.id, parsedMember.id)
+        assertEquals(memberApi.enrolledAt, parsedMember.enrolledAt)
         assertEquals(memberApi.householdId, parsedMember.householdId)
         assertEquals(memberApi.cardId, parsedMember.cardId)
         assertEquals(memberApi.name, parsedMember.name)
