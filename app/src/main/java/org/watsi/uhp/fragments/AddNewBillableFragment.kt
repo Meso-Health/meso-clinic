@@ -20,12 +20,14 @@ import kotlinx.android.synthetic.main.fragment_add_new_billable.save_button
 import kotlinx.android.synthetic.main.fragment_add_new_billable.type_spinner
 import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
-import java.io.Serializable
+import java.util.UUID
 
 import javax.inject.Inject
 
@@ -38,15 +40,12 @@ class AddNewBillableFragment : DaggerFragment() {
     lateinit var compositionAdapter: ArrayAdapter<String>
 
     companion object {
-        const val PARAM_IDENTIFICATION_EVENT = "identification_event"
-        const val PARAM_LINE_ITEMS = "line_items"
+        const val PARAM_ENCOUNTER = "encounter"
 
-        fun forIdentificationEvent(idEvent: IdentificationEvent,
-                                   lineItems: List<Pair<Billable, Int>>): AddNewBillableFragment {
+        fun forEncounter(encounter: EncounterWithItemsAndForms): AddNewBillableFragment {
             val fragment = AddNewBillableFragment()
             fragment.arguments = Bundle().apply {
-                putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
-                putSerializable(PARAM_LINE_ITEMS, lineItems as Serializable)
+                putSerializable(PARAM_ENCOUNTER, encounter)
             }
             return fragment
         }
@@ -115,14 +114,14 @@ class AddNewBillableFragment : DaggerFragment() {
         save_button.setOnClickListener {
             // TODO: handle missing fields
             viewModel.getBillable()?.let { billable ->
-                val identificationEvent =
-                        arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
-                val lineItems = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>
-                val lineItemsWithNewBillable = lineItems.toMutableList()
-                lineItemsWithNewBillable.add(Pair(billable, 1))
+                val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
+                val updatedEncounterItems = encounter.encounterItems.toMutableList()
+                val newBillableEncounterItem = EncounterItem(
+                        UUID.randomUUID(), encounter.encounter.id, billable.id, 1)
+                updatedEncounterItems.add(EncounterItemWithBillable(newBillableEncounterItem, billable))
 
-                navigationManager.popTo(EncounterFragment.forIdentificationEvent(
-                        identificationEvent, lineItemsWithNewBillable))
+                navigationManager.popTo(EncounterFragment.forEncounter(
+                        encounter.copy(encounterItems = updatedEncounterItems)))
             }
         }
     }

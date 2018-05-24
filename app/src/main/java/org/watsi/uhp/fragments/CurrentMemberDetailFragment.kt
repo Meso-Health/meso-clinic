@@ -65,7 +65,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         identificationEvent = arguments.getSerializable(PARAM_IDENTIFICAITON_EVENT) as IdentificationEvent
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentMemberDetailViewModel::class.java)
-        viewModel.getObservable(member).observe(this, Observer {
+        viewModel.getObservable(member, identificationEvent).observe(this, Observer {
             it?.member?.let { member ->
                 this.member = member
 
@@ -110,7 +110,8 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         member_action_button.text = getString(R.string.detail_create_encounter)
         member_action_button.setOnClickListener {
-            navigationManager.goTo(EncounterFragment.forIdentificationEvent(identificationEvent))
+            navigationManager.goTo(EncounterFragment.forEncounter(
+                    viewModel.buildEncounter(identificationEvent)))
         }
 
         memberAdapter = MemberAdapter(

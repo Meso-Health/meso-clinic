@@ -50,4 +50,8 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
     override fun uniqueCompositions(): Single<List<String>> {
         return billableDao.distinctCompositions().subscribeOn(Schedulers.io())
     }
+
+    override fun opdDefaults(): Single<List<Billable>> {
+        return billableDao.opdDefaults().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    }
 }
