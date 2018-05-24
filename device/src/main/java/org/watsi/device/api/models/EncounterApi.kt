@@ -4,8 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.annotations.SerializedName
 import org.threeten.bp.Instant
-import org.watsi.domain.entities.Encounter
-import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.relations.EncounterWithItems
 import java.util.UUID
 
 /**
@@ -25,14 +24,14 @@ data class EncounterApi(
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>
 ) {
 
-    constructor (encounter: Encounter, encounterItems: List<EncounterItem>) :
-            this(id = encounter.id,
-                 memberId = encounter.memberId,
-                 identificationEventId = encounter.identificationEventId,
-                 occurredAt = encounter.occurredAt,
-                 backdatedOccurredAt = encounter.backdatedOccurredAt,
-                 copaymentPaid  = encounter.copaymentPaid,
-                 diagnoses = Gson().fromJson(encounter.diagnoses.toString(), JsonArray::class.java),
-                 encounterItems = encounterItems.map { EncounterItemApi(it) }
+    constructor (encounterWithItems: EncounterWithItems) :
+            this(id = encounterWithItems.encounter.id,
+                 memberId = encounterWithItems.encounter.memberId,
+                 identificationEventId = encounterWithItems.encounter.identificationEventId,
+                 occurredAt = encounterWithItems.encounter.occurredAt,
+                 backdatedOccurredAt = encounterWithItems.encounter.backdatedOccurredAt,
+                 copaymentPaid  = encounterWithItems.encounter.copaymentPaid,
+                 diagnoses = Gson().fromJson(encounterWithItems.encounter.diagnoses.toString(), JsonArray::class.java),
+                 encounterItems = encounterWithItems.encounterItems.map { EncounterItemApi(it) }
             )
 }

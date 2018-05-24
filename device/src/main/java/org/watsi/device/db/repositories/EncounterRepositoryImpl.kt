@@ -51,8 +51,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         val authToken = sessionManager.currentToken()!!
 
         return find(delta.modelId).flatMapCompletable {
-            api.postEncounter(authToken.getHeaderString(), authToken.user.providerId,
-                    EncounterApi(it.encounter, it.encounterItems))
+            api.postEncounter(authToken.getHeaderString(), authToken.user.providerId, EncounterApi(it))
         }.subscribeOn(Schedulers.io())
     }
 }
