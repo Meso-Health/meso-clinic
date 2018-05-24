@@ -4,15 +4,16 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
-import kotlinx.android.synthetic.main.fragment_member_detail.household_members
+import kotlinx.android.synthetic.main.fragment_member_detail.household_members_label
+import kotlinx.android.synthetic.main.fragment_member_detail.household_members_list
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
 import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
@@ -21,9 +22,12 @@ import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
 import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
 import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
 import org.threeten.bp.Clock
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
+import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
@@ -34,10 +38,12 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var logger: Logger
 
     lateinit var member: Member
     lateinit var identificationEvent: IdentificationEvent
     lateinit var viewModel: CurrentMemberDetailViewModel
+    lateinit var memberAdapter: MemberAdapter
 
     companion object {
         const val PARAM_MEMBER = "member"
@@ -78,14 +84,15 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 }
 
                 member_name_detail_fragment.text = member.name
-                member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
+                member_age_and_gender.text = member.formatAgeAndGender(clock)
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
             }
             
             it?.householdMembers?.let { householdMembers ->
-                // TODO: Make this take a list of MemberWithThumbnail.
-                household_members.adapter = ArrayAdapter<Member>(context, android.R.layout.simple_list_item_1, householdMembers.map { it.member })
+                memberAdapter.setMembers(householdMembers)
+                household_members_label.text = context.resources.getQuantityString(
+                        R.plurals.household_label, householdMembers.size, householdMembers.size)
             }
 
             it?.memberThumbnail?.bytes?.let { bytes ->
@@ -105,6 +112,23 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         member_action_button.setOnClickListener {
             navigationManager.goTo(EncounterFragment.forIdentificationEvent(identificationEvent))
         }
+
+        memberAdapter = MemberAdapter(
+                showClinicNumber = false,
+                showPhoneNumber = true,
+                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
+                    if (memberRelation.identificationEvent != null) {
+                        memberRelation.identificationEvent?.let {
+                            navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
+                                    memberRelation.member, it))
+                        }
+                    } else {
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
+                    }
+                })
+        household_members_list.adapter = memberAdapter
+        household_members_list.layoutManager = LinearLayoutManager(activity)
+        household_members_list.isNestedScrollingEnabled = false
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

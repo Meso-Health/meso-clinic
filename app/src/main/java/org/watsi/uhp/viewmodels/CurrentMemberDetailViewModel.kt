@@ -9,6 +9,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.usecases.DismissIdentificationEventUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
@@ -33,10 +34,10 @@ class CurrentMemberDetailViewModel @Inject constructor(
             ViewState(
                     member = memberWithThumbnail.member,
                     memberThumbnail = memberWithThumbnail.photo,
-                    householdMembers = results[1] as List<MemberWithThumbnail>)
+                    householdMembers = results[1] as List<MemberWithIdEventAndThumbnailPhoto>)
         }).onErrorReturn {
             logger.error(it)
-            ViewState(null, null)
+            ViewState(null, null, null)
         }.startWith(
             ViewState(member)
         )
@@ -49,5 +50,5 @@ class CurrentMemberDetailViewModel @Inject constructor(
 
     data class ViewState(val member: Member?,
                          val memberThumbnail: Photo? = null,
-                         val householdMembers: List<MemberWithThumbnail>? = null)
+                         val householdMembers: List<MemberWithIdEventAndThumbnailPhoto>? = null)
 }

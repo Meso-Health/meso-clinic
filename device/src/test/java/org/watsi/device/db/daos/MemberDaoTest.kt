@@ -2,14 +2,12 @@ package org.watsi.device.db.daos
 
 import org.junit.Test
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
-import org.watsi.device.db.relations.MemberWithThumbnailModel
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
-import org.watsi.device.factories.PhotoModelFactory
-
 import org.watsi.device.factories.MemberWithThumbnailModelFactory
+import org.watsi.device.factories.PhotoModelFactory
 import org.watsi.domain.entities.Delta
 import java.util.UUID
 
@@ -53,14 +51,17 @@ class MemberDaoTest : DaoBaseTest() {
     @Test
     fun remainingHouseholdMembers() {
         val householdId = UUID.randomUUID()
-        val householdMember1 = MemberWithThumbnailModel(memberModel = MemberModelFactory.create(memberDao, householdId = householdId))
-        val householdMember2 = MemberWithThumbnailModel(memberModel = MemberModelFactory.create(memberDao, householdId = householdId))
-        val householdMember3 = MemberWithThumbnailModel(memberModel = MemberModelFactory.create(memberDao, householdId = householdId))
+        val householdMembers = (1..3).map {
+            MemberWithIdEventAndThumbnailPhotoModel(
+                    memberModel = MemberModelFactory.create(memberDao, householdId = householdId),
+                    identificationEventModels = emptyList()
+            )
+        }
         MemberModelFactory.create(memberDao)
 
-        memberDao.remainingHouseholdMembers(householdMember1.memberModel!!.id, householdId)
+        memberDao.remainingHouseholdMembers(householdMembers[0].memberModel!!.id, householdId)
                 .test()
-                .assertValue(listOf(householdMember2, householdMember3))
+                .assertValue(listOf(householdMembers[1], householdMembers[2]))
     }
 
     @Test

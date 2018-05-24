@@ -26,20 +26,21 @@ import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
+import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.factories.IdentificationEventModelFactory
-import org.watsi.device.db.relations.MemberWithThumbnailModel
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.DeltaFactory
+import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PhotoFactory
-import org.watsi.domain.relations.MemberWithThumbnail
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
@@ -169,19 +170,24 @@ class MemberRepositoryImplTest {
     @Test
     fun remainingHouseholdMembers() {
         val member = MemberFactory.build()
-        val householdMembers = listOf(
-                MemberWithThumbnail(member = MemberFactory.build(householdId = member.householdId),
-                                    photo = PhotoFactory.build())
+        val householdMemberRelations = listOf(
+                MemberWithIdEventAndThumbnailPhoto(
+                        member = MemberFactory.build(householdId = member.householdId),
+                        thumbnailPhoto = PhotoFactory.build(),
+                        identificationEvent = IdentificationEventFactory.build()
+                )
         )
         whenever(mockDao.remainingHouseholdMembers(member.id, member.householdId)).thenReturn(
-                Flowable.just(householdMembers.map {
-                    MemberWithThumbnailModel(
+                Flowable.just(householdMemberRelations.map {
+                    MemberWithIdEventAndThumbnailPhotoModel(
                             memberModel = MemberModel.fromMember(it.member, clock),
-                            photoModels = listOf(PhotoModel.fromPhoto(it.photo!!, clock))
+                            photoModels = listOf(PhotoModel.fromPhoto(it.thumbnailPhoto!!, clock)),
+                            identificationEventModels = listOf(
+                                    IdentificationEventModel.fromIdentificationEvent(it.identificationEvent!!, clock))
                     )
                 }))
 
-        repository.remainingHouseholdMembers(member).test().assertValue(householdMembers)
+        repository.remainingHouseholdMembers(member).test().assertValue(householdMemberRelations)
     }
 
     @Test

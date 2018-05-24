@@ -87,10 +87,10 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         }
     }
 
-    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>> {
-        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithThumbnailModels ->
-            memberWithThumbnailModels.map { memberWithThumbnailModel ->
-                memberWithThumbnailModel.toMemberWithThumbnail()
+    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithIdEventAndThumbnailModels ->
+            memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
+                memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
             }
         }
     }

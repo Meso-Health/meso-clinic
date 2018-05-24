@@ -46,6 +46,10 @@ data class Member(val id: UUID,
         }
     }
 
+    fun formatAgeAndGender(clock: Clock = Clock.systemDefaultZone()): String {
+        return "${getAgeYears(clock)} - ${gender}"
+    }
+
     fun diff(previous: Member): List<Delta> {
         val gson = GsonBuilder().serializeNulls().create()
         val previousMap = gson.fromJson(gson.toJson(previous), Map::class.java) as Map<String, Any?>

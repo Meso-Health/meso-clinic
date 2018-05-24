@@ -100,6 +100,14 @@ class MemberTest {
     }
 
     @Test
+    fun formatAgeAndGender() {
+        val m1 = MemberFactory.build(birthdate = tenYearsAgo, gender = Member.Gender.M)
+        val m2 = MemberFactory.build(birthdate = fiveYearsAgo, gender = Member.Gender.F)
+        assertEquals(m1.formatAgeAndGender(), "10 - M")
+        assertEquals(m2.formatAgeAndGender(), "5 - F")
+    }
+
+    @Test
     fun diff() {
         val member = MemberFactory.build()
         val updatedMember = member.copy(phoneNumber = "775555555", cardId = "RWI123456")
