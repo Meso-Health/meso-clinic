@@ -25,19 +25,16 @@ class MemberDaoTest : DaoBaseTest() {
         // open identification event
         val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
                 memberId = memberWithOpenCheckIn.id,
-                accepted = true,
                 dismissed = false)
 
         // dismissed identification event
         IdentificationEventModelFactory.create(identificationEventDao,
                 memberId = memberWithDismissedCheckIn.id,
-                accepted = true,
                 dismissed = true)
 
         // open identification event but with corresponding encounter
         val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
                 memberId = memberWithEncounter.id,
-                accepted = true,
                 dismissed = false)
         EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
 

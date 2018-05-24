@@ -5,8 +5,11 @@ import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
+import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
@@ -34,41 +37,11 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun find(id: UUID): Flowable<Member> {
-        return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
+        return memberDao.findFlowable(id).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
     override fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail> {
         return memberDao.findFlowableMemberWithThumbnail(id).map { it.toMemberWithThumbnail() }
-    }
-
-    override fun save(member: Member, deltas: List<Delta>): Completable {
-        return Completable.fromAction {
-            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
-            memberDao.upsert(MemberModel.fromMember(member, clock), deltaModels)
-        }.subscribeOn(Schedulers.io())
-    }
-
-    override fun fetch(): Completable {
-        return sessionManager.currentToken()?.let { token ->
-            Completable.fromAction {
-                val fetchedMembers = api.members(token.getHeaderString(), token.user.providerId)
-                        .blockingGet()
-                val unsyncedMembers = memberDao.unsynced().blockingGet()
-                val unsyncedIds = unsyncedMembers.map { it.id }
-                val persistedMembers = memberDao.all().blockingFirst()
-                val membersById = persistedMembers.groupBy { it.id }
-                val fetchedAndUnsyncedIds = fetchedMembers.map { it.id } + unsyncedIds
-                memberDao.deleteNotInList(fetchedAndUnsyncedIds.distinct())
-                val fetchedMembersWithoutUnsynced = fetchedMembers.filter {
-                    !unsyncedIds.contains(it.id)
-                }
-                memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
-                    val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
-                    MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
-                })
-                preferencesManager.updateMemberLastFetched(clock.instant())
-            }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
     }
 
     override fun findByCardId(cardId: String): Maybe<Member> {
@@ -95,9 +68,34 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         }
     }
 
-    override fun sync(deltas: List<Delta>): Completable {
-        // TODO: implement
-        return Completable.complete()
+    override fun save(member: Member, deltas: List<Delta>): Completable {
+        return Completable.fromAction {
+            val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            memberDao.upsert(MemberModel.fromMember(member, clock), deltaModels)
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun fetch(): Completable {
+        return sessionManager.currentToken()?.let { token ->
+            Completable.fromAction {
+                val fetchedMembers = api.getMembers(token.getHeaderString(), token.user.providerId)
+                        .blockingGet()
+                val unsyncedMembers = memberDao.unsynced().blockingGet()
+                val unsyncedIds = unsyncedMembers.map { it.id }
+                val persistedMembers = memberDao.all().blockingFirst()
+                val membersById = persistedMembers.groupBy { it.id }
+                val fetchedAndUnsyncedIds = fetchedMembers.map { it.id } + unsyncedIds
+                memberDao.deleteNotInList(fetchedAndUnsyncedIds.distinct())
+                val fetchedMembersWithoutUnsynced = fetchedMembers.filter {
+                    !unsyncedIds.contains(it.id)
+                }
+                memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
+                    val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
+                    MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+                })
+                preferencesManager.updateMemberLastFetched(clock.instant())
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 
     override fun downloadPhotos(): Completable {
@@ -117,5 +115,31 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
 
     override fun withPhotosToFetchCount(): Flowable<Int> {
         return memberDao.needPhotoDownloadCount()
+    }
+
+    override fun sync(deltas: List<Delta>): Completable {
+        val authToken = sessionManager.currentToken()!!
+
+        return memberDao.find(deltas.first().modelId).flatMapCompletable {
+            val member = it.toMember()
+            if (deltas.any { it.action == Delta.Action.ADD }) {
+                api.postMember(authToken.getHeaderString(), MemberApi(member))
+            } else {
+                api.patchMember(authToken.getHeaderString(), member.id, MemberApi.patch(member, deltas))
+            }
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun syncPhotos(deltas: List<Delta>): Completable {
+        val authToken = sessionManager.currentToken()!!
+        val memberId = deltas.first().modelId
+
+        // the modelId in a photo delta corresponds to the member ID and not the photo ID
+        // to make this querying and formatting of the sync request simpler
+        return photoDao.findMemberWithRawPhoto(memberId).flatMapCompletable { memberWithRawPhotoModel ->
+            val memberWithRawPhoto = memberWithRawPhotoModel.toMemberWithRawPhoto()
+            val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
+            api.patchPhoto(authToken.getHeaderString(), memberId, requestBody)
+        }
     }
 }

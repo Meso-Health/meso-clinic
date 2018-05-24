@@ -9,18 +9,17 @@ class CreateEncounterUseCase(private val encounterRepository: EncounterRepositor
 
     fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
         val deltas = mutableListOf<Delta>()
+
         deltas.add(Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.ENCOUNTER,
                 modelId = encounterWithItemsAndForms.encounter.id))
 
-        if (encounterWithItemsAndForms.encounterForms.isNotEmpty()) {
-            // use encounter ID in encounter form delta because it allows a more simple pattern
-            // for querying the delta and creating the sync request
+        encounterWithItemsAndForms.encounterForms.map { encounterForm ->
             deltas.add(Delta(
                     action = Delta.Action.ADD,
                     modelName = Delta.ModelName.ENCOUNTER_FORM,
-                    modelId = encounterWithItemsAndForms.encounter.id))
+                    modelId = encounterForm.id))
         }
 
         return encounterRepository.create(encounterWithItemsAndForms, deltas)

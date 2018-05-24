@@ -61,11 +61,11 @@ class DiagnosisRepositoryImplTest {
         val model = DiagnosisModelFactory.build(clock = clock)
         val apiResponse = DiagnosisApi(model.id, model.description, model.searchAliases)
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.diagnoses(any())).thenReturn(Single.just(listOf(apiResponse)))
+        whenever(mockApi.getDiagnoses(any())).thenReturn(Single.just(listOf(apiResponse)))
 
         repository.fetch().test().assertComplete()
 
-        verify(mockApi).diagnoses(authToken.getHeaderString())
+        verify(mockApi).getDiagnoses(authToken.getHeaderString())
         verify(mockDao).deleteNotInList(listOf(model.id))
         verify(mockDao).insert(listOf(model))
         verify(mockPreferencesManager).updateDiagnosesLastFetched(clock.instant())

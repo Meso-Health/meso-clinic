@@ -28,7 +28,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.diagnoses(token.getHeaderString()).flatMapCompletable { fetchedDiagnoses ->
+            api.getDiagnoses(token.getHeaderString()).flatMapCompletable { fetchedDiagnoses ->
                 Completable.fromAction {
                     diagnosisDao.deleteNotInList(fetchedDiagnoses.map { it.id })
                     diagnosisDao.insert(fetchedDiagnoses.map { diagnosisApi ->

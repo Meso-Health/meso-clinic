@@ -29,7 +29,6 @@ class BillableRepositoryImplTest {
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
-
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: BillableRepositoryImpl
 
@@ -81,12 +80,12 @@ class BillableRepositoryImplTest {
                 fetchedModel.id, fetchedModel.type.toString(), fetchedModel.composition,
                 fetchedModel.unit, fetchedModel.price, fetchedModel.name)
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.billables(any(), any())).thenReturn(Single.just(listOf(apiResponse)))
+        whenever(mockApi.getBillables(any(), any())).thenReturn(Single.just(listOf(apiResponse)))
         whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedModel)))
 
         repository.fetch().test().assertComplete()
 
-        verify(mockApi).billables(authToken.getHeaderString(), authToken.user.providerId)
+        verify(mockApi).getBillables(authToken.getHeaderString(), authToken.user.providerId)
         verify(mockDao).deleteNotInList(listOf(fetchedModel.id, unsyncedModel.id))
         verify(mockDao).upsert(listOf(fetchedModel))
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())

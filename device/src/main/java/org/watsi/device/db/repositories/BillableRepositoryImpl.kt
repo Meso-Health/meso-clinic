@@ -30,9 +30,9 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
 
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.billables(token.getHeaderString(),
-                          token.user.providerId).flatMapCompletable { fetchedBillables ->
-                billableDao.unsynced().flatMapCompletable { unsyncedBillables->
+            api.getBillables(token.getHeaderString(), token.user.providerId).flatMapCompletable {
+                fetchedBillables ->
+                billableDao.unsynced().flatMapCompletable { unsyncedBillables ->
                     Completable.fromAction {
                         val fetchedAndUnsyncedIds =
                                 fetchedBillables.map { it.id } + unsyncedBillables.map { it.id }

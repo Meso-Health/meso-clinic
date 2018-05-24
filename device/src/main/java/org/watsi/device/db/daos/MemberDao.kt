@@ -31,7 +31,10 @@ interface MemberDao {
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
     @Query("SELECT * FROM members where id = :id LIMIT 1")
-    fun find(id: UUID): Flowable<MemberModel?>
+    fun findFlowable(id: UUID): Flowable<MemberModel>
+
+    @Query("SELECT * FROM members where id = :id LIMIT 1")
+    fun find(id: UUID): Single<MemberModel>
 
     @Query("SELECT * FROM members")
     fun all(): Flowable<List<MemberModel>>
@@ -49,8 +52,7 @@ interface MemberDao {
             "INNER JOIN (\n" +
             "   SELECT id, memberId, max(occurredAt) AS occurredAt\n" +
             "   FROM identification_events\n" +
-            "   WHERE accepted = 1\n" +
-            "   AND dismissed = 0\n" +
+            "   WHERE dismissed = 0\n" +
             "   GROUP BY memberId\n" +
             ") last_identifications on last_identifications.memberId = members.id\n" +
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +

@@ -1,23 +1,47 @@
 package org.watsi.device.api.models
 
+import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import java.util.UUID
 
-data class MemberApi(@SerializedName("id") val id: UUID,
-                     @SerializedName("household_id") val householdId: UUID,
-                     @SerializedName("card_id") val cardId: String?,
-                     @SerializedName("full_name") val name: String,
-                     @SerializedName("gender") val gender: Member.Gender,
-                     @SerializedName("birthdate") val birthdate: LocalDate,
-                     @SerializedName("birthdate_accuracy")
+/**
+ * Data class that defines the structure of a sync Member API request.
+ *
+ * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
+ * classes to a format our API accepts.
+ */
+data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
+                     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
+                     @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID,
+                     @SerializedName(CARD_ID_FIELD) val cardId: String?,
+                     @SerializedName(NAME_FIELD) val name: String,
+                     @SerializedName(GENDER_FIELD) val gender: Member.Gender,
+                     @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
+                     @SerializedName(BIRTHDATE_ACCURACY_FIELD)
                      val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
-                     @SerializedName("fingerprints_guid") val fingerprintsGuid: UUID?,
-                     @SerializedName("phone_number") val phoneNumber: String?,
+                     @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
+                     @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
                      @Expose(serialize = false)
-                     @SerializedName("photo_url") val photoUrl: String?) {
+                     @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?) {
+
+    constructor (member: Member) :
+            this(id = member.id,
+                 enrolledAt = member.enrolledAt,
+                 householdId = member.householdId,
+                 cardId = member.cardId,
+                 name = member.name,
+                 gender = member.gender,
+                 birthdate = member.birthdate,
+                 birthdateAccuracy = member.birthdateAccuracy,
+                 fingerprintsGuid = member.fingerprintsGuid,
+                 phoneNumber = member.phoneNumber,
+                 photoUrl = member.photoUrl
+            )
 
     fun toMember(persistedMember: Member?): Member {
         // necessary because when running locally, URL is returned relative to app directory
@@ -31,6 +55,7 @@ data class MemberApi(@SerializedName("id") val id: UUID,
             if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
         return Member(id = id,
+                      enrolledAt = enrolledAt,
                       householdId = householdId,
                       cardId = cardId,
                       name = name,
@@ -42,5 +67,36 @@ data class MemberApi(@SerializedName("id") val id: UUID,
                       photoId = persistedMember?.photoId,
                       thumbnailPhotoId = thumbnailPhotoId,
                       photoUrl = convertedPhotoUrl)
+    }
+
+    companion object {
+        const val ID_FIELD = "id"
+        const val ENROLLED_AT_FIELD = "enrolled_at"
+        const val HOUSEHOLD_ID_FIELD = "household_id"
+        const val CARD_ID_FIELD = "card_id"
+        const val NAME_FIELD = "full_name"
+        const val GENDER_FIELD = "gender"
+        const val BIRTHDATE_FIELD = "birthdate"
+        const val BIRTHDATE_ACCURACY_FIELD = "birthdate_accuracy"
+        const val FINGERPRINTS_GUID_FIELD = "fingerprints_guid"
+        const val PHONE_NUMBER_FIELD = "phone_number"
+        const val PHOTO_URL_FIELD = "photo_url"
+
+        fun patch(member: Member, deltas: List<Delta>): JsonObject {
+            val patchParams = JsonObject()
+            patchParams.addProperty(ID_FIELD, member.id.toString())
+            deltas.forEach { delta ->
+                when (delta.field) {
+                    "name" -> patchParams.addProperty(NAME_FIELD, member.name)
+                    "phoneNumber" -> patchParams.addProperty(PHONE_NUMBER_FIELD, member.phoneNumber)
+                    "fingerprintsGuid" -> {
+                        patchParams.addProperty(FINGERPRINTS_GUID_FIELD, member.fingerprintsGuid.toString())
+                    }
+                    "cardId" -> patchParams.addProperty(CARD_ID_FIELD, member.cardId)
+                    null -> Unit
+                }
+            }
+            return patchParams
+        }
     }
 }

@@ -2,12 +2,14 @@ package org.watsi.domain.entities
 
 import com.google.gson.GsonBuilder
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.utils.DateUtils
 import java.io.Serializable
 import java.util.UUID
 
 data class Member(val id: UUID,
+                  val enrolledAt: Instant,
                   val householdId: UUID,
                   val photoId: UUID?,
                   val thumbnailPhotoId: UUID?,

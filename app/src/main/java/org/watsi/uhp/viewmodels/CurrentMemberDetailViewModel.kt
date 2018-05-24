@@ -18,7 +18,7 @@ import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.relations.MemberWithThumbnail
-import org.watsi.domain.usecases.DismissIdentificationEventUseCase
+import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
@@ -29,7 +29,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
         private val loadMemberUseCase: LoadMemberUseCase,
         private val loadDefaultOpdBillables: LoadDefaultBillablesUseCase,
         private val loadHouseholdMembersUseCase: LoadHouseholdMembersUseCase,
-        private val dismissIdentificationEventUseCase: DismissIdentificationEventUseCase,
+        private val identificationEventRepository: IdentificationEventRepository,
         private val clock: Clock,
         private val logger: Logger
 ) : ViewModel() {
@@ -65,7 +65,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
     }
 
     fun dismiss(identificationEvent: IdentificationEvent): Completable {
-        return dismissIdentificationEventUseCase.execute(identificationEvent)
+        return identificationEventRepository.dismiss(identificationEvent)
     }
 
     fun buildEncounter(idEvent: IdentificationEvent): EncounterWithItemsAndForms {

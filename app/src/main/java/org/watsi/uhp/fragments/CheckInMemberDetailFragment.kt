@@ -199,7 +199,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         val idEvent = IdentificationEvent(id = UUID.randomUUID(),
                                           memberId = member.id,
                                           occurredAt = clock.instant(),
-                                          accepted = true,
                                           searchMethod =
                                             IdentificationEvent.SearchMethod.SCAN_BARCODE, // TODO
                                           throughMemberId = null,

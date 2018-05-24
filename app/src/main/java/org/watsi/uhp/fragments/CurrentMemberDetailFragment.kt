@@ -95,8 +95,8 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                         R.plurals.household_label, householdMembers.size, householdMembers.size)
             }
 
-            it?.memberThumbnail?.bytes?.let { bytes ->
-                PhotoLoader.loadMemberPhoto(bytes, member_photo, context)
+            it?.memberThumbnail?.let { thumbnail ->
+                PhotoLoader.loadMemberPhoto(thumbnail.bytes, member_photo, context)
             }
         })
     }
