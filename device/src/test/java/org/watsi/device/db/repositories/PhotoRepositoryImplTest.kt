@@ -13,15 +13,19 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
+import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.factories.PhotoModelFactory
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.factories.PhotoFactory
 
 @RunWith(MockitoJUnitRunner::class)
 class PhotoRepositoryImplTest {
 
     @Mock lateinit var mockDao: PhotoDao
+    @Mock lateinit var mockApi: CoverageApi
+    @Mock lateinit var mockSessionManager: SessionManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: PhotoRepositoryImpl
 
@@ -29,7 +33,7 @@ class PhotoRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = PhotoRepositoryImpl(mockDao, clock)
+        repository = PhotoRepositoryImpl(mockDao, mockApi, mockSessionManager, clock)
     }
 
     @Test

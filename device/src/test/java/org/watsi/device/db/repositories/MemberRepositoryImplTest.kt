@@ -2,17 +2,22 @@ package org.watsi.device.db.repositories
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import edu.emory.mathcs.backport.java.util.Arrays
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import okio.Buffer
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,17 +33,20 @@ import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
+import org.watsi.device.db.models.MemberWithRawPhotoModel
 import org.watsi.device.db.models.PhotoModel
-import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.db.relations.MemberWithThumbnailModel
+import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
+import org.watsi.device.factories.PhotoModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PhotoFactory
+import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithThumbnail
 import java.util.UUID
 
@@ -52,6 +60,9 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockPhotoDao: PhotoDao
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: MemberRepositoryImpl
+    
+    val user = UserFactory.build()
+    val token = AuthenticationToken("token", clock.instant(), user)
 
     @Before
     fun setup() {
@@ -75,74 +86,6 @@ class MemberRepositoryImplTest {
         whenever(mockDao.findFlowable(model.id)).thenReturn(Flowable.just(model))
 
         repository.find(model.id).test().assertValue(model.toMember())
-    }
-
-    @Test
-    fun create() {
-        val member = MemberFactory.build()
-        val delta = DeltaFactory.build(modelName = Delta.ModelName.MEMBER)
-
-        repository.save(member, listOf(delta)).test().assertComplete()
-
-        verify(mockDao).upsert(
-                MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))
-    }
-
-    @Test
-    fun fetch_noCurrentToken_completes() {
-        whenever(mockSessionManager.currentToken()).thenReturn(null)
-
-        repository.fetch().test().assertComplete()
-    }
-
-    @Test
-    fun fetch_hasToken_succeeds_updatesMembers() {
-        val authToken = AuthenticationTokenFactory.build()
-        val syncedModel = MemberModelFactory.build(clock = clock,
-                                                   thumbnailPhotoId = UUID.randomUUID(),
-                                                   photoUrl = null)
-        val syncedModelPhotoUrl = "https://watsi.org/photo"
-        val syncedModelApi = MemberApi(syncedModel.id, syncedModel.householdId, syncedModel.cardId,
-                syncedModel.name, syncedModel.gender, syncedModel.birthdate,
-                syncedModel.birthdateAccuracy, syncedModel.fingerprintsGuid,
-                syncedModel.phoneNumber, syncedModelPhotoUrl)
-        val inactiveMember = MemberModelFactory.build(clock = clock)
-        val newMember = MemberModelFactory.build(clock = clock)
-        val newMemberApi = MemberApi(newMember.id, newMember.householdId, newMember.cardId,
-                newMember.name, newMember.gender, newMember.birthdate, newMember.birthdateAccuracy,
-                newMember.fingerprintsGuid, newMember.phoneNumber, newMember.photoUrl)
-        val unsyncedMember = MemberModelFactory.build(clock = clock)
-        val unsyncedMemberApi = MemberApi(unsyncedMember.id, unsyncedMember.householdId,
-                unsyncedMember.cardId, unsyncedMember.name, unsyncedMember.gender,
-                unsyncedMember.birthdate, unsyncedMember.birthdateAccuracy,
-                unsyncedMember.fingerprintsGuid, unsyncedMember.phoneNumber, unsyncedMember.photoUrl)
-
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.members(any(), any())).thenReturn(
-                Single.just(listOf(syncedModelApi, newMemberApi, unsyncedMemberApi)))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedMember)))
-        whenever(mockDao.all()).thenReturn(
-                Flowable.just(listOf(syncedModel, inactiveMember, unsyncedMember)))
-
-        repository.fetch().test().assertComplete()
-
-        verify(mockApi).members(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao).deleteNotInList(listOf(syncedModel.id, newMember.id, unsyncedMember.id))
-        verify(mockDao).upsert(listOf(syncedModel.copy(photoUrl = syncedModelPhotoUrl), newMember))
-        verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
-    }
-
-    @Test
-    fun fetch_hasToken_fails_returnsError() {
-        val authToken = AuthenticationTokenFactory.build()
-        val exception = Exception()
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.members(any(), any())).then { throw exception }
-
-        repository.fetch().test().assertError(exception)
-
-        verify(mockApi).members(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao, never()).unsynced()
     }
 
     @Test
@@ -185,6 +128,66 @@ class MemberRepositoryImplTest {
     }
 
     @Test
+    fun save() {
+        val member = MemberFactory.build()
+        val delta = DeltaFactory.build(modelName = Delta.ModelName.MEMBER)
+
+        repository.save(member, listOf(delta)).test().assertComplete()
+
+        verify(mockDao).upsert(
+                MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))
+    }
+
+    @Test
+    fun fetch_noCurrentToken_completes() {
+        whenever(mockSessionManager.currentToken()).thenReturn(null)
+
+        repository.fetch().test().assertComplete()
+    }
+
+    @Test
+    fun fetch_hasToken_succeeds_updatesMembers() {
+        val syncedMemberPhotoUrl = "https://watsi.org/photo"
+        val syncedMember = MemberModelFactory.build(
+                clock = clock,
+                thumbnailPhotoId = UUID.randomUUID(),
+                photoUrl = syncedMemberPhotoUrl
+        )
+        val syncedMemberApi = MemberApi(syncedMember.toMember())
+        val unsyncedMember = MemberModelFactory.build(clock = clock)
+        val unsyncedMemberApi = MemberApi(unsyncedMember.toMember())
+        val inactiveMember = MemberModelFactory.build(clock = clock)
+        val newMember = MemberModelFactory.build(clock = clock)
+        val newMemberApi = MemberApi(newMember.toMember())
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockApi.getMembers(any(), any())).thenReturn(
+                Single.just(listOf(syncedMemberApi, newMemberApi, unsyncedMemberApi)))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedMember)))
+        whenever(mockDao.all()).thenReturn(
+                Flowable.just(listOf(syncedMember, inactiveMember, unsyncedMember)))
+
+        repository.fetch().test().assertComplete()
+
+        verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
+        verify(mockDao).deleteNotInList(listOf(syncedMember.id, newMember.id, unsyncedMember.id))
+        verify(mockDao).upsert(listOf(syncedMember.copy(photoUrl = syncedMemberPhotoUrl), newMember))
+        verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
+    }
+
+    @Test
+    fun fetch_hasToken_fails_returnsError() {
+        val exception = Exception()
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockApi.getMembers(any(), any())).then { throw exception }
+
+        repository.fetch().test().assertError(exception)
+
+        verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
+        verify(mockDao, never()).unsynced()
+    }
+
+    @Test
     fun downloadPhotos() {
         val photoUrl = "http://localhost:5000/dragonfly/media/foo-9ce2ca927c19c2b0"
         val photoBytes = ByteArray(1, { 0xa })
@@ -201,5 +204,71 @@ class MemberRepositoryImplTest {
         val photo = captor.firstValue
         assert(Arrays.equals(photoBytes, photo.bytes))
         verify(mockDao).upsert(MemberModel.fromMember(member.copy(thumbnailPhotoId = photo.id), clock))
+    }
+
+    @Test
+    fun sync_post() {
+        val member = MemberFactory.build()
+        val memberModel = MemberModel.fromMember(member, clock)
+        val delta = DeltaFactory.build(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.MEMBER,
+                modelId = memberModel.id,
+                synced = false
+        )
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockDao.find(memberModel.id)).thenReturn(Single.just(memberModel))
+        whenever(mockApi.postMember(token.getHeaderString(), MemberApi(member)))
+                .thenReturn(Completable.complete())
+
+        repository.sync(listOf(delta)).test().assertComplete()
+    }
+
+    @Test
+    fun sync_patch() {
+        val member = MemberFactory.build()
+        val memberModel = MemberModel.fromMember(member, clock)
+        val deltas = listOf("name", "gender").map { field -> Delta(
+                action = Delta.Action.EDIT,
+                modelName = Delta.ModelName.MEMBER,
+                modelId = memberModel.id,
+                field = field,
+                synced = false
+        ) }
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockDao.find(memberModel.id)).thenReturn(Single.just(memberModel))
+        whenever(mockApi.patchMember(token.getHeaderString(), member.id, MemberApi.patch(member, deltas)))
+                .thenReturn(Completable.complete())
+
+        repository.sync(deltas).test().assertComplete()
+    }
+
+    @Test
+    fun syncPhotos() {
+        val photoModel = PhotoModelFactory.build()
+        val memberModel = MemberModelFactory.build(photoId = photoModel.id, clock = clock)
+        val memberWithRawPhotoModel = MemberWithRawPhotoModel(memberModel, listOf(photoModel))
+        val delta = DeltaFactory.build(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.PHOTO,
+                modelId = memberModel.id,
+                synced = false
+        )
+        val captor = argumentCaptor<RequestBody>()
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockPhotoDao.findMemberWithRawPhoto(memberModel.id))
+                .thenReturn(Single.just(memberWithRawPhotoModel))
+        whenever(mockApi.patchPhoto(eq(token.getHeaderString()), eq(memberModel.id), captor.capture()))
+                .thenReturn(Completable.complete())
+
+        repository.syncPhotos(listOf(delta)).test().assertComplete()
+
+        val requestBody = captor.firstValue
+        val buffer = Buffer()
+        requestBody.writeTo(buffer)
+        assertTrue(java.util.Arrays.equals(photoModel.bytes, buffer.readByteArray()))
     }
 }
