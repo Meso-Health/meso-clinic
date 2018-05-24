@@ -10,10 +10,12 @@ import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_receipt.save_button
+import org.watsi.device.managers.Logger
 
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.uhp.R
+import org.watsi.uhp.R.string.encounter_submitted
 import org.watsi.uhp.managers.NavigationManager
 
 import javax.inject.Inject
@@ -22,6 +24,7 @@ class ReceiptFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var createEncounterUseCase: CreateEncounterUseCase
+    @Inject lateinit var logger: Logger
 
     lateinit var encounter: EncounterWithItemsAndForms
 
@@ -53,15 +56,19 @@ class ReceiptFragment : DaggerFragment() {
         // TODO: populate view
 
         save_button.setOnClickListener {
-            createEncounterUseCase.execute(encounter)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        navigationManager.popTo(CurrentPatientsFragment())
-                        Toast.makeText(activity, "Claim submitted", Toast.LENGTH_LONG).show()
-                    }, {
-                        // TODO: handle error
-                    })
+            submitEncounter(true)
         }
+    }
+
+    private fun submitEncounter(copaymentPaid: Boolean) {
+        createEncounterUseCase.execute(encounter.copy(encounter.encounter.copy(copaymentPaid = copaymentPaid)))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    navigationManager.popTo(CurrentPatientsFragment())
+                    Toast.makeText(activity, getString(encounter_submitted), Toast.LENGTH_LONG).show()
+                }, {
+                    logger.error(it)
+                })
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -69,12 +76,12 @@ class ReceiptFragment : DaggerFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+        return when (item?.itemId) {
             R.id.menu_submit_without_copayment -> {
-                // TODO: handle submit without copayment
+                submitEncounter(false)
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }
-        return true
     }
 }

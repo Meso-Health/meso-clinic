@@ -160,8 +160,7 @@
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="receipt_total">Total</string>
-    <string name="encounter_submitted">\'s encounter was submitted successfully.</string>
-    <string name="copayment_paid_checkbox">Copayment received</string>
+    <string name="encounter_submitted">Claim submitted</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d Item</item>
         <item quantity="other">%d Items</item>
