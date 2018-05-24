@@ -9,6 +9,7 @@ import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -23,6 +24,8 @@ import com.simprints.libsimprints.Tier
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
 import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
+import kotlinx.android.synthetic.main.fragment_member_detail.household_members_label
+import kotlinx.android.synthetic.main.fragment_member_detail.household_members_list
 import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
 import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
@@ -37,11 +40,12 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.MemberWithThumbnail
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
+import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.SimprintsHelper
 import org.watsi.uhp.managers.KeyboardManager
@@ -62,8 +66,8 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
     lateinit var viewModel: CheckInMemberDetailViewModel
     lateinit var member: Member
-    lateinit var memberWithThumbnail: MemberWithThumbnail
     lateinit var simprintsHelper: SimprintsHelper
+    lateinit var memberAdapter: MemberAdapter
     private var verificationDetails: FingerprintVerificationDetails? = null
 
     companion object {
@@ -84,12 +88,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         simprintsHelper = SimprintsHelper(sessionManager.currentToken()?.user?.username, this)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CheckInMemberDetailViewModel::class.java)
-        viewModel.getObservable(member.id).observe(this, Observer {
-            it?.let { memberWithThumbnail ->
-                this.memberWithThumbnail = memberWithThumbnail
-                this.member = memberWithThumbnail.member
+        viewModel.getObservable(member).observe(this, Observer {
+            it?.member?.let { member ->
+                this.member = member
 
-                val member = memberWithThumbnail.member
                 if (member.isAbsentee()) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
@@ -105,12 +107,19 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 }
 
                 member_name_detail_fragment.text = member.name
-                member_age_and_gender.text = "${member.getAgeYears(clock)} - ${member.gender}"
+                member_age_and_gender.text = member.formatAgeAndGender(clock)
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
-                memberWithThumbnail.photo?.bytes?.let {
-                    PhotoLoader.loadMemberPhoto(it, member_photo, activity)
-                }
+            }
+
+            it?.householdMembers?.let { householdMembers ->
+                memberAdapter.setMembers(householdMembers)
+                household_members_label.text = context.resources.getQuantityString(
+                        R.plurals.household_label, householdMembers.size, householdMembers.size)
+            }
+
+            it?.memberThumbnail?.bytes?.let { bytes ->
+                PhotoLoader.loadMemberPhoto(bytes, member_photo, context)
             }
         })
     }
@@ -137,6 +146,23 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 }
             }
         }
+
+        memberAdapter = MemberAdapter(
+                showClinicNumber = false,
+                showPhoneNumber = true,
+                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
+                    if (memberRelation.identificationEvent != null) {
+                        memberRelation.identificationEvent?.let {
+                            navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
+                                    memberRelation.member, it))
+                        }
+                    } else {
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
+                    }
+                })
+        household_members_list.adapter = memberAdapter
+        household_members_list.layoutManager = LinearLayoutManager(activity)
+        household_members_list.isNestedScrollingEnabled = false
     }
 
     private fun launchClinicNumberDialog() {

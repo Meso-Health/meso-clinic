@@ -29,13 +29,13 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZoneOffset
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.relations.EncounterItemWithBillable
 
-import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
-import java.io.Serializable
 
 import javax.inject.Inject
 
@@ -49,19 +49,15 @@ class EncounterFragment : DaggerFragment() {
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
-    lateinit var lineItemAdapter: ArrayAdapter<LineItemPresenter>
+    lateinit var encounterItemAdapter: ArrayAdapter<EncounterItemPresenter>
 
     companion object {
-        const val PARAM_IDENTIFICATION_EVENT = "identification_event"
-        const val PARAM_LINE_ITEMS = "line_items"
+        const val PARAM_ENCOUNTER = "encounter"
 
-        fun forIdentificationEvent(idEvent: IdentificationEvent,
-                                   lineItems: List<Pair<Billable, Int>> = emptyList()): EncounterFragment {
+        fun forEncounter(encounter: EncounterWithItemsAndForms): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
-                putSerializable(PARAM_IDENTIFICATION_EVENT, idEvent)
-                // TODO: this Serializable cast is probably broken
-                putSerializable(PARAM_LINE_ITEMS, lineItems as Serializable)
+                putSerializable(PARAM_ENCOUNTER, encounter)
             }
             return fragment
         }
@@ -75,11 +71,11 @@ class EncounterFragment : DaggerFragment() {
         billableTypeAdapter = ArrayAdapter(
                 activity, android.R.layout.simple_list_item_1, billableTypeOptions)
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
-        lineItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
+        encounterItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        val lineItemsFromArgs = arguments.getSerializable(PARAM_LINE_ITEMS) as List<Pair<Billable, Int>>?
-        observable = viewModel.getObservable(lineItemsFromArgs ?: emptyList())
+        val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
+        observable = viewModel.getObservable(encounter)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 viewState.backdatedOccurredAt?.let {
@@ -112,11 +108,11 @@ class EncounterFragment : DaggerFragment() {
                     }
                 }
 
-                viewState.lineItems.let {
+                viewState.encounter.let {
                     // ideally only do this if the line items change or alternatively could choose
                     // to only notify after both clear & add if there is a UI flash
-                    lineItemAdapter.clear()
-                    lineItemAdapter.addAll(it.map { LineItemPresenter(it.first, it.second) })
+                    encounterItemAdapter.clear()
+                    encounterItemAdapter.addAll(it.encounterItems.map { EncounterItemPresenter(it) })
                 }
             }
         })
@@ -128,9 +124,6 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val identificationEvent =
-                arguments.getSerializable(PARAM_IDENTIFICATION_EVENT) as IdentificationEvent
-
         type_spinner.adapter = billableTypeAdapter
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -182,11 +175,12 @@ class EncounterFragment : DaggerFragment() {
             }
         })
 
-        line_items_list.adapter = lineItemAdapter
+        line_items_list.adapter = encounterItemAdapter
 
         add_billable_prompt.setOnClickListener {
-            navigationManager.goTo(AddNewBillableFragment.forIdentificationEvent(
-                    identificationEvent, viewModel.currentLineItems()))
+            viewModel.currentEncounter()?.let {
+                navigationManager.goTo(AddNewBillableFragment.forEncounter(it))
+            }
         }
 
         backdate_encounter.setOnClickListener {
@@ -194,13 +188,9 @@ class EncounterFragment : DaggerFragment() {
         }
 
         save_button.setOnClickListener {
-            val encounterWithItemAndForms =
-                    viewModel.buildEncounterWithItemsAndForms(identificationEvent)
-
-            if (encounterWithItemAndForms == null) {
-                // TODO: do not allow submitting without any encounter items
-            } else {
-                navigationManager.goTo(DiagnosisFragment.forEncounter(encounterWithItemAndForms))
+            viewModel.currentEncounter()?.let {
+                // TODO: should we allow proceeding with no encounter items?
+                navigationManager.goTo(DiagnosisFragment.forEncounter(it))
             }
         }
     }
@@ -258,9 +248,9 @@ class EncounterFragment : DaggerFragment() {
         override fun toString(): String = billable?.name ?: "Select..."
     }
 
-    data class LineItemPresenter(val billable: Billable, val quantity: Int) {
+    data class EncounterItemPresenter(val encounterItem: EncounterItemWithBillable) {
         override fun toString(): String {
-            return "${billable.name} - $quantity"
+            return "${encounterItem.billable.name} - ${encounterItem.encounterItem.quantity}"
         }
     }
 }

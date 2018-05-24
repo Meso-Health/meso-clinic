@@ -6,19 +6,18 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients_label
 import kotlinx.android.synthetic.main.fragment_current_patients.identification_button
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
-
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -26,7 +25,6 @@ import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
-
 import javax.inject.Inject
 
 class CurrentPatientsFragment : DaggerFragment() {
@@ -37,6 +35,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var logger: Logger
 
     lateinit var viewModel: CurrentPatientsViewModel
+    lateinit var memberAdapter: MemberAdapter
 
     companion object {
         const val SCAN_CARD_INTENT = 1
@@ -52,10 +51,9 @@ class CurrentPatientsFragment : DaggerFragment() {
                 if (checkedInMembers.isEmpty()) {
                     current_patients_label.visibility = View.GONE
                 } else {
+                    memberAdapter.setMembers(checkedInMembers)
                     current_patients_label.text = activity.resources.getQuantityString(
                             R.plurals.current_patients_label, checkedInMembers.size, checkedInMembers.size)
-
-                    current_patients.adapter = MemberAdapter(context, checkedInMembers, true)
                 }
             }
         })
@@ -68,22 +66,24 @@ class CurrentPatientsFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-
-        current_patients.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
-            val memberRelation = parent.getItemAtPosition(position) as MemberWithIdEventAndThumbnailPhoto
-            if (memberRelation.identificationEvent != null) {
-                memberRelation.identificationEvent?.let {
-                    navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
-                            memberRelation.member, it))
-                }
-            } else {
-                // members on the CurrentPatientsFragment shoud always be checked-in, so lor
-                // an error if they do not have a corresponding open IdentificationEvent
-                logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
-                        "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
-            }
-        }
+        memberAdapter = MemberAdapter(
+                showClinicNumber = true,
+                showPhoneNumber = false,
+                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
+                    if (memberRelation.identificationEvent != null) {
+                        memberRelation.identificationEvent?.let {
+                            navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
+                                    memberRelation.member, it))
+                        }
+                    } else {
+                        logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
+                                "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
+                    }
+                })
+        current_patients.adapter = memberAdapter
+        current_patients.layoutManager = LinearLayoutManager(activity)
+        current_patients.isNestedScrollingEnabled = false
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
@@ -127,7 +127,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                 // TODO: handle error
             }, {
                 // TODO: this code path technically should not happen...
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
+                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
             })
         }
         error?.let {

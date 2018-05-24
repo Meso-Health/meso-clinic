@@ -26,7 +26,7 @@
         android:theme="@style/LargeLabel"
         android:visibility="gone" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/member_search_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

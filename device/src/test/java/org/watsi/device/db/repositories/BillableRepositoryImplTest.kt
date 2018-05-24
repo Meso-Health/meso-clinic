@@ -90,4 +90,12 @@ class BillableRepositoryImplTest {
         verify(mockDao).upsert(listOf(fetchedModel))
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())
     }
+
+    @Test
+    fun opdDefaults() {
+        val defaultBillable = BillableModelFactory.build()
+        whenever(mockDao.opdDefaults()).thenReturn(Single.just(listOf(defaultBillable)))
+
+        repository.opdDefaults().test().assertValue(listOf(defaultBillable.toBillable()))
+    }
 }

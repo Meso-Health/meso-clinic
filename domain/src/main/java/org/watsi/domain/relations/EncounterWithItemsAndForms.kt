@@ -6,4 +6,7 @@ import java.io.Serializable
 
 data class EncounterWithItemsAndForms(val encounter: Encounter,
                                       val encounterItems: List<EncounterItemWithBillable>,
-                                      val encounterForms: List<EncounterForm>) : Serializable
+                                      val encounterForms: List<EncounterForm>) : Serializable {
+
+    fun price(): Int = encounterItems.map { it.price() }.sum()
+}

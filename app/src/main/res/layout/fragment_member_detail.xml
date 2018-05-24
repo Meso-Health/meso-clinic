@@ -119,12 +119,15 @@
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
         android:layout_marginRight="@dimen/fragment_horizontal_margin" />
 
-    <ListView
-        android:id="@+id/household_members"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/household_members_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/space24"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
         android:layout_marginLeft="@dimen/fragment_horizontal_margin"
         android:layout_marginRight="@dimen/fragment_horizontal_margin"
-        android:divider="@color/transparent" />
+        android:scrollbars="vertical" />
 
 </LinearLayout>

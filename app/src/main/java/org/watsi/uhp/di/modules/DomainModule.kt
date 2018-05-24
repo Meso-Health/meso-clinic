@@ -2,6 +2,7 @@ package org.watsi.uhp.di.modules
 
 import dagger.Module
 import dagger.Provides
+import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
@@ -11,6 +12,7 @@ import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
+import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
@@ -82,6 +84,11 @@ class DomainModule {
     @Provides
     fun provideLoadMemberUseCase(memberRepository: MemberRepository): LoadMemberUseCase {
         return LoadMemberUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideLoadDefaultOpdBillablesUseCase(billableRepository: BillableRepository): LoadDefaultBillablesUseCase {
+        return LoadDefaultBillablesUseCase(billableRepository)
     }
 
     @Provides

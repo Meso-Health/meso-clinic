@@ -17,7 +17,7 @@ interface MemberRepository {
     fun findByCardId(cardId: String): Maybe<Member>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
-    fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithThumbnail>>
+    fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun save(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
     fun downloadPhotos(): Completable

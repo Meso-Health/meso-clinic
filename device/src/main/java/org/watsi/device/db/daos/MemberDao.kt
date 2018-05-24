@@ -62,7 +62,7 @@ interface MemberDao {
 
     @Transaction
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id != :memberId")
-    fun remainingHouseholdMembers(memberId: UUID, householdId: UUID): Flowable<List<MemberWithThumbnailModel>>
+    fun remainingHouseholdMembers(memberId: UUID, householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     fun needPhotoDownload(): Single<List<MemberModel>>

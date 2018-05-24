@@ -4,12 +4,9 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
-import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
-import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.BillableRepository
@@ -17,8 +14,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class EncounterViewModel @Inject constructor(
-        billableRepository: BillableRepository,
-        private val clock: Clock
+        billableRepository: BillableRepository
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -35,14 +31,15 @@ class EncounterViewModel @Inject constructor(
         })
     }
 
-    fun getObservable(initialLineItems: List<Pair<Billable, Int>>): LiveData<ViewState> {
-        observable.value = ViewState(lineItems = initialLineItems)
+    fun getObservable(encounter: EncounterWithItemsAndForms): LiveData<ViewState> {
+        observable.value = ViewState(encounter = encounter)
         return observable
     }
 
     fun selectType(type: Billable.Type?) {
         val selectableBillables = if (type != null && type != Billable.Type.DRUG) {
-            val currentBillables = observable.value?.lineItems?.map { it.first } ?: emptyList()
+            val encounterItems = currentEncounter()?.encounterItems
+            val currentBillables = encounterItems?.map { it.billable } ?: emptyList()
             billablesByType[type]!!.filter {  it -> !currentBillables.contains(it) }.sortedBy { it.name }
         } else {
             emptyList()
@@ -52,12 +49,16 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun addItem(billable: Billable) {
-        val updatedList = observable.value?.lineItems?.toMutableList() ?: mutableListOf()
-        updatedList.add(Pair(billable, 1))
-        observable.value = observable.value?.copy(lineItems = updatedList,
-                                                  type = null,
-                                                  selectableBillables = emptyList(),
-                                                  searchResults = emptyList())
+        currentEncounter()?.let {
+            val updatedEncounterItems = it.encounterItems.toMutableList()
+            val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
+            updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
+            val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
+            observable.value = observable.value?.copy(encounter = updatedEncounter,
+                                                      type = null,
+                                                      selectableBillables = emptyList(),
+                                                      searchResults = emptyList())
+        }
     }
 
     fun updateQuery(query: String) {
@@ -78,28 +79,13 @@ class EncounterViewModel @Inject constructor(
         observable.value = observable.value?.copy(backdatedOccurredAt = instant)
     }
 
-    fun buildEncounterWithItemsAndForms(identificationEvent: IdentificationEvent): EncounterWithItemsAndForms? {
-        val encounter = Encounter(id = UUID.randomUUID(),
-                memberId = identificationEvent.memberId,
-                identificationEventId = identificationEvent.id,
-                occurredAt = clock.instant(),
-                backdatedOccurredAt = observable.value?.backdatedOccurredAt)
-        return observable.value?.lineItems?.map {
-            val encounterItem = EncounterItem(
-                    UUID.randomUUID(), encounter.id, it.first.id, it.second)
-            EncounterItemWithBillable(encounterItem, it.first)
-        }?.let { encounterItems ->
-            EncounterWithItemsAndForms(encounter, encounterItems, emptyList())
-        }
-    }
-
-    fun currentLineItems(): List<Pair<Billable, Int>> {
-        return observable.value?.lineItems ?: emptyList()
+    fun currentEncounter(): EncounterWithItemsAndForms? {
+        return observable.value?.encounter
     }
 
     data class ViewState(val type: Billable.Type? = null,
                          val selectableBillables: List<Billable> = emptyList(),
                          val backdatedOccurredAt: Instant? = null,
-                         val lineItems: List<Pair<Billable, Int>>,
+                         val encounter: EncounterWithItemsAndForms,
                          val searchResults: List<Billable> = emptyList())
 }

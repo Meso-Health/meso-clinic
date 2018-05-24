@@ -51,4 +51,13 @@ class BillableDaoTest : DaoBaseTest() {
 
         billableDao.unsynced().test().assertValue(listOf(unsyncedBillable))
     }
+
+    @Test
+    fun opdDefaults() {
+        val consultation = BillableModelFactory.create(billableDao, name = "Consultation")
+        val medicalForm = BillableModelFactory.create(billableDao, name = "Medical Form")
+        BillableModelFactory.create(billableDao)
+
+        billableDao.opdDefaults().test().assertValue(listOf(consultation, medicalForm))
+    }
 }
