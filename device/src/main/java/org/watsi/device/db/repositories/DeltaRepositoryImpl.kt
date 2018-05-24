@@ -15,6 +15,7 @@ class DeltaRepositoryImpl(
         private val deltaDao: DeltaDao,
         private val clock: Clock
 ) : DeltaRepository {
+
     override fun syncStatus(): Flowable<DeltaRepository.SyncStatus> {
         val syncFlowables = listOf(
                 deltaDao.unsyncedCount(Delta.ModelName.MEMBER, Delta.Action.ADD),
