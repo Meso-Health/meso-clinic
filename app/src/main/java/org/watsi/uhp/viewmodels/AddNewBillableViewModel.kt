@@ -3,13 +3,15 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
 
 class AddNewBillableViewModel @Inject constructor(
-        billableRepository: BillableRepository
+        billableRepository: BillableRepository,
+        private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -19,7 +21,7 @@ class AddNewBillableViewModel @Inject constructor(
         billableRepository.uniqueCompositions().subscribe({
             observable.postValue(observable.value?.copy(compositions = it))
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
     }
 

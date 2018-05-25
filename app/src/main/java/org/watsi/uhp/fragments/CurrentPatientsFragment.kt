@@ -124,9 +124,9 @@ class CurrentPatientsFragment : DaggerFragment() {
             viewModel.getIdentificationEvent(it).subscribe({idEvent ->
                 navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(it, idEvent))
             }, {
-                // TODO: handle error
+                logger.error(it)
             }, {
-                // TODO: this code path technically should not happen...
+                logger.error("Member without open check-in on CurrentPatientsFragment")
                 navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
             })
         }

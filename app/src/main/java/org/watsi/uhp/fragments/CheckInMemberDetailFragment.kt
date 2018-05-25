@@ -168,8 +168,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                     createIdentificationEvent(dialog as AlertDialog).subscribe({
                         navigationManager.popTo(CurrentPatientsFragment())
                     }, {
-                        // TODO: handle error
-                        logger.error("Error launching clinic number dialog")
+                        logger.error(it)
                     })
                 }
 

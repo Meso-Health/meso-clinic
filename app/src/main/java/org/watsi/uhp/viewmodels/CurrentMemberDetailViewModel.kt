@@ -41,7 +41,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
             defaultBillables.clear()
             defaultBillables.addAll(it)
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
 
         val flowables = listOf(

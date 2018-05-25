@@ -4,13 +4,15 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
 
 class SearchMemberViewModel @Inject constructor (
-        private val memberRepository: MemberRepository
+        private val memberRepository: MemberRepository,
+        private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<List<MemberWithIdEventAndThumbnailPhoto>>()
@@ -24,7 +26,7 @@ class SearchMemberViewModel @Inject constructor (
             members = it
             memberNames = it.map { it.name }.distinct()
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
     }
 
@@ -36,7 +38,7 @@ class SearchMemberViewModel @Inject constructor (
                 memberRepository.byIds(it.map { it.id }).subscribe({
                     observable.postValue(it)
                 }, {
-                    // TODO: handle error
+                    logger.error(it)
                 })
             }
         } else {
@@ -46,7 +48,7 @@ class SearchMemberViewModel @Inject constructor (
                 memberRepository.byIds(it.map { it.id }).subscribe({
                     observable.postValue(it)
                 }, {
-                    // TODO: handle error
+                    logger.error(it)
                 })
             }
         }

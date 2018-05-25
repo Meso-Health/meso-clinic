@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.threeten.bp.Instant
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
@@ -14,7 +15,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 class EncounterViewModel @Inject constructor(
-        billableRepository: BillableRepository
+        billableRepository: BillableRepository,
+        private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -24,10 +26,13 @@ class EncounterViewModel @Inject constructor(
     init {
         billableRepository.all().subscribe({
             billablesByType = it.groupBy { it.type }
-            // TOOD: handle no billables case?
-            uniqueDrugNames = billablesByType[Billable.Type.DRUG]!!.map { it.name }.distinct()
+            if (billablesByType[Billable.Type.DRUG]?.isEmpty() == true) {
+                logger.warning("No Billables of type Drug loaded")
+            } else {
+                uniqueDrugNames = billablesByType[Billable.Type.DRUG]!!.map { it.name }.distinct()
+            }
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
     }
 

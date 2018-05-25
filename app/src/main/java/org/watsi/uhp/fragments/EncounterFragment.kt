@@ -28,6 +28,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZoneOffset
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterItemWithBillable
 

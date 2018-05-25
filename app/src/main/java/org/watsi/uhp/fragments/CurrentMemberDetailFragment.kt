@@ -150,7 +150,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 viewModel.dismiss(identificationEvent).subscribe({
                     navigationManager.popTo(CurrentPatientsFragment())
                 }, {
-                    // TODO: handle error
+                    logger.error(it)
                 })
             }
             else -> super.onOptionsItemSelected(item)
