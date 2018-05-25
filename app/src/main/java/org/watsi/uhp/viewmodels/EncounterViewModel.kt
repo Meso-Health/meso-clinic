@@ -81,7 +81,12 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun updateBackdatedOccurredAt(instant: Instant) {
-        observable.value = observable.value?.copy(backdatedOccurredAt = instant)
+        currentEncounter()?.let {
+            val updatedEncounter = it.encounter.copy(occurredAt = instant,
+                                                     backdatedOccurredAt = true)
+            observable.value = observable.value?.copy(
+                    encounter = it.copy(encounter = updatedEncounter))
+        }
     }
 
     fun currentEncounter(): EncounterWithItemsAndForms? {
@@ -90,7 +95,6 @@ class EncounterViewModel @Inject constructor(
 
     data class ViewState(val type: Billable.Type? = null,
                          val selectableBillables: List<Billable> = emptyList(),
-                         val backdatedOccurredAt: Instant? = null,
                          val encounter: EncounterWithItemsAndForms,
                          val searchResults: List<Billable> = emptyList())
 }

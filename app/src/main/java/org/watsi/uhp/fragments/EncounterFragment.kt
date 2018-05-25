@@ -79,9 +79,6 @@ class EncounterFragment : DaggerFragment() {
         observable = viewModel.getObservable(encounter)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                viewState.backdatedOccurredAt?.let {
-                    backdate_encounter.text = it.toString() // TODO: format
-                }
                 if (viewState.type == null) {
                     type_spinner.setSelection(0)
                 }
@@ -110,6 +107,10 @@ class EncounterFragment : DaggerFragment() {
                 }
 
                 viewState.encounter.let {
+                    if (it.encounter.backdatedOccurredAt) {
+                        backdate_encounter.text = it.encounter.occurredAt.toString()
+                    }
+
                     // ideally only do this if the line items change or alternatively could choose
                     // to only notify after both clear & add if there is a UI flash
                     encounterItemAdapter.clear()
@@ -212,11 +213,13 @@ class EncounterFragment : DaggerFragment() {
 
         datePicker.maxDate = clock.instant().toEpochMilli()
 
-        observable.value?.backdatedOccurredAt?.let {
-            val ldt = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
-            datePicker.updateDate(ldt.year, ldt.monthValue, ldt.dayOfMonth)
-            timePicker.hour = ldt.hour
-            timePicker.minute = ldt.minute
+        viewModel.currentEncounter()?.encounter?.let {
+            if  (it.backdatedOccurredAt) {
+                val ldt = LocalDateTime.ofInstant(it.occurredAt, ZoneId.systemDefault())
+                datePicker.updateDate(ldt.year, ldt.monthValue, ldt.dayOfMonth)
+                timePicker.hour = ldt.hour
+                timePicker.minute = ldt.minute
+            }
         }
 
         val builder = AlertDialog.Builder(context)

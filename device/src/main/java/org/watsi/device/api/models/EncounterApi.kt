@@ -18,7 +18,7 @@ data class EncounterApi(
         @SerializedName("member_id") val memberId: UUID,
         @SerializedName("identification_event_id") val identificationEventId: UUID,
         @SerializedName("occurred_at") val occurredAt: Instant,
-        @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Instant?,
+        @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Boolean,
         @SerializedName("copayment_paid") val copaymentPaid: Boolean = false,
         @SerializedName("diagnosis_ids") val diagnoses: JsonArray,
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>

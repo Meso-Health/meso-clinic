@@ -10,7 +10,7 @@ object EncounterFactory {
               memberId: UUID = UUID.randomUUID(),
               identificationEventId: UUID = UUID.randomUUID(),
               occurredAt: Instant = Instant.now(),
-              backdatedOccurredAt: Instant? = null,
+              backdatedOccurredAt: Boolean = false,
               copaymentPaid: Boolean = true,
               diagnoses: List<Int> = emptyList()) : Encounter {
         return Encounter(id = id,
