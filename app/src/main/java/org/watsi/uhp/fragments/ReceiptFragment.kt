@@ -1,6 +1,7 @@
 package org.watsi.uhp.fragments
 
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -9,13 +10,24 @@ import android.view.ViewGroup
 import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_receipt.diagnoses_label
+import kotlinx.android.synthetic.main.fragment_receipt.diagnoses_list
+import kotlinx.android.synthetic.main.fragment_receipt.encounter_items_label
+import kotlinx.android.synthetic.main.fragment_receipt.encounter_items_list
+import kotlinx.android.synthetic.main.fragment_receipt.forms_label
 import kotlinx.android.synthetic.main.fragment_receipt.save_button
+import kotlinx.android.synthetic.main.fragment_receipt.total_price
 import org.watsi.device.managers.Logger
 
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.uhp.R
+import org.watsi.uhp.R.plurals.diagnosis_count
+import org.watsi.uhp.R.plurals.forms_attached_label
+import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.encounter_submitted
+import org.watsi.uhp.R.string.price_with_currency
+import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.managers.NavigationManager
 
 import javax.inject.Inject
@@ -53,7 +65,18 @@ class ReceiptFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        // TODO: populate view
+        diagnoses_label.text = resources.getQuantityString(
+                diagnosis_count, encounter.diagnoses.size, encounter.diagnoses.size)
+        encounter_items_label.text = resources.getQuantityString(
+                receipt_line_item_count, encounter.encounterItems.size, encounter.encounterItems.size)
+        total_price.text = getString(price_with_currency, encounter.price())
+        forms_label.text = resources.getQuantityString(
+                forms_attached_label, encounter.encounterForms.size, encounter.encounterForms.size)
+
+        diagnoses_list.text = encounter.diagnoses.map { it.description }.joinToString(", ")
+
+        encounter_items_list.adapter = EncounterItemAdapter(encounter.encounterItems)
+        encounter_items_list.layoutManager = LinearLayoutManager(activity)
 
         save_button.setOnClickListener {
             submitEncounter(true)

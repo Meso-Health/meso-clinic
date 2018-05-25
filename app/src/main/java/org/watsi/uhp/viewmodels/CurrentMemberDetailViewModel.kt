@@ -75,7 +75,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
             EncounterItemWithBillable(encounterItem, it)
         }
         val encounter = Encounter(encounterId, idEvent.memberId, idEvent.id, Instant.now(clock))
-        return EncounterWithItemsAndForms(encounter, defaultEncounterItems, emptyList())
+        return EncounterWithItemsAndForms(encounter, defaultEncounterItems, emptyList(), emptyList())
     }
 
     data class ViewState(val member: Member?,

@@ -42,7 +42,8 @@
     <string name="photo_btn_label">Take photo</string>
     <string name="photo_description">Photo</string>
     <string name="cancel">Cancel</string>
-    <string name="price_with_currency">%1$s UGX</string>
+    <string name="price_with_currency">%1$d UGX</string>
+    <string name="total">Total</string>
 
     <!-- Form -->
     <string name="photo_field_label">Photo</string>
