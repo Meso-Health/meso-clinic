@@ -11,6 +11,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterWithItemsFactory
@@ -35,31 +36,59 @@ class SyncEncounterUseCaseTest {
     @Test
     fun execute() {
         val syncedIdEvent = IdentificationEventFactory.build()
-        val shouldBeSyncedEncounter = EncounterFactory.build(identificationEventId = syncedIdEvent.id)
-        val shouldBeSyncedEncounterDelta = DeltaFactory.build(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.ENCOUNTER,
-                modelId = shouldBeSyncedEncounter.id,
-                synced = false
-        )
-
         val unsyncedIdEvent = IdentificationEventFactory.build()
-        val shouldNotBeSyncedEncounter = EncounterFactory.build(identificationEventId = unsyncedIdEvent.id)
-        val shouldNotBeSyncedEncounterDelta = DeltaFactory.build(
+        val syncedBillable = BillableFactory.build()
+        val unsyncedBillable = BillableFactory.build()
+        val unsyncedEncounter1 = EncounterWithItemsFactory.buildWithBillable(
+                EncounterFactory.build(identificationEventId = syncedIdEvent.id),
+                syncedBillable
+        )
+        val unsyncedEncounter2 = EncounterWithItemsFactory.buildWithBillable(
+                EncounterFactory.build(identificationEventId = unsyncedIdEvent.id),
+                syncedBillable
+        )
+        val unsyncedEncounter3 = EncounterWithItemsFactory.buildWithBillable(
+                EncounterFactory.build(identificationEventId = syncedIdEvent.id),
+                unsyncedBillable
+        )
+        val unsyncedEncounterDelta1 = DeltaFactory.build(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.ENCOUNTER,
-                modelId = shouldNotBeSyncedEncounter.id,
+                modelId = unsyncedEncounter1.encounter.id,
                 synced = false
         )
+        val unsyncedEncounterDelta2 = DeltaFactory.build(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.ENCOUNTER,
+                modelId = unsyncedEncounter2.encounter.id,
+                synced = false
+        )
+        val unsyncedEncounterDelta3 = DeltaFactory.build(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.ENCOUNTER,
+                modelId = unsyncedEncounter3.encounter.id,
+                synced = false
+        )
+        val shouldBeSyncedEncounterDelta = unsyncedEncounterDelta1
 
+        whenever(deltaRepo.unsynced(Delta.ModelName.ENCOUNTER))
+                .thenReturn(Single.just(listOf(
+                        unsyncedEncounterDelta1,
+                        unsyncedEncounterDelta2,
+                        unsyncedEncounterDelta3
+                )))
         whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.IDENTIFICATION_EVENT, Delta.Action.ADD))
                 .thenReturn(Single.just(listOf(unsyncedIdEvent.id)))
-        whenever(deltaRepo.unsynced(Delta.ModelName.ENCOUNTER))
-                .thenReturn(Single.just(listOf(shouldBeSyncedEncounterDelta, shouldNotBeSyncedEncounterDelta)))
-        whenever(encounterRepo.find(shouldBeSyncedEncounter.id))
-                .thenReturn(Single.just(EncounterWithItemsFactory.build(encounter = shouldBeSyncedEncounter)))
-        whenever(encounterRepo.find(shouldNotBeSyncedEncounter.id))
-                .thenReturn(Single.just(EncounterWithItemsFactory.build(encounter = shouldNotBeSyncedEncounter)))
+        whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.BILLABLE, Delta.Action.ADD))
+                .thenReturn(Single.just(listOf(unsyncedBillable.id)))
+
+        whenever(encounterRepo.find(unsyncedEncounter1.encounter.id))
+                .thenReturn(Single.just(unsyncedEncounter1))
+        whenever(encounterRepo.find(unsyncedEncounter2.encounter.id))
+                .thenReturn(Single.just(unsyncedEncounter2))
+        whenever(encounterRepo.find(unsyncedEncounter3.encounter.id))
+                .thenReturn(Single.just(unsyncedEncounter3))
+
         whenever(encounterRepo.sync(shouldBeSyncedEncounterDelta))
                 .thenReturn(Completable.complete())
         whenever(deltaRepo.markAsSynced(listOf(shouldBeSyncedEncounterDelta)))

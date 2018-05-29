@@ -3,6 +3,8 @@ package org.watsi.device.db.repositories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -18,9 +20,13 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.BillableApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.factories.BillableModelFactory
+import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.AuthenticationToken
+import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
+import org.watsi.domain.factories.UserFactory
 
 @RunWith(MockitoJUnitRunner::class)
 class BillableRepositoryImplTest {
@@ -31,6 +37,14 @@ class BillableRepositoryImplTest {
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: BillableRepositoryImpl
+
+    val billableModel = BillableModelFactory.build(clock = clock)
+    val deltaModel = DeltaModelFactory.build(
+            action = Delta.Action.ADD,
+            modelName = Delta.ModelName.BILLABLE,
+            modelId = billableModel.id,
+            synced = false
+    )
 
     @Before
     fun setup() {
@@ -49,11 +63,9 @@ class BillableRepositoryImplTest {
 
     @Test
     fun create() {
-        val model = BillableModelFactory.build(clock = clock)
+        repository.create(billableModel.toBillable(), deltaModel.toDelta()).test().assertComplete()
 
-        repository.create(model.toBillable()).test().assertComplete()
-
-        verify(mockDao).insert(model)
+        verify(mockDao).insertWithDelta(billableModel, deltaModel)
     }
 
     @Test
@@ -97,5 +109,20 @@ class BillableRepositoryImplTest {
         whenever(mockDao.opdDefaults()).thenReturn(Single.just(listOf(defaultBillable)))
 
         repository.opdDefaults().test().assertValue(listOf(defaultBillable.toBillable()))
+    }
+
+    @Test
+    fun sync() {
+        val user = UserFactory.build()
+        val token = AuthenticationToken("token", clock.instant(), user)
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockDao.find(billableModel.id))
+                .thenReturn(Maybe.just(billableModel))
+        whenever(mockApi.postBillable(token.getHeaderString(), user.providerId,
+                BillableApi(billableModel.toBillable())))
+                .thenReturn(Completable.complete())
+
+        repository.sync(deltaModel.toDelta()).test().assertComplete()
     }
 }
