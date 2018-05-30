@@ -21,6 +21,7 @@ object MemberModelFactory {
               cardId: String? = null,
               name: String = "Akiiki Monday",
               gender: Member.Gender = Member.Gender.F,
+              language: String? = null,
               birthdate: LocalDate = LocalDate.now(),
               birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
               fingerprintsGuid: UUID? = null,
@@ -38,11 +39,11 @@ object MemberModelFactory {
                            cardId = cardId,
                            name = name,
                            gender = gender,
+                           language = language,
                            birthdate = birthdate,
                            birthdateAccuracy = birthdateAccuracy,
                            fingerprintsGuid = fingerprintsGuid,
-                           phoneNumber = phoneNumber
-        )
+                           phoneNumber = phoneNumber)
     }
 
     fun create(memberDao: MemberDao,
@@ -57,6 +58,7 @@ object MemberModelFactory {
                cardId: String? = null,
                name: String = "Akiiki Monday",
                gender: Member.Gender = Member.Gender.F,
+               language: String? = null,
                birthdate: LocalDate = LocalDate.now(),
                birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
                fingerprintsGuid: UUID? = null,
@@ -73,6 +75,7 @@ object MemberModelFactory {
                           cardId = cardId,
                           name = name,
                           gender = gender,
+                          language = language,
                           birthdate = birthdate,
                           birthdateAccuracy = birthdateAccuracy,
                           fingerprintsGuid = fingerprintsGuid,

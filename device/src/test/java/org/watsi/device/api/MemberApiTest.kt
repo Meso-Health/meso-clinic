@@ -17,6 +17,8 @@ class MemberApiTest {
             cardId = member.cardId,
             name = member.name,
             gender = member.gender,
+            language = member.language,
+            otherLanguage = null,
             birthdate = member.birthdate,
             birthdateAccuracy = member.birthdateAccuracy,
             fingerprintsGuid = member.fingerprintsGuid,

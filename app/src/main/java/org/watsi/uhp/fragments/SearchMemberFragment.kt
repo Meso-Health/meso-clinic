@@ -26,6 +26,7 @@ class SearchMemberFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var keyboardManager: KeyboardManager
 
     lateinit var viewModel: SearchMemberViewModel
     lateinit var memberAdapter: MemberAdapter
@@ -51,7 +52,7 @@ class SearchMemberFragment : DaggerFragment() {
             if (hasFocus) {
                 // for SearchViews, in order to properly show the search keyboard, we need to
                 // use findFocus() to grab and pass a view *inside* of the SearchView
-                KeyboardManager.showKeyboard(searchView.findFocus(), activity)
+                keyboardManager.showKeyboard(searchView.findFocus())
             }
         }
 
@@ -60,7 +61,7 @@ class SearchMemberFragment : DaggerFragment() {
 
             override fun onQueryTextSubmit(query: String): Boolean {
                 viewModel.updateQuery(query)
-                KeyboardManager.hideKeyboard(member_search, activity)
+                keyboardManager.hideKeyboard(member_search)
                 return true
             }
         })

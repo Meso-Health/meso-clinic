@@ -18,6 +18,8 @@
 
     <dimen name="cornerRadius">4dp</dimen>
 
+    <dimen name="editMemberPhotoPlaceholderPadding">30dp</dimen>
+
     <!-- Photo dimensions scale -->
     <dimen name="thumbnailHeight28">28dp</dimen>
     <dimen name="thumbnailWidth28">28dp</dimen>

@@ -26,6 +26,8 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                      val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
                      @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
                      @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
+                     @SerializedName(LANGUAGE_FIELD) val language: String?,
+                     @SerializedName(OTHER_LANGUAGE_FIELD) val otherLanguage: String?,
                      @Expose(serialize = false)
                      @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?) {
 
@@ -40,6 +42,8 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                  birthdateAccuracy = member.birthdateAccuracy,
                  fingerprintsGuid = member.fingerprintsGuid,
                  phoneNumber = member.phoneNumber,
+                 language = preferredLanguage(member),
+                 otherLanguage = preferredLanguageOther(member),
                  photoUrl = member.photoUrl
             )
 
@@ -64,6 +68,7 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                       birthdateAccuracy = birthdateAccuracy,
                       fingerprintsGuid = fingerprintsGuid,
                       phoneNumber = phoneNumber,
+                      language = language,
                       photoId = persistedMember?.photoId,
                       thumbnailPhotoId = thumbnailPhotoId,
                       photoUrl = convertedPhotoUrl)
@@ -80,6 +85,8 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
         const val BIRTHDATE_ACCURACY_FIELD = "birthdate_accuracy"
         const val FINGERPRINTS_GUID_FIELD = "fingerprints_guid"
         const val PHONE_NUMBER_FIELD = "phone_number"
+        const val LANGUAGE_FIELD = "preferred_language"
+        const val OTHER_LANGUAGE_FIELD = "preferred_language_other"
         const val PHOTO_URL_FIELD = "photo_url"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
@@ -97,6 +104,24 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                 }
             }
             return patchParams
+        }
+
+        private fun preferredLanguage(member: Member): String? {
+            return if (Member.COMMON_LANGUAGES.contains(member.language)) {
+                member.language
+            } else if (member.language != null) {
+                Member.LANGUAGE_CHOICE_OTHER
+            } else {
+                null
+            }?.toLowerCase()
+        }
+
+        private fun preferredLanguageOther(member: Member): String? {
+            return if (Member.COMMON_LANGUAGES.contains(member.language)) {
+                null
+            } else {
+                member.language?.toLowerCase()
+            }
         }
     }
 }

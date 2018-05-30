@@ -72,14 +72,14 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 if (member.isAbsentee()) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
-                        navigationManager.goTo(CompleteEnrollmentFragment.forMember(member.id))
+                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
                     }
                 }
 
                 if (member.cardId == null) {
                     replace_card_notification.visibility = View.VISIBLE
                     replace_card_notification.setOnClickListener {
-                        navigationManager.goTo(MemberEditFragment.forMember(member))
+                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
                     }
                 }
 
@@ -141,7 +141,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_member_edit -> {
-                navigationManager.goTo(MemberEditFragment.forMember(member))
+                navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }
             R.id.menu_enroll_newborn -> {
                 navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))

@@ -61,6 +61,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var fingerprintManager: FingerprintManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var keyboardManager: KeyboardManager
 
     lateinit var viewModel: CheckInMemberDetailViewModel
     lateinit var member: Member
@@ -92,14 +93,14 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 if (member.isAbsentee()) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
-                        navigationManager.goTo(CompleteEnrollmentFragment.forMember(member.id))
+                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
                     }
                 }
 
                 if (member.cardId == null) {
                     replace_card_notification.visibility = View.VISIBLE
                     replace_card_notification.setOnClickListener {
-                        navigationManager.goTo(MemberEditFragment.forMember(member))
+                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
                     }
                 }
 
@@ -176,7 +177,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
         dialog.setOnShowListener {
             val clinicNumberField = dialog.findViewById<EditText>(R.id.clinic_number_field)
-            KeyboardManager.focusAndForceShowKeyboard(clinicNumberField, context)
+            clinicNumberField?.let { keyboardManager.showKeyboard(it) }
         }
 
         dialog.show()
@@ -275,7 +276,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_member_edit -> {
-                navigationManager.goTo(MemberEditFragment.forMember(member))
+                navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }
             R.id.menu_enroll_newborn -> {
                 val member = arguments?.getSerializable(PARAM_MEMBER) as Member
