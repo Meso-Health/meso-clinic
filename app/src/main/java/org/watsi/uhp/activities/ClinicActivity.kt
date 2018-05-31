@@ -17,10 +17,11 @@ import org.watsi.uhp.fragments.CurrentPatientsFragment
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.DaggerJobService
-import org.watsi.uhp.services.DeleteFetchedPhotoService
-import org.watsi.uhp.services.DownloadMemberPhotosService
+import org.watsi.uhp.services.DeleteFetchedPhotosService
+import org.watsi.uhp.services.FetchMemberPhotosService
 import org.watsi.uhp.services.FetchService
-import org.watsi.uhp.services.SyncService
+import org.watsi.uhp.services.SyncDataService
+import org.watsi.uhp.services.SyncPhotosService
 import javax.inject.Inject
 
 class ClinicActivity : DaggerAppCompatActivity() {
@@ -30,9 +31,10 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     companion object {
         private val FETCH_SERVICE_JOB_ID = 0
-        private val SYNC_SERVICE_JOB_ID = 1
-        private val DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID = 2
-        private val DELETE_PHOTOS_SERVICE_JOB_ID = 3
+        private val FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID = 1
+        private val DELETE_FETCHED_PHOTOS_SERVICE_JOB_ID = 2
+        private val SYNC_DATA_SERVICE_JOB_ID = 3
+        private val SYNC_PHOTOS_SERVICE_JOB_ID = 4
         val requiredPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.INTERNET)
     }
 
@@ -83,13 +85,10 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     private fun startServices() {
         DaggerJobService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
-        DaggerJobService.schedule(SYNC_SERVICE_JOB_ID, this, SyncService::class.java)
-        DaggerJobService.schedule(DOWNLOAD_MEMBER_PHOTO_SERVICE_JOB_ID,
-                                  this,
-                                  DownloadMemberPhotosService::class.java)
-        DaggerJobService.schedule(DELETE_PHOTOS_SERVICE_JOB_ID,
-                                  this,
-                                  DeleteFetchedPhotoService::class.java)
+        DaggerJobService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
+        DaggerJobService.schedule(DELETE_FETCHED_PHOTOS_SERVICE_JOB_ID, this, DeleteFetchedPhotosService::class.java)
+        DaggerJobService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
+        DaggerJobService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
     }
 
     private fun setupToolbar() {

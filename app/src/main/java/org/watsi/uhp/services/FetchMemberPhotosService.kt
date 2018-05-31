@@ -4,17 +4,21 @@ import android.app.job.JobParameters
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import org.watsi.device.managers.Logger
-import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.repositories.MemberRepository
+
 import javax.inject.Inject
 
-open class DeleteFetchedPhotoService : DaggerJobService() {
+/**
+ * Service class to handle downloading member photos
+ */
+class FetchMemberPhotosService : DaggerJobService() {
 
-    @Inject lateinit var photoRepository: PhotoRepository
+    @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var logger: Logger
     private lateinit var disposable: Disposable
 
     override fun onStartJob(params: JobParameters): Boolean {
-        photoRepository.deleteSynced().subscribe(SyncObserver(params))
+        memberRepository.downloadPhotos().subscribe(SyncObserver(params))
         return true
     }
 
