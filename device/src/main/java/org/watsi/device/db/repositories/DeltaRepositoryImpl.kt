@@ -25,7 +25,7 @@ class DeltaRepositoryImpl(
                 deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER_FORM)
         )
 
-        return Flowable.zip(syncFlowables, { results ->
+        return Flowable.combineLatest(syncFlowables, { results ->
             DeltaRepository.SyncStatus(
                     results[0] as Int,
                     results[1] as Int,

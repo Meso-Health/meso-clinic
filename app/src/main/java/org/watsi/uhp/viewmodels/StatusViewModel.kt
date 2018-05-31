@@ -28,7 +28,7 @@ class StatusViewModel @Inject constructor (
         val flowables = listOf(syncStatusUseCase.execute(), fetchStatusUseCase.execute())
 
         return LiveDataReactiveStreams.fromPublisher(
-            Flowable.zip(flowables, { results ->
+            Flowable.combineLatest(flowables, { results ->
                 ViewState(results[0] as DeltaRepository.SyncStatus,
                           results[1] as Int,
                           preferencesManager.getMemberLastFetched(),
