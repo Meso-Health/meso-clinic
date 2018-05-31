@@ -33,19 +33,19 @@ class AddNewBillableViewModel @Inject constructor(
         observable.value = observable.value?.copy(type = type)
     }
 
-    fun updateName(name: String) {
-        observable.value = observable.value?.copy(name = name)
+    fun updateName(name: String?) {
+        observable.value = observable.value?.copy(name = clearEmptyString(name))
     }
 
-    fun updateComposition(composition: String) {
-        observable.value = observable.value?.copy(composition = composition)
+    fun updateComposition(composition: String?) {
+        observable.value = observable.value?.copy(composition = clearEmptyString(composition))
     }
 
-    fun updateUnit(unit: String) {
-        observable.value = observable.value?.copy(unit = unit)
+    fun updateUnit(unit: String?) {
+        observable.value = observable.value?.copy(unit = clearEmptyString(unit))
     }
 
-    fun updatePrice(price: Int) {
+    fun updatePrice(price: Int?) {
         observable.value = observable.value?.copy(price = price)
     }
 
@@ -66,6 +66,10 @@ class AddNewBillableViewModel @Inject constructor(
         } else {
             null
         }
+    }
+
+    private fun clearEmptyString(field: String?): String? {
+        return if (field != null && !field.isEmpty()) field else null
     }
 
     data class ViewState(val compositions: List<String> = emptyList(),
