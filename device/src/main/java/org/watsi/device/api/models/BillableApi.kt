@@ -10,12 +10,23 @@ data class BillableApi(val id: UUID,
                        val price: Int,
                        val name: String) {
 
+    constructor (billable: Billable) : this(
+            id = billable.id,
+            type = billable.type.toString().toLowerCase(),
+            composition = billable.composition?.toLowerCase(),
+            unit = billable.unit,
+            price = billable.price,
+            name = billable.name
+    )
+
     fun toBillable(): Billable {
-        return Billable(id = id,
-                        type = Billable.Type.valueOf(type.toUpperCase()),
-                        composition = composition,
-                        unit = unit,
-                        price = price,
-                        name = name)
+        return Billable(
+                id = id,
+                type = Billable.Type.valueOf(type.toUpperCase()),
+                composition = composition,
+                unit = unit,
+                price = price,
+                name = name
+        )
     }
 }

@@ -10,22 +10,23 @@ class SyncEncounterUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsyncedModelIds(Delta.ModelName.IDENTIFICATION_EVENT, Delta.Action.ADD).flatMapCompletable {
-            unsyncedIdEventIds ->
-            deltaRepository.unsynced(Delta.ModelName.ENCOUNTER).flatMapCompletable { encounterDeltas ->
-                Completable.concat(encounterDeltas.map { encounterDelta ->
-                    encounterRepository.find(encounterDelta.modelId).flatMapCompletable {
-                        // filter out deltas that correspond to an IdEvent that has not been synced yet
-                        if (!unsyncedIdEventIds.contains(it.encounter.identificationEventId)) {
-                            Completable.concat(listOf(
-                                    encounterRepository.sync(encounterDelta),
-                                    deltaRepository.markAsSynced(listOf(encounterDelta))
-                            ))
-                        } else {
-                            Completable.complete()
-                        }
-                    }
-                })
+        return Completable.fromAction {
+            val unsyncedEncounterDeltas = deltaRepository.unsynced(
+                    Delta.ModelName.ENCOUNTER).blockingGet()
+            val unsyncedIdEventIds = deltaRepository.unsyncedModelIds(
+                    Delta.ModelName.IDENTIFICATION_EVENT, Delta.Action.ADD).blockingGet()
+            val unsyncedBillableIds = deltaRepository.unsyncedModelIds(
+                    Delta.ModelName.BILLABLE, Delta.Action.ADD).blockingGet()
+
+            unsyncedEncounterDeltas.map { encounterDelta ->
+                val encounterWithItems = encounterRepository.find(encounterDelta.modelId).blockingGet()
+                val hasUnsyncedIdEvent = unsyncedIdEventIds.contains(encounterWithItems.encounter.identificationEventId)
+                val hasUnsyncedBillable = encounterWithItems.encounterItems.any { unsyncedBillableIds.contains(it.billableId) }
+
+                if (!hasUnsyncedIdEvent && !hasUnsyncedBillable) {
+                    encounterRepository.sync(encounterDelta).blockingGet()
+                    deltaRepository.markAsSynced(listOf(encounterDelta)).blockingGet()
+                }
             }
         }
     }

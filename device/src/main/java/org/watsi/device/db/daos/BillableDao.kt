@@ -5,8 +5,10 @@ import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
+import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
+import org.watsi.device.db.models.DeltaModel
 import java.util.UUID
 
 @Dao
@@ -14,6 +16,9 @@ interface BillableDao {
 
     @Insert
     fun insert(model: BillableModel)
+
+    @Insert
+    fun insertWithDelta(model: BillableModel, delta: DeltaModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(models: List<BillableModel>)
@@ -23,6 +28,9 @@ interface BillableDao {
 
     @Query("SELECT * FROM billables")
     fun all(): Single<List<BillableModel>>
+
+    @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
+    fun find(id: UUID): Maybe<BillableModel>
 
     @Query("SELECT DISTINCT(composition) FROM billables WHERE composition IS NOT NULL")
     fun distinctCompositions(): Single<List<String>>

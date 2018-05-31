@@ -1,30 +1,44 @@
 package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
+import org.watsi.device.api.models.BillableApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.models.BillableModel
+import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.BillableRepository
+import java.util.UUID
 
-class BillableRepositoryImpl(private val billableDao: BillableDao,
-                             private val api: CoverageApi,
-                             private val sessionManager: SessionManager,
-                             private val preferencesManager: PreferencesManager,
-                             private val clock: Clock) : BillableRepository {
+class BillableRepositoryImpl(
+        private val billableDao: BillableDao,
+        private val api: CoverageApi,
+        private val sessionManager: SessionManager,
+        private val preferencesManager: PreferencesManager,
+        private val clock: Clock
+) : BillableRepository {
 
     override fun all(): Single<List<Billable>> {
         return billableDao.all().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
     }
 
-    override fun create(billable: Billable): Completable {
+    override fun find(id: UUID): Maybe<Billable> {
+        return billableDao.find(id).map { it.toBillable() }.subscribeOn(Schedulers.io())
+    }
+
+    override fun create(billable: Billable, delta: Delta): Completable {
         return Completable.fromAction {
-            billableDao.insert(BillableModel.fromBillable(billable, clock))
+            billableDao.insertWithDelta(
+                    BillableModel.fromBillable(billable, clock),
+                    DeltaModel.fromDelta(delta, clock)
+            )
         }.subscribeOn(Schedulers.io())
     }
 
@@ -53,5 +67,16 @@ class BillableRepositoryImpl(private val billableDao: BillableDao,
 
     override fun opdDefaults(): Single<List<Billable>> {
         return billableDao.opdDefaults().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    }
+
+    override fun sync(delta: Delta): Completable {
+        val authToken = sessionManager.currentToken()!!
+
+        return billableDao.find(delta.modelId).flatMapCompletable {
+            val billable = it.toBillable()
+            api.postBillable(authToken.getHeaderString(), authToken.user.providerId,
+                    BillableApi(billable)
+            )
+        }.subscribeOn(Schedulers.io())
     }
 }
