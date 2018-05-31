@@ -13,38 +13,39 @@ class CreateEncounterUseCase(
 ) {
 
     fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
-        val encounterDeltas = mutableListOf<Delta>()
-        val newBillables = mutableListOf<Billable>()
+        return Completable.fromAction {
+            val encounterDeltas = mutableListOf<Delta>()
+            val newBillables = mutableListOf<Billable>()
 
-        encounterDeltas.add(Delta(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.ENCOUNTER,
-                modelId = encounterWithItemsAndForms.encounter.id))
-
-        encounterWithItemsAndForms.encounterForms.map { encounterForm ->
             encounterDeltas.add(Delta(
                     action = Delta.Action.ADD,
-                    modelName = Delta.ModelName.ENCOUNTER_FORM,
-                    modelId = encounterForm.id))
-        }
+                    modelName = Delta.ModelName.ENCOUNTER,
+                    modelId = encounterWithItemsAndForms.encounter.id))
 
-        encounterWithItemsAndForms.encounterItems.map { encounterItem ->
-            val billable = encounterItem.billable
-            if (billableRepository.find(billable.id).blockingGet() == null) {
-                newBillables.add(billable)
+            encounterWithItemsAndForms.encounterForms.map { encounterForm ->
+                encounterDeltas.add(Delta(
+                        action = Delta.Action.ADD,
+                        modelName = Delta.ModelName.ENCOUNTER_FORM,
+                        modelId = encounterForm.id))
             }
-        }
 
-        return Completable.concatArray(
-                Completable.concat(newBillables.map { billable ->
-                    val billableDelta = Delta(
-                            action = Delta.Action.ADD,
-                            modelName = Delta.ModelName.BILLABLE,
-                            modelId = billable.id
-                    )
-                    billableRepository.create(billable, billableDelta)
-                }),
-                encounterRepository.create(encounterWithItemsAndForms, encounterDeltas)
-        )
+            encounterWithItemsAndForms.encounterItems.map { encounterItem ->
+                val billable = encounterItem.billable
+                if (billableRepository.find(billable.id).blockingGet() == null) {
+                    newBillables.add(billable)
+                }
+            }
+
+            Completable.concat(newBillables.map { billable ->
+                val billableDelta = Delta(
+                        action = Delta.Action.ADD,
+                        modelName = Delta.ModelName.BILLABLE,
+                        modelId = billable.id
+                )
+                billableRepository.create(billable, billableDelta)
+            }).blockingAwait()
+
+            encounterRepository.create(encounterWithItemsAndForms, encounterDeltas).blockingAwait()
+        }
     }
 }
