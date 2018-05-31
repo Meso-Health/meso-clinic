@@ -2,6 +2,7 @@ package org.watsi.uhp.services
 
 import android.app.job.JobParameters
 import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import org.watsi.device.managers.Logger
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
@@ -29,7 +30,7 @@ class SyncService : DaggerJobService() {
                 syncBillableUseCase.execute(),
                 syncEncounterUseCase.execute(),
                 syncEncounterFormUseCase.execute()
-        ).subscribe({
+        ).subscribeOn(Schedulers.io()).subscribe({
             jobFinished(params, false)
         }, {
             logger.error(it)
