@@ -14,7 +14,7 @@ data class EncounterModel(@PrimaryKey val id: UUID,
                           val memberId: UUID,
                           val identificationEventId: UUID,
                           val occurredAt: Instant,
-                          val backdatedOccurredAt: Instant?,
+                          val backdatedOccurredAt: Boolean,
                           val copaymentPaid: Boolean,
                           val diagnoses: List<Int>) {
 

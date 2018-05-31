@@ -4,6 +4,13 @@
         <attr name="message" format="string"/>
         <attr name="action" format="string"/>
     </declare-styleable>
+    <declare-styleable name="DialogEditField">
+        <attr name="label" />
+        <attr name="android:inputType" />
+    </declare-styleable>
+    <declare-styleable name="DialogBirthdateField">
+        <attr name="showCalendarIcon" format="boolean" />
+    </declare-styleable>
     <declare-styleable name="ButtonWithPreview">
         <attr name="buttonText" format="reference" localization="suggested" />
         <attr name="icon" format="reference" localization="suggested" />

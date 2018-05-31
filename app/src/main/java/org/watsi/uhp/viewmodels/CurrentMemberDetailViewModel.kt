@@ -41,7 +41,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
             defaultBillables.clear()
             defaultBillables.addAll(it)
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
 
         val flowables = listOf(
@@ -74,8 +74,8 @@ class CurrentMemberDetailViewModel @Inject constructor(
             val encounterItem = EncounterItem(UUID.randomUUID(), encounterId, it.id, 1)
             EncounterItemWithBillable(encounterItem, it)
         }
-        val encounter = Encounter(encounterId, idEvent.memberId, idEvent.id, Instant.now(clock), null)
-        return EncounterWithItemsAndForms(encounter, defaultEncounterItems, emptyList())
+        val encounter = Encounter(encounterId, idEvent.memberId, idEvent.id, Instant.now(clock))
+        return EncounterWithItemsAndForms(encounter, defaultEncounterItems, emptyList(), emptyList())
     }
 
     data class ViewState(val member: Member?,

@@ -4,11 +4,16 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Diagnosis
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.DiagnosisRepository
 import javax.inject.Inject
 
-class DiagnosisViewModel @Inject constructor(diagnosisRepository: DiagnosisRepository) : ViewModel() {
+class DiagnosisViewModel @Inject constructor(
+        diagnosisRepository: DiagnosisRepository,
+        private val logger: Logger
+) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
     private var diagnoses: List<Diagnosis> = emptyList()
@@ -20,7 +25,7 @@ class DiagnosisViewModel @Inject constructor(diagnosisRepository: DiagnosisRepos
             diagnoses = it
             uniqueDescriptions = diagnoses.map { it.description }.distinct()
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
     }
 
@@ -56,6 +61,12 @@ class DiagnosisViewModel @Inject constructor(diagnosisRepository: DiagnosisRepos
         } else {
             observable.value = observable.value?.copy(suggestedDiagnoses = emptyList())
         }
+    }
+
+    fun updateEncounterWithDiagnoses(encounterRelation: EncounterWithItemsAndForms): EncounterWithItemsAndForms {
+        val diagnoses = observable.value?.selectedDiagnoses ?: emptyList()
+        val updatedEncounter = encounterRelation.encounter.copy(diagnoses = diagnoses.map { it.id })
+        return encounterRelation.copy(encounter = updatedEncounter, diagnoses = diagnoses)
     }
 
     data class ViewState(val selectedDiagnoses: List<Diagnosis> = emptyList(),

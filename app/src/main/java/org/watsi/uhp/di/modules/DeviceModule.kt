@@ -16,7 +16,9 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.device.managers.SessionManagerImpl
 import org.watsi.device.managers.SimprintsManager
 import org.watsi.uhp.BuildConfig
+import org.watsi.uhp.managers.AndroidKeyboardManager
 import org.watsi.uhp.managers.DebugLogger
+import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.RollbarLogger
 import javax.inject.Singleton
 
@@ -64,5 +66,10 @@ class DeviceModule {
     @Provides
     fun provideFingerprintManager(simHelper: SimHelper, sessionManager: SessionManager): FingerprintManager {
         return SimprintsManager(simHelper, sessionManager)
+    }
+
+    @Provides
+    fun provideKeyboardManager(context: Context): KeyboardManager {
+        return AndroidKeyboardManager(context)
     }
 }

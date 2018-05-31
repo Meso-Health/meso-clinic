@@ -98,7 +98,7 @@ class AddNewBillableFragment : DaggerFragment() {
 
         name_field.addTextChangedListener(TextChangedListener { viewModel.updateName(it) })
         unit_field.addTextChangedListener(TextChangedListener { viewModel.updateUnit(it) })
-        price_field.addTextChangedListener(TextChangedListener { viewModel.updatePrice(it.toInt()) })
+        price_field.addTextChangedListener(TextChangedListener { viewModel.updatePrice(it.toIntOrNull()) })
 
         composition_spinner.adapter = compositionAdapter
         composition_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

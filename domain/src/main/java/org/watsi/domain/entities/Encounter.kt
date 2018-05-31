@@ -8,6 +8,6 @@ data class Encounter(val id: UUID,
                      val memberId: UUID,
                      val identificationEventId: UUID,
                      val occurredAt: Instant,
-                     val backdatedOccurredAt: Instant?,
-                     val copaymentPaid: Boolean = false,
+                     val backdatedOccurredAt: Boolean = false,
+                     val copaymentPaid: Boolean = true,
                      val diagnoses: List<Int> = emptyList()) : Serializable

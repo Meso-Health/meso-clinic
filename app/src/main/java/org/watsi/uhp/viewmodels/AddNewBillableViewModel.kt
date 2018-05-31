@@ -3,13 +3,15 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
 
 class AddNewBillableViewModel @Inject constructor(
-        billableRepository: BillableRepository
+        billableRepository: BillableRepository,
+        private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -19,7 +21,7 @@ class AddNewBillableViewModel @Inject constructor(
         billableRepository.uniqueCompositions().subscribe({
             observable.postValue(observable.value?.copy(compositions = it))
         }, {
-            // TODO: handle error
+            logger.error(it)
         })
     }
 
@@ -31,19 +33,19 @@ class AddNewBillableViewModel @Inject constructor(
         observable.value = observable.value?.copy(type = type)
     }
 
-    fun updateName(name: String) {
-        observable.value = observable.value?.copy(name = name)
+    fun updateName(name: String?) {
+        observable.value = observable.value?.copy(name = clearEmptyString(name))
     }
 
-    fun updateComposition(composition: String) {
-        observable.value = observable.value?.copy(composition = composition)
+    fun updateComposition(composition: String?) {
+        observable.value = observable.value?.copy(composition = clearEmptyString(composition))
     }
 
-    fun updateUnit(unit: String) {
-        observable.value = observable.value?.copy(unit = unit)
+    fun updateUnit(unit: String?) {
+        observable.value = observable.value?.copy(unit = clearEmptyString(unit))
     }
 
-    fun updatePrice(price: Int) {
+    fun updatePrice(price: Int?) {
         observable.value = observable.value?.copy(price = price)
     }
 
@@ -64,6 +66,10 @@ class AddNewBillableViewModel @Inject constructor(
         } else {
             null
         }
+    }
+
+    private fun clearEmptyString(field: String?): String? {
+        return if (field != null && !field.isEmpty()) field else null
     }
 
     data class ViewState(val compositions: List<String> = emptyList(),

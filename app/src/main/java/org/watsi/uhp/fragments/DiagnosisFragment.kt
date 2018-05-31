@@ -99,12 +99,9 @@ class DiagnosisFragment : DaggerFragment() {
         })
 
         save_button.setOnClickListener {
-            val encounterWithItems =
-                    arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
-            val diagnoses = observable.value?.selectedDiagnoses?.map { it.id } ?: emptyList()
-            val updatedEncounter = encounterWithItems.encounter.copy(diagnoses = diagnoses)
+            val encounterRelation = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
             navigationManager.goTo(EncounterFormFragment.forEncounter(
-                    encounter = encounterWithItems.copy(encounter = updatedEncounter)))
+                    encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
         }
     }
 

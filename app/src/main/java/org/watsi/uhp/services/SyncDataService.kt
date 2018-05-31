@@ -4,6 +4,7 @@ import android.app.job.JobParameters
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import org.watsi.device.managers.Logger
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
@@ -26,7 +27,7 @@ class SyncDataService : DaggerJobService() {
                 syncIdentificationEventUseCase.execute(),
                 syncBillableUseCase.execute(),
                 syncEncounterUseCase.execute()
-        ).subscribe(SyncObserver(params))
+        ).subscribeOn(Schedulers.io()).subscribe(SyncObserver(params))
         return true
     }
 

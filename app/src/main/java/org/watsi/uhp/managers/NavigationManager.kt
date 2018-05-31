@@ -6,8 +6,12 @@ import android.support.v4.app.FragmentManager
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
+import org.watsi.device.managers.Logger
 
-class NavigationManager(private val fragmentManager: FragmentManager, @IdRes private val fragmentContainer: Int) {
+class NavigationManager(
+        private val fragmentManager: FragmentManager,
+        @IdRes private val fragmentContainer: Int,
+        private val logger: Logger) {
 
     /**
      * Navigate to the supplied Fragment and add the FragmentTransaction to the back-stack
@@ -87,7 +91,7 @@ class NavigationManager(private val fragmentManager: FragmentManager, @IdRes pri
         }
 
         override fun onError(e: Throwable) {
-            // TODO: handle onError
+            logger.error(e)
         }
     }
 }

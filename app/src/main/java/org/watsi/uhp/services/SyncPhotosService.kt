@@ -4,6 +4,7 @@ import android.app.job.JobParameters
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import org.watsi.device.managers.Logger
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncMemberPhotoUseCase
@@ -20,7 +21,7 @@ class SyncPhotosService : DaggerJobService() {
         Completable.concatArray(
                 syncMemberPhotoUseCase.execute(),
                 syncEncounterFormUseCase.execute()
-        ).subscribe(SyncObserver(params))
+        ).subscribeOn(Schedulers.io()).subscribe(SyncObserver(params))
         return true
     }
 

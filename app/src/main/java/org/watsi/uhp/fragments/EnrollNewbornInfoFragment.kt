@@ -63,6 +63,7 @@ class EnrollNewbornInfoFragment : DaggerFragment() {
                                  cardId = cardId,
                                  name = name.text.toString(),
                                  gender = gender,
+                                 language = parent.language,
                                  birthdate = birthdate,
                                  birthdateAccuracy = Member.DateAccuracy.D,
                                  fingerprintsGuid = null,

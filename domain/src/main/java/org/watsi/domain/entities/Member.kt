@@ -17,6 +17,7 @@ data class Member(val id: UUID,
                   val cardId: String?,
                   val name: String,
                   val gender: Gender,
+                  val language: String?,
                   val birthdate: LocalDate,
                   val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
                   val fingerprintsGuid: UUID?,
@@ -65,13 +66,37 @@ data class Member(val id: UUID,
         }
     }
 
+    fun getAgeMonths(clock: Clock = Clock.systemDefaultZone()): Int {
+        return DateUtils.getMonthsAgo(birthdate, clock)
+    }
+
+    /**
+     * Returns quantity in months if below 2 or in years otherwise, regardless of birthdate accuracy.
+     */
+    fun getDisplayAge(clock: Clock = Clock.systemDefaultZone()): String {
+        val ageYears = getAgeYears(clock)
+        return if (ageYears >= 2) ageYears.toString() else "${getAgeMonths(clock)} months"
+    }
+
     companion object {
+        const val LANGUAGE_CHOICE_OTHER = "Other"
+        const val LANGUAGE_RUKIGA = "Rukiga"
+        const val LANGUAGE_RUTOORO = "Rutooro"
+        const val LANGUAGE_KINYARWANDA = "Kinyarwanda"
+        val COMMON_LANGUAGES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA)
+        val LANGUAGE_CHOICES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA,
+                LANGUAGE_CHOICE_OTHER)
+
         fun validCardId(cardId: String): Boolean {
             return cardId.matches(Regex("[A-Z]{3}[0-9]{6}"))
         }
 
         fun validPhoneNumber(phoneNumber: String): Boolean {
             return phoneNumber.matches("0?[1-9]\\d{8}".toRegex())
+        }
+
+        fun formatCardId(cardId: String): String {
+            return "${cardId.substring(0, 3)} ${cardId.substring(3, 6)} ${cardId.substring(6, 9)}"
         }
     }
 }

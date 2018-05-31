@@ -20,7 +20,8 @@ class EncounterWithItemsAndFormsTest {
 
         val encounter = EncounterFactory.build()
         val encounterWithItemsAndForms = EncounterWithItemsAndForms(
-                encounter, listOf(encounterItemWithBillable1, encounterItemWithBillable2), emptyList())
+                encounter, listOf(encounterItemWithBillable1, encounterItemWithBillable2),
+                emptyList(), emptyList())
 
         assertEquals(500, encounterWithItemsAndForms.price())
     }

@@ -24,13 +24,14 @@ import javax.inject.Inject
 class AuthenticationActivity : DaggerAppCompatActivity() {
 
     @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var keyboardManager: KeyboardManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
         toolbar.setTitle(R.string.authentication_activity_label)
 
-        KeyboardManager.focusAndShowKeyboard(login_username, this)
+        keyboardManager.showKeyboard(login_username)
         ActivityHelper.setupBannerIfInTrainingMode(this)
 
         val watcher = LoginTextWatcher(login_username, login_password, login_button)
@@ -41,7 +42,7 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
         login_button.setOnClickListener {
             login_username.clearFocus()
             login_password.clearFocus()
-            KeyboardManager.hideKeyboard(it, baseContext)
+            keyboardManager.hideKeyboard(it)
 
             sessionManager.login(login_username.text.toString(), login_password.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())

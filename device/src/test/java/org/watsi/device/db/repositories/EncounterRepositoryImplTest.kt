@@ -70,7 +70,7 @@ class EncounterRepositoryImplTest {
         val encounterItemWithBillable = EncounterItemWithBillable(encounterItem, billable)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
         val encounterWithItemsAndForms = EncounterWithItemsAndForms(
-                encounter, listOf(encounterItemWithBillable), listOf(encounterForm))
+                encounter, listOf(encounterItemWithBillable), listOf(encounterForm), emptyList())
 
         repository.create(encounterWithItemsAndForms, deltas).test().assertComplete()
 
