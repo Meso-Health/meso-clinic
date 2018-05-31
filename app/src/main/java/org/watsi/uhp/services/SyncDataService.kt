@@ -20,13 +20,17 @@ class SyncDataService : DaggerJobService() {
     @Inject lateinit var syncEncounterUseCase: SyncEncounterUseCase
     @Inject lateinit var logger: Logger
     private lateinit var disposable: Disposable
+    private var errors = mutableListOf<Throwable>()
 
     override fun onStartJob(params: JobParameters): Boolean {
         Completable.concatArray(
-                syncMemberUseCase.execute(),
-                syncIdentificationEventUseCase.execute(),
-                syncBillableUseCase.execute(),
-                syncEncounterUseCase.execute()
+                syncMemberUseCase.execute().onErrorComplete { errors.add(it) },
+                syncIdentificationEventUseCase.execute().onErrorComplete { errors.add(it) },
+                syncBillableUseCase.execute().onErrorComplete { errors.add(it) },
+                syncEncounterUseCase.execute().onErrorComplete { errors.add(it) },
+                Completable.fromAction {
+                    if (errors.size > 0) { throw Exception(errors.map { it.message }.joinToString()) }
+                }
         ).subscribeOn(Schedulers.io()).subscribe(SyncObserver(params))
         return true
     }
