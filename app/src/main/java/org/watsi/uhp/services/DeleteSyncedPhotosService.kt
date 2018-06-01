@@ -4,7 +4,7 @@ import io.reactivex.Completable
 import org.watsi.domain.repositories.PhotoRepository
 import javax.inject.Inject
 
-class DeleteFetchedPhotosService : BaseService() {
+class DeleteSyncedPhotosService : BaseService() {
 
     @Inject lateinit var photoRepository: PhotoRepository
 

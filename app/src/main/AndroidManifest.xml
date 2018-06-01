@@ -34,15 +34,15 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
         <service
-            android:name=".services.DeleteFetchedPhotosService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
-        <service
             android:name=".services.SyncDataService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
         <service
             android:name=".services.SyncPhotosService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+        <service
+            android:name=".services.DeleteSyncedPhotosService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
