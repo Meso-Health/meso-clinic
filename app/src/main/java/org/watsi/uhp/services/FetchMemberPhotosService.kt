@@ -23,6 +23,7 @@ class FetchMemberPhotosService : DaggerJobService() {
     }
 
     override fun onStopJob(params: JobParameters): Boolean {
+        disposable.dispose()
         return true
     }
 
