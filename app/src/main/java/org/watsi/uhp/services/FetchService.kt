@@ -20,22 +20,26 @@ class FetchService : DaggerJobService() {
     @Inject lateinit var diagnosisRepository: DiagnosisRepository
     @Inject lateinit var logger: Logger
     private lateinit var disposable: Disposable
-    private var errors = mutableListOf<Throwable>()
+    private var errored = false
 
     override fun onStartJob(params: JobParameters): Boolean {
         Completable.concatArray(
-                memberRepository.fetch().onErrorComplete { errors.add(it) },
-                billableRepository.fetch().onErrorComplete { errors.add(it) },
-                diagnosisRepository.fetch().onErrorComplete { errors.add(it) },
-                Completable.fromAction {
-                    if (errors.size > 0) { throw Exception(errors.map { it.message }.joinToString()) }
-                }
+                memberRepository.fetch().onErrorComplete { setError(it) },
+                billableRepository.fetch().onErrorComplete { setError(it) },
+                diagnosisRepository.fetch().onErrorComplete { setError(it) },
+                Completable.fromAction { if (errored) { throw Exception() } }
         ).subscribe(SyncObserver(params))
         return true
     }
 
     override fun onStopJob(params: JobParameters): Boolean {
         disposable.dispose()
+        return true
+    }
+
+    private fun setError(e: Throwable): Boolean {
+        errored = true
+        logger.error(e)
         return true
     }
 
@@ -49,7 +53,6 @@ class FetchService : DaggerJobService() {
         }
 
         override fun onError(e: Throwable) {
-            logger.error(e)
             jobFinished(params, true)
         }
     }

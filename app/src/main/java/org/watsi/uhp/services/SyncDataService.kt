@@ -20,23 +20,27 @@ class SyncDataService : DaggerJobService() {
     @Inject lateinit var syncEncounterUseCase: SyncEncounterUseCase
     @Inject lateinit var logger: Logger
     private lateinit var disposable: Disposable
-    private var errors = mutableListOf<Throwable>()
+    private var errored = false
 
     override fun onStartJob(params: JobParameters): Boolean {
         Completable.concatArray(
-                syncMemberUseCase.execute().onErrorComplete { errors.add(it) },
-                syncIdentificationEventUseCase.execute().onErrorComplete { errors.add(it) },
-                syncBillableUseCase.execute().onErrorComplete { errors.add(it) },
-                syncEncounterUseCase.execute().onErrorComplete { errors.add(it) },
-                Completable.fromAction {
-                    if (errors.size > 0) { throw Exception(errors.map { it.message }.joinToString()) }
-                }
+                syncMemberUseCase.execute().onErrorComplete { setError(it) },
+                syncIdentificationEventUseCase.execute().onErrorComplete { setError(it) },
+                syncBillableUseCase.execute().onErrorComplete { setError(it) },
+                syncEncounterUseCase.execute().onErrorComplete { setError(it) },
+                Completable.fromAction { if (errored) { throw Exception() } }
         ).subscribeOn(Schedulers.io()).subscribe(SyncObserver(params))
         return true
     }
 
     override fun onStopJob(params: JobParameters): Boolean {
         disposable.dispose()
+        return true
+    }
+
+    private fun setError(e: Throwable): Boolean {
+        errored = true
+        logger.error(e)
         return true
     }
 
@@ -50,7 +54,6 @@ class SyncDataService : DaggerJobService() {
         }
 
         override fun onError(e: Throwable) {
-            logger.error(e)
             jobFinished(params, true)
         }
     }

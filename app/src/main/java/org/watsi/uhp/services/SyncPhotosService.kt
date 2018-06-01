@@ -16,21 +16,25 @@ class SyncPhotosService : DaggerJobService() {
     @Inject lateinit var syncEncounterFormUseCase: SyncEncounterFormUseCase
     @Inject lateinit var logger: Logger
     private lateinit var disposable: Disposable
-    private var errors = mutableListOf<Throwable>()
+    private var errored = false
 
     override fun onStartJob(params: JobParameters): Boolean {
         Completable.concatArray(
-                syncMemberPhotoUseCase.execute().onErrorComplete { errors.add(it) },
-                syncEncounterFormUseCase.execute().onErrorComplete { errors.add(it) },
-                Completable.fromAction {
-                    if (errors.size > 0) { throw Exception(errors.map { it.message }.joinToString()) }
-                }
+                syncMemberPhotoUseCase.execute().onErrorComplete { setError(it) },
+                syncEncounterFormUseCase.execute().onErrorComplete { setError(it) },
+                Completable.fromAction { if (errored) { throw Exception() } }
         ).subscribeOn(Schedulers.io()).subscribe(SyncObserver(params))
         return true
     }
 
     override fun onStopJob(params: JobParameters): Boolean {
         disposable.dispose()
+        return true
+    }
+
+    private fun setError(e: Throwable): Boolean {
+        errored = true
+        logger.error(e)
         return true
     }
 
