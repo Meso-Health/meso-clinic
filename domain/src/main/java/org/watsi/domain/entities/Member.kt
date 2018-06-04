@@ -23,7 +23,6 @@ data class Member(val id: UUID,
                   val fingerprintsGuid: UUID?,
                   val phoneNumber: String?) : Serializable {
 
-    enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
 
     fun isAbsentee(clock: Clock = Clock.systemDefaultZone()): Boolean {
@@ -100,3 +99,5 @@ data class Member(val id: UUID,
         }
     }
 }
+
+enum class Gender { M, F }
