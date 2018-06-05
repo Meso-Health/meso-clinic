@@ -59,11 +59,15 @@ class EnrollNewbornViewModel(
             val errors = it.errors.filterNot { it.key === MEMBER_NAME_ERROR } // 'it' here seems to refers to current viewState which is the viewStateObservable
             viewStateObservable.value = it.copy(name = name, errors = errors) // look into copy method, probably makes copy of viewStateObservable and sets with new value of new name and error, then sets it as new value to viewStateObservable?
         }
+        // it looks like the above is clearing any name error there may be on the error object
+        // and is setting the value of the name to viewState
+
+        // why is this block happening within a viewStateObservable.value?.let block??
     }
 
     fun onBirthdateChange(birthdate: LocalDate) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key === MEMBER_BIRTHDATE_ERROR }
+            val errors = it.errors.filterNot { it.key === MEMBER_BIRTHDATE_ERROR || it.key === MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR }
             viewStateObservable.value = it.copy(birthdate = birthdate, errors = errors)
         }
     }
@@ -134,7 +138,11 @@ class EnrollNewbornViewModel(
             }
 
             if (viewState.birthdate === null) {
-                errors[MEMBER_BIRTHDATE_ERROR] = "Birth date is required"   // we should probably change to Birthdate one word if this error is user facing to keep consistent with user facing designs that say birthdate one word
+                errors[MEMBER_BIRTHDATE_ERROR] = "Birthdate is required"   // we should probably change to Birthdate one word if this error is user facing to keep consistent with user facing designs that say birthdate one word
+            }
+
+            if (viewState.birthdate != null && viewState.birthdate.isBefore(LocalDate.now().minusMonths(3))) {
+                errors[MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR] = "Birthdate must be within the past three months"
             }
 
             if (viewState.photoId === null) {
@@ -168,6 +176,7 @@ class EnrollNewbornViewModel(
         const val SAVE_ERROR = "save_error"
         const val MEMBER_NAME_ERROR = "member_name_error"
         const val MEMBER_BIRTHDATE_ERROR = "member_birthdate_error" // in enrollment, birthdate error triggers  MEMBER_AGE_ERROR, changing name here to make more sense for this context, make sure this is okay
+        const val MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR = "member_birthday_not_within_three_months_error" // lol, shoud maybe rename this
         const val MEMBER_GENDER_ERROR = "member_gender_error"
         const val MEMBER_PHOTO_ERROR = "member_photo_error"
         const val MEMBER_CARD_ERROR = "member_card_error"
