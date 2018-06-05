@@ -24,11 +24,12 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
     }
 
     override fun sync(delta: Delta): Completable {
-        val authToken = sessionManager.currentToken()!!
-
-        return find(delta.modelId).flatMapCompletable {
-            val requestBody = RequestBody.create(MediaType.parse("image/jpg"), it.photo.bytes)
-            api.patchEncounterForm(authToken.getHeaderString(), it.encounterForm.encounterId, requestBody)
-        }
+        return sessionManager.currentToken()?.let { token ->
+            find(delta.modelId).flatMapCompletable { encounterFormModel ->
+                val requestBody = RequestBody.create(MediaType.parse("image/jpg"), encounterFormModel.photo.bytes)
+                api.patchEncounterForm(token.getHeaderString(),
+                        encounterFormModel.encounterForm.encounterId, requestBody)
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 }
