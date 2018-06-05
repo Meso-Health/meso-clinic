@@ -36,14 +36,14 @@ class CreateEncounterUseCase(
                 }
             }
 
-            Completable.concat(newBillables.map { billable ->
+            newBillables.map { billable ->
                 val billableDelta = Delta(
                         action = Delta.Action.ADD,
                         modelName = Delta.ModelName.BILLABLE,
                         modelId = billable.id
                 )
-                billableRepository.create(billable, billableDelta)
-            }).blockingAwait()
+                billableRepository.create(billable, billableDelta).blockingAwait()
+            }
 
             encounterRepository.create(encounterWithItemsAndForms, encounterDeltas).blockingAwait()
         }

@@ -1,7 +1,7 @@
 package org.watsi.domain.usecases
 
-import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import org.junit.Before
 import org.junit.Test
@@ -31,8 +31,7 @@ class CreateEncounterUseCaseTest {
     }
 
     @Test
-    fun execute_encounterDoesNotHaveNewBillablesOrEncounterForms_createsEncounterWithDelta
-            () {
+    fun execute_encounterDoesNotHaveNewBillablesOrEncounterForms_createsEncounterWithDelta() {
         val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build()
         val encounterDelta = Delta(
                 action = Delta.Action.ADD,
@@ -40,9 +39,10 @@ class CreateEncounterUseCaseTest {
                 modelId = encounterWithItemsAndForms.encounter.id
         )
 
-        useCase.execute(encounterWithItemsAndForms)
+        whenever(mockEncounterRepository.create(encounterWithItemsAndForms, listOf(encounterDelta)))
+                .thenReturn(Completable.complete())
 
-        verify(mockEncounterRepository).create(encounterWithItemsAndForms, listOf(encounterDelta))
+        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
     }
 
     @Test
@@ -67,11 +67,12 @@ class CreateEncounterUseCaseTest {
         )
 
         whenever(mockBillableRepository.find(billable.id)).thenReturn(Maybe.empty())
+        whenever(mockBillableRepository.create(billable, billableDelta))
+                .thenReturn(Completable.complete())
+        whenever(mockEncounterRepository.create(encounterWithItemsAndForms, listOf(encounterDelta)))
+                .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms)
-
-        verify(mockBillableRepository).create(billable, billableDelta)
-        verify(mockEncounterRepository).create(encounterWithItemsAndForms, listOf(encounterDelta))
+        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
     }
 
     @Test
@@ -93,8 +94,9 @@ class CreateEncounterUseCaseTest {
                 modelId = encounterForm.id
         )
 
-        useCase.execute(encounterWithItemsAndForms)
+        whenever(mockEncounterRepository.create(encounterWithItemsAndForms, listOf(encounterDelta, encounterFormDelta)))
+                .thenReturn(Completable.complete())
 
-        verify(mockEncounterRepository).create(encounterWithItemsAndForms, listOf(encounterDelta, encounterFormDelta))
+        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
     }
 }
