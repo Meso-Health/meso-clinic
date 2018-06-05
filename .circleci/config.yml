@@ -31,6 +31,6 @@ jobs:
           destination: reports/domain
       - store_test_results:
           paths:
-#            - app/build/test-results
+            - app/build/test-results
             - device/build/test-results
             - domain/build/test-results
