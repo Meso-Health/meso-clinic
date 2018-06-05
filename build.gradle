@@ -50,11 +50,11 @@ task runDomainUnitTests(dependsOn: [':domain:test']) {
     description 'Run unit tests for the domain module.'
 }
 
-task runDeviceUnitTests(dependsOn: [':device:test']) {
+task runDeviceUnitTests(dependsOn: [':device:testDebugUnitTest']) {
     description 'Run unit tests for the device module.'
 }
 
-task runAppUnitTests(dependsOn: [':app:test']) {
+task runAppUnitTests(dependsOn: [':app:testDebugUnitTest']) {
     description 'Run unit tests for the app module.'
 }
 
