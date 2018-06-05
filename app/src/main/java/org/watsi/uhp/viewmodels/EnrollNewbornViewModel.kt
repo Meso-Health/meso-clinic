@@ -3,12 +3,15 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
 import javax.inject.Inject
 import org.threeten.bp.LocalDate
-import org.watsi.domain.entities.Gender
+import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
 import java.util.UUID
 
@@ -16,13 +19,15 @@ class EnrollNewbornViewModel(
         private val createMemberUseCase: CreateMemberUseCase,
         private val loadMemberPhotoUseCase: LoadPhotoUseCase,
         private val viewStateObservable: MutableLiveData<ViewState>,
-        private val logger: Logger
+        private val logger: Logger,
+        private val clock: Clock
 ) : ViewModel() {
 
     @Inject constructor(createMemberUseCase: CreateMemberUseCase,   // not completely sure with this @Inject stuff, look more into Dagger
                         loadMemberPhotoUseCase: LoadPhotoUseCase,
-                        logger: Logger)  :
-            this(createMemberUseCase, loadMemberPhotoUseCase, MutableLiveData<ViewState>(), logger)
+                        logger: Logger,
+                        clock: Clock)  :
+            this(createMemberUseCase, loadMemberPhotoUseCase, MutableLiveData<ViewState>(), logger, clock)
             // ^ when I originally had logger before MutableLiveData<ViewState>(), was getting type mismatch error ??
     init {
         viewStateObservable.value = ViewState()
@@ -41,7 +46,12 @@ class EnrollNewbornViewModel(
             return Completable.error(ValidationException("Some fields are missing", validationErrors))
         }
 
-        // continue....
+        viewStateObservable.value = viewState.copy(status = MemberStatus.SAVING)
+        val member = toMember(viewState, memberId, clock)
+
+        return createMemberUseCase.execute(member).doOnError { onError(it) }
+                .onErrorResumeNext { Completable.never() }
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun onNameChange(name: String) {
@@ -58,7 +68,7 @@ class EnrollNewbornViewModel(
         }
     }
 
-    fun onGenderChange(gender: Gender) {
+    fun onGenderChange(gender: Member.Gender) {
         viewStateObservable.value?.let {
             val errors = it.errors.filterNot { it.key === MEMBER_GENDER_ERROR }
             viewStateObservable.value = it.copy(gender = gender, errors = errors)
@@ -68,7 +78,7 @@ class EnrollNewbornViewModel(
     fun onCaptureFingerprintId(fingerprintId: UUID?) { // why the ? after UUID here? look up syntax
         viewStateObservable.value?.let {
             val errors = it.errors.filterNot { it.key === MEMBER_FINGERPRINTS_ERROR }
-            viewStateObservable.value = it.copy(fingerprintsGuid = fingerprintId, errors = errors) // should we just change the name of this key in viewState to fingerprintId?
+            viewStateObservable.value = it.copy(fingerprintsGuid = fingerprintId, errors = errors)
         }
     }
 
@@ -139,9 +149,9 @@ class EnrollNewbornViewModel(
         }
     }
 
-    data class ViewState(val name: String = "", // why does this have no default syntax like the others below?
-                         val birthdate: LocalDate? = null, // is this syntax with the ? meant to show defaults
-                         val gender: Gender? = null,
+    data class ViewState(val name: String = "",
+                         val birthdate: LocalDate? = null,
+                         val gender: Member.Gender? = null,
                          val photoId: UUID? = null,
                          val thumbnailPhoto: Photo? = null,
                          val fingerprintsGuid: UUID? = null,
@@ -164,6 +174,29 @@ class EnrollNewbornViewModel(
         const val MEMBER_FINGERPRINTS_ERROR = "member_fingerprints_error"
 
         // why is toMember defined in here?
+        fun toMember(viewState: ViewState, memberId: UUID, clock: Clock): Member {
+            if (FormValidator.formValidationErrors(viewState).isEmpty() &&
+                    viewState.gender != null && viewState.cardId != null &&
+                    viewState.birthdate != null && viewState.photoId != null && viewState.name != null) {
 
+                return Member(
+                        id = memberId,
+                        name = viewState.name,
+                        enrolledAt = Instant.now(clock),
+                        birthdate = viewState.birthdate,
+                        gender = viewState.gender,
+                        photoId = viewState.photoId,
+                        thumbnailPhotoId = viewState.thumbnailPhoto?.id,
+                        fingerprintsGuid = viewState.fingerprintsGuid,
+                        cardId = viewState.cardId
+                        // householdId take from mom?
+                        // language from mom?
+                        // phoneNumber from mom?
+                        // photoUrl from mom?
+                )
+            } else {
+                throw IllegalStateException("ViewStateToEntityMapper.fromMemberViewStateToMember should only be called with a valid viewState. " + viewState.toString())
+            }
+        }
     }
 }
