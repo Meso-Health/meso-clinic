@@ -36,7 +36,7 @@ class EnrollNewbornViewModel(
     fun saveMember(memberId: UUID, formValidator: FormValidator) : Completable {
         val viewState = viewStateObservable.value
 
-        if (viewState === null || viewState.status === MemberStatus.SAVING) {
+        if (viewState == null || viewState.status == MemberStatus.SAVING) {
             return Completable.never()
         }
 
@@ -56,7 +56,7 @@ class EnrollNewbornViewModel(
 
     fun onNameChange(name: String) {
         viewStateObservable.value?.let { // what is this value? syntax... look more into MutableLiveData and methods on it
-            val errors = it.errors.filterNot { it.key === MEMBER_NAME_ERROR } // 'it' here seems to refers to current viewState which is the viewStateObservable
+            val errors = it.errors.filterNot { it.key == MEMBER_NAME_ERROR } // 'it' here seems to refers to current viewState which is the viewStateObservable
             viewStateObservable.value = it.copy(name = name, errors = errors) // look into copy method, probably makes copy of viewStateObservable and sets with new value of new name and error, then sets it as new value to viewStateObservable?
         }
         // it looks like the above is clearing any name error there may be on the error object
@@ -67,21 +67,21 @@ class EnrollNewbornViewModel(
 
     fun onBirthdateChange(birthdate: LocalDate) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key === MEMBER_BIRTHDATE_ERROR || it.key === MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR }
+            val errors = it.errors.filterNot { it.key == MEMBER_BIRTHDATE_ERROR || it.key == MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR }
             viewStateObservable.value = it.copy(birthdate = birthdate, errors = errors)
         }
     }
 
     fun onGenderChange(gender: Member.Gender) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key === MEMBER_GENDER_ERROR }
+            val errors = it.errors.filterNot { it.key == MEMBER_GENDER_ERROR }
             viewStateObservable.value = it.copy(gender = gender, errors = errors)
         }
     }
 
     fun onCaptureFingerprintId(fingerprintId: UUID?) { // why the ? after UUID here? look up syntax
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key === MEMBER_FINGERPRINTS_ERROR }
+            val errors = it.errors.filterNot { it.key == MEMBER_FINGERPRINTS_ERROR }
             viewStateObservable.value = it.copy(fingerprintsGuid = fingerprintId, errors = errors)
         }
     }
@@ -95,14 +95,14 @@ class EnrollNewbornViewModel(
 
     fun onCardScan(cardId: String) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key === MEMBER_CARD_ERROR }
+            val errors = it.errors.filterNot { it.key == MEMBER_CARD_ERROR }
             viewStateObservable.value = it.copy(cardId = cardId, errors = errors)
         }
     }
 
     fun onPhotoTaken(photoId: UUID, thumbnailPhotoId: UUID) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key === MEMBER_PHOTO_ERROR }
+            val errors = it.errors.filterNot { it.key == MEMBER_PHOTO_ERROR }
             viewStateObservable.value = it.copy(photoId = photoId, errors = errors)
         }
 
@@ -133,11 +133,11 @@ class EnrollNewbornViewModel(
                 errors[MEMBER_NAME_ERROR] = "Name is required"
             }
 
-            if (viewState.gender === null) {
+            if (viewState.gender == null) {
                 errors[MEMBER_GENDER_ERROR] = "Gender is required"
             }
 
-            if (viewState.birthdate === null) {
+            if (viewState.birthdate == null) {
                 errors[MEMBER_BIRTHDATE_ERROR] = "Birthdate is required"   // we should probably change to Birthdate one word if this error is user facing to keep consistent with user facing designs that say birthdate one word
             }
 
@@ -145,11 +145,11 @@ class EnrollNewbornViewModel(
                 errors[MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR] = "Birthdate must be within the past three months"
             }
 
-            if (viewState.photoId === null) {
+            if (viewState.photoId == null) {
                 errors[MEMBER_PHOTO_ERROR] = "A photo of the member is required"
             }
 
-            if (viewState.cardId === null) {
+            if (viewState.cardId == null) {
                 errors[MEMBER_CARD_ERROR] = "Member card is required"
             }
 
