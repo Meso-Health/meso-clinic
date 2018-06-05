@@ -78,7 +78,6 @@ abstract class BaseService : JobService() {
         fun <T : BaseService> schedule(jobId: Int, context: Context, jobClass: Class<T>) {
             val requireNetwork = BuildConfig.BUILD_TYPE == "release"
 
-            this::class.java
             val jobInfo = JobInfo.Builder(jobId, ComponentName(context, jobClass))
                     .setRequiredNetworkType(if (requireNetwork) JobInfo.NETWORK_TYPE_ANY else JobInfo.NETWORK_TYPE_NONE)
                     .setPeriodic(SYNC_INTERVAL.toLong())
