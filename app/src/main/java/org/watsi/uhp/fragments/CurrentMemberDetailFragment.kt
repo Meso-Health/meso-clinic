@@ -4,30 +4,25 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
-import kotlinx.android.synthetic.main.fragment_member_detail.household_members_label
-import kotlinx.android.synthetic.main.fragment_member_detail.household_members_list
-import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
-import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
-import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
-import kotlinx.android.synthetic.main.fragment_member_detail.member_name_detail_fragment
-import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
-import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
-import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
+import kotlinx.android.synthetic.main.fragment_current_member_detail.absentee_notification
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_action_button
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_age_and_gender
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_card_id_detail_fragment
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_name_detail_fragment
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_phone_number
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_photo
+import kotlinx.android.synthetic.main.fragment_current_member_detail.replace_card_notification
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
-import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
@@ -43,7 +38,6 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     lateinit var member: Member
     lateinit var identificationEvent: IdentificationEvent
     lateinit var viewModel: CurrentMemberDetailViewModel
-    lateinit var memberAdapter: MemberAdapter
 
     companion object {
         const val PARAM_MEMBER = "member"
@@ -88,12 +82,6 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
             }
-            
-            it?.householdMembers?.let { householdMembers ->
-                memberAdapter.setMembers(householdMembers)
-                household_members_label.text = context.resources.getQuantityString(
-                        R.plurals.household_label, householdMembers.size, householdMembers.size)
-            }
 
             it?.memberThumbnail?.let { thumbnail ->
                 PhotoLoader.loadMemberPhoto(thumbnail.bytes, member_photo, context)
@@ -104,7 +92,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.detail_fragment_label)
         setHasOptionsMenu(true)
-        return inflater?.inflate(R.layout.fragment_member_detail, container, false)
+        return inflater?.inflate(R.layout.fragment_current_member_detail, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -113,23 +101,6 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             navigationManager.goTo(EncounterFragment.forEncounter(
                     viewModel.buildEncounter(identificationEvent)))
         }
-
-        memberAdapter = MemberAdapter(
-                showClinicNumber = false,
-                showPhoneNumber = true,
-                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                    if (memberRelation.identificationEvent != null) {
-                        memberRelation.identificationEvent?.let {
-                            navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
-                                    memberRelation.member, it))
-                        }
-                    } else {
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
-                    }
-                })
-        household_members_list.adapter = memberAdapter
-        household_members_list.layoutManager = LinearLayoutManager(activity)
-        household_members_list.isNestedScrollingEnabled = false
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

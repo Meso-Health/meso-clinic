@@ -70,14 +70,7 @@ class SearchMemberFragment : DaggerFragment() {
                 showClinicNumber = false,
                 showPhoneNumber = true,
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                    if (memberRelation.identificationEvent != null) {
-                        memberRelation.identificationEvent?.let {
-                            navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
-                                    memberRelation.member, it))
-                        }
-                    } else {
                         navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
-                    }
                 })
         member_search_results.adapter = memberAdapter
         member_search_results.layoutManager = LinearLayoutManager(activity)

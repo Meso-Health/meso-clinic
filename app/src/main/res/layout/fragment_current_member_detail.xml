@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/detail_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <org.watsi.uhp.custom_components.NotificationBar
+            android:id="@+id/replace_card_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            custom:message="@string/replace_card_notification"
+            custom:action="@string/replace_card_action" />
+
+        <org.watsi.uhp.custom_components.NotificationBar
+            android:id="@+id/absentee_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            custom:message="@string/absentee_notification"
+            custom:action="@string/absentee_action" />
+
+        <RelativeLayout
+            android:id="@+id/member_details"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/detail_fragment_photo_height"
+            android:layout_marginTop="@dimen/fragment_vertical_margin"
+            android:layout_marginBottom="@dimen/fragment_vertical_margin"
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+
+            <ImageView
+                android:id="@+id/member_photo"
+                android:contentDescription="@string/photo_description"
+                android:layout_width="@dimen/detail_fragment_photo_width"
+                android:layout_height="@dimen/detail_fragment_photo_height"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="10dp"
+                android:adjustViewBounds="true" />
+
+            <TextView
+                android:id="@+id/member_name_detail_fragment"
+                android:theme="@style/Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/member_photo" />
+
+            <TextView
+                android:id="@+id/member_age_and_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/member_name_detail_fragment"
+                android:layout_toEndOf="@id/member_photo" />
+
+            <TextView
+                android:id="@+id/member_card_id_detail_fragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/member_photo"
+                android:layout_below="@id/member_age_and_gender" />
+
+            <TextView
+                android:id="@+id/member_phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/member_card_id_detail_fragment"
+                android:layout_toEndOf="@id/member_photo" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/member_action_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            style="@style/PrimaryButton"
+            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
+            android:layout_marginRight="@dimen/fragment_horizontal_margin"
+            android:layout_marginBottom="@dimen/fragment_vertical_margin"/>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

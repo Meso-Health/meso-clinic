@@ -12,6 +12,7 @@ import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
+import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
@@ -127,5 +128,10 @@ class DomainModule {
             memberRepository: MemberRepository
     ): LoadHouseholdMembersUseCase {
         return LoadHouseholdMembersUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideIsMemberCheckedInUseCase(memberRepository: MemberRepository): IsMemberCheckedInUseCase {
+        return IsMemberCheckedInUseCase(memberRepository)
     }
 }

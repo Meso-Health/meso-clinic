@@ -12,8 +12,7 @@ import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
 
 class CurrentPatientsViewModel @Inject constructor(
-        memberRepository: MemberRepository,
-        private val identificationEventRepository: IdentificationEventRepository
+        memberRepository: MemberRepository
 ) : ViewModel() {
 
     private val observable: LiveData<ViewState>
@@ -24,10 +23,6 @@ class CurrentPatientsViewModel @Inject constructor(
     }
 
     fun getObservable(): LiveData<ViewState> = observable
-
-    fun getIdentificationEvent(member: Member): Maybe<IdentificationEvent> {
-        return identificationEventRepository.openCheckIn(member.id)
-    }
 
     data class ViewState(val checkedInMembers: List<MemberWithIdEventAndThumbnailPhoto>)
 }

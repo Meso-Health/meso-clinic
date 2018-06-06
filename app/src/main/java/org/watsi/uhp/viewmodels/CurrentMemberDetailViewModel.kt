@@ -28,7 +28,6 @@ import javax.inject.Inject
 class CurrentMemberDetailViewModel @Inject constructor(
         private val loadMemberUseCase: LoadMemberUseCase,
         private val loadDefaultOpdBillables: LoadDefaultBillablesUseCase,
-        private val loadHouseholdMembersUseCase: LoadHouseholdMembersUseCase,
         private val identificationEventRepository: IdentificationEventRepository,
         private val clock: Clock,
         private val logger: Logger
@@ -44,24 +43,13 @@ class CurrentMemberDetailViewModel @Inject constructor(
             logger.error(it)
         })
 
-        val flowables = listOf(
-                loadMemberUseCase.execute(member.id),
-                loadHouseholdMembersUseCase.execute(member)
-        )
-
-        val zippedFlowables = Flowable.zip(flowables, {results ->
-            val memberWithThumbnail = results[0] as MemberWithThumbnail
-            ViewState(
-                    member = memberWithThumbnail.member,
-                    memberThumbnail = memberWithThumbnail.photo,
-                    householdMembers = results[1] as List<MemberWithIdEventAndThumbnailPhoto>)
-        }).onErrorReturn {
-            logger.error(it)
-            ViewState(null, null, null)
-        }.startWith(
-            ViewState(member)
-        )
-        return LiveDataReactiveStreams.fromPublisher(zippedFlowables)
+        val flowable = loadMemberUseCase.execute(member.id)
+                .map { ViewState(member = it.member, memberThumbnail = it?.photo) }
+                .onErrorReturn {
+                    logger.error(it)
+                    ViewState(null)
+                }
+        return LiveDataReactiveStreams.fromPublisher(flowable)
     }
 
     fun dismiss(identificationEvent: IdentificationEvent): Completable {
@@ -79,6 +67,5 @@ class CurrentMemberDetailViewModel @Inject constructor(
     }
 
     data class ViewState(val member: Member?,
-                         val memberThumbnail: Photo? = null,
-                         val householdMembers: List<MemberWithIdEventAndThumbnailPhoto>? = null)
+                         val memberThumbnail: Photo? = null)
 }

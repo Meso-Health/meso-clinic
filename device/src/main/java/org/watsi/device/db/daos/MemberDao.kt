@@ -60,6 +60,19 @@ interface MemberDao {
             "ORDER BY last_identifications.occurredAt")
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
+    @Query("SELECT EXISTS(\n" +
+            "   SELECT *\n" +
+            "   FROM (\n" +
+            "       SELECT id, memberId, max(occurredAt) AS occurredAt\n" +
+            "       FROM identification_events\n" +
+            "       WHERE dismissed = 0\n" +
+            "       AND memberId = :memberId\n" +
+            "   ) last_identifications\n" +
+            "   LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
+            "   WHERE encounters.identificationEventId IS NULL\n" +
+            "   AND last_identifications.memberId = :memberId)")
+    fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
+
     @Transaction
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id != :memberId")
     fun remainingHouseholdMembers(memberId: UUID, householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>

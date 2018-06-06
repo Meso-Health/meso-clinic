@@ -121,14 +121,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
         member?.let {
-            viewModel.getIdentificationEvent(it).subscribe({idEvent ->
-                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(it, idEvent))
-            }, {
-                logger.error(it)
-            }, {
-                logger.error("Member without open check-in on CurrentPatientsFragment")
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-            })
+            navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
         }
         error?.let {
             // TODO: display error?

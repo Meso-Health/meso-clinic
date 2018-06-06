@@ -130,6 +130,7 @@
     <string name="replace_card_notification">Needs new member card</string>
     <string name="replace_card_action">ISSUE</string>
     <string name="check_in">Check-in</string>
+    <string name="checked_in">Already Checked In</string>
     <string name="identification_approved">has been successfully checked in.</string>
 
     <string name="fingerprint_scan_btn">SCAN</string>
