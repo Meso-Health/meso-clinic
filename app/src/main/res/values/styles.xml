@@ -1,10 +1,11 @@
 <resources>
     <!-- Base application theme. -->
     <style name="mainTheme" parent="Theme.AppCompat.Light">
-        <!-- Color palette -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:colorAccent">@color/colorPrimary</item>
+
+        <item name="android:windowBackground">@color/gray1</item>
 
         <!-- Toolbar styles -->
         <item name="windowActionBar">false</item>

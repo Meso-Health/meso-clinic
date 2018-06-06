@@ -23,10 +23,10 @@ data class IdentificationEvent(val id: UUID,
     fun formatClinicNumber(): String {
         return when (clinicNumberType) {
             ClinicNumberType.OPD -> {
-                clinicNumber.toString()
+                "#$clinicNumber"
             }
             ClinicNumberType.DELIVERY -> {
-                "D$clinicNumber"
+                "#D$clinicNumber"
             }
         }
     }

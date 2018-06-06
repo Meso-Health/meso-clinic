@@ -46,6 +46,36 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun isMemberCheckedIn() {
+        val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
+        val memberWithOpenCheckIn = MemberModelFactory.create(
+                memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
+        val memberWithDismissedCheckIn = MemberModelFactory.create(memberDao)
+        val memberWithEncounter = MemberModelFactory.create(memberDao)
+        MemberModelFactory.create(memberDao)
+
+        // open identification event
+        val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
+                memberId = memberWithOpenCheckIn.id,
+                dismissed = false)
+
+        // dismissed identification event
+        IdentificationEventModelFactory.create(identificationEventDao,
+                memberId = memberWithDismissedCheckIn.id,
+                dismissed = true)
+
+        // open identification event but with corresponding encounter
+        val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
+                memberId = memberWithEncounter.id,
+                dismissed = false)
+        EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
+
+        memberDao.isMemberCheckedIn(memberWithOpenCheckIn.id).test().assertValue(true)
+        memberDao.isMemberCheckedIn(memberWithDismissedCheckIn.id).test().assertValue(false)
+        memberDao.isMemberCheckedIn(memberWithEncounter.id).test().assertValue(false)
+    }
+
+    @Test
     fun remainingHouseholdMembers() {
         val householdId = UUID.randomUUID()
         val householdMembers = (1..3).map {

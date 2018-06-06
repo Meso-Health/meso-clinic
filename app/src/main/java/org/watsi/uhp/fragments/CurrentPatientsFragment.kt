@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,8 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients
-import kotlinx.android.synthetic.main.fragment_current_patients.current_patients_label
 import kotlinx.android.synthetic.main.fragment_current_patients.identification_button
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
@@ -33,6 +34,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
 
     lateinit var viewModel: CurrentPatientsViewModel
     lateinit var memberAdapter: MemberAdapter
@@ -48,13 +50,7 @@ class CurrentPatientsFragment : DaggerFragment() {
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 val checkedInMembers = viewState.checkedInMembers
-                if (checkedInMembers.isEmpty()) {
-                    current_patients_label.visibility = View.GONE
-                } else {
-                    memberAdapter.setMembers(checkedInMembers)
-                    current_patients_label.text = activity.resources.getQuantityString(
-                            R.plurals.current_patients_label, checkedInMembers.size, checkedInMembers.size)
-                }
+                memberAdapter.setMembers(checkedInMembers)
             }
         })
     }
@@ -67,8 +63,6 @@ class CurrentPatientsFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         memberAdapter = MemberAdapter(
-                showClinicNumber = true,
-                showPhoneNumber = false,
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                     if (memberRelation.identificationEvent != null) {
                         memberRelation.identificationEvent?.let {
@@ -80,10 +74,15 @@ class CurrentPatientsFragment : DaggerFragment() {
                                 "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
                         navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
                     }
-                })
+                },
+                clock = clock)
+        val layoutManager = LinearLayoutManager(activity)
         current_patients.adapter = memberAdapter
-        current_patients.layoutManager = LinearLayoutManager(activity)
+        current_patients.layoutManager = layoutManager
         current_patients.isNestedScrollingEnabled = false
+        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
+        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
+        current_patients.addItemDecoration(listItemDivider)
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
@@ -121,14 +120,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
         member?.let {
-            viewModel.getIdentificationEvent(it).subscribe({idEvent ->
-                navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(it, idEvent))
-            }, {
-                logger.error(it)
-            }, {
-                logger.error("Member without open check-in on CurrentPatientsFragment")
-                navigationManager.goTo(CheckInMemberDetailFragment.forMember(member))
-            })
+            navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
         }
         error?.let {
             // TODO: display error?

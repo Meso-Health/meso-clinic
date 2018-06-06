@@ -107,7 +107,8 @@
             style="@style/PrimaryButton"
             android:layout_marginLeft="@dimen/fragment_horizontal_margin"
             android:layout_marginRight="@dimen/fragment_horizontal_margin"
-            android:layout_marginBottom="@dimen/fragment_vertical_margin"/>
+            android:layout_marginBottom="@dimen/fragment_vertical_margin"
+            android:visibility="invisible"/>
 
         <View
             android:id="@+id/detail_fragment_divider"

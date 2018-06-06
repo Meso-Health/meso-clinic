@@ -73,14 +73,21 @@ interface CoverageApi {
     fun postIdentificationEvent(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int,
-            @Body unsyncedEvent: IdentificationEventApi
+            @Body identificationEvent: IdentificationEventApi
+    ): Completable
+
+    @POST("providers/{providerId}/billables")
+    fun postBillable(
+            @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+            @Path("providerId") providerId: Int,
+            @Body billable: BillableApi
     ): Completable
 
     @POST("providers/{providerId}/encounters")
     fun postEncounter(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int,
-            @Body unsyncedEncounter: EncounterApi
+            @Body encounter: EncounterApi
     ): Completable
 
     @Multipart

@@ -118,7 +118,7 @@ class EditMemberFragment : DaggerFragment() {
                 val genderString = genderOptions.find { it.first == member.gender }?.second
                 top_gender_age.text = resources.getString(R.string.member_list_item_gender_age,
                         genderString,
-                        member.getDisplayAge())
+                        member.getDisplayAge(clock))
 
                 name_field.setValue(member.name)
                 gender_field.setValue(genderString)
@@ -140,7 +140,7 @@ class EditMemberFragment : DaggerFragment() {
                 // determine if missing information section should be shown based on initial
                 // member information
                 if (this.member == null) {
-                    if (member.isAbsentee()) {
+                    if (member.isAbsentee(clock)) {
                         missing_information_panel_header.visibility = View.VISIBLE
                         member_panel_header.visibility = View.VISIBLE
                     }

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.watsi.uhp.views.MemberListItem
+<org.watsi.uhp.views.MemberDetail
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/item_member_list_photo_height" >
+        android:layout_height="@dimen/thumbnailLarge" >
 
         <ImageView
             android:id="@+id/member_photo"
             android:contentDescription="@string/photo_description"
             android:adjustViewBounds="true"
-            android:layout_width="@dimen/item_member_list_photo_width"
-            android:layout_height="@dimen/item_member_list_photo_height"
+            android:layout_width="@dimen/thumbnailLarge"
+            android:layout_height="@dimen/thumbnailLarge"
             android:layout_marginEnd="12dp" />
 
         <TextView
@@ -70,4 +70,4 @@
             android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
-</org.watsi.uhp.views.MemberListItem>
+</org.watsi.uhp.views.MemberDetail>

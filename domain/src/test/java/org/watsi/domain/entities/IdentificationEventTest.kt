@@ -11,7 +11,7 @@ class IdentificationEventTest {
                 clinicNumberType = IdentificationEvent.ClinicNumberType.DELIVERY)
         val outpatient = IdentificationEventFactory.build(clinicNumber = 2334,
                 clinicNumberType = IdentificationEvent.ClinicNumberType.OPD)
-        assertEquals(delivery.formatClinicNumber(), "D0")
-        assertEquals(outpatient.formatClinicNumber(), "2334")
+        assertEquals(delivery.formatClinicNumber(), "#D0")
+        assertEquals(outpatient.formatClinicNumber(), "#2334")
     }
 }

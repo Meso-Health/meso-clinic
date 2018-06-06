@@ -4,11 +4,10 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
-import org.watsi.domain.entities.Billable
-import io.reactivex.Flowable
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.entities.IdentificationEvent
@@ -16,11 +15,8 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
-import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import java.util.UUID
 import javax.inject.Inject
@@ -28,7 +24,6 @@ import javax.inject.Inject
 class CurrentMemberDetailViewModel @Inject constructor(
         private val loadMemberUseCase: LoadMemberUseCase,
         private val loadDefaultOpdBillables: LoadDefaultBillablesUseCase,
-        private val loadHouseholdMembersUseCase: LoadHouseholdMembersUseCase,
         private val identificationEventRepository: IdentificationEventRepository,
         private val clock: Clock,
         private val logger: Logger
@@ -44,24 +39,13 @@ class CurrentMemberDetailViewModel @Inject constructor(
             logger.error(it)
         })
 
-        val flowables = listOf(
-                loadMemberUseCase.execute(member.id),
-                loadHouseholdMembersUseCase.execute(member)
-        )
-
-        val zippedFlowables = Flowable.zip(flowables, {results ->
-            val memberWithThumbnail = results[0] as MemberWithThumbnail
-            ViewState(
-                    member = memberWithThumbnail.member,
-                    memberThumbnail = memberWithThumbnail.photo,
-                    householdMembers = results[1] as List<MemberWithIdEventAndThumbnailPhoto>)
-        }).onErrorReturn {
-            logger.error(it)
-            ViewState(null, null, null)
-        }.startWith(
-            ViewState(member)
-        )
-        return LiveDataReactiveStreams.fromPublisher(zippedFlowables)
+        val flowable = loadMemberUseCase.execute(member.id)
+                .map { ViewState(member = it.member, memberThumbnail = it.photo) }
+                .onErrorReturn {
+                    logger.error(it)
+                    ViewState(null)
+                }
+        return LiveDataReactiveStreams.fromPublisher(flowable)
     }
 
     fun dismiss(identificationEvent: IdentificationEvent): Completable {
@@ -79,6 +63,5 @@ class CurrentMemberDetailViewModel @Inject constructor(
     }
 
     data class ViewState(val member: Member?,
-                         val memberThumbnail: Photo? = null,
-                         val householdMembers: List<MemberWithIdEventAndThumbnailPhoto>? = null)
+                         val memberThumbnail: Photo? = null)
 }

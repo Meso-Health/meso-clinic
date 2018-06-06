@@ -10,13 +10,13 @@ class SyncMemberUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsynced(Delta.ModelName.MEMBER).flatMapCompletable { memberDeltas ->
-            Completable.concat(memberDeltas.groupBy { it.modelId }.values.map { groupedDeltas ->
-                Completable.concat(listOf(
-                        memberRepository.sync(groupedDeltas),
-                        deltaRepository.markAsSynced(groupedDeltas)
-                ))
-            })
+        return Completable.fromAction {
+            val unsyncedMemberDeltas = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
+
+            unsyncedMemberDeltas.groupBy { it.modelId }.values.map { groupedDeltas ->
+                memberRepository.sync(groupedDeltas).blockingGet()
+                deltaRepository.markAsSynced(groupedDeltas).blockingGet()
+            }
         }
     }
 }

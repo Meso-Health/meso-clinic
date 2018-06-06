@@ -19,14 +19,12 @@
     <dimen name="cornerRadius">4dp</dimen>
 
     <dimen name="editMemberPhotoPlaceholderPadding">30dp</dimen>
+    <dimen name="thumbnailMediumPlaceholderPadding">12dp</dimen>
 
     <!-- Photo dimensions scale -->
-    <dimen name="thumbnailHeight28">28dp</dimen>
-    <dimen name="thumbnailWidth28">28dp</dimen>
-    <dimen name="thumbnailHeight52">52dp</dimen>
-    <dimen name="thumbnailWidth52">52dp</dimen>
-    <dimen name="thumbnailHeight120">120dp</dimen>
-    <dimen name="thumbnailWidth120">120dp</dimen>
+    <dimen name="thumbnailSmall">28dp</dimen>
+    <dimen name="thumbnailMedium">52dp</dimen>
+    <dimen name="thumbnailLarge">120dp</dimen>
 
     <!-- View dimensions scale -->
     <dimen name="viewHeight120">120dp</dimen>
@@ -57,10 +55,6 @@
 
     <!-- padding for each item in a list view -->
     <dimen name="list_item_vertical_padding">16dp</dimen>
-
-    <!-- dimensions for photo on member card -->
-    <dimen name="item_member_list_photo_width">90dp</dimen>
-    <dimen name="item_member_list_photo_height">120dp</dimen>
 
     <!-- dimensions for photo on detail view -->
     <dimen name="detail_fragment_photo_height">208dp</dimen>

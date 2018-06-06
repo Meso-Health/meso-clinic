@@ -44,13 +44,13 @@ class IdentificationEventRepositoryImpl(
     }
 
     override fun sync(delta: Delta): Completable {
-        val authToken = sessionManager.currentToken()!!
-
-        return identificationEventDao.find(delta.modelId).flatMapCompletable {
-            val identificationEvent = it.toIdentificationEvent()
-            api.postIdentificationEvent(authToken.getHeaderString(), authToken.user.providerId,
-                    IdentificationEventApi(identificationEvent)
-            )
-        }.subscribeOn(Schedulers.io())
+        return sessionManager.currentToken()?.let { token ->
+            identificationEventDao.find(delta.modelId).flatMapCompletable { idEventModel ->
+                val identificationEvent = idEventModel.toIdentificationEvent()
+                api.postIdentificationEvent(token.getHeaderString(), token.user.providerId,
+                        IdentificationEventApi(identificationEvent)
+                )
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 }

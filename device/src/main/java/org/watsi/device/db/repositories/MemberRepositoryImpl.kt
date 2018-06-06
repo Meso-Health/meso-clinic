@@ -60,6 +60,10 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         }
     }
 
+    override fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean> {
+        return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
+    }
+
     override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithIdEventAndThumbnailModels ->
             memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
@@ -118,28 +122,28 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun sync(deltas: List<Delta>): Completable {
-        val authToken = sessionManager.currentToken()!!
-
-        return memberDao.find(deltas.first().modelId).flatMapCompletable {
-            val member = it.toMember()
-            if (deltas.any { it.action == Delta.Action.ADD }) {
-                api.postMember(authToken.getHeaderString(), MemberApi(member))
-            } else {
-                api.patchMember(authToken.getHeaderString(), member.id, MemberApi.patch(member, deltas))
-            }
-        }.subscribeOn(Schedulers.io())
+        return sessionManager.currentToken()?.let { token ->
+            memberDao.find(deltas.first().modelId).flatMapCompletable { memberModel ->
+                val member = memberModel.toMember()
+                if (deltas.any { it.action == Delta.Action.ADD }) {
+                    api.postMember(token.getHeaderString(), MemberApi(member))
+                } else {
+                    api.patchMember(token.getHeaderString(), member.id, MemberApi.patch(member, deltas))
+                }
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 
     override fun syncPhotos(deltas: List<Delta>): Completable {
-        val authToken = sessionManager.currentToken()!!
-        val memberId = deltas.first().modelId
-
-        // the modelId in a photo delta corresponds to the member ID and not the photo ID
-        // to make this querying and formatting of the sync request simpler
-        return photoDao.findMemberWithRawPhoto(memberId).flatMapCompletable { memberWithRawPhotoModel ->
-            val memberWithRawPhoto = memberWithRawPhotoModel.toMemberWithRawPhoto()
-            val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
-            api.patchPhoto(authToken.getHeaderString(), memberId, requestBody)
-        }
+        return sessionManager.currentToken()?.let { token ->
+            // the modelId in a photo delta corresponds to the member ID and not the photo ID
+            // to make this querying and formatting of the sync request simpler
+            val memberId = deltas.first().modelId
+            photoDao.findMemberWithRawPhoto(memberId).flatMapCompletable { memberWithRawPhotoModel ->
+                val memberWithRawPhoto = memberWithRawPhotoModel.toMemberWithRawPhoto()
+                val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
+                api.patchPhoto(token.getHeaderString(), memberId, requestBody)
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 }

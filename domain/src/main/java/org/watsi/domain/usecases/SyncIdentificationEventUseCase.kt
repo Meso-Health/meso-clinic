@@ -10,13 +10,14 @@ class SyncIdentificationEventUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsynced(Delta.ModelName.IDENTIFICATION_EVENT).flatMapCompletable { idEventDeltas ->
-            Completable.concat(idEventDeltas.map { idEventDelta ->
-                Completable.concat(listOf(
-                        identificationEventRepository.sync(idEventDelta),
-                        deltaRepository.markAsSynced(listOf(idEventDelta))
-                ))
-            })
+        return Completable.fromAction {
+            val unsyncedIdEventDeltas = deltaRepository.unsynced(
+                    Delta.ModelName.IDENTIFICATION_EVENT).blockingGet()
+
+            unsyncedIdEventDeltas.map { idEventDelta ->
+                identificationEventRepository.sync(idEventDelta)
+                deltaRepository.markAsSynced(listOf(idEventDelta))
+            }
         }
     }
 }

@@ -12,9 +12,11 @@ import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
+import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
+import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
 import org.watsi.domain.usecases.SyncIdentificationEventUseCase
@@ -37,37 +39,65 @@ class DomainModule {
     }
 
     @Provides
-    fun provideSyncMemberUseCase(memberRepository: MemberRepository, deltaRepository: DeltaRepository): SyncMemberUseCase {
+    fun provideSyncMemberUseCase(
+            memberRepository: MemberRepository,
+            deltaRepository: DeltaRepository
+    ): SyncMemberUseCase {
         return SyncMemberUseCase(memberRepository, deltaRepository)
     }
 
     @Provides
-    fun provideCreateIdentificationEventUseCase(identificationEventRepository: IdentificationEventRepository): CreateIdentificationEventUseCase {
+    fun provideCreateIdentificationEventUseCase(
+            identificationEventRepository: IdentificationEventRepository
+    ): CreateIdentificationEventUseCase {
         return CreateIdentificationEventUseCase(identificationEventRepository)
     }
 
     @Provides
-    fun provideSyncIdentificationEventUseCase(identificationEventRepository: IdentificationEventRepository, deltaRepository: DeltaRepository): SyncIdentificationEventUseCase {
+    fun provideSyncBillableUseCase(
+            billableRepository: BillableRepository,
+            deltaRepository: DeltaRepository
+    ): SyncBillableUseCase {
+        return SyncBillableUseCase(billableRepository, deltaRepository)
+    }
+    
+    @Provides
+    fun provideSyncIdentificationEventUseCase(
+            identificationEventRepository: IdentificationEventRepository,
+            deltaRepository: DeltaRepository
+    ): SyncIdentificationEventUseCase {
         return SyncIdentificationEventUseCase(identificationEventRepository, deltaRepository)
     }
 
     @Provides
-    fun provideCreateEncounterUseCase(encounterRepository: EncounterRepository): CreateEncounterUseCase {
-        return CreateEncounterUseCase(encounterRepository)
+    fun provideCreateEncounterUseCase(
+            encounterRepository: EncounterRepository,
+            billableRepository: BillableRepository
+    ): CreateEncounterUseCase {
+        return CreateEncounterUseCase(encounterRepository, billableRepository)
     }
 
     @Provides
-    fun provideSyncEncounterUseCase(encounterRepository: EncounterRepository, deltaRepository: DeltaRepository): SyncEncounterUseCase {
+    fun provideSyncEncounterUseCase(
+            encounterRepository: EncounterRepository,
+            deltaRepository: DeltaRepository
+    ): SyncEncounterUseCase {
         return SyncEncounterUseCase(encounterRepository, deltaRepository)
     }
 
     @Provides
-    fun provideSyncEncounterFormUseCase(encounterFormRepository: EncounterFormRepository, deltaRepository: DeltaRepository): SyncEncounterFormUseCase {
+    fun provideSyncEncounterFormUseCase(
+            encounterFormRepository: EncounterFormRepository,
+            deltaRepository: DeltaRepository
+    ): SyncEncounterFormUseCase {
         return SyncEncounterFormUseCase(encounterFormRepository, deltaRepository)
     }
 
     @Provides
-    fun provideSyncMemberPhotoUseCase(memberRepository: MemberRepository, deltaRepository: DeltaRepository): SyncMemberPhotoUseCase {
+    fun provideSyncMemberPhotoUseCase(
+            memberRepository: MemberRepository,
+            deltaRepository: DeltaRepository
+    ): SyncMemberPhotoUseCase {
         return SyncMemberPhotoUseCase(memberRepository, deltaRepository)
     }
   
@@ -87,12 +117,21 @@ class DomainModule {
     }
 
     @Provides
-    fun provideLoadDefaultOpdBillablesUseCase(billableRepository: BillableRepository): LoadDefaultBillablesUseCase {
+    fun provideLoadDefaultOpdBillablesUseCase(
+            billableRepository: BillableRepository
+    ): LoadDefaultBillablesUseCase {
         return LoadDefaultBillablesUseCase(billableRepository)
     }
 
     @Provides
-    fun provideLoadHouseholdMembersUseCase(memberRepository: MemberRepository): LoadHouseholdMembersUseCase {
+    fun provideLoadHouseholdMembersUseCase(
+            memberRepository: MemberRepository
+    ): LoadHouseholdMembersUseCase {
         return LoadHouseholdMembersUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideIsMemberCheckedInUseCase(memberRepository: MemberRepository): IsMemberCheckedInUseCase {
+        return IsMemberCheckedInUseCase(memberRepository)
     }
 }

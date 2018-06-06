@@ -38,7 +38,7 @@ class DebugLogger : Logger {
         Log.e(TAG, logMessage(throwable.localizedMessage, params), throwable)
     }
 
-    private fun logMessage(message: String, params: Map<String, String>): String {
+    private fun logMessage(message: String?, params: Map<String, String>): String? {
         return if (params.isEmpty()) message else message + " - " + params.toString()
     }
 }

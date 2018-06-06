@@ -192,12 +192,17 @@ dependencies {
     // Exception reporting
     implementation dependencies.rollbar
 
+    // Image loading
+    // https://bumptech.github.io/glide/doc/download-setup.html#gradle
+    implementation (dependencies.glide) {
+        exclude group: "com.android.support"
+    }
+    kapt dependencies.glideCompiler
+
     // Application dependencies
     implementation 'me.xdrop:fuzzywuzzy:1.1.9'
     implementation 'me.philio:pinentryview:1.0.6'
     implementation 'net.hockeyapp.android:HockeySDK:4.1.2'
-    implementation 'com.github.bumptech.glide:glide:3.8.0'
-    kapt 'com.github.bumptech.glide:compiler:4.0.0-RC1'
 
     // Testing
     testImplementation project(path: ':domain', configuration: 'testOutput')

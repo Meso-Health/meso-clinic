@@ -98,7 +98,7 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
     <!-- CurrentPatientsFragment -->
-    <string name="current_patients_fragment_label">Select a member</string>
+    <string name="current_patients_fragment_label">Checked in members</string>
     <string name="identification_button">Look up member</string>
     <string name="current_patients_empty_text">There are no checked-in members.</string>
     <plurals name="current_patients_label" >
@@ -130,6 +130,7 @@
     <string name="replace_card_notification">Needs new member card</string>
     <string name="replace_card_action">ISSUE</string>
     <string name="check_in">Check-in</string>
+    <string name="checked_in">Already Checked In</string>
     <string name="identification_approved">has been successfully checked in.</string>
 
     <string name="fingerprint_scan_btn">SCAN</string>
@@ -240,4 +241,7 @@
     <string name="member_photo_overlay_text">Take photo of member</string>
     <string name="form_photo_overlay_text">Take photo of form</string>
 
+    <!-- MemberListItem -->
+    <string name="member_list_item_description">%1$s &#183; %2$s</string>
+    <string name="member_list_item_description_checked_in">%1$s &#183; %2$s &#183; %3$s</string>
 </resources>

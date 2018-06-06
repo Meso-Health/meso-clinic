@@ -21,18 +21,18 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
-import kotlinx.android.synthetic.main.fragment_member_detail.absentee_notification
-import kotlinx.android.synthetic.main.fragment_member_detail.household_members_label
-import kotlinx.android.synthetic.main.fragment_member_detail.household_members_list
-import kotlinx.android.synthetic.main.fragment_member_detail.member_action_button
-import kotlinx.android.synthetic.main.fragment_member_detail.member_age_and_gender
-import kotlinx.android.synthetic.main.fragment_member_detail.member_card_id_detail_fragment
-import kotlinx.android.synthetic.main.fragment_member_detail.member_name_detail_fragment
-import kotlinx.android.synthetic.main.fragment_member_detail.member_phone_number
-import kotlinx.android.synthetic.main.fragment_member_detail.member_photo
-import kotlinx.android.synthetic.main.fragment_member_detail.replace_card_notification
-import kotlinx.android.synthetic.main.fragment_member_detail.scan_fingerprints_btn
-import kotlinx.android.synthetic.main.fragment_member_detail.scan_result
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.absentee_notification
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_label
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_list
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_action_button
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_age_and_gender
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_card_id_detail_fragment
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_name_detail_fragment
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_phone_number
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_photo
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.replace_card_notification
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_fingerprints_btn
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_result
 import org.threeten.bp.Clock
 import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
@@ -90,7 +90,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee()) {
+                if (member.isAbsentee(clock)) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
                         navigationManager.goTo(EditMemberFragment.forMember(member.id))
@@ -108,6 +108,24 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 member_age_and_gender.text = member.formatAgeAndGender(clock)
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
+
+                PhotoLoader.loadMemberPhoto(
+                        it.memberThumbnail?.bytes, member_photo, context, member.gender)
+            }
+
+            it?.isMemberCheckedIn?.let { isMemberCheckedIn ->
+                member_action_button.visibility = View.VISIBLE
+
+                if (isMemberCheckedIn) {
+                    member_action_button.isEnabled = false
+                    member_action_button.text = getString(R.string.checked_in)
+                } else {
+                    member_action_button.isEnabled = true
+                    member_action_button.text = getString(R.string.check_in)
+                    member_action_button.setOnClickListener {
+                        launchClinicNumberDialog()
+                    }
+                }
             }
 
             it?.householdMembers?.let { householdMembers ->
@@ -115,25 +133,16 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 household_members_label.text = context.resources.getQuantityString(
                         R.plurals.household_label, householdMembers.size, householdMembers.size)
             }
-
-            it?.memberThumbnail?.bytes?.let { bytes ->
-                PhotoLoader.loadMemberPhoto(bytes, member_photo, context)
-            }
         })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.detail_fragment_label)
         setHasOptionsMenu(true)
-        return inflater?.inflate(R.layout.fragment_member_detail, container, false)
+        return inflater?.inflate(R.layout.fragment_checkin_member_detail, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        member_action_button.text = getString(R.string.check_in)
-        member_action_button.setOnClickListener {
-            launchClinicNumberDialog()
-        }
-
         member.fingerprintsGuid?.let { guid ->
             scan_fingerprints_btn.visibility = View.VISIBLE
             scan_fingerprints_btn.setOnClickListener {view ->
@@ -144,18 +153,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         }
 
         memberAdapter = MemberAdapter(
-                showClinicNumber = false,
-                showPhoneNumber = true,
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                    if (memberRelation.identificationEvent != null) {
-                        memberRelation.identificationEvent?.let {
-                            navigationManager.goTo(CurrentMemberDetailFragment.forMemberAndIdEvent(
-                                    memberRelation.member, it))
-                        }
-                    } else {
                         navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
-                    }
-                })
+                },
+                clock = clock)
         household_members_list.adapter = memberAdapter
         household_members_list.layoutManager = LinearLayoutManager(activity)
         household_members_list.isNestedScrollingEnabled = false
