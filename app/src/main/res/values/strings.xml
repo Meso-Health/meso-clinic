@@ -98,7 +98,7 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
     <!-- CurrentPatientsFragment -->
-    <string name="current_patients_fragment_label">Select a member</string>
+    <string name="current_patients_fragment_label">Checked in members</string>
     <string name="identification_button">Look up member</string>
     <string name="current_patients_empty_text">There are no checked-in members.</string>
     <plurals name="current_patients_label" >

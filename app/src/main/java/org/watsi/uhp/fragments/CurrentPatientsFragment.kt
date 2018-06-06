@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients
-import kotlinx.android.synthetic.main.fragment_current_patients.current_patients_label
 import kotlinx.android.synthetic.main.fragment_current_patients.identification_button
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
@@ -50,13 +50,7 @@ class CurrentPatientsFragment : DaggerFragment() {
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 val checkedInMembers = viewState.checkedInMembers
-                if (checkedInMembers.isEmpty()) {
-                    current_patients_label.visibility = View.GONE
-                } else {
-                    memberAdapter.setMembers(checkedInMembers)
-                    current_patients_label.text = activity.resources.getQuantityString(
-                            R.plurals.current_patients_label, checkedInMembers.size, checkedInMembers.size)
-                }
+                memberAdapter.setMembers(checkedInMembers)
             }
         })
     }
@@ -82,9 +76,13 @@ class CurrentPatientsFragment : DaggerFragment() {
                     }
                 },
                 clock = clock)
+        val layoutManager = LinearLayoutManager(activity)
         current_patients.adapter = memberAdapter
-        current_patients.layoutManager = LinearLayoutManager(activity)
+        current_patients.layoutManager = layoutManager
         current_patients.isNestedScrollingEnabled = false
+        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
+        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
+        current_patients.addItemDecoration(listItemDivider)
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
