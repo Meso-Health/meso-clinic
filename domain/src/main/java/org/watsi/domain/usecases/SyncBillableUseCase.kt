@@ -10,13 +10,13 @@ class SyncBillableUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsynced(Delta.ModelName.BILLABLE).flatMapCompletable { billableDeltas ->
-            Completable.concat(billableDeltas.map { billableDelta ->
-                Completable.concat(listOf(
-                        billableRepository.sync(billableDelta),
-                        deltaRepository.markAsSynced(listOf(billableDelta))
-                ))
-            })
+        return Completable.fromAction {
+            val unsyncedBillableDeltas = deltaRepository.unsynced(Delta.ModelName.BILLABLE).blockingGet()
+
+            unsyncedBillableDeltas.map { billableDelta ->
+                billableRepository.sync(billableDelta).blockingGet()
+                deltaRepository.markAsSynced(listOf(billableDelta)).blockingGet()
+            }
         }
     }
 }
