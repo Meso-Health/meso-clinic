@@ -32,16 +32,15 @@ class CheckInMemberDetailViewModel @Inject constructor(
             val memberWithThumbnail = results[0] as MemberWithThumbnail
             val isMemberCheckedIn = results[1] as Boolean
             ViewState(
-                        member = member,
-                        memberThumbnail = memberWithThumbnail.photo,
-                        isMemberCheckedIn = isMemberCheckedIn,
-                        householdMembers = results[2] as List<MemberWithIdEventAndThumbnailPhoto>)
+                    member = member,
+                    memberThumbnail = memberWithThumbnail.photo,
+                    isMemberCheckedIn = isMemberCheckedIn,
+                    householdMembers = results[2] as List<MemberWithIdEventAndThumbnailPhoto>
+            )
         }).onErrorReturn {
             logger.error(it)
             ViewState()
-        }.startWith(
-                ViewState(member)
-        )
+        }.startWith(ViewState(member))
         return LiveDataReactiveStreams.fromPublisher(zippedFlowables)
     }
 
