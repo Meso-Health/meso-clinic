@@ -36,7 +36,11 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
     }
 
-    override fun find(id: UUID): Flowable<Member> {
+    override fun find(id: UUID): Single<Member> {
+        return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
+    }
+
+    override fun findFlowable(id: UUID): Flowable<Member> {
         return memberDao.findFlowable(id).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
@@ -123,8 +127,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
 
     override fun sync(deltas: List<Delta>): Completable {
         return sessionManager.currentToken()?.let { token ->
-            memberDao.find(deltas.first().modelId).flatMapCompletable { memberModel ->
-                val member = memberModel.toMember()
+            find(deltas.first().modelId).flatMapCompletable { member ->
                 if (deltas.any { it.action == Delta.Action.ADD }) {
                     api.postMember(token.getHeaderString(), MemberApi(member))
                 } else {
