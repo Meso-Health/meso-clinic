@@ -16,6 +16,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients
 import kotlinx.android.synthetic.main.fragment_current_patients.current_patients_label
 import kotlinx.android.synthetic.main.fragment_current_patients.identification_button
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
@@ -33,6 +34,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
 
     lateinit var viewModel: CurrentPatientsViewModel
     lateinit var memberAdapter: MemberAdapter
@@ -67,8 +69,6 @@ class CurrentPatientsFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         memberAdapter = MemberAdapter(
-                showClinicNumber = true,
-                showPhoneNumber = false,
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                     if (memberRelation.identificationEvent != null) {
                         memberRelation.identificationEvent?.let {
@@ -80,7 +80,8 @@ class CurrentPatientsFragment : DaggerFragment() {
                                 "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
                         navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
                     }
-                })
+                },
+                clock = clock)
         current_patients.adapter = memberAdapter
         current_patients.layoutManager = LinearLayoutManager(activity)
         current_patients.isNestedScrollingEnabled = false

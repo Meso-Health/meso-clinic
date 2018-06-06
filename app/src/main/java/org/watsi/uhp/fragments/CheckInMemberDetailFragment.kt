@@ -90,7 +90,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee()) {
+                if (member.isAbsentee(clock)) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
                         navigationManager.goTo(EditMemberFragment.forMember(member.id))
@@ -108,6 +108,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 member_age_and_gender.text = member.formatAgeAndGender(clock)
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
+
+                PhotoLoader.loadMemberPhoto(
+                        it.memberThumbnail?.bytes, member_photo, context, member.gender)
             }
 
             it?.isMemberCheckedIn?.let { isMemberCheckedIn ->
@@ -130,10 +133,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 household_members_label.text = context.resources.getQuantityString(
                         R.plurals.household_label, householdMembers.size, householdMembers.size)
             }
-
-            it?.memberThumbnail?.bytes?.let { bytes ->
-                PhotoLoader.loadMemberPhoto(bytes, member_photo, context)
-            }
         })
     }
 
@@ -154,11 +153,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         }
 
         memberAdapter = MemberAdapter(
-                showClinicNumber = false,
-                showPhoneNumber = true,
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                         navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
-                })
+                },
+                clock = clock)
         household_members_list.adapter = memberAdapter
         household_members_list.layoutManager = LinearLayoutManager(activity)
         household_members_list.isNestedScrollingEnabled = false

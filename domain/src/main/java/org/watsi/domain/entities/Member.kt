@@ -26,16 +26,16 @@ data class Member(val id: UUID,
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
 
-    fun isAbsentee(clock: Clock = Clock.systemDefaultZone()): Boolean {
+    fun isAbsentee(clock: Clock): Boolean {
         return (photoUrl == null && thumbnailPhotoId == null) ||
                 (requiresFingerprint(clock) && fingerprintsGuid == null)
     }
 
-    fun requiresFingerprint(clock: Clock = Clock.systemDefaultZone()): Boolean {
+    fun requiresFingerprint(clock: Clock): Boolean {
         return getAgeYears(clock) >= 6
     }
 
-    fun getAgeYears(clock: Clock = Clock.systemDefaultZone()): Int {
+    fun getAgeYears(clock: Clock): Int {
         return DateUtils.getYearsAgo(birthdate, clock)
     }
 
@@ -49,7 +49,7 @@ data class Member(val id: UUID,
         }
     }
 
-    fun formatAgeAndGender(clock: Clock = Clock.systemDefaultZone()): String {
+    fun formatAgeAndGender(clock: Clock): String {
         return "${getAgeYears(clock)} - ${gender}"
     }
 
@@ -66,14 +66,14 @@ data class Member(val id: UUID,
         }
     }
 
-    fun getAgeMonths(clock: Clock = Clock.systemDefaultZone()): Int {
+    fun getAgeMonths(clock: Clock): Int {
         return DateUtils.getMonthsAgo(birthdate, clock)
     }
 
     /**
      * Returns quantity in months if below 2 or in years otherwise, regardless of birthdate accuracy.
      */
-    fun getDisplayAge(clock: Clock = Clock.systemDefaultZone()): String {
+    fun getDisplayAge(clock: Clock): String {
         val ageYears = getAgeYears(clock)
         return if (ageYears >= 2) ageYears.toString() else "${getAgeMonths(clock)} months"
     }

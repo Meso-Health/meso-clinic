@@ -12,6 +12,7 @@ import android.widget.SearchView
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_member_search.member_search
 import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
@@ -27,6 +28,7 @@ class SearchMemberFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
     @Inject lateinit var keyboardManager: KeyboardManager
+    @Inject lateinit var clock: Clock
 
     lateinit var viewModel: SearchMemberViewModel
     lateinit var memberAdapter: MemberAdapter
@@ -67,11 +69,10 @@ class SearchMemberFragment : DaggerFragment() {
         })
 
         memberAdapter = MemberAdapter(
-                showClinicNumber = false,
-                showPhoneNumber = true,
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                         navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
-                })
+                },
+                clock = clock)
         member_search_results.adapter = memberAdapter
         member_search_results.layoutManager = LinearLayoutManager(activity)
         member_search_results.isNestedScrollingEnabled = false

@@ -63,7 +63,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee()) {
+                if (member.isAbsentee(clock)) {
                     absentee_notification.visibility = View.VISIBLE
                     absentee_notification.setOnActionClickListener {
                         navigationManager.goTo(EditMemberFragment.forMember(member.id))
@@ -81,10 +81,9 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 member_age_and_gender.text = member.formatAgeAndGender(clock)
                 member_card_id_detail_fragment.text = member.cardId
                 member_phone_number.text = member.phoneNumber
-            }
 
-            it?.memberThumbnail?.let { thumbnail ->
-                PhotoLoader.loadMemberPhoto(thumbnail.bytes, member_photo, context)
+                PhotoLoader.loadMemberPhoto(
+                        it.memberThumbnail?.bytes, member_photo, context, member.gender)
             }
         })
     }

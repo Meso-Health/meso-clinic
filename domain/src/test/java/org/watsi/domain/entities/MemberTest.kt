@@ -5,13 +5,18 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneId
 import org.watsi.domain.factories.MemberFactory
 import java.util.UUID
 
 class MemberTest {
 
     val today = LocalDate.now()
+    val now = Instant.now()
+    val fixedClock = Clock.fixed(now, ZoneId.systemDefault())
     lateinit var fiveYearsAgo: LocalDate
     lateinit var tenYearsAgo: LocalDate
 
@@ -27,7 +32,7 @@ class MemberTest {
                 fingerprintsGuid = UUID.randomUUID(),
                 thumbnailPhotoId = UUID.randomUUID())
 
-        assertFalse(member.isAbsentee())
+        assertFalse(member.isAbsentee(fixedClock))
     }
 
     @Test
@@ -36,7 +41,7 @@ class MemberTest {
                                          fingerprintsGuid = null,
                                          thumbnailPhotoId = UUID.randomUUID())
 
-        assertFalse(member.isAbsentee())
+        assertFalse(member.isAbsentee(fixedClock))
     }
 
     @Test
@@ -45,32 +50,32 @@ class MemberTest {
                                          fingerprintsGuid = null,
                                          photoUrl = "")
 
-        assertFalse(member.isAbsentee())
+        assertFalse(member.isAbsentee(fixedClock))
     }
 
     @Test
     fun isAbsentee_requiresFingerprints_noFingerprint_isTrue() {
         val member = MemberFactory.build(birthdate = tenYearsAgo, fingerprintsGuid = null)
 
-        assert(member.isAbsentee())
+        assert(member.isAbsentee(fixedClock))
     }
 
     @Test
     fun isAbsentee_noPhoto_isTrue() {
         val member = MemberFactory.build(thumbnailPhotoId = null, photoUrl = null)
 
-        assert(member.isAbsentee())
+        assert(member.isAbsentee(fixedClock))
     }
 
     @Test
     fun requiresFingerprint() {
-        assert(MemberFactory.build(birthdate = tenYearsAgo).requiresFingerprint())
-        assertFalse(MemberFactory.build(birthdate = fiveYearsAgo).requiresFingerprint())
+        assert(MemberFactory.build(birthdate = tenYearsAgo).requiresFingerprint(fixedClock))
+        assertFalse(MemberFactory.build(birthdate = fiveYearsAgo).requiresFingerprint(fixedClock))
     }
 
     @Test
     fun getAgeYears() {
-        assertEquals(10, MemberFactory.build(birthdate = tenYearsAgo).getAgeYears())
+        assertEquals(10, MemberFactory.build(birthdate = tenYearsAgo).getAgeYears(fixedClock))
     }
 
     @Test
@@ -103,8 +108,8 @@ class MemberTest {
     fun formatAgeAndGender() {
         val m1 = MemberFactory.build(birthdate = tenYearsAgo, gender = Member.Gender.M)
         val m2 = MemberFactory.build(birthdate = fiveYearsAgo, gender = Member.Gender.F)
-        assertEquals(m1.formatAgeAndGender(), "10 - M")
-        assertEquals(m2.formatAgeAndGender(), "5 - F")
+        assertEquals(m1.formatAgeAndGender(fixedClock), "10 - M")
+        assertEquals(m2.formatAgeAndGender(fixedClock), "5 - F")
     }
 
     @Test
