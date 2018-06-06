@@ -70,13 +70,11 @@ class BillableRepositoryImpl(
     }
 
     override fun sync(delta: Delta): Completable {
-        val authToken = sessionManager.currentToken()!!
-
-        return billableDao.find(delta.modelId).flatMapCompletable {
-            val billable = it.toBillable()
-            api.postBillable(authToken.getHeaderString(), authToken.user.providerId,
-                    BillableApi(billable)
-            )
-        }.subscribeOn(Schedulers.io())
+        return sessionManager.currentToken()?.let { token ->
+            billableDao.find(delta.modelId).flatMapCompletable { billableModel ->
+                val billable = billableModel.toBillable()
+                api.postBillable(token.getHeaderString(), token.user.providerId, BillableApi(billable))
+            }.subscribeOn(Schedulers.io())
+        } ?: Completable.complete()
     }
 }

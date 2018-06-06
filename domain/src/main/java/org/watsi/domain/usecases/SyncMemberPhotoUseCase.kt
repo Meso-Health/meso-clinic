@@ -10,20 +10,21 @@ class SyncMemberPhotoUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsyncedModelIds(Delta.ModelName.MEMBER, Delta.Action.ADD).flatMapCompletable {
-            unsyncedMemberIds ->
-            deltaRepository.unsynced(Delta.ModelName.PHOTO).flatMapCompletable { photoDeltas ->
-                // filter out deltas that correspond to a Member that has not been synced yet
-                val photoDeltasThatCanBeSynced = photoDeltas
-                        .filter { !unsyncedMemberIds.contains(it.modelId) }
-                        .groupBy { it.modelId }
-                        .values
-                Completable.concat(photoDeltasThatCanBeSynced.map { deltas ->
-                    Completable.concat(listOf(
-                            memberRepository.syncPhotos(deltas),
-                            deltaRepository.markAsSynced(deltas)
-                    ))
-                })
+        return Completable.fromAction {
+            val unsyncedMemberPhotoDeltas = deltaRepository.unsynced(
+                    Delta.ModelName.PHOTO).blockingGet()
+            val unsyncedMemberIds = deltaRepository.unsyncedModelIds(
+                    Delta.ModelName.MEMBER, Delta.Action.ADD).blockingGet()
+            // the modelId in a photo delta corresponds to the member ID and not the photo ID
+            // to make querying simpler
+            val syncableMemberPhotoDeltas = unsyncedMemberPhotoDeltas
+                    .filter { !unsyncedMemberIds.contains(it.modelId) }
+                    .groupBy { it.modelId }
+                    .values
+
+            syncableMemberPhotoDeltas.map { groupedDeltas ->
+                memberRepository.syncPhotos(groupedDeltas).blockingGet()
+                deltaRepository.markAsSynced(groupedDeltas).blockingGet()
             }
         }
     }

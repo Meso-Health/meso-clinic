@@ -10,22 +10,20 @@ class SyncEncounterFormUseCase(
         private val deltaRepository: DeltaRepository
 ) {
     fun execute(): Completable {
-        return deltaRepository.unsyncedModelIds(Delta.ModelName.ENCOUNTER, Delta.Action.ADD).flatMapCompletable {
-            unsyncedEncounterIds ->
-            deltaRepository.unsynced(Delta.ModelName.ENCOUNTER_FORM).flatMapCompletable { encounterFormDeltas ->
-                Completable.concat(encounterFormDeltas.map { encounterFormDelta ->
-                    encounterFormRepository.find(encounterFormDelta.modelId).flatMapCompletable {
-                        // filter out deltas that correspond to a Encounter that has not been synced yet
-                        if (!unsyncedEncounterIds.contains(it.encounterForm.encounterId)) {
-                            Completable.concat(listOf(
-                                    encounterFormRepository.sync(encounterFormDelta),
-                                    deltaRepository.markAsSynced(listOf(encounterFormDelta))
-                            ))
-                        } else {
-                            Completable.complete()
-                        }
-                    }
-                })
+        return Completable.fromAction {
+            val unsyncedEncounterFormDeltas = deltaRepository.unsynced(
+                    Delta.ModelName.ENCOUNTER_FORM).blockingGet()
+            val unsyncedEncounterIds = deltaRepository.unsyncedModelIds(
+                    Delta.ModelName.ENCOUNTER, Delta.Action.ADD).blockingGet()
+
+            unsyncedEncounterFormDeltas.map { encounterFormDelta ->
+                val encounterForm = encounterFormRepository.find(encounterFormDelta.modelId).blockingGet()
+                val hasUnsyncedEncounter = unsyncedEncounterIds.contains(encounterForm.encounterForm.encounterId)
+
+                if (!hasUnsyncedEncounter) {
+                    encounterFormRepository.sync(encounterFormDelta).blockingGet()
+                    deltaRepository.markAsSynced(listOf(encounterFormDelta)).blockingGet()
+                }
             }
         }
     }
