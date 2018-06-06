@@ -4,11 +4,10 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
-import org.watsi.domain.entities.Billable
-import io.reactivex.Flowable
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.entities.IdentificationEvent
@@ -16,11 +15,8 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
-import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import java.util.UUID
 import javax.inject.Inject
@@ -44,7 +40,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
         })
 
         val flowable = loadMemberUseCase.execute(member.id)
-                .map { ViewState(member = it.member, memberThumbnail = it?.photo) }
+                .map { ViewState(member = it.member, memberThumbnail = it.photo) }
                 .onErrorReturn {
                     logger.error(it)
                     ViewState(null)
