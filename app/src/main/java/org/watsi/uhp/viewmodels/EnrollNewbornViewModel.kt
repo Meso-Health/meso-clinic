@@ -32,7 +32,7 @@ class EnrollNewbornViewModel(
         viewStateObservable.value = ViewState()
     }
 
-    fun saveMember(memberId: UUID, formValidator: FormValidator) : Completable {
+    fun saveMember(memberId: UUID, householdId: UUID, formValidator: FormValidator) : Completable {
         val viewState = viewStateObservable.value
 
         if (viewState == null || viewState.status == MemberStatus.SAVING) {
@@ -46,8 +46,8 @@ class EnrollNewbornViewModel(
         }
 
         viewStateObservable.value = viewState.copy(status = MemberStatus.SAVING)
-        val member = toMember(viewState, memberId, clock)
-
+        val member = toMember(viewState, memberId, householdId, clock)
+        
         return createMemberUseCase.execute(member).doOnError { onError(it) }
                 .onErrorResumeNext { Completable.never() }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,7 +75,7 @@ class EnrollNewbornViewModel(
         }
     }
 
-    fun onCaptureFingerprintId(fingerprintId: UUID?) { 
+    fun onCaptureFingerprintId(fingerprintId: UUID?) {
         viewStateObservable.value?.let {
             val errors = it.errors.filterNot { it.key == MEMBER_FINGERPRINTS_ERROR }
             viewStateObservable.value = it.copy(fingerprintsGuid = fingerprintId, errors = errors)
@@ -178,7 +178,7 @@ class EnrollNewbornViewModel(
         const val MEMBER_CARD_ERROR = "member_card_error"
         const val MEMBER_FINGERPRINTS_ERROR = "member_fingerprints_error"
 
-        fun toMember(viewState: ViewState, memberId: UUID, clock: Clock): Member {
+        fun toMember(viewState: ViewState, memberId: UUID, householdId: UUID, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() &&
                     viewState.gender != null && viewState.cardId != null &&
                     viewState.birthdate != null && viewState.photoId != null && viewState.name != null) {
@@ -192,8 +192,8 @@ class EnrollNewbornViewModel(
                         photoId = viewState.photoId,
                         thumbnailPhotoId = viewState.thumbnailPhoto?.id,
                         fingerprintsGuid = viewState.fingerprintsGuid,
-                        cardId = viewState.cardId
-                        // householdId take from mom? --> required
+                        cardId = viewState.cardId,
+                        householdId = householdId
                         // language from mom?
                         // phoneNumber from mom?
                 )
