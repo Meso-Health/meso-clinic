@@ -47,7 +47,7 @@ class EnrollNewbornViewModel(
 
         viewStateObservable.value = viewState.copy(status = MemberStatus.SAVING)
         val member = toMember(viewState, memberId, householdId, clock)
-        
+
         return createMemberUseCase.execute(member).doOnError { onError(it) }
                 .onErrorResumeNext { Completable.never() }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -193,9 +193,10 @@ class EnrollNewbornViewModel(
                         thumbnailPhotoId = viewState.thumbnailPhoto?.id,
                         fingerprintsGuid = viewState.fingerprintsGuid,
                         cardId = viewState.cardId,
-                        householdId = householdId
-                        // language from mom?
-                        // phoneNumber from mom?
+                        householdId = householdId,
+                        language = null, // should we grab this from the parent?
+                        phoneNumber = null, // should we grab this from the parent?
+                        photoUrl = null //
                 )
             } else {
                 throw IllegalStateException("ViewStateToEntityMapper.fromMemberViewStateToMember should only be called with a valid viewState. " + viewState.toString())
