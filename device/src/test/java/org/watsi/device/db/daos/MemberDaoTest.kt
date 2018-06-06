@@ -71,6 +71,8 @@ class MemberDaoTest : DaoBaseTest() {
         EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
 
         memberDao.isMemberCheckedIn(memberWithOpenCheckIn.id).test().assertValue(true)
+        memberDao.isMemberCheckedIn(memberWithDismissedCheckIn.id).test().assertValue(false)
+        memberDao.isMemberCheckedIn(memberWithEncounter.id).test().assertValue(false)
     }
 
     @Test
