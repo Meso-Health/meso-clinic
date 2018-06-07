@@ -196,7 +196,7 @@ class EnrollNewbornViewModel(
                         householdId = householdId,
                         language = null, // should we grab this from the parent?
                         phoneNumber = null, // should we grab this from the parent?
-                        photoUrl = null //
+                        photoUrl = null
                 )
             } else {
                 throw IllegalStateException("ViewStateToEntityMapper.fromMemberViewStateToMember should only be called with a valid viewState. " + viewState.toString())
