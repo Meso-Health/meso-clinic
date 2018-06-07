@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/receipt_billable_quantity"
         android:layout_width="25dp"
-        android:textColor="@color/title"
+        android:textColor="@color/gray9"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
-        android:textColor="@color/title"
+        android:textColor="@color/gray9"
         android:layout_toEndOf="@id/receipt_billable_quantity" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:id="@+id/receipt_billable_price_of_quantity"
         android:layout_width="65dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/title"
+        android:textColor="@color/gray9"
         android:gravity="end"
         android:textAlignment="gravity"
         android:layout_toEndOf="@id/receipt_billable_name" />

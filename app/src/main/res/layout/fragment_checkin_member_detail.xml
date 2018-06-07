@@ -114,7 +114,7 @@
             android:id="@+id/detail_fragment_divider"
             android:layout_width="fill_parent"
             android:layout_height="1dip"
-            android:background="@color/divider" />
+            android:background="@color/gray3" />
 
         <TextView
             android:id="@+id/household_members_label"
