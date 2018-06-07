@@ -3,7 +3,6 @@ package org.watsi.domain.entities
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
@@ -17,14 +16,8 @@ class MemberTest {
     val today = LocalDate.now()
     val now = Instant.now()
     val fixedClock = Clock.fixed(now, ZoneId.systemDefault())
-    lateinit var fiveYearsAgo: LocalDate
-    lateinit var tenYearsAgo: LocalDate
-
-    @Before
-    fun setup() {
-        fiveYearsAgo = today.minusYears(5)
-        tenYearsAgo = today.minusYears(10)
-    }
+    val fiveYearsAgo = today.minusYears(5)
+    val tenYearsAgo = today.minusYears(10)
 
     @Test
     fun isAbsentee_requiresFingerprints_hasFingerprintAndPhoto_isFalse() {
