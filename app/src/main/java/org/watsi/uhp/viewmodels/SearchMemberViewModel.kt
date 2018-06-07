@@ -8,6 +8,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.uhp.helpers.QueryHelper
 import javax.inject.Inject
 
 class SearchMemberViewModel @Inject constructor (
@@ -33,7 +34,7 @@ class SearchMemberViewModel @Inject constructor (
     fun getObservable(): LiveData<List<MemberWithIdEventAndThumbnailPhoto>> = observable
 
     fun updateQuery(query: String) {
-        if (query.matches(Regex(".*\\d+.*"))) {
+        if (QueryHelper.isSearchById(query)) {
             members.filter { it.cardId?.contains(query) == true }.sortedBy { it.cardId }.let {
                 memberRepository.byIds(it.map { it.id }).subscribe({
                     observable.postValue(it)

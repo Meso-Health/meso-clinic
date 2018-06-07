@@ -14,9 +14,11 @@ import kotlinx.android.synthetic.main.fragment_member_search.member_search
 import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
@@ -70,7 +72,13 @@ class SearchMemberFragment : DaggerFragment() {
 
         memberAdapter = MemberAdapter(
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
+                        val searchMethod: SearchMethod = when (QueryHelper.isSearchById(member_search.query.toString())) {
+                            true -> SearchMethod.SEARCH_ID
+                            false -> SearchMethod.SEARCH_NAME
+                        }
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                                memberRelation.member,
+                                searchMethod))
                 },
                 clock = clock)
         member_search_results.adapter = memberAdapter
