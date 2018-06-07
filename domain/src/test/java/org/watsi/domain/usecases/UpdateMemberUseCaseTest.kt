@@ -2,7 +2,7 @@ package org.watsi.domain.usecases
 
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
-import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
@@ -29,7 +29,7 @@ class UpdateMemberUseCaseTest {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         useCase = UpdateMemberUseCase(mockMemberRepository)
         whenever(mockMember.id).thenReturn(memberId)
-        whenever(mockMemberRepository.find(memberId)).thenReturn(Flowable.just(mockPrevMember))
+        whenever(mockMemberRepository.find(memberId)).thenReturn(Single.just(mockPrevMember))
     }
 
     @Test
