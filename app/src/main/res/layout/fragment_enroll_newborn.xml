@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:showCalendarIcon="true"
-            app:layout_contraintTop_toBottomOf="@id/name_layout"/>
+            app:layout_constraintTop_toBottomOf="@id/name_layout"/>
 
 
     </android.support.constraint.ConstraintLayout>
