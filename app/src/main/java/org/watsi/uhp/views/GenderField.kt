@@ -32,13 +32,13 @@ class GenderField @JvmOverloads constructor(
             gender_button_female.setUnselected(R.drawable.ic_member_placeholder_female)
             true
         }
+    }
 
-        fun setOnGenderChange(onGenderChange: (gender: Member.Gender) -> Unit) {
-            this.onGenderChange = onGenderChange
-        }
+    fun setOnGenderChange(onGenderChange: (gender: Member.Gender) -> Unit) {
+        this.onGenderChange = onGenderChange
+    }
 
-        fun setError(errorMessage: String?) {
-            gender_error_message.error = errorMessage
-        }
+    fun setError(errorMessage: String?) {
+        gender_error_message.error = errorMessage
     }
 }
