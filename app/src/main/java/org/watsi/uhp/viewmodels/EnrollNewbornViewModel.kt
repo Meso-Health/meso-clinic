@@ -1,5 +1,6 @@
 package org.watsi.uhp.viewmodels
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
@@ -32,7 +33,7 @@ class EnrollNewbornViewModel(
         viewStateObservable.value = ViewState()
     }
 
-    fun saveMember(memberId: UUID, householdId: UUID, formValidator: FormValidator) : Completable {
+    fun saveMember(memberId: UUID, householdId: UUID, formValidator: FormValidator = FormValidator) : Completable {
         val viewState = viewStateObservable.value
 
         if (viewState == null || viewState.status == MemberStatus.SAVING) {
@@ -113,6 +114,8 @@ class EnrollNewbornViewModel(
                 }
         )
     }
+
+    fun getViewStateObservable(): LiveData<ViewState> = viewStateObservable
 
     private fun onError(throwable: Throwable) {
         val errors = HashMap<String, String>()
