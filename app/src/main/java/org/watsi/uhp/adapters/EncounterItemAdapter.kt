@@ -5,24 +5,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.uhp.R.layout.item_encounter_item_list
+import org.watsi.uhp.R
 import org.watsi.uhp.views.EncounterItemListItem
+import java.util.UUID
 
-class EncounterItemAdapter(private val encounterItems: List<EncounterItemWithBillable>)
-    : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {
+class EncounterItemAdapter(
+        private val onQuantityChanged: (encounterItemId: UUID, newQuantity: String) -> Unit,
+        private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf()
+) : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {
+
+    lateinit var encounterItemView: EncounterItemListItem
 
     override fun getItemCount(): Int = encounterItems.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val encounterItem = encounterItems[position]
-        val view = holder.itemView as EncounterItemListItem
-        view.setEncounterItem(encounterItem)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
-                item_encounter_item_list, parent, false)
+                R.layout.view_encounter_item_list_item, parent, false)
         return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val encounterItemRelation = encounterItems[position]
+        encounterItemView = holder.itemView as EncounterItemListItem
+        encounterItemView.setEncounterItem(encounterItemRelation, onQuantityChanged)
+    }
+
+    fun setEncounterItems(updatedEncounterItems: List<EncounterItemWithBillable>) {
+        encounterItems.clear()
+        encounterItems.addAll(updatedEncounterItems)
+        notifyDataSetChanged()
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

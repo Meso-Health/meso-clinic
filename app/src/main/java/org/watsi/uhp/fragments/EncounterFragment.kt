@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.SimpleCursorAdapter
 import android.widget.TimePicker
+import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.backdate_encounter
@@ -28,16 +30,14 @@ import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZoneOffset
-import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.EncounterItemWithBillable
-
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
+import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
-
+import java.util.UUID
 import javax.inject.Inject
 
 class EncounterFragment : DaggerFragment() {
@@ -50,7 +50,7 @@ class EncounterFragment : DaggerFragment() {
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
-    lateinit var encounterItemAdapter: ArrayAdapter<EncounterItemPresenter>
+    lateinit var encounterItemAdapter: EncounterItemAdapter
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -66,16 +66,15 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
 
         val billableTypeOptions = Billable.Type.values().map { it.toString() }.toMutableList()
         billableTypeOptions.add(0, getString(prompt_category))
         billableTypeAdapter = ArrayAdapter(
                 activity, android.R.layout.simple_list_item_1, billableTypeOptions)
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
-        encounterItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
         observable = viewModel.getObservable(encounter)
         observable.observe(this, Observer {
             it?.let { viewState ->
@@ -110,14 +109,20 @@ class EncounterFragment : DaggerFragment() {
                     if (it.encounter.backdatedOccurredAt) {
                         backdate_encounter.text = it.encounter.occurredAt.toString()
                     }
-
-                    // ideally only do this if the line items change or alternatively could choose
-                    // to only notify after both clear & add if there is a UI flash
-                    encounterItemAdapter.clear()
-                    encounterItemAdapter.addAll(it.encounterItems.map { EncounterItemPresenter(it) })
+                    encounterItemAdapter.setEncounterItems(it.encounterItems)
                 }
             }
         })
+
+        encounterItemAdapter = EncounterItemAdapter(
+                onQuantityChanged = { encounterItemId: UUID, newQuantity: String ->
+                    if (newQuantity in listOf("", "0")) {
+                        Toast.makeText(context, R.string.error_blank_or_zero_quantity, Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.setItemQuantity(encounterItemId, newQuantity.toInt())
+                    }
+                }
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -177,6 +182,7 @@ class EncounterFragment : DaggerFragment() {
             }
         })
 
+        line_items_list.layoutManager = LinearLayoutManager(activity)
         line_items_list.adapter = encounterItemAdapter
 
         add_billable_prompt.setOnClickListener {
@@ -250,11 +256,5 @@ class EncounterFragment : DaggerFragment() {
      */
     data class BillablePresenter(val billable: Billable?) {
         override fun toString(): String = billable?.name ?: "Select..."
-    }
-
-    data class EncounterItemPresenter(val encounterItem: EncounterItemWithBillable) {
-        override fun toString(): String {
-            return "${encounterItem.billable.name} - ${encounterItem.encounterItem.quantity}"
-        }
     }
 }

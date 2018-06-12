@@ -66,6 +66,18 @@ class EncounterViewModel @Inject constructor(
         }
     }
 
+    // naming convention?
+    fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
+        currentEncounter()?.let { encounter ->
+            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+            updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
+                encounterItemRelation.encounterItem.quantity = quantity
+            }
+            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
+            observable.value = observable.value?.copy(encounter = updatedEncounter)
+        }
+    }
+
     fun updateQuery(query: String) {
         if (query.length > 2) {
             val topMatchingNames = FuzzySearch.extractTop(query, uniqueDrugNames, 5, 50)

@@ -77,8 +77,8 @@ class CurrentPatientsFragment : DaggerFragment() {
                 },
                 clock = clock)
         val layoutManager = LinearLayoutManager(activity)
-        current_patients.adapter = memberAdapter
         current_patients.layoutManager = layoutManager
+        current_patients.adapter = memberAdapter
         current_patients.isNestedScrollingEnabled = false
         val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
         listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))

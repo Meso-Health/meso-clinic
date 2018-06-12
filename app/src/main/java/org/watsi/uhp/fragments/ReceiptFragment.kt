@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.fragment_receipt.forms_label
 import kotlinx.android.synthetic.main.fragment_receipt.save_button
 import kotlinx.android.synthetic.main.fragment_receipt.total_price
 import org.watsi.device.managers.Logger
-
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.uhp.R
@@ -27,9 +26,7 @@ import org.watsi.uhp.R.plurals.forms_attached_label
 import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.encounter_submitted
 import org.watsi.uhp.R.string.price_with_currency
-import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.managers.NavigationManager
-
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment() {
@@ -75,7 +72,7 @@ class ReceiptFragment : DaggerFragment() {
 
         diagnoses_list.text = encounter.diagnoses.map { it.description }.joinToString(", ")
 
-        encounter_items_list.adapter = EncounterItemAdapter(encounter.encounterItems)
+//        encounter_items_list.adapter = EncounterItemAdapter(encounter.encounterItems)
         encounter_items_list.layoutManager = LinearLayoutManager(activity)
 
         save_button.setOnClickListener {
