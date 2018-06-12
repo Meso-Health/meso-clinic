@@ -45,8 +45,8 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         const val SCAN_QRCODE_INTENT = 2
         const val PARAM_MEMBER = "member"
 
-        fun forParent(member: Member): EnrollNewbornInfoFragment {
-            val fragment = EnrollNewbornInfoFragment()
+        fun forParent(member: Member): EnrollNewbornFragment {
+            val fragment = EnrollNewbornFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_MEMBER, member)
             }
