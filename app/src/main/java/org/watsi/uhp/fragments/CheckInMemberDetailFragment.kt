@@ -25,11 +25,7 @@ import kotlinx.android.synthetic.main.fragment_checkin_member_detail.absentee_no
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_label
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_list
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_action_button
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_age_and_gender
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_card_id_detail_fragment
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_name_detail_fragment
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_phone_number
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_photo
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_detail
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_result
@@ -45,7 +41,6 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
@@ -116,13 +111,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                     }
                 }
 
-                member_name_detail_fragment.text = member.name
-                member_age_and_gender.text = member.formatAgeAndGender(clock)
-                member_card_id_detail_fragment.text = member.cardId
-                member_phone_number.text = member.phoneNumber
-
-                PhotoLoader.loadMemberPhoto(
-                        it.memberThumbnail?.bytes, member_photo, context, member.gender)
+                member_detail.setMember(member, it.memberThumbnail, clock)
             }
 
             it?.isMemberCheckedIn?.let { isMemberCheckedIn ->
