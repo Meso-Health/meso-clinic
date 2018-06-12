@@ -281,7 +281,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             }
             R.id.menu_enroll_newborn -> {
                 val member = arguments?.getSerializable(PARAM_MEMBER) as Member
-                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
+                navigationManager.goTo(EnrollNewbornFragment.forParent(member))
             }
             else -> super.onOptionsItemSelected(item)
         }

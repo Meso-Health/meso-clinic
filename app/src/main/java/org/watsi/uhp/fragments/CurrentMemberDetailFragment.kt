@@ -114,7 +114,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
                 navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }
             R.id.menu_enroll_newborn -> {
-                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
+                navigationManager.goTo(EnrollNewbornFragment.forParent(member))
             }
             R.id.menu_dismiss_member -> {
                 viewModel.dismiss(identificationEvent).subscribe({
