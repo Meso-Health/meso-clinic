@@ -163,7 +163,6 @@
     <!-- DiagnosisFragment -->
     <string name="diagnosis_fragment_label"> Enter diagnoses </string>
     <plurals name="diagnosis_count">
-        <item quantity="zero">No Diagnoses</item>
         <item quantity="one">%d Diagnosis</item>
         <item quantity="other">%d Diagnoses</item>
     </plurals>
@@ -198,7 +197,6 @@
         <item quantity="other">%d Items</item>
     </plurals>
     <plurals name="forms_attached_label" >
-        <item quantity="zero">No forms attached</item>
         <item quantity="one">%d form attached</item>
         <item quantity="other">%d forms attached</item>
     </plurals>
