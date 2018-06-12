@@ -121,6 +121,9 @@ class EncounterFragment : DaggerFragment() {
                     } else {
                         viewModel.setItemQuantity(encounterItemId, newQuantity.toInt())
                     }
+                },
+                onRemoveEncounterItem = { encounterItemId: UUID ->
+                    viewModel.removeItem(encounterItemId)
                 }
         )
     }

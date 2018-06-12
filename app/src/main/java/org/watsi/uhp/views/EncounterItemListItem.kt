@@ -7,6 +7,7 @@ import android.widget.RelativeLayout
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.remove_line_item_btn
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterItemWithBillable
 import java.util.UUID
@@ -17,7 +18,8 @@ class EncounterItemListItem @JvmOverloads constructor(
 
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: String) -> Unit
+            onQuantityChanged: (encounterItemId: UUID, newQuantity: String) -> Unit,
+            onRemoveEncounterItem: (encounterItemId: UUID) -> Unit
     ) {
         val billable = encounterItemRelation.billable
         val encounterItem = encounterItemRelation.encounterItem
@@ -32,5 +34,7 @@ class EncounterItemListItem @JvmOverloads constructor(
                 onQuantityChanged(encounterItem.id, billable_quantity.text.toString())
             }
         }
+
+        remove_line_item_btn.setOnClickListener { onRemoveEncounterItem(encounterItem.id) }
     }
 }

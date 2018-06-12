@@ -78,6 +78,15 @@ class EncounterViewModel @Inject constructor(
         }
     }
 
+    fun removeItem(encounterItemId: UUID) {
+        currentEncounter()?.let { encounter ->
+            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+                    .filterNot { it.encounterItem.id == encounterItemId }
+            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
+            observable.value = observable.value?.copy(encounter = updatedEncounter)
+        }
+    }
+
     fun updateQuery(query: String) {
         if (query.length > 2) {
             val topMatchingNames = FuzzySearch.extractTop(query, uniqueDrugNames, 5, 50)

@@ -10,8 +10,9 @@ import org.watsi.uhp.views.EncounterItemListItem
 import java.util.UUID
 
 class EncounterItemAdapter(
+        private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf(),
         private val onQuantityChanged: (encounterItemId: UUID, newQuantity: String) -> Unit,
-        private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf()
+        private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit
 ) : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {
 
     lateinit var encounterItemView: EncounterItemListItem
@@ -27,7 +28,7 @@ class EncounterItemAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val encounterItemRelation = encounterItems[position]
         encounterItemView = holder.itemView as EncounterItemListItem
-        encounterItemView.setEncounterItem(encounterItemRelation, onQuantityChanged)
+        encounterItemView.setEncounterItem(encounterItemRelation, onQuantityChanged, onRemoveEncounterItem)
     }
 
     fun setEncounterItems(updatedEncounterItems: List<EncounterItemWithBillable>) {
