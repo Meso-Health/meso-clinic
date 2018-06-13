@@ -198,8 +198,8 @@ class EncounterFragment : DaggerFragment() {
             }
         })
 
-        line_items_list.layoutManager = LinearLayoutManager(activity)
         line_items_list.adapter = encounterItemAdapter
+        line_items_list.layoutManager = LinearLayoutManager(activity)
 
         add_billable_prompt.setOnClickListener {
             viewModel.currentEncounter()?.let {
