@@ -16,6 +16,7 @@ import org.watsi.uhp.viewmodels.SearchMemberViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
+import org.watsi.uhp.viewmodels.ReceiptViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -54,6 +55,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EncounterViewModel::class)
     abstract fun bindEncounterViewModel(viewModel: EncounterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReceiptViewModel::class)
+    abstract fun bindReceiptViewModel(viewModel: ReceiptViewModel): ViewModel
 
     @Binds
     @IntoMap
