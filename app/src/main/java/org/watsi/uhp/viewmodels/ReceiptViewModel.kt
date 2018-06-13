@@ -26,12 +26,13 @@ class ReceiptViewModel @Inject constructor(
         observable.value = observable.value?.copy(occurredAt = instant, backdatedOccurredAt = true)
     }
 
-    fun submitEncounter(encounter: EncounterWithItemsAndForms): Completable {
+    fun submitEncounter(encounter: EncounterWithItemsAndForms, copaymentPaid: Boolean): Completable {
         return observable.value?.let { viewState ->
             val updatedEncounter = encounter.copy(
                 encounter = encounter.encounter.copy(
                     occurredAt = viewState.occurredAt,
-                    backdatedOccurredAt = viewState.backdatedOccurredAt
+                    backdatedOccurredAt = viewState.backdatedOccurredAt,
+                    copaymentPaid = copaymentPaid
                 )
             )
             createEncounterUseCase.execute(updatedEncounter)

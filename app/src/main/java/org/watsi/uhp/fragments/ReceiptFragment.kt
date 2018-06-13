@@ -159,7 +159,7 @@ class ReceiptFragment : DaggerFragment() {
     }
 
     private fun submitEncounter(copaymentPaid: Boolean) {
-        viewModel.submitEncounter(encounter).subscribe({
+        viewModel.submitEncounter(encounter, copaymentPaid).subscribe({
             navigationManager.popTo(CurrentPatientsFragment())
             Toast.makeText(activity, getString(encounter_submitted), Toast.LENGTH_LONG).show()
         }, {
