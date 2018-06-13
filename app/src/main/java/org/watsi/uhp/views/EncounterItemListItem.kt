@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View.OnFocusChangeListener
 import android.widget.RelativeLayout
+import android.widget.Toast
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
@@ -18,7 +19,7 @@ class EncounterItemListItem @JvmOverloads constructor(
 
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: String) -> Unit,
+            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
             onRemoveEncounterItem: (encounterItemId: UUID) -> Unit
     ) {
         val billable = encounterItemRelation.billable
@@ -31,7 +32,13 @@ class EncounterItemListItem @JvmOverloads constructor(
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
-                onQuantityChanged(encounterItem.id, billable_quantity.text.toString())
+                if (billable_quantity.text.toString() in listOf("", "0")) {
+                    billable_quantity.setText(encounterItem.quantity.toString()) // set quantity back to original
+                    Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
+                            android.widget.Toast.LENGTH_SHORT).show()
+                } else {
+                    onQuantityChanged(encounterItem.id, billable_quantity.text.toString().toInt())
+                }
             }
         }
 

@@ -81,18 +81,14 @@ class EncounterViewModel @Inject constructor(
         }
     }
 
-    fun setItemQuantity(encounterItemId: UUID, quantity: String) {
+    fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
         currentEncounter()?.let { encounter ->
-            if (quantity in listOf("", "0")) {
-                throw InvalidQuantityException()
-            } else {
-                val updatedEncounterItems = encounter.encounterItems.toMutableList()
-                updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
-                    encounterItemRelation.encounterItem.quantity = quantity.toInt()
-                }
-                val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-                observable.value = observable.value?.copy(encounter = updatedEncounter)
+            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+            updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
+                encounterItemRelation.encounterItem.quantity = quantity.toInt()
             }
+            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
+            observable.value = observable.value?.copy(encounter = updatedEncounter)
         }
     }
 
@@ -129,5 +125,4 @@ class EncounterViewModel @Inject constructor(
                          val searchResults: List<Billable> = emptyList())
 
     class DuplicateBillableException : Exception()
-    class InvalidQuantityException : Exception()
 }

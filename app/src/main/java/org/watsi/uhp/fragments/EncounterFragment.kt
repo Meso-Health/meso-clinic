@@ -115,13 +115,8 @@ class EncounterFragment : DaggerFragment() {
         })
 
         encounterItemAdapter = EncounterItemAdapter(
-                onQuantityChanged = { encounterItemId: UUID, newQuantity: String ->
-                    try {
-                        viewModel.setItemQuantity(encounterItemId, newQuantity)
-                    } catch (e: EncounterViewModel.InvalidQuantityException) {
-                        Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
-                                android.widget.Toast.LENGTH_SHORT).show()
-                    }
+                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
+                    viewModel.setItemQuantity(encounterItemId, newQuantity)
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)

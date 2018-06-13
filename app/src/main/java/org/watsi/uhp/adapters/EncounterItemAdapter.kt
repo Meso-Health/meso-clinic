@@ -11,7 +11,7 @@ import java.util.UUID
 
 class EncounterItemAdapter(
         private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf(),
-        private val onQuantityChanged: (encounterItemId: UUID, newQuantity: String) -> Unit,
+        private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
         private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit
 ) : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {
 
