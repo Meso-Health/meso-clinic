@@ -72,6 +72,15 @@ class EncounterViewModel @Inject constructor(
         }
     }
 
+    fun removeItem(encounterItemId: UUID) {
+        currentEncounter()?.let { encounter ->
+            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+                    .filterNot { it.encounterItem.id == encounterItemId }
+            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
+            observable.value = observable.value?.copy(encounter = updatedEncounter)
+        }
+    }
+
     fun setItemQuantity(encounterItemId: UUID, quantity: String) {
         currentEncounter()?.let { encounter ->
             if (quantity in listOf("", "0")) {
@@ -84,15 +93,6 @@ class EncounterViewModel @Inject constructor(
                 val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
                 observable.value = observable.value?.copy(encounter = updatedEncounter)
             }
-        }
-    }
-
-    fun removeItem(encounterItemId: UUID) {
-        currentEncounter()?.let { encounter ->
-            val updatedEncounterItems = encounter.encounterItems.toMutableList()
-                    .filterNot { it.encounterItem.id == encounterItemId }
-            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(encounter = updatedEncounter)
         }
     }
 
