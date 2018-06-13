@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.SimpleCursorAdapter
 import android.widget.TimePicker
-import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.backdate_encounter
@@ -153,14 +152,7 @@ class EncounterFragment : DaggerFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                billableAdapter.getItem(position).billable?.let {
-                    try {
-                        viewModel.addItem(it)
-                    } catch (e: EncounterViewModel.DuplicateBillableException) {
-                        Toast.makeText(context, org.watsi.uhp.R.string.error_duplicate_billable,
-                                android.widget.Toast.LENGTH_SHORT).show()
-                    }
-                }
+                billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
             }
         }
 
@@ -181,13 +173,8 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onSuggestionClick(position: Int): Boolean {
                 observable.value?.selectableBillables?.get(position)?.let {
-                    try {
-                        viewModel.addItem(it)
-                        drug_search.setQuery("", false)
-                    } catch (e: EncounterViewModel.DuplicateBillableException) {
-                        Toast.makeText(context, org.watsi.uhp.R.string.error_duplicate_billable,
-                                android.widget.Toast.LENGTH_SHORT).show()
-                    }
+                    viewModel.addItem(it)
+                    drug_search.setQuery("", false)
                 }
                 return true
             }

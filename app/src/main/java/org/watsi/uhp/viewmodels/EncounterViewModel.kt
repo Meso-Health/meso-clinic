@@ -43,9 +43,8 @@ class EncounterViewModel @Inject constructor(
 
     fun selectType(type: Billable.Type?) {
         val selectableBillables = if (type != null && type != Billable.Type.DRUG) {
-            val encounterItems = currentEncounter()?.encounterItems
-            val currentBillables = encounterItems?.map { it.billable } ?: emptyList()
-            billablesByType[type]!!.filter {  it -> !currentBillables.contains(it) }.sortedBy { it.name }
+            val currentBillables = currentEncounter()?.billables() ?: emptyList()
+            billablesByType[type]!!.minus(currentBillables).sortedBy { it.name }
         } else {
             emptyList()
         }
@@ -55,20 +54,16 @@ class EncounterViewModel @Inject constructor(
 
     fun addItem(billable: Billable) {
         currentEncounter()?.let {
-            if (it.containsBillable(billable.id)) {
-                throw DuplicateBillableException()
-            } else {
-                val updatedEncounterItems = it.encounterItems.toMutableList()
-                val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
-                updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
-                val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
-                observable.value = observable.value?.copy(
-                        encounter = updatedEncounter,
-                        type = null,
-                        selectableBillables = emptyList(),
-                        searchResults = emptyList()
-                )
-            }
+            val updatedEncounterItems = it.encounterItems.toMutableList()
+            val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
+            updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
+            val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
+            observable.value = observable.value?.copy(
+                    encounter = updatedEncounter,
+                    type = null,
+                    selectableBillables = emptyList(),
+                    searchResults = emptyList()
+            )
         }
     }
 
@@ -85,7 +80,7 @@ class EncounterViewModel @Inject constructor(
         currentEncounter()?.let { encounter ->
             val updatedEncounterItems = encounter.encounterItems.toMutableList()
             updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
-                encounterItemRelation.encounterItem.quantity = quantity.toInt()
+                encounterItemRelation.encounterItem.quantity = quantity
             }
             val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
             observable.value = observable.value?.copy(encounter = updatedEncounter)
@@ -94,7 +89,11 @@ class EncounterViewModel @Inject constructor(
 
     fun updateQuery(query: String) {
         if (query.length > 2) {
-            val topMatchingNames = FuzzySearch.extractTop(query, uniqueDrugNames, 5, 50)
+            val currentDrugNames = currentEncounter()?.billables()
+                    ?.filter { it.type == Billable.Type.DRUG }?.map { it.name }
+                    ?: emptyList()
+            val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
+            val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
             val matchingBillables = topMatchingNames.map { result ->
                 billablesByType[Billable.Type.DRUG]!!.filter { it.name == result.string }
@@ -123,6 +122,4 @@ class EncounterViewModel @Inject constructor(
                          val selectableBillables: List<Billable> = emptyList(),
                          val encounter: EncounterWithItemsAndForms,
                          val searchResults: List<Billable> = emptyList())
-
-    class DuplicateBillableException : Exception()
 }
