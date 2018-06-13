@@ -24,20 +24,24 @@ class EncounterItemListItem @JvmOverloads constructor(
     ) {
         val billable = encounterItemRelation.billable
         val encounterItem = encounterItemRelation.encounterItem
+        val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
         billable_details.text = billable.dosageDetails()
 
-        billable_quantity.setText(encounterItem.quantity.toString())
+        billable_quantity.setText(currentQuantity.toString())
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
-                if (billable_quantity.text.toString() in listOf("", "0")) {
-                    billable_quantity.setText(encounterItem.quantity.toString()) // set quantity back to original
-                    Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
-                            android.widget.Toast.LENGTH_SHORT).show()
-                } else {
-                    onQuantityChanged(encounterItem.id, billable_quantity.text.toString().toInt())
+                val newQuantity = billable_quantity.text.toString().toIntOrNull()
+                if (newQuantity != currentQuantity) {
+                    if (newQuantity == null || newQuantity == 0) {
+                        billable_quantity.setText(currentQuantity.toString())
+                        Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
+                                android.widget.Toast.LENGTH_SHORT).show()
+                    } else {
+                        onQuantityChanged(encounterItem.id, newQuantity)
+                    }
                 }
             }
         }
