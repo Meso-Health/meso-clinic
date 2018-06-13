@@ -88,9 +88,9 @@ class EncounterViewModel @Inject constructor(
 
     fun updateQuery(query: String) {
         if (query.length > 2) {
-            val currentDrugNames = currentEncounter()?.billables()
-                    ?.filter { it.type == Billable.Type.DRUG }?.map { it.name }
-                    ?: emptyList()
+            val currentDrugNames = currentEncounter()?.billables().orEmpty()
+                    .filter { it.type == Billable.Type.DRUG }
+                    .map { it.name }
             val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
             val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
