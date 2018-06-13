@@ -32,9 +32,11 @@ class EncounterItemAdapter(
     }
 
     fun setEncounterItems(updatedEncounterItems: List<EncounterItemWithBillable>) {
-        encounterItems.clear()
-        encounterItems.addAll(updatedEncounterItems)
-        notifyDataSetChanged()
+        if (updatedEncounterItems != encounterItems) {
+            encounterItems.clear()
+            encounterItems.addAll(updatedEncounterItems)
+            notifyDataSetChanged()
+        }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
