@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
-import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
@@ -102,15 +101,6 @@ class EncounterViewModel @Inject constructor(
             observable.value = observable.value?.copy(selectableBillables = matchingBillables)
         } else {
             observable.value = observable.value?.copy(selectableBillables = emptyList())
-        }
-    }
-
-    fun updateBackdatedOccurredAt(instant: Instant) {
-        currentEncounter()?.let {
-            val updatedEncounter = it.encounter.copy(occurredAt = instant,
-                                                     backdatedOccurredAt = true)
-            observable.value = observable.value?.copy(
-                    encounter = it.copy(encounter = updatedEncounter))
         }
     }
 

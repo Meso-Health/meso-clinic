@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments
 
-import android.app.AlertDialog
 import android.app.SearchManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
@@ -14,21 +13,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.DatePicker
 import android.widget.SimpleCursorAdapter
-import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
-import kotlinx.android.synthetic.main.fragment_encounter.backdate_encounter
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
+import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
 import kotlinx.android.synthetic.main.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZoneOffset
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
@@ -103,11 +97,9 @@ class EncounterFragment : DaggerFragment() {
                         drug_search.visibility = View.GONE
                     }
                 }
-
                 viewState.encounter.let {
-                    if (it.encounter.backdatedOccurredAt) {
-                        backdate_encounter.text = it.encounter.occurredAt.toString()
-                    }
+                    encounter_item_count.text = resources.getQuantityString(
+                            R.plurals.encounter_item_count, it.encounterItems.size, it.encounterItems.size)
                     encounterItemAdapter.setEncounterItems(it.encounterItems)
                 }
             }
@@ -189,10 +181,6 @@ class EncounterFragment : DaggerFragment() {
             }
         }
 
-        backdate_encounter.setOnClickListener {
-            launchBackdateDialog()
-        }
-
         save_button.setOnClickListener {
             viewModel.currentEncounter()?.let {
                 // TODO: should we allow proceeding with no encounter items?
@@ -208,45 +196,6 @@ class EncounterFragment : DaggerFragment() {
             cursor.addRow(arrayOf(it.id.mostSignificantBits, it.name, it.dosageDetails(), it.id.toString()))
         }
         return cursor
-    }
-
-    private fun launchBackdateDialog() {
-        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_backdate_encounter, null)
-        val datePicker = dialogView.findViewById<View>(R.id.date_picker) as DatePicker
-        val timePicker = dialogView.findViewById<View>(R.id.time_picker) as TimePicker
-
-        datePicker.maxDate = clock.instant().toEpochMilli()
-
-        viewModel.currentEncounter()?.encounter?.let {
-            if  (it.backdatedOccurredAt) {
-                val ldt = LocalDateTime.ofInstant(it.occurredAt, ZoneId.systemDefault())
-                datePicker.updateDate(ldt.year, ldt.monthValue, ldt.dayOfMonth)
-                timePicker.hour = ldt.hour
-                timePicker.minute = ldt.minute
-            }
-        }
-
-        val builder = AlertDialog.Builder(context)
-        builder.setView(dialogView)
-
-        val dialog = builder.create()
-
-        dialogView.findViewById<View>(R.id.done).setOnClickListener {
-            val backdatedOccurredAt = LocalDateTime.of(datePicker.year,
-                                                   datePicker.month,
-                                                   datePicker.dayOfMonth,
-                                                   timePicker.hour,
-                                                   timePicker.minute
-            ).toInstant(ZoneOffset.UTC) // TODO: fix offset calculation
-            viewModel.updateBackdatedOccurredAt(backdatedOccurredAt)
-            dialog.dismiss()
-        }
-
-        dialogView.findViewById<View>(R.id.cancel).setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     /**

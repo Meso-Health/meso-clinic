@@ -15,6 +15,8 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_receipt.date_edit
+import kotlinx.android.synthetic.main.fragment_receipt.date_label
 import kotlinx.android.synthetic.main.fragment_receipt.diagnoses_label
 import kotlinx.android.synthetic.main.fragment_receipt.diagnoses_list
 import kotlinx.android.synthetic.main.fragment_receipt.encounter_items_label
@@ -22,8 +24,6 @@ import kotlinx.android.synthetic.main.fragment_receipt.encounter_items_list
 import kotlinx.android.synthetic.main.fragment_receipt.forms_label
 import kotlinx.android.synthetic.main.fragment_receipt.save_button
 import kotlinx.android.synthetic.main.fragment_receipt.total_price
-import kotlinx.android.synthetic.main.fragment_receipt.date_label
-import kotlinx.android.synthetic.main.fragment_receipt.date_edit
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
@@ -39,7 +39,6 @@ import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.helpers.DateHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
-
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment() {

@@ -160,6 +160,10 @@
     <string name="continue_encounter_button">Next</string>
     <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
+    <plurals name="encounter_item_count">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
 
     <!-- DiagnosisFragment -->
     <string name="diagnosis_fragment_label">Diagnoses</string>
