@@ -161,7 +161,7 @@
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!-- DiagnosisFragment -->
-    <string name="diagnosis_fragment_label"> Enter diagnoses </string>
+    <string name="diagnosis_fragment_label">Diagnoses</string>
     <plurals name="diagnosis_count">
         <item quantity="one">%d diagnosis</item>
         <item quantity="other">%d diagnoses</item>
