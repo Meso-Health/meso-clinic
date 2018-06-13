@@ -13,7 +13,6 @@ import java.util.UUID
 interface MemberRepository {
     fun all(): Flowable<List<Member>>
     fun find(id: UUID): Single<Member>
-    fun findFlowable(id: UUID): Flowable<Member>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun findByCardId(cardId: String): Maybe<Member>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>

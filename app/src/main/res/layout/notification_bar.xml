@@ -16,7 +16,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:background="@drawable/ic_info_outline"
-            android:backgroundTint="@color/text" />
+            android:backgroundTint="@color/gray9" />
 
         <TextView
             android:id="@+id/notification_message"
@@ -32,7 +32,7 @@
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/primary"
             style="?android:attr/buttonBarButtonStyle"
             android:background="?attr/selectableItemBackground" />
     </LinearLayout>

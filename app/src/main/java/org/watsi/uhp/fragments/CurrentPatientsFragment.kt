@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_current_patients.identification_b
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -72,7 +73,6 @@ class CurrentPatientsFragment : DaggerFragment() {
                     } else {
                         logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
                                 "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
                     }
                 },
                 clock = clock)
@@ -120,7 +120,9 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
         member?.let {
-            navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
+            navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                    it,
+                    SearchMethod.SCAN_BARCODE))
         }
         error?.let {
             // TODO: display error?

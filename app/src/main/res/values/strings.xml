@@ -77,6 +77,7 @@
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
     <string name="edit_input_add">Add</string>
     <string name="edit_input_edit">Edit</string>
+    <string name="edit_clickable"><u>Edit</u></string>
     <string-array name="age_units">
         <item>years</item>
         <item>months</item>
@@ -107,11 +108,10 @@
     </plurals>
 
     <!-- QrCodeActivity -->
-    <string name="search_member_hint">Search member name or ID</string>
+    <string name="search_member_hint">Search member name or ID&#8230;</string>
     <string name="scan_member_card">Scan member card</string>
 
     <!-- SearchMemberFragment -->
-    <string name="member_search_fragment_label">Search</string>
     <string name="member_no_search_results_text">No search results. Please try again.</string>
 
     <!-- MemberDetailFragment -->
@@ -162,11 +162,10 @@
     <string name="add_billable_prompt"><u>Not in search?</u></string>
 
     <!-- DiagnosisFragment -->
-    <string name="diagnosis_fragment_label"> Enter diagnoses </string>
+    <string name="diagnosis_fragment_label">Diagnoses</string>
     <plurals name="diagnosis_count">
-        <item quantity="zero">No Diagnoses</item>
-        <item quantity="one">%d Diagnosis</item>
-        <item quantity="other">%d Diagnoses</item>
+        <item quantity="one">%d diagnosis</item>
+        <item quantity="other">%d diagnoses</item>
     </plurals>
     <string name="search_diagnosis_hint">Search diagnoses</string>
 
@@ -189,17 +188,16 @@
     <string name="encounter_form_finish_btn">Next</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">Review encounter</string>
+    <string name="receipt_fragment_label">Review</string>
     <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="receipt_total">Total</string>
     <string name="encounter_submitted">Claim submitted</string>
     <plurals name="receipt_line_item_count" >
-        <item quantity="one">%d Item</item>
-        <item quantity="other">%d Items</item>
+        <item quantity="one">%d line item</item>
+        <item quantity="other">%d line items</item>
     </plurals>
     <plurals name="forms_attached_label" >
-        <item quantity="zero">No forms attached</item>
         <item quantity="one">%d form attached</item>
         <item quantity="other">%d forms attached</item>
     </plurals>
@@ -245,4 +243,7 @@
     <!-- MemberListItem -->
     <string name="member_list_item_description">%1$s &#183; %2$s</string>
     <string name="member_list_item_description_checked_in">%1$s &#183; %2$s &#183; %3$s</string>
+
+    <!-- DateHelper -->
+    <string name="today_wrapper">Today (%1$s)</string>
 </resources>

@@ -28,53 +28,10 @@
             custom:message="@string/absentee_notification"
             custom:action="@string/absentee_action" />
 
-        <RelativeLayout
-            android:id="@+id/member_details"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/detail_fragment_photo_height"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"
-            android:layout_marginBottom="@dimen/fragment_vertical_margin"
-            android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-            android:layout_marginRight="@dimen/fragment_horizontal_margin" >
-
-            <ImageView
-                android:id="@+id/member_photo"
-                android:contentDescription="@string/photo_description"
-                android:layout_width="@dimen/detail_fragment_photo_width"
-                android:layout_height="@dimen/detail_fragment_photo_height"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="10dp"
-                android:adjustViewBounds="true" />
-
-            <TextView
-                android:id="@+id/member_name_detail_fragment"
-                android:theme="@style/Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/member_photo" />
-
-            <TextView
-                android:id="@+id/member_age_and_gender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/member_name_detail_fragment"
-                android:layout_toEndOf="@id/member_photo" />
-
-            <TextView
-                android:id="@+id/member_card_id_detail_fragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/member_photo"
-                android:layout_below="@id/member_age_and_gender" />
-
-            <TextView
-                android:id="@+id/member_phone_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/member_card_id_detail_fragment"
-                android:layout_toEndOf="@id/member_photo" />
-
-        </RelativeLayout>
+        <org.watsi.uhp.views.MemberCard
+            android:id="@+id/member_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/member_action_button"

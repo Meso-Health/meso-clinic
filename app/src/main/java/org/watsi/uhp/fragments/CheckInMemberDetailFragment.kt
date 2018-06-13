@@ -25,11 +25,7 @@ import kotlinx.android.synthetic.main.fragment_checkin_member_detail.absentee_no
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_label
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_list
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_action_button
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_age_and_gender
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_card_id_detail_fragment
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_name_detail_fragment
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_phone_number
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_photo
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_detail
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_fingerprints_btn
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_result
@@ -38,16 +34,17 @@ import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
+import java.io.Serializable
 import java.util.UUID
 import javax.inject.Inject
 
@@ -66,16 +63,25 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     lateinit var viewModel: CheckInMemberDetailViewModel
     lateinit var member: Member
     lateinit var memberAdapter: MemberAdapter
+    lateinit var searchFields: SearchFields
     private var verificationDetails: FingerprintVerificationDetails? = null
+
+    data class SearchFields(val searchMethod: SearchMethod, var throughMemberId: UUID? = null) : Serializable
 
     companion object {
         const val PARAM_MEMBER = "member"
+        const val PARAM_SEARCH_FIELDS = "search_fields"
         const val VERIFY_FINGERPRINT_INTENT = 1
 
-        fun forMember(member: Member): CheckInMemberDetailFragment {
+        fun forMemberWithSearchMethod(member: Member, searchMethod: SearchMethod): CheckInMemberDetailFragment {
+            return forMemberWithSearchFields(member, SearchFields(searchMethod))
+        }
+
+        private fun forMemberWithSearchFields(member: Member, searchFields: SearchFields): CheckInMemberDetailFragment{
             val fragment = CheckInMemberDetailFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_MEMBER, member)
+                putSerializable(PARAM_SEARCH_FIELDS, searchFields)
             }
             return fragment
         }
@@ -84,6 +90,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
+        searchFields = arguments.getSerializable(PARAM_SEARCH_FIELDS) as SearchFields
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CheckInMemberDetailViewModel::class.java)
         viewModel.getObservable(member).observe(this, Observer {
@@ -104,13 +111,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                     }
                 }
 
-                member_name_detail_fragment.text = member.name
-                member_age_and_gender.text = member.formatAgeAndGender(clock)
-                member_card_id_detail_fragment.text = member.cardId
-                member_phone_number.text = member.phoneNumber
-
-                PhotoLoader.loadMemberPhoto(
-                        it.memberThumbnail?.bytes, member_photo, context, member.gender)
+                member_detail.setMember(member, it.memberThumbnail, clock)
             }
 
             it?.isMemberCheckedIn?.let { isMemberCheckedIn ->
@@ -154,7 +155,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
         memberAdapter = MemberAdapter(
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
+                        val throughMemberId = searchFields.throughMemberId ?: memberRelation.member.id
+                        navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchFields(
+                                memberRelation.member,
+                                SearchFields(searchFields.searchMethod, throughMemberId)))
                 },
                 clock = clock)
         household_members_list.adapter = memberAdapter
@@ -196,9 +200,8 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         val idEvent = IdentificationEvent(id = UUID.randomUUID(),
                                           memberId = member.id,
                                           occurredAt = clock.instant(),
-                                          searchMethod =
-                                            IdentificationEvent.SearchMethod.SCAN_BARCODE, // TODO
-                                          throughMemberId = null,
+                                          searchMethod = searchFields.searchMethod,
+                                          throughMemberId = searchFields.throughMemberId,
                                           clinicNumber = clinicNumber,
                                           clinicNumberType = clinicNumberType,
                                           fingerprintsVerificationTier =

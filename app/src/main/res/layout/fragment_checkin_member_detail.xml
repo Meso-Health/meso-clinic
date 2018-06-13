@@ -28,77 +28,30 @@
             custom:message="@string/absentee_notification"
             custom:action="@string/absentee_action" />
 
-        <RelativeLayout
-            android:id="@+id/member_details"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/detail_fragment_photo_height"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"
-            android:layout_marginBottom="@dimen/fragment_vertical_margin"
+        <org.watsi.uhp.views.MemberCard
+            android:id="@+id/member_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/scan_fingerprints_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/PrimaryButton"
+            android:text="@string/fingerprint_scan_btn"
+            android:drawableStart="@drawable/ic_fingerprints"
             android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-            android:layout_marginRight="@dimen/fragment_horizontal_margin" >
+            android:layout_marginRight="@dimen/fragment_horizontal_margin"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/member_photo"
-                android:contentDescription="@string/photo_description"
-                android:layout_width="@dimen/detail_fragment_photo_width"
-                android:layout_height="@dimen/detail_fragment_photo_height"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="10dp"
-                android:adjustViewBounds="true" />
-
-            <TextView
-                android:id="@+id/member_name_detail_fragment"
-                android:theme="@style/Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/member_photo" />
-
-            <TextView
-                android:id="@+id/member_age_and_gender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/member_name_detail_fragment"
-                android:layout_toEndOf="@id/member_photo" />
-
-            <TextView
-                android:id="@+id/member_card_id_detail_fragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/member_photo"
-                android:layout_below="@id/member_age_and_gender" />
-
-            <TextView
-                android:id="@+id/member_phone_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/member_card_id_detail_fragment"
-                android:layout_toEndOf="@id/member_photo" />
-
-            <Button
-                android:id="@+id/scan_fingerprints_btn"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:theme="@style/SecondaryButton"
-                android:layout_toEndOf="@id/member_photo"
-                android:layout_alignParentBottom="true"
-                android:text="@string/fingerprint_scan_btn"
-                android:drawableStart="@drawable/ic_fingerprints"
-                android:paddingStart="40dp"
-                android:paddingEnd="48dp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/scan_result"
-                android:layout_height="36dp"
-                android:layout_width="156dp"
-                android:drawableStart="@drawable/ic_fingerprints"
-                android:background="@drawable/scan_result_button"
-                android:gravity="center"
-                android:layout_toEndOf="@id/member_photo"
-                android:layout_alignParentBottom="true"
-                android:visibility="gone" />
-
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/scan_result"
+            android:layout_height="36dp"
+            android:layout_width="156dp"
+            android:drawableStart="@drawable/ic_fingerprints"
+            android:background="@drawable/scan_result_button"
+            android:gravity="center"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/member_action_button"
@@ -114,7 +67,7 @@
             android:id="@+id/detail_fragment_divider"
             android:layout_width="fill_parent"
             android:layout_height="1dip"
-            android:background="@color/divider" />
+            android:background="@color/gray3" />
 
         <TextView
             android:id="@+id/household_members_label"

@@ -75,7 +75,7 @@ data class Member(val id: UUID,
      */
     fun getDisplayAge(clock: Clock): String {
         val ageYears = getAgeYears(clock)
-        return if (ageYears >= 2) ageYears.toString() else "${getAgeMonths(clock)} months"
+        return if (ageYears >= 2) "${ageYears.toString()} years" else "${getAgeMonths(clock)} months"
     }
 
     companion object {
