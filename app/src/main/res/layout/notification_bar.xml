@@ -32,7 +32,7 @@
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/primary"
             style="?android:attr/buttonBarButtonStyle"
             android:background="?attr/selectableItemBackground" />
     </LinearLayout>

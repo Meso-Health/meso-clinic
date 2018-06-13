@@ -44,4 +44,10 @@
         android:title="@string/menu_submit_without_copayment"
         app:showAsAction="never"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_member_search"
+        app:showAsAction="always"
+        app:actionLayout="@layout/view_toolbar_search"
+        android:title="@string/search_member_hint"
+        android:visible="false" />
 </menu>

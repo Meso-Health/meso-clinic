@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
@@ -19,6 +20,7 @@ class SearchMemberViewModel @Inject constructor (
     private val observable = MutableLiveData<List<MemberWithIdEventAndThumbnailPhoto>>()
     private var members: List<Member> = emptyList()
     private var memberNames: List<String> = emptyList()
+    private var searchMethod: IdentificationEvent.SearchMethod? = null
 
     init {
         observable.value = emptyList()
@@ -34,7 +36,8 @@ class SearchMemberViewModel @Inject constructor (
     fun getObservable(): LiveData<List<MemberWithIdEventAndThumbnailPhoto>> = observable
 
     fun updateQuery(query: String) {
-        if (QueryHelper.isSearchById(query)) {
+        searchMethod = QueryHelper.searchMethod(query)
+        if (QueryHelper.searchMethod(query) == IdentificationEvent.SearchMethod.SEARCH_ID) {
             members.filter { it.cardId?.contains(query) == true }.sortedBy { it.cardId }.let {
                 memberRepository.byIds(it.map { it.id }).subscribe({
                     observable.postValue(it)
@@ -54,4 +57,6 @@ class SearchMemberViewModel @Inject constructor (
             }
         }
     }
+
+    fun searchMethod() = searchMethod
 }

@@ -1,9 +1,10 @@
 <resources>
     <!-- Base styling -->
-    <style name="mainTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="android:colorAccent">@color/colorPrimary</item>
+    <style name="mainTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:colorAccent">@color/primary</item>
 
         <item name="android:windowBackground">@color/gray1</item>
 
@@ -14,11 +15,6 @@
         <item name="android:editTextStyle">@style/EditTextStyle</item>
 
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
-
-        <!-- Toolbar styles -->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <!-- Text styling -->

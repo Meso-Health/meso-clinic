@@ -1,22 +1,30 @@
 package org.watsi.uhp.helpers
 
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertFalse
+import org.watsi.domain.entities.IdentificationEvent
 
 class QueryHelperTest {
 
     @Test
-    fun validId() {
-        val validId = "RWI096138"
+    fun searchMethod_empty_returnsNull() {
+        val query = ""
 
-        assertTrue(QueryHelper.isSearchById(validId))
+        assertNull(QueryHelper.searchMethod(query))
     }
 
     @Test
-    fun nonId() {
-        val name = "Jim"
+    fun searchMethod_includesNumber_returnsSEARCH_ID() {
+        val query = "RWI096138"
 
-        assertFalse(QueryHelper.isSearchById(name))
+        assertEquals(IdentificationEvent.SearchMethod.SEARCH_ID, QueryHelper.searchMethod(query))
+    }
+
+    @Test
+    fun searchMethod_doesNotIncludeNumber_returnsSEARCH_NAME() {
+        val query = "Jim"
+
+        assertEquals(IdentificationEvent.SearchMethod.SEARCH_NAME, QueryHelper.searchMethod(query))
     }
 }

@@ -38,11 +38,7 @@ android {
         debug {
             applicationIdSuffix ".development"
             versionNameSuffix "-development"
-            resValue "string", "app_name", "UHP Dev"
-            resValue "string", "main_activity_label", "UHP Dev"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#868E96" // gray
-            resValue "color", "colorPrimaryDark", "#343A40"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_development"
             ]
@@ -57,11 +53,7 @@ android {
         sandbox {
             applicationIdSuffix ".sandbox"
             versionNameSuffix "-sandbox"
-            resValue "string", "app_name", "UHP Sandbox"
-            resValue "string", "main_activity_label", "UHP Sandbox"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#FCAF63" // beige
-            resValue "color", "colorPrimaryDark", "#E89746"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
@@ -73,11 +65,7 @@ android {
             signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
-            resValue "string", "app_name", "UHP Demo"
-            resValue "string", "main_activity_label", "UHP Demo"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
-            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -91,11 +79,7 @@ android {
             signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".training"
             versionNameSuffix "-training"
-            resValue "string", "app_name", "UHP Training"
-            resValue "string", "main_activity_label", "UHP Training"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
-            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_training"
             ]
@@ -110,11 +94,7 @@ android {
             signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".production"
             versionNameSuffix "-production"
-            resValue "string", "app_name", "UHP"
-            resValue "string", "main_activity_label", "UHP"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
-            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]

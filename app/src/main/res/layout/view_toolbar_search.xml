@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.watsi.uhp.views.ToolbarSearch
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/space4"
+        android:layout_marginBottom="@dimen/space4"
+        android:layout_marginEnd="@dimen/space16"
+        android:background="@drawable/toolbar_search_background">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/space12"
+            android:layout_marginStart="@dimen/space12"
+            android:background="@drawable/ic_arrow_back_gray6_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <EditText
+            android:id="@+id/search_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:textColor="@color/gray6"
+            android:textColorHint="@color/gray3"
+            android:inputType="textNoSuggestions"
+            android:hint="@string/search_member_hint"
+            android:focusable="true"
+            android:focusedByDefault="true"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toEndOf="@id/back_button"
+            app:layout_constraintEnd_toStartOf="@id/action_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/action_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/scan_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space12"
+                android:background="@drawable/ic_qr_code_gray6_24dp" />
+
+            <ImageView
+                android:id="@+id/clear_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space12"
+                android:visibility="gone"
+                android:background="@drawable/ic_close_gray6_24dp" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</org.watsi.uhp.views.ToolbarSearch>

@@ -3,25 +3,27 @@ package org.watsi.uhp.fragments
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_member_search.member_search
 import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
-import org.watsi.domain.entities.IdentificationEvent.SearchMethod
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
+import org.watsi.uhp.views.ToolbarSearch
 import javax.inject.Inject
 
 class SearchMemberFragment : DaggerFragment() {
@@ -34,6 +36,11 @@ class SearchMemberFragment : DaggerFragment() {
 
     lateinit var viewModel: SearchMemberViewModel
     lateinit var memberAdapter: MemberAdapter
+    lateinit var toolbarSearchView: ToolbarSearch
+
+    companion object {
+        const val SCAN_CARD_INTENT = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,48 +54,65 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.member_search_fragment_label)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_member_search, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        member_search.setOnQueryTextFocusChangeListener { searchView, hasFocus ->
-            if (hasFocus) {
-                // for SearchViews, in order to properly show the search keyboard, we need to
-                // use findFocus() to grab and pass a view *inside* of the SearchView
-                keyboardManager.showKeyboard(searchView.findFocus())
-            }
-        }
-
-        member_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String) = true
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.updateQuery(query)
-                keyboardManager.hideKeyboard(member_search)
-                return true
-            }
-        })
-
         memberAdapter = MemberAdapter(
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                        val searchMethod: SearchMethod = when (QueryHelper.isSearchById(member_search.query.toString())) {
-                            true -> SearchMethod.SEARCH_ID
-                            false -> SearchMethod.SEARCH_NAME
-                        }
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
-                                memberRelation.member,
-                                searchMethod))
+                    val searchMethod = viewModel.searchMethod() ?: run {
+                        logger.error("Search method not set")
+                        IdentificationEvent.SearchMethod.SEARCH_ID
+                    }
+
+                    toolbarSearchView.clear()
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                            memberRelation.member,
+                            searchMethod))
                 },
                 clock = clock)
+
+        val layoutManager = LinearLayoutManager(activity)
+        member_search_results.layoutManager = layoutManager
         member_search_results.adapter = memberAdapter
-        member_search_results.layoutManager = LinearLayoutManager(activity)
         member_search_results.isNestedScrollingEnabled = false
+        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
+        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
+        member_search_results.addItemDecoration(listItemDivider)
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        val searchMenuItem = menu!!.findItem(R.id.menu_member_search)
+        searchMenuItem.isVisible = true
 
-        member_search.requestFocus()
+        toolbarSearchView = searchMenuItem.actionView as ToolbarSearch
+        toolbarSearchView.keyboardManager = keyboardManager
+        toolbarSearchView.onSearch { query ->
+            viewModel.updateQuery(query)
+        }
+
+        toolbarSearchView.onBack {
+            toolbarSearchView.clear()
+            navigationManager.goBack()
+        }
+
+        toolbarSearchView.onScan {
+            startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
+        }
+
+        keyboardManager.showKeyboard(toolbarSearchView)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
+        member?.let {
+            navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                    it,
+                    IdentificationEvent.SearchMethod.SCAN_BARCODE))
+        }
+        error?.let {
+            // TODO: display error?
+        }
     }
 }
