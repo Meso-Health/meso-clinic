@@ -116,10 +116,11 @@ class EncounterFragment : DaggerFragment() {
 
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: String ->
-                    if (newQuantity in listOf("", "0")) {
-                        Toast.makeText(context, R.string.error_blank_or_zero_quantity, Toast.LENGTH_SHORT).show()
-                    } else {
-                        viewModel.setItemQuantity(encounterItemId, newQuantity.toInt())
+                    try {
+                        viewModel.setItemQuantity(encounterItemId, newQuantity)
+                    } catch (e: EncounterViewModel.InvalidQuantityException) {
+                        Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
+                                android.widget.Toast.LENGTH_SHORT).show()
                     }
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
@@ -157,7 +158,14 @@ class EncounterFragment : DaggerFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
+                billableAdapter.getItem(position).billable?.let {
+                    try {
+                        viewModel.addItem(it)
+                    } catch (e: EncounterViewModel.DuplicateBillableException) {
+                        Toast.makeText(context, org.watsi.uhp.R.string.error_duplicate_billable,
+                                android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
@@ -178,8 +186,13 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onSuggestionClick(position: Int): Boolean {
                 observable.value?.selectableBillables?.get(position)?.let {
-                    viewModel.addItem(it)
-                    drug_search.setQuery("", false)
+                    try {
+                        viewModel.addItem(it)
+                        drug_search.setQuery("", false)
+                    } catch (e: EncounterViewModel.DuplicateBillableException) {
+                        Toast.makeText(context, org.watsi.uhp.R.string.error_duplicate_billable,
+                                android.widget.Toast.LENGTH_SHORT).show()
+                    }
                 }
                 return true
             }

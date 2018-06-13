@@ -55,26 +55,35 @@ class EncounterViewModel @Inject constructor(
 
     fun addItem(billable: Billable) {
         currentEncounter()?.let {
-            val updatedEncounterItems = it.encounterItems.toMutableList()
-            val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
-            updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
-            val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(encounter = updatedEncounter,
-                                                      type = null,
-                                                      selectableBillables = emptyList(),
-                                                      searchResults = emptyList())
+            if (it.containsBillable(billable.id)) {
+                throw DuplicateBillableException()
+            } else {
+                val updatedEncounterItems = it.encounterItems.toMutableList()
+                val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
+                updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
+                val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
+                observable.value = observable.value?.copy(
+                        encounter = updatedEncounter,
+                        type = null,
+                        selectableBillables = emptyList(),
+                        searchResults = emptyList()
+                )
+            }
         }
     }
 
-    // naming convention?
-    fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
+    fun setItemQuantity(encounterItemId: UUID, quantity: String) {
         currentEncounter()?.let { encounter ->
-            val updatedEncounterItems = encounter.encounterItems.toMutableList()
-            updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
-                encounterItemRelation.encounterItem.quantity = quantity
+            if (quantity in listOf("", "0")) {
+                throw InvalidQuantityException()
+            } else {
+                val updatedEncounterItems = encounter.encounterItems.toMutableList()
+                updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
+                    encounterItemRelation.encounterItem.quantity = quantity.toInt()
+                }
+                val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
+                observable.value = observable.value?.copy(encounter = updatedEncounter)
             }
-            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(encounter = updatedEncounter)
         }
     }
 
@@ -118,4 +127,7 @@ class EncounterViewModel @Inject constructor(
                          val selectableBillables: List<Billable> = emptyList(),
                          val encounter: EncounterWithItemsAndForms,
                          val searchResults: List<Billable> = emptyList())
+
+    class DuplicateBillableException : Exception()
+    class InvalidQuantityException : Exception()
 }
