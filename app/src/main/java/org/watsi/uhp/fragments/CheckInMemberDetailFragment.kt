@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.absentee_notification
@@ -41,6 +40,7 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
@@ -148,7 +148,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             scan_fingerprints_btn.visibility = View.VISIBLE
             scan_fingerprints_btn.setOnClickListener {view ->
                 if (!fingerprintManager.verifyFingerprint(guid.toString(), this, VERIFY_FINGERPRINT_INTENT)) {
-                    Toast.makeText(context, R.string.fingerprints_not_installed_error_message, Toast.LENGTH_LONG).show()
+                    SnackbarHelper.show(view, context, R.string.fingerprints_not_installed_error_message)
                 }
             }
         }
@@ -172,6 +172,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 .setMessage(R.string.clinic_number_prompt)
                 .setPositiveButton(R.string.clinic_number_button) { dialog, _ ->
                     createIdentificationEvent(dialog as AlertDialog).subscribe({
+                        view?.let {
+                            SnackbarHelper.show(it, context, getString(R.string.checked_in_snackbar_message, member.name))
+                        }
                         navigationManager.popTo(CurrentPatientsFragment())
                     }, {
                         logger.error(it)
@@ -230,12 +233,12 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                         when (badScan) {
                             true -> {
                                 setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorRed), R.string.bad_scan_indicator)
-                                Toast.makeText(context, R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show()
+                                view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_successful) }
                             } false -> {
                                 setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorGreen), R.string.good_scan_indicator)
-                                Toast.makeText(context, R.string.fingerprint_scan_successful, Toast.LENGTH_LONG).show()
+                                view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_successful) }
                             } null -> {
-                                Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
+                                view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
                                 logger.error("FingerprintManager returned null badScan on Success $fingerprintResponse")
                             }
                         }
@@ -243,7 +246,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                     }
                     FingerprintManager.FingerprintStatus.FAILURE -> {
                         setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorNeutral), R.string.no_scan_indicator)
-                        Toast.makeText(context, R.string.fingerprint_scan_failed, Toast.LENGTH_LONG).show()
+                        view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
                     }
                     FingerprintManager.FingerprintStatus.CANCELLED -> { /* No-op */ }
                 }

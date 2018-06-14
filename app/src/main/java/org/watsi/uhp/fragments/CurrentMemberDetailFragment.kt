@@ -19,6 +19,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import javax.inject.Inject
@@ -110,6 +111,9 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             }
             R.id.menu_dismiss_member -> {
                 viewModel.dismiss(identificationEvent).subscribe({
+                    view?.let {
+                        SnackbarHelper.show(it, context, getString(R.string.checked_out_snackbar_message, member.name))
+                    }
                     navigationManager.popTo(CurrentPatientsFragment())
                 }, {
                     logger.error(it)

@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.TimePicker
-import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_receipt.date_edit
 import kotlinx.android.synthetic.main.fragment_receipt.date_label
@@ -32,11 +31,11 @@ import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.plurals.forms_attached_label
 import org.watsi.uhp.R.plurals.receipt_line_item_count
-import org.watsi.uhp.R.string.encounter_submitted
 import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.helpers.DateHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import javax.inject.Inject
@@ -158,8 +157,8 @@ class ReceiptFragment : DaggerFragment() {
 
     private fun submitEncounter(copaymentPaid: Boolean) {
         viewModel.submitEncounter(encounter, copaymentPaid).subscribe({
+            view?.let { SnackbarHelper.show(it, context, R.string.encounter_submitted) }
             navigationManager.popTo(CurrentPatientsFragment())
-            Toast.makeText(activity, getString(encounter_submitted), Toast.LENGTH_LONG).show()
         }, {
             logger.error(it)
         })

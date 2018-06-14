@@ -131,7 +131,7 @@
     <string name="replace_card_action">ISSUE</string>
     <string name="check_in">Check-in</string>
     <string name="checked_in">Already Checked In</string>
-    <string name="identification_approved">has been successfully checked in.</string>
+    <string name="checked_in_snackbar_message">%1$s was checked in.</string>
 
     <string name="fingerprint_scan_btn">SCAN</string>
     <string name="fingerprint_scan_successful">Fingerprint Scan Successful!</string>
@@ -142,9 +142,7 @@
 
     <!-- CurrentMemberDetailFragment -->
     <string name="detail_create_encounter">Record Encounter</string>
-    <string name="dismiss_member_alert">Why are you dismissing the member?</string>
-    <string name="identification_dismissed">has been checked out without treatment details.</string>
-    <string name="identification_dismissed_failure">Failed to check out member.</string>
+    <string name="checked_out_snackbar_message">%1$s has been checked out without treatment details.</string>
     <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
 
     <!-- EncounterFragment -->
@@ -222,6 +220,7 @@
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_info_label">Enroll newborn</string>
     <string name="enroll_newborn_save_btn">Continue</string>
+    <string name="enrollment_completed_snackbar_message">%1$s successfully enrolled.</string>
 
     <!-- EnrollNewbornPhotoFragment -->
     <string name="enroll_newborn_photo_label">Newborn photo</string>

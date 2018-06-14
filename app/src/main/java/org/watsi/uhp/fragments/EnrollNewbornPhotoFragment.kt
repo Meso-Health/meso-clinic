@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_capture_photo.photo
@@ -20,6 +19,7 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import java.util.UUID
 import javax.inject.Inject
@@ -63,8 +63,11 @@ class EnrollNewbornPhotoFragment : DaggerFragment() {
             createMemberUseCase.execute(newborn.copy(photoId = photoIds?.first))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                navigationManager.popTo(CurrentPatientsFragment())
-                Toast.makeText(activity, "Enrollment completed", Toast.LENGTH_LONG).show()
+                        view?.let {
+                            SnackbarHelper.show(it, context,
+                                    context.getString(R.string.enrollment_completed_snackbar_message, newborn.name))
+                        }
+                        navigationManager.popTo(CurrentPatientsFragment())
             }, {
                 // TODO: handle error
             })
