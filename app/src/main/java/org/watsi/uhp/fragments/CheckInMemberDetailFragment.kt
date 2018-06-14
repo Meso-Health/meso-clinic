@@ -273,8 +273,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                                                       val resultCode: Int)
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.findItem(R.id.menu_member_edit).isVisible = true
-        menu.findItem(R.id.menu_enroll_newborn).isVisible = true
+        menu?.let {
+            it.findItem(R.id.menu_member_edit).isVisible = true
+            it.findItem(R.id.menu_enroll_newborn).isVisible = true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -165,8 +165,11 @@ class ReceiptFragment : DaggerFragment() {
         })
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.menu_submit_without_copayment).isVisible = true
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        menu?.let {
+            it.findItem(R.id.menu_submit_without_copayment).isVisible = true
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

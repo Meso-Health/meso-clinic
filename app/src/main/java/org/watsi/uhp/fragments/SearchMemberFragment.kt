@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_member_search.member_search_resul
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
+import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SearchByMemberCardActivity
@@ -83,36 +85,45 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        val searchMenuItem = menu!!.findItem(R.id.menu_member_search)
-        searchMenuItem.isVisible = true
+        menu?.let {
+            val searchMenuItem = menu.findItem(R.id.menu_member_search)
+            searchMenuItem.isVisible = true
 
-        toolbarSearchView = searchMenuItem.actionView as ToolbarSearch
-        toolbarSearchView.keyboardManager = keyboardManager
-        toolbarSearchView.onSearch { query ->
-            viewModel.updateQuery(query)
+            toolbarSearchView = searchMenuItem.actionView as ToolbarSearch
+            toolbarSearchView.keyboardManager = keyboardManager
+            toolbarSearchView.onSearch { query ->
+                viewModel.updateQuery(query)
+            }
+
+            toolbarSearchView.onBack {
+                toolbarSearchView.clear()
+                navigationManager.goBack()
+            }
+
+            toolbarSearchView.onScan {
+                startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
+            }
+
+            keyboardManager.showKeyboard(toolbarSearchView)
         }
-
-        toolbarSearchView.onBack {
-            toolbarSearchView.clear()
-            navigationManager.goBack()
-        }
-
-        toolbarSearchView.onScan {
-            startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
-        }
-
-        keyboardManager.showKeyboard(toolbarSearchView)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
-        member?.let {
-            navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
-                    it,
-                    IdentificationEvent.SearchMethod.SCAN_BARCODE))
-        }
-        error?.let {
-            // TODO: display error?
+        return when (resultCode) {
+            Activity.RESULT_OK -> {
+                val member = data?.getSerializableExtra(SearchByMemberCardActivity.MEMBER_RESULT_KEY) as Member?
+                if (member != null) {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                            member, IdentificationEvent.SearchMethod.SCAN_BARCODE))
+                } else {
+                    logger.error("QRCodeActivity returned null member with resultCode: Activity.RESULT_OK")
+                }
+            }
+            SearchByMemberCardActivity.RESULT_REDIRECT_TO_SEARCH_FRAGMENT -> { }
+            Activity.RESULT_CANCELED -> { }
+            else -> {
+                logger.error("QrCodeActivity.parseResult called with resultCode: $resultCode")
+            }
         }
     }
 }
