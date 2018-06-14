@@ -27,6 +27,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.plurals.forms_attached_label
@@ -34,7 +35,6 @@ import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
-import org.watsi.uhp.helpers.DateHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -69,8 +69,8 @@ class ReceiptFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounter.encounter.occurredAt, encounter.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->
-                val dateString = DateHelper.formatDateString(viewState.occurredAt, clock)
-                date_label.text = if (DateHelper.isToday(viewState.occurredAt, clock)) {
+                val dateString = DateUtils.formatInstantStyleLong(viewState.occurredAt, clock)
+                date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
                     resources.getString(today_wrapper, dateString)
                 } else {
                     dateString
