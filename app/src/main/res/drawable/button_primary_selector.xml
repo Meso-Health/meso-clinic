@@ -3,6 +3,9 @@
   <item
       android:drawable="@drawable/button_primary_pressed_background"
       android:state_pressed="true"/>
+  <item
+      android:drawable="@drawable/button_primary_disabled"
+      android:state_enabled="false" />
 
   <item android:drawable="@drawable/button_primary_background" />
 </selector>
