@@ -140,6 +140,7 @@
     <string name="bad_scan_indicator">Fingerprint Mismatch</string>
 
     <!-- CurrentMemberDetailFragment -->
+    <string name="current_member_fragment_label">Encounter</string>
     <string name="detail_create_encounter">Record Encounter</string>
     <string name="checked_out_snackbar_message">%1$s has been checked out without treatment details.</string>
     <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
