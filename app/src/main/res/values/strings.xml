@@ -152,13 +152,18 @@
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="prompt_billable">Select a</string>
     <string name="search_drug_hint">Search drugs</string>
-    <string name="already_in_list_items">Already selected</string>
+    <string name="error_duplicate_billable">Already selected</string>
+    <string name="error_blank_or_zero_quantity">Please enter a nonzero quantity</string>
     <string name="default_billable_quantity">1</string>
     <string name="remove_billable_button">X</string>
     <string name="encounter_product_list_label">Items</string>
     <string name="continue_encounter_button">Next</string>
     <string name="backdate"><u>Change date</u></string>
     <string name="add_billable_prompt"><u>Not in search?</u></string>
+    <plurals name="encounter_item_count">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
 
     <!-- DiagnosisFragment -->
     <string name="diagnosis_fragment_label">Diagnoses</string>

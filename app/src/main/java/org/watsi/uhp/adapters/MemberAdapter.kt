@@ -14,9 +14,16 @@ class MemberAdapter(
         private val members: MutableList<MemberWithIdEventAndThumbnailPhoto> = mutableListOf(),
         private val clock: Clock
 ) : RecyclerView.Adapter<MemberAdapter.MemberViewHolder>() {
-    override fun getItemCount(): Int = members.size
 
     lateinit var memberListItemView: MemberListItem
+
+    override fun getItemCount(): Int = members.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
+        val memberView = LayoutInflater.from(parent.context).inflate(
+                R.layout.view_member_list_item, parent, false)
+        return MemberViewHolder(memberView)
+    }
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
         val memberRelation = members[position]
@@ -25,12 +32,6 @@ class MemberAdapter(
         memberListItemView.setOnClickListener{
             onItemSelect(memberRelation)
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
-        val memberView = LayoutInflater.from(parent.context).inflate(
-                R.layout.view_member_list_item, parent, false)
-        return MemberViewHolder(memberView)
     }
 
     fun setMembers(updatedMembers: List<MemberWithIdEventAndThumbnailPhoto>) {
