@@ -9,7 +9,6 @@
     <color name="indicatorRed">#F44336</color>
     <color name="indicatorGreen">#4caf50</color>
     <color name="indicatorNeutral">#9E9E9E</color>
-    <color name="notificationGray">#EEEEEE</color>
     <color name="disabledButton">#D6D6D6</color>
     <color name="disabledButtonText">#A5A5A5</color>
     <color name="translucentOverlay">#55000000</color>

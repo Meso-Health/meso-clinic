@@ -25,7 +25,6 @@
     <dimen name="thumbnailSmall">28dp</dimen>
     <dimen name="thumbnailMedium">52dp</dimen>
     <dimen name="thumbnailLarge">120dp</dimen>
-    <dimen name="thumbnailXLarge">150dp</dimen>
 
     <!-- View dimensions scale -->
     <dimen name="viewHeight120">120dp</dimen>

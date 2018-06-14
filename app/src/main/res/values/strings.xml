@@ -114,31 +114,30 @@
     <!-- SearchMemberFragment -->
     <string name="member_no_search_results_text">No search results. Please try again.</string>
 
-    <!-- MemberDetailFragment -->
-    <plurals name="household_label">
-        <item quantity="one">No other household members</item>
-        <item quantity="other">%d Household Members</item>
-    </plurals>
-
     <!-- PresentingConditionsFragment -->
     <string name="fragment_presenting_conditions">Enter presenting conditions</string>
 
     <!-- CheckinMemberDetailFragment -->
     <string name="detail_fragment_label">Member</string>
     <string name="absentee_notification">Needs to complete enrollment</string>
-    <string name="absentee_action">ENROLL</string>
+    <string name="absentee_action">Enroll</string>
     <string name="replace_card_notification">Needs new member card</string>
-    <string name="replace_card_action">ISSUE</string>
-    <string name="check_in">Check-in</string>
+    <string name="replace_card_action">Issue</string>
+    <string name="check_in">Check In</string>
     <string name="checked_in">Already Checked In</string>
+    <string name="identification_approved">has been successfully checked in.</string>
+    <string name="household_panel_header">Household</string>
+    <plurals name="household_members_label" >
+        <item quantity="one">%d member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
     <string name="checked_in_snackbar_message">%1$s was checked in.</string>
 
-    <string name="fingerprint_scan_btn">SCAN</string>
+    <string name="fingerprint_scan_btn">Verify Fingerprints</string>
     <string name="fingerprint_scan_successful">Fingerprint Scan Successful!</string>
     <string name="fingerprint_scan_failed">Fingerprint Scan Failed</string>
-    <string name="good_scan_indicator">GOOD MATCH</string>
-    <string name="bad_scan_indicator">BAD MATCH</string>
-    <string name="no_scan_indicator">NO SCAN</string>
+    <string name="good_scan_indicator">Good Fingerprint Match</string>
+    <string name="bad_scan_indicator">Fingerprint Mismatch</string>
 
     <!-- CurrentMemberDetailFragment -->
     <string name="detail_create_encounter">Record Encounter</string>

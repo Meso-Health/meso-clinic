@@ -61,7 +61,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
                 if (member.isAbsentee(clock)) {
                     absentee_notification.visibility = View.VISIBLE
-                    absentee_notification.setOnActionClickListener {
+                    absentee_notification.setOnClickListener {
                         navigationManager.goTo(EditMemberFragment.forMember(member.id))
                     }
                 }

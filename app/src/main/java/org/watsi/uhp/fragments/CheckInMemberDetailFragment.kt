@@ -4,11 +4,10 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
@@ -21,13 +20,13 @@ import android.widget.RadioGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.absentee_notification
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_label
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_list
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_panel_summary
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_action_button
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_detail
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.notification_container
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.replace_card_notification
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_fingerprints_btn
-import kotlinx.android.synthetic.main.fragment_checkin_member_detail.scan_result
 import org.threeten.bp.Clock
 import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
@@ -97,17 +96,15 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee(clock)) {
-                    absentee_notification.visibility = View.VISIBLE
-                    absentee_notification.setOnActionClickListener {
-                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
-                    }
-                }
+                if (member.isAbsentee(clock) || member.cardId == null) {
+                    notification_container.visibility = View.VISIBLE
 
-                if (member.cardId == null) {
-                    replace_card_notification.visibility = View.VISIBLE
-                    replace_card_notification.setOnClickListener {
-                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
+                    if (member.isAbsentee(clock)) {
+                        absentee_notification.visibility = View.VISIBLE
+                    }
+
+                    if (member.cardId == null) {
+                        replace_card_notification.visibility = View.VISIBLE
                     }
                 }
 
@@ -131,8 +128,8 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
             it?.householdMembers?.let { householdMembers ->
                 memberAdapter.setMembers(householdMembers)
-                household_members_label.text = context.resources.getQuantityString(
-                        R.plurals.household_label, householdMembers.size, householdMembers.size)
+                household_panel_summary.text = context.resources.getQuantityString(
+                        R.plurals.household_members_label, householdMembers.size, householdMembers.size)
             }
         })
     }
@@ -145,12 +142,19 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         member.fingerprintsGuid?.let { guid ->
-            scan_fingerprints_btn.visibility = View.VISIBLE
             scan_fingerprints_btn.setOnClickListener {view ->
                 if (!fingerprintManager.verifyFingerprint(guid.toString(), this, VERIFY_FINGERPRINT_INTENT)) {
                     SnackbarHelper.show(view, context, R.string.fingerprints_not_installed_error_message)
                 }
             }
+        }
+
+        absentee_notification.setOnClickListener {
+            navigationManager.goTo(EditMemberFragment.forMember(member.id))
+        }
+
+        replace_card_notification.setOnClickListener {
+            navigationManager.goTo(EditMemberFragment.forMember(member.id))
         }
 
         memberAdapter = MemberAdapter(
@@ -161,9 +165,13 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                                 SearchFields(searchFields.searchMethod, throughMemberId)))
                 },
                 clock = clock)
+        val layoutManager = LinearLayoutManager(activity)
         household_members_list.adapter = memberAdapter
-        household_members_list.layoutManager = LinearLayoutManager(activity)
+        household_members_list.layoutManager = layoutManager
         household_members_list.isNestedScrollingEnabled = false
+        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
+        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
+        household_members_list.addItemDecoration(listItemDivider)
     }
 
     private fun launchClinicNumberDialog() {
@@ -245,7 +253,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
                     }
                     FingerprintManager.FingerprintStatus.FAILURE -> {
-                        setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorNeutral), R.string.no_scan_indicator)
+//                        setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorNeutral), R.string.no_scan_indicator)
                         view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
                     }
                     FingerprintManager.FingerprintStatus.CANCELLED -> { /* No-op */ }
@@ -258,17 +266,17 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     private fun setScanResultProperties(color: Int, textId: Int) {
-        scan_result.invalidate()
-        scan_result.setText(textId)
-        scan_result.setTextColor(color)
-        val border = scan_result.background as GradientDrawable
-        border.setStroke(2, color)
-        val fingerprintIcon = scan_result.compoundDrawables[0] as VectorDrawable
-        //mutate() allows us to modify only this instance of the drawable without affecting others
-        fingerprintIcon.mutate().setTint(color)
-
-        scan_fingerprints_btn.visibility = View.GONE
-        scan_result.visibility = View.VISIBLE
+//        scan_result.invalidate()
+//        scan_result.setText(textId)
+//        scan_result.setTextColor(color)
+//        val border = scan_result.background as GradientDrawable
+//        border.setStroke(2, color)
+//        val fingerprintIcon = scan_result.compoundDrawables[0] as VectorDrawable
+//        //mutate() allows us to modify only this instance of the drawable without affecting others
+//        fingerprintIcon.mutate().setTint(color)
+//
+//        scan_fingerprints_btn.visibility = View.GONE
+//        scan_result.visibility = View.VISIBLE
     }
 
     private data class FingerprintVerificationDetails(val tier: String?,

@@ -2,23 +2,22 @@
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/member_photo"
         android:contentDescription="@string/photo_description"
-        android:layout_width="@dimen/thumbnailXLarge"
-        android:layout_height="@dimen/thumbnailXLarge"
-        android:padding="@dimen/space16"
+        android:layout_width="@dimen/thumbnailLarge"
+        android:layout_height="@dimen/thumbnailLarge"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/space16"
+        android:layout_marginStart="@dimen/space16"
         app:layout_constraintStart_toEndOf="@id/member_photo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">

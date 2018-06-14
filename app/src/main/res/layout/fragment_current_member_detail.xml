@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <org.watsi.uhp.custom_components.NotificationBar
+        <org.watsi.uhp.views.NotificationBar
             android:id="@+id/replace_card_notification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             custom:message="@string/replace_card_notification"
             custom:action="@string/replace_card_action" />
 
-        <org.watsi.uhp.custom_components.NotificationBar
+        <org.watsi.uhp.views.NotificationBar
             android:id="@+id/absentee_notification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
