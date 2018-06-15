@@ -3,6 +3,7 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View.OnFocusChangeListener
+import android.view.inputmethod.EditorInfo
 import android.widget.RelativeLayout
 import android.widget.Toast
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
@@ -11,6 +12,7 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billabl
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.remove_line_item_btn
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.uhp.managers.KeyboardManager
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -20,7 +22,8 @@ class EncounterItemListItem @JvmOverloads constructor(
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,
             onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
-            onRemoveEncounterItem: (encounterItemId: UUID) -> Unit
+            onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
+            keyboardManager: KeyboardManager
     ) {
         val billable = encounterItemRelation.billable
         val encounterItem = encounterItemRelation.encounterItem
@@ -44,6 +47,13 @@ class EncounterItemListItem @JvmOverloads constructor(
                     }
                 }
             }
+        }
+        billable_quantity.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                billable_quantity.clearFocus()
+                keyboardManager.hideKeyboard(v)
+            }
+            false
         }
 
         remove_line_item_btn.setOnClickListener { onRemoveEncounterItem(encounterItem.id) }

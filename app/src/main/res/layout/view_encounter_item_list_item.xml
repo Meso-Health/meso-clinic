@@ -16,6 +16,7 @@
         android:inputType="number"
         android:selectAllOnFocus="true"
         android:layout_centerVertical="true"
+        android:imeOptions="actionDone"
         android:maxLength="9" />
 
     <LinearLayout

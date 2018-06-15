@@ -28,6 +28,7 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.adapters.EncounterItemAdapter
+import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import java.util.UUID
@@ -37,6 +38,7 @@ class EncounterFragment : DaggerFragment() {
 
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: EncounterViewModel
@@ -111,7 +113,8 @@ class EncounterFragment : DaggerFragment() {
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
-                }
+                },
+                keyboardManager = keyboardManager
         )
     }
 
