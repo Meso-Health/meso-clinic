@@ -57,7 +57,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
-    @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var fingerprintManager: FingerprintManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
