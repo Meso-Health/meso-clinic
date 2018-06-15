@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
 import android.widget.TextView
-import dagger.android.DaggerFragment
+import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.*
 import org.watsi.device.managers.Logger
@@ -58,7 +58,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         gender_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_GENDER_ERROR])
         name_layout.setError(errorMap[EnrollNewbornViewModel.MEMBER_NAME_ERROR])
         birthdate_dialog_field.setErrorOnField(errorMap[EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR])
-        // TODO: set other error too
         photo_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_PHOTO_ERROR])
         card_id_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_CARD_ERROR])
     }
