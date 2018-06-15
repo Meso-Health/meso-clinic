@@ -16,6 +16,7 @@ import org.watsi.uhp.viewmodels.SearchMemberViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
+import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -64,6 +65,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(StatusViewModel::class)
     abstract fun bindStatusViewModel(viewModel: StatusViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EnrollNewbornViewModel::class)
+    abstract fun bindEnrollNewbornViewModel(viewModel: EnrollNewbornViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory
