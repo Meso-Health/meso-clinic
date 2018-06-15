@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments
 
-import android.app.AlertDialog
 import android.app.SearchManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
@@ -8,36 +7,30 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.DatePicker
 import android.widget.SimpleCursorAdapter
-import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
-import kotlinx.android.synthetic.main.fragment_encounter.backdate_encounter
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
+import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
 import kotlinx.android.synthetic.main.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZoneOffset
-import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.EncounterItemWithBillable
-
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
+import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
-
+import java.util.UUID
 import javax.inject.Inject
 
 class EncounterFragment : DaggerFragment() {
@@ -50,7 +43,7 @@ class EncounterFragment : DaggerFragment() {
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
-    lateinit var encounterItemAdapter: ArrayAdapter<EncounterItemPresenter>
+    lateinit var encounterItemAdapter: EncounterItemAdapter
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -66,16 +59,15 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
 
         val billableTypeOptions = Billable.Type.values().map { it.toString() }.toMutableList()
         billableTypeOptions.add(0, getString(prompt_category))
         billableTypeAdapter = ArrayAdapter(
                 activity, android.R.layout.simple_list_item_1, billableTypeOptions)
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
-        encounterItemAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
         observable = viewModel.getObservable(encounter)
         observable.observe(this, Observer {
             it?.let { viewState ->
@@ -105,19 +97,22 @@ class EncounterFragment : DaggerFragment() {
                         drug_search.visibility = View.GONE
                     }
                 }
-
                 viewState.encounter.let {
-                    if (it.encounter.backdatedOccurredAt) {
-                        backdate_encounter.text = it.encounter.occurredAt.toString()
-                    }
-
-                    // ideally only do this if the line items change or alternatively could choose
-                    // to only notify after both clear & add if there is a UI flash
-                    encounterItemAdapter.clear()
-                    encounterItemAdapter.addAll(it.encounterItems.map { EncounterItemPresenter(it) })
+                    encounter_item_count.text = resources.getQuantityString(
+                            R.plurals.encounter_item_count, it.encounterItems.size, it.encounterItems.size)
+                    encounterItemAdapter.setEncounterItems(it.encounterItems)
                 }
             }
         })
+
+        encounterItemAdapter = EncounterItemAdapter(
+                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
+                    viewModel.setItemQuantity(encounterItemId, newQuantity)
+                },
+                onRemoveEncounterItem = { encounterItemId: UUID ->
+                    viewModel.removeItem(encounterItemId)
+                }
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -178,15 +173,12 @@ class EncounterFragment : DaggerFragment() {
         })
 
         line_items_list.adapter = encounterItemAdapter
+        line_items_list.layoutManager = LinearLayoutManager(activity)
 
         add_billable_prompt.setOnClickListener {
             viewModel.currentEncounter()?.let {
                 navigationManager.goTo(AddNewBillableFragment.forEncounter(it))
             }
-        }
-
-        backdate_encounter.setOnClickListener {
-            launchBackdateDialog()
         }
 
         save_button.setOnClickListener {
@@ -206,55 +198,10 @@ class EncounterFragment : DaggerFragment() {
         return cursor
     }
 
-    private fun launchBackdateDialog() {
-        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_backdate_encounter, null)
-        val datePicker = dialogView.findViewById<View>(R.id.date_picker) as DatePicker
-        val timePicker = dialogView.findViewById<View>(R.id.time_picker) as TimePicker
-
-        datePicker.maxDate = clock.instant().toEpochMilli()
-
-        viewModel.currentEncounter()?.encounter?.let {
-            if  (it.backdatedOccurredAt) {
-                val ldt = LocalDateTime.ofInstant(it.occurredAt, ZoneId.systemDefault())
-                datePicker.updateDate(ldt.year, ldt.monthValue, ldt.dayOfMonth)
-                timePicker.hour = ldt.hour
-                timePicker.minute = ldt.minute
-            }
-        }
-
-        val builder = AlertDialog.Builder(context)
-        builder.setView(dialogView)
-
-        val dialog = builder.create()
-
-        dialogView.findViewById<View>(R.id.done).setOnClickListener {
-            val backdatedOccurredAt = LocalDateTime.of(datePicker.year,
-                                                   datePicker.month,
-                                                   datePicker.dayOfMonth,
-                                                   timePicker.hour,
-                                                   timePicker.minute
-            ).toInstant(ZoneOffset.UTC) // TODO: fix offset calculation
-            viewModel.updateBackdatedOccurredAt(backdatedOccurredAt)
-            dialog.dismiss()
-        }
-
-        dialogView.findViewById<View>(R.id.cancel).setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
-
     /**
      * Used to customize toString behavior for use in an ArrayAdapter
      */
     data class BillablePresenter(val billable: Billable?) {
         override fun toString(): String = billable?.name ?: "Select..."
-    }
-
-    data class EncounterItemPresenter(val encounterItem: EncounterItemWithBillable) {
-        override fun toString(): String {
-            return "${encounterItem.billable.name} - ${encounterItem.encounterItem.quantity}"
-        }
     }
 }

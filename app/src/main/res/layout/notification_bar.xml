@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/notificationGray"
-        android:paddingStart="20dp"
-        android:gravity="center_vertical" >
-
-        <View
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:background="@drawable/ic_info_outline"
-            android:backgroundTint="@color/text" />
-
-        <TextView
-            android:id="@+id/notification_message"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp" />
-
-        <Button
-            android:id="@+id/notification_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
-            style="?android:attr/buttonBarButtonStyle"
-            android:background="?attr/selectableItemBackground" />
-    </LinearLayout>
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16"
+    android:background="@drawable/panel_bottom_background">
 
     <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/disabledButton" />
+        android:id="@+id/notification_icon"
+        android:layout_width="@dimen/space24"
+        android:layout_height="@dimen/space24"
+        android:background="@drawable/ic_info_outline"
+        android:backgroundTint="@color/gray9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/notification_message"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/notification_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/notification_icon"
+        app:layout_constraintEnd_toStartOf="@id/notification_btn"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/notification_btn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/notification_message"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="end|center_vertical"
+        android:textAllCaps="true"
+        android:textColor="@color/primary"
+        style="?android:attr/buttonBarButtonStyle"
+        android:background="?attr/selectableItemBackground" />
+</android.support.constraint.ConstraintLayout>

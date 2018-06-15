@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -19,6 +20,8 @@ import kotlinx.android.synthetic.main.fragment_current_patients.identification_b
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.IdentificationEvent.SearchMethod
+import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -72,7 +75,6 @@ class CurrentPatientsFragment : DaggerFragment() {
                     } else {
                         logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
                                 "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMember(memberRelation.member))
                     }
                 },
                 clock = clock)
@@ -90,9 +92,10 @@ class CurrentPatientsFragment : DaggerFragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.findItem(R.id.menu_logout).isVisible = true
-        menu.findItem(R.id.menu_version).isVisible = true
-        menu.findItem(R.id.menu_search_by_name_or_id).isVisible = true
+        menu?.let {
+            it.findItem(R.id.menu_logout).isVisible = true
+            it.findItem(R.id.menu_version).isVisible = true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -109,21 +112,29 @@ class CurrentPatientsFragment : DaggerFragment() {
                             (activity as ClinicActivity).navigateToAuthenticationActivity()
                         }.create().show()
             }
-            R.id.menu_search_by_name_or_id -> {
-                navigationManager.goTo(SearchMemberFragment())
-            }
             else -> super.onOptionsItemSelected(item)
         }
         return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val (member, error) = SearchByMemberCardActivity.parseResult(resultCode, data, logger)
-        member?.let {
-            navigationManager.goTo(CheckInMemberDetailFragment.forMember(it))
-        }
-        error?.let {
-            // TODO: display error?
+        return when (resultCode) {
+            Activity.RESULT_OK -> {
+                val member = data?.getSerializableExtra(SearchByMemberCardActivity.MEMBER_RESULT_KEY) as Member?
+                if (member != null) {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                            member,SearchMethod.SCAN_BARCODE))
+                } else {
+                    logger.error("QRCodeActivity returned null member with resultCode: Activity.RESULT_OK")
+                }
+            }
+            SearchByMemberCardActivity.RESULT_REDIRECT_TO_SEARCH_FRAGMENT -> {
+                navigationManager.goTo(SearchMemberFragment())
+            }
+            Activity.RESULT_CANCELED -> { }
+            else -> {
+                logger.error("QrCodeActivity.parseResult called with resultCode: $resultCode")
+            }
         }
     }
 }

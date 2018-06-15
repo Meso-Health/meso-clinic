@@ -7,22 +7,23 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_diagnosis.diagnoses_count
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_search
 import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-
 import org.watsi.uhp.R
+import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
-
 import javax.inject.Inject
 
 class DiagnosisFragment : DaggerFragment() {
@@ -30,9 +31,9 @@ class DiagnosisFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private lateinit var diagnosisAdapter: DiagnosisAdapter
     lateinit var viewModel: DiagnosisViewModel
     lateinit var observable: LiveData<DiagnosisViewModel.ViewState>
-    lateinit var selectedDiagnosesAdapter: ArrayAdapter<DiagnosisPresenter>
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -49,8 +50,6 @@ class DiagnosisFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        selectedDiagnosesAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiagnosisViewModel::class.java)
         observable = viewModel.getObservable()
         observable.observe(this, Observer {
@@ -58,12 +57,17 @@ class DiagnosisFragment : DaggerFragment() {
                 val cursor = buildSuggestionsCursor(viewState.suggestedDiagnoses)
                 diagnosis_search.suggestionsAdapter.changeCursor(cursor)
 
-                selectedDiagnosesAdapter.clear()
-                selectedDiagnosesAdapter.addAll(viewState.selectedDiagnoses.map {
-                    DiagnosisPresenter(it)
-                })
+                diagnosisAdapter.setDiagnoses(viewState.selectedDiagnoses)
+                diagnoses_count.text = resources.getQuantityString(
+                        R.plurals.diagnosis_count, viewState.selectedDiagnoses.size, viewState.selectedDiagnoses.size)
             }
         })
+
+        diagnosisAdapter = DiagnosisAdapter(
+                onRemoveDiagnosis = { diagnosis: Diagnosis ->
+                    viewModel.removeDiagnosis(diagnosis)
+                }
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -72,8 +76,13 @@ class DiagnosisFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-
-        selected_diagnosis_list.adapter = selectedDiagnosesAdapter
+        val layoutManager = LinearLayoutManager(activity)
+        selected_diagnosis_list.adapter = diagnosisAdapter
+        selected_diagnosis_list.layoutManager = layoutManager
+        selected_diagnosis_list.isNestedScrollingEnabled = false
+        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
+        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
+        selected_diagnosis_list.addItemDecoration(listItemDivider)
 
         diagnosis_search.suggestionsAdapter = SimpleCursorAdapter(
                 activity, R.layout.item_billable_search_suggestion, null,
@@ -93,6 +102,7 @@ class DiagnosisFragment : DaggerFragment() {
                 observable.value?.suggestedDiagnoses?.get(position)?.let {
                     viewModel.addDiagnosis(it)
                     diagnosis_search.setQuery("", false)
+                    diagnosis_search.clearFocus()
                 }
                 return true
             }
@@ -112,9 +122,5 @@ class DiagnosisFragment : DaggerFragment() {
             cursor.addRow(arrayOf(it.id, it.description, it.id.toString()))
         }
         return cursor
-    }
-
-    data class DiagnosisPresenter(val diagnosis: Diagnosis) {
-        override fun toString(): String = diagnosis.description
     }
 }

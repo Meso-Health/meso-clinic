@@ -9,15 +9,10 @@
     <color name="indicatorRed">#F44336</color>
     <color name="indicatorGreen">#4caf50</color>
     <color name="indicatorNeutral">#9E9E9E</color>
-    <color name="notificationGray">#EEEEEE</color>
     <color name="disabledButton">#D6D6D6</color>
     <color name="disabledButtonText">#A5A5A5</color>
     <color name="translucentOverlay">#55000000</color>
     <color name="translucentWhite">#7FFFFFFF</color>
-
-    <color name="title">#212121</color>
-    <color name="text">#747474</color>
-    <color name="divider">#DADADA</color>
 
     <color name="gray0">#f8f9fa</color>
     <color name="gray1">#f1f3f5</color>

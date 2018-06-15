@@ -12,18 +12,15 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_current_member_detail.absentee_notification
 import kotlinx.android.synthetic.main.fragment_current_member_detail.member_action_button
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_age_and_gender
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_card_id_detail_fragment
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_name_detail_fragment
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_phone_number
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_photo
+import kotlinx.android.synthetic.main.fragment_current_member_detail.member_detail
+import kotlinx.android.synthetic.main.fragment_current_member_detail.notification_container
 import kotlinx.android.synthetic.main.fragment_current_member_detail.replace_card_notification
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.PhotoLoader
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import javax.inject.Inject
@@ -63,33 +60,25 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee(clock)) {
-                    absentee_notification.visibility = View.VISIBLE
-                    absentee_notification.setOnActionClickListener {
-                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
+                if (member.isAbsentee(clock) || member.cardId == null) {
+                    notification_container.visibility = View.VISIBLE
+
+                    if (member.isAbsentee(clock)) {
+                        absentee_notification.visibility = View.VISIBLE
+                    }
+
+                    if (member.cardId == null) {
+                        replace_card_notification.visibility = View.VISIBLE
                     }
                 }
 
-                if (member.cardId == null) {
-                    replace_card_notification.visibility = View.VISIBLE
-                    replace_card_notification.setOnClickListener {
-                        navigationManager.goTo(EditMemberFragment.forMember(member.id))
-                    }
-                }
-
-                member_name_detail_fragment.text = member.name
-                member_age_and_gender.text = member.formatAgeAndGender(clock)
-                member_card_id_detail_fragment.text = member.cardId
-                member_phone_number.text = member.phoneNumber
-
-                PhotoLoader.loadMemberPhoto(
-                        it.memberThumbnail?.bytes, member_photo, context, member.gender)
+                member_detail.setMember(member, it.memberThumbnail, clock)
             }
         })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.detail_fragment_label)
+        activity.setTitle(R.string.current_member_fragment_label)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_current_member_detail, container, false)
     }
@@ -100,12 +89,15 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             navigationManager.goTo(EncounterFragment.forEncounter(
                     viewModel.buildEncounter(identificationEvent)))
         }
+        member_detail.setIdentificationEvent(identificationEvent)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu!!.findItem(R.id.menu_member_edit).isVisible = true
-        menu.findItem(R.id.menu_enroll_newborn).isVisible = true
-        menu.findItem(R.id.menu_dismiss_member).isVisible = true
+        menu?.let {
+            it.findItem(R.id.menu_member_edit).isVisible = true
+            it.findItem(R.id.menu_enroll_newborn).isVisible = true
+            it.findItem(R.id.menu_dismiss_member).isVisible = true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -118,6 +110,9 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             }
             R.id.menu_dismiss_member -> {
                 viewModel.dismiss(identificationEvent).subscribe({
+                    view?.let {
+                        SnackbarHelper.show(it, context, getString(R.string.checked_out_snackbar_message, member.name))
+                    }
                     navigationManager.popTo(CurrentPatientsFragment())
                 }, {
                     logger.error(it)

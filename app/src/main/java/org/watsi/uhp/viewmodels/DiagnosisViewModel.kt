@@ -32,10 +32,18 @@ class DiagnosisViewModel @Inject constructor(
     fun getObservable(): LiveData<ViewState> = observable
 
     fun addDiagnosis(diagnosis: Diagnosis) {
-        val diagnoses = observable.value?.selectedDiagnoses?.toMutableList() ?: mutableListOf()
-        diagnoses.add(diagnosis)
+        val diagnoses = observable.value?.selectedDiagnoses.orEmpty().toMutableList()
+        if (!diagnoses.contains(diagnosis)) {
+            diagnoses.add(diagnosis)
+        }
         observable.value = observable.value?.copy(selectedDiagnoses = diagnoses,
                                                   suggestedDiagnoses = emptyList())
+    }
+
+    fun removeDiagnosis(diagnosis: Diagnosis) {
+        val diagnoses = observable.value?.selectedDiagnoses.orEmpty().minus(diagnosis)
+        observable.value = observable.value?.copy(selectedDiagnoses = diagnoses,
+                suggestedDiagnoses = emptyList())
     }
 
     fun updateQuery(query: String) {
@@ -55,8 +63,11 @@ class DiagnosisViewModel @Inject constructor(
             }.filterNotNull()
             val matchingSearchAliasesDiagnoses = diagnoses.filter { it.searchAliases.contains(query) }
 
-            val suggestedDiagnoses = (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses).distinct()
-
+            val suggestedDiagnoses = (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses)
+                    .distinct()
+                    .filterNot { diagnosis ->
+                        observable.value?.selectedDiagnoses.orEmpty().map { it.id }.contains(diagnosis.id)
+                    }
             observable.value = observable.value?.copy(suggestedDiagnoses = suggestedDiagnoses)
         } else {
             observable.value = observable.value?.copy(suggestedDiagnoses = emptyList())

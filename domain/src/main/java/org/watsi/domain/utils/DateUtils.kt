@@ -4,10 +4,13 @@ import org.threeten.bp.Clock
 import org.threeten.bp.DateTimeException
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.FormatStyle
 import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.domain.entities.Member
+import java.util.Locale
 
 object DateUtils {
     const val TIME_FORMAT = "h:mma"
@@ -22,13 +25,27 @@ object DateUtils {
         return formatter.format(instant)
     }
 
+    fun formatInstantStyleLong(instant: Instant, clock: Clock = Clock.systemDefaultZone()): String {
+        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+            .withLocale(Locale.getDefault()).withZone(clock.zone)
+        return formatter.format(instant)
+    }
+
     fun formatLocalDate(localDate: LocalDate): String {
         val formatter = DateTimeFormatter.ofPattern(DATE_FORMAT)
         return localDate.format(formatter)
     }
 
+
     fun isDateInFuture(localDate: LocalDate, clock: Clock = Clock.systemDefaultZone()): Boolean {
         return localDate.isAfter(LocalDate.now(clock))
+    }
+
+    fun isToday(instant: Instant, clock: Clock = Clock.systemDefaultZone()): Boolean {
+        val todayDate: LocalDateTime = LocalDateTime.now(clock)
+        val occurredAtDate = LocalDateTime.ofInstant(instant, clock.zone)
+
+        return todayDate.dayOfYear == occurredAtDate.dayOfYear && todayDate.year == occurredAtDate.year
     }
 
     fun dateWithAccuracyToAge(date: LocalDate,

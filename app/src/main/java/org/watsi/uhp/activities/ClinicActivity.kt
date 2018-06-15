@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import dagger.android.support.DaggerAppCompatActivity
@@ -43,7 +42,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_clinic)
 
         ActivityHelper.setupBannerIfInTrainingMode(this)
-        setupToolbar()
         startServices()
 
         navigationManager.goTo(CurrentPatientsFragment())
@@ -89,12 +87,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
         BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
         BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
-    }
-
-    private fun setupToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.showOverflowMenu()
-        setSupportActionBar(toolbar)
     }
 
     private fun checkForUpdates() {

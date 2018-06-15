@@ -1,7 +1,9 @@
 package org.watsi.uhp.activities
 
-import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import kotlinx.android.synthetic.main.activity_qr_code.search_button_container
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.MemberRepository
@@ -14,20 +16,17 @@ class SearchByMemberCardActivity : QrCodeActivity() {
 
     companion object {
         const val RESULT_LOOKUP_FAILED = 3
+        const val RESULT_REDIRECT_TO_SEARCH_FRAGMENT = 4
         const val MEMBER_RESULT_KEY = "member"
+    }
 
-        fun parseResult(resultCode: Int, data: Intent?, logger: Logger): Pair<Member?, String?> {
-            return when (resultCode) {
-                Activity.RESULT_OK -> {
-                    Pair(data?.getSerializableExtra(MEMBER_RESULT_KEY) as Member?, null)
-                }
-                else -> {
-                    if (resultCode != Activity.RESULT_CANCELED) {
-                        logger.error("QrCodeActivity.parseResult called with resultCode: $resultCode")
-                    }
-                    Pair(null, "failed")
-                }
-            }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        search_button_container.visibility = View.VISIBLE
+        search_button_container.setOnClickListener {
+            setResult(RESULT_REDIRECT_TO_SEARCH_FRAGMENT)
+            finish()
         }
     }
 
