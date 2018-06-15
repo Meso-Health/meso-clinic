@@ -52,7 +52,6 @@ class EnrollNewbornViewModel(
         return createMemberUseCase.execute(member).doOnError { onError(it) }
                 .onErrorResumeNext { Completable.never() }
                 .observeOn(AndroidSchedulers.mainThread())
-        // ^ what's going on in this chunk?
     }
 
     fun onNameChange(name: String) {
