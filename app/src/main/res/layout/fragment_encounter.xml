@@ -75,8 +75,7 @@
                 android:id="@+id/encounter_item_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/backdate" />
+                android:layout_alignParentStart="true" />
 
             <TextView
                 android:id="@+id/add_billable_prompt"
