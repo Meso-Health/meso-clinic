@@ -77,9 +77,14 @@ class EncounterViewModel @Inject constructor(
 
     fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
         currentEncounter()?.let { encounter ->
-            val updatedEncounterItems = encounter.encounterItems.toMutableList()
-            updatedEncounterItems.find { it.encounterItem.id == encounterItemId }?.let { encounterItemRelation ->
-                encounterItemRelation.encounterItem.quantity = quantity
+            val updatedEncounterItems = encounter.encounterItems.map { encounterItemWithBillable ->
+                if (encounterItemWithBillable.encounterItem.id == encounterItemId) {
+                    val oldEncounterItem = encounterItemWithBillable.encounterItem
+                    val newEncounterItem = oldEncounterItem.copy(quantity = quantity)
+                    encounterItemWithBillable.copy(encounterItem = newEncounterItem)
+                } else {
+                    encounterItemWithBillable
+                }
             }
             val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
             observable.value = observable.value?.copy(encounter = updatedEncounter)

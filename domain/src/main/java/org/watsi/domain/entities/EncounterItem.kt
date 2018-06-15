@@ -6,4 +6,4 @@ import java.util.UUID
 data class EncounterItem(val id: UUID,
                          val encounterId: UUID,
                          val billableId: UUID,
-                         var quantity: Int) : Serializable
+                         val quantity: Int) : Serializable
