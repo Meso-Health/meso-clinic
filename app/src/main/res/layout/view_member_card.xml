@@ -36,19 +36,19 @@
             android:id="@+id/member_age_and_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/member_name" />
+            app:layout_constraintTop_toBottomOf="@id/member_name" />
 
         <TextView
             android:id="@+id/member_card_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/member_age_and_gender" />
+            app:layout_constraintTop_toBottomOf="@id/member_age_and_gender" />
 
         <TextView
             android:id="@+id/clinic_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/member_card_id" />
+            app:layout_constraintTop_toBottomOf="@id/member_card_id" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
