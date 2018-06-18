@@ -22,6 +22,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
 import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
@@ -136,6 +137,9 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         done.setOnClickListener {
             viewModel.saveMember(memberId, parent.householdId).subscribe({
                 // TODO: navigationManager.popTo(parentFragment)
+                view?.let {
+                    SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
+                }
             }, { throwable ->
                 showSnackbar(throwable)
             })
