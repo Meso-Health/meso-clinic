@@ -75,7 +75,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         validationKeysToField.forEach {
             val validationKey = it.key
             val layout = it.value
-            if (errorMap[validationKey] != null) {
+            errorMap[validationKey]?.let {
                 (view as ScrollView).smoothScrollTo(0, layout.top - AUTO_SCROLL_PADDING_IN_DP)
                 return
             }
@@ -87,7 +87,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EnrollNewbornViewModel::class.java)
         viewModel.getViewStateObservable().observe(this, Observer {
-            if (it != null) {
+            it?.let {
                 setErrors(it.errors)
 
                 if (it.name.isEmpty()) {
@@ -172,13 +172,13 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         when (requestCode) {
             CAPTURE_PHOTO_INTENT -> {
                 val (photoIds, error) = SavePhotoActivity.parseResult(resultCode, data, logger)
-                if (photoIds != null) {
+                photoIds?.let {
                     viewModel.onPhotoTaken(photoIds.first, photoIds.second)
                 }
             }
             SCAN_QRCODE_INTENT -> {
                 val (cardId, error) = ScanNewCardActivity.parseResult(resultCode, data, logger)
-                if (cardId != null) {
+                cardId?.let {
                     viewModel.onCardScan(cardId)
                 }
             }
