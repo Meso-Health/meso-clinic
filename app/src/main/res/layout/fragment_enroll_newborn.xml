@@ -14,54 +14,70 @@
             focusableInTouchMode?
             focusable?
             clickable?-->
-        
-        <org.watsi.uhp.views.GenderField
-            android:id="@+id/gender_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/name_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Full Name"
-                android:imeOptions="actionNext"
-                android:inputType="textCapWords|textNoSuggestions"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <org.watsi.uhp.views.DialogBirthdateField
-            android:id="@+id/birthdate_dialog_field"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/enroll_newborn_fields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:showCalendarIcon="true"
-            app:layout_constraintTop_toBottomOf="@id/name_layout"/>
+            android:paddingLeft="@dimen/space16"
+            android:paddingRight="@dimen/space16"
+            android:paddingTop="@dimen/space24"
+            android:background="@color/white"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <org.watsi.uhp.views.GenderField
+                android:id="@+id/gender_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space24"
+                app:layout_constraintTop_toBottomOf="@id/gender_field">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Full Name"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords|textNoSuggestions" />
+            </android.support.design.widget.TextInputLayout>
+
+            <org.watsi.uhp.views.DialogBirthdateField
+                android:id="@+id/birthdate_dialog_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space24"
+                app:showCalendarIcon="true"
+                app:layout_constraintTop_toBottomOf="@id/name_layout" />
+
+        </android.support.constraint.ConstraintLayout>
 
         <org.watsi.uhp.views.PhotoField
             android:id="@+id/photo_field"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/member_card_header"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/member_card_panel_header_text"
-            style="@style/PanelHeader" />
+            app:layout_constraintTop_toBottomOf="@id/enroll_newborn_fields" />
 
         <org.watsi.uhp.views.MemberCardIdField
             android:id="@+id/card_id_field"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/photo_field" />
 
         <Button
             android:id="@+id/done"
             android:text="Done"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/space16"
+            android:layout_marginLeft="@dimen/space16"
+            android:layout_marginTop="@dimen/space24"
+            app:layout_constraintTop_toBottomOf="@id/card_id_field"
+            style="@style/PrimaryButton" />
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
