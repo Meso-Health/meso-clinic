@@ -75,20 +75,6 @@ class EnrollNewbornViewModel(
         }
     }
 
-    fun onCaptureFingerprintId(fingerprintId: UUID?) {
-        viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key == MEMBER_FINGERPRINTS_ERROR }
-            viewStateObservable.value = it.copy(fingerprintsGuid = fingerprintId, errors = errors)
-        }
-    }
-
-    fun onFingerprintScanError(errorMessage: String) {
-        viewStateObservable.value?.let {
-            val errors = it.errors.toMutableMap()
-            errors[MEMBER_FINGERPRINTS_ERROR]
-        }
-    }
-
     fun onCardScan(cardId: String) {
         viewStateObservable.value?.let {
             val errors = it.errors.filterNot { it.key == MEMBER_CARD_ERROR }
@@ -160,8 +146,6 @@ class EnrollNewbornViewModel(
                          val gender: Member.Gender? = null,
                          val photoId: UUID? = null,
                          val thumbnailPhoto: Photo? = null,
-                         val fingerprintsGuid: UUID? = null,
-                         val fingerprintsError: String? = null,
                          val cardId: String? = null,
                          val errors: Map<String, String> = emptyMap(),
                          val status: MemberStatus = MemberStatus.NEW)
@@ -178,7 +162,6 @@ class EnrollNewbornViewModel(
         const val MEMBER_GENDER_ERROR = "member_gender_error"
         const val MEMBER_PHOTO_ERROR = "member_photo_error"
         const val MEMBER_CARD_ERROR = "member_card_error"
-        const val MEMBER_FINGERPRINTS_ERROR = "member_fingerprints_error"
 
         fun toMember(viewState: ViewState, memberId: UUID, householdId: UUID, language: String?, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() &&
@@ -193,7 +176,7 @@ class EnrollNewbornViewModel(
                         gender = viewState.gender,
                         photoId = viewState.photoId,
                         thumbnailPhotoId = viewState.thumbnailPhoto?.id,
-                        fingerprintsGuid = viewState.fingerprintsGuid,
+                        fingerprintsGuid = null,
                         cardId = viewState.cardId,
                         householdId = householdId,
                         language = language,
