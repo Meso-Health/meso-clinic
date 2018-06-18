@@ -15,7 +15,13 @@ import android.widget.ScrollView
 import android.widget.TextView
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.*
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.gender_field
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.name_layout
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.name
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.birthdate_dialog_field
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.photo_field
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id_field
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.done
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
@@ -26,7 +32,7 @@ import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
