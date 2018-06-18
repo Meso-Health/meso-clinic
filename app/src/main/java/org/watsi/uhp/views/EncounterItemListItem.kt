@@ -1,10 +1,10 @@
 package org.watsi.uhp.views
 
 import android.content.Context
+import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.EditorInfo
-import android.widget.RelativeLayout
 import android.widget.Toast
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
@@ -17,7 +17,7 @@ import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : RelativeLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,

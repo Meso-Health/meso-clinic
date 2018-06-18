@@ -27,6 +27,8 @@
     <dimen name="thumbnailLarge">120dp</dimen>
 
     <!-- View dimensions scale -->
+    <dimen name="viewHeight40">40dp</dimen>
+    <dimen name="viewHeight64">64dp</dimen>
     <dimen name="viewHeight120">120dp</dimen>
 
     <!-- left and right margins on all fragments -->
@@ -40,9 +42,6 @@
 
     <!-- margin for floating action buttons -->
     <dimen name="fab_margin">16dp</dimen>
-
-    <!-- margin above and below spinners -->
-    <dimen name="spinner_vertical_margin">16dp</dimen>
 
     <!-- margin above and below large text labels -->
     <dimen name="label_vertical_margin">16dp</dimen>
