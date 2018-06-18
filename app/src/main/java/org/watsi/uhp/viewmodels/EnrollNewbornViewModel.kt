@@ -33,7 +33,7 @@ class EnrollNewbornViewModel(
         viewStateObservable.value = ViewState()
     }
 
-    fun saveMember(memberId: UUID, householdId: UUID, formValidator: FormValidator = FormValidator) : Completable {
+    fun saveMember(memberId: UUID, householdId: UUID, language: String?, formValidator: FormValidator = FormValidator) : Completable {
         val viewState = viewStateObservable.value
 
         if (viewState == null || viewState.status == MemberStatus.SAVING) {
@@ -47,7 +47,7 @@ class EnrollNewbornViewModel(
         }
 
         viewStateObservable.value = viewState.copy(status = MemberStatus.SAVING)
-        val member = toMember(viewState, memberId, householdId, clock)
+        val member = toMember(viewState, memberId, householdId, language, clock)
 
         return createMemberUseCase.execute(member).doOnError { onError(it) }
                 .onErrorResumeNext { Completable.never() }
@@ -180,7 +180,7 @@ class EnrollNewbornViewModel(
         const val MEMBER_CARD_ERROR = "member_card_error"
         const val MEMBER_FINGERPRINTS_ERROR = "member_fingerprints_error"
 
-        fun toMember(viewState: ViewState, memberId: UUID, householdId: UUID, clock: Clock): Member {
+        fun toMember(viewState: ViewState, memberId: UUID, householdId: UUID, language: String?, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() &&
                     viewState.gender != null && viewState.cardId != null &&
                     viewState.birthdate != null && viewState.photoId != null && viewState.name != null) {
@@ -196,8 +196,8 @@ class EnrollNewbornViewModel(
                         fingerprintsGuid = viewState.fingerprintsGuid,
                         cardId = viewState.cardId,
                         householdId = householdId,
-                        language = null, // should we grab this from the parent?
-                        phoneNumber = null, // should we grab this from the parent?
+                        language = language,
+                        phoneNumber = null,
                         photoUrl = null
                 )
             } else {

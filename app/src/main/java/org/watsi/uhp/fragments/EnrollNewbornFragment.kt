@@ -137,7 +137,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         done.setOnClickListener {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
-            viewModel.saveMember(memberId, parent.householdId).subscribe({
+            viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
                 // TODO: navigationManager.popTo(parentFragment)
                 view?.let {
                     SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
