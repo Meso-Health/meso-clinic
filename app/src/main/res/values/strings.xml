@@ -2,7 +2,10 @@
     <!-- Error Messages -->
     <string name="image_capture_failed">Image capture failed</string>
     <string name="image_failed_to_save">Image failed to save</string>
-    <string name="generic_error_message">An error has occurred. Contact support.</string>
+
+    <!--TODO: is it okay to change this generic error message? -->
+    <!--<string name="generic_error_message">An error has occurred. Contact support.</string>-->
+    <string name="generic_save_error">An unknown error occurred. Try again later.</string>
     <string name="name_validation_error">Name cannot be blank.</string>
     <string name="card_id_validation_error">
         Invalid card ID. ID must be 3 letters followed by 6 numbers.
@@ -15,7 +18,9 @@
     <string name="birthdate_validation_error">Invalid birthdate.</string>
 
     <!-- Confirmation Messages -->
+    <string name="exit_form_alert_title">Are you sure?</string>
     <string name="exit_form_alert">Are you sure you want to exit?</string>
+    <string name="exit_edit_member_form_message">You will lose any information about this member.</string>
 
     <!-- Menu -->
     <string name="menu_dismiss_member">Dismiss member</string>
@@ -45,6 +50,7 @@
     <string name="price_with_currency">%1$s UGX</string>
     <string name="total">Total</string>
     <string name="save">Save</string>
+    <string name="discard">Discard</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
 
@@ -218,11 +224,8 @@
     <string name="clinic_number_prompt">Enter the member\'s clinic number</string>
 
     <!-- EnrollNewbornInfoFragment -->
-    <string name="enroll_newborn_info_label">Enroll newborn</string>
-    <string name="enroll_newborn_save_btn">Continue</string>
-
-    <!-- EnrollNewbornPhotoFragment -->
-    <string name="enroll_newborn_photo_label">Newborn photo</string>
+    <string name="enroll_newborn_activity_title">Newborn</string>
+    <string name="enrollment_completed_snackbar_message">%1$s successfully enrolled.</string>
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">Status</string>

@@ -90,11 +90,10 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 setErrors(it.errors)
 
                 if (it.name.isEmpty()) {
-                    activity.title = "Newborn"
-                    // TODO: clean up string (add to R -> context.getString(R.string.____))
+                    activity.title = context.getString(R.string.enroll_newborn_activity_title)
                 } else {
                     activity.title = it.name
-                    // TODO check design that we do want it to update at the top when the user types in the name
+                    // TODO design: check that we do want it to update at the top when the user types in the name
                 }
 
                 if(it.photoId != null && it.thumbnailPhoto != null) {
@@ -111,8 +110,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstance: Bundle?): View? {
-        activity.title = "Newborn"
-        // TODO: clean up string (add to R -> context.getString(R.string.____))
+        activity.title = context.getString(R.string.enroll_newborn_activity_title)
         return inflater?.inflate(R.layout.fragment_enroll_newborn, container, false)
     }
 
@@ -148,8 +146,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     fun showSnackbar(throwable: Throwable) {
-        var errorMessage = "An unknown error occurred. Try again later."
-        // TODO: clean up string (add to R -> context.getString(R.string.____))
+        var errorMessage = context.getString(R.string.generic_save_error)
         if (throwable is EnrollNewbornViewModel.ValidationException) {
             errorMessage = throwable.localizedMessage
             scrollToFirstError(throwable.errors)
@@ -181,7 +178,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             else -> {
                 logger.error("unknown request code")
-                // TODO: clean up string (add to R -> context.getString(R.string.____))
             }
         }
     }
@@ -193,11 +189,11 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         } else {
             Single.create<Boolean> { single ->
                 AlertDialog.Builder(activity)
-                        // TODO: clean up strings (add to R -> context.getString(R.string.____))
-                        .setTitle("Are you sure?")
-                        .setMessage("You will lose any information about this member.")
-                        .setPositiveButton("Discard") { _, _ -> single.onSuccess(true) }
-                        .setNegativeButton("Cancel") { _, _ -> single.onSuccess(false) }
+                        // TODO design: there is already a string resource "Are you sure you want to exit?" can we just use that?
+                        .setTitle(context.getString(R.string.exit_form_alert_title))
+                        .setMessage(context.getString(R.string.exit_edit_member_form_message))
+                        .setPositiveButton(context.getString(R.string.discard)) { _, _ -> single.onSuccess(true) }
+                        .setNegativeButton(context.getString(R.string.cancel)) { _, _ -> single.onSuccess(false) }
                         .setOnDismissListener { single.onSuccess(false) }
                         .show()
             }
