@@ -125,10 +125,6 @@ class EnrollNewbornViewModel(
                 errors[MEMBER_BIRTHDATE_ERROR] = "Birthdate is required"   // we should probably change to Birthdate one word if this error is user facing to keep consistent with user facing designs that say birthdate one word
             }
 
-            if (viewState.birthdate != null && viewState.birthdate.isBefore(LocalDate.now().minusMonths(3))) {
-                errors[MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR] = "Birthdate must be within the past three months"
-            }
-
             if (viewState.photoId == null) {
                 errors[MEMBER_PHOTO_ERROR] = "A photo of the member is required"
             }
