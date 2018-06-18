@@ -146,15 +146,11 @@
     <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
 
     <!-- EncounterFragment -->
-    <string name="encounter_fragment_label">Enter line items</string>
+    <string name="encounter_fragment_label">Line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
-    <string name="prompt_billable">Select a</string>
-    <string name="search_drug_hint">Search drugs</string>
-    <string name="error_duplicate_billable">Already selected</string>
+    <string name="search_drug_hint">Search&#8230;</string>
     <string name="error_blank_or_zero_quantity">Please enter a nonzero quantity</string>
     <string name="default_billable_quantity">1</string>
-    <string name="remove_billable_button">X</string>
-    <string name="encounter_product_list_label">Items</string>
     <string name="continue_encounter_button">Next</string>
     <string name="add_billable_prompt"><u>Add new item</u></string>
     <plurals name="encounter_item_count">
@@ -168,8 +164,7 @@
         <item quantity="one">%d diagnosis</item>
         <item quantity="other">%d diagnoses</item>
     </plurals>
-    <string name="search_diagnosis_hint">Search diagnoses</string>
-
+    <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
     <!-- AddNewBillableFragment -->
     <string name="add_new_billable_fragment_label">Add new item</string>
