@@ -63,7 +63,9 @@ class EncounterFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
 
-        val billableTypeOptions = Billable.Type.values().map { it.toString() }.toMutableList()
+        val billableTypeOptions = Billable.Type.values()
+                .map { it.toString().toLowerCase().capitalize() }
+                .toMutableList()
         billableTypeOptions.add(0, getString(prompt_category))
         billableTypeAdapter = ArrayAdapter(
                 activity, android.R.layout.simple_list_item_1, billableTypeOptions)
@@ -132,7 +134,7 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedType = if (position > 0) {
-                    Billable.Type.valueOf(billableTypeAdapter.getItem(position))
+                    Billable.Type.valueOf(billableTypeAdapter.getItem(position).toUpperCase())
                 } else {
                     null
                 }
