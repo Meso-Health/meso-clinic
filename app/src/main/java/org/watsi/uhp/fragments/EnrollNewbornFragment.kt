@@ -37,8 +37,8 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var logger: Logger
     lateinit var viewModel: EnrollNewbornViewModel
+    lateinit var parent: Member
     private val memberId = UUID.randomUUID()
-    private val parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
     companion object {
         const val AUTO_SCROLL_PADDING_IN_DP = 60
@@ -135,6 +135,8 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
 
         done.setOnClickListener {
+            parent = arguments.getSerializable(PARAM_MEMBER) as Member
+
             viewModel.saveMember(memberId, parent.householdId).subscribe({
                 // TODO: navigationManager.popTo(parentFragment)
                 view?.let {
