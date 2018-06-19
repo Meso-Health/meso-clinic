@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_enroll_newborn.name
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.birthdate_dialog_field
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.photo_field
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id_field
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.done
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.done_button
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
@@ -32,11 +32,11 @@ import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
+import org.watsi.domain.utils.StringUtils
 import java.util.UUID
 import javax.inject.Inject
 
 class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
-    // TODO TextView.OnEditorActionListener?
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -103,14 +103,14 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     // TODO design: check that we do want it to update at the top when the user types in the name
                 }
 
-                if(it.photoId != null && it.thumbnailPhoto != null) {
+                if (it.photoId != null && it.thumbnailPhoto != null) {
                     val thumbnailBitmap = BitmapFactory.decodeByteArray(
                             it.thumbnailPhoto.bytes, 0, it.thumbnailPhoto.bytes.size)
                     photo_field.setPhotoPreview(thumbnailBitmap)
                 }
 
                 it.cardId?.let {
-                    card_id_field.setCardId(org.watsi.domain.utils.StringUtils.formatCardId(it))
+                    card_id_field.setCardId(StringUtils.formatCardId(it))
                 }
             }
         })
@@ -140,7 +140,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             startActivityForResult(Intent(activity, ScanNewCardActivity::class.java), SCAN_QRCODE_INTENT)
         }
 
-        done.setOnClickListener {
+        done_button.setOnClickListener {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
             viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
@@ -149,15 +149,12 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
                 }
             }, { throwable ->
-                showSnackbar(throwable)
+                handleOnSaveError(throwable)
             })
         }
-
-//        name.setOnEditorActionListener(this)
-//        TODO: check if we need this^
     }
 
-    fun showSnackbar(throwable: Throwable) {
+    fun handleOnSaveError(throwable: Throwable) {
         var errorMessage = context.getString(R.string.generic_save_error)
         if (throwable is EnrollNewbornViewModel.ValidationException) {
             errorMessage = throwable.localizedMessage
@@ -189,7 +186,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 }
             }
             else -> {
-                logger.error("unknown request code")
+                logger.error("EnrollNewbornFragment.onActivityResult received unknown request code $resultCode")
             }
         }
     }

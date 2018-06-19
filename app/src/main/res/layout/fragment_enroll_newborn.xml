@@ -9,11 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
-        <!--padding?
-            clipToPadding?
-            focusableInTouchMode?
-            focusable?
-            clickable?-->
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/enroll_newborn_fields"
@@ -41,7 +36,7 @@
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Full Name"
+                    android:hint="@string/name_field_label"
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords|textNoSuggestions" />
             </android.support.design.widget.TextInputLayout>
@@ -69,8 +64,8 @@
             app:layout_constraintTop_toBottomOf="@id/photo_field" />
 
         <Button
-            android:id="@+id/done"
-            android:text="Done"
+            android:id="@+id/done_button"
+            android:text="@string/done"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/space16"
