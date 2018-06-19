@@ -179,16 +179,14 @@
 
 
     <!-- AddNewBillableFragment -->
-    <string name="add_new_billable_fragment_label">Add new item</string>
-
+    <string name="add_new_billable_fragment_label">New line item</string>
+    <string name="add_new_billable_type_label">Type</string>
     <string name="add_new_billable_name_label">Name</string>
-    <string name="add_new_billable_price_label">Price per unit</string>
+    <string name="add_new_billable_price_label">Price per Unit</string>
     <string name="add_new_billable_unit_label">Unit (eg. 100mg)</string>
     <string name="add_new_billable_composition_label">Composition (eg. tablet)</string>
     <string name="add_new_billable">Add</string>
-    <string name="UGX">UGX</string>
-    <string name="empty_billable_name_field">Please enter name in the blank above</string>
-    <string name="empty_billable_price_field">Please enter price in the blank above</string>
+    <string name="currency">UGX</string>
 
     <!-- EncounterFormFragment -->
     <string name="encounter_form_fragment_label">Take photo of form</string>

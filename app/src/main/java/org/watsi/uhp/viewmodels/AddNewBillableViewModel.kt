@@ -30,39 +30,34 @@ class AddNewBillableViewModel @Inject constructor(
     }
 
     fun updateType(type: Billable.Type) {
-        observable.value = observable.value?.copy(type = type)
+        validateAndUpdate(observable.value?.copy(type = type))
     }
 
     fun updateName(name: String?) {
-        observable.value = observable.value?.copy(name = clearEmptyString(name))
+        validateAndUpdate(observable.value?.copy(name = clearEmptyString(name)))
     }
 
     fun updateComposition(composition: String?) {
-        observable.value = observable.value?.copy(composition = clearEmptyString(composition))
+        validateAndUpdate(observable.value?.copy(composition = clearEmptyString(composition)))
     }
 
     fun updateUnit(unit: String?) {
-        observable.value = observable.value?.copy(unit = clearEmptyString(unit))
+        validateAndUpdate(observable.value?.copy(unit = clearEmptyString(unit)))
     }
 
     fun updatePrice(price: Int?) {
-        observable.value = observable.value?.copy(price = price)
+        validateAndUpdate(observable.value?.copy(price = price))
     }
 
     fun getBillable(): Billable? {
         val state = observable.value
-        return if (state?.name != null && state.type != null && state.price != null) {
-            if (state.type == Billable.Type.DRUG &&
-                    (state.unit == null || state.composition == null)) {
-                null
-            } else {
-                Billable(id = UUID.randomUUID(),
-                         type = state.type,
-                         composition = state.composition,
-                         unit = state.unit,
-                         price = state.price,
-                         name = state.name)
-            }
+        return if (state?.name != null && state.type != null && state.price != null && state.isValid) {
+            Billable(id = UUID.randomUUID(),
+                type = state.type,
+                composition = state.composition,
+                unit = state.unit,
+                price = state.price,
+                name = state.name)
         } else {
             null
         }
@@ -72,10 +67,21 @@ class AddNewBillableViewModel @Inject constructor(
         return if (field != null && !field.isEmpty()) field else null
     }
 
+    private fun isStateValid(state: ViewState? = observable.value): Boolean {
+        return (state?.name != null && state.type != null && state.price != null) &&
+                !(state.type == Billable.Type.DRUG && (state.unit == null || state.composition == null))
+    }
+
+    private fun validateAndUpdate(state: ViewState? = observable.value) {
+        val isValid = isStateValid(state)
+        observable.value = state?.copy(isValid = isValid)
+    }
+
     data class ViewState(val compositions: List<String> = emptyList(),
                          val composition: String? = null,
                          val unit: String? = null,
                          val price: Int? = null,
                          val name: String? = null,
-                         val type: Billable.Type? = null)
+                         val type: Billable.Type? = null,
+                         val isValid: Boolean = false)
 }
