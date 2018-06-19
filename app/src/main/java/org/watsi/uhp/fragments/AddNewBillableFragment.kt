@@ -12,13 +12,14 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_add_new_billable.composition_field
+import kotlinx.android.synthetic.main.fragment_add_new_billable.composition_container
 import kotlinx.android.synthetic.main.fragment_add_new_billable.composition_spinner
 import kotlinx.android.synthetic.main.fragment_add_new_billable.name_field
 import kotlinx.android.synthetic.main.fragment_add_new_billable.price_field
 import kotlinx.android.synthetic.main.fragment_add_new_billable.save_button
 import kotlinx.android.synthetic.main.fragment_add_new_billable.type_spinner
 import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_field
+import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_container
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
@@ -60,15 +61,18 @@ class AddNewBillableFragment : DaggerFragment() {
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 compositionAdapter.clear()
-                compositionAdapter.addAll(viewState.compositions)
+                compositionAdapter.add("") // This provides a default empty option that is stored as null.
+                compositionAdapter.addAll(viewState.compositions.map { it.capitalize() })
 
                 if (viewState.type != null && Billable.requiresQuantity(viewState.type)) {
-                    unit_field.visibility = View.VISIBLE
-                    composition_field.visibility = View.VISIBLE
+                    unit_container.visibility = View.VISIBLE
+                    composition_container.visibility = View.VISIBLE
                 } else {
-                    unit_field.visibility = View.GONE
-                    composition_field.visibility = View.GONE
+                    unit_container.visibility = View.GONE
+                    composition_container.visibility = View.GONE
                 }
+
+                save_button.isEnabled = viewState.isValid
             }
         })
     }
@@ -81,9 +85,10 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
         val billableTypes = Billable.Type.values()
-        type_spinner.adapter = ArrayAdapter<Billable.Type>(activity,
-                                                         android.R.layout.simple_list_item_1,
-                                                         billableTypes)
+        val billableStrings = billableTypes.map { it.toString().toLowerCase().capitalize() }
+        type_spinner.adapter = ArrayAdapter<String>(activity,
+                                                    android.R.layout.simple_list_item_1,
+                                                    billableStrings)
         // pre-select drug because its been the most commonly created Billable type
         type_spinner.setSelection(billableTypes.indexOf(Billable.Type.DRUG))
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -112,7 +117,6 @@ class AddNewBillableFragment : DaggerFragment() {
         }
 
         save_button.setOnClickListener {
-            // TODO: handle missing fields
             viewModel.getBillable()?.let { billable ->
                 val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
                 val updatedEncounterItems = encounter.encounterItems.toMutableList()
