@@ -63,7 +63,7 @@ class EnrollNewbornViewModel(
 
     fun onBirthdateChange(birthdate: LocalDate) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key == MEMBER_BIRTHDATE_ERROR || it.key == MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR }
+            val errors = it.errors.filterNot { it.key == MEMBER_BIRTHDATE_ERROR }
             viewStateObservable.value = it.copy(birthdate = birthdate, errors = errors)
         }
     }
@@ -122,7 +122,7 @@ class EnrollNewbornViewModel(
             }
 
             if (viewState.birthdate == null) {
-                errors[MEMBER_BIRTHDATE_ERROR] = "Birthdate is required"   // we should probably change to Birthdate one word if this error is user facing to keep consistent with user facing designs that say birthdate one word
+                errors[MEMBER_BIRTHDATE_ERROR] = "Birthdate is required"
             }
 
             if (viewState.photoId == null) {
@@ -154,7 +154,6 @@ class EnrollNewbornViewModel(
         const val SAVE_ERROR = "save_error"
         const val MEMBER_NAME_ERROR = "member_name_error"
         const val MEMBER_BIRTHDATE_ERROR = "member_birthdate_error"
-        const val MEMBER_BIRTHDATE_NOT_WITHIN_THREE_MONTHS_ERROR = "member_birthday_not_within_three_months_error"
         const val MEMBER_GENDER_ERROR = "member_gender_error"
         const val MEMBER_PHOTO_ERROR = "member_photo_error"
         const val MEMBER_CARD_ERROR = "member_card_error"
