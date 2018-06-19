@@ -7,8 +7,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +27,8 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.adapters.EncounterItemAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper.scrollToBottom
+import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
@@ -127,6 +127,8 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        setRecyclerView(line_items_list, encounterItemAdapter, context)
+
         type_spinner.adapter = billableTypeAdapter
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -179,13 +181,6 @@ class EncounterFragment : DaggerFragment() {
                 return true
             }
         })
-
-        val layoutManager = LinearLayoutManager(activity)
-        line_items_list.adapter = encounterItemAdapter
-        line_items_list.layoutManager = layoutManager
-        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
-        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
-        line_items_list.addItemDecoration(listItemDivider)
 
         add_billable_prompt.setOnClickListener {
             viewModel.currentEncounter()?.let {

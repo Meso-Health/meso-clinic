@@ -7,8 +7,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +25,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import javax.inject.Inject
@@ -56,15 +55,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                 memberAdapter.setMembers(checkedInMembers)
             }
         })
-    }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.current_patients_fragment_label)
-        setHasOptionsMenu(true)
-        return inflater?.inflate(R.layout.fragment_current_patients, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         memberAdapter = MemberAdapter(
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                     if (memberRelation.identificationEvent != null) {
@@ -77,14 +68,18 @@ class CurrentPatientsFragment : DaggerFragment() {
                                 "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
                     }
                 },
-                clock = clock)
-        val layoutManager = LinearLayoutManager(activity)
-        current_patients.adapter = memberAdapter
-        current_patients.layoutManager = layoutManager
-        current_patients.isNestedScrollingEnabled = false
-        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
-        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
-        current_patients.addItemDecoration(listItemDivider)
+                clock = clock
+        )
+    }
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        activity.setTitle(R.string.current_patients_fragment_label)
+        setHasOptionsMenu(true)
+        return inflater?.inflate(R.layout.fragment_current_patients, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        setRecyclerView(current_patients, memberAdapter, context)
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
