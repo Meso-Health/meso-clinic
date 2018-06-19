@@ -151,6 +151,7 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
+                scrollToBottom(line_items_list)
             }
         }
 
@@ -173,6 +174,7 @@ class EncounterFragment : DaggerFragment() {
                 observable.value?.selectableBillables?.get(position)?.let {
                     viewModel.addItem(it)
                     drug_search.setQuery("", false)
+                    scrollToBottom(line_items_list)
                 }
                 return true
             }

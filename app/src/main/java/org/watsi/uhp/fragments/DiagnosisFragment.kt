@@ -103,6 +103,7 @@ class DiagnosisFragment : DaggerFragment() {
                     viewModel.addDiagnosis(it)
                     diagnosis_search.setQuery("", false)
                     diagnosis_search.clearFocus()
+                    scrollToBottom(selected_diagnosis_list)
                 }
                 return true
             }
