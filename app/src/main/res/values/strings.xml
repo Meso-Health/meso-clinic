@@ -18,7 +18,6 @@
     <string name="birthdate_validation_error">Invalid birthdate.</string>
 
     <!-- Confirmation Messages -->
-    <string name="exit_form_alert_title">Are you sure?</string>
     <string name="exit_form_alert">Are you sure you want to exit?</string>
     <string name="exit_edit_member_form_message">You will lose any information about this member.</string>
 

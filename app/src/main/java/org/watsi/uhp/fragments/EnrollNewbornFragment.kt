@@ -144,7 +144,9 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
             viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
-                // TODO: navigationManager.popTo(parentFragment)
+                // Does this work the way we want it to?
+                navigationManager.goBack()
+
                 view?.let {
                     SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
                 }
@@ -192,14 +194,12 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onBack(): Single<Boolean> {
-        // if no information has entered, do not show confirmation dialog onBack
         return if (viewModel.getViewStateObservable().value == EnrollNewbornViewModel.ViewState()) {
             Single.just(true)
         } else {
             Single.create<Boolean> { single ->
                 AlertDialog.Builder(activity)
-                        // TODO design: there is already a string resource "Are you sure you want to exit?" can we just use that?
-                        .setTitle(context.getString(R.string.exit_form_alert_title))
+                        .setTitle(context.getString(R.string.exit_form_alert))
                         .setMessage(context.getString(R.string.exit_edit_member_form_message))
                         .setPositiveButton(context.getString(R.string.discard)) { _, _ -> single.onSuccess(true) }
                         .setNegativeButton(context.getString(R.string.cancel)) { _, _ -> single.onSuccess(false) }
