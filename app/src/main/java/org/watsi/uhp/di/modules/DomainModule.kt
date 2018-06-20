@@ -8,6 +8,7 @@ import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -24,6 +25,7 @@ import org.watsi.domain.usecases.SyncMemberPhotoUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
+import org.watsi.domain.usecases.LoadPhotoUseCase
 
 @Module
 class DomainModule {
@@ -114,6 +116,11 @@ class DomainModule {
     @Provides
     fun provideLoadMemberUseCase(memberRepository: MemberRepository): LoadMemberUseCase {
         return LoadMemberUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideLoadPhotoUseCase(photoRepository: PhotoRepository): LoadPhotoUseCase {
+        return LoadPhotoUseCase(photoRepository)
     }
 
     @Provides
