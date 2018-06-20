@@ -175,8 +175,8 @@ class EncounterFragment : DaggerFragment() {
             override fun onSuggestionClick(position: Int): Boolean {
                 observable.value?.selectableBillables?.get(position)?.let {
                     viewModel.addItem(it)
-                    drug_search.setQuery("", false)
                     scrollToBottom(line_items_list)
+                    drug_search.setQuery("", false)
                 }
                 return true
             }
