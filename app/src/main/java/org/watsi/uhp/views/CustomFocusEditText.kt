@@ -4,7 +4,6 @@ import android.content.Context
 import android.support.v7.widget.AppCompatEditText
 import android.util.AttributeSet
 import android.view.KeyEvent
-import org.watsi.uhp.managers.KeyboardManager
 
 /**
  * Custom EditText that clears focus when the keyboard is hidden via back/down button press. The
@@ -22,16 +21,9 @@ class CustomFocusEditText : AppCompatEditText {
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
-    private lateinit var keyboardManager: KeyboardManager
-
-    fun setKeyboardManager(manager: KeyboardManager) {
-        keyboardManager = manager
-    }
-
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent): Boolean {
         return if (event.keyCode == KeyEvent.KEYCODE_BACK) {
             clearFocus()
-            keyboardManager.hideKeyboard(this)
             true
         } else super.dispatchKeyEvent(event)
     }
