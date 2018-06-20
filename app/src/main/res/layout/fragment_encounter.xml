@@ -6,14 +6,17 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:focusable="true"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/encounter_item_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="@dimen/fragment_horizontal_margin"
+        android:paddingTop="@dimen/space8"
+        android:paddingBottom="@dimen/fragment_horizontal_margin"
+        android:paddingLeft="@dimen/fragment_horizontal_margin"
+        android:paddingRight="@dimen/fragment_horizontal_margin"
         android:elevation="2dp">
 
         <!--hacky method to add box around spinner without rewriting material design styles-->
@@ -21,8 +24,9 @@
             android:id="@+id/select_type_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
             android:background="@drawable/view_outline_rectangle"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <Spinner
                 android:id="@+id/type_spinner"
@@ -37,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space8"
             android:background="@drawable/view_outline_rectangle"
-            app:layout_constraintTop_toBottomOf="@id/select_type_box" >
+            app:layout_constraintTop_toBottomOf="@id/select_type_box">
 
             <Spinner
                 android:id="@+id/billable_spinner"
