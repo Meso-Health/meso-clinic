@@ -17,7 +17,6 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
-import kotlinx.android.synthetic.main.fragment_encounter.encounter_fragment
 import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
@@ -120,7 +119,6 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
                     select_type_box.visibility = View.GONE
