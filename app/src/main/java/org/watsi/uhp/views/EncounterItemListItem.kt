@@ -21,6 +21,8 @@ class EncounterItemListItem @JvmOverloads constructor(
 
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,
+            onQuantitySelected: () -> Unit,
+            onQuantityDeselected: () -> Unit,
             onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
             onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
             keyboardManager: KeyboardManager
@@ -32,10 +34,12 @@ class EncounterItemListItem @JvmOverloads constructor(
         billable_name.text = billable.name
         billable_details.text = billable.dosageDetails()
 
+        billable_quantity.setKeyboardManager(keyboardManager)
         billable_quantity.setText(currentQuantity.toString())
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
+                onQuantityDeselected()
                 val newQuantity = billable_quantity.text.toString().toIntOrNull()
                 if (newQuantity != currentQuantity) {
                     if (newQuantity == null || newQuantity == 0) {
@@ -46,11 +50,15 @@ class EncounterItemListItem @JvmOverloads constructor(
                         onQuantityChanged(encounterItem.id, newQuantity)
                     }
                 }
+            } else {
+                onQuantitySelected()
             }
         }
+        // Clear focus and hide keyboard when the IME done checkmark is pressed. (Android does not
+        // do this automatically.)
         billable_quantity.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                billable_quantity.clearFocus()
+                v.clearFocus()
                 keyboardManager.hideKeyboard(v)
             }
             false

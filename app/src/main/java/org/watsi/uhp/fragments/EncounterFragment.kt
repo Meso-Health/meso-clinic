@@ -17,9 +17,12 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
+import kotlinx.android.synthetic.main.fragment_encounter.encounter_fragment
 import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
+import kotlinx.android.synthetic.main.fragment_encounter.select_billable_box
+import kotlinx.android.synthetic.main.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.main.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
@@ -109,16 +112,6 @@ class EncounterFragment : DaggerFragment() {
                 }
             }
         })
-
-        encounterItemAdapter = EncounterItemAdapter(
-                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
-                    viewModel.setItemQuantity(encounterItemId, newQuantity)
-                },
-                onRemoveEncounterItem = { encounterItemId: UUID ->
-                    viewModel.removeItem(encounterItemId)
-                },
-                keyboardManager = keyboardManager
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -127,6 +120,25 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+
+        encounterItemAdapter = EncounterItemAdapter(
+                onQuantitySelected = {
+                    select_type_box.visibility = View.GONE
+                    select_billable_box.visibility = View.GONE
+                },
+                onQuantityDeselected = {
+                    select_type_box.visibility = View.VISIBLE
+                    select_billable_box.visibility = View.VISIBLE
+                },
+                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
+                    viewModel.setItemQuantity(encounterItemId, newQuantity)
+                },
+                onRemoveEncounterItem = { encounterItemId: UUID ->
+                    viewModel.removeItem(encounterItemId)
+                },
+                keyboardManager = keyboardManager
+        )
+
         setRecyclerView(line_items_list, encounterItemAdapter, context)
 
         type_spinner.adapter = billableTypeAdapter

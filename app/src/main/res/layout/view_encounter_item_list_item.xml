@@ -7,7 +7,7 @@
     android:paddingStart="@dimen/space16"
     android:paddingEnd="@dimen/space16">
 
-    <EditText
+    <org.watsi.uhp.views.CustomFocusEditText
         android:id="@+id/billable_quantity"
         android:layout_width="@dimen/viewHeight40"
         android:layout_height="@dimen/viewHeight40"
