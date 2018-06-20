@@ -152,6 +152,7 @@ class EncounterFragment : DaggerFragment() {
                     null
                 }
                 viewModel.selectType(selectedType)
+                billable_spinner.performClick()
             }
         }
 
