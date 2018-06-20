@@ -100,7 +100,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     activity.title = context.getString(R.string.enroll_newborn_activity_title)
                 } else {
                     activity.title = it.name
-                    // TODO design: check that we do want it to update at the top when the user types in the name
                 }
 
                 if (it.photoId != null && it.thumbnailPhoto != null) {
@@ -144,8 +143,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
             viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
-                // Does this work the way we want it to?
-                navigationManager.goBack()
+                // TODO: implement goBack to parent fragment
 
                 view?.let {
                     SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
