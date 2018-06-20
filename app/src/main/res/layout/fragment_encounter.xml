@@ -51,6 +51,7 @@
                 android:layout_height="@dimen/viewHeight40"
                 android:iconifiedByDefault="false"
                 android:queryHint="@string/search_drug_hint"
+                android:queryBackground="@android:color/transparent"
                 android:inputType="textFilter"
                 android:visibility="gone" />
 
