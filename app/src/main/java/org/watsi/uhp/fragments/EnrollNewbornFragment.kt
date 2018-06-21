@@ -144,7 +144,8 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
             viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
-                // TODO: implement goBack to parent fragment
+                viewModel.setStatusAsSaved()
+                navigationManager.goBack()
 
                 view?.let {
                     SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
@@ -193,6 +194,9 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onBack(): Single<Boolean> {
+        val currentViewState = viewModel.getViewStateObservable().value
+
+        return if (currentViewState == EnrollNewbornViewModel.ViewState() || currentViewState?.status == MemberStatus.SAVED) {
             Single.just(true)
         } else {
             Single.create<Boolean> { single ->
