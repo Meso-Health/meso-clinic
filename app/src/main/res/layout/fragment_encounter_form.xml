@@ -1,41 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/fragment_vertical_margin"
-    android:layout_marginBottom="@dimen/fragment_vertical_margin"
-    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-    android:layout_marginRight="@dimen/fragment_horizontal_margin"
-    android:focusable="true"
-    android:focusableInTouchMode="true" >
+    android:background="@color/white">
 
-    <Button
-        android:id="@+id/photo_btn"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/encounter_form_panel"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:theme="@style/SecondaryButton"
-        android:text="@string/photo_btn_label" />
+        android:background="@color/white"
+        android:padding="@dimen/fragment_horizontal_margin"
+        android:elevation="@dimen/panelElevation">
 
-    <ImageView
-        android:id="@+id/photo"
-        android:contentDescription="@string/photo_description"
-        android:layout_height="360dp"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/fragment_vertical_margin"
-        android:layout_gravity="center_horizontal"
-        android:adjustViewBounds="true" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom" >
-
-        <Button
-            android:id="@+id/finish_button"
+        <org.watsi.uhp.views.ImageTextButton
+            android:id="@+id/photo_btn"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            style="@style/PrimaryButton"
-            android:text="@string/encounter_form_finish_btn" />
-    </LinearLayout>
-</LinearLayout>
+            style="@style/SecondaryButton"
+            android:drawableLeft="@drawable/ic_camera_black_24dp"
+            android:text="@string/encounter_form_add_photo_btn" />
+
+        <TextView
+            android:id="@+id/encounter_form_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space12"
+            android:textColor="@color/gray7"
+            app:layout_constraintTop_toBottomOf="@id/photo_btn" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/encounter_form_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="@dimen/list_view_bottom_padding"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/encounter_form_panel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space16"
+        style="@style/PrimaryButton"
+        android:text="@string/continue_encounter_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

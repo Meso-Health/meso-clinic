@@ -17,6 +17,12 @@ object PhotoLoader {
     const val ROUNDING_RADIUS = 8
     val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(ROUNDING_RADIUS))
 
+    fun loadPhoto(bytes: ByteArray?, view: ImageView, context: Context) {
+        Glide.with(context)
+                .load(bytes)
+                .into(view)
+    }
+
     fun loadMemberPhoto(bytes: ByteArray?, view: ImageView, context: Context, gender: Member.Gender) {
         val placeholder = if (gender == Member.Gender.F) {
             R.drawable.ic_member_placeholder_female

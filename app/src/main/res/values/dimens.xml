@@ -19,17 +19,20 @@
     <dimen name="cornerRadius">4dp</dimen>
 
     <dimen name="editMemberPhotoPlaceholderPadding">30dp</dimen>
-    <dimen name="thumbnailMediumPlaceholderPadding">12dp</dimen>
+    <dimen name="thumbnailSmallPlaceholderPadding">12dp</dimen>
 
     <!-- Photo dimensions scale -->
-    <dimen name="thumbnailSmall">28dp</dimen>
-    <dimen name="thumbnailMedium">52dp</dimen>
+    <dimen name="thumbnailSmall">52dp</dimen>
+    <dimen name="thumbnailMedium">80dp</dimen>
     <dimen name="thumbnailLarge">120dp</dimen>
 
     <!-- View dimensions scale -->
     <dimen name="viewHeight40">40dp</dimen>
     <dimen name="viewHeight64">64dp</dimen>
     <dimen name="viewHeight120">120dp</dimen>
+
+    <!-- elevation for top panels in encounter flow fragments -->
+    <dimen name="panelElevation">2dp</dimen>
 
     <!-- left and right margins on all fragments -->
     <dimen name="fragment_horizontal_margin">16dp</dimen>

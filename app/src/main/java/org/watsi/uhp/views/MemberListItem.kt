@@ -16,7 +16,7 @@ class MemberListItem @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val placeholderPadding = resources.getDimensionPixelSize(R.dimen.thumbnailMediumPlaceholderPadding)
+    private val placeholderPadding = resources.getDimensionPixelSize(R.dimen.thumbnailSmallPlaceholderPadding)
 
     fun setMember(memberRelation: MemberWithIdEventAndThumbnailPhoto, clock: Clock) {
         val member = memberRelation.member
