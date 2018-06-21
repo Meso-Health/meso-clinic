@@ -54,6 +54,11 @@ class EnrollNewbornViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun setStatusAsSaved() {
+        val viewState = viewStateObservable.value
+        viewStateObservable.value = viewState?.copy(status = MemberStatus.SAVED)
+    }
+
     fun onNameChange(name: String) {
         viewStateObservable.value?.let {
             val errors = it.errors.filterNot { it.key == MEMBER_NAME_ERROR }
@@ -146,7 +151,7 @@ class EnrollNewbornViewModel(
                          val errors: Map<String, String> = emptyMap(),
                          val status: MemberStatus = MemberStatus.NEW)
 
-    enum class MemberStatus { ERROR, SAVING, NEW }
+    enum class MemberStatus { NEW, SAVING, ERROR, SAVED }
 
     data class ValidationException(val msg: String, val errors: Map<String, String>): Exception(msg)
 

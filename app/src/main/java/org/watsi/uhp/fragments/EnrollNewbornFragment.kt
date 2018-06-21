@@ -32,6 +32,7 @@ import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
+import org.watsi.uhp.viewmodels.EnrollNewbornViewModel.MemberStatus
 import org.watsi.domain.utils.StringUtils
 import java.util.UUID
 import javax.inject.Inject
@@ -192,7 +193,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onBack(): Single<Boolean> {
-        return if (viewModel.getViewStateObservable().value == EnrollNewbornViewModel.ViewState()) {
             Single.just(true)
         } else {
             Single.create<Boolean> { single ->
