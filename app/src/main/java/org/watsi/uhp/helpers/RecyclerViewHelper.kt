@@ -6,6 +6,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import org.watsi.uhp.R
 
+fun RecyclerView.scrollToBottom() {
+    this.adapter?.let {
+        this.scrollToPosition(it.itemCount - 1)
+    }
+}
+
 object RecyclerViewHelper {
 
     /**
@@ -26,9 +32,5 @@ object RecyclerViewHelper {
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(listItemDivider)
         recyclerView.isNestedScrollingEnabled = nestedScrollingEnabled
-    }
-
-    fun scrollToBottom(recyclerView: RecyclerView) {
-        recyclerView.scrollToPosition(recyclerView.adapter.itemCount - 1)
     }
 }

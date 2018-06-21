@@ -26,10 +26,12 @@ import kotlinx.android.synthetic.main.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
@@ -66,7 +68,7 @@ class EncounterFragment : DaggerFragment() {
         val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
 
         val billableTypeOptions = Billable.Type.values()
-                .map { it.toString().toLowerCase().capitalize() }
+                .map { it.toString().titleize() }
                 .toMutableList()
         billableTypeOptions.add(0, getString(prompt_category))
         billableTypeAdapter = ArrayAdapter(
@@ -163,7 +165,7 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
-                RecyclerViewHelper.scrollToBottom(line_items_list)
+                line_items_list.scrollToBottom()
             }
         }
 
@@ -185,7 +187,7 @@ class EncounterFragment : DaggerFragment() {
             override fun onSuggestionClick(position: Int): Boolean {
                 observable.value?.selectableBillables?.get(position)?.let {
                     viewModel.addItem(it)
-                    RecyclerViewHelper.scrollToBottom(line_items_list)
+                    line_items_list.scrollToBottom()
                     drug_search.setQuery("", false)
                 }
                 return true

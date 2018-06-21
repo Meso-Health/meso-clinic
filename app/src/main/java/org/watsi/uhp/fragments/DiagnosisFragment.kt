@@ -21,6 +21,7 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import javax.inject.Inject
@@ -94,7 +95,7 @@ class DiagnosisFragment : DaggerFragment() {
                     viewModel.addDiagnosis(it)
                     diagnosis_search.setQuery("", false)
                     diagnosis_search.clearFocus()
-                    RecyclerViewHelper.scrollToBottom(selected_diagnosis_list)
+                    selected_diagnosis_list.scrollToBottom()
                 }
                 return true
             }
