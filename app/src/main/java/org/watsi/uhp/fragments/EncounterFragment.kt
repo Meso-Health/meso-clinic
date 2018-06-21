@@ -29,8 +29,7 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.adapters.EncounterItemAdapter
-import org.watsi.uhp.helpers.RecyclerViewHelper.scrollToBottom
-import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
@@ -137,7 +136,7 @@ class EncounterFragment : DaggerFragment() {
                 keyboardManager = keyboardManager
         )
 
-        setRecyclerView(line_items_list, encounterItemAdapter, context)
+        RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
 
         type_spinner.adapter = billableTypeAdapter
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -164,7 +163,7 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
-                scrollToBottom(line_items_list)
+                RecyclerViewHelper.scrollToBottom(line_items_list)
             }
         }
 
@@ -186,7 +185,7 @@ class EncounterFragment : DaggerFragment() {
             override fun onSuggestionClick(position: Int): Boolean {
                 observable.value?.selectableBillables?.get(position)?.let {
                     viewModel.addItem(it)
-                    scrollToBottom(line_items_list)
+                    RecyclerViewHelper.scrollToBottom(line_items_list)
                     drug_search.setQuery("", false)
                 }
                 return true

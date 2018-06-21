@@ -20,8 +20,7 @@ import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.DiagnosisAdapter
-import org.watsi.uhp.helpers.RecyclerViewHelper.scrollToBottom
-import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import javax.inject.Inject
@@ -95,7 +94,7 @@ class DiagnosisFragment : DaggerFragment() {
                     viewModel.addDiagnosis(it)
                     diagnosis_search.setQuery("", false)
                     diagnosis_search.clearFocus()
-                    scrollToBottom(selected_diagnosis_list)
+                    RecyclerViewHelper.scrollToBottom(selected_diagnosis_list)
                 }
                 return true
             }
@@ -107,7 +106,7 @@ class DiagnosisFragment : DaggerFragment() {
                     encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
         }
 
-        setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
+        RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
     }
 
     private fun buildSuggestionsCursor(diagnoses: List<Diagnosis>): MatrixCursor {
