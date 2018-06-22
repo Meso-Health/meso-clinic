@@ -7,17 +7,18 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import org.watsi.uhp.di.ViewModelKey
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
+import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
-import org.watsi.uhp.viewmodels.EncounterViewModel
-import org.watsi.uhp.viewmodels.SearchMemberViewModel
-import org.watsi.uhp.viewmodels.StatusViewModel
-import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
+import org.watsi.uhp.viewmodels.EncounterFormViewModel
+import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
+import org.watsi.uhp.viewmodels.SearchMemberViewModel
+import org.watsi.uhp.viewmodels.StatusViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -56,6 +57,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EncounterViewModel::class)
     abstract fun bindEncounterViewModel(viewModel: EncounterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EncounterFormViewModel::class)
+    abstract fun bindEncounterFormViewModel(viewModel: EncounterFormViewModel): ViewModel
 
     @Binds
     @IntoMap

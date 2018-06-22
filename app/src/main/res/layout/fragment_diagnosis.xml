@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:padding="@dimen/fragment_horizontal_margin"
-        android:elevation="2dp">
+        android:elevation="@dimen/panelElevation">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/diagnosis_search_box"

@@ -48,7 +48,7 @@ class SavePhotoActivity : PhotoActivity() {
                     if (resultCode != Activity.RESULT_CANCELED) {
                         logger.error("SavePhotoActivity.parseResult called with resultCode: $resultCode")
                     }
-                    Pair(null, "Failed")
+                    Pair(null, "failed")
                 }
             }
         }
