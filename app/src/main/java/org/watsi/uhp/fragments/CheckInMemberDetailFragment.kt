@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.Menu
@@ -33,7 +32,6 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
@@ -149,12 +147,17 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        member.fingerprintsGuid?.let { guid ->
+        if (member.fingerprintsGuid != null) {
             scan_fingerprints_btn.setOnClickListener {view ->
-                if (!fingerprintManager.verifyFingerprint(guid.toString(), this, VERIFY_FINGERPRINT_INTENT)) {
+                if (!fingerprintManager.verifyFingerprint(member.fingerprintsGuid.toString(),
+                                                          this, VERIFY_FINGERPRINT_INTENT)) {
                     SnackbarHelper.show(view, context, R.string.fingerprints_not_installed_error_message)
                 }
             }
+        } else {
+            scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
+                SnackbarHelper.show(view, context, R.string.fingerprints_missing_no_verify)
+            })
         }
 
         absentee_notification.setOnClickListener {
@@ -234,12 +237,13 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
                         when (badScan) {
                             true -> {
-                                setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorRed), R.string.bad_scan_indicator)
-                                view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_successful) }
+                                scan_fingerprints_btn.showFailure(getString(R.string.bad_scan_indicator))
                             } false -> {
-                                setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorGreen), R.string.good_scan_indicator)
-                                view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_successful) }
+                                scan_fingerprints_btn.showSuccess(getString(R.string.good_scan_indicator))
                             } null -> {
+                                scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
+                                    SnackbarHelper.show(view, context, R.string.fingerprint_scan_failed)
+                                })
                                 view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
                                 logger.error("FingerprintManager returned null badScan on Success $fingerprintResponse")
                             }
@@ -247,30 +251,19 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
                     }
                     FingerprintManager.FingerprintStatus.FAILURE -> {
-//                        setScanResultProperties(ContextCompat.getColor(context, R.color.indicatorNeutral), R.string.no_scan_indicator)
-                        view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
+                        scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
+                            SnackbarHelper.show(view, context, R.string.fingerprint_scan_failed)
+                        })
                     }
-                    FingerprintManager.FingerprintStatus.CANCELLED -> { /* No-op */ }
+                    FingerprintManager.FingerprintStatus.CANCELLED -> {
+                        scan_fingerprints_btn.enableButton()
+                    }
                 }
             }
             else -> {
                 logger.error("Unknown requestCode called from CheckInMemberDetailFragment: $requestCode")
             }
         }
-    }
-
-    private fun setScanResultProperties(color: Int, textId: Int) {
-//        scan_result.invalidate()
-//        scan_result.setText(textId)
-//        scan_result.setTextColor(color)
-//        val border = scan_result.background as GradientDrawable
-//        border.setStroke(2, color)
-//        val fingerprintIcon = scan_result.compoundDrawables[0] as VectorDrawable
-//        //mutate() allows us to modify only this instance of the drawable without affecting others
-//        fingerprintIcon.mutate().setTint(color)
-//
-//        scan_fingerprints_btn.visibility = View.GONE
-//        scan_result.visibility = View.VISIBLE
     }
 
     private data class FingerprintVerificationDetails(val tier: String?,

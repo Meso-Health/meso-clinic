@@ -11,7 +11,7 @@
     <declare-styleable name="DialogBirthdateField">
         <attr name="showCalendarIcon" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="ButtonWithPreview">
+    <declare-styleable name="ButtonWithContainer">
         <attr name="buttonText" format="reference" localization="suggested" />
         <attr name="icon" format="reference" localization="suggested" />
     </declare-styleable>

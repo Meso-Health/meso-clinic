@@ -20,12 +20,12 @@ class ButtonWithPreview @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_button_with_preview, this, true)
-        val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.ButtonWithPreview)
+        val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.ButtonWithContainer)
 
-        button.text = customAttributes.getString(R.styleable.ButtonWithPreview_buttonText)
-        button.setCompoundDrawablesWithIntrinsicBounds(customAttributes.getDrawable(R.styleable.ButtonWithPreview_icon), null, null, null)
+        button.text = customAttributes.getString(R.styleable.ButtonWithContainer_buttonText)
+        button.setCompoundDrawablesWithIntrinsicBounds(customAttributes.getDrawable(R.styleable.ButtonWithContainer_icon), null, null, null)
         // must grab icon again separately; if we share the variable then changing the tint will affect both
-        preview_icon.setImageDrawable(customAttributes.getDrawable(R.styleable.ButtonWithPreview_icon))
+        preview_icon.setImageDrawable(customAttributes.getDrawable(R.styleable.ButtonWithContainer_icon))
         preview_icon.imageTintList = context.getColorStateList(R.color.gray6)
 
         customAttributes.recycle()
