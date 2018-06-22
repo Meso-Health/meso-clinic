@@ -40,15 +40,21 @@ class EncounterViewModel @Inject constructor(
         return observable
     }
 
-    fun selectType(type: Billable.Type?) {
-        val selectableBillables = if (type != null && type != Billable.Type.DRUG) {
-            val currentBillables = currentEncounter()?.billables() ?: emptyList()
+    fun getSelectableBillables(
+            type: Billable.Type?,
+            currentEncounter: EncounterWithItemsAndForms? = currentEncounter()
+    ) : List<Billable>  {
+        return if (type != null && type != Billable.Type.DRUG) {
+            val currentBillables = currentEncounter?.billables() ?: emptyList()
             billablesByType[type]!!.minus(currentBillables).sortedBy { it.name }
         } else {
             emptyList()
         }
+    }
+
+    fun selectType(type: Billable.Type?) {
         observable.value = observable.value?.copy(
-                type = type, selectableBillables = selectableBillables)
+                type = type, selectableBillables = getSelectableBillables(type))
     }
 
     fun addItem(billable: Billable) {
@@ -59,8 +65,7 @@ class EncounterViewModel @Inject constructor(
             val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
             observable.value = observable.value?.copy(
                     encounter = updatedEncounter,
-                    type = null,
-                    selectableBillables = emptyList(),
+                    selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter),
                     searchResults = emptyList()
             )
         }

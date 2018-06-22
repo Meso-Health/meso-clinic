@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,13 +20,19 @@ import kotlinx.android.synthetic.main.fragment_encounter.drug_search
 import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
+import kotlinx.android.synthetic.main.fragment_encounter.select_billable_box
+import kotlinx.android.synthetic.main.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.main.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.adapters.EncounterItemAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.scrollToBottom
+import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import java.util.UUID
@@ -37,6 +42,7 @@ class EncounterFragment : DaggerFragment() {
 
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: EncounterViewModel
@@ -61,7 +67,9 @@ class EncounterFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
 
-        val billableTypeOptions = Billable.Type.values().map { it.toString() }.toMutableList()
+        val billableTypeOptions = Billable.Type.values()
+                .map { it.toString().titleize() }
+                .toMutableList()
         billableTypeOptions.add(0, getString(prompt_category))
         billableTypeAdapter = ArrayAdapter(
                 activity, android.R.layout.simple_list_item_1, billableTypeOptions)
@@ -104,15 +112,6 @@ class EncounterFragment : DaggerFragment() {
                 }
             }
         })
-
-        encounterItemAdapter = EncounterItemAdapter(
-                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
-                    viewModel.setItemQuantity(encounterItemId, newQuantity)
-                },
-                onRemoveEncounterItem = { encounterItemId: UUID ->
-                    viewModel.removeItem(encounterItemId)
-                }
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -121,6 +120,26 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        encounterItemAdapter = EncounterItemAdapter(
+                onQuantitySelected = {
+                    select_type_box.visibility = View.GONE
+                    select_billable_box.visibility = View.GONE
+                },
+                onQuantityDeselected = {
+                    select_type_box.visibility = View.VISIBLE
+                    select_billable_box.visibility = View.VISIBLE
+                },
+                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
+                    viewModel.setItemQuantity(encounterItemId, newQuantity)
+                },
+                onRemoveEncounterItem = { encounterItemId: UUID ->
+                    viewModel.removeItem(encounterItemId)
+                },
+                keyboardManager = keyboardManager
+        )
+
+        RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
+
         type_spinner.adapter = billableTypeAdapter
         type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -129,11 +148,12 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedType = if (position > 0) {
-                    Billable.Type.valueOf(billableTypeAdapter.getItem(position))
+                    Billable.Type.valueOf(billableTypeAdapter.getItem(position).toUpperCase())
                 } else {
                     null
                 }
                 viewModel.selectType(selectedType)
+                billable_spinner.performClick()
             }
         }
 
@@ -145,6 +165,7 @@ class EncounterFragment : DaggerFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
+                line_items_list.scrollToBottom()
             }
         }
 
@@ -166,14 +187,12 @@ class EncounterFragment : DaggerFragment() {
             override fun onSuggestionClick(position: Int): Boolean {
                 observable.value?.selectableBillables?.get(position)?.let {
                     viewModel.addItem(it)
+                    line_items_list.scrollToBottom()
                     drug_search.setQuery("", false)
                 }
                 return true
             }
         })
-
-        line_items_list.adapter = encounterItemAdapter
-        line_items_list.layoutManager = LinearLayoutManager(activity)
 
         add_billable_prompt.setOnClickListener {
             viewModel.currentEncounter()?.let {

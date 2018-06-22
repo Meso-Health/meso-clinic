@@ -1,53 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.watsi.uhp.views.EncounterItemListItem
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp" >
+    android:layout_height="@dimen/viewHeight64"
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16">
 
-    <EditText
+    <org.watsi.uhp.views.CustomFocusEditText
         android:id="@+id/billable_quantity"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/viewHeight40"
+        android:layout_height="@dimen/viewHeight40"
         android:text="@string/default_billable_quantity"
         android:background="@drawable/view_outline_rectangle"
         android:gravity="center"
         android:inputType="number"
         android:selectAllOnFocus="true"
-        android:layout_centerVertical="true"
-        android:maxLength="9" />
+        android:imeOptions="actionDone"
+        android:maxLength="9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/billable_info"
-        android:layout_width="250dp"
+    <TextView
+        android:id="@+id/billable_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/billable_quantity"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_centerVertical="true"
-        android:orientation="vertical" >
+        android:paddingStart="@dimen/space16"
+        android:paddingEnd="@dimen/space36"
+        android:theme="@style/Title"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/billable_details"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
-            android:id="@+id/billable_name"
-            android:theme="@style/Title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/billable_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/billable_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space16"
+        android:paddingEnd="@dimen/space36"
+        android:visibility="gone"
+        android:textColor="@color/gray6"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintTop_toBottomOf="@id/billable_name"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
         android:id="@+id/remove_line_item_btn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/space24"
+        android:layout_height="@dimen/space24"
         android:background="@drawable/ic_clear_black_24dp"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/billable_info" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </org.watsi.uhp.views.EncounterItemListItem>

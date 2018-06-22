@@ -18,18 +18,17 @@ import kotlinx.android.synthetic.main.fragment_add_new_billable.name_field
 import kotlinx.android.synthetic.main.fragment_add_new_billable.price_field
 import kotlinx.android.synthetic.main.fragment_add_new_billable.save_button
 import kotlinx.android.synthetic.main.fragment_add_new_billable.type_spinner
-import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_field
 import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_container
+import kotlinx.android.synthetic.main.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-
+import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
 import java.util.UUID
-
 import javax.inject.Inject
 
 class AddNewBillableFragment : DaggerFragment() {
@@ -83,9 +82,8 @@ class AddNewBillableFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-
         val billableTypes = Billable.Type.values()
-        val billableStrings = billableTypes.map { it.toString().toLowerCase().capitalize() }
+        val billableStrings = billableTypes.map { it.toString().titleize() }
         type_spinner.adapter = ArrayAdapter<String>(activity,
                                                     android.R.layout.simple_list_item_1,
                                                     billableStrings)
