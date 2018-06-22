@@ -9,23 +9,24 @@ import org.watsi.uhp.R
 import org.watsi.uhp.views.DiagnosisListItem
 
 class DiagnosisAdapter(
-        private val onRemoveDiagnosis: (diagnosis: Diagnosis) -> Unit,
-        private val diagnoses: MutableList<Diagnosis> = mutableListOf()
-) : RecyclerView.Adapter<DiagnosisAdapter.DiagnosisViewHolder>() {
+        private val diagnoses: MutableList<Diagnosis> = mutableListOf(),
+        private val onRemoveDiagnosis: (diagnosis: Diagnosis) -> Unit
+) : RecyclerView.Adapter<DiagnosisAdapter.ViewHolder>() {
 
     lateinit var diagnosisListItemView: DiagnosisListItem
+
     override fun getItemCount(): Int = diagnoses.size
 
-    override fun onBindViewHolder(holder: DiagnosisViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(
+                R.layout.view_diagnosis_list_item, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val diagnosis = diagnoses[position]
         diagnosisListItemView = holder.itemView as DiagnosisListItem
         diagnosisListItemView.setDiagnosis(diagnosis, onRemoveDiagnosis)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiagnosisViewHolder {
-        val diagnosisView = LayoutInflater.from(parent.context).inflate(
-                R.layout.view_diagnosis_list_item, parent, false)
-        return DiagnosisViewHolder(diagnosisView)
     }
 
     fun setDiagnoses(updatedDiagnoses: List<Diagnosis>) {
@@ -36,5 +37,5 @@ class DiagnosisAdapter(
         }
     }
 
-    class DiagnosisViewHolder(diagnosisView: View) : RecyclerView.ViewHolder(diagnosisView)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

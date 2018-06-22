@@ -75,7 +75,7 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     fun updateEncounterWithDiagnoses(encounterRelation: EncounterWithItemsAndForms): EncounterWithItemsAndForms {
-        val diagnoses = observable.value?.selectedDiagnoses ?: emptyList()
+        val diagnoses = observable.value?.selectedDiagnoses.orEmpty()
         val updatedEncounter = encounterRelation.encounter.copy(diagnoses = diagnoses.map { it.id })
         return encounterRelation.copy(encounter = updatedEncounter, diagnoses = diagnoses)
     }

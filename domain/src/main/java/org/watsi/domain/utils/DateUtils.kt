@@ -36,7 +36,6 @@ object DateUtils {
         return localDate.format(formatter)
     }
 
-
     fun isDateInFuture(localDate: LocalDate, clock: Clock = Clock.systemDefaultZone()): Boolean {
         return localDate.isAfter(LocalDate.now(clock))
     }

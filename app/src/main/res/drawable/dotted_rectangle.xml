@@ -9,9 +9,5 @@
         android:dashWidth="4dp"
         android:dashGap="4dp" />
 
-    <corners
-        android:bottomRightRadius="@dimen/cornerRadius"
-        android:bottomLeftRadius="@dimen/cornerRadius"
-        android:topLeftRadius="@dimen/cornerRadius"
-        android:topRightRadius="@dimen/cornerRadius" />
+    <corners android:radius="@dimen/cornerRadius" />
 </shape>

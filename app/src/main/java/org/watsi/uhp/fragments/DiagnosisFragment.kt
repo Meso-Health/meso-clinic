@@ -101,13 +101,13 @@ class DiagnosisFragment : DaggerFragment() {
             }
         })
 
+        RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
+
         save_button.setOnClickListener {
             val encounterRelation = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
             navigationManager.goTo(EncounterFormFragment.forEncounter(
                     encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
         }
-
-        RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
     }
 
     private fun buildSuggestionsCursor(diagnoses: List<Diagnosis>): MatrixCursor {

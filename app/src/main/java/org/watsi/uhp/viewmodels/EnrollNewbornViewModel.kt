@@ -7,14 +7,14 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
-import org.watsi.device.managers.Logger
-import org.watsi.domain.usecases.CreateMemberUseCase
-import org.watsi.domain.usecases.LoadPhotoUseCase
-import javax.inject.Inject
 import org.threeten.bp.LocalDate
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
+import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.usecases.LoadPhotoUseCase
 import java.util.UUID
+import javax.inject.Inject
 
 class EnrollNewbornViewModel(
         private val createMemberUseCase: CreateMemberUseCase,

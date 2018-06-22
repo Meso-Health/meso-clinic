@@ -45,7 +45,7 @@ class EncounterViewModel @Inject constructor(
             currentEncounter: EncounterWithItemsAndForms? = currentEncounter()
     ) : List<Billable>  {
         return if (type != null && type != Billable.Type.DRUG) {
-            val currentBillables = currentEncounter?.billables() ?: emptyList()
+            val currentBillables = currentEncounter?.billables().orEmpty()
             billablesByType[type]!!.minus(currentBillables).sortedBy { it.name }
         } else {
             emptyList()
