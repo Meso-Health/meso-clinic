@@ -61,7 +61,7 @@ class AddNewBillableFragment : DaggerFragment() {
             it?.let { viewState ->
                 compositionAdapter.clear()
                 compositionAdapter.add("") // This provides a default empty option that is stored as null.
-                compositionAdapter.addAll(viewState.compositions.map { it.capitalize() })
+                compositionAdapter.addAll(viewState.compositions.map { it.capitalize() }.sorted())
 
                 if (viewState.type != null && Billable.requiresQuantity(viewState.type)) {
                     unit_container.visibility = View.VISIBLE
