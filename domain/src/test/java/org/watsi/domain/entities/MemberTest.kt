@@ -101,8 +101,8 @@ class MemberTest {
     fun formatAgeAndGender() {
         val m1 = MemberFactory.build(birthdate = tenYearsAgo, gender = Member.Gender.M)
         val m2 = MemberFactory.build(birthdate = fiveYearsAgo, gender = Member.Gender.F)
-        assertEquals(m1.formatAgeAndGender(fixedClock), "10 - M")
-        assertEquals(m2.formatAgeAndGender(fixedClock), "5 - F")
+        assertEquals(m1.formatAgeAndGender(fixedClock), "Male · 10 years")
+        assertEquals(m2.formatAgeAndGender(fixedClock), "Female · 5 years")
     }
 
     @Test

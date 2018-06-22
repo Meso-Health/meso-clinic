@@ -64,6 +64,9 @@
     <string name="age_dialog_title">Age</string>
     <string name="birthdate_dialog_title">Birthdate</string>
     <string name="toggle_date_input">Enter birthdate?</string>
+    <string name="birthdate_day_error">Day cannot be blank</string>
+    <string name="birthdate_month_error">Month cannot be blank</string>
+    <string name="birthdate_year_error">Year cannot be blank</string>
     <string name="toggle_age_input">Enter age?</string>
     <string name="day_label">Day</string>
     <string name="month_label">Month</string>
@@ -216,9 +219,11 @@
     <string name="clinic_number_button">Submit</string>
     <string name="clinic_number_prompt">Enter the member\'s clinic number</string>
 
+    <string name="newborn_error_message">Newborns must be less than 3 months old</string>
+
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_activity_title">Newborn</string>
-    <string name="enrollment_completed_snackbar_message">%1$s successfully enrolled.</string>
+    <string name="enrollment_completed_snackbar_message">Newborn successfully enrolled.</string>
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">Status</string>

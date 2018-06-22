@@ -50,7 +50,12 @@ data class Member(val id: UUID,
     }
 
     fun formatAgeAndGender(clock: Clock): String {
-        return "${getAgeYears(clock)} - ${gender}"
+        val genderString = if (gender == Member.Gender.F) {
+            "Female"
+        } else {
+            "Male"
+        }
+        return "$genderString · ${getDisplayAge(clock)}"
     }
 
     fun diff(previous: Member): List<Delta> {

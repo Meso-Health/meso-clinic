@@ -29,6 +29,7 @@
                 android:id="@+id/name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="-4dp"
                 android:paddingTop="@dimen/space24"
                 app:layout_constraintTop_toBottomOf="@id/gender_field">
 
@@ -42,10 +43,11 @@
             </android.support.design.widget.TextInputLayout>
 
             <org.watsi.uhp.views.DialogBirthdateField
-                android:id="@+id/birthdate_dialog_field"
+                android:id="@+id/enroll_newborn_birthdate_dialog_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/space24"
+                app:allowAgeSelector="false"
                 app:showCalendarIcon="true"
                 app:layout_constraintTop_toBottomOf="@id/name_layout" />
 
