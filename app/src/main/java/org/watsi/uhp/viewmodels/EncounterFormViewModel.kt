@@ -3,17 +3,16 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.usecases.LoadPhotoUseCase
 import java.util.UUID
 import javax.inject.Inject
 
 class EncounterFormViewModel @Inject constructor(
-        private val photoRepository: PhotoRepository,
+        private val loadPhotoUseCase: LoadPhotoUseCase,
         private val logger: Logger
 ) : ViewModel() {
 
@@ -26,8 +25,7 @@ class EncounterFormViewModel @Inject constructor(
     fun getObservable(): LiveData<ViewState> = observable
 
     fun addEncounterFormPhoto(fullsizePhotoId: UUID, thumbnailPhotoId: UUID) {
-        photoRepository.find(thumbnailPhotoId).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            thumbnailPhoto ->
+        loadPhotoUseCase.execute(thumbnailPhotoId).subscribe({ thumbnailPhoto ->
             currentEncounterFormPhotos()?.let {
                 val updatedPhotos = it.toMutableList()
                 updatedPhotos.add(EncounterFormPhoto(fullsizePhotoId, thumbnailPhoto))
