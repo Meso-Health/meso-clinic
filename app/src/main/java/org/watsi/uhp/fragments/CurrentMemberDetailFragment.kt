@@ -20,6 +20,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
@@ -78,7 +79,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.current_member_fragment_label)
+        (activity as ClinicActivity).setToolbar(R.string.current_member_fragment_label, R.drawable.ic_arrow_back_white_24dp)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_current_member_detail, container, false)
     }
@@ -102,6 +103,9 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+            }
             R.id.menu_member_edit -> {
                 navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }
