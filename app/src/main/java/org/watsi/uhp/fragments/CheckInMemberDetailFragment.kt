@@ -7,8 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -39,6 +37,7 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -131,6 +130,16 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                         R.plurals.household_members_label, householdMembers.size, householdMembers.size)
             }
         })
+
+        memberAdapter = MemberAdapter(
+                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
+                    val throughMemberId = searchFields.throughMemberId ?: memberRelation.member.id
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchFields(
+                            memberRelation.member,
+                            SearchFields(searchFields.searchMethod, throughMemberId)))
+                },
+                clock = clock
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -156,21 +165,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             navigationManager.goTo(EditMemberFragment.forMember(member.id))
         }
 
-        memberAdapter = MemberAdapter(
-                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                        val throughMemberId = searchFields.throughMemberId ?: memberRelation.member.id
-                        navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchFields(
-                                memberRelation.member,
-                                SearchFields(searchFields.searchMethod, throughMemberId)))
-                },
-                clock = clock)
-        val layoutManager = LinearLayoutManager(activity)
-        household_members_list.adapter = memberAdapter
-        household_members_list.layoutManager = layoutManager
-        household_members_list.isNestedScrollingEnabled = false
-        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
-        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
-        household_members_list.addItemDecoration(listItemDivider)
+        RecyclerViewHelper.setRecyclerView(household_members_list, memberAdapter, context, false)
     }
 
     private fun launchClinicNumberDialog() {

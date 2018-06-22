@@ -12,15 +12,18 @@
         android:layout_marginTop="@dimen/space24"
         android:background="@drawable/panel_background"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/identification_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/space24"
+        android:paddingBottom="@dimen/list_view_bottom_padding"
+        android:clipToPadding="false"
         android:src="@drawable/ic_person_add_white_24dp"
         android:text="@string/identification_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -35,6 +34,7 @@ import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -49,6 +49,7 @@ class ReceiptFragment : DaggerFragment() {
 
     lateinit var viewModel: ReceiptViewModel
     lateinit var encounter: EncounterWithItemsAndForms
+    lateinit var receiptItemAdapter: ReceiptListItemAdapter
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -76,9 +77,9 @@ class ReceiptFragment : DaggerFragment() {
                     dateString
                 }
             }
-
         })
 
+        receiptItemAdapter = ReceiptListItemAdapter(encounter.encounterItems)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -101,12 +102,12 @@ class ReceiptFragment : DaggerFragment() {
             diagnoses_list.text = encounter.diagnoses.map { it.description }.joinToString(", ")
         }
 
-        encounter_items_list.adapter = ReceiptListItemAdapter(encounter.encounterItems)
-        encounter_items_list.layoutManager = LinearLayoutManager(activity)
-
         date_edit.setOnClickListener {
             launchBackdateDialog()
         }
+
+        RecyclerViewHelper.setRecyclerView(encounter_items_list, receiptItemAdapter, context, false)
+
         save_button.setOnClickListener {
             submitEncounter(true)
         }
@@ -129,7 +130,6 @@ class ReceiptFragment : DaggerFragment() {
                 }
             }
         }
-
 
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)
@@ -168,7 +168,6 @@ class ReceiptFragment : DaggerFragment() {
         menu?.let {
             it.findItem(R.id.menu_submit_without_copayment).isVisible = true
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

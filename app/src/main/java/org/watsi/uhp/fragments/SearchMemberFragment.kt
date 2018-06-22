@@ -6,8 +6,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -22,6 +20,7 @@ import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
@@ -53,14 +52,7 @@ class SearchMemberFragment : DaggerFragment() {
                 memberAdapter.setMembers(matchingMembers)
             }
         })
-    }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        setHasOptionsMenu(true)
-        return inflater?.inflate(R.layout.fragment_member_search, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         memberAdapter = MemberAdapter(
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                     val searchMethod = viewModel.searchMethod() ?: run {
@@ -73,15 +65,17 @@ class SearchMemberFragment : DaggerFragment() {
                             memberRelation.member,
                             searchMethod))
                 },
-                clock = clock)
+                clock = clock
+        )
+    }
 
-        val layoutManager = LinearLayoutManager(activity)
-        member_search_results.layoutManager = layoutManager
-        member_search_results.adapter = memberAdapter
-        member_search_results.isNestedScrollingEnabled = false
-        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
-        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
-        member_search_results.addItemDecoration(listItemDivider)
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
+        return inflater?.inflate(R.layout.fragment_member_search, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        RecyclerViewHelper.setRecyclerView(member_search_results, memberAdapter, context)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

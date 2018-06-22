@@ -7,8 +7,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +20,8 @@ import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.DiagnosisAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import javax.inject.Inject
@@ -76,14 +76,6 @@ class DiagnosisFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val layoutManager = LinearLayoutManager(activity)
-        selected_diagnosis_list.adapter = diagnosisAdapter
-        selected_diagnosis_list.layoutManager = layoutManager
-        selected_diagnosis_list.isNestedScrollingEnabled = false
-        val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
-        listItemDivider.setDrawable(resources.getDrawable(R.drawable.list_divider, null))
-        selected_diagnosis_list.addItemDecoration(listItemDivider)
-
         diagnosis_search.suggestionsAdapter = SimpleCursorAdapter(
                 activity, R.layout.item_billable_search_suggestion, null,
                 arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1), intArrayOf(R.id.text1), 0)
@@ -103,6 +95,7 @@ class DiagnosisFragment : DaggerFragment() {
                     viewModel.addDiagnosis(it)
                     diagnosis_search.setQuery("", false)
                     diagnosis_search.clearFocus()
+                    selected_diagnosis_list.scrollToBottom()
                 }
                 return true
             }
@@ -113,6 +106,8 @@ class DiagnosisFragment : DaggerFragment() {
             navigationManager.goTo(EncounterFormFragment.forEncounter(
                     encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
         }
+
+        RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
     }
 
     private fun buildSuggestionsCursor(diagnoses: List<Diagnosis>): MatrixCursor {
