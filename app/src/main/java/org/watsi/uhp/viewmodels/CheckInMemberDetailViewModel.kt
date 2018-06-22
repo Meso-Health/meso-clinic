@@ -47,5 +47,5 @@ class CheckInMemberDetailViewModel @Inject constructor(
     data class ViewState(val member: Member? = null,
                          val memberThumbnail: Photo? = null,
                          val isMemberCheckedIn: Boolean? = null,
-                         val householdMembers: List<MemberWithIdEventAndThumbnailPhoto>? = null)
+                         val householdMembers: List<MemberWithIdEventAndThumbnailPhoto> = emptyList())
 }

@@ -247,8 +247,9 @@ class EditMemberFragment : DaggerFragment() {
                     FingerprintManager.FingerprintStatus.SUCCESS -> {
                         fingerprintResponse.fingerprintId?.let {
                             viewModel.updateFingerprints(it).subscribe()
+                        } ?: run {
+                            logger.error("FingerprintManager returned success but null fingerprintId")
                         }
-                        // TODO: handle null fingerprintId
                     }
                     FingerprintManager.FingerprintStatus.FAILURE -> {
                         listOf(fingerprints_field, missing_fingerprints_field).forEach {

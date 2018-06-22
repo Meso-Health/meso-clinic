@@ -55,7 +55,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/space12"
-                android:background="@drawable/ic_qr_code_gray6_24dp" />
+                android:background="@drawable/ic_search_qr_code_black"
+                android:backgroundTint="@color/gray6" />
 
             <ImageView
                 android:id="@+id/clear_button"

@@ -65,7 +65,7 @@
                 android:id="@+id/scan_fingerprints_btn"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/space24"
+                android:layout_marginTop="@dimen/space16"
                 app:layout_constraintTop_toBottomOf="@id/member_detail"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:id="@+id/member_action_button"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/space12"
+                android:layout_marginTop="@dimen/space8"
                 app:layout_constraintTop_toBottomOf="@id/scan_fingerprints_btn"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +105,8 @@
             android:paddingStart="@dimen/space16"
             android:paddingTop="@dimen/space8"
             android:paddingBottom="@dimen/space8"
-            android:layout_marginTop="@dimen/space16"
+            android:layout_marginTop="@dimen/space8"
+            style="@style/Label"
             app:layout_constraintTop_toBottomOf="@id/household_panel_header"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -121,6 +122,24 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/panel_background"
             android:clipToPadding="false" />
+
+        <TextView
+            android:id="@+id/household_list_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:paddingStart="@dimen/space16"
+            android:paddingEnd="@dimen/space16"
+            android:paddingTop="@dimen/space36"
+            android:paddingBottom="@dimen/space36"
+            android:text="@string/empty_household_list"
+            android:textAlignment="center"
+            android:textColor="@color/gray6"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/household_panel_summary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>
