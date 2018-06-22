@@ -37,7 +37,7 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -52,7 +52,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
-    @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var fingerprintManager: FingerprintManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
@@ -166,7 +165,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             navigationManager.goTo(EditMemberFragment.forMember(member.id))
         }
 
-        setRecyclerView(household_members_list, memberAdapter, context, false)
+        RecyclerViewHelper.setRecyclerView(household_members_list, memberAdapter, context, false)
     }
 
     private fun launchClinicNumberDialog() {
@@ -292,7 +291,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             }
             R.id.menu_enroll_newborn -> {
                 val member = arguments?.getSerializable(PARAM_MEMBER) as Member
-                navigationManager.goTo(EnrollNewbornInfoFragment.forParent(member))
+                navigationManager.goTo(EnrollNewbornFragment.forParent(member))
             }
             else -> super.onOptionsItemSelected(item)
         }

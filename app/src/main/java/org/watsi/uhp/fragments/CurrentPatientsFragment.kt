@@ -25,7 +25,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import javax.inject.Inject
@@ -79,7 +79,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        setRecyclerView(current_patients, memberAdapter, context)
+        RecyclerViewHelper.setRecyclerView(current_patients, memberAdapter, context)
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)

@@ -20,7 +20,7 @@ import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
+import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
@@ -75,7 +75,7 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        setRecyclerView(member_search_results, memberAdapter, context)
+        RecyclerViewHelper.setRecyclerView(member_search_results, memberAdapter, context)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
