@@ -10,14 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_encounter_form.encounter_form_count
 import kotlinx.android.synthetic.main.fragment_encounter_form.encounter_form_list
 import kotlinx.android.synthetic.main.fragment_encounter_form.photo_btn
 import kotlinx.android.synthetic.main.fragment_encounter_form.save_button
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.adapters.EncounterFormAdapter
@@ -30,7 +28,6 @@ class EncounterFormFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var photoRepository: PhotoRepository
     @Inject lateinit var logger: Logger
 
     private lateinit var encounterFormAdapter: EncounterFormAdapter
@@ -98,17 +95,10 @@ class EncounterFormFragment : DaggerFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val (photoIds, error) = SavePhotoActivity.parseResult(resultCode, data, logger)
         photoIds?.let {
-            photoRepository.find(it.second).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ thumbnailPhoto ->
-                        viewModel.addEncounterFormPhoto(
-                                EncounterFormViewModel.EncounterFormPhoto(it.first, thumbnailPhoto)
-                        )
-                    }, {
-                        // TODO: handle error
-                    })
+            viewModel.addEncounterFormPhoto(it.first, it.second)
         }
         error?.let {
-            // TODO: handle error
+            logger.error(it)
         }
     }
 }
