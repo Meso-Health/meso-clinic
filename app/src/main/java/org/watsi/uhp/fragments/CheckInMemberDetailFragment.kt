@@ -17,6 +17,7 @@ import android.widget.RadioGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.absentee_notification
+import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_list_empty_state
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_members_list
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.household_panel_summary
 import kotlinx.android.synthetic.main.fragment_checkin_member_detail.member_action_button
@@ -126,6 +127,11 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 memberAdapter.setMembers(householdMembers)
                 household_panel_summary.text = context.resources.getQuantityString(
                         R.plurals.household_members_label, householdMembers.size, householdMembers.size)
+                if (householdMembers.isEmpty()) {
+                    household_list_empty_state.visibility = View.VISIBLE
+                } else {
+                    household_list_empty_state.visibility = View.GONE
+                }
             }
         })
 

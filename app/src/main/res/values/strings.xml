@@ -134,6 +134,7 @@
     <string name="checked_in">Already Checked In</string>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="household_panel_header">Household</string>
+    <string name="empty_household_list">No other household members</string>
     <plurals name="household_members_label" >
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>

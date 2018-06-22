@@ -26,6 +26,9 @@
     <dimen name="thumbnailMedium">80dp</dimen>
     <dimen name="thumbnailLarge">120dp</dimen>
 
+    <!-- Fragment -->
+    <dimen name="scrollingFragmentBottomPadding">80dp</dimen>
+
     <!-- View dimensions scale -->
     <dimen name="viewHeight40">40dp</dimen>
     <dimen name="viewHeight64">64dp</dimen>

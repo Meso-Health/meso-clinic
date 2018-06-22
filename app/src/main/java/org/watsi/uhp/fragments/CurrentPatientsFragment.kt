@@ -79,7 +79,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        RecyclerViewHelper.setRecyclerView(current_patients, memberAdapter, context)
+        RecyclerViewHelper.setRecyclerView(current_patients, memberAdapter, context, false)
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)

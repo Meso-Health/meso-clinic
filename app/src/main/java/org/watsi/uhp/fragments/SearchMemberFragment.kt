@@ -75,7 +75,7 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        RecyclerViewHelper.setRecyclerView(member_search_results, memberAdapter, context)
+        RecyclerViewHelper.setRecyclerView(member_search_results, memberAdapter, context, false)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

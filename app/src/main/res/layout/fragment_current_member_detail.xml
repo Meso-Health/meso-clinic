@@ -59,7 +59,7 @@
             android:id="@+id/member_action_button"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/space24"
+            android:layout_marginTop="@dimen/space16"
             style="@style/PrimaryButton"
             app:layout_constraintTop_toBottomOf="@id/member_detail"
             app:layout_constraintStart_toStartOf="parent"
