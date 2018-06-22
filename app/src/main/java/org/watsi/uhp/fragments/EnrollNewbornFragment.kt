@@ -32,6 +32,7 @@ import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
+import org.watsi.uhp.viewmodels.EnrollNewbornViewModel.MemberStatus
 import org.watsi.domain.utils.StringUtils
 import java.util.UUID
 import javax.inject.Inject
@@ -143,7 +144,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
             viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
-                // TODO: implement goBack to parent fragment
+                navigationManager.goBack()
 
                 view?.let {
                     SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
@@ -192,7 +193,9 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onBack(): Single<Boolean> {
-        return if (viewModel.getViewStateObservable().value == EnrollNewbornViewModel.ViewState()) {
+        val currentViewState = viewModel.getViewStateObservable().value
+
+        return if (currentViewState == EnrollNewbornViewModel.ViewState() || currentViewState?.status == MemberStatus.SAVED) {
             Single.just(true)
         } else {
             Single.create<Boolean> { single ->
