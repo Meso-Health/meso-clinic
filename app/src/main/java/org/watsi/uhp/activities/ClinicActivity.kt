@@ -127,6 +127,24 @@ class ClinicActivity : DaggerAppCompatActivity() {
         setToolbarHomeIcon(homeIconId)
     }
 
+    /**
+     * Sets the toolbar to be flat and title-less.
+     */
+    fun setToolbarMinimal(@DrawableRes homeIconId: Int?) {
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.elevation = 0.toFloat()
+        setToolbarHomeIcon(homeIconId)
+    }
+
+    /**
+     * Resets the changes made by setToolbarMinimal
+     */
+    fun resetToolbarMinimal() {
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        //TODO: 4 is the default material design elevation for action bars, but ours is set to 12 for some reason.
+        supportActionBar?.elevation = 12.toFloat()
+    }
+
     private fun setToolbarHomeIcon(@DrawableRes homeIconId: Int?) {
         supportActionBar?.setDisplayHomeAsUpEnabled(homeIconId != null)
         homeIconId?.let{ supportActionBar?.setHomeAsUpIndicator(it) }
