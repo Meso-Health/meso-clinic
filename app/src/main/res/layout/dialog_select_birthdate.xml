@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/space16"
-    android:paddingStart="18dp"
-    android:paddingEnd="18dp">
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16">
 
     <TextView
         android:id="@+id/birthdate_dialog_title"
@@ -23,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/primary"
+        android:visibility="gone"
         android:paddingStart="@dimen/space8"
         android:paddingBottom="@dimen/space8"
         app:layout_constraintTop_toTopOf="parent"

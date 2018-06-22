@@ -6,24 +6,24 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
-import android.widget.TextView
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.gender_field
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.name_layout
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.name
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.birthdate_dialog_field
-import kotlinx.android.synthetic.main.fragment_enroll_newborn.photo_field
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id_field
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.done_button
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.enroll_newborn_birthdate_dialog_field
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.gender_field
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.name
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.name_layout
+import kotlinx.android.synthetic.main.fragment_enroll_newborn.photo_field
+import org.threeten.bp.LocalDate
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
+import org.watsi.domain.utils.StringUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
@@ -33,7 +33,6 @@ import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel.MemberStatus
-import org.watsi.domain.utils.StringUtils
 import java.util.UUID
 import javax.inject.Inject
 
@@ -65,7 +64,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     private fun setErrors(errorMap: Map<String, String>) {
         gender_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_GENDER_ERROR])
         name_layout.setError(errorMap[EnrollNewbornViewModel.MEMBER_NAME_ERROR])
-        birthdate_dialog_field.setErrorOnField(errorMap[EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR])
+        enroll_newborn_birthdate_dialog_field.setErrorOnField(errorMap[EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR])
         photo_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_PHOTO_ERROR])
         card_id_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_CARD_ERROR])
     }
@@ -74,7 +73,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         val validationKeysToField = linkedMapOf(
                 EnrollNewbornViewModel.MEMBER_GENDER_ERROR to gender_field,
                 EnrollNewbornViewModel.MEMBER_NAME_ERROR to name_layout,
-                EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR to birthdate_dialog_field,
+                EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR to enroll_newborn_birthdate_dialog_field,
                 EnrollNewbornViewModel.MEMBER_PHOTO_ERROR to photo_field,
                 EnrollNewbornViewModel.MEMBER_CARD_ERROR to card_id_field
         )
@@ -112,6 +111,10 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 it.cardId?.let {
                     card_id_field.setCardId(StringUtils.formatCardId(it))
                 }
+
+                it.birthdate?.let {birthdate ->
+                    enroll_newborn_birthdate_dialog_field.setValue(birthdate, Member.DateAccuracy.D)
+                }
             }
         })
     }
@@ -140,6 +143,20 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             startActivityForResult(Intent(activity, ScanNewCardActivity::class.java), SCAN_QRCODE_INTENT)
         }
 
+        enroll_newborn_birthdate_dialog_field.configureBirthdateDialog(keyboardManager,
+                { birthdate: LocalDate,
+                  birthdateAccuracy: Member.DateAccuracy,
+                  dialog: AlertDialog ->
+                    if (birthdate.isBefore(LocalDate.now().minusMonths(3))) {
+                        enroll_newborn_birthdate_dialog_field.setDateErrorMessage(getString(R.string.newborn_error_message))
+                    } else {
+                        viewModel.onBirthdateChange(birthdate)
+                        dialog.dismiss()
+                    }
+                },
+                initialBirthdateOnDialog = LocalDate.now()
+        )
+
         done_button.setOnClickListener {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
@@ -163,13 +180,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         } else {
             logger.error(throwable)
         }
-        view?.let {
-            val snackbar = Snackbar.make(it, errorMessage, Snackbar.LENGTH_LONG)
-            val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
-            textView.setTextColor(context.getColor(R.color.white))
-            snackbar.view.setBackgroundColor(context.getColor(R.color.red6))
-            snackbar.show()
-        }
+        view?.let { SnackbarHelper.showError(it, context, errorMessage) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

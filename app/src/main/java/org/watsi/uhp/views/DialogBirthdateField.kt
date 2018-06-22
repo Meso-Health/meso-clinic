@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
+import kotlinx.android.synthetic.main.dialog_select_birthdate.view.birthdate_dialog_toggle_input
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.action
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.border
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.field_error_message
@@ -39,7 +40,9 @@ class DialogBirthdateField @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var birthdate: LocalDate? = null
+    private var initialBirthdateOnDialog: LocalDate? = null
     private var accuracy: Member.DateAccuracy? = null
+    private var allowAgeSelector: Boolean = false
     private lateinit var keyboardManager: KeyboardManager
     private lateinit var dialog: AlertDialog
     private lateinit var dialogLayout: View
@@ -49,6 +52,7 @@ class DialogBirthdateField @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.view_dialog_edit_field, this, true)
         val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.DialogBirthdateField)
         val showCalendarIcon = customAttributes.getBoolean(R.styleable.DialogBirthdateField_showCalendarIcon, false)
+        allowAgeSelector = customAttributes.getBoolean(R.styleable.DialogBirthdateField_allowAgeSelector, false)
 
         field_label.visibility = View.INVISIBLE
         input_value.setText(R.string.age_field_label)
@@ -92,11 +96,10 @@ class DialogBirthdateField @JvmOverloads constructor(
         this.birthdate = birthdate
         this.accuracy = accuracy
 
+        field_label.text = context.getString(R.string.birthdate_field_label)
         if (accuracy == Member.DateAccuracy.D) {
-            field_label.text = context.getString(R.string.birthdate_field_label)
             input_value.text = DateUtils.formatLocalDate(birthdate)
         } else {
-            field_label.text = context.getString(R.string.age_field_label)
             input_value.text = DateUtils.dateWithAccuracyToAge(birthdate, accuracy).toString()
         }
         field_label.visibility = View.VISIBLE
@@ -109,13 +112,21 @@ class DialogBirthdateField @JvmOverloads constructor(
      * handleNewValue callback when done.
      */
     fun configureBirthdateDialog(keyboardManager: KeyboardManager,
-                                 handleNewValue: (birthdate: LocalDate, accuracy: Member.DateAccuracy, dialog: AlertDialog) -> Unit) {
+                                 handleNewValue: (birthdate: LocalDate, accuracy: Member.DateAccuracy, dialog: AlertDialog) -> Unit,
+                                 initialBirthdateOnDialog: LocalDate? = null) {
         this.keyboardManager = keyboardManager
         this.handleNewValue = handleNewValue
+        this.initialBirthdateOnDialog = initialBirthdateOnDialog
         setOnClickListener {
             this.requestFocus()
             launchBirthdateDialog()
         }
+    }
+
+    fun setDateErrorMessage(message: String) {
+        val errorMessage = dialogLayout.findViewById<TextView>(R.id.date_error_message)
+        errorMessage.text = message
+        errorMessage.visibility = View.VISIBLE
     }
 
     private fun launchBirthdateDialog() {
@@ -131,7 +142,7 @@ class DialogBirthdateField @JvmOverloads constructor(
         })
         dialog = dialogBuilder.create()
         dialog.show()
-        if (accuracy == Member.DateAccuracy.D) { toggleDateInput() } else { toggleAgeInput() }
+        if (accuracy == Member.DateAccuracy.D || !allowAgeSelector) { toggleDateInput() } else { toggleAgeInput() }
     }
 
     private fun toggleAgeInput() {
@@ -147,6 +158,7 @@ class DialogBirthdateField @JvmOverloads constructor(
         val birthdate = birthdate
         val accuracy = accuracy
 
+        birthdateDialogToggle.visibility = View.VISIBLE
         birthdateDialogTitle.setText(R.string.age_dialog_title)
         birthdateDialogToggle.setText(R.string.toggle_date_input)
         birthdateDialogToggle.setOnClickListener { toggleDateInput() }
@@ -181,20 +193,26 @@ class DialogBirthdateField @JvmOverloads constructor(
 
     private fun toggleDateInput() {
         val birthdateDialogTitle = dialogLayout.findViewById<TextView>(R.id.birthdate_dialog_title)
-        val birthdateDialogToggle = dialogLayout.findViewById<TextView>(R.id.birthdate_dialog_toggle_input)
+        birthdateDialogTitle.setText(R.string.birthdate_dialog_title)
+
         val ageFields = dialogLayout.findViewById<ConstraintLayout>(R.id.age_fields)
         val dateFields = dialogLayout.findViewById<ConstraintLayout>(R.id.date_fields)
         val dayInput = dialogLayout.findViewById<TextInputEditText>(R.id.day_input)
         val monthInput = dialogLayout.findViewById<TextInputEditText>(R.id.month_input)
         val yearInput = dialogLayout.findViewById<TextInputEditText>(R.id.year_input)
+        // TODO: Figure out a way to just not show calculatedAge if we using newborn picker.
         val calculatedAge = dialogLayout.findViewById<TextView>(R.id.calculated_age)
         val errorMessage = dialogLayout.findViewById<TextView>(R.id.date_error_message)
         val birthdate = birthdate
+        val initialBirthdateOnDialog = initialBirthdateOnDialog
         val accuracy = accuracy
 
-        birthdateDialogTitle.setText(R.string.birthdate_dialog_title)
-        birthdateDialogToggle.setText(R.string.toggle_age_input)
-        birthdateDialogToggle.setOnClickListener { toggleAgeInput() }
+        if (allowAgeSelector) {
+            val birthdateDialogToggle = dialogLayout.findViewById<TextView>(R.id.birthdate_dialog_toggle_input)
+            birthdateDialogToggle.visibility = View.VISIBLE
+            birthdateDialogToggle.setText(R.string.toggle_age_input)
+            birthdateDialogToggle.setOnClickListener { toggleAgeInput() }
+        }
 
         if (birthdate != null && accuracy == Member.DateAccuracy.D) {
             dayInput.setText(birthdate.dayOfMonth.toString())
@@ -202,7 +220,13 @@ class DialogBirthdateField @JvmOverloads constructor(
             yearInput.setText(birthdate.year.toString())
             calculatedAge.text = formatCalculatedAge(birthdate)
             calculatedAge.visibility = View.VISIBLE
+
+        } else if (initialBirthdateOnDialog != null) {
+            dayInput.setText(initialBirthdateOnDialog.dayOfMonth.toString())
+            monthInput.setText(initialBirthdateOnDialog.monthValue.toString())
+            yearInput.setText(initialBirthdateOnDialog.year.toString())
         }
+
         yearInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 submitDate(dayInput.text.toString(), monthInput.text.toString(), yearInput.text.toString())
@@ -277,23 +301,19 @@ class DialogBirthdateField @JvmOverloads constructor(
         errorMessage.visibility = View.INVISIBLE
 
         if (day == null) {
-            errorMessage.text = "Day cannot be blank"
-            errorMessage.visibility = View.VISIBLE
+            setDateErrorMessage(context.getString(R.string.birthdate_day_error))
             dayInput.post { keyboardManager.showKeyboard(dayInput) }
         } else if (month == null) {
-            errorMessage.text = "Month cannot be blank"
-            errorMessage.visibility = View.VISIBLE
+            setDateErrorMessage(context.getString(R.string.birthdate_month_error))
             monthInput.post { keyboardManager.showKeyboard(monthInput) }
         } else if (year == null) {
-            errorMessage.text = "Year cannot be blank"
-            errorMessage.visibility = View.VISIBLE
+            setDateErrorMessage(context.getString(R.string.birthdate_year_error))
             yearInput.post { keyboardManager.showKeyboard(yearInput) }
         } else {
             if (DateUtils.isValidBirthdate(day, month, year)) {
                 handleNewValue(LocalDate.of(year, month, day), Member.DateAccuracy.D, dialog)
             } else {
-                errorMessage.text = resources.getString(R.string.invalid_date_error_message)
-                errorMessage.visibility = View.VISIBLE
+                setDateErrorMessage(resources.getString(R.string.invalid_date_error_message))
             }
         }
     }

@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.view_member_card.view.member_photo
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.Companion.formatCardId
 import org.watsi.domain.entities.Photo
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.PhotoLoader
@@ -27,7 +28,7 @@ class MemberCard @JvmOverloads constructor(
     fun setMember(member: Member, thumbnail: Photo?, clock: Clock) {
         member_name.text = member.name
         member_age_and_gender.text = member.formatAgeAndGender(clock)
-        member_card_id.text = member.cardId
+        member.cardId?.let { member_card_id.text = formatCardId(it) }
         PhotoLoader.loadMemberPhoto(
                 thumbnail?.bytes, member_photo, context, member.gender)
     }
