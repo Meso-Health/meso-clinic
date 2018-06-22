@@ -104,15 +104,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         navigationManager.goBack()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                navigationManager.goBack()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
     /**
      * Helper method for configuring the toolbar from a Fragment
