@@ -27,8 +27,7 @@ class EncounterFormViewModel @Inject constructor(
     fun addEncounterFormPhoto(fullsizePhotoId: UUID, thumbnailPhotoId: UUID) {
         loadPhotoUseCase.execute(thumbnailPhotoId).subscribe({ thumbnailPhoto ->
             currentEncounterFormPhotos()?.let {
-                val updatedPhotos = it.toMutableList()
-                updatedPhotos.add(EncounterFormPhoto(fullsizePhotoId, thumbnailPhoto))
+                val updatedPhotos = it.plus(EncounterFormPhoto(fullsizePhotoId, thumbnailPhoto))
                 observable.value = observable.value?.copy(encounterFormPhotos = updatedPhotos)
             }
         }, {
@@ -38,8 +37,7 @@ class EncounterFormViewModel @Inject constructor(
 
     fun removeEncounterFormPhoto(photo: EncounterFormPhoto) {
         currentEncounterFormPhotos()?.let {
-            val updatedPhotos = it.toMutableList()
-            updatedPhotos.remove(photo)
+            val updatedPhotos = it.minus(photo)
             observable.value = observable.value?.copy(encounterFormPhotos = updatedPhotos)
         }
     }
