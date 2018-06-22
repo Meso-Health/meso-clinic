@@ -52,6 +52,7 @@ class EnrollNewbornViewModel(
         return createMemberUseCase.execute(member).doOnError { onError(it) }
                 .onErrorResumeNext { Completable.never() }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete { setStatusAsSaved() }
     }
 
     fun setStatusAsSaved() {

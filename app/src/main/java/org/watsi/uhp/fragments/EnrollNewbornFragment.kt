@@ -144,7 +144,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
 
             viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
-                viewModel.setStatusAsSaved()
                 navigationManager.goBack()
 
                 view?.let {
