@@ -65,7 +65,6 @@ class SimprintsManager (private val simHelper: SimHelper, private val sessionMan
                             UUID.fromString(registration.guid)
                     )
                 } else {
-                    // TODO: report to Rollbar
                     FingerprintManager.FingerprintRequestResponse(
                             FingerprintManager.FingerprintStatus.FAILURE)
                 }
@@ -75,7 +74,6 @@ class SimprintsManager (private val simHelper: SimHelper, private val sessionMan
                         FingerprintManager.FingerprintStatus.CANCELLED)
             }
             else -> {
-                // TODO: report to Rollbar
                 FingerprintManager.FingerprintRequestResponse(
                         FingerprintManager.FingerprintStatus.FAILURE)
             }
@@ -99,7 +97,6 @@ class SimprintsManager (private val simHelper: SimHelper, private val sessionMan
                             verification.tier == BAD_SCAN_THRESHOLD
                     )
                 } else {
-                    // TODO: report to Rollbar
                     FingerprintManager.FingerprintVerificationResponse(
                             FingerprintManager.FingerprintStatus.FAILURE)
                 }
@@ -109,7 +106,6 @@ class SimprintsManager (private val simHelper: SimHelper, private val sessionMan
                         FingerprintManager.FingerprintStatus.CANCELLED)
             }
             else -> {
-                // TODO: report to Rollbar
                 FingerprintManager.FingerprintVerificationResponse(
                         FingerprintManager.FingerprintStatus.FAILURE)
             }

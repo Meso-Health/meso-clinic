@@ -31,6 +31,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -201,9 +202,12 @@ class EncounterFragment : DaggerFragment() {
         }
 
         save_button.setOnClickListener {
-            viewModel.currentEncounter()?.let {
-                // TODO: should we allow proceeding with no encounter items?
-                navigationManager.goTo(DiagnosisFragment.forEncounter(it))
+            if (viewModel.currentEncounter()?.encounterItems?.isEmpty() != false) {
+                SnackbarHelper.show(it, context, R.string.no_line_items_snackbar_message)
+            } else {
+                viewModel.currentEncounter()?.let {
+                    navigationManager.goTo(DiagnosisFragment.forEncounter(it))
+                }
             }
         }
     }

@@ -161,6 +161,7 @@
     <string name="default_billable_quantity">1</string>
     <string name="continue_encounter_button">Next</string>
     <string name="add_billable_prompt"><u>Add new item</u></string>
+    <string name="no_line_items_snackbar_message">Must include at least one line item</string>
     <plurals name="encounter_item_count">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>

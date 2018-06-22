@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.LocalDate
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.usecases.LoadMemberUseCase
@@ -18,12 +19,14 @@ import javax.inject.Inject
 class EditMemberViewModel(
         private val loadMemberUseCase: LoadMemberUseCase,
         private val updateMemberUseCase: UpdateMemberUseCase,
+        private val logger: Logger,
         private val viewStateObservable: MediatorLiveData<ViewState>
 ) : ViewModel() {
 
     @Inject constructor(loadMemberUseCase: LoadMemberUseCase,
-                        updateMemberUseCase: UpdateMemberUseCase) :
-            this(loadMemberUseCase, updateMemberUseCase, MediatorLiveData<ViewState>())
+                        updateMemberUseCase: UpdateMemberUseCase,
+                        logger: Logger) :
+            this(loadMemberUseCase, updateMemberUseCase, logger, MediatorLiveData<ViewState>())
 
     internal var sourceLiveData: LiveData<ViewState>? = null
 
@@ -51,7 +54,7 @@ class EditMemberViewModel(
         val flowable = loadMemberUseCase.execute(memberId)
                 .map { ViewState(it) }
                 .onErrorReturn {
-                    // TODO: handle error
+                    logger.error(it)
                     ViewState(null)
                 }
         return LiveDataReactiveStreams.fromPublisher(flowable)
