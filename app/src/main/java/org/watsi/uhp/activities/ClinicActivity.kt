@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.annotation.DrawableRes
+import android.support.annotation.StringRes
 import android.support.v4.app.ActivityCompat
 import android.view.Menu
 import android.view.MenuItem
@@ -110,6 +112,24 @@ class ClinicActivity : DaggerAppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    /**
+     * Helper method for configuring the toolbar from a Fragment
+     *
+     * @param titleId ID of a StringRes to use as the title
+     * @param homeIconId ID of a DrawableRes to use as the up navigation affordance
+     *                   Pass null if an up navigation affordance should not be displayed
+     *                   and pass 0 to use the theme default (back arrow)
+     */
+    fun setToolbar(@StringRes titleId: Int, @DrawableRes homeIconId: Int?) {
+        setTitle(titleId)
+        setToolbarHomeIcon(homeIconId)
+    }
+
+    private fun setToolbarHomeIcon(@DrawableRes homeIconId: Int?) {
+        supportActionBar?.setDisplayHomeAsUpEnabled(homeIconId != null)
+        homeIconId?.let{ supportActionBar?.setHomeAsUpIndicator(it) }
     }
 
     fun navigateToAuthenticationActivity() {
