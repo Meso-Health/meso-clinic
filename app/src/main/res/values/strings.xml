@@ -138,10 +138,10 @@
     <string name="checked_in_snackbar_message">%1$s was checked in.</string>
 
     <string name="fingerprint_scan_btn">Verify Fingerprints</string>
-    <string name="fingerprint_scan_successful">Fingerprint Scan Successful!</string>
-    <string name="fingerprint_scan_failed">Fingerprint Scan Failed</string>
+    <string name="fingerprint_scan_failed">Fingerprints could not be scanned. Contact your administrator for help.</string>
     <string name="good_scan_indicator">Good Fingerprint Match</string>
     <string name="bad_scan_indicator">Fingerprint Mismatch</string>
+    <string name="fingerprints_missing_no_verify">No fingerprint scans to verify.</string>
 
     <!-- CurrentMemberDetailFragment -->
     <string name="current_member_fragment_label">Encounter</string>
