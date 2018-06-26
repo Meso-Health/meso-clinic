@@ -25,6 +25,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.utils.StringUtils
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
 import org.watsi.uhp.helpers.LayoutHelper
@@ -97,9 +98,9 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 setErrors(it.errors)
 
                 if (it.name.isEmpty()) {
-                    activity.title = context.getString(R.string.enroll_newborn_activity_title)
+                    (activity as ClinicActivity).setToolbar(context.getString(R.string.enroll_newborn_activity_title), R.drawable.ic_clear_white_24dp)
                 } else {
-                    activity.title = it.name
+                    (activity as ClinicActivity).setToolbar(it.name, R.drawable.ic_clear_white_24dp)
                 }
 
                 if (it.photoId != null && it.thumbnailPhoto != null) {
@@ -120,7 +121,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstance: Bundle?): View? {
-        activity.title = context.getString(R.string.enroll_newborn_activity_title)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.enroll_newborn_activity_title), R.drawable.ic_clear_white_24dp)
         return inflater?.inflate(R.layout.fragment_enroll_newborn, container, false)
     }
 
