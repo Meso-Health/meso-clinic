@@ -79,7 +79,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(R.string.current_member_fragment_label, R.drawable.ic_arrow_back_white_24dp)
+        activity.setTitle(R.string.current_member_fragment_label)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_current_member_detail, container, false)
     }
@@ -103,9 +103,6 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            android.R.id.home -> {
-                navigationManager.goBack()
-            }
             R.id.menu_member_edit -> {
                 navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }

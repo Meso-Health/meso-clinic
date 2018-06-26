@@ -35,6 +35,7 @@ import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
 import org.watsi.uhp.managers.KeyboardManager
@@ -90,6 +91,8 @@ class EditMemberFragment : DaggerFragment() {
         observable.observe(this, Observer { viewState ->
             viewState?.memberWithThumbnail?.let { memberWithThumbnail ->
                 val member = memberWithThumbnail.member
+
+                (activity as ClinicActivity).setToolbar(member.name, R.drawable.ic_arrow_back_white_24dp)
                 activity.title = member.name
                 top_name.text = member.name
 
