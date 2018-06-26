@@ -66,7 +66,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         name_layout.setError(errorMap[EnrollNewbornViewModel.MEMBER_NAME_ERROR])
         enroll_newborn_birthdate_dialog_field.setErrorOnField(errorMap[EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR])
         photo_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_PHOTO_ERROR])
-        card_id_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_CARD_ERROR])
     }
 
     private fun scrollToFirstError(errorMap: Map<String, String>) {
@@ -74,8 +73,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 EnrollNewbornViewModel.MEMBER_GENDER_ERROR to gender_field,
                 EnrollNewbornViewModel.MEMBER_NAME_ERROR to name_layout,
                 EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR to enroll_newborn_birthdate_dialog_field,
-                EnrollNewbornViewModel.MEMBER_PHOTO_ERROR to photo_field,
-                EnrollNewbornViewModel.MEMBER_CARD_ERROR to card_id_field
+                EnrollNewbornViewModel.MEMBER_PHOTO_ERROR to photo_field
         )
 
         validationKeysToField.forEach {
