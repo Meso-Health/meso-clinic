@@ -73,7 +73,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.current_patients_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.current_patients_fragment_label), null)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_current_patients, container, false)
     }

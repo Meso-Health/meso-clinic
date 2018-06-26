@@ -20,6 +20,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
