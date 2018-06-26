@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.remove_
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.uhp.managers.KeyboardManager
+import java.text.NumberFormat
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -34,7 +35,7 @@ class EncounterItemListItem @JvmOverloads constructor(
         billable_name.text = billable.name
         billable_details.text = billable.dosageDetails()
 
-        billable_quantity.setText(currentQuantity.toString())
+        billable_quantity.setText(NumberFormat.getInstance().format(currentQuantity))
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus

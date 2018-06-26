@@ -14,19 +14,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/receipt_billable_name"
+    <android.support.constraint.Guideline
+        android:id="@+id/receipt_billable_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintGuide_begin="@dimen/space16"
+        android:orientation="vertical" />
+
+    <TextView
+        android:id="@+id/receipt_billable_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dialog_padding"
+        android:layout_marginRight="@dimen/dialog_padding"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/receipt_billable_quantity" />
+        app:layout_constraintStart_toEndOf="@id/receipt_billable_guideline"
+        app:layout_constraintEnd_toStartOf="@id/receipt_billable_price"
+        app:layout_constraintHorizontal_chainStyle="spread"/>
 
     <TextView
         android:id="@+id/receipt_billable_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/receipt_billable_name"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -36,7 +47,7 @@
         android:textColor="@color/gray6"
         android:layout_marginLeft="@dimen/dialog_padding"
         app:layout_constraintTop_toBottomOf="@id/receipt_billable_name"
-        app:layout_constraintStart_toEndOf="@id/receipt_billable_quantity"
+        app:layout_constraintStart_toEndOf="@id/receipt_billable_guideline"
         android:visibility="gone" />
 
 </org.watsi.uhp.views.ReceiptListItem>
