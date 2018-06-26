@@ -17,23 +17,14 @@ object DateUtils {
     const val DAY_OF_WEEK_FORMAT = "EEEE"
     const val DATE_FORMAT = "MMM dd, yyyy"
 
-    fun formatInstant(instant: Instant,
-                      format: String,
-                      zoneId: ZoneId = ZoneId.systemDefault()
-    ): String {
-        val formatter = DateTimeFormatter.ofPattern(format).withZone(zoneId)
-        return formatter.format(instant)
-    }
-
-    fun formatInstantStyleLong(instant: Instant, clock: Clock = Clock.systemDefaultZone()): String {
-        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-            .withLocale(Locale.getDefault()).withZone(clock.zone)
-        return formatter.format(instant)
-    }
-
     fun formatLocalDate(localDate: LocalDate): String {
         val formatter = DateTimeFormatter.ofPattern(DATE_FORMAT)
         return localDate.format(formatter)
+    }
+
+    fun formatLocalTime(localDateTime: LocalDateTime): String {
+        val formatter = DateTimeFormatter.ofPattern(TIME_FORMAT)
+        return localDateTime.format(formatter).toLowerCase()
     }
 
     fun isDateInFuture(localDate: LocalDate, clock: Clock = Clock.systemDefaultZone()): Boolean {
