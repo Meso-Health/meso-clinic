@@ -35,7 +35,6 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
-import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -148,7 +147,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(R.string.detail_fragment_label, R.drawable.ic_arrow_back_white_24dp)
+        activity.setTitle(R.string.detail_fragment_label)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_checkin_member_detail, container, false)
     }
@@ -286,9 +285,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            android.R.id.home -> {
-                navigationManager.goTo(CurrentPatientsFragment())
-            }
             R.id.menu_member_edit -> {
                 navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }
