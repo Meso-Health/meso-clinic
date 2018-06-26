@@ -98,7 +98,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 setErrors(it.errors)
 
                 if (it.name.isEmpty()) {
-                    (activity as ClinicActivity).setToolbar(R.string.enroll_newborn_activity_title, R.drawable.ic_clear_white_24dp)
+                    (activity as ClinicActivity).setToolbar(context.getString(R.string.enroll_newborn_activity_title), R.drawable.ic_clear_white_24dp)
                 } else {
                     (activity as ClinicActivity).setToolbar(it.name, R.drawable.ic_clear_white_24dp)
                 }
@@ -121,7 +121,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstance: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(R.string.enroll_newborn_activity_title, R.drawable.ic_clear_white_24dp)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.enroll_newborn_activity_title), R.drawable.ic_clear_white_24dp)
         return inflater?.inflate(R.layout.fragment_enroll_newborn, container, false)
     }
 
