@@ -1,7 +1,10 @@
 package org.watsi.device.db.repositories
 
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -9,7 +12,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.RequestBody
 import okio.Buffer
-import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,14 +43,14 @@ class EncounterFormRepositoryImplTest {
     lateinit var repository: EncounterFormRepositoryImpl
 
     val photoModel = PhotoModelFactory.build()
-    val encounterFormModel = EncounterFormModelFactory.build(photoId = photoModel.id)
+    val encounterFormModel = EncounterFormModelFactory.build(photoId = photoModel.id, clock = clock)
     val encounterFormWithPhotoModel = EncounterFormWithPhotoModel(encounterFormModel, listOf(photoModel))
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterFormRepositoryImpl(mockDao, mockApi, mockSessionManager)
+        repository = EncounterFormRepositoryImpl(mockDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
@@ -82,6 +85,30 @@ class EncounterFormRepositoryImplTest {
         val requestBody = captor.firstValue
         val buffer = Buffer()
         requestBody.writeTo(buffer)
-        Assert.assertTrue(Arrays.equals(photoModel.bytes, buffer.readByteArray()))
+        assertTrue(Arrays.equals(photoModel.bytes, buffer.readByteArray()))
+        verify(mockDao).update(encounterFormModel.copy(photoId = null))
+    }
+
+    @Test
+    fun sync_fails_doesNotUpdateForm() {
+        val user = UserFactory.build()
+        val token = AuthenticationToken("token", clock.instant(), user)
+        val delta = DeltaFactory.build(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.ENCOUNTER_FORM,
+                modelId = encounterFormModel.id,
+                synced = false
+        )
+        val exception = Exception()
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockDao.find(encounterFormModel.id)).thenReturn(Single.just(encounterFormWithPhotoModel))
+        whenever(mockApi.patchEncounterForm(
+                eq(token.getHeaderString()), eq(encounterFormModel.encounterId), any()
+        )).then { throw exception }
+
+        repository.sync(delta).test().assertError(exception)
+
+        verify(mockDao, never()).update(encounterFormModel.copy(photoId = null))
     }
 }
