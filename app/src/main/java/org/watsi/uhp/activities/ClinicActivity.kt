@@ -115,7 +115,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
     }
 
     /**
-     * Helper method for configuring the toolbar from a Fragment
+     * Helper method for configuring the toolbar from a Fragment that takes StringRes ID as title
      *
      * @param titleId ID of a StringRes to use as the title
      * @param homeIconId ID of a DrawableRes to use as the up navigation affordance
@@ -124,6 +124,19 @@ class ClinicActivity : DaggerAppCompatActivity() {
      */
     fun setToolbar(@StringRes titleId: Int, @DrawableRes homeIconId: Int?) {
         setTitle(titleId)
+        setToolbarHomeIcon(homeIconId)
+    }
+
+    /**
+     * Helper method for configuring the toolbar from a Fragment that takes String as title
+     *
+     * @param title String to use as the title
+     * @param homeIconId ID of a DrawableRes to use as the up navigation affordance
+     *                   Pass null if an up navigation affordance should not be displayed
+     *                   and pass 0 to use the theme default (back arrow)
+     */
+    fun setToolbar(title: String, @DrawableRes homeIconId: Int?) {
+        setTitle(title)
         setToolbarHomeIcon(homeIconId)
     }
 
