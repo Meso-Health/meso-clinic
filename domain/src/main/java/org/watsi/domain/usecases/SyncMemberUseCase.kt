@@ -14,8 +14,8 @@ class SyncMemberUseCase(
             val unsyncedMemberDeltas = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
 
             unsyncedMemberDeltas.groupBy { it.modelId }.values.map { groupedDeltas ->
-                memberRepository.sync(groupedDeltas).blockingGet()
-                deltaRepository.markAsSynced(groupedDeltas).blockingGet()
+                memberRepository.sync(groupedDeltas).blockingAwait()
+                deltaRepository.markAsSynced(groupedDeltas).blockingAwait()
             }
         }
     }

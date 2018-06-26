@@ -12,7 +12,7 @@ data class EncounterFormModel(@PrimaryKey val id: UUID,
                               val createdAt: Instant,
                               val updatedAt: Instant,
                               val encounterId: UUID,
-                              val photoId: UUID) {
+                              val photoId: UUID?) {
 
     fun toEncounterForm(): EncounterForm {
         return EncounterForm(id = id, encounterId = encounterId, photoId = photoId)

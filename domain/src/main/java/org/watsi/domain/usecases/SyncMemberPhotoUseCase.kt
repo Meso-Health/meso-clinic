@@ -23,8 +23,8 @@ class SyncMemberPhotoUseCase(
                     .values
 
             syncableMemberPhotoDeltas.map { groupedDeltas ->
-                memberRepository.syncPhotos(groupedDeltas).blockingGet()
-                deltaRepository.markAsSynced(groupedDeltas).blockingGet()
+                memberRepository.syncPhotos(groupedDeltas).blockingAwait()
+                deltaRepository.markAsSynced(groupedDeltas).blockingAwait()
             }
         }
     }

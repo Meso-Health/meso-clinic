@@ -24,8 +24,8 @@ class SyncEncounterUseCase(
                 val hasUnsyncedBillable = encounterWithItems.encounterItems.any { unsyncedBillableIds.contains(it.billableId) }
 
                 if (!hasUnsyncedIdEvent && !hasUnsyncedBillable) {
-                    encounterRepository.sync(encounterDelta).blockingGet()
-                    deltaRepository.markAsSynced(listOf(encounterDelta)).blockingGet()
+                    encounterRepository.sync(encounterDelta).blockingAwait()
+                    deltaRepository.markAsSynced(listOf(encounterDelta)).blockingAwait()
                 }
             }
         }
