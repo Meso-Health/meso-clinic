@@ -3,6 +3,7 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
@@ -32,7 +33,12 @@ class EncounterItemListItem @JvmOverloads constructor(
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
-        billable_details.text = billable.dosageDetails()
+        if (billable.dosageDetails() != null) {
+            billable_details.text = billable.dosageDetails()
+            billable_details.visibility = View.VISIBLE
+        } else {
+            billable_details.visibility = View.GONE
+        }
 
         billable_quantity.setText(currentQuantity.toString())
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
