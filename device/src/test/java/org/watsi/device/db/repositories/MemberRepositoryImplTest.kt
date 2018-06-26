@@ -276,5 +276,30 @@ class MemberRepositoryImplTest {
         val buffer = Buffer()
         requestBody.writeTo(buffer)
         assertTrue(java.util.Arrays.equals(photoModel.bytes, buffer.readByteArray()))
+        verify(mockDao).upsert(memberModel.copy(photoId = null), emptyList())
+    }
+
+    @Test
+    fun syncPhotos_syncFails_doesNotUpdatePhotoId() {
+        val photoModel = PhotoModelFactory.build()
+        val memberModel = MemberModelFactory.build(photoId = photoModel.id, clock = clock)
+        val memberWithRawPhotoModel = MemberWithRawPhotoModel(memberModel, listOf(photoModel))
+        val delta = DeltaFactory.build(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.PHOTO,
+                modelId = memberModel.id,
+                synced = false
+        )
+        val exception = Exception()
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockPhotoDao.findMemberWithRawPhoto(memberModel.id))
+                .thenReturn(Single.just(memberWithRawPhotoModel))
+        whenever(mockApi.patchPhoto(eq(token.getHeaderString()), eq(memberModel.id), any()))
+                .then { throw exception }
+
+        repository.syncPhotos(listOf(delta)).test().assertError(exception)
+
+        verify(mockDao, never()).upsert(memberModel.copy(photoId = null), emptyList())
     }
 }

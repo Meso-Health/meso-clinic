@@ -15,8 +15,8 @@ class SyncIdentificationEventUseCase(
                     Delta.ModelName.IDENTIFICATION_EVENT).blockingGet()
 
             unsyncedIdEventDeltas.map { idEventDelta ->
-                identificationEventRepository.sync(idEventDelta)
-                deltaRepository.markAsSynced(listOf(idEventDelta))
+                identificationEventRepository.sync(idEventDelta).blockingAwait()
+                deltaRepository.markAsSynced(listOf(idEventDelta)).blockingAwait()
             }
         }
     }
