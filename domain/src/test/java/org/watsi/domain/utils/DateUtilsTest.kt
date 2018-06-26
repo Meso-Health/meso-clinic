@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.temporal.ChronoUnit
 
@@ -30,11 +31,13 @@ class DateUtilsTest {
     }
 
     @Test
-    fun longDateString() {
+    fun dateAndTimeStrings() {
         val dateString = "May 21, 2018"
-        val matchingInstant = Instant.parse("2018-05-21T10:15:30.000Z")
+        val timeString = "10:15am"
+        val matchingLocalDateTime = LocalDateTime.parse("2018-05-21T10:15:30.000")
 
-        assertEquals(dateString, DateUtils.formatInstantStyleLong(matchingInstant, clock))
+        assertEquals(dateString, DateUtils.formatLocalDate(matchingLocalDateTime.toLocalDate()))
+        assertEquals(timeString, DateUtils.formatLocalTime(matchingLocalDateTime))
     }
 
     @Test
