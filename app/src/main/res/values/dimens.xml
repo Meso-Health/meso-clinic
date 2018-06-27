@@ -61,9 +61,6 @@
     <!-- padding for each item in a list view -->
     <dimen name="list_item_vertical_padding">16dp</dimen>
 
-    <!-- bottom padding below last item for list views on pages with fixed bottom buttons -->
-    <dimen name="list_view_bottom_padding">64dp</dimen>
-
     <!-- dimensions for photo on detail view -->
     <dimen name="detail_fragment_photo_height">208dp</dimen>
     <dimen name="detail_fragment_photo_width">156dp</dimen>
