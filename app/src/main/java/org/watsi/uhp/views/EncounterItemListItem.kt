@@ -44,17 +44,22 @@ class EncounterItemListItem @JvmOverloads constructor(
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
-                onQuantityDeselected()
                 keyboardManager.hideKeyboard(v)
+                onQuantityDeselected()
 
-                val newQuantity = billable_quantity.text.toString().toIntOrNull()
-                if (newQuantity != currentQuantity) {
-                    if (newQuantity == null || newQuantity == 0) {
-                        billable_quantity.setText(currentQuantity.toString())
-                        Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
-                                android.widget.Toast.LENGTH_SHORT).show()
+                val parsedQuantity = billable_quantity.text.toString().toIntOrNull()
+                if (parsedQuantity == null || parsedQuantity == 0) {
+                    billable_quantity.setText(currentQuantity.toString())
+                    Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
+                            android.widget.Toast.LENGTH_SHORT).show()
+                } else {
+                    if (parsedQuantity != currentQuantity) {
+                        onQuantityChanged(encounterItem.id, parsedQuantity)
                     } else {
-                        onQuantityChanged(encounterItem.id, newQuantity)
+                        // always set the field text to the parsed quantity (otherwise if
+                        // currentQuantity is 10 and user inputs "0010", it would stay at "0010"
+                        // instead of updating to 10)
+                        billable_quantity.setText(parsedQuantity.toString())
                     }
                 }
             } else {
