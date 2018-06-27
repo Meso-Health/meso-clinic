@@ -7,10 +7,13 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
+import android.widget.TextView
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id_field
@@ -37,7 +40,7 @@ import org.watsi.uhp.viewmodels.EnrollNewbornViewModel.MemberStatus
 import java.util.UUID
 import javax.inject.Inject
 
-class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
+class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack, TextView.OnEditorActionListener {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -169,6 +172,8 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 handleOnSaveError(throwable)
             })
         }
+
+        name.setOnEditorActionListener(this)
     }
 
     fun handleOnSaveError(throwable: Throwable) {
@@ -180,6 +185,23 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             logger.error(throwable)
         }
         view?.let { SnackbarHelper.showError(it, context, errorMessage) }
+    }
+
+    /**
+     * Define custom onEditorAction behavior for cases where we do not want the default ime behavior
+     * when entering information into the inputs
+     */
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+        if (v == null) return false
+        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+            if (v == name) {
+                v.clearFocus()
+                keyboardManager.hideKeyboard(v)
+                enroll_newborn_birthdate_dialog_field.performClick()
+                return true
+            }
+        }
+        return false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
