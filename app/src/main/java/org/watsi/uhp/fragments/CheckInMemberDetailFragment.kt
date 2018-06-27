@@ -260,6 +260,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                         scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
                             SnackbarHelper.show(view, context, R.string.fingerprint_scan_failed)
                         })
+                        view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
                     }
                     FingerprintManager.FingerprintStatus.CANCELLED -> {
                         scan_fingerprints_btn.enableButton()
