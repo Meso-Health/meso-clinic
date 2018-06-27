@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import dagger.android.support.DaggerAppCompatActivity
 import net.hockeyapp.android.UpdateManager
 import org.watsi.device.managers.SessionManager
@@ -91,6 +92,14 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     private fun checkForUpdates() {
         UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID)
+    }
+
+    fun setSoftInputModeToResize() {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    fun setSoftInputModeToPan() {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -29,6 +29,7 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -117,6 +118,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.encounter_fragment_label)
+        (activity as ClinicActivity).setSoftInputModeToResize()
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
     }
 
@@ -125,10 +127,12 @@ class EncounterFragment : DaggerFragment() {
                 onQuantitySelected = {
                     select_type_box.visibility = View.GONE
                     select_billable_box.visibility = View.GONE
+                    save_button.visibility = View.GONE
                 },
                 onQuantityDeselected = {
                     select_type_box.visibility = View.VISIBLE
                     select_billable_box.visibility = View.VISIBLE
+                    save_button.visibility = View.VISIBLE
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
                     viewModel.setItemQuantity(encounterItemId, newQuantity)
@@ -210,6 +214,11 @@ class EncounterFragment : DaggerFragment() {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ClinicActivity).setSoftInputModeToPan()
     }
 
     private fun buildSearchResultCursor(billables: List<Billable>): MatrixCursor {
