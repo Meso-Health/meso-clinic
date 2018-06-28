@@ -3,13 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/white"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-    android:layout_marginRight="@dimen/fragment_horizontal_margin"
-    android:layout_marginTop="@dimen/fragment_vertical_margin"
-    android:layout_marginBottom="@dimen/fragment_vertical_margin">
+    android:paddingLeft="@dimen/fragment_horizontal_margin"
+    android:paddingRight="@dimen/fragment_horizontal_margin"
+    android:paddingTop="@dimen/fragment_vertical_margin"
+    android:paddingBottom="@dimen/fragment_vertical_margin">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/type_container"
@@ -19,21 +20,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/type_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/space4"
-            style="@style/Label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/add_new_billable_type_label"/>
-
-        <Spinner
+        <org.watsi.uhp.views.SpinnerField
             android:id="@+id/type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/type_label"
+            app:label="@string/add_new_billable_type_label"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <View
@@ -59,7 +51,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:hint="@string/add_new_billable_name_label"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:inputType="textCapWords|textNoSuggestions" />
     </android.support.design.widget.TextInputLayout>
 
@@ -86,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:hint="@string/add_new_billable_unit_label"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:inputType="textCapWords"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -110,6 +102,17 @@
         </android.support.design.widget.TextInputLayout>
     </android.support.constraint.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/currency_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/currency"
+        android:textColor="@color/gray6"
+        android:textSize="@dimen/fontSize16"
+        android:padding="@dimen/space12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/spread_container"/>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/composition_container"
         android:layout_width="match_parent"
@@ -118,21 +121,12 @@
         app:layout_constraintTop_toBottomOf="@id/spread_container"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/composition_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/space4"
-            style="@style/Label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/add_new_billable_composition_label"/>
-
-        <Spinner
+        <org.watsi.uhp.views.SpinnerField
             android:id="@+id/composition_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/composition_label"
+            app:label="@string/add_new_billable_composition_label"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <View

@@ -182,6 +182,7 @@
     <string name="add_new_billable_price_label">Price per Unit</string>
     <string name="add_new_billable_unit_label">Unit (eg. 100mg)</string>
     <string name="add_new_billable_composition_label">Composition (eg. tablet)</string>
+    <string name="add_new_billable_composition_prompt">Select a composition</string>
     <string name="add_new_billable">Add</string>
     <string name="currency">UGX</string>
 

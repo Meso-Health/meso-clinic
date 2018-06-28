@@ -26,6 +26,9 @@ data class Billable(val id: UUID,
         fun requiresQuantity(type: Billable.Type): Boolean {
             return type == Type.DRUG || type == Type.SUPPLY || type == Type.VACCINE
         }
+
+        const val VACCINE_COMPOSITION = "vail"
+        const val SUPPLY_COMPOSITION = "unit"
     }
 
     enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE }

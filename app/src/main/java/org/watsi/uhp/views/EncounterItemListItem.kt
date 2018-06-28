@@ -34,7 +34,7 @@ class EncounterItemListItem @JvmOverloads constructor(
         billable_name.text = billable.name
         billable_details.text = billable.dosageDetails()
 
-        billable_quantity.setText(NumberFormat.getInstance().format(currentQuantity))
+        billable_quantity.setText(currentQuantity.toString())
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
