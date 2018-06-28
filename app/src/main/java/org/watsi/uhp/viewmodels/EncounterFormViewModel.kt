@@ -28,7 +28,7 @@ class EncounterFormViewModel @Inject constructor(
         loadPhotoUseCase.execute(thumbnailPhotoId).subscribe({ thumbnailPhoto ->
             currentEncounterFormPhotos()?.let {
                 val updatedPhotos = it.plus(EncounterFormPhoto(fullsizePhotoId, thumbnailPhoto))
-                observable.value = observable.value?.copy(encounterFormPhotos = updatedPhotos)
+                observable.postValue(observable.value?.copy(encounterFormPhotos = updatedPhotos))
             }
         }, {
             logger.error(it)
