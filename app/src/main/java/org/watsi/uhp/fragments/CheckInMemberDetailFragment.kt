@@ -5,13 +5,13 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import dagger.android.support.DaggerFragment
@@ -36,6 +36,7 @@ import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
@@ -178,8 +179,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     private fun launchClinicNumberDialog() {
-        val builder = AlertDialog.Builder(activity)
-        builder.setView(R.layout.dialog_clinic_number)
+        val builder = AlertDialog.Builder(context)
+        val editTextLayout = LayoutInflater.from(context).inflate(R.layout.dialog_clinic_number, null)
+        builder.setView(editTextLayout)
                 .setMessage(R.string.clinic_number_prompt)
                 .setPositiveButton(R.string.clinic_number_button) { dialog, _ ->
                     createIdentificationEvent(dialog as AlertDialog).subscribe({
@@ -194,8 +196,13 @@ class CheckInMemberDetailFragment : DaggerFragment() {
         val dialog = builder.create()
 
         dialog.setOnShowListener {
-            val clinicNumberField = dialog.findViewById<EditText>(R.id.clinic_number_field)
+            val clinicNumberField = dialog.findViewById<TextInputEditText>(R.id.clinic_number_field_text_edit)
             clinicNumberField?.let { keyboardManager.showKeyboard(it) }
+            val submitButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            submitButton.isEnabled = false
+            clinicNumberField?.addTextChangedListener( LayoutHelper.OnChangedListener { text ->
+                submitButton.isEnabled = !text.isEmpty()
+            })
         }
 
         dialog.show()
@@ -204,7 +211,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     private fun createIdentificationEvent(dialog: AlertDialog): Completable {
         val radioGroupView = dialog.findViewById<RadioGroup>(R.id.radio_group_clinic_number)
         val selectedRadioButton = dialog.findViewById<RadioButton>(radioGroupView?.checkedRadioButtonId!!)
-        val clinicNumberField = dialog.findViewById<EditText>(R.id.clinic_number_field)
+        val clinicNumberField = dialog.findViewById<TextInputEditText>(R.id.clinic_number_field_text_edit)
 
         val clinicNumberType = IdentificationEvent.ClinicNumberType.valueOf(
                 selectedRadioButton?.text.toString().toUpperCase())
