@@ -64,10 +64,16 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
                     if (member.isAbsentee(clock)) {
                         absentee_notification.visibility = View.VISIBLE
+                        absentee_notification.setOnClickListener {
+                            navigationManager.goTo(EditMemberFragment.forMember(member.id))
+                        }
                     }
 
                     if (member.cardId == null) {
                         replace_card_notification.visibility = View.VISIBLE
+                        replace_card_notification.setOnClickListener {
+                            navigationManager.goTo(EditMemberFragment.forMember(member.id))
+                        }
                     }
                 }
 
