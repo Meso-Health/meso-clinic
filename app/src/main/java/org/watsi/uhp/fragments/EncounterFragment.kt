@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -146,7 +147,9 @@ class EncounterFragment : DaggerFragment() {
         RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
 
         type_spinner.adapter = billableTypeAdapter
-        type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val typeSpinnerListener =  object : AdapterView.OnItemSelectedListener, View.OnTouchListener {
+            var userSelected = false
+
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 /* no-op */
             }
@@ -158,9 +161,23 @@ class EncounterFragment : DaggerFragment() {
                     null
                 }
                 viewModel.selectType(selectedType)
-                billable_spinner.performClick()
+
+                // Distinguish between user-initiated select events and automatically triggered
+                // ones (e.g. resuming fragment on back press)
+                if (userSelected) {
+                    billable_spinner.performClick()
+                    userSelected = false
+                }
+            }
+
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                userSelected = true
+                return false
             }
         }
+        type_spinner.onItemSelectedListener = typeSpinnerListener
+        type_spinner.setOnTouchListener(typeSpinnerListener)
+
 
         billable_spinner.adapter = billableAdapter
         billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
