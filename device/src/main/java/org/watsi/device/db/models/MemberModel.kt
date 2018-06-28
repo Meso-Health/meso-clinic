@@ -25,6 +25,11 @@ data class MemberModel(@PrimaryKey val id: UUID,
                        val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
                        val fingerprintsGuid: UUID?,
                        val phoneNumber: String?) {
+    init {
+        if (name.isBlank()) {
+            throw ModelValidationException("Name cannot be blank")
+        }
+    }
 
     fun toMember(): Member {
         return Member(id = id,
