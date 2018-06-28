@@ -14,7 +14,7 @@ class EncounterItemAdapter(
         private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf(),
         private val onQuantitySelected: () -> Unit,
         private val onQuantityDeselected: () -> Unit,
-        private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
+        private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
         private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
         private val keyboardManager: KeyboardManager
 ) : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {

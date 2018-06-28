@@ -5,7 +5,6 @@ import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
@@ -24,7 +23,7 @@ class EncounterItemListItem @JvmOverloads constructor(
             encounterItemRelation: EncounterItemWithBillable,
             onQuantitySelected: () -> Unit,
             onQuantityDeselected: () -> Unit,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
+            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
             onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
             keyboardManager: KeyboardManager
     ) {
@@ -46,11 +45,8 @@ class EncounterItemListItem @JvmOverloads constructor(
                 if (newQuantity != currentQuantity) {
                     if (newQuantity == null || newQuantity == 0) {
                         billable_quantity.setText(currentQuantity.toString())
-                        Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
-                                android.widget.Toast.LENGTH_SHORT).show()
-                    } else {
-                        onQuantityChanged(encounterItem.id, newQuantity)
                     }
+                    onQuantityChanged(encounterItem.id, newQuantity)
                 }
             } else {
                 onQuantitySelected()

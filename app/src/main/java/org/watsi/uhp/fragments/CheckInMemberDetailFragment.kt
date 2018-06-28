@@ -183,10 +183,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                 .setMessage(R.string.clinic_number_prompt)
                 .setPositiveButton(R.string.clinic_number_button) { dialog, _ ->
                     createIdentificationEvent(dialog as AlertDialog).subscribe({
-                        view?.let {
-                            SnackbarHelper.show(it, context, getString(R.string.checked_in_snackbar_message, member.name))
-                        }
-                        navigationManager.popTo(CurrentPatientsFragment())
+                        navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
+                                getString(R.string.checked_in_snackbar_message, member.name)
+                        ))
                     }, {
                         logger.error(it)
                     })
