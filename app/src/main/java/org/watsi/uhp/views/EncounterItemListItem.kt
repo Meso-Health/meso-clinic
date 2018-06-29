@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
@@ -14,6 +13,7 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.remove_
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.uhp.managers.KeyboardManager
+import java.text.NumberFormat
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -23,7 +23,7 @@ class EncounterItemListItem @JvmOverloads constructor(
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,
             onQuantitySelected: () -> Unit,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
+            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
             onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
             keyboardManager: KeyboardManager
     ) {
@@ -43,20 +43,20 @@ class EncounterItemListItem @JvmOverloads constructor(
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
-                val parsedQuantity = billable_quantity.text.toString().toIntOrNull()
-                if (parsedQuantity == null || parsedQuantity == 0) {
+                val parsedNewQuantity = billable_quantity.text.toString().toIntOrNull()
+
+                if (parsedNewQuantity == null || parsedNewQuantity == 0) {
+                    // set field text back to previous quantity
                     billable_quantity.setText(currentQuantity.toString())
-                    Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
-                            android.widget.Toast.LENGTH_SHORT).show()
                 } else {
-                    if (parsedQuantity != currentQuantity) {
-                        onQuantityChanged(encounterItem.id, parsedQuantity)
-                    } else {
-                        // always set the field text to the parsed quantity (otherwise if
-                        // currentQuantity is 10 and user inputs "0010", it would stay at "0010"
-                        // instead of updating to 10)
-                        billable_quantity.setText(parsedQuantity.toString())
-                    }
+                    // always set the field text to the parsed quantity (otherwise if
+                    // currentQuantity is 10 and user inputs "0010", it would stay at "0010"
+                    // instead of updating to 10)
+                    billable_quantity.setText(parsedNewQuantity.toString())
+                }
+
+                if (parsedNewQuantity != currentQuantity) {
+                    onQuantityChanged(encounterItem.id, parsedNewQuantity)
                 }
             } else {
                 onQuantitySelected()

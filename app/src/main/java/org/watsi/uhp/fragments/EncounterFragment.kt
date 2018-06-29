@@ -148,8 +148,12 @@ class EncounterFragment : DaggerFragment() {
                     line_items_list.setBottomPadding(0)
                     line_items_list.setBottomMargin(context.resources.getDimensionPixelSize(R.dimen.numericKeyboardHeight))
                 },
-                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
-                    viewModel.setItemQuantity(encounterItemId, newQuantity)
+                onQuantityChanged = { encounterItemId: UUID, newQuantity: Int? ->
+                    if (newQuantity == null || newQuantity == 0) {
+                        SnackbarHelper.show(save_button, context, R.string.error_blank_or_zero_quantity)
+                    } else {
+                        viewModel.setItemQuantity(encounterItemId, newQuantity)
+                    }
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
@@ -237,7 +241,7 @@ class EncounterFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             if (viewModel.currentEncounter()?.encounterItems?.isEmpty() != false) {
-                SnackbarHelper.show(it, context, R.string.no_line_items_snackbar_message)
+                SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
             } else {
                 viewModel.currentEncounter()?.let {
                     navigationManager.goTo(DiagnosisFragment.forEncounter(it))

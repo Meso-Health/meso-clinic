@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.annotation.DrawableRes
+import android.support.annotation.StringRes
 import android.support.v4.app.ActivityCompat
 import android.view.Menu
 import android.view.MenuItem
@@ -119,6 +121,42 @@ class ClinicActivity : DaggerAppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    /**
+     * Helper method for configuring the toolbar from a Fragment
+     *
+     * @param title String to use as the title
+     * @param homeIconId ID of a DrawableRes to use as the up navigation affordance
+     *                   Pass null if an up navigation affordance should not be displayed
+     *                   and pass 0 to use the theme default (back arrow)
+     */
+    fun setToolbar(title: String, @DrawableRes homeIconId: Int?) {
+        setTitle(title)
+        setToolbarHomeIcon(homeIconId)
+    }
+
+    /**
+     * Sets the toolbar to be flat and title-less.
+     */
+    fun setToolbarMinimal(@DrawableRes homeIconId: Int?) {
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.elevation = 0.toFloat()
+        setToolbarHomeIcon(homeIconId)
+    }
+
+    /**
+     * Resets the changes made by setToolbarMinimal
+     */
+    fun resetToolbarMinimal() {
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        //TODO: 4 is the default material design elevation for action bars, but ours is set to 12 for some reason.
+        supportActionBar?.elevation = 12.toFloat()
+    }
+
+    private fun setToolbarHomeIcon(@DrawableRes homeIconId: Int?) {
+        supportActionBar?.setDisplayHomeAsUpEnabled(homeIconId != null)
+        homeIconId?.let{ supportActionBar?.setHomeAsUpIndicator(it) }
     }
 
     fun navigateToAuthenticationActivity() {

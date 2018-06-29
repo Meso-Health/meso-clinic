@@ -26,12 +26,12 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import javax.inject.Inject
 
 class CurrentPatientsFragment : DaggerFragment() {
-
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -41,12 +41,25 @@ class CurrentPatientsFragment : DaggerFragment() {
     lateinit var viewModel: CurrentPatientsViewModel
     lateinit var memberAdapter: MemberAdapter
 
+    private var snackbarMessageToShow: String? = null
+
     companion object {
         const val SCAN_CARD_INTENT = 1
+        const val PARAM_SNACKBAR_MESSAGE = "member"
+
+        fun withSnackbarMessage(message: String): CurrentPatientsFragment {
+            val fragment = CurrentPatientsFragment()
+            fragment.arguments = Bundle().apply {
+                putString(PARAM_SNACKBAR_MESSAGE, message)
+            }
+            return fragment
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CurrentPatientsViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
@@ -73,7 +86,7 @@ class CurrentPatientsFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.current_patients_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.current_patients_fragment_label), null)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_current_patients, container, false)
     }
@@ -83,6 +96,11 @@ class CurrentPatientsFragment : DaggerFragment() {
 
         identification_button.setOnClickListener {
             startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
+        }
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(identification_button, context, snackbarMessage)
+            snackbarMessageToShow = null
         }
     }
 

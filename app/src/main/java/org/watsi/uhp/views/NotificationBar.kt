@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import kotlinx.android.synthetic.main.notification_bar.view.notification_btn
 
 import org.watsi.uhp.R
 
@@ -28,5 +29,9 @@ class NotificationBar(context: Context, attrs: AttributeSet) : LinearLayout(cont
         } finally {
             ta.recycle()
         }
+    }
+
+    override fun setOnClickListener(listener: OnClickListener?) {
+        notification_btn.setOnClickListener(listener)
     }
 }

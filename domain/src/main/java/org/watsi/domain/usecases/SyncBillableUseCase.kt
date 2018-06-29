@@ -14,8 +14,8 @@ class SyncBillableUseCase(
             val unsyncedBillableDeltas = deltaRepository.unsynced(Delta.ModelName.BILLABLE).blockingGet()
 
             unsyncedBillableDeltas.map { billableDelta ->
-                billableRepository.sync(billableDelta).blockingGet()
-                deltaRepository.markAsSynced(listOf(billableDelta)).blockingGet()
+                billableRepository.sync(billableDelta).blockingAwait()
+                deltaRepository.markAsSynced(listOf(billableDelta)).blockingAwait()
             }
         }
     }

@@ -21,8 +21,8 @@ class SyncEncounterFormUseCase(
                 val hasUnsyncedEncounter = unsyncedEncounterIds.contains(encounterForm.encounterForm.encounterId)
 
                 if (!hasUnsyncedEncounter) {
-                    encounterFormRepository.sync(encounterFormDelta).blockingGet()
-                    deltaRepository.markAsSynced(listOf(encounterFormDelta)).blockingGet()
+                    encounterFormRepository.sync(encounterFormDelta).blockingAwait()
+                    deltaRepository.markAsSynced(listOf(encounterFormDelta)).blockingAwait()
                 }
             }
         }

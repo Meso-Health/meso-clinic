@@ -141,7 +141,10 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
             photoDao.findMemberWithRawPhoto(memberId).flatMapCompletable { memberWithRawPhotoModel ->
                 val memberWithRawPhoto = memberWithRawPhotoModel.toMemberWithRawPhoto()
                 val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
-                api.patchPhoto(token.getHeaderString(), memberId, requestBody)
+                Completable.concatArray(
+                    api.patchPhoto(token.getHeaderString(), memberId, requestBody),
+                    save(memberWithRawPhoto.member.copy(photoId = null), emptyList())
+                )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }

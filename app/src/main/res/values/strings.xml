@@ -182,6 +182,7 @@
     <string name="add_new_billable_price_label">Price per Unit</string>
     <string name="add_new_billable_unit_label">Unit (eg. 100mg)</string>
     <string name="add_new_billable_composition_label">Composition (eg. tablet)</string>
+    <string name="add_new_billable_composition_prompt">Select a composition</string>
     <string name="add_new_billable">Add</string>
     <string name="currency">UGX</string>
 
@@ -207,6 +208,8 @@
         <item quantity="one">%d form attached</item>
         <item quantity="other">%d forms attached</item>
     </plurals>
+    <string name="today_wrapper">Today (%1$s)</string>
+    <string name="date_and_time">%1$s at %2$s</string>
 
     <!-- MemberEditFragment -->
     <string name="member_edit_label">Edit member details</string>
@@ -248,7 +251,4 @@
     <!-- MemberListItem -->
     <string name="member_list_item_description">%1$s &#183; %2$s</string>
     <string name="member_list_item_description_checked_in">%1$s &#183; %2$s &#183; %3$s</string>
-
-    <!-- DateHelper -->
-    <string name="today_wrapper">Today (%1$s)</string>
 </resources>

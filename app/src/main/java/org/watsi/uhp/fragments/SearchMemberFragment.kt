@@ -18,6 +18,7 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
@@ -70,6 +71,7 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        (activity as ClinicActivity).setToolbarMinimal(null)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_member_search, container, false)
     }
@@ -119,5 +121,10 @@ class SearchMemberFragment : DaggerFragment() {
                 logger.error("QrCodeActivity.parseResult called with resultCode: $resultCode")
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ClinicActivity).resetToolbarMinimal()
     }
 }

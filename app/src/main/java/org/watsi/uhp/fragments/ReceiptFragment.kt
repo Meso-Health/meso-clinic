@@ -31,13 +31,14 @@ import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.plurals.forms_attached_label
 import org.watsi.uhp.R.plurals.receipt_line_item_count
+import org.watsi.uhp.R.string.date_and_time
 import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
+import java.text.NumberFormat
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment() {
@@ -70,11 +71,12 @@ class ReceiptFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounter.encounter.occurredAt, encounter.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->
-                val dateString = DateUtils.formatInstantStyleLong(viewState.occurredAt, clock)
+                val date_string = DateUtils.formatLocalDate(viewState.occurredAt.atZone(clock.zone).toLocalDate())
+                val time_string = DateUtils.formatLocalTime(viewState.occurredAt.atZone(clock.zone).toLocalDateTime())
                 date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
-                    resources.getString(today_wrapper, dateString)
+                    resources.getString(today_wrapper, date_string)
                 } else {
-                    dateString
+                    resources.getString(date_and_time, date_string, time_string)
                 }
             }
         })
@@ -93,7 +95,7 @@ class ReceiptFragment : DaggerFragment() {
                 diagnosis_count, encounter.diagnoses.size, encounter.diagnoses.size)
         encounter_items_label.text = resources.getQuantityString(
                 receipt_line_item_count, encounter.encounterItems.size, encounter.encounterItems.size)
-        total_price.text = getString(price_with_currency, encounter.price().toString()) // TODO: format
+        total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounter.price()))
         forms_label.text = resources.getQuantityString(
                 forms_attached_label, encounter.encounterForms.size, encounter.encounterForms.size)
 
@@ -157,8 +159,9 @@ class ReceiptFragment : DaggerFragment() {
 
     private fun submitEncounter(copaymentPaid: Boolean) {
         viewModel.submitEncounter(encounter, copaymentPaid).subscribe({
-            view?.let { SnackbarHelper.show(it, context, R.string.encounter_submitted) }
-            navigationManager.popTo(CurrentPatientsFragment())
+            navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
+                    getString(R.string.encounter_submitted)
+            ))
         }, {
             logger.error(it)
         })

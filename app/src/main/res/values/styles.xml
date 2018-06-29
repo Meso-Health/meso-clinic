@@ -62,10 +62,10 @@
     <!-- Button styling -->
 
     <style name="FlatButtonStyle" parent="Base.Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/primary</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">@dimen/fontSize16</item>
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@drawable/alert_dialog_button_selector</item>
     </style>
 
     <style name="RaisedButtonBase" parent="Base.Widget.AppCompat.Button">
