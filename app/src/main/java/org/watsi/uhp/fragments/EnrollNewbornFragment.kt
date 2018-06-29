@@ -40,7 +40,7 @@ import org.watsi.uhp.viewmodels.EnrollNewbornViewModel.MemberStatus
 import java.util.UUID
 import javax.inject.Inject
 
-class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack, TextView.OnEditorActionListener {
+class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -173,7 +173,18 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack, 
             })
         }
 
-        name.setOnEditorActionListener(this)
+        name.setOnEditorActionListener() { v, actionId, event ->
+            if (v == null) false
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                if (v == name) {
+                    v?.clearFocus()
+                    keyboardManager.hideKeyboard(v)
+                    enroll_newborn_birthdate_dialog_field.performClick()
+                    true
+                }
+            }
+            false
+        }
     }
 
     fun handleOnSaveError(throwable: Throwable) {
@@ -185,23 +196,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack, 
             logger.error(throwable)
         }
         view?.let { SnackbarHelper.showError(it, context, errorMessage) }
-    }
-
-    /**
-     * Define custom onEditorAction behavior for cases where we do not want the default ime behavior
-     * when entering information into the inputs
-     */
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        if (v == null) return false
-        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            if (v == name) {
-                v.clearFocus()
-                keyboardManager.hideKeyboard(v)
-                enroll_newborn_birthdate_dialog_field.performClick()
-                return true
-            }
-        }
-        return false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
