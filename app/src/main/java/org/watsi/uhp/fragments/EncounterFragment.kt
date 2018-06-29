@@ -36,6 +36,8 @@ import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom
+import org.watsi.uhp.helpers.setBottomMargin
+import org.watsi.uhp.helpers.setBottomPadding
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
@@ -120,7 +122,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.encounter_fragment_label)
-        (activity as ClinicActivity).setSoftInputModeToResize()
+        (activity as ClinicActivity).setSoftInputModeToNothing()
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
     }
 
@@ -130,7 +132,9 @@ class EncounterFragment : DaggerFragment() {
                 keyboardManager.hideKeyboard(v)
                 select_type_box.visibility = View.VISIBLE
                 select_billable_box.visibility = View.VISIBLE
-                save_button.visibility = View.VISIBLE
+
+                line_items_list.setBottomPadding(context.resources.getDimensionPixelSize(R.dimen.scrollingFragmentBottomPadding))
+                line_items_list.setBottomMargin(0)
             }
         }
 
@@ -138,7 +142,11 @@ class EncounterFragment : DaggerFragment() {
                 onQuantitySelected = {
                     select_type_box.visibility = View.GONE
                     select_billable_box.visibility = View.GONE
-                    save_button.visibility = View.GONE
+
+                    // manually resize recyclerView when keyboard is shown since neither adjustPan
+                    // nor adjustResize accomplishes the intended behavior.
+                    line_items_list.setBottomPadding(0)
+                    line_items_list.setBottomMargin(context.resources.getDimensionPixelSize(R.dimen.numericKeyboardHeight))
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
                     viewModel.setItemQuantity(encounterItemId, newQuantity)

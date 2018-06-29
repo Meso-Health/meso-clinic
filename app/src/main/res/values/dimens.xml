@@ -29,6 +29,9 @@
     <!-- Fragment -->
     <dimen name="scrollingFragmentBottomPadding">80dp</dimen>
 
+    <!-- Numeric Keyboard -->
+    <dimen name="numericKeyboardHeight">205dp</dimen>
+
     <!-- View dimensions scale -->
     <dimen name="viewHeight40">40dp</dimen>
     <dimen name="viewHeight64">64dp</dimen>

@@ -94,8 +94,8 @@ class ClinicActivity : DaggerAppCompatActivity() {
         UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID)
     }
 
-    fun setSoftInputModeToResize() {
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    fun setSoftInputModeToNothing() {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }
 
     fun setSoftInputModeToPan() {
