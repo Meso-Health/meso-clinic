@@ -11,15 +11,7 @@
 
     <include layout="@layout/training_banner"/>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:theme="@style/toolbar" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <LinearLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="@dimen/fragment_horizontal_margin"
@@ -69,6 +61,7 @@
 
         <Button
             android:id="@+id/login_button"
+            android:layout_marginTop="@dimen/space16"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             style="@style/PrimaryButton"

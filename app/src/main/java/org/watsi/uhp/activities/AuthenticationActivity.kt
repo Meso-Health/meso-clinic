@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
 import kotlinx.android.synthetic.main.activity_authentication.login_username
-import kotlinx.android.synthetic.main.activity_authentication.toolbar
 import me.philio.pinentry.PinEntryView
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
@@ -29,7 +28,6 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
-        toolbar.setTitle(R.string.authentication_activity_label)
 
         keyboardManager.showKeyboard(login_username)
         ActivityHelper.setupBannerIfInTrainingMode(this)

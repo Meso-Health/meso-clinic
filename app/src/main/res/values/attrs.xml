@@ -11,6 +11,7 @@
     <declare-styleable name="DialogBirthdateField">
         <attr name="showCalendarIcon" format="boolean" />
         <attr name="allowAgeSelector" format="boolean" />
+        <attr name="showCalculatedAge" format="boolean" />
     </declare-styleable>
     <declare-styleable name="ButtonWithContainer">
         <attr name="buttonText" format="reference" localization="suggested" />
