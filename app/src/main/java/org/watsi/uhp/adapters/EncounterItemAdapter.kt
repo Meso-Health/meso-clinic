@@ -13,7 +13,6 @@ import java.util.UUID
 class EncounterItemAdapter(
         private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf(),
         private val onQuantitySelected: () -> Unit,
-        private val onQuantityDeselected: () -> Unit,
         private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
         private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
         private val keyboardManager: KeyboardManager
@@ -33,7 +32,7 @@ class EncounterItemAdapter(
         val encounterItemRelation = encounterItems[position]
         encounterItemView = holder.itemView as EncounterItemListItem
         encounterItemView.setEncounterItem(encounterItemRelation, onQuantitySelected,
-                onQuantityDeselected, onQuantityChanged, onRemoveEncounterItem, keyboardManager)
+                onQuantityChanged, onRemoveEncounterItem, keyboardManager)
     }
 
     fun setEncounterItems(updatedEncounterItems: List<EncounterItemWithBillable>) {

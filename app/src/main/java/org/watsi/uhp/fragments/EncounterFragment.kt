@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
 import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
+import kotlinx.android.synthetic.main.fragment_encounter.fragment_encounter_container
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
 import kotlinx.android.synthetic.main.fragment_encounter.select_billable_box
@@ -124,16 +125,20 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        fragment_encounter_container.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                keyboardManager.hideKeyboard(v)
+                select_type_box.visibility = View.VISIBLE
+                select_billable_box.visibility = View.VISIBLE
+                save_button.visibility = View.VISIBLE
+            }
+        }
+
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
                     select_type_box.visibility = View.GONE
                     select_billable_box.visibility = View.GONE
                     save_button.visibility = View.GONE
-                },
-                onQuantityDeselected = {
-                    select_type_box.visibility = View.VISIBLE
-                    select_billable_box.visibility = View.VISIBLE
-                    save_button.visibility = View.VISIBLE
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int ->
                     viewModel.setItemQuantity(encounterItemId, newQuantity)
