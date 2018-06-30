@@ -36,7 +36,7 @@
         android:id="@+id/encounter_form_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingBottom="@dimen/list_view_bottom_padding"
+        android:paddingBottom="@dimen/scrollingFragmentBottomPadding"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/encounter_form_panel"
         app:layout_constraintBottom_toBottomOf="parent"

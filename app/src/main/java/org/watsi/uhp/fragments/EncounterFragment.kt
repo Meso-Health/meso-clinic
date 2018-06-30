@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.main.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.main.fragment_encounter.drug_search
 import kotlinx.android.synthetic.main.fragment_encounter.encounter_item_count
+import kotlinx.android.synthetic.main.fragment_encounter.fragment_encounter_container
 import kotlinx.android.synthetic.main.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.main.fragment_encounter.save_button
 import kotlinx.android.synthetic.main.fragment_encounter.select_billable_box
@@ -29,10 +31,13 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom
+import org.watsi.uhp.helpers.setBottomMargin
+import org.watsi.uhp.helpers.setBottomPadding
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterViewModel
@@ -117,18 +122,31 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.encounter_fragment_label)
+        (activity as ClinicActivity).setSoftInputModeToNothing()
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        fragment_encounter_container.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                keyboardManager.hideKeyboard(v)
+                select_type_box.visibility = View.VISIBLE
+                select_billable_box.visibility = View.VISIBLE
+
+                line_items_list.setBottomPadding(context.resources.getDimensionPixelSize(R.dimen.scrollingFragmentBottomPadding))
+                line_items_list.setBottomMargin(0)
+            }
+        }
+
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
                     select_type_box.visibility = View.GONE
                     select_billable_box.visibility = View.GONE
-                },
-                onQuantityDeselected = {
-                    select_type_box.visibility = View.VISIBLE
-                    select_billable_box.visibility = View.VISIBLE
+
+                    // manually resize recyclerView when keyboard is shown since neither adjustPan
+                    // nor adjustResize accomplishes the intended behavior.
+                    line_items_list.setBottomPadding(0)
+                    line_items_list.setBottomMargin(context.resources.getDimensionPixelSize(R.dimen.numericKeyboardHeight))
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int? ->
                     if (newQuantity == null || newQuantity == 0) {
@@ -146,7 +164,9 @@ class EncounterFragment : DaggerFragment() {
         RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
 
         type_spinner.adapter = billableTypeAdapter
-        type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val typeSpinnerListener =  object : AdapterView.OnItemSelectedListener, View.OnTouchListener {
+            var userSelected = false
+
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 /* no-op */
             }
@@ -158,9 +178,23 @@ class EncounterFragment : DaggerFragment() {
                     null
                 }
                 viewModel.selectType(selectedType)
-                billable_spinner.performClick()
+
+                // Distinguish between user-initiated select events and automatically triggered
+                // ones (e.g. resuming fragment on back press)
+                if (userSelected) {
+                    billable_spinner.performClick()
+                    userSelected = false
+                }
+            }
+
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                userSelected = true
+                return false
             }
         }
+        type_spinner.onItemSelectedListener = typeSpinnerListener
+        type_spinner.setOnTouchListener(typeSpinnerListener)
+
 
         billable_spinner.adapter = billableAdapter
         billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -214,6 +248,11 @@ class EncounterFragment : DaggerFragment() {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ClinicActivity).setSoftInputModeToPan()
     }
 
     private fun buildSearchResultCursor(billables: List<Billable>): MatrixCursor {

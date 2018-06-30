@@ -20,6 +20,7 @@ object PhotoLoader {
     fun loadPhoto(bytes: ByteArray?, view: ImageView, context: Context) {
         Glide.with(context)
                 .load(bytes)
+                .apply(requestOptions)
                 .into(view)
     }
 

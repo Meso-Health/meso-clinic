@@ -29,7 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:backgroundTint="@color/gray4" />
 
         <TextView
             android:layout_width="fill_parent"
