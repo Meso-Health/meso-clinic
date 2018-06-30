@@ -195,7 +195,6 @@ class EncounterFragment : DaggerFragment() {
         type_spinner.onItemSelectedListener = typeSpinnerListener
         type_spinner.setOnTouchListener(typeSpinnerListener)
 
-
         billable_spinner.adapter = billableAdapter
         billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
