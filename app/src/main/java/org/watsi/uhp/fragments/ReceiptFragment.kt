@@ -36,7 +36,6 @@ import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import java.text.NumberFormat
@@ -160,8 +159,9 @@ class ReceiptFragment : DaggerFragment() {
 
     private fun submitEncounter(copaymentPaid: Boolean) {
         viewModel.submitEncounter(encounter, copaymentPaid).subscribe({
-            view?.let { SnackbarHelper.show(it, context, R.string.encounter_submitted) }
-            navigationManager.popTo(CurrentPatientsFragment())
+            navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
+                    getString(R.string.encounter_submitted)
+            ))
         }, {
             logger.error(it)
         })

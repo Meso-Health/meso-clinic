@@ -24,25 +24,27 @@
 
     <TextView
         android:id="@+id/billable_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/space16"
-        android:paddingEnd="@dimen/space36"
+        android:layout_marginStart="@dimen/space16"
+        android:layout_marginEnd="@dimen/space16"
         android:theme="@style/Title"
         app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintEnd_toStartOf="@+id/remove_line_item_btn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/billable_details"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/billable_details"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/space16"
-        android:paddingEnd="@dimen/space36"
+        android:layout_marginStart="@dimen/space16"
+        android:layout_marginEnd="@dimen/space16"
         android:visibility="gone"
         android:textColor="@color/gray6"
         app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintEnd_toStartOf="@+id/remove_line_item_btn"
         app:layout_constraintTop_toBottomOf="@id/billable_name"
         app:layout_constraintBottom_toBottomOf="parent" />
 

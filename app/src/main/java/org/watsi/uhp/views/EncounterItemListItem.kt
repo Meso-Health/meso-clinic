@@ -3,9 +3,9 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
@@ -23,8 +23,7 @@ class EncounterItemListItem @JvmOverloads constructor(
     fun setEncounterItem(
             encounterItemRelation: EncounterItemWithBillable,
             onQuantitySelected: () -> Unit,
-            onQuantityDeselected: () -> Unit,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int) -> Unit,
+            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
             onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
             keyboardManager: KeyboardManager
     ) {
@@ -33,24 +32,31 @@ class EncounterItemListItem @JvmOverloads constructor(
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
-        billable_details.text = billable.dosageDetails()
+        if (billable.dosageDetails() != null) {
+            billable_details.text = billable.dosageDetails()
+            billable_details.visibility = View.VISIBLE
+        } else {
+            billable_details.visibility = View.GONE
+        }
 
-        billable_quantity.setText(NumberFormat.getInstance().format(currentQuantity))
+        billable_quantity.setText(currentQuantity.toString())
         billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
-                onQuantityDeselected()
-                keyboardManager.hideKeyboard(v)
+                val parsedNewQuantity = billable_quantity.text.toString().toIntOrNull()
 
-                val newQuantity = billable_quantity.text.toString().toIntOrNull()
-                if (newQuantity != currentQuantity) {
-                    if (newQuantity == null || newQuantity == 0) {
-                        billable_quantity.setText(currentQuantity.toString())
-                        Toast.makeText(context, org.watsi.uhp.R.string.error_blank_or_zero_quantity,
-                                android.widget.Toast.LENGTH_SHORT).show()
-                    } else {
-                        onQuantityChanged(encounterItem.id, newQuantity)
-                    }
+                if (parsedNewQuantity == null || parsedNewQuantity == 0) {
+                    // set field text back to previous quantity
+                    billable_quantity.setText(currentQuantity.toString())
+                } else {
+                    // always set the field text to the parsed quantity (otherwise if
+                    // currentQuantity is 10 and user inputs "0010", it would stay at "0010"
+                    // instead of updating to 10)
+                    billable_quantity.setText(parsedNewQuantity.toString())
+                }
+
+                if (parsedNewQuantity != currentQuantity) {
+                    onQuantityChanged(encounterItem.id, parsedNewQuantity)
                 }
             } else {
                 onQuantitySelected()

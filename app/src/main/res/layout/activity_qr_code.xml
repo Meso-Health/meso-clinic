@@ -54,6 +54,7 @@
             android:id="@+id/search_button_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:padding="@dimen/space24"
             app:layout_constraintEnd_toEndOf="parent">
 

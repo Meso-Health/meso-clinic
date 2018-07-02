@@ -3,13 +3,13 @@ package org.watsi.uhp.fragments
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_add_new_billable.composition_container
@@ -28,6 +28,7 @@ import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
+import org.watsi.uhp.views.SpinnerField
 import java.util.UUID
 import javax.inject.Inject
 
@@ -54,21 +55,28 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        compositionAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
+        compositionAdapter = SpinnerField.createAdapter(context, mutableListOf())
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 compositionAdapter.clear()
-                compositionAdapter.add("") // This provides a default empty option that is stored as null.
+                compositionAdapter.add(getString(R.string.add_new_billable_composition_prompt))
                 compositionAdapter.addAll(viewState.compositions.map { it.capitalize() }.sorted())
 
-                if (viewState.type != null && Billable.requiresQuantity(viewState.type)) {
-                    unit_container.visibility = View.VISIBLE
-                    composition_container.visibility = View.VISIBLE
-                } else {
-                    unit_container.visibility = View.GONE
-                    composition_container.visibility = View.GONE
+                when (viewState.type) {
+                    Billable.Type.DRUG -> {
+                        unit_container.visibility = View.VISIBLE
+                        composition_container.visibility = View.VISIBLE
+                    }
+                    Billable.Type.VACCINE -> {
+                        unit_container.visibility = View.VISIBLE
+                        composition_container.visibility = View.GONE
+                    }
+                    in listOf(Billable.Type.SERVICE, Billable.Type.LAB, Billable.Type.SUPPLY) -> {
+                        unit_container.visibility = View.GONE
+                        composition_container.visibility = View.GONE
+                    }
                 }
 
                 save_button.isEnabled = viewState.isValid
@@ -83,36 +91,23 @@ class AddNewBillableFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val billableTypes = Billable.Type.values()
-        val billableStrings = billableTypes.map { it.toString().titleize() }
-        type_spinner.adapter = ArrayAdapter<String>(activity,
-                                                    android.R.layout.simple_list_item_1,
-                                                    billableStrings)
-        // pre-select drug because its been the most commonly created Billable type
-        type_spinner.setSelection(billableTypes.indexOf(Billable.Type.DRUG))
-        type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                /* no-op */
-            }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.updateType(billableTypes[position])
+        type_spinner.setUpSpinner(
+            billableTypes.map { it.toString().titleize() },
+            billableTypes.indexOf(Billable.Type.DRUG).toString().titleize(),
+            { selectedString ->
+                Billable.Type.valueOf(selectedString.toUpperCase())?.let {
+                        type -> viewModel.updateType(type)
+                }
             }
-        }
+        )
 
         name_field.addTextChangedListener(TextChangedListener { viewModel.updateName(it) })
         unit_field.addTextChangedListener(TextChangedListener { viewModel.updateUnit(it) })
         price_field.addTextChangedListener(TextChangedListener { viewModel.updatePrice(it.toIntOrNull()) })
 
-        composition_spinner.adapter = compositionAdapter
-        composition_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                /* no-op */
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.updateComposition(composition_spinner.adapter.getItem(position) as String)
-            }
-        }
+        composition_spinner.setUpSpinner(compositionAdapter, null, { viewModel.updateComposition(it) },
+            getString(R.string.add_new_billable_composition_prompt), { viewModel.updateComposition(null) })
 
         save_button.setOnClickListener {
             viewModel.getBillable()?.let { billable ->
