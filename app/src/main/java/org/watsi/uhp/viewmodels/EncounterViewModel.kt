@@ -58,11 +58,11 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun addItem(billable: Billable) {
-        currentEncounter()?.let {
-            val updatedEncounterItems = it.encounterItems.toMutableList()
-            val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
+        currentEncounter()?.let { encounter ->
+            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+            val encounterItem = EncounterItem(UUID.randomUUID(), encounter.encounter.id, billable.id, 1)
             updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
-            val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
+            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
             observable.value = observable.value?.copy(
                     encounter = updatedEncounter,
                     selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter),
@@ -76,7 +76,10 @@ class EncounterViewModel @Inject constructor(
             val updatedEncounterItems = encounter.encounterItems.toMutableList()
                     .filterNot { it.encounterItem.id == encounterItemId }
             val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(encounter = updatedEncounter)
+            observable.value = observable.value?.copy(
+                    encounter = updatedEncounter,
+                    selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter)
+            )
         }
     }
 
