@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -80,28 +81,32 @@ class SearchMemberFragment : DaggerFragment() {
         RecyclerViewHelper.setRecyclerView(member_search_results, memberAdapter, context, false)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu?.let {
-            val searchMenuItem = menu.findItem(R.id.menu_member_search)
-            searchMenuItem.isVisible = true
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        val searchMenuItem = menu.findItem(R.id.menu_member_search)
+        searchMenuItem.isVisible = true
 
-            toolbarSearchView = searchMenuItem.actionView as ToolbarSearch
-            toolbarSearchView.keyboardManager = keyboardManager
-            toolbarSearchView.onSearch { query ->
-                viewModel.updateQuery(query)
-            }
-
-            toolbarSearchView.onBack {
-                toolbarSearchView.clear()
-                navigationManager.goBack()
-            }
-
-            toolbarSearchView.onScan {
-                startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
-            }
-
-            keyboardManager.showKeyboard(toolbarSearchView)
+        toolbarSearchView = searchMenuItem.actionView as ToolbarSearch
+        toolbarSearchView.keyboardManager = keyboardManager
+        toolbarSearchView.onSearch { query ->
+            viewModel.updateQuery(query)
         }
+
+        toolbarSearchView.onBack {
+            toolbarSearchView.clear()
+            navigationManager.goBack()
+        }
+
+        toolbarSearchView.onScan {
+            startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        // without including the 100 ms delay, some additional rendering occurs that prevents the
+        // keyboard from displaying properly
+        toolbarSearchView.postDelayed({
+            toolbarSearchView.focus()
+        }, 100)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
