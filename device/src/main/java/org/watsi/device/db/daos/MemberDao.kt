@@ -5,7 +5,6 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -84,7 +83,7 @@ interface MemberDao {
     fun unsynced(): Single<List<MemberModel>>
 
     @Query("DELETE FROM members WHERE id IN (:ids)")
-    fun delete(ids: List<UUID>): Completable
+    fun delete(ids: List<UUID>)
 
     @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     fun needPhotoDownloadCount(): Flowable<Int>
