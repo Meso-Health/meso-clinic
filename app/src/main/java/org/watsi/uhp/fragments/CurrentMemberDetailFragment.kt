@@ -107,6 +107,9 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+            }
             R.id.menu_member_edit -> {
                 navigationManager.goTo(EditMemberFragment.forMember(member.id))
             }
