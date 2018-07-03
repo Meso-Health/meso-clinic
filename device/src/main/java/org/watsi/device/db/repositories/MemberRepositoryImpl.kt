@@ -79,22 +79,26 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         }.subscribeOn(Schedulers.io())
     }
 
+    /**
+     * Removes any synced persisted members that are not returned in the API results and
+     * overwrites any synced persisted data if the API response contains updated data
+     */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val fetchedMembers = api.getMembers(token.getHeaderString(), token.user.providerId)
-                        .blockingGet()
-                val unsyncedMembers = memberDao.unsynced().blockingGet()
-                val unsyncedIds = unsyncedMembers.map { it.id }
+                val fetchedMembers = api.getMembers(token.getHeaderString(), token.user.providerId).blockingGet()
+                val fetchedMemberIds = fetchedMembers.map { it.id }
                 val persistedMembers = memberDao.all().blockingFirst()
-                val membersById = persistedMembers.groupBy { it.id }
-                val fetchedAndUnsyncedIds = fetchedMembers.map { it.id } + unsyncedIds
-                memberDao.deleteNotInList(fetchedAndUnsyncedIds.distinct())
-                val fetchedMembersWithoutUnsynced = fetchedMembers.filter {
-                    !unsyncedIds.contains(it.id)
-                }
+                val persistedMembersById = persistedMembers.groupBy { it.id }
+                val unsyncedMembers = memberDao.unsynced().blockingGet()
+                val unsyncedMemberIds = unsyncedMembers.map { it.id }
+                val syncedMemberIds = persistedMembers.map{ it.id }.minus(unsyncedMemberIds)
+                val deletedMemberIds = syncedMemberIds.minus(fetchedMemberIds)
+                val fetchedMembersWithoutUnsynced = fetchedMembers.filter { !unsyncedMemberIds.contains(it.id) }
+
+                memberDao.delete(deletedMemberIds)
                 memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
-                    val persistedMember = membersById[memberApi.id]?.firstOrNull()?.toMember()
+                    val persistedMember = persistedMembersById[memberApi.id]?.firstOrNull()?.toMember()
                     MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
                 })
                 preferencesManager.updateMemberLastFetched(clock.instant())

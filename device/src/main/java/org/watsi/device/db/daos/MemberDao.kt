@@ -5,6 +5,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -57,16 +58,6 @@ interface MemberDao {
             "ORDER BY last_identifications.occurredAt")
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
-    /*
-    @Query("SELECT EXISTS(\n" +
-            "   SELECT max(identification_events.occurredAt)\n" +
-            "   FROM identification_events\n" +
-            "   LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +
-            "   WHERE identification_events.dismissed = 0\n" +
-            "   AND identification_events.memberId = :memberId\n" +
-            "   AND encounters.identificationEventId IS NULL)")
-            */
-
     @Query("SELECT (\n" +
             "   SELECT max(identification_events.occurredAt)\n" +
             "   FROM identification_events\n" +
@@ -92,8 +83,8 @@ interface MemberDao {
             "deltas.modelName = 'MEMBER')")
     fun unsynced(): Single<List<MemberModel>>
 
-    @Query("DELETE FROM members WHERE id NOT IN (:ids)")
-    fun deleteNotInList(ids: List<UUID>)
+    @Query("DELETE FROM members WHERE id IN (:ids)")
+    fun delete(ids: List<UUID>): Completable
 
     @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     fun needPhotoDownloadCount(): Flowable<Int>

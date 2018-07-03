@@ -35,8 +35,8 @@ interface BillableDao {
     @Query("SELECT DISTINCT(composition) FROM billables WHERE composition IS NOT NULL")
     fun distinctCompositions(): Single<List<String>>
 
-    @Query("DELETE FROM billables WHERE id NOT IN (:ids)")
-    fun deleteNotInList(ids: List<UUID>)
+    @Query("DELETE FROM billables WHERE id IN (:ids)")
+    fun delete(ids: List<UUID>)
 
     @Query("SELECT billables.* FROM billables\n" +
             "INNER JOIN deltas ON\n" +

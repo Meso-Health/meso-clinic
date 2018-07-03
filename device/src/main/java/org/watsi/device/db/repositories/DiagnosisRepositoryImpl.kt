@@ -28,14 +28,17 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.getDiagnoses(token.getHeaderString()).flatMapCompletable { fetchedDiagnoses ->
-                Completable.fromAction {
-                    diagnosisDao.deleteNotInList(fetchedDiagnoses.map { it.id })
-                    diagnosisDao.insert(fetchedDiagnoses.map { diagnosisApi ->
-                        DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
-                    })
-                    preferencesManager.updateDiagnosesLastFetched(clock.instant())
-                }
+            Completable.fromAction {
+                val fetchedDiagnoses = api.getDiagnoses(token.getHeaderString()).blockingGet()
+                val fetchedDiagnosesIds = fetchedDiagnoses.map { it.id }
+                val persistedDiagnosesIds = diagnosisDao.all().blockingGet().map { it.id }
+                val deletedDiagnosesIds = persistedDiagnosesIds.minus(fetchedDiagnosesIds)
+
+                diagnosisDao.delete(deletedDiagnosesIds)
+                diagnosisDao.insert(fetchedDiagnoses.map { diagnosisApi ->
+                    DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
+                })
+                preferencesManager.updateDiagnosesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
