@@ -2,10 +2,10 @@
 <org.watsi.uhp.views.EncounterItemListItem
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="false"
     android:layout_width="match_parent"
     android:layout_height="@dimen/viewHeight64"
-    android:paddingStart="@dimen/space16"
-    android:paddingEnd="@dimen/space16">
+    android:paddingStart="@dimen/space16">
 
     <org.watsi.uhp.views.CustomFocusEditText
         android:id="@+id/billable_quantity"
@@ -24,35 +24,48 @@
 
     <TextView
         android:id="@+id/billable_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/space16"
-        android:paddingEnd="@dimen/space36"
+        android:layout_marginStart="@dimen/space16"
+        android:layout_marginEnd="@dimen/space16"
         android:theme="@style/Title"
         app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintEnd_toStartOf="@+id/remove_line_item_btn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/billable_details"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/billable_details"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/space16"
-        android:paddingEnd="@dimen/space36"
+        android:layout_marginStart="@dimen/space16"
+        android:layout_marginEnd="@dimen/space16"
         android:visibility="gone"
         android:textColor="@color/gray6"
         app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintEnd_toStartOf="@+id/remove_line_item_btn"
         app:layout_constraintTop_toBottomOf="@id/billable_name"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <Button
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/remove_line_item_btn"
-        android:layout_width="@dimen/space24"
-        android:layout_height="@dimen/space24"
-        android:background="@drawable/ic_clear_black_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="@dimen/space16"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:layout_width="@dimen/space24"
+            android:layout_height="@dimen/space24"
+            android:background="@drawable/ic_clear_black_24dp"
+            android:clickable="false"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 </org.watsi.uhp.views.EncounterItemListItem>

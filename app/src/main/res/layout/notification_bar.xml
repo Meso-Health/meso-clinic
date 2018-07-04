@@ -39,6 +39,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="end|center_vertical"
         android:textColor="@color/primary"
-        style="FlatButtonStyle"
         android:background="?attr/selectableItemBackground" />
 </android.support.constraint.ConstraintLayout>

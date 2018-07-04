@@ -23,3 +23,4 @@ object SnackbarHelper {
         show(view, context, message, R.color.red6)
     }
 }
+

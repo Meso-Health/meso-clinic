@@ -36,14 +36,18 @@ class DiagnosisViewModel @Inject constructor(
         if (!diagnoses.contains(diagnosis)) {
             diagnoses.add(diagnosis)
         }
-        observable.value = observable.value?.copy(selectedDiagnoses = diagnoses,
-                                                  suggestedDiagnoses = emptyList())
+        observable.value = observable.value?.copy(
+                selectedDiagnoses = diagnoses,
+                suggestedDiagnoses = emptyList()
+        )
     }
 
     fun removeDiagnosis(diagnosis: Diagnosis) {
         val diagnoses = observable.value?.selectedDiagnoses.orEmpty().minus(diagnosis)
-        observable.value = observable.value?.copy(selectedDiagnoses = diagnoses,
-                suggestedDiagnoses = emptyList())
+        observable.value = observable.value?.copy(
+                selectedDiagnoses = diagnoses,
+                suggestedDiagnoses = emptyList()
+        )
     }
 
     fun updateQuery(query: String) {

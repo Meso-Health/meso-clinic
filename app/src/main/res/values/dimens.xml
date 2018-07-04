@@ -29,6 +29,9 @@
     <!-- Fragment -->
     <dimen name="scrollingFragmentBottomPadding">80dp</dimen>
 
+    <!-- Numeric Keyboard -->
+    <dimen name="numericKeyboardHeight">205dp</dimen>
+
     <!-- View dimensions scale -->
     <dimen name="viewHeight40">40dp</dimen>
     <dimen name="viewHeight64">64dp</dimen>
@@ -60,9 +63,6 @@
 
     <!-- padding for each item in a list view -->
     <dimen name="list_item_vertical_padding">16dp</dimen>
-
-    <!-- bottom padding below last item for list views on pages with fixed bottom buttons -->
-    <dimen name="list_view_bottom_padding">64dp</dimen>
 
     <!-- dimensions for photo on detail view -->
     <dimen name="detail_fragment_photo_height">208dp</dimen>

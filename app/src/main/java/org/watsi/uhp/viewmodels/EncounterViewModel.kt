@@ -25,10 +25,11 @@ class EncounterViewModel @Inject constructor(
     init {
         billableRepository.all().subscribe({
             billablesByType = it.groupBy { it.type }
-            if (billablesByType[Billable.Type.DRUG]?.isEmpty() == true) {
+            val drugBillables = billablesByType[Billable.Type.DRUG].orEmpty()
+            if (drugBillables.isEmpty()) {
                 logger.warning("No Billables of type Drug loaded")
             } else {
-                uniqueDrugNames = billablesByType[Billable.Type.DRUG]!!.map { it.name }.distinct()
+                uniqueDrugNames = drugBillables.map { it.name }.distinct()
             }
         }, {
             logger.error(it)
@@ -44,11 +45,17 @@ class EncounterViewModel @Inject constructor(
             type: Billable.Type?,
             currentEncounter: EncounterWithItemsAndForms? = currentEncounter()
     ) : List<Billable>  {
-        return if (type != null && type != Billable.Type.DRUG) {
-            val currentBillables = currentEncounter?.billables().orEmpty()
-            billablesByType[type]!!.minus(currentBillables).sortedBy { it.name }
-        } else {
-            emptyList()
+        val billableList = billablesByType[type].orEmpty()
+        return when {
+            billableList.isEmpty() -> {
+                logger.warning("No Billables of type $type loaded")
+                emptyList()
+            }
+            type == Billable.Type.DRUG -> emptyList()
+            else -> {
+                val currentBillables = currentEncounter?.billables().orEmpty()
+                billableList.minus(currentBillables).sortedBy { it.name }
+            }
         }
     }
 
@@ -58,11 +65,11 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun addItem(billable: Billable) {
-        currentEncounter()?.let {
-            val updatedEncounterItems = it.encounterItems.toMutableList()
-            val encounterItem = EncounterItem(UUID.randomUUID(), it.encounter.id, billable.id, 1)
+        currentEncounter()?.let { encounter ->
+            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+            val encounterItem = EncounterItem(UUID.randomUUID(), encounter.encounter.id, billable.id, 1)
             updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
-            val updatedEncounter = it.copy(encounterItems = updatedEncounterItems)
+            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
             observable.value = observable.value?.copy(
                     encounter = updatedEncounter,
                     selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter),
@@ -76,7 +83,10 @@ class EncounterViewModel @Inject constructor(
             val updatedEncounterItems = encounter.encounterItems.toMutableList()
                     .filterNot { it.encounterItem.id == encounterItemId }
             val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(encounter = updatedEncounter)
+            observable.value = observable.value?.copy(
+                    encounter = updatedEncounter,
+                    selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter)
+            )
         }
     }
 
@@ -104,8 +114,9 @@ class EncounterViewModel @Inject constructor(
             val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
             val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
+            val drugBillables =  billablesByType[Billable.Type.DRUG].orEmpty()
             val matchingBillables = topMatchingNames.map { result ->
-                billablesByType[Billable.Type.DRUG]!!.filter { it.name == result.string }
+                drugBillables.filter { it.name == result.string }
             }.flatten().sortedBy { it.name }
 
             observable.value = observable.value?.copy(selectableBillables = matchingBillables)

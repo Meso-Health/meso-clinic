@@ -19,12 +19,6 @@ class ToolbarSearch @JvmOverloads constructor(
 
     var keyboardManager: KeyboardManager? = null
 
-    init {
-        post {
-            focus()
-        }
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
@@ -81,7 +75,7 @@ class ToolbarSearch @JvmOverloads constructor(
         search_text.text.clear()
     }
 
-    private fun focus() {
+    fun focus() {
         search_text.requestFocus()
         keyboardManager?.showKeyboard(search_text)
     }

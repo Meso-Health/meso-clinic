@@ -54,8 +54,16 @@ class AddNewBillableViewModel @Inject constructor(
         return if (state?.name != null && state.type != null && state.price != null && state.isValid) {
             Billable(id = UUID.randomUUID(),
                 type = state.type,
-                composition = state.composition,
-                unit = state.unit,
+                composition = when (state.type) {
+                    Billable.Type.DRUG -> state.composition
+                    Billable.Type.VACCINE -> Billable.VACCINE_COMPOSITION
+                    Billable.Type.SUPPLY -> Billable.SUPPLY_COMPOSITION
+                    else -> null
+                },
+                unit = when (state.type) {
+                    in listOf(Billable.Type.DRUG, Billable.Type.VACCINE) -> state.unit
+                    else -> null
+                },
                 price = state.price,
                 name = state.name)
         } else {

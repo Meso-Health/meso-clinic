@@ -20,8 +20,6 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
-import org.watsi.uhp.activities.ClinicActivity
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import javax.inject.Inject
@@ -66,10 +64,16 @@ class CurrentMemberDetailFragment : DaggerFragment() {
 
                     if (member.isAbsentee(clock)) {
                         absentee_notification.visibility = View.VISIBLE
+                        absentee_notification.setOnClickListener {
+                            navigationManager.goTo(EditMemberFragment.forMember(member.id))
+                        }
                     }
 
                     if (member.cardId == null) {
                         replace_card_notification.visibility = View.VISIBLE
+                        replace_card_notification.setOnClickListener {
+                            navigationManager.goTo(EditMemberFragment.forMember(member.id))
+                        }
                     }
                 }
 
@@ -111,10 +115,8 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             }
             R.id.menu_dismiss_member -> {
                 viewModel.dismiss(identificationEvent).subscribe({
-                    view?.let {
-                        SnackbarHelper.show(it, context, getString(R.string.checked_out_snackbar_message, member.name))
-                    }
-                    navigationManager.popTo(CurrentPatientsFragment())
+                    navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
+                            getString(R.string.checked_out_snackbar_message, member.name)))
                 }, {
                     logger.error(it)
                 })

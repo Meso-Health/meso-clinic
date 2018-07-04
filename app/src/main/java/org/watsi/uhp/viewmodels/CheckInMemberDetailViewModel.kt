@@ -32,7 +32,7 @@ class CheckInMemberDetailViewModel @Inject constructor(
             val memberWithThumbnail = results[0] as MemberWithThumbnail
             val isMemberCheckedIn = results[1] as Boolean
             ViewState(
-                    member = member,
+                    member = memberWithThumbnail.member,
                     memberThumbnail = memberWithThumbnail.photo,
                     isMemberCheckedIn = isMemberCheckedIn,
                     householdMembers = results[2] as List<MemberWithIdEventAndThumbnailPhoto>

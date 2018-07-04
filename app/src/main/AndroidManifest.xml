@@ -60,6 +60,7 @@
             android:name=".activities.AuthenticationActivity"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop"
+            android:label="@string/authentication_activity_label"
             android:screenOrientation="portrait" >
         </activity>
         <activity
