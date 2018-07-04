@@ -123,6 +123,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstance: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.enroll_newborn_activity_title), R.drawable.ic_clear_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_enroll_newborn, container, false)
     }
 
@@ -231,6 +232,5 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             else -> super.onOptionsItemSelected(item)
         }
-        true
     }
 }
