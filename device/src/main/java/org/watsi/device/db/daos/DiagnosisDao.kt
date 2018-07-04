@@ -14,7 +14,7 @@ interface DiagnosisDao {
     fun insert(model: DiagnosisModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(models: List<DiagnosisModel>)
+    fun upsert(models: List<DiagnosisModel>)
 
     @Query("SELECT * FROM diagnoses")
     fun all(): Single<List<DiagnosisModel>>

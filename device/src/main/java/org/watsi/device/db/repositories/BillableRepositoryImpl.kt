@@ -44,20 +44,21 @@ class BillableRepositoryImpl(
 
     /**
      * Removes any synced persisted billables that are not returned in the API results and
-     * overwrites any persisted data if the API response contains updated data
+     * overwrites any persisted data if the API response contains updated data. Do not
+     * remove or overwrite any unsynced data (new billables).
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val fetchedBillables = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
-                val fetchedBillableIds = fetchedBillables.map { it.id }
-                val persistedBillableIds = billableDao.all().blockingGet().map { it.id }
-                val unsyncedBillableIds = billableDao.unsynced().blockingGet().map { it.id }
-                val syncedBillableIds = persistedBillableIds.minus(unsyncedBillableIds)
-                val deletedBillableIds = syncedBillableIds.minus(fetchedBillableIds)
+                val serverBillables = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
+                val serverBillableIds = serverBillables.map { it.id }
+                val clientBillableIds = billableDao.all().blockingGet().map { it.id }
+                val unsyncedClientBillableIds = billableDao.unsynced().blockingGet().map { it.id }
+                val syncedClientBillableIds = clientBillableIds.minus(unsyncedClientBillableIds)
+                val serverRemovedBillableIds = syncedClientBillableIds.minus(serverBillableIds)
 
-                billableDao.delete(deletedBillableIds)
-                billableDao.upsert(fetchedBillables.map { billableApi ->
+                billableDao.delete(serverRemovedBillableIds)
+                billableDao.upsert(serverBillables.map { billableApi ->
                     BillableModel.fromBillable(billableApi.toBillable(), clock)
                 })
                 preferencesManager.updateBillablesLastFetched(clock.instant())

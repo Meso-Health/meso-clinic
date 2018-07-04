@@ -80,25 +80,27 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     /**
-     * Removes any synced persisted members that are not returned in the API results and
-     * overwrites any synced persisted data if the API response contains updated data
+     * Removes any synced client members that are not returned in the API results and
+     * overwrites any synced client members if the API response contains updated data. Does not
+     * remove or overwrite any unsynced data (new or edited members).
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val fetchedMembers = api.getMembers(token.getHeaderString(), token.user.providerId).blockingGet()
-                val fetchedMemberIds = fetchedMembers.map { it.id }
-                val persistedMembers = memberDao.all().blockingFirst()
-                val persistedMembersById = persistedMembers.groupBy { it.id }
-                val unsyncedMembers = memberDao.unsynced().blockingGet()
-                val unsyncedMemberIds = unsyncedMembers.map { it.id }
-                val syncedMemberIds = persistedMembers.map{ it.id }.minus(unsyncedMemberIds)
-                val deletedMemberIds = syncedMemberIds.minus(fetchedMemberIds)
-                val fetchedMembersWithoutUnsynced = fetchedMembers.filter { !unsyncedMemberIds.contains(it.id) }
+                val serverMembers = api.getMembers(token.getHeaderString(), token.user.providerId).blockingGet()
+                val serverMemberIds = serverMembers.map { it.id }
+                val clientMembers = memberDao.all().blockingFirst()
+                val clientMemberIds = clientMembers.map { it.id }
+                val clientMembersById = clientMembers.groupBy { it.id }
+                val unsyncedClientMembers = memberDao.unsynced().blockingGet()
+                val unsyncedClientMemberIds = unsyncedClientMembers.map { it.id }
+                val syncedClientMemberIds = clientMemberIds.minus(unsyncedClientMemberIds)
+                val serverRemovedMemberIds = syncedClientMemberIds.minus(serverMemberIds)
+                val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
 
-                memberDao.delete(deletedMemberIds)
-                memberDao.upsert(fetchedMembersWithoutUnsynced.map { memberApi ->
-                    val persistedMember = persistedMembersById[memberApi.id]?.firstOrNull()?.toMember()
+                memberDao.delete(serverRemovedMemberIds)
+                memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
+                    val persistedMember = clientMembersById[memberApi.id]?.firstOrNull()?.toMember()
                     MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
                 })
                 preferencesManager.updateMemberLastFetched(clock.instant())

@@ -86,20 +86,40 @@ class BillableRepositoryImplTest {
     @Test
     fun fetch_hasToken_savesResponse() {
         val authToken = AuthenticationTokenFactory.build()
-        val fetchedModel = BillableModelFactory.build(clock = clock)
-        val unsyncedModel = BillableModelFactory.build()
-        val apiResponse = BillableApi(
-                fetchedModel.id, fetchedModel.type.toString(), fetchedModel.composition,
-                fetchedModel.unit, fetchedModel.price, fetchedModel.name)
+        val noChange = BillableModelFactory.build(clock = clock)
+        val noChangeApi = BillableApi(noChange.toBillable())
+        val serverEdited = BillableModelFactory.build(name = "fucap", clock = clock)
+        val serverEditedApi = BillableApi(serverEdited.copy(name = "flucap").toBillable())
+        val serverAdded = BillableModelFactory.build(clock = clock)
+        val serverAddedApi = BillableApi(serverAdded.toBillable())
+        val serverRemoved = BillableModelFactory.build(clock = clock)
+        val clientAdded = BillableModelFactory.build(clock = clock)
+
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.getBillables(any(), any())).thenReturn(Single.just(listOf(apiResponse)))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedModel)))
+        whenever(mockApi.getBillables(any(), any())).thenReturn(Single.just(listOf(
+                noChangeApi,
+                serverEditedApi,
+                serverAddedApi
+        )))
+        whenever(mockDao.all()).thenReturn(Single.just(listOf(
+                noChange,
+                serverEdited,
+                serverRemoved,
+                clientAdded
+        )))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(
+                clientAdded
+        )))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).getBillables(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao).deleteNotInList(listOf(fetchedModel.id, unsyncedModel.id))
-        verify(mockDao).upsert(listOf(fetchedModel))
+        verify(mockDao).delete(listOf(serverRemoved.id))
+        verify(mockDao).upsert(listOf(
+                noChange,
+                serverEdited.copy(name = "flucap"),
+                serverAdded
+        ))
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())
     }
 

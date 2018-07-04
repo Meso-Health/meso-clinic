@@ -24,18 +24,18 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
 
     /**
      * Removes any persisted diagnoses that are not returned in the API results and overwrites
-     * any persisted data if the API response contains updated data
+     * any persisted data if the API response contains updated data.
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val fetchedDiagnoses = api.getDiagnoses(token.getHeaderString()).blockingGet()
-                val fetchedDiagnosesIds = fetchedDiagnoses.map { it.id }
-                val persistedDiagnosesIds = diagnosisDao.all().blockingGet().map { it.id }
-                val deletedDiagnosesIds = persistedDiagnosesIds.minus(fetchedDiagnosesIds)
+                val serverDiagnoses = api.getDiagnoses(token.getHeaderString()).blockingGet()
+                val serverDiagnosesIds = serverDiagnoses.map { it.id }
+                val clientDiagnosesIds = diagnosisDao.all().blockingGet().map { it.id }
+                val serverRemovedDiagnosesIds = clientDiagnosesIds.minus(serverDiagnosesIds)
 
-                diagnosisDao.delete(deletedDiagnosesIds)
-                diagnosisDao.insert(fetchedDiagnoses.map { diagnosisApi ->
+                diagnosisDao.delete(serverRemovedDiagnosesIds)
+                diagnosisDao.upsert(serverDiagnoses.map { diagnosisApi ->
                     DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
                 })
                 preferencesManager.updateDiagnosesLastFetched(clock.instant())
