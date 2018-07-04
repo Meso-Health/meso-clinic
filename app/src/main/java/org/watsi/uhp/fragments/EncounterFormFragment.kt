@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_encounter_form.save_button
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.adapters.EncounterFormAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
@@ -70,7 +72,8 @@ class EncounterFormFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.encounter_form_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_form_fragment_label), R.drawable.ic_arrow_back_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_encounter_form, container, false)
     }
 
@@ -99,6 +102,16 @@ class EncounterFormFragment : DaggerFragment() {
         }
         error?.let {
             logger.error(it)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
