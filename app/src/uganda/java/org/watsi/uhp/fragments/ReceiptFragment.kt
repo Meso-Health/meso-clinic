@@ -13,15 +13,15 @@ import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_receipt.date_edit
-import kotlinx.android.synthetic.main.fragment_receipt.date_label
-import kotlinx.android.synthetic.main.fragment_receipt.diagnoses_label
-import kotlinx.android.synthetic.main.fragment_receipt.diagnoses_list
-import kotlinx.android.synthetic.main.fragment_receipt.encounter_items_label
-import kotlinx.android.synthetic.main.fragment_receipt.encounter_items_list
-import kotlinx.android.synthetic.main.fragment_receipt.forms_label
-import kotlinx.android.synthetic.main.fragment_receipt.save_button
-import kotlinx.android.synthetic.main.fragment_receipt.total_price
+import kotlinx.android.synthetic.uganda.fragment_receipt.date_edit
+import kotlinx.android.synthetic.uganda.fragment_receipt.date_label
+import kotlinx.android.synthetic.uganda.fragment_receipt.diagnoses_label
+import kotlinx.android.synthetic.uganda.fragment_receipt.diagnoses_list
+import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_label
+import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_list
+import kotlinx.android.synthetic.uganda.fragment_receipt.forms_label
+import kotlinx.android.synthetic.uganda.fragment_receipt.save_button
+import kotlinx.android.synthetic.uganda.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
@@ -67,7 +67,7 @@ class ReceiptFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounter = arguments.getSerializable(EncounterFormFragment.PARAM_ENCOUNTER) as EncounterWithItemsAndForms
+        encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounter.encounter.occurredAt, encounter.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->

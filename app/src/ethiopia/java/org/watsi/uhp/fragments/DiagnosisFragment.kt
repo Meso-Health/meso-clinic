@@ -59,14 +59,14 @@ class DiagnosisFragment : DaggerFragment() {
 
                 diagnosisAdapter.setDiagnoses(viewState.selectedDiagnoses)
                 diagnoses_count.text = resources.getQuantityString(
-                        R.plurals.diagnosis_count, viewState.selectedDiagnoses.size, viewState.selectedDiagnoses.size)
+                    R.plurals.diagnosis_count, viewState.selectedDiagnoses.size, viewState.selectedDiagnoses.size)
             }
         })
 
         diagnosisAdapter = DiagnosisAdapter(
-                onRemoveDiagnosis = { diagnosis: Diagnosis ->
-                    viewModel.removeDiagnosis(diagnosis)
-                }
+            onRemoveDiagnosis = { diagnosis: Diagnosis ->
+                viewModel.removeDiagnosis(diagnosis)
+            }
         )
     }
 
@@ -77,8 +77,8 @@ class DiagnosisFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         diagnosis_search.suggestionsAdapter = SimpleCursorAdapter(
-                activity, R.layout.item_billable_search_suggestion, null,
-                arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1), intArrayOf(R.id.text1), 0)
+            activity, R.layout.item_billable_search_suggestion, null,
+            arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1), intArrayOf(R.id.text1), 0)
         diagnosis_search.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
 
@@ -105,8 +105,8 @@ class DiagnosisFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             val encounterRelation = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
-            navigationManager.goTo(EncounterFormFragment.forEncounter(
-                    encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
+            navigationManager.goTo(ReceiptFragment.forEncounter(
+                encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
         }
     }
 

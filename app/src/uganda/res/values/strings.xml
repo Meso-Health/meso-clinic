@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- StatusFragment -->
+    <string name="sync_encounter_forms_label">Treatment Forms</string>
+
+    <!-- EncounterFormFragment -->
+    <string name="encounter_form_fragment_label">Treatment form photos</string>
+    <string name="encounter_form_add_photo_btn">Add photo</string>
+    <plurals name="encounter_form_count">
+        <item quantity="one">%d treatment form photo</item>
+        <item quantity="other">%d treatment form photos</item>
+    </plurals>
+</resources>

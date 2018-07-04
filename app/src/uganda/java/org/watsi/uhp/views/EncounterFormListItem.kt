@@ -3,8 +3,8 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
-import kotlinx.android.synthetic.main.view_encounter_form_list_item.view.encounter_form_photo
-import kotlinx.android.synthetic.main.view_encounter_form_list_item.view.remove_encounter_form_btn
+import kotlinx.android.synthetic.uganda.view_encounter_form_list_item.view.encounter_form_photo
+import kotlinx.android.synthetic.uganda.view_encounter_form_list_item.view.remove_encounter_form_btn
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.viewmodels.EncounterFormViewModel
 

@@ -186,14 +186,6 @@
     <string name="add_new_billable">Add</string>
     <string name="currency">UGX</string>
 
-    <!-- EncounterFormFragment -->
-    <string name="encounter_form_fragment_label">Treatment form photos</string>
-    <string name="encounter_form_add_photo_btn">Add photo</string>
-    <plurals name="encounter_form_count">
-        <item quantity="one">%d treatment form photo</item>
-        <item quantity="other">%d treatment form photos</item>
-    </plurals>
-
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">Review</string>
     <string name="back_button">Go back</string>
@@ -241,7 +233,6 @@
     <string name="sync_new_members_label">New members</string>
     <string name="sync_id_events_label">Identifications</string>
     <string name="sync_encounters_label">Encounters</string>
-    <string name="sync_encounter_forms_label">Treatment Forms</string>
     <string name="all_synced">All synced</string>
 
     <!-- PhotoActivity -->
