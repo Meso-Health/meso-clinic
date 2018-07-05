@@ -60,7 +60,7 @@ class DomainModule {
     ): SyncBillableUseCase {
         return SyncBillableUseCase(billableRepository, deltaRepository)
     }
-
+    
     @Provides
     fun provideSyncIdentificationEventUseCase(
             identificationEventRepository: IdentificationEventRepository,
@@ -92,7 +92,7 @@ class DomainModule {
     ): SyncMemberPhotoUseCase {
         return SyncMemberPhotoUseCase(memberRepository, deltaRepository)
     }
-
+  
     @Provides
     fun provideSyncStatusUseCase(deltaRepository: DeltaRepository): SyncStatusUseCase {
         return SyncStatusUseCase(deltaRepository)

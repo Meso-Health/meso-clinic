@@ -117,7 +117,7 @@ class DbModule {
                                              api: CoverageApi,
                                              sessionManager: SessionManager,
                                              clock: Clock): IdentificationEventRepository {
-            return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
+        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
     }
 
     @Provides
@@ -134,6 +134,6 @@ class DbModule {
                                api: CoverageApi,
                                sessionManager: SessionManager,
                                clock: Clock): PhotoRepository {
-            return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
+        return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
     }
 }
