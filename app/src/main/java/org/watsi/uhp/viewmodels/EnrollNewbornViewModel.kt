@@ -83,8 +83,7 @@ class EnrollNewbornViewModel(
 
     fun onCardScan(cardId: String) {
         viewStateObservable.value?.let {
-            val errors = it.errors.filterNot { it.key == MEMBER_CARD_ERROR }
-            viewStateObservable.value = it.copy(cardId = cardId, errors = errors)
+            viewStateObservable.value = it.copy(cardId = cardId)
         }
     }
 
@@ -135,10 +134,6 @@ class EnrollNewbornViewModel(
                 errors[MEMBER_PHOTO_ERROR] = "A photo of the member is required"
             }
 
-            if (viewState.cardId == null) {
-                errors[MEMBER_CARD_ERROR] = "Member card is required"
-            }
-
             return errors
         }
     }
@@ -162,12 +157,11 @@ class EnrollNewbornViewModel(
         const val MEMBER_BIRTHDATE_ERROR = "member_birthdate_error"
         const val MEMBER_GENDER_ERROR = "member_gender_error"
         const val MEMBER_PHOTO_ERROR = "member_photo_error"
-        const val MEMBER_CARD_ERROR = "member_card_error"
 
         fun toMember(viewState: ViewState, memberId: UUID, householdId: UUID, language: String?, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() &&
-                    viewState.gender != null && viewState.cardId != null &&
-                    viewState.birthdate != null && viewState.photoId != null && viewState.name != null) {
+                    viewState.gender != null && viewState.birthdate != null &&
+                    viewState.photoId != null && viewState.name != null) {
 
                 return Member(
                         id = memberId,
