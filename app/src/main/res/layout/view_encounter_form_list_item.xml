@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/space12"
     android:paddingBottom="@dimen/space12"
-    android:paddingStart="@dimen/space16"
-    android:paddingEnd="@dimen/space16">
+    android:paddingStart="@dimen/space16">
 
     <ImageView
         android:id="@+id/encounter_form_photo"
@@ -19,13 +18,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/remove_encounter_form_btn"
-        android:layout_width="@dimen/space24"
-        android:layout_height="@dimen/space24"
-        android:background="@drawable/ic_clear_black_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space16"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:layout_width="@dimen/space24"
+            android:layout_height="@dimen/space24"
+            android:background="@drawable/ic_clear_black_24dp"
+            android:clickable="false" />
+    </android.support.constraint.ConstraintLayout>
 
 </org.watsi.uhp.views.EncounterFormListItem>

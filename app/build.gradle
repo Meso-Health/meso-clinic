@@ -40,7 +40,7 @@ android {
             versionNameSuffix "-development"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_development"
+                    appIcon: "@mipmap/ic_launcher_dev"
             ]
 
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
@@ -81,7 +81,7 @@ android {
             versionNameSuffix "-training"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_training"
+                    appIcon: "@mipmap/ic_launcher"
             ]
 
             buildConfigField "Integer", "PROVIDER_ID", "1"
