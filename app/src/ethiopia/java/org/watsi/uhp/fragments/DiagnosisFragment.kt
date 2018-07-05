@@ -106,7 +106,7 @@ class DiagnosisFragment : DaggerFragment() {
         save_button.setOnClickListener {
             val encounterRelation = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
             navigationManager.goTo(ReceiptFragment.forEncounter(
-                encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
+                    encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
         }
     }
 

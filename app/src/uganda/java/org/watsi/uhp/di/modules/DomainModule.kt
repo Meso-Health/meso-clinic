@@ -42,63 +42,63 @@ class DomainModule {
 
     @Provides
     fun provideSyncMemberUseCase(
-        memberRepository: MemberRepository,
-        deltaRepository: DeltaRepository
+            memberRepository: MemberRepository,
+            deltaRepository: DeltaRepository
     ): SyncMemberUseCase {
         return SyncMemberUseCase(memberRepository, deltaRepository)
     }
 
     @Provides
     fun provideCreateIdentificationEventUseCase(
-        identificationEventRepository: IdentificationEventRepository
+            identificationEventRepository: IdentificationEventRepository
     ): CreateIdentificationEventUseCase {
         return CreateIdentificationEventUseCase(identificationEventRepository)
     }
 
     @Provides
     fun provideSyncBillableUseCase(
-        billableRepository: BillableRepository,
-        deltaRepository: DeltaRepository
+            billableRepository: BillableRepository,
+            deltaRepository: DeltaRepository
     ): SyncBillableUseCase {
         return SyncBillableUseCase(billableRepository, deltaRepository)
     }
 
     @Provides
     fun provideSyncIdentificationEventUseCase(
-        identificationEventRepository: IdentificationEventRepository,
-        deltaRepository: DeltaRepository
+            identificationEventRepository: IdentificationEventRepository,
+            deltaRepository: DeltaRepository
     ): SyncIdentificationEventUseCase {
         return SyncIdentificationEventUseCase(identificationEventRepository, deltaRepository)
     }
 
     @Provides
     fun provideCreateEncounterUseCase(
-        encounterRepository: EncounterRepository,
-        billableRepository: BillableRepository
+            encounterRepository: EncounterRepository,
+            billableRepository: BillableRepository
     ): CreateEncounterUseCase {
         return CreateEncounterUseCase(encounterRepository, billableRepository)
     }
 
     @Provides
     fun provideSyncEncounterUseCase(
-        encounterRepository: EncounterRepository,
-        deltaRepository: DeltaRepository
+            encounterRepository: EncounterRepository,
+            deltaRepository: DeltaRepository
     ): SyncEncounterUseCase {
         return SyncEncounterUseCase(encounterRepository, deltaRepository)
     }
 
     @Provides
     fun provideSyncEncounterFormUseCase(
-        encounterFormRepository: EncounterFormRepository,
-        deltaRepository: DeltaRepository
+            encounterFormRepository: EncounterFormRepository,
+            deltaRepository: DeltaRepository
     ): SyncEncounterFormUseCase {
         return SyncEncounterFormUseCase(encounterFormRepository, deltaRepository)
     }
 
     @Provides
     fun provideSyncMemberPhotoUseCase(
-        memberRepository: MemberRepository,
-        deltaRepository: DeltaRepository
+            memberRepository: MemberRepository,
+            deltaRepository: DeltaRepository
     ): SyncMemberPhotoUseCase {
         return SyncMemberPhotoUseCase(memberRepository, deltaRepository)
     }
@@ -125,14 +125,14 @@ class DomainModule {
 
     @Provides
     fun provideLoadDefaultOpdBillablesUseCase(
-        billableRepository: BillableRepository
+            billableRepository: BillableRepository
     ): LoadDefaultBillablesUseCase {
         return LoadDefaultBillablesUseCase(billableRepository)
     }
 
     @Provides
     fun provideLoadHouseholdMembersUseCase(
-        memberRepository: MemberRepository
+            memberRepository: MemberRepository
     ): LoadHouseholdMembersUseCase {
         return LoadHouseholdMembersUseCase(memberRepository)
     }

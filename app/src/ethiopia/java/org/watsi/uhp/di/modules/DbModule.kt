@@ -60,7 +60,7 @@ class DbModule {
     @Singleton
     @Provides
     fun provideIdentificationEventDao(db: AppDatabase): IdentificationEventDao =
-        db.identificationEventDao()
+            db.identificationEventDao()
 
     @Singleton
     @Provides
@@ -76,7 +76,7 @@ class DbModule {
                                   sessionManager: SessionManager,
                                   preferencesManager: PreferencesManager,
                                   clock: Clock): BillableRepository =
-        BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
+            BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
@@ -89,21 +89,21 @@ class DbModule {
                                    sessionManager: SessionManager,
                                    preferencesManager: PreferencesManager,
                                    clock: Clock): DiagnosisRepository =
-        DiagnosisRepositoryImpl(diagnosisDao, api, sessionManager, preferencesManager, clock)
+            DiagnosisRepositoryImpl(diagnosisDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun provideEncounterRepository(encounterDao: EncounterDao,
                                    api: CoverageApi,
                                    sessionManager: SessionManager,
                                    clock: Clock): EncounterRepository =
-        EncounterRepositoryImpl(encounterDao, api, sessionManager, clock)
+            EncounterRepositoryImpl(encounterDao, api, sessionManager, clock)
 
     @Provides
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
                                              api: CoverageApi,
                                              sessionManager: SessionManager,
                                              clock: Clock): IdentificationEventRepository {
-        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
+            return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
     }
 
     @Provides
@@ -113,13 +113,13 @@ class DbModule {
                                 preferencesManager: PreferencesManager,
                                 photoDao: PhotoDao,
                                 clock: Clock): MemberRepository =
-        MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,
                                api: CoverageApi,
                                sessionManager: SessionManager,
                                clock: Clock): PhotoRepository {
-        return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
+            return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
     }
 }
