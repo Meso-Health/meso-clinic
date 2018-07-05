@@ -103,13 +103,13 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun deleteNotInList() {
-        MemberModelFactory.create(memberDao)
-        val model = MemberModelFactory.create(memberDao)
+    fun delete() {
+        val model1 = MemberModelFactory.create(memberDao)
+        val model2 = MemberModelFactory.create(memberDao)
 
-        memberDao.deleteNotInList(listOf(model.id))
+        memberDao.delete(listOf(model1.id))
 
-        memberDao.all().test().assertValue(listOf(model))
+        memberDao.all().test().assertValue(listOf(model2))
     }
 
     @Test

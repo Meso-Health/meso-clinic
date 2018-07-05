@@ -29,13 +29,13 @@ class BillableDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun deleteNotInList() {
-        BillableModelFactory.create(billableDao)
-        val model = BillableModelFactory.create(billableDao)
+    fun delete() {
+        val model1 = BillableModelFactory.create(billableDao)
+        val model2 = BillableModelFactory.create(billableDao)
 
-        billableDao.deleteNotInList(listOf(model.id))
+        billableDao.delete(listOf(model1.id))
 
-        billableDao.all().test().assertValue(listOf(model))
+        billableDao.all().test().assertValue(listOf(model2))
     }
 
     @Test

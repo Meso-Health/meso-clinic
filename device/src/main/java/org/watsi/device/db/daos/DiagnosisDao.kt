@@ -14,11 +14,11 @@ interface DiagnosisDao {
     fun insert(model: DiagnosisModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(models: List<DiagnosisModel>)
+    fun upsert(models: List<DiagnosisModel>)
 
     @Query("SELECT * FROM diagnoses")
     fun all(): Single<List<DiagnosisModel>>
 
-    @Query("DELETE FROM diagnoses WHERE id NOT IN (:ids)")
-    fun deleteNotInList(ids: List<Int>)
+    @Query("DELETE FROM diagnoses WHERE id IN (:ids)")
+    fun delete(ids: List<Int>)
 }

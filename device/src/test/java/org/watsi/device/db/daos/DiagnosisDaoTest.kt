@@ -11,17 +11,17 @@ class DiagnosisDaoTest : DaoBaseTest() {
         val newDiagnosis = DiagnosisModelFactory.build(id = 2)
         val updatedDiagnosis = persistedDiagnosis.copy(description = "Fever")
 
-        diagnosisDao.insert(listOf(updatedDiagnosis, newDiagnosis))
+        diagnosisDao.upsert(listOf(updatedDiagnosis, newDiagnosis))
 
         diagnosisDao.all().test().assertValue(listOf(updatedDiagnosis, newDiagnosis))
     }
 
     @Test
-    fun deleteNotInList() {
+    fun delete() {
         DiagnosisModelFactory.create(diagnosisDao, id = 1)
         val model = DiagnosisModelFactory.create(diagnosisDao, id = 2)
 
-        diagnosisDao.deleteNotInList(listOf(model.id))
+        diagnosisDao.delete(listOf(1))
 
         diagnosisDao.all().test().assertValue(listOf(model))
     }
