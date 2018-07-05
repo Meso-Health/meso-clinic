@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SimpleCursorAdapter
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.scrollToBottom
@@ -71,7 +73,8 @@ class DiagnosisFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.diagnosis_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.diagnosis_fragment_label), R.drawable.ic_arrow_back_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_diagnosis, container, false)
     }
 
@@ -117,5 +120,15 @@ class DiagnosisFragment : DaggerFragment() {
             cursor.addRow(arrayOf(it.id, it.description, it.id.toString()))
         }
         return cursor
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

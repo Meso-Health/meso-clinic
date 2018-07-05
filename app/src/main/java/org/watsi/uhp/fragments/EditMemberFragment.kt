@@ -10,6 +10,7 @@ import android.support.design.widget.TextInputLayout
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -160,6 +161,7 @@ class EditMemberFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_edit_member, container, false)
     }
 
@@ -277,6 +279,16 @@ class EditMemberFragment : DaggerFragment() {
             else -> {
                 logger.error("Unknown requestCode called from EditMemberFragment: $requestCode")
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -121,8 +122,9 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.encounter_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_clear_white_24dp)
         (activity as ClinicActivity).setSoftInputModeToNothing()
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
     }
 
@@ -268,5 +270,15 @@ class EncounterFragment : DaggerFragment() {
      */
     data class BillablePresenter(val billable: Billable?) {
         override fun toString(): String = billable?.name ?: "Select..."
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
