@@ -58,16 +58,35 @@ class DiagnosisRepositoryImplTest {
     @Test
     fun fetch_hasToken_savesResponse() {
         val authToken = AuthenticationTokenFactory.build()
-        val model = DiagnosisModelFactory.build(clock = clock)
-        val apiResponse = DiagnosisApi(model.id, model.description, model.searchAliases)
+        val noChange = DiagnosisModelFactory.build(id = 1, clock = clock)
+        val noChangeApi = DiagnosisApi(noChange.toDiagnosis())
+        val serverEdited = DiagnosisModelFactory.build(id = 2, description = "maleria", clock = clock)
+        val serverEditedApi = DiagnosisApi(serverEdited.copy(description = "malaria").toDiagnosis())
+        val serverAdded = DiagnosisModelFactory.build(id = 4, clock = clock)
+        val serverAddedApi = DiagnosisApi(serverAdded.toDiagnosis())
+        val serverRemoved = DiagnosisModelFactory.build(id = 3, clock = clock)
+
         whenever(mockSessionManager.currentToken()).thenReturn(authToken)
-        whenever(mockApi.getDiagnoses(any())).thenReturn(Single.just(listOf(apiResponse)))
+        whenever(mockApi.getDiagnoses(any())).thenReturn(Single.just(listOf(
+                noChangeApi,
+                serverEditedApi,
+                serverAddedApi
+        )))
+        whenever(mockDao.all()).thenReturn(Single.just(listOf(
+                noChange,
+                serverEdited,
+                serverRemoved
+        )))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).getDiagnoses(authToken.getHeaderString())
-        verify(mockDao).deleteNotInList(listOf(model.id))
-        verify(mockDao).insert(listOf(model))
+        verify(mockDao).delete(listOf(serverRemoved.id))
+        verify(mockDao).upsert(listOf(
+                noChange,
+                serverEdited.copy(description = "malaria"),
+                serverAdded
+        ))
         verify(mockPreferencesManager).updateDiagnosesLastFetched(clock.instant())
     }
 }

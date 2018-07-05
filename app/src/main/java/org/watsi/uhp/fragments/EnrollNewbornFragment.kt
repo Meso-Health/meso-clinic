@@ -7,10 +7,14 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
+import android.widget.TextView
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id_field
@@ -67,7 +71,6 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         name_layout.setError(errorMap[EnrollNewbornViewModel.MEMBER_NAME_ERROR])
         enroll_newborn_birthdate_dialog_field.setErrorOnField(errorMap[EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR])
         photo_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_PHOTO_ERROR])
-        card_id_field.setError(errorMap[EnrollNewbornViewModel.MEMBER_CARD_ERROR])
     }
 
     private fun scrollToFirstError(errorMap: Map<String, String>) {
@@ -75,8 +78,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 EnrollNewbornViewModel.MEMBER_GENDER_ERROR to gender_field,
                 EnrollNewbornViewModel.MEMBER_NAME_ERROR to name_layout,
                 EnrollNewbornViewModel.MEMBER_BIRTHDATE_ERROR to enroll_newborn_birthdate_dialog_field,
-                EnrollNewbornViewModel.MEMBER_PHOTO_ERROR to photo_field,
-                EnrollNewbornViewModel.MEMBER_CARD_ERROR to card_id_field
+                EnrollNewbornViewModel.MEMBER_PHOTO_ERROR to photo_field
         )
 
         validationKeysToField.forEach {
@@ -122,6 +124,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstance: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.enroll_newborn_activity_title), R.drawable.ic_clear_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_enroll_newborn, container, false)
     }
 
@@ -171,6 +174,19 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 handleOnSaveError(throwable)
             })
         }
+
+        name.setOnEditorActionListener() { v, actionId, event ->
+            if (v == null) false
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                if (v == name) {
+                    v?.clearFocus()
+                    keyboardManager.hideKeyboard(v)
+                    enroll_newborn_birthdate_dialog_field.performClick()
+                    true
+                }
+            }
+            false
+        }
     }
 
     fun handleOnSaveError(throwable: Throwable) {
@@ -219,6 +235,16 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                         .setOnDismissListener { single.onSuccess(false) }
                         .show()
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

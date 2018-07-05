@@ -42,21 +42,26 @@ class BillableRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
+    /**
+     * Removes any synced persisted billables that are not returned in the API results and
+     * overwrites any persisted data if the API response contains updated data. Do not
+     * remove or overwrite any unsynced data (new billables).
+     */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            api.getBillables(token.getHeaderString(), token.user.providerId).flatMapCompletable {
-                fetchedBillables ->
-                billableDao.unsynced().flatMapCompletable { unsyncedBillables ->
-                    Completable.fromAction {
-                        val fetchedAndUnsyncedIds =
-                                fetchedBillables.map { it.id } + unsyncedBillables.map { it.id }
-                        billableDao.deleteNotInList(fetchedAndUnsyncedIds)
-                        billableDao.upsert(fetchedBillables.map { billableApi ->
-                            BillableModel.fromBillable(billableApi.toBillable(), clock)
-                        })
-                        preferencesManager.updateBillablesLastFetched(clock.instant())
-                    }
-                }
+            Completable.fromAction {
+                val serverBillables = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
+                val serverBillableIds = serverBillables.map { it.id }
+                val clientBillableIds = billableDao.all().blockingGet().map { it.id }
+                val unsyncedClientBillableIds = billableDao.unsynced().blockingGet().map { it.id }
+                val syncedClientBillableIds = clientBillableIds.minus(unsyncedClientBillableIds)
+                val serverRemovedBillableIds = syncedClientBillableIds.minus(serverBillableIds)
+
+                billableDao.delete(serverRemovedBillableIds)
+                billableDao.upsert(serverBillables.map { billableApi ->
+                    BillableModel.fromBillable(billableApi.toBillable(), clock)
+                })
+                preferencesManager.updateBillablesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }

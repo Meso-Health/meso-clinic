@@ -49,7 +49,6 @@ import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PhotoFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class MemberRepositoryImplTest {
@@ -153,31 +152,53 @@ class MemberRepositoryImplTest {
 
     @Test
     fun fetch_hasToken_succeeds_updatesMembers() {
-        val syncedMemberPhotoUrl = "https://watsi.org/photo"
-        val syncedMember = MemberModelFactory.build(
-                clock = clock,
-                thumbnailPhotoId = UUID.randomUUID(),
-                photoUrl = syncedMemberPhotoUrl
-        )
-        val syncedMemberApi = MemberApi(syncedMember.toMember())
-        val unsyncedMember = MemberModelFactory.build(clock = clock)
-        val unsyncedMemberApi = MemberApi(unsyncedMember.toMember())
-        val inactiveMember = MemberModelFactory.build(clock = clock)
-        val newMember = MemberModelFactory.build(clock = clock)
-        val newMemberApi = MemberApi(newMember.toMember())
+        val noChange = MemberModelFactory.build(clock = clock)
+        val noChangeApi = MemberApi(noChange.toMember())
+        val serverEdited = MemberModelFactory.build(name = "Bryan", clock = clock)
+        val serverEditedApi = MemberApi(serverEdited.copy(name = "Byron").toMember())
+        val serverAdded = MemberModelFactory.build(clock = clock)
+        val serverAddedApi = MemberApi(serverAdded.toMember())
+        val serverRemoved = MemberModelFactory.build(clock = clock)
+        val clientEdited = MemberModelFactory.build(name = "Ross", clock = clock)
+        val clientEditedApi = MemberApi(clientEdited.copy(name = "Rocks").toMember())
+        val clientAdded = MemberModelFactory.build(clock = clock)
+        val clientEditedServerEdited = MemberModelFactory.build(name = "Mike", clock = clock)
+        val clientEditedServerEditedApi = MemberApi(clientEditedServerEdited.copy(name = "Michael").toMember())
+        val clientEditedServerRemoved = MemberModelFactory.build(clock = clock)
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockApi.getMembers(any(), any())).thenReturn(
-                Single.just(listOf(syncedMemberApi, newMemberApi, unsyncedMemberApi)))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(unsyncedMember)))
-        whenever(mockDao.all()).thenReturn(
-                Flowable.just(listOf(syncedMember, inactiveMember, unsyncedMember)))
+        whenever(mockApi.getMembers(any(), any())).thenReturn(Single.just(listOf(
+                noChangeApi,
+                serverEditedApi,
+                serverAddedApi,
+                clientEditedApi,
+                clientEditedServerEditedApi
+        )))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(
+                clientEdited,
+                clientAdded,
+                clientEditedServerEdited,
+                clientEditedServerRemoved
+        )))
+        whenever(mockDao.all()).thenReturn(Flowable.just(listOf(
+                noChange,
+                serverEdited,
+                serverRemoved,
+                clientEdited,
+                clientAdded,
+                clientEditedServerEdited,
+                clientEditedServerRemoved
+        )))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
-        verify(mockDao).deleteNotInList(listOf(syncedMember.id, newMember.id, unsyncedMember.id))
-        verify(mockDao).upsert(listOf(syncedMember.copy(photoUrl = syncedMemberPhotoUrl), newMember))
+        verify(mockDao).delete(listOf(serverRemoved.id))
+        verify(mockDao).upsert(listOf(
+                noChange,
+                serverEdited.copy(name = "Byron"),
+                serverAdded
+        ))
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
 

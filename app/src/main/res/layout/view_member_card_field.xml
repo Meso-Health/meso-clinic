@@ -11,7 +11,7 @@
     android:paddingBottom="@dimen/space24"
     android:clipToPadding="false"
     android:clipChildren="false"
-    android:background="@drawable/panel_background">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/member_card_label"

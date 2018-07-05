@@ -34,6 +34,7 @@ import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.date_and_time
 import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
@@ -85,7 +86,7 @@ class ReceiptFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.receipt_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.receipt_fragment_label), R.drawable.ic_arrow_back_white_24dp)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_receipt, container, false)
     }
@@ -175,6 +176,10 @@ class ReceiptFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
             R.id.menu_submit_without_copayment -> {
                 submitEncounter(false)
                 true
