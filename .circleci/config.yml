@@ -1,0 +1,36 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-25-alpha
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx1024m"
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
+      - run:
+          name: Run Tests
+          command: ./gradlew lintDebug runUnitTests
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports/app
+      - store_artifacts:
+          path: device/build/reports
+          destination: reports/device
+      - store_artifacts:
+          path: domain/build/reports
+          destination: reports/domain
+      - store_test_results:
+          paths:
+            - app/build/test-results
+            - device/build/test-results
+            - domain/build/test-results

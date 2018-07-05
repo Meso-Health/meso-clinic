@@ -1,28 +1,73 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.1.3-2'
     repositories {
+        google()
         jcenter()
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+    ext {
+        gradleVersion = '3.1.2'
+        kotlinVersion = '1.2.40'
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
         maven {
             url "https://maven.google.com"
         }
+        maven {
+            url "https://jitpack.io"
+        }
+        maven {
+            url "https://maven.fabric.io/public"
+        }
+        google()
+        jcenter()
     }
 }
 
+// This block encapsulates custom properties and makes them available to all
+// modules in the project.
+ext {
+    minSdkVersion = 24
+    targetSdkVersion = 26
+    compileSdkVersion = 26
+    applicationId = "org.watsi.uhp"
+    versionCode = 1
+    versionName = "1.0"
+}
+
+// This adds more custom properties from the dependencies.gradle file and makes them available to
+// all modules in the project.
+apply from: 'dependencies.gradle'
+
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task runDomainUnitTests(dependsOn: [':domain:test']) {
+    description 'Run unit tests for the domain module.'
+}
+
+task runDeviceUnitTests(dependsOn: [':device:testDebugUnitTest']) {
+    description 'Run unit tests for the device module.'
+}
+
+task runAppUnitTests(dependsOn: [':app:testDebugUnitTest']) {
+    description 'Run unit tests for the app module.'
+}
+
+task runUnitTests(dependsOn: ['runDomainUnitTests', 'runDeviceUnitTests', 'runAppUnitTests']) {
+    description 'Run unit tests for all modules.'
+}
+
+task runAppInstrumentationTests(dependsOn: [':app:connectedAndroidTest']) {
+    description 'Run instrumentation tests for the app module.'
 }

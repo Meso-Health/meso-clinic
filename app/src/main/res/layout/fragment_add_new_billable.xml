@@ -1,149 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:paddingLeft="@dimen/fragment_horizontal_margin"
+    android:paddingRight="@dimen/fragment_horizontal_margin"
+    android:paddingTop="@dimen/fragment_vertical_margin"
+    android:paddingBottom="@dimen/fragment_vertical_margin">
 
-    <data>
-        <variable name="billable" type="org.watsi.uhp.view_models.BillableViewModel"/>
-    </data>
-
-    <LinearLayout
-        android:orientation="vertical"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/type_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        android:layout_marginTop="@dimen/fragment_vertical_margin"
-        android:layout_marginBottom="@dimen/fragment_vertical_margin"
-        android:layout_marginLeft="@dimen/fragment_horizontal_margin"
-        android:layout_marginRight="@dimen/fragment_horizontal_margin">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/label_vertical_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/view_outline_rectangle">
-            <Spinner
-                android:id="@+id/type_field"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:entries="@{billable.typeSelections}"
-                android:selectedItemPosition="@={billable.selectedTypeIndex}" />
-        </RelativeLayout>
+            app:label="@string/add_new_billable_type_label"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
+        <View
+            android:id="@+id/type_divider"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/add_new_billable_name_label"
-            android:labelFor="@+id/name_field" />
+            android:layout_height="1dip"
+            android:background="@color/gray3"
+            app:layout_constraintTop_toBottomOf="@id/type_spinner"
+            app:layout_constraintStart_toStartOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
 
-        <EditText
-                android:id="@+id/name_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={billable.name}"
-                android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-            />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/name_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/label_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/type_container"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/name_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:maxLines="1"
+            android:hint="@string/add_new_billable_name_label"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords|textNoSuggestions" />
+    </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:labelFor="@+id/name_field"
-                android:text="@string/add_new_billable_unit_label"
-                android:visibility="@{billable.showUnit}" />
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/spread_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/label_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/name_container"
+        app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:labelFor="@+id/price_field"
-                android:text="@string/add_new_billable_price_label" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/unit_container"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/price_container"
+            app:layout_constraintHorizontal_chainStyle="spread">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/unit_field"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:text="@={billable.unit}"
-                android:visibility="@{billable.showUnit}" />
+                android:hint="@string/add_new_billable_unit_label"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/price_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/unit_container"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/price_field"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:hint="@string/add_new_billable_price_label"
+                android:inputType="number"
+                android:imeOptions="actionDone" />
+        </android.support.design.widget.TextInputLayout>
+    </android.support.constraint.ConstraintLayout>
 
-                <EditText
-                    android:id="@+id/price_field"
-                    android:layout_width="156dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:gravity="left"
-                    android:imeOptions="actionDone"
-                    android:text="@={billable.price}" />
+    <TextView
+        android:id="@+id/currency_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/currency"
+        android:textColor="@color/gray6"
+        android:textSize="@dimen/fontSize16"
+        android:padding="@dimen/space12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/spread_container"/>
 
-                <TextView
-                    android:id="@+id/ugx"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:gravity="center_vertical"
-                    android:text="@string/UGX"
-                    android:theme="@style/LargeLabel" />
-            </LinearLayout>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/composition_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/label_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/spread_container"
+        app:layout_constraintStart_toStartOf="parent">
 
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/add_new_billable_composition"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/add_new_billable_composition_label"
-            android:visibility="@{billable.showComposition}"
-            />
-
-        <org.watsi.uhp.custom_components.BillableCompositionInput
-            android:id="@+id/list_of_compositions"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@+id/member_name"
-            android:maxLines="1"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:focusableInTouchMode="true"
-            android:text="@={billable.composition}"
-            android:visibility="@{billable.showComposition}"/>
-
-        <Button
-            android:id="@+id/save_button"
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/composition_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/form_item_vertical_margin"
-            style="@style/PrimaryButton"
-            android:text="@string/add_new_billable"
-            android:enabled="@{billable.saveEnabled}"
-            android:onClick="@{() -> billable.onClickSave()}"
-            android:textAllCaps="true"
-            android:layout_below="@id/price_field" />
-    </LinearLayout>
-</layout>
+            app:label="@string/add_new_billable_composition_label"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/composition_divider"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/gray3"
+            app:layout_constraintTop_toBottomOf="@id/composition_spinner"
+            app:layout_constraintStart_toStartOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/label_vertical_margin"
+        style="@style/PrimaryButton"
+        android:text="@string/add_new_billable"
+        android:enabled="false"
+        app:layout_constraintTop_toBottomOf="@id/composition_container"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

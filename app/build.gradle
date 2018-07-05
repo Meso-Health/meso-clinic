@@ -1,32 +1,30 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
-
     // building string config fields requires a double-quoted string
     // For non-strings in buildConfigField, use System.getenv instead of ENV.
     def ENV = { k -> "\"${System.getenv(k)}\"" }
 
-    dataBinding {
-        enabled = true
-    }
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
         applicationId "org.watsi.uhp"
-        minSdkVersion 21
-        targetSdkVersion 22
         multiDexEnabled true
         versionCode System.getenv("VERSION_CODE") as Integer
         versionName System.getenv("VERSION_NAME") as String
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "Integer", "PROVIDER_ID", System.getenv("PROVIDER_ID")
+        buildConfigField "Integer", "PROVIDER_ID", "1"
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
+        buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
     }
     signingConfigs {
         releaseConfig {
@@ -38,32 +36,16 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
-            versionNameSuffix '-debug'
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releaseConfig
-        }
-    }
-    productFlavors {
-        development {
             applicationIdSuffix ".development"
             versionNameSuffix "-development"
-            resValue "string", "app_name", "UHP Dev"
-            resValue "string", "main_activity_label", "UHP Dev"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#868E96" // gray
-            resValue "color", "colorPrimaryDark", "#343A40"
             manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_development"
+                    appIcon: "@mipmap/ic_launcher_dev"
             ]
 
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
-            buildConfigField "String", "API_HOST", ENV("DEVELOPMENT_API_HOST")
+            buildConfigField "String", "API_HOST", "\"http://localhost:5000\""
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
             buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
             buildConfigField "String", "ROLLBAR_API_KEY", "null"
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
@@ -71,11 +53,7 @@ android {
         sandbox {
             applicationIdSuffix ".sandbox"
             versionNameSuffix "-sandbox"
-            resValue "string", "app_name", "UHP Sandbox"
-            resValue "string", "main_activity_label", "UHP Sandbox"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#FCAF63" // beige
-            resValue "color", "colorPrimaryDark", "#E89746"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
@@ -83,34 +61,11 @@ android {
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
-        spec {
-            applicationIdSuffix ".spec"
-            versionNameSuffix "-spec"
-            resValue "string", "app_name", "UHP Spec"
-            resValue "string", "main_activity_label", "UHP Spec"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#F4C2C2" // pink
-            resValue "color", "colorPrimaryDark", "#E09F9F"
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_spec"
-            ]
-
-            buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
-            buildConfigField "String", "API_HOST", ENV("SPEC_API_HOST")
-            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
-            buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
-            buildConfigField "String", "ROLLBAR_API_KEY", "null"
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
-        }
         demo {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".demo"
             versionNameSuffix "-demo"
-            resValue "string", "app_name", "UHP Demo"
-            resValue "string", "main_activity_label", "UHP Demo"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
-            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -118,32 +73,28 @@ android {
             buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("DEMO_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
         training {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".training"
             versionNameSuffix "-training"
-            resValue "string", "app_name", "UHP Training"
-            resValue "string", "main_activity_label", "UHP Training"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
-            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_training"
+                    appIcon: "@mipmap/ic_launcher"
             ]
 
-            buildConfigField "Integer", "PROVIDER_ID", System.getenv("TRAINING_PROVIDER_ID")
+            buildConfigField "Integer", "PROVIDER_ID", "1"
             buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("TRAINING_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
-        production {
+        release {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".production"
             versionNameSuffix "-production"
-            resValue "string", "app_name", "UHP"
-            resValue "string", "main_activity_label", "UHP"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            resValue "color", "colorPrimary", "#329AF0" // Watsi blue
-            resValue "color", "colorPrimaryDark", "#1C7CD6"
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
@@ -151,6 +102,7 @@ android {
             buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
             buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
     }
 
@@ -166,52 +118,80 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.j256.ormlite:ormlite-core:5.0'
-    compile 'com.j256.ormlite:ormlite-android:5.0'
-    compile 'com.rollbar:rollbar-android:0.2.0'
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.android.support:design:25.4.0'
-    compile 'com.android.support:support-v4:25.4.0'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:cardview-v7:25.4.0'
-    compile 'com.google.android.gms:play-services-vision:9.4.0'
-    compile 'me.xdrop:fuzzywuzzy:1.1.9'
-    compile 'me.philio:pinentryview:1.0.6'
-    compile 'com.simprints:LibSimprints:1.0.11'
-    compile 'net.hockeyapp.android:HockeySDK:4.1.2'
-    compile 'com.google.guava:guava:20.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'com.github.bumptech.glide:glide:3.8.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
+    def dependencies = rootProject.ext.dependencies
+    def testDependencies = rootProject.ext.testDependencies
 
-    // Libs for testing
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.powermock:powermock:1.6.5'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
-    testCompile "org.powermock:powermock-module-junit4-rule:1.6.5"
-    testCompile "org.powermock:powermock-classloading-xstream:1.6.5"
-
-    testCompile 'org.robolectric:robolectric:3.3.2'
-    testCompile 'org.robolectric:shadows-support-v4:3.3.2'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    debugCompile 'com.airbnb.okreplay:okreplay:1.3.0'
-    releaseCompile 'com.airbnb.okreplay:noop:1.3.0'
-    testCompile 'com.airbnb.okreplay:junit:1.3.0'
-    androidTestCompile 'com.airbnb.okreplay:espresso:1.3.0'
-
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
+    implementation (project(":domain")) {
+        exclude group: 'org.threeten', module: 'threetenbp'
     }
-}
-repositories {
-    mavenCentral()
+    implementation (project(':device')) {
+        exclude group: 'org.threeten', module: 'threetenbp'
+    }
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Support libraries
+    implementation dependencies.kotlin
+    implementation dependencies.kotlinReflect
+    implementation dependencies.androidSupportLibrary
+    implementation dependencies.supportDesign
+    implementation dependencies.cardView
+    implementation dependencies.gson
+    implementation dependencies.gmsVision
+    implementation dependencies.constraintLayout
+
+    // Dependency injection
+    implementation dependencies.dagger
+    implementation dependencies.daggerAndroidSupport
+    kapt dependencies.daggerAndroidProcessor
+    kapt dependencies.daggerCompiler
+    kaptTest dependencies.daggerCompiler
+    kaptAndroidTest dependencies.daggerCompiler
+
+    // AAC
+    implementation dependencies.aacLifecycleExtensions
+    implementation dependencies.roomRuntime
+    implementation dependencies.roomRxJava
+    implementation dependencies.reactiveStreams
+    kapt dependencies.roomCompiler
+
+    // API
+    implementation dependencies.retrofit
+    implementation dependencies.retrofitRxJava
+    implementation dependencies.gsonConverter
+
+    // Simprints
+    implementation dependencies.simprints
+
+    // Time
+    implementation dependencies.threeTenAndroidBackport
+
+    // RX Java
+    implementation dependencies.rxJava
+    implementation dependencies.rxAndroid
+
+    // Exception reporting
+    implementation dependencies.rollbar
+
+    // Image loading
+    // https://bumptech.github.io/glide/doc/download-setup.html#gradle
+    implementation (dependencies.glide) {
+        exclude group: "com.android.support"
+    }
+    kapt dependencies.glideCompiler
+
+    // Application dependencies
+    implementation 'me.xdrop:fuzzywuzzy:1.1.9'
+    implementation 'me.philio:pinentryview:1.0.6'
+    implementation 'net.hockeyapp.android:HockeySDK:4.1.2'
+
+    // Testing
+    testImplementation project(path: ':domain', configuration: 'testOutput')
+    testImplementation testDependencies.junit
+    testImplementation testDependencies.mockito
+    testImplementation testDependencies.mockitoKotlin
+    testImplementation testDependencies.aacTesting
+    testImplementation testDependencies.robolectric
+    androidTestImplementation testDependencies.androidTestRunner
+    androidTestImplementation testDependencies.espresso
+    androidTestImplementation testDependencies.okReplayEspresso
 }

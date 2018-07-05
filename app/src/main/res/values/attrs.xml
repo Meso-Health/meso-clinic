@@ -4,4 +4,23 @@
         <attr name="message" format="string"/>
         <attr name="action" format="string"/>
     </declare-styleable>
+    <declare-styleable name="DialogEditField">
+        <attr name="label" />
+        <attr name="android:inputType" />
+    </declare-styleable>
+    <declare-styleable name="DialogBirthdateField">
+        <attr name="showCalendarIcon" format="boolean" />
+        <attr name="allowAgeSelector" format="boolean" />
+        <attr name="showCalculatedAge" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="ButtonWithContainer">
+        <attr name="buttonText" format="reference" localization="suggested" />
+        <attr name="icon" format="reference" localization="suggested" />
+    </declare-styleable>
+    <declare-styleable name="SpinnerField">
+        <attr name="label" />
+    </declare-styleable>
+    <declare-styleable name="StatusField">
+        <attr name="android:text" />
+    </declare-styleable>
 </resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<org.watsi.uhp.views.MemberListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/space8"
+    android:paddingBottom="@dimen/space8"
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16">
+
+    <ImageView
+        android:id="@+id/member_photo"
+        android:contentDescription="@string/photo_description"
+        android:layout_width="@dimen/thumbnailSmall"
+        android:layout_height="@dimen/thumbnailSmall"
+        android:background="@drawable/thumbnail_photo_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space12"
+        app:layout_constraintStart_toEndOf="@id/member_photo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/name"
+            android:theme="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/member_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+</org.watsi.uhp.views.MemberListItem>

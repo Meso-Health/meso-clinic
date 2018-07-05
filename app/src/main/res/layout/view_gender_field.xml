@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true"
+    android:focusable="true" >
+
+    <TextView
+        android:id="@+id/gender_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gender_field_label"
+        style="@style/Label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <org.watsi.uhp.views.ImageTextButton
+        android:id="@+id/gender_button_female"
+        style="@style/SecondaryButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space8"
+        android:layout_marginEnd="@dimen/space8"
+        android:drawableStart="@drawable/ic_member_placeholder_female"
+        android:text="@string/female"
+        android:elevation="0dp"
+        android:stateListAnimator="@null"
+        app:layout_constraintEnd_toStartOf="@+id/gender_button_male"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gender_label"/>
+
+    <org.watsi.uhp.views.ImageTextButton
+        android:id="@+id/gender_button_male"
+        style="@style/SecondaryButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space8"
+        android:layout_marginStart="@dimen/space8"
+        android:drawableStart="@drawable/ic_member_placeholder_male"
+        android:text="@string/male"
+        android:elevation="0dp"
+        android:stateListAnimator="@null"
+        app:layout_constraintBaseline_toBaselineOf="@id/gender_button_female"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@+id/gender_button_female"
+        app:layout_constraintTop_toBottomOf="@id/gender_label"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/gender_error_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space8"
+        app:layout_constraintTop_toBottomOf="@id/gender_button_female" />
+</android.support.constraint.ConstraintLayout>
