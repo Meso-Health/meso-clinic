@@ -109,8 +109,8 @@ android {
     productFlavors {
         uganda {
             dimension "version"
-            applicationIdSuffix ".ugx"
-            versionNameSuffix "-ugx"
+            applicationIdSuffix ".uga"
+            versionNameSuffix "-uga"
         }
         ethiopia {
             dimension "version"
