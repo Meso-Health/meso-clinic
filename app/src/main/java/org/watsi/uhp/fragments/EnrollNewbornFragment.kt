@@ -7,14 +7,12 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
-import android.widget.TextView
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_enroll_newborn.card_id_field

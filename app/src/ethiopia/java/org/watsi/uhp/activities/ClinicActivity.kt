@@ -1,11 +1,11 @@
 package org.watsi.uhp.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.annotation.DrawableRes
-import android.support.annotation.StringRes
 import android.support.v4.app.ActivityCompat
 import android.view.Menu
 import android.view.MenuItem
@@ -13,10 +13,12 @@ import android.view.WindowManager
 import dagger.android.support.DaggerAppCompatActivity
 import net.hockeyapp.android.UpdateManager
 import org.watsi.device.managers.SessionManager
+import org.watsi.uhp.BaseApplication
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.CurrentPatientsFragment
 import org.watsi.uhp.helpers.ActivityHelper
+import org.watsi.uhp.managers.LocaleManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.DeleteSyncedPhotosService
@@ -30,6 +32,9 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var navigationManager: NavigationManager
+    lateinit var localeManager: LocaleManager
+
+    internal var servicesStarted = false
 
     companion object {
         private val FETCH_SERVICE_JOB_ID = 0
@@ -45,7 +50,10 @@ class ClinicActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_clinic)
 
         ActivityHelper.setupBannerIfInTrainingMode(this)
-        startServices()
+        if (servicesStarted) {
+            startServices()
+            servicesStarted = true
+        }
 
         navigationManager.goTo(CurrentPatientsFragment())
     }
@@ -82,6 +90,12 @@ class ClinicActivity : DaggerAppCompatActivity() {
     public override fun onDestroy() {
         super.onDestroy()
         UpdateManager.unregister()
+    }
+
+    override fun attachBaseContext(base: Context) {
+        // pull LocaleManager off of Application because Activity is not injected when this is called
+        localeManager = (base.applicationContext as BaseApplication).localeManager
+        super.attachBaseContext(localeManager.createLocalizedContext(base))
     }
 
     private fun startServices() {
@@ -151,5 +165,15 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     fun navigateToAuthenticationActivity() {
         startActivity(Intent(this, AuthenticationActivity::class.java))
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.menu_switch_language -> {
+                localeManager.toggleLocale(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

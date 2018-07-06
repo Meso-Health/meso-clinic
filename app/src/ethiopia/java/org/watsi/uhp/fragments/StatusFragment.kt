@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -66,6 +68,7 @@ class StatusFragment : DaggerFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.version_and_sync_label)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_status, container, false)
     }
 
@@ -84,5 +87,10 @@ class StatusFragment : DaggerFragment() {
         } else {
             count.toString() + " pending"
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        val switchLanguageItem = menu.findItem(R.id.menu_switch_language)
+        switchLanguageItem.isVisible = true
     }
 }

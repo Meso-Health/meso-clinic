@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AuthenticationActivity -->
+    <string name="authentication_activity_label">ናይ ተጠቃሚ መአተዊ</string>
+    <string name="login_username_label">ናይ ተጠቃሚ ሽም</string>
+    <string name="login_password_label">መሕልፍ ቃል</string>
+    <string name="login_button_text">እቶ</string>
+    <string name="login_generic_failure_message">ክኣትው አይካኣለን</string>
+    <string name="login_wrong_password_message">ጌጋ መሕልፍ ቃል</string>
+    <string name="login_progress_message">ይኣትው ኣሎ</string>
+    <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+</resources>
