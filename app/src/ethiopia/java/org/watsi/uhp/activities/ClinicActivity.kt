@@ -50,8 +50,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         ActivityHelper.setupBannerIfInTrainingMode(this)
         startServices()
 
-        // Just some temporary code to take us to Encounter for now.
-        // navigationManager.goTo(EncounterFragment.forEncounterWithFakeMember())
         navigationManager.goTo(CurrentPatientsFragment())
     }
 
