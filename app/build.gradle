@@ -105,6 +105,19 @@ android {
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
     }
+    flavorDimensions "version"
+    productFlavors {
+        uganda {
+            dimension "version"
+            applicationIdSuffix ".uga"
+            versionNameSuffix "-uga"
+        }
+        ethiopia {
+            dimension "version"
+            applicationIdSuffix ".eth"
+            versionNameSuffix "-eth"
+        }
+    }
 
     sourceSets {
         String sharedTestDir = 'src/sharedTest/java'

@@ -11,10 +11,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_encounter_form.encounter_form_count
-import kotlinx.android.synthetic.main.fragment_encounter_form.encounter_form_list
-import kotlinx.android.synthetic.main.fragment_encounter_form.photo_btn
-import kotlinx.android.synthetic.main.fragment_encounter_form.save_button
+import kotlinx.android.synthetic.uganda.fragment_encounter_form.encounter_form_count
+import kotlinx.android.synthetic.uganda.fragment_encounter_form.encounter_form_list
+import kotlinx.android.synthetic.uganda.fragment_encounter_form.photo_btn
+import kotlinx.android.synthetic.uganda.fragment_encounter_form.save_button
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.uhp.R

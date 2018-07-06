@@ -60,7 +60,7 @@ task runDeviceUnitTests(dependsOn: [':device:testDebugUnitTest']) {
     description 'Run unit tests for the device module.'
 }
 
-task runAppUnitTests(dependsOn: [':app:testDebugUnitTest']) {
+task runAppUnitTests(dependsOn: [':app:testEthiopiaDebugUnitTest', ':app:testUgandaDebugUnitTest']) {
     description 'Run unit tests for the app module.'
 }
 
