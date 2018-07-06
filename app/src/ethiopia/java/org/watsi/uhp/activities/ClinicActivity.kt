@@ -34,8 +34,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
     @Inject lateinit var navigationManager: NavigationManager
     lateinit var localeManager: LocaleManager
 
-    internal var servicesStarted = false
-
     companion object {
         private val FETCH_SERVICE_JOB_ID = 0
         private val FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID = 1
@@ -50,11 +48,10 @@ class ClinicActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_clinic)
 
         ActivityHelper.setupBannerIfInTrainingMode(this)
-        if (servicesStarted) {
-            startServices()
-            servicesStarted = true
-        }
+        startServices()
 
+        // Just some temporary code to take us to Encounter for now.
+        // navigationManager.goTo(EncounterFragment.forEncounterWithFakeMember())
         navigationManager.goTo(CurrentPatientsFragment())
     }
 
