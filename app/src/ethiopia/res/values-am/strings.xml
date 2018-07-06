@@ -9,4 +9,15 @@
     <string name="login_wrong_password_message">የተሳሳተ የይለፍ ቃል</string>
     <string name="login_progress_message">እየገባ ነው</string>
     <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
+
+    <!-- Encounter Flow -->
+    <string name="continue_encounter_button">ቀጥል</string>
+
+    <!-- DiagnosisFragment -->
+    <string name="diagnosis_fragment_label">በሽታዎች ዝርዝር</string>
+    <plurals name="diagnosis_count">
+        <item quantity="one">%d በሽታ</item>
+        <item quantity="other">%d በሽታዎች ዝርዝር</item>
+    </plurals>
+    <string name="search_diagnosis_hint">በሽታ ፈልግ&#8230;</string>
 </resources>

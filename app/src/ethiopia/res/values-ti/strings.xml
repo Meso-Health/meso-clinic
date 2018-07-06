@@ -9,4 +9,15 @@
     <string name="login_wrong_password_message">ጌጋ መሕልፍ ቃል</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
     <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+
+    <!-- Encounter Flow -->
+    <string name="continue_encounter_button">ቀፅል</string>
+    
+    <!-- DiagnosisFragment -->
+    <string name="diagnosis_fragment_label">ነፀርታታት ሕማም</string>
+    <plurals name="diagnosis_count">
+        <item quantity="one">%d ነፀርታ ሕማም</item>
+        <item quantity="other">%d ነፀርታታት ሕማም</item>
+    </plurals>
+    <string name="search_diagnosis_hint">ነፀርታ ኣልሽ&#8230;</string>
 </resources>
