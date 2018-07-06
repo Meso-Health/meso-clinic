@@ -15,7 +15,7 @@ class LocaleManager @Inject constructor(private val preferencesManager: Preferen
 
     fun createLocalizedContext(baseContext: Context): Context {
         val config = baseContext.resources.configuration
-        config.setLocale(preferencesManager.getLocale())
+        preferencesManager.getLocale()?.let { config.setLocale(it) }
         return baseContext.createConfigurationContext(config)
     }
 
