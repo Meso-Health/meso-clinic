@@ -96,8 +96,6 @@ class ReceiptFragment : DaggerFragment() {
         encounter_items_label.text = resources.getQuantityString(
             receipt_line_item_count, encounter.encounterItems.size, encounter.encounterItems.size)
         total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounter.price()))
-        forms_label.text = resources.getQuantityString(
-            forms_attached_label, encounter.encounterForms.size, encounter.encounterForms.size)
 
         if (encounter.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
