@@ -161,16 +161,16 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         done_button.setOnClickListener {
             parent = arguments.getSerializable(PARAM_MEMBER) as Member
-
-            viewModel.saveMember(memberId, parent.householdId, parent.language).subscribe({
-                navigationManager.goBack()
-
-                view?.let {
-                    SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
-                }
-            }, { throwable ->
-                handleOnSaveError(throwable)
-            })
+            parent.householdId?.let {
+                viewModel.saveMember(memberId, it, parent.language).subscribe({
+                    navigationManager.goBack()
+                    view?.let {
+                        SnackbarHelper.show(it, context, context.getString(R.string.enrollment_completed_snackbar_message))
+                    }
+                }, { throwable ->
+                    handleOnSaveError(throwable)
+                })
+            }
         }
 
         name.setOnEditorActionListener() { v, actionId, event ->

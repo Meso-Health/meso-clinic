@@ -164,19 +164,21 @@ class EnrollNewbornViewModel(
                     viewState.photoId != null && viewState.name != null) {
 
                 return Member(
-                        id = memberId,
-                        name = viewState.name,
-                        enrolledAt = Instant.now(clock),
-                        birthdate = viewState.birthdate,
-                        gender = viewState.gender,
-                        photoId = viewState.photoId,
-                        thumbnailPhotoId = viewState.thumbnailPhoto?.id,
-                        fingerprintsGuid = null,
-                        cardId = viewState.cardId,
-                        householdId = householdId,
-                        language = language,
-                        phoneNumber = null,
-                        photoUrl = null
+                    id = memberId,
+                    name = viewState.name,
+                    enrolledAt = Instant.now(clock),
+                    birthdate = viewState.birthdate,
+                    gender = viewState.gender,
+                    photoId = viewState.photoId,
+                    thumbnailPhotoId = viewState.thumbnailPhoto?.id,
+                    fingerprintsGuid = null,
+                    cardId = viewState.cardId,
+                    householdId = householdId,
+                    language = language,
+                    phoneNumber = null,
+                    photoUrl = null,
+                    membershipNumber = null,
+                    medicalRecordNumber = null
                 )
             } else {
                 throw IllegalStateException("ViewStateToEntityMapper.fromMemberViewStateToMember should only be called with a valid viewState. " + viewState.toString())
