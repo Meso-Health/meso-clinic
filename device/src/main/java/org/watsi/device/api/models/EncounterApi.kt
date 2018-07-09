@@ -16,7 +16,7 @@ import java.util.UUID
 data class EncounterApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("member_id") val memberId: UUID,
-        @SerializedName("identification_event_id") val identificationEventId: UUID,
+        @SerializedName("identification_event_id") val identificationEventId: UUID?,
         @SerializedName("occurred_at") val occurredAt: Instant,
         @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Boolean,
         @SerializedName("copayment_paid") val copaymentPaid: Boolean = false,
