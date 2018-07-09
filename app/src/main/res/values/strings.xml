@@ -175,17 +175,6 @@
     </plurals>
     <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
-    <!-- AddNewBillableFragment -->
-    <string name="add_new_billable_fragment_label">New line item</string>
-    <string name="add_new_billable_type_label">Type</string>
-    <string name="add_new_billable_name_label">Name</string>
-    <string name="add_new_billable_price_label">Price per Unit</string>
-    <string name="add_new_billable_unit_label">Unit (eg. 100mg)</string>
-    <string name="add_new_billable_composition_label">Composition (eg. tablet)</string>
-    <string name="add_new_billable_composition_prompt">Select a composition</string>
-    <string name="add_new_billable">Add</string>
-    <string name="currency">UGX</string>
-
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">Review</string>
     <string name="back_button">Go back</string>
@@ -202,6 +191,7 @@
     </plurals>
     <string name="today_wrapper">Today (%1$s)</string>
     <string name="date_and_time">%1$s at %2$s</string>
+    <string name="currency">UGX</string>
 
     <!-- MemberEditFragment -->
     <string name="member_edit_label">Edit member details</string>

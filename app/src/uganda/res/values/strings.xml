@@ -10,4 +10,14 @@
         <item quantity="one">%d treatment form photo</item>
         <item quantity="other">%d treatment form photos</item>
     </plurals>
+
+    <!-- AddNewBillableFragment -->
+    <string name="add_new_billable_fragment_label">New line item</string>
+    <string name="add_new_billable_type_label">Type</string>
+    <string name="add_new_billable_name_label">Name</string>
+    <string name="add_new_billable_price_label">Price per Unit</string>
+    <string name="add_new_billable_unit_label">Unit (eg. 100mg)</string>
+    <string name="add_new_billable_composition_label">Composition (eg. tablet)</string>
+    <string name="add_new_billable_composition_prompt">Select a composition</string>
+    <string name="add_new_billable">Add</string>
 </resources>
