@@ -15,21 +15,25 @@ import java.util.UUID
  * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
  * classes to a format our API accepts.
  */
-data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
-                     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
-                     @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID,
-                     @SerializedName(CARD_ID_FIELD) val cardId: String?,
-                     @SerializedName(NAME_FIELD) val name: String,
-                     @SerializedName(GENDER_FIELD) val gender: Member.Gender,
-                     @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
-                     @SerializedName(BIRTHDATE_ACCURACY_FIELD)
-                     val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
-                     @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
-                     @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
-                     @SerializedName(LANGUAGE_FIELD) val language: String?,
-                     @SerializedName(OTHER_LANGUAGE_FIELD) val otherLanguage: String?,
-                     @Expose(serialize = false)
-                     @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?) {
+data class MemberApi(
+    @SerializedName(ID_FIELD) val id: UUID,
+    @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
+    @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID?,
+    @SerializedName(CARD_ID_FIELD) val cardId: String?,
+    @SerializedName(NAME_FIELD) val name: String,
+    @SerializedName(GENDER_FIELD) val gender: Member.Gender,
+    @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
+    @SerializedName(BIRTHDATE_ACCURACY_FIELD)
+    val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
+    @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
+    @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
+    @SerializedName(LANGUAGE_FIELD) val language: String?,
+    @SerializedName(OTHER_LANGUAGE_FIELD) val otherLanguage: String?,
+    @Expose(serialize = false)
+    @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?,
+    @SerializedName(MEMBERSHIP_NUMBER_FIELD) val membershipNumber: String?,
+    @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?
+) {
 
     constructor (member: Member) :
             this(id = member.id,
@@ -44,7 +48,9 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                  phoneNumber = member.phoneNumber,
                  language = preferredLanguage(member),
                  otherLanguage = preferredLanguageOther(member),
-                 photoUrl = member.photoUrl
+                 photoUrl = member.photoUrl,
+                 membershipNumber = member.membershipNumber,
+                 medicalRecordNumber = member.medicalRecordNumber
             )
 
     fun toMember(persistedMember: Member?): Member {
@@ -58,20 +64,24 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
         val thumbnailPhotoId = persistedMember?.let {
             if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
-        return Member(id = id,
-                      enrolledAt = enrolledAt,
-                      householdId = householdId,
-                      cardId = cardId,
-                      name = name,
-                      gender = gender,
-                      birthdate = birthdate,
-                      birthdateAccuracy = birthdateAccuracy,
-                      fingerprintsGuid = fingerprintsGuid,
-                      phoneNumber = phoneNumber,
-                      language = language,
-                      photoId = persistedMember?.photoId,
-                      thumbnailPhotoId = thumbnailPhotoId,
-                      photoUrl = convertedPhotoUrl)
+        return Member(
+            id = id,
+            enrolledAt = enrolledAt,
+            householdId = householdId,
+            cardId = cardId,
+            name = name,
+            gender = gender,
+            birthdate = birthdate,
+            birthdateAccuracy = birthdateAccuracy,
+            fingerprintsGuid = fingerprintsGuid,
+            phoneNumber = phoneNumber,
+            language = language,
+            photoId = persistedMember?.photoId,
+            thumbnailPhotoId = thumbnailPhotoId,
+            photoUrl = convertedPhotoUrl,
+            membershipNumber = membershipNumber,
+            medicalRecordNumber = medicalRecordNumber
+        )
     }
 
     companion object {
@@ -88,6 +98,8 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
         const val LANGUAGE_FIELD = "preferred_language"
         const val OTHER_LANGUAGE_FIELD = "preferred_language_other"
         const val PHOTO_URL_FIELD = "photo_url"
+        const val MEMBERSHIP_NUMBER_FIELD = "membership_number"
+        const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
             val patchParams = JsonObject()

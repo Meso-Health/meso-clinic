@@ -8,20 +8,24 @@ import org.watsi.domain.utils.DateUtils
 import java.io.Serializable
 import java.util.UUID
 
-data class Member(val id: UUID,
-                  val enrolledAt: Instant,
-                  val householdId: UUID,
-                  val photoId: UUID?,
-                  val thumbnailPhotoId: UUID?,
-                  val photoUrl: String?,
-                  val cardId: String?,
-                  val name: String,
-                  val gender: Gender,
-                  val language: String?,
-                  val birthdate: LocalDate,
-                  val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
-                  val fingerprintsGuid: UUID?,
-                  val phoneNumber: String?) : Serializable {
+data class Member(
+    val id: UUID,
+    val enrolledAt: Instant,
+    val householdId: UUID?,
+    val photoId: UUID?,
+    val thumbnailPhotoId: UUID?,
+    val photoUrl: String?,
+    val cardId: String?,
+    val name: String,
+    val gender: Gender,
+    val language: String?,
+    val birthdate: LocalDate,
+    val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
+    val fingerprintsGuid: UUID?,
+    val phoneNumber: String?,
+    val membershipNumber: String?,
+    val medicalRecordNumber: String?
+) : Serializable {
 
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
