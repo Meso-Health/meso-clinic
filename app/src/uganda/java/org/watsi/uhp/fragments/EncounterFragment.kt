@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
@@ -57,11 +57,13 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
+    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: EncounterWithItemsAndForms): EncounterFragment {
+        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -72,7 +74,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
 
         val billableTypeOptions = Billable.Type.values()
                 .map { it.toString().titleize() }
@@ -83,7 +85,8 @@ class EncounterFragment : DaggerFragment() {
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        observable = viewModel.getObservable(encounter)
+        observable = viewModel.getObservable(encounterBuilder.encounter.id,
+                                             encounterBuilder.encounterItems)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 if (viewState.type == null) {
@@ -112,7 +115,7 @@ class EncounterFragment : DaggerFragment() {
                         drug_search.visibility = View.GONE
                     }
                 }
-                viewState.encounter.let {
+                viewState.let {
                     encounter_item_count.text = resources.getQuantityString(
                             R.plurals.encounter_item_count, it.encounterItems.size, it.encounterItems.size)
                     encounterItemAdapter.setEncounterItems(it.encounterItems)
@@ -235,17 +238,17 @@ class EncounterFragment : DaggerFragment() {
         })
 
         add_billable_prompt.setOnClickListener {
-            viewModel.currentEncounter()?.let {
-                navigationManager.goTo(AddNewBillableFragment.forEncounter(it))
-            }
+            encounterBuilder.encounterItems = viewModel.currentEncounterItems().orEmpty()
+            navigationManager.goTo(AddNewBillableFragment.forEncounter(encounterBuilder))
         }
 
         save_button.setOnClickListener {
-            if (viewModel.currentEncounter()?.encounterItems?.isEmpty() != false) {
-                SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
-            } else {
-                viewModel.currentEncounter()?.let {
-                    navigationManager.goTo(DiagnosisFragment.forEncounter(it))
+            viewModel.currentEncounterItems()?.let { encounterItems ->
+                if (encounterItems.isEmpty()) {
+                    SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
+                } else {
+                    encounterBuilder.encounterItems = encounterItems
+                    navigationManager.goTo(DiagnosisFragment.forEncounter(encounterBuilder))
                 }
             }
         }

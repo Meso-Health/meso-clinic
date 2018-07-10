@@ -39,7 +39,7 @@ interface PhotoDao {
             "FROM photos\n" +
             "LEFT OUTER JOIN members ON\n" +
                 "(photos.id = members.thumbnailPhotoId OR photos.id = members.photoId)\n" +
-            "LEFT OUTER JOIN encounter_forms ON photos.id = encounter_forms.photoId\n" +
+            "LEFT OUTER JOIN encounter_forms ON photos.id = encounter_forms.photoId OR photos.id = encounter_forms.thumbnailId\n" +
             "WHERE (encounter_forms.id IS NULL AND members.id IS NULL AND\n" +
                 "photos.createdAt <= (strftime('%s', 'now', '-30 Minute') * 1000))")
     fun canBeDeleted(): Single<List<PhotoModel>>

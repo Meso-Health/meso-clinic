@@ -14,11 +14,7 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_billables_updated_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_diagnoses_updated_at
-import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_members_updated_at
-import kotlinx.android.synthetic.ethiopia.fragment_status.unfetched_member_photos
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_edited_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_encounters
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_identifications
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_new_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.version
 import org.watsi.device.managers.Logger
@@ -39,26 +35,14 @@ class StatusFragment : DaggerFragment() {
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(StatusViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
-                viewState.membersUpdatedAt?.let {
-                    fetch_members_updated_at.setValue(DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString())
-                }
                 viewState.billablesUpdatedAt?.let {
                     fetch_billables_updated_at.setValue(DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString())
                 }
                 viewState.diagnosesUpdatedAt?.let {
                     fetch_diagnoses_updated_at.setValue(DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString())
                 }
-                viewState.photosToFetchCount?.let {
-                    unfetched_member_photos.setValue(formattedQuantity(it))
-                }
                 viewState.syncStatus.unsyncedNewMemberCount?.let {
                     unsynced_new_members.setValue(formattedQuantity(it))
-                }
-                viewState.syncStatus.unsyncedEditedMemberCount?.let {
-                    unsynced_edited_members.setValue(formattedQuantity(it))
-                }
-                viewState.syncStatus.unsyncedIdEventCount?.let {
-                    unsynced_identifications.setValue(formattedQuantity(it))
                 }
                 viewState.syncStatus.unsyncedEncounterCount?.let {
                     unsynced_encounters.setValue(formattedQuantity(it))

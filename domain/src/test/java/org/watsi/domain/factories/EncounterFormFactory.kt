@@ -7,7 +7,8 @@ object EncounterFormFactory {
 
     fun build(id: UUID = UUID.randomUUID(),
               encounterId: UUID = UUID.randomUUID(),
-              photoId: UUID = UUID.randomUUID()) : EncounterForm {
-        return EncounterForm(id = id, encounterId = encounterId, photoId = photoId)
+              photoId: UUID = UUID.randomUUID(),
+              thumbnailId: UUID = UUID.randomUUID()) : EncounterForm {
+        return EncounterForm(id = id, encounterId = encounterId, photoId = photoId, thumbnailId = thumbnailId)
     }
 }

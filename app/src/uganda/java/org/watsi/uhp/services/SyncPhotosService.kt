@@ -12,9 +12,9 @@ class SyncPhotosService : BaseService() {
 
     override fun executeTasks(): Completable {
         return Completable.concatArray(
-                syncMemberPhotoUseCase.execute().onErrorComplete { setErrored(it) },
-                syncEncounterFormUseCase.execute().onErrorComplete { setErrored(it) },
-                Completable.fromAction { if (getErrored()) { throw Exception() } }
+            syncMemberPhotoUseCase.execute().onErrorComplete { setErrored(it) },
+            syncEncounterFormUseCase.execute().onErrorComplete { setErrored(it) },
+            Completable.fromAction { if (getErrored()) { throw Exception() } }
         )
     }
 }
