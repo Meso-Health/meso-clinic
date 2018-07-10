@@ -21,11 +21,8 @@ import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.LocaleManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.BaseService
-import org.watsi.uhp.services.DeleteSyncedPhotosService
-import org.watsi.uhp.services.FetchMemberPhotosService
 import org.watsi.uhp.services.FetchService
 import org.watsi.uhp.services.SyncDataService
-import org.watsi.uhp.services.SyncPhotosService
 import javax.inject.Inject
 
 class ClinicActivity : DaggerAppCompatActivity() {
@@ -36,10 +33,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     companion object {
         private val FETCH_SERVICE_JOB_ID = 0
-        private val FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID = 1
-        private val SYNC_DATA_SERVICE_JOB_ID = 2
-        private val SYNC_PHOTOS_SERVICE_JOB_ID = 3
-        private val DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID = 4
+        private val SYNC_DATA_SERVICE_JOB_ID = 1
         val requiredPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.INTERNET)
     }
 
@@ -95,10 +89,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     private fun startServices() {
         BaseService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
-        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
-        BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
-        BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
     }
 
     private fun checkForUpdates() {
