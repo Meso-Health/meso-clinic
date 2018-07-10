@@ -121,7 +121,7 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_clear_white_24dp)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_arrow_back_white_24dp)
         (activity as ClinicActivity).setSoftInputModeToNothing()
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
