@@ -46,7 +46,8 @@ class MemberInformationViewModel @Inject constructor(
 
     fun buildEncounter(): EncounterWithItemsAndForms {
         val encounterId = UUID.randomUUID()
-        val encounter = Encounter(encounterId, UUID.randomUUID(), UUID.randomUUID(), Instant.now(clock))
+        val memberId = UUID.randomUUID()
+        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
         return EncounterWithItemsAndForms(encounter, emptyList(), emptyList(), emptyList())
     }
 
