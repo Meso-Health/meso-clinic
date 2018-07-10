@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class Encounter(val id: UUID,
                      val memberId: UUID,
-                     val identificationEventId: UUID,
+                     val identificationEventId: UUID?,
                      val occurredAt: Instant,
                      val backdatedOccurredAt: Boolean = false,
                      val copaymentPaid: Boolean = true,
