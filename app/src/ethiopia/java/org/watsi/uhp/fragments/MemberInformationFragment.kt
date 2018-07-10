@@ -62,7 +62,7 @@ class MemberInformationFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(context.getString(R.string.member_information_fragment_label), R.drawable.ic_clear_white_24dp)
+        (activity as ClinicActivity).setToolbar(getString(R.string.member_information_fragment_label), R.drawable.ic_clear_white_24dp)
         return inflater?.inflate(R.layout.fragment_member_information, container, false)
     }
 
