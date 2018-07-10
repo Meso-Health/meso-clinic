@@ -8,7 +8,6 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
@@ -36,15 +35,19 @@ class EncounterViewModel @Inject constructor(
         })
     }
 
-    fun getObservable(encounter: EncounterWithItemsAndForms): LiveData<ViewState> {
-        observable.value = ViewState(encounter = encounter)
+    fun getObservable(
+        encounterId: UUID,
+        encounterItems: List<EncounterItemWithBillable>
+    ): LiveData<ViewState> {
+        observable.value = ViewState(encounterItems = encounterItems, encounterId = encounterId)
         return observable
     }
 
+
     fun getSelectableBillables(
             type: Billable.Type?,
-            currentEncounter: EncounterWithItemsAndForms? = currentEncounter()
-    ) : List<Billable>  {
+            encounterItems: List<EncounterItemWithBillable>? = currentEncounterItems()
+    ): List<Billable>  {
         val billableList = billablesByType[type].orEmpty()
         return when {
             billableList.isEmpty() -> {
@@ -53,7 +56,7 @@ class EncounterViewModel @Inject constructor(
             }
             type == Billable.Type.DRUG -> emptyList()
             else -> {
-                val currentBillables = currentEncounter?.billables().orEmpty()
+                val currentBillables = encounterItems.orEmpty().map { it.billable }
                 billableList.minus(currentBillables).sortedBy { it.name }
             }
         }
@@ -65,34 +68,30 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun addItem(billable: Billable) {
-        currentEncounter()?.let { encounter ->
-            val updatedEncounterItems = encounter.encounterItems.toMutableList()
-            val encounterItem = EncounterItem(UUID.randomUUID(), encounter.encounter.id, billable.id, 1)
+        observable.value?.let { viewState ->
+            val updatedEncounterItems = viewState.encounterItems.toMutableList()
+            val encounterItem = EncounterItem(UUID.randomUUID(), viewState.encounterId, billable.id, 1)
             updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
-            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(
-                    encounter = updatedEncounter,
-                    selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter),
+            observable.value = viewState.copy(
+                    encounterItems = updatedEncounterItems,
+                    selectableBillables = getSelectableBillables(viewState.type, updatedEncounterItems),
                     searchResults = emptyList()
             )
         }
     }
 
     fun removeItem(encounterItemId: UUID) {
-        currentEncounter()?.let { encounter ->
-            val updatedEncounterItems = encounter.encounterItems.toMutableList()
+        observable.value?.let { viewState ->
+            val updatedEncounterItems = viewState.encounterItems.toMutableList()
                     .filterNot { it.encounterItem.id == encounterItemId }
-            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(
-                    encounter = updatedEncounter,
-                    selectableBillables = getSelectableBillables(observable.value?.type, updatedEncounter)
-            )
+            observable.value = viewState.copy(encounterItems = updatedEncounterItems,
+                    selectableBillables = getSelectableBillables(viewState.type, updatedEncounterItems))
         }
     }
 
     fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
-        currentEncounter()?.let { encounter ->
-            val updatedEncounterItems = encounter.encounterItems.map { encounterItemWithBillable ->
+        observable.value?.let { viewState ->
+            val updatedEncounterItems = viewState.encounterItems.map { encounterItemWithBillable ->
                 if (encounterItemWithBillable.encounterItem.id == encounterItemId) {
                     val oldEncounterItem = encounterItemWithBillable.encounterItem
                     val newEncounterItem = oldEncounterItem.copy(quantity = quantity)
@@ -101,14 +100,14 @@ class EncounterViewModel @Inject constructor(
                     encounterItemWithBillable
                 }
             }
-            val updatedEncounter = encounter.copy(encounterItems = updatedEncounterItems)
-            observable.value = observable.value?.copy(encounter = updatedEncounter)
+            observable.value = viewState.copy(encounterItems = updatedEncounterItems)
         }
     }
 
     fun updateQuery(query: String) {
         if (query.length > 2) {
-            val currentDrugNames = currentEncounter()?.billables().orEmpty()
+            val currentDrugNames = currentEncounterItems().orEmpty()
+                    .map { it.billable }
                     .filter { it.type == Billable.Type.DRUG }
                     .map { it.name }
             val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
@@ -125,12 +124,13 @@ class EncounterViewModel @Inject constructor(
         }
     }
 
-    fun currentEncounter(): EncounterWithItemsAndForms? {
-        return observable.value?.encounter
+    fun currentEncounterItems(): List<EncounterItemWithBillable>? {
+        return observable.value?.encounterItems
     }
 
     data class ViewState(val type: Billable.Type? = null,
                          val selectableBillables: List<Billable> = emptyList(),
-                         val encounter: EncounterWithItemsAndForms,
+                         val encounterItems: List<EncounterItemWithBillable>,
+                         val encounterId: UUID,
                          val searchResults: List<Billable> = emptyList())
 }

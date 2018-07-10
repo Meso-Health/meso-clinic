@@ -3,7 +3,6 @@ package org.watsi.uhp.fragments
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -23,7 +22,7 @@ import kotlinx.android.synthetic.uganda.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
@@ -39,11 +38,13 @@ class AddNewBillableFragment : DaggerFragment() {
 
     lateinit var viewModel: AddNewBillableViewModel
     lateinit var compositionAdapter: ArrayAdapter<String>
+    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: EncounterWithItemsAndForms): AddNewBillableFragment {
+        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): AddNewBillableFragment {
             val fragment = AddNewBillableFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -55,6 +56,7 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
         compositionAdapter = SpinnerField.createAdapter(context, mutableListOf())
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)
@@ -111,14 +113,11 @@ class AddNewBillableFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             viewModel.getBillable()?.let { billable ->
-                val encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
-                val updatedEncounterItems = encounter.encounterItems.toMutableList()
-                val newBillableEncounterItem = EncounterItem(
-                        UUID.randomUUID(), encounter.encounter.id, billable.id, 1)
-                updatedEncounterItems.add(EncounterItemWithBillable(newBillableEncounterItem, billable))
-
-                navigationManager.popTo(EncounterFragment.forEncounter(
-                        encounter.copy(encounterItems = updatedEncounterItems)))
+                val newBillableEncounterItem = EncounterItem(UUID.randomUUID(), encounterBuilder.encounter.id,
+                                                             billable.id, 1)
+                encounterBuilder.encounterItems = encounterBuilder.encounterItems.plus(
+                    EncounterItemWithBillable(newBillableEncounterItem, billable))
+                navigationManager.popTo(EncounterFragment.forEncounter(encounterBuilder))
             }
         }
     }

@@ -292,7 +292,7 @@
       },
       {
         "tableName": "encounter_forms",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `encounterId` TEXT NOT NULL, `photoId` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `encounterId` TEXT NOT NULL, `photoId` TEXT, `thumbnailId` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -321,6 +321,12 @@
           {
             "fieldPath": "photoId",
             "columnName": "photoId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "thumbnailId",
+            "columnName": "thumbnailId",
             "affinity": "TEXT",
             "notNull": false
           }

@@ -19,7 +19,7 @@ class EncounterWithItemsAndFormsTest {
         val encounterItemWithBillable2 = EncounterItemWithBillable(encounterItem2, billable2)
 
         val encounter = EncounterFactory.build()
-        val encounterWithItemsAndForms = EncounterWithItemsAndForms(
+        val encounterWithItemsAndForms = MutableEncounterWithItemsAndForms(
                 encounter, listOf(encounterItemWithBillable1, encounterItemWithBillable2),
                 emptyList(), emptyList())
 
