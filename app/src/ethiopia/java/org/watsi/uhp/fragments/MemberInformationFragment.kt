@@ -99,8 +99,8 @@ class MemberInformationFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.save().subscribe({
-                navigationManager.goTo(EncounterFragment.forEncounter(viewModel.buildEncounter()))
+            viewModel.save().subscribe({mutableEncounterRelation ->
+                navigationManager.goTo(EncounterFragment.forEncounter(mutableEncounterRelation))
             }, { throwable ->
                 // TODO when we implement validations
             })

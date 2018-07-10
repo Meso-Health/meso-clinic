@@ -3,6 +3,7 @@ package org.watsi.domain.relations
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
+import org.watsi.domain.entities.Member
 import java.io.Serializable
 
 data class EncounterWithItemsAndForms(val encounter: Encounter,
@@ -13,7 +14,8 @@ data class EncounterWithItemsAndForms(val encounter: Encounter,
 data class MutableEncounterWithItemsAndForms(var encounter: Encounter,
                                              var encounterItems: List<EncounterItemWithBillable>,
                                              var encounterForms: List<EncounterForm>,
-                                             var diagnoses: List<Diagnosis>) : Serializable {
+                                             var diagnoses: List<Diagnosis>,
+                                             var member: Member? = null) : Serializable {
 
     private fun clearEncounterFormThumbnails(): List<EncounterForm> {
         return encounterForms.map { encounterForm ->

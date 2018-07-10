@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2b47bcb11dbb412d59d53b8a805e02c1",
+    "identityHash": "ab2bea1a6b5aa868fb8c14c7391eda7c",
     "entities": [
       {
         "tableName": "billables",
@@ -595,7 +595,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2b47bcb11dbb412d59d53b8a805e02c1\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ab2bea1a6b5aa868fb8c14c7391eda7c\")"
     ]
   }
 }

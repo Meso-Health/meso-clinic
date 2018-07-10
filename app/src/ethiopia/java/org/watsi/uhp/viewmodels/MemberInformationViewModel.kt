@@ -3,24 +3,19 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Single
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
 import org.watsi.domain.utils.Age
 import org.watsi.domain.utils.AgeUnit
 import java.util.UUID
 import javax.inject.Inject
 
 
-class MemberInformationViewModel @Inject constructor(
-        private val createMemberUseCase: CreateMemberUseCase,
-        private val clock: Clock
-) : ViewModel() {
+class MemberInformationViewModel @Inject constructor(private val clock: Clock) : ViewModel() {
     private val observable = MutableLiveData<ViewState>()
 
     fun getObservable(membershipNumber: String): LiveData<ViewState> {
@@ -44,22 +39,18 @@ class MemberInformationViewModel @Inject constructor(
         observable.value?.let { observable.value = it.copy(medicalRecordNumber = medicalRecordNumber) }
     }
 
-    fun buildEncounter(): EncounterWithItemsAndForms {
-        val encounterId = UUID.randomUUID()
-        val memberId = UUID.randomUUID()
-        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
-        return EncounterWithItemsAndForms(encounter, emptyList(), emptyList(), emptyList())
-    }
-
-    fun save(): Completable {
-        val viewState = observable.value
-        return if (viewState == null) {
-            Completable.never()
-        } else {
-            Completable.fromAction {
-                val member = toMember(viewState, UUID.randomUUID(), clock)
-                createMemberUseCase.execute(member).blockingAwait()
-            }.observeOn(AndroidSchedulers.mainThread())
+    fun save(): Single<MutableEncounterWithItemsAndForms> {
+        return Single.fromCallable {
+            val viewState = observable.value
+            if (viewState == null) {
+                throw IllegalStateException("MemberInformationViewModel.toMember should only be called with a null viewState.")
+            } else {
+                val encounterId = UUID.randomUUID()
+                val memberId = UUID.randomUUID()
+                val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
+                val member = toMember(viewState, memberId, clock)
+                MutableEncounterWithItemsAndForms(encounter, emptyList(), emptyList(), emptyList(), member)
+            }
         }
     }
 
