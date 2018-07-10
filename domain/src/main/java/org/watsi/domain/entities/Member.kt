@@ -29,7 +29,6 @@ data class Member(
 
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
-    enum class AgeUnit { YEARS, MONTHS }
 
     fun isAbsentee(clock: Clock): Boolean {
         return (photoUrl == null && thumbnailPhotoId == null) ||

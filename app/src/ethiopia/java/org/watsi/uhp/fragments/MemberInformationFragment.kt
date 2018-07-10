@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.gender_fie
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
-import org.watsi.domain.entities.Member
+import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.LayoutHelper
@@ -54,7 +54,7 @@ class MemberInformationFragment : DaggerFragment() {
         observable = viewModel.getObservable(membershipNumber)
         observable.observe(this, Observer {
             it?.let { viewState ->
-
+                gender_field
             }
         })
     }
@@ -81,7 +81,7 @@ class MemberInformationFragment : DaggerFragment() {
         age_unit_spinner.adapter = ageUnitAdapter
         age_unit_spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                viewModel.onAgeUnitChange(Member.AgeUnit.valueOf(age_unit_spinner.selectedItem.toString().toUpperCase()))
+                viewModel.onAgeUnitChange(AgeUnit.valueOf(age_unit_spinner.selectedItem.toString()))
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) { /* no-op */ }
