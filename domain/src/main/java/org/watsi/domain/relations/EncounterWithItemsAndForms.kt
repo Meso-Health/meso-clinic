@@ -11,11 +11,11 @@ data class EncounterWithItemsAndForms(val encounter: Encounter,
                                       val encounterForms: List<EncounterForm>,
                                       val diagnoses: List<Diagnosis>) : Serializable
 
-data class MutableEncounterWithItemsAndForms(var encounter: Encounter,
-                                             var encounterItems: List<EncounterItemWithBillable>,
-                                             var encounterForms: List<EncounterForm>,
-                                             var diagnoses: List<Diagnosis>,
-                                             var member: Member? = null) : Serializable {
+data class EncounterBuilder(var encounter: Encounter,
+                            var encounterItems: List<EncounterItemWithBillable>,
+                            var encounterForms: List<EncounterForm>,
+                            var diagnoses: List<Diagnosis>,
+                            var member: Member? = null) : Serializable {
 
     private fun clearEncounterFormThumbnails(): List<EncounterForm> {
         return encounterForms.map { encounterForm ->

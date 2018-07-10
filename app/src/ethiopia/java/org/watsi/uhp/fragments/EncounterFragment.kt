@@ -16,6 +16,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.drug_search
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.encounter_item_count
@@ -27,7 +28,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
@@ -44,8 +45,7 @@ import org.watsi.uhp.viewmodels.EncounterViewModel
 import java.util.UUID
 import javax.inject.Inject
 
-class EncounterFragment : DaggerFragment() {
-
+class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -56,12 +56,12 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterBuilder: EncounterBuilder
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): EncounterFragment {
+        fun forEncounter(encounter: EncounterBuilder): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -72,7 +72,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
 
         val billableTypeOptions = Billable.Type.values()
                 .map { it.toString().titleize() }
@@ -244,6 +244,13 @@ class EncounterFragment : DaggerFragment() {
                     navigationManager.goTo(DiagnosisFragment.forEncounter(encounterBuilder))
                 }
             }
+        }
+    }
+
+    override fun onBack(): Single<Boolean> {
+        return Single.fromCallable {
+            viewModel.updateEncounterFlowRelationWithLineItems(encounterBuilder)
+            true
         }
     }
 

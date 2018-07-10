@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
@@ -57,13 +57,13 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterBuilder: EncounterBuilder
 
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): EncounterFragment {
+        fun forEncounter(encounter: EncounterBuilder): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -74,7 +74,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
 
         val billableTypeOptions = Billable.Type.values()
                 .map { it.toString().titleize() }

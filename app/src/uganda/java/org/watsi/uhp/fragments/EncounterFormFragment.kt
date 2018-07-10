@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter_form.encounter_form_l
 import kotlinx.android.synthetic.uganda.fragment_encounter_form.photo_btn
 import kotlinx.android.synthetic.uganda.fragment_encounter_form.save_button
 import org.watsi.device.managers.Logger
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
@@ -36,13 +36,13 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     private lateinit var encounterFormAdapter: EncounterFormAdapter
     lateinit var viewModel: EncounterFormViewModel
     lateinit var observable: LiveData<EncounterFormViewModel.ViewState>
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterBuilder: EncounterBuilder
 
     companion object {
         const val CAPTURE_PHOTO_INTENT = 1
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): EncounterFormFragment {
+        fun forEncounter(encounter: EncounterBuilder): EncounterFormFragment {
             val fragment = EncounterFormFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -54,7 +54,7 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterFormViewModel::class.java)
         observable = viewModel.getObservable()
         observable.observe(this, Observer {

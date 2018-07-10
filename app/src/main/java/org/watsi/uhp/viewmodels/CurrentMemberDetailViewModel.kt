@@ -14,7 +14,7 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
@@ -52,14 +52,14 @@ class CurrentMemberDetailViewModel @Inject constructor(
         return identificationEventRepository.dismiss(identificationEvent)
     }
 
-    fun buildEncounter(idEvent: IdentificationEvent): MutableEncounterWithItemsAndForms {
+    fun buildEncounter(idEvent: IdentificationEvent): EncounterBuilder {
         val encounterId = UUID.randomUUID()
         val defaultEncounterItems = defaultBillables.map {
             val encounterItem = EncounterItem(UUID.randomUUID(), encounterId, it.id, 1)
             EncounterItemWithBillable(encounterItem, it)
         }
         val encounter = Encounter(encounterId, idEvent.memberId, idEvent.id, Instant.now(clock))
-        return MutableEncounterWithItemsAndForms(encounter, defaultEncounterItems, emptyList(), emptyList())
+        return EncounterBuilder(encounter, defaultEncounterItems, emptyList(), emptyList())
     }
 
     data class ViewState(val member: Member?,

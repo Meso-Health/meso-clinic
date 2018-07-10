@@ -56,7 +56,7 @@ class MemberInformationFragment : DaggerFragment() {
         observable = viewModel.getObservable(membershipNumber)
         observable.observe(this, Observer {
             it?.let { viewState ->
-
+                gender_field.setGender(viewState.gender)
             }
         })
     }
@@ -99,8 +99,8 @@ class MemberInformationFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.save().subscribe({mutableEncounterRelation ->
-                navigationManager.goTo(EncounterFragment.forEncounter(mutableEncounterRelation))
+            viewModel.buildEncounterFlowRelation().subscribe({encounterBuilder ->
+                navigationManager.goTo(EncounterFragment.forEncounter(encounterBuilder))
             }, { throwable ->
                 // TODO when we implement validations
             })

@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.uganda.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.NavigationManager
@@ -38,13 +38,13 @@ class AddNewBillableFragment : DaggerFragment() {
 
     lateinit var viewModel: AddNewBillableViewModel
     lateinit var compositionAdapter: ArrayAdapter<String>
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterBuilder: EncounterBuilder
 
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): AddNewBillableFragment {
+        fun forEncounter(encounter: EncounterBuilder): AddNewBillableFragment {
             val fragment = AddNewBillableFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -56,7 +56,7 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
         compositionAdapter = SpinnerField.createAdapter(context, mutableListOf())
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)

@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Diagnosis
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.repositories.DiagnosisRepository
 import javax.inject.Inject
 
@@ -81,10 +81,10 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
-    fun updateEncounterWithDiagnoses(encounterRelation: MutableEncounterWithItemsAndForms) {
+    fun updateEncounterWithDiagnoses(encounterBuilder: EncounterBuilder) {
         val diagnoses = observable.value?.selectedDiagnoses.orEmpty()
-        encounterRelation.encounter = encounterRelation.encounter.copy(diagnoses = diagnoses.map { it.id })
-        encounterRelation.diagnoses = diagnoses
+        encounterBuilder.encounter = encounterBuilder.encounter.copy(diagnoses = diagnoses.map { it.id })
+        encounterBuilder.diagnoses = diagnoses
     }
 
     data class ViewState(val selectedDiagnoses: List<Diagnosis> = emptyList(),

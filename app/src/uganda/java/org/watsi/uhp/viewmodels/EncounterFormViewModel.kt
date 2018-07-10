@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Photo
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.usecases.LoadPhotoUseCase
 import java.util.UUID
 import javax.inject.Inject
@@ -59,10 +59,10 @@ class EncounterFormViewModel @Inject constructor(
         }
     }
 
-    fun updateEncounterWithForms(encounterRelation: MutableEncounterWithItemsAndForms) {
+    fun updateEncounterWithForms(encounterBuilder: EncounterBuilder) {
         val encounterFormPhotos = observable.value?.encounterFormPhotos.orEmpty()
-        encounterRelation.encounterForms = encounterFormPhotos.map {
-            EncounterForm(UUID.randomUUID(), encounterRelation.encounter.id, it.fullsizePhotoId, it.thumbnailPhotoId)
+        encounterBuilder.encounterForms = encounterFormPhotos.map {
+            EncounterForm(UUID.randomUUID(), encounterBuilder.encounter.id, it.fullsizePhotoId, it.thumbnailPhotoId)
         }
     }
 

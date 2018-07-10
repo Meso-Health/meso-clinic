@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Instant
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import javax.inject.Inject
@@ -27,29 +27,28 @@ class ReceiptViewModel @Inject constructor(
         observable.value = observable.value?.copy(occurredAt = instant, backdatedOccurredAt = true)
     }
 
-    fun updateEncounterWithDate(encounterRelation: MutableEncounterWithItemsAndForms) {
+    fun updateEncounterWithDate(encounterBuilder: EncounterBuilder) {
         observable.value?.let { viewState ->
-            encounterRelation.encounter = encounterRelation.encounter.copy(
+            encounterBuilder.encounter = encounterBuilder.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt
             )
         }
-
     }
 
     fun submitEncounter(
-        encounterRelation: MutableEncounterWithItemsAndForms,
-        copaymentPaid: Boolean
+            encounterBuilder: EncounterBuilder,
+            copaymentPaid: Boolean
     ): Completable {
         return observable.value?.let { viewState ->
-            encounterRelation.encounter = encounterRelation.encounter.copy(
+            encounterBuilder.encounter = encounterBuilder.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
                 copaymentPaid = copaymentPaid
             )
             Completable.fromCallable {
-                createEncounterUseCase.execute(encounterRelation.toEncounterWithItemsAndForms()).blockingAwait()
-                encounterRelation.member?.let { createMemberUseCase.execute(it).blockingAwait() }
+                createEncounterUseCase.execute(encounterBuilder.toEncounterWithItemsAndForms()).blockingAwait()
+                encounterBuilder.member?.let { createMemberUseCase.execute(it).blockingAwait() }
             }.observeOn(AndroidSchedulers.mainThread())
         } ?: Completable.never()
     }

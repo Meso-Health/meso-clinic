@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.uganda.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -52,12 +52,12 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     lateinit var viewModel: ReceiptViewModel
     lateinit var receiptItemAdapter: ReceiptListItemAdapter
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterBuilder: EncounterBuilder
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): ReceiptFragment {
+        fun forEncounter(encounter: EncounterBuilder): ReceiptFragment {
             val fragment = ReceiptFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -69,7 +69,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounterBuilder.encounter.occurredAt, encounterBuilder.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->

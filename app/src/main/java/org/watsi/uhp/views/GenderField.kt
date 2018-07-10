@@ -19,18 +19,33 @@ class GenderField @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.view_gender_field, this, true)
         gender_button_female.setOnTouchListener { _, _ ->
             this.requestFocus()
+            setGender(Member.Gender.F)
             onGenderChange(Member.Gender.F)
-            gender_button_female.setSelected()
-            gender_button_male.setUnselected(R.drawable.ic_member_placeholder_male)
             true
         }
 
         gender_button_male.setOnTouchListener { _, _ ->
             this.requestFocus()
+            setGender(Member.Gender.M)
             onGenderChange(Member.Gender.M)
-            gender_button_male.setSelected()
-            gender_button_female.setUnselected(R.drawable.ic_member_placeholder_female)
             true
+        }
+    }
+
+    fun setGender(gender: Member.Gender?) {
+        when (gender) {
+            Member.Gender.F -> {
+                gender_button_female.setSelected()
+                gender_button_male.setUnselected(R.drawable.ic_member_placeholder_male)
+            }
+            Member.Gender.M -> {
+                gender_button_male.setSelected()
+                gender_button_female.setUnselected(R.drawable.ic_member_placeholder_female)
+            }
+            else -> {
+                gender_button_male.setUnselected(R.drawable.ic_member_placeholder_male)
+                gender_button_female.setUnselected(R.drawable.ic_member_placeholder_female)
+            }
         }
     }
 

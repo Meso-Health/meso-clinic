@@ -8,7 +8,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.Age
 import org.watsi.domain.utils.AgeUnit
 import java.util.UUID
@@ -39,7 +39,7 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         observable.value?.let { observable.value = it.copy(medicalRecordNumber = medicalRecordNumber) }
     }
 
-    fun save(): Single<MutableEncounterWithItemsAndForms> {
+    fun buildEncounterFlowRelation(): Single<EncounterBuilder> {
         return Single.fromCallable {
             val viewState = observable.value
             if (viewState == null) {
@@ -49,7 +49,7 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
                 val memberId = UUID.randomUUID()
                 val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
                 val member = toMember(viewState, memberId, clock)
-                MutableEncounterWithItemsAndForms(encounter, emptyList(), emptyList(), emptyList(), member)
+                EncounterBuilder(encounter, emptyList(), emptyList(), emptyList(), member)
             }
         }
     }
