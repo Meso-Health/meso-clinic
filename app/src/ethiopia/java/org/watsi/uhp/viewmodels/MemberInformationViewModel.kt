@@ -55,9 +55,10 @@ class MemberInformationViewModel @Inject constructor(
         return if (viewState == null) {
             Completable.never()
         } else {
-            val member = toMember(viewState, UUID.randomUUID(), clock)
-            createMemberUseCase.execute(member)
-                    .observeOn(AndroidSchedulers.mainThread())
+            Completable.fromAction {
+                val member = toMember(viewState, UUID.randomUUID(), clock)
+                createMemberUseCase.execute(member).blockingAwait()
+            }.observeOn(AndroidSchedulers.mainThread())
         }
     }
 

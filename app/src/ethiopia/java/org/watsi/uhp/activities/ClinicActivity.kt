@@ -50,6 +50,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
         ActivityHelper.setupBannerIfInTrainingMode(this)
         startServices()
 
+        //navigationManager.goTo(CurrentPatientsFragment())
         navigationManager.goTo(MemberInformationFragment.withMembershipNumber("01/01/06/P-692/2"))
     }
 

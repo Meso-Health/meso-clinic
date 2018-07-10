@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.gender_field
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
 import org.watsi.domain.utils.AgeUnit
@@ -33,6 +34,7 @@ class MemberInformationFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MemberInformationViewModel
     lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
+    lateinit var membershipNumber: String
 
     companion object {
         const val PARAM_MEMBERSHIP_NUMBER = "membership_number"
@@ -48,13 +50,13 @@ class MemberInformationFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val membershipNumber = arguments.getString(PARAM_MEMBERSHIP_NUMBER)
+        membershipNumber = arguments.getString(PARAM_MEMBERSHIP_NUMBER)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberInformationViewModel::class.java)
         observable = viewModel.getObservable(membershipNumber)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                gender_field
+
             }
         })
     }
@@ -65,6 +67,7 @@ class MemberInformationFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        membership_number.setText(membershipNumber)
         gender_field.setOnGenderChange { gender -> viewModel.onGenderChange(gender) }
 
         medical_record_number.addTextChangedListener(LayoutHelper.OnChangedListener {
