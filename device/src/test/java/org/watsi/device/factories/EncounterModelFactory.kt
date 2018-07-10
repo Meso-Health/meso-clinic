@@ -10,7 +10,7 @@ object EncounterModelFactory {
 
     fun build(id: UUID = UUID.randomUUID(),
               memberId: UUID = UUID.randomUUID(),
-              identificationEventId: UUID = UUID.randomUUID(),
+              identificationEventId: UUID? = UUID.randomUUID(),
               occurredAt: Instant = Instant.now(),
               backdatedOccurredAt: Boolean = false,
               copaymentPaid: Boolean = true,
@@ -33,7 +33,7 @@ object EncounterModelFactory {
     fun create(encounterDao: EncounterDao,
                id: UUID = UUID.randomUUID(),
                memberId: UUID = UUID.randomUUID(),
-               identificationEventId: UUID = UUID.randomUUID(),
+               identificationEventId: UUID? = UUID.randomUUID(),
                occurredAt: Instant = Instant.now(),
                backdatedOccurredAt: Boolean = false,
                copaymentPaid: Boolean = true,
