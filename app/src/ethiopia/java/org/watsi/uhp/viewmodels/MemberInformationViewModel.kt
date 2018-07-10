@@ -92,5 +92,6 @@ class MemberInformationViewModel @Inject constructor(
                          val age: Int? = null,
                          val ageUnit: AgeUnit = AgeUnit.years,
                          val gender: Member.Gender? = null,
-                         val medicalRecordNumber: String? = null)
+                         val medicalRecordNumber: String? = null,
+                         val errors: Map<String, String> = emptyMap())
 }
