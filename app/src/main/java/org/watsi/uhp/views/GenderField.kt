@@ -22,8 +22,7 @@ class GenderField @JvmOverloads constructor(
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 this.requestFocus()
                 onGenderChange(Member.Gender.F)
-                gender_button_female.setSelected()
-                gender_button_male.setUnselected(R.drawable.ic_member_placeholder_male)
+                setGender(Member.Gender.F)
                 true
             } else {
                 false
@@ -34,8 +33,7 @@ class GenderField @JvmOverloads constructor(
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 this.requestFocus()
                 onGenderChange(Member.Gender.M)
-                gender_button_male.setSelected()
-                gender_button_female.setUnselected(R.drawable.ic_member_placeholder_female)
+                setGender(Member.Gender.M)
                 true
             } else {
                 false
