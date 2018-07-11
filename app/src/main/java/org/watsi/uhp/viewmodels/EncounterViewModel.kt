@@ -3,6 +3,8 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
@@ -106,23 +108,24 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun updateQuery(query: String) {
-        if (query.length > 2) {
-            val currentDrugNames = currentEncounterItems().orEmpty()
-                    .map { it.billable }
-                    .filter { it.type == Billable.Type.DRUG }
-                    .map { it.name }
-            val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
-            val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
+        Completable.fromCallable {
+            if (query.length > 2) {
+                val currentDrugNames = currentEncounterItems().orEmpty()
+                        .map { it.billable }
+                        .filter { it.type == Billable.Type.DRUG }
+                        .map { it.name }
+                val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
+                val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
-            val drugBillables =  billablesByType[Billable.Type.DRUG].orEmpty()
-            val matchingBillables = topMatchingNames.map { result ->
-                drugBillables.filter { it.name == result.string }
-            }.flatten().sortedBy { it.name }
-
-            observable.value = observable.value?.copy(selectableBillables = matchingBillables)
-        } else {
-            observable.value = observable.value?.copy(selectableBillables = emptyList())
-        }
+                val drugBillables =  billablesByType[Billable.Type.DRUG].orEmpty()
+                val matchingBillables = topMatchingNames.map { result ->
+                    drugBillables.filter { it.name == result.string }
+                }.flatten().sortedBy { it.name }
+                observable.postValue(observable.value?.copy(selectableBillables = matchingBillables))
+            } else {
+                observable.postValue(observable.value?.copy(selectableBillables = emptyList()))
+            }
+        }.subscribeOn(Schedulers.computation()).subscribe()
     }
 
     fun currentEncounterItems(): List<EncounterItemWithBillable>? {
