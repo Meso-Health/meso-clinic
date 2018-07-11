@@ -8,7 +8,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.EncounterBuilder
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
@@ -129,8 +129,8 @@ class EncounterViewModel @Inject constructor(
         return observable.value?.encounterItems
     }
 
-    fun updateEncounterFlowRelationWithLineItems(encounterBuilder: EncounterBuilder) {
-        encounterBuilder.encounterItems = observable.value?.encounterItems.orEmpty()
+    fun updateEncounterFlowRelationWithLineItems(encounterFlowState: EncounterFlowState) {
+        encounterFlowState.encounterItems = observable.value?.encounterItems.orEmpty()
     }
 
     data class ViewState(val type: Billable.Type? = null,

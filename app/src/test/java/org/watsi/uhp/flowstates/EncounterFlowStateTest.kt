@@ -1,10 +1,11 @@
-package org.watsi.domain.relations
+package org.watsi.uhp.flowstates
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Test
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
+import org.watsi.domain.relations.EncounterItemWithBillable
 
 class EncounterWithItemsAndFormsTest {
 
@@ -19,10 +20,10 @@ class EncounterWithItemsAndFormsTest {
         val encounterItemWithBillable2 = EncounterItemWithBillable(encounterItem2, billable2)
 
         val encounter = EncounterFactory.build()
-        val encounterWithItemsAndForms = EncounterBuilder(
+        val encounterWithItemsAndForms = EncounterFlowState(
                 encounter, listOf(encounterItemWithBillable1, encounterItemWithBillable2),
                 emptyList(), emptyList())
 
-        assertEquals(500, encounterWithItemsAndForms.price())
+        Assert.assertEquals(500, encounterWithItemsAndForms.price())
     }
 }

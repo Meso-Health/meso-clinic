@@ -6,8 +6,8 @@ import android.arch.lifecycle.ViewModel
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Diagnosis
-import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.repositories.DiagnosisRepository
+import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class DiagnosisViewModel @Inject constructor(
@@ -81,10 +81,10 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
-    fun updateEncounterWithDiagnoses(encounterBuilder: EncounterBuilder) {
+    fun updateEncounterWithDiagnoses(encounterFlowState: EncounterFlowState) {
         val diagnoses = observable.value?.selectedDiagnoses.orEmpty()
-        encounterBuilder.encounter = encounterBuilder.encounter.copy(diagnoses = diagnoses.map { it.id })
-        encounterBuilder.diagnoses = diagnoses
+        encounterFlowState.encounter = encounterFlowState.encounter.copy(diagnoses = diagnoses.map { it.id })
+        encounterFlowState.diagnoses = diagnoses
     }
 
     data class ViewState(val selectedDiagnoses: List<Diagnosis> = emptyList(),

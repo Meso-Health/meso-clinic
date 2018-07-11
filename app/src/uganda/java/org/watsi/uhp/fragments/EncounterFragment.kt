@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.EncounterBuilder
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
@@ -57,13 +57,13 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
-    lateinit var encounterBuilder: EncounterBuilder
+    lateinit var encounterFlowState: EncounterFlowState
 
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: EncounterBuilder): EncounterFragment {
+        fun forEncounter(encounter: EncounterFlowState): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -74,7 +74,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
 
         val billableTypeOptions = Billable.Type.values()
                 .map { it.toString().titleize() }
@@ -85,8 +85,8 @@ class EncounterFragment : DaggerFragment() {
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        observable = viewModel.getObservable(encounterBuilder.encounter.id,
-                                             encounterBuilder.encounterItems)
+        observable = viewModel.getObservable(encounterFlowState.encounter.id,
+                                             encounterFlowState.encounterItems)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 if (viewState.type == null) {
@@ -238,8 +238,8 @@ class EncounterFragment : DaggerFragment() {
         })
 
         add_billable_prompt.setOnClickListener {
-            encounterBuilder.encounterItems = viewModel.currentEncounterItems().orEmpty()
-            navigationManager.goTo(AddNewBillableFragment.forEncounter(encounterBuilder))
+            encounterFlowState.encounterItems = viewModel.currentEncounterItems().orEmpty()
+            navigationManager.goTo(AddNewBillableFragment.forEncounter(encounterFlowState))
         }
 
         save_button.setOnClickListener {
@@ -247,8 +247,8 @@ class EncounterFragment : DaggerFragment() {
                 if (encounterItems.isEmpty()) {
                     SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
                 } else {
-                    encounterBuilder.encounterItems = encounterItems
-                    navigationManager.goTo(DiagnosisFragment.forEncounter(encounterBuilder))
+                    encounterFlowState.encounterItems = encounterItems
+                    navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
                 }
             }
         }

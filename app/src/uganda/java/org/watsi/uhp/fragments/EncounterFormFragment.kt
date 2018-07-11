@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter_form.encounter_form_l
 import kotlinx.android.synthetic.uganda.fragment_encounter_form.photo_btn
 import kotlinx.android.synthetic.uganda.fragment_encounter_form.save_button
 import org.watsi.device.managers.Logger
-import org.watsi.domain.relations.EncounterBuilder
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
@@ -36,13 +36,13 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     private lateinit var encounterFormAdapter: EncounterFormAdapter
     lateinit var viewModel: EncounterFormViewModel
     lateinit var observable: LiveData<EncounterFormViewModel.ViewState>
-    lateinit var encounterBuilder: EncounterBuilder
+    lateinit var encounterFlowState: EncounterFlowState
 
     companion object {
         const val CAPTURE_PHOTO_INTENT = 1
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: EncounterBuilder): EncounterFormFragment {
+        fun forEncounter(encounter: EncounterFlowState): EncounterFormFragment {
             val fragment = EncounterFormFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -54,7 +54,7 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterFormViewModel::class.java)
         observable = viewModel.getObservable()
         observable.observe(this, Observer {
@@ -73,7 +73,7 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 }
         )
 
-        viewModel.initEncounterFormPhotos(encounterBuilder.encounterForms).subscribe({
+        viewModel.initEncounterFormPhotos(encounterFlowState.encounterForms).subscribe({
             /* No-Op; the forms have been loaded successfully */
         }, {
             logger.error(it)
@@ -97,14 +97,14 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         setRecyclerView(encounter_form_list, encounterFormAdapter, context)
 
         save_button.setOnClickListener {
-            viewModel.updateEncounterWithForms(encounterBuilder)
-            navigationManager.goTo(ReceiptFragment.forEncounter(encounterBuilder))
+            viewModel.updateEncounterWithForms(encounterFlowState)
+            navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
         }
     }
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.updateEncounterWithForms(encounterBuilder)
+            viewModel.updateEncounterWithForms(encounterFlowState)
             true
         }
     }

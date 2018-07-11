@@ -20,10 +20,10 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_butto
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -39,7 +39,7 @@ class MemberInformationFragment : DaggerFragment() {
     lateinit var viewModel: MemberInformationViewModel
     lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
     lateinit var membershipNumber: String
-    lateinit var encounterBuilder: EncounterBuilder
+    lateinit var encounterFlowState: EncounterFlowState
     internal val memberId = UUID.randomUUID()
     private val encounterId = UUID.randomUUID()
 
@@ -59,9 +59,7 @@ class MemberInformationFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         membershipNumber = arguments.getString(PARAM_MEMBERSHIP_NUMBER)
         val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
-        encounterBuilder = EncounterBuilder(encounter, emptyList(), emptyList(), emptyList())
-
-
+        encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberInformationViewModel::class.java)
         observable = viewModel.getObservable(membershipNumber)
         observable.observe(this, Observer {
@@ -109,8 +107,8 @@ class MemberInformationFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.buildEncounterFlowRelation(memberId, encounterBuilder).subscribe({encounterBuilder ->
-                navigationManager.goTo(EncounterFragment.forEncounter(encounterBuilder))
+            viewModel.buildEncounterFlowRelation(memberId, encounterFlowState).subscribe({ encounterFlowState ->
+                navigationManager.goTo(EncounterFragment.forEncounter(encounterFlowState))
             }, { throwable ->
                 // TODO when we implement validations
             })
