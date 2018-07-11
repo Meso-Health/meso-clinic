@@ -75,6 +75,7 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
             }
         }
     }
+
     data class ViewState(val membershipNumber: String,
                          val age: Int? = null,
                          val ageUnit: AgeUnit = AgeUnit.years,
