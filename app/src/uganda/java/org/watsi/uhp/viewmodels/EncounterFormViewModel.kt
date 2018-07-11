@@ -9,6 +9,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.usecases.LoadPhotoUseCase
+import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
