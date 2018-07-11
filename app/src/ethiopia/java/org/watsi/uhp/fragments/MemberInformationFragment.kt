@@ -91,7 +91,7 @@ class MemberInformationFragment : DaggerFragment() {
 
         age_unit_spinner.adapter = ageUnitAdapter
         age_unit_spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.onAgeUnitChange(AgeUnit.valueOf(age_unit_spinner.selectedItem.toString()))
             }
 
