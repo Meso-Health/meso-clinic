@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6836f707e4fb904f2fd27a242bac8bef",
+    "identityHash": "8471f90134b0f3f98e0346d514c21b91",
     "entities": [
       {
         "tableName": "billables",
@@ -174,7 +174,7 @@
       },
       {
         "tableName": "encounters",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, `visitType` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -229,6 +229,12 @@
             "columnName": "diagnoses",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "visitType",
+            "columnName": "visitType",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -595,7 +601,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6836f707e4fb904f2fd27a242bac8bef\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8471f90134b0f3f98e0346d514c21b91\")"
     ]
   }
 }
