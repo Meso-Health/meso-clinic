@@ -109,7 +109,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         RecyclerViewHelper.setRecyclerView(encounter_items_list, receiptItemAdapter, context, false)
 
         save_button.setOnClickListener {
-            submitEncounter(true)
+            submitEncounter()
         }
     }
 
@@ -155,8 +155,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         dialog.show()
     }
 
-    private fun submitEncounter(copaymentPaid: Boolean) {
-        viewModel.submitEncounter(encounterBuilder, copaymentPaid).subscribe({
+    private fun submitEncounter() {
+        viewModel.submitEncounter(encounterBuilder).subscribe({
             navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             ))
@@ -172,20 +172,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu?.let {
-            it.findItem(R.id.menu_submit_without_copayment).isVisible = true
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             android.R.id.home -> {
                 navigationManager.goBack()
-                true
-            }
-            R.id.menu_submit_without_copayment -> {
-                submitEncounter(false)
                 true
             }
             else -> super.onOptionsItemSelected(item)
