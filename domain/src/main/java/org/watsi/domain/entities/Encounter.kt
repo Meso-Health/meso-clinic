@@ -10,7 +10,7 @@ data class Encounter(
     val identificationEventId: UUID?,
     val occurredAt: Instant,
     val backdatedOccurredAt: Boolean = false,
-    val copaymentPaid: Boolean = true,
+    val copaymentPaid: Boolean? = true,
     val diagnoses: List<Int> = emptyList(),
     val visitType: String? = null
 ) : Serializable {

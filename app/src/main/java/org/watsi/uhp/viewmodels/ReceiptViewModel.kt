@@ -39,7 +39,7 @@ class ReceiptViewModel @Inject constructor(
 
     fun submitEncounter(
         encounterRelation: MutableEncounterWithItemsAndForms,
-        copaymentPaid: Boolean
+        copaymentPaid: Boolean? = null
     ): Completable {
         return observable.value?.let { viewState ->
             encounterRelation.encounter = encounterRelation.encounter.copy(
