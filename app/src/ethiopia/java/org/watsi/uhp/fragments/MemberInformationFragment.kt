@@ -18,6 +18,9 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_re
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -25,6 +28,7 @@ import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 class MemberInformationFragment : DaggerFragment() {
@@ -35,6 +39,9 @@ class MemberInformationFragment : DaggerFragment() {
     lateinit var viewModel: MemberInformationViewModel
     lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
     lateinit var membershipNumber: String
+    lateinit var encounterBuilder: EncounterBuilder
+    internal val memberId = UUID.randomUUID()
+    private val encounterId = UUID.randomUUID()
 
     companion object {
         const val PARAM_MEMBERSHIP_NUMBER = "membership_number"
@@ -51,6 +58,9 @@ class MemberInformationFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         membershipNumber = arguments.getString(PARAM_MEMBERSHIP_NUMBER)
+        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
+        encounterBuilder = EncounterBuilder(encounter, emptyList(), emptyList(), emptyList())
+
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberInformationViewModel::class.java)
         observable = viewModel.getObservable(membershipNumber)
@@ -99,7 +109,7 @@ class MemberInformationFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.buildEncounterFlowRelation().subscribe({encounterBuilder ->
+            viewModel.buildEncounterFlowRelation(memberId, encounterBuilder).subscribe({encounterBuilder ->
                 navigationManager.goTo(EncounterFragment.forEncounter(encounterBuilder))
             }, { throwable ->
                 // TODO when we implement validations

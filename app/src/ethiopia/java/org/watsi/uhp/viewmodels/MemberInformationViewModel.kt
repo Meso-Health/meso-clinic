@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Single
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterBuilder
 import org.watsi.domain.utils.Age
@@ -39,17 +38,14 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         observable.value?.let { observable.value = it.copy(medicalRecordNumber = medicalRecordNumber) }
     }
 
-    fun buildEncounterFlowRelation(): Single<EncounterBuilder> {
+    fun buildEncounterFlowRelation(memberId: UUID, encounterBuilder: EncounterBuilder): Single<EncounterBuilder> {
         return Single.fromCallable {
             val viewState = observable.value
             if (viewState == null) {
                 throw IllegalStateException("MemberInformationViewModel.toMember should only be called with a null viewState.")
             } else {
-                val encounterId = UUID.randomUUID()
-                val memberId = UUID.randomUUID()
-                val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
-                val member = toMember(viewState, memberId, clock)
-                EncounterBuilder(encounter, emptyList(), emptyList(), emptyList(), member)
+                encounterBuilder.member = toMember(viewState, memberId, clock)
+                encounterBuilder
             }
         }
     }
