@@ -6,14 +6,14 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Instant
-import org.watsi.device.managers.Logger
-import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
+import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
-    private val createEncounterUseCase: CreateEncounterUseCase
+    private val createEncounterUseCase: CreateEncounterUseCase,
+    private val createMemberUseCase: CreateMemberUseCase
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -27,28 +27,29 @@ class ReceiptViewModel @Inject constructor(
         observable.value = observable.value?.copy(occurredAt = instant, backdatedOccurredAt = true)
     }
 
-    fun updateEncounterWithDate(encounterRelation: MutableEncounterWithItemsAndForms) {
+    fun updateEncounterWithDate(encounterFlowState: EncounterFlowState) {
         observable.value?.let { viewState ->
-            encounterRelation.encounter = encounterRelation.encounter.copy(
+            encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt
             )
         }
-
     }
 
     fun submitEncounter(
-        encounterRelation: MutableEncounterWithItemsAndForms,
+        encounterFlowState: EncounterFlowState,
         copaymentPaid: Boolean? = null
     ): Completable {
         return observable.value?.let { viewState ->
-            encounterRelation.encounter = encounterRelation.encounter.copy(
+            encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
                 copaymentPaid = copaymentPaid
             )
-            createEncounterUseCase.execute(encounterRelation.toEncounterWithItemsAndForms())
-                .observeOn(AndroidSchedulers.mainThread())
+            Completable.fromCallable {
+                encounterFlowState.member?.let { createMemberUseCase.execute(it).blockingAwait() }
+                createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
+            }.observeOn(AndroidSchedulers.mainThread())
         } ?: Completable.never()
     }
 

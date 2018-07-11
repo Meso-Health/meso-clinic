@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/space16"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/membership_number_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/membership_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/membership_number_label"
+            android:enabled="false"
+            android:imeOptions="actionDone"
+            android:inputType="number" />
+    </android.support.design.widget.TextInputLayout>
+
+    <org.watsi.uhp.views.GenderField
+        android:id="@+id/gender_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space16"
+        app:layout_constraintTop_toBottomOf="@+id/membership_number_layout" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/age_fields"
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/space16"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/gender_field" >
+
+        <android.support.constraint.Guideline
+            android:id="@+id/age_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/age_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/space8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/age_guideline">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/age_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/age_field_label"
+                android:selectAllOnFocus="true"
+                android:imeOptions="actionDone"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+            android:id="@+id/age_unit_spinner"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/space48"
+            android:paddingTop="@dimen/space12"
+            app:layout_constraintStart_toEndOf="@id/age_guideline"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/medical_record_number_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space24"
+        app:layout_constraintTop_toBottomOf="@id/age_fields">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/medical_record_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/medical_record_number"
+            android:imeOptions="actionDone"
+            android:inputType="number" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/next_button"
+        android:text="@string/continue_encounter_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/PrimaryButton" />
+</android.support.constraint.ConstraintLayout>

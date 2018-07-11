@@ -16,6 +16,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.drug_search
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.encounter_item_count
@@ -27,7 +28,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
@@ -44,8 +45,7 @@ import org.watsi.uhp.viewmodels.EncounterViewModel
 import java.util.UUID
 import javax.inject.Inject
 
-class EncounterFragment : DaggerFragment() {
-
+class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -56,12 +56,12 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterFlowState: EncounterFlowState
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): EncounterFragment {
+        fun forEncounter(encounter: EncounterFlowState): EncounterFragment {
             val fragment = EncounterFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -72,7 +72,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
 
         val billableTypeOptions = Billable.Type.values()
                 .map { it.toString().titleize() }
@@ -83,8 +83,8 @@ class EncounterFragment : DaggerFragment() {
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        observable = viewModel.getObservable(encounterBuilder.encounter.id,
-                encounterBuilder.encounterItems)
+        observable = viewModel.getObservable(encounterFlowState.encounter.id,
+                encounterFlowState.encounterItems)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 if (viewState.type == null) {
@@ -123,7 +123,7 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_clear_white_24dp)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_arrow_back_white_24dp)
         (activity as ClinicActivity).setSoftInputModeToNothing()
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
@@ -240,10 +240,17 @@ class EncounterFragment : DaggerFragment() {
                 if (encounterItems.isEmpty()) {
                     SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
                 } else {
-                    encounterBuilder.encounterItems = encounterItems
-                    navigationManager.goTo(DiagnosisFragment.forEncounter(encounterBuilder))
+                    encounterFlowState.encounterItems = encounterItems
+                    navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
                 }
             }
+        }
+    }
+
+    override fun onBack(): Single<Boolean> {
+        return Single.fromCallable {
+            viewModel.updateEncounterFlowRelationWithLineItems(encounterFlowState)
+            true
         }
     }
 

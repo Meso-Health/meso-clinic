@@ -9,6 +9,7 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.repositories.BillableRepository
+import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
@@ -126,6 +127,10 @@ class EncounterViewModel @Inject constructor(
 
     fun currentEncounterItems(): List<EncounterItemWithBillable>? {
         return observable.value?.encounterItems
+    }
+
+    fun updateEncounterFlowRelationWithLineItems(encounterFlowState: EncounterFlowState) {
+        encounterFlowState.encounterItems = observable.value?.encounterItems.orEmpty()
     }
 
     data class ViewState(val type: Billable.Type? = null,

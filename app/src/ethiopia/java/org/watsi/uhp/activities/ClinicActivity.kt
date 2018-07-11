@@ -16,7 +16,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BaseApplication
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
-import org.watsi.uhp.fragments.CurrentPatientsFragment
+import org.watsi.uhp.fragments.MemberInformationFragment
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.LocaleManager
 import org.watsi.uhp.managers.NavigationManager
@@ -44,7 +44,8 @@ class ClinicActivity : DaggerAppCompatActivity() {
         ActivityHelper.setupBannerIfInTrainingMode(this)
         startServices()
 
-        navigationManager.goTo(CurrentPatientsFragment())
+        //navigationManager.goTo(CurrentPatientsFragment())
+        navigationManager.goTo(MemberInformationFragment.withMembershipNumber("01/01/06/P-692/2"))
     }
 
     /**

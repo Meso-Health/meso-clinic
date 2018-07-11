@@ -5,12 +5,9 @@ import org.threeten.bp.DateTimeException
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.domain.entities.Member
-import java.util.Locale
 
 object DateUtils {
     const val TIME_FORMAT = "h:mma"

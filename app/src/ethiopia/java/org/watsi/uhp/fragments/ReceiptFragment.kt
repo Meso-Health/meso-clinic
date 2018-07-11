@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -35,6 +33,7 @@ import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -50,12 +49,12 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     lateinit var viewModel: ReceiptViewModel
     lateinit var receiptItemAdapter: ReceiptListItemAdapter
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterFlowState: EncounterFlowState
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): ReceiptFragment {
+        fun forEncounter(encounter: EncounterFlowState): ReceiptFragment {
             val fragment = ReceiptFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -67,9 +66,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
-        viewModel.getObservable(encounterBuilder.encounter.occurredAt, encounterBuilder.encounter.backdatedOccurredAt)
+        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->
                 val date_string = DateUtils.formatLocalDate(viewState.occurredAt.atZone(clock.zone).toLocalDate())
                 val time_string = DateUtils.formatLocalTime(viewState.occurredAt.atZone(clock.zone).toLocalDateTime())
@@ -81,7 +80,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             })
 
-        receiptItemAdapter = ReceiptListItemAdapter(encounterBuilder.encounterItems)
+        receiptItemAdapter = ReceiptListItemAdapter(encounterFlowState.encounterItems)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,14 +91,14 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         diagnoses_label.text = resources.getQuantityString(
-            diagnosis_count, encounterBuilder.diagnoses.size, encounterBuilder.diagnoses.size)
+            diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
         encounter_items_label.text = resources.getQuantityString(
-            receipt_line_item_count, encounterBuilder.encounterItems.size, encounterBuilder.encounterItems.size)
-        total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounterBuilder.price()))
+            receipt_line_item_count, encounterFlowState.encounterItems.size, encounterFlowState.encounterItems.size)
+        total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounterFlowState.price()))
 
-        if (encounterBuilder.diagnoses.isNotEmpty()) {
+        if (encounterFlowState.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
-            diagnoses_list.text = encounterBuilder.diagnoses.map { it.description }.joinToString(", ")
+            diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
         }
 
         date_edit.setOnClickListener {
@@ -156,7 +155,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun submitEncounter() {
-        viewModel.submitEncounter(encounterBuilder).subscribe({
+        viewModel.submitEncounter(encounterFlowState).subscribe({
             navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             ))
@@ -167,7 +166,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.updateEncounterWithDate(encounterBuilder)
+            viewModel.updateEncounterWithDate(encounterFlowState)
             true
         }
     }

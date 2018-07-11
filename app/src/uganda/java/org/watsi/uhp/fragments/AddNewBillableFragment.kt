@@ -22,9 +22,9 @@ import kotlinx.android.synthetic.uganda.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.MutableEncounterWithItemsAndForms
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
 import org.watsi.uhp.views.SpinnerField
@@ -38,13 +38,13 @@ class AddNewBillableFragment : DaggerFragment() {
 
     lateinit var viewModel: AddNewBillableViewModel
     lateinit var compositionAdapter: ArrayAdapter<String>
-    lateinit var encounterBuilder: MutableEncounterWithItemsAndForms
+    lateinit var encounterFlowState: EncounterFlowState
 
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: MutableEncounterWithItemsAndForms): AddNewBillableFragment {
+        fun forEncounter(encounter: EncounterFlowState): AddNewBillableFragment {
             val fragment = AddNewBillableFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -56,7 +56,7 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterBuilder = arguments.getSerializable(PARAM_ENCOUNTER) as MutableEncounterWithItemsAndForms
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         compositionAdapter = SpinnerField.createAdapter(context, mutableListOf())
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)
@@ -113,11 +113,11 @@ class AddNewBillableFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             viewModel.getBillable()?.let { billable ->
-                val newBillableEncounterItem = EncounterItem(UUID.randomUUID(), encounterBuilder.encounter.id,
+                val newBillableEncounterItem = EncounterItem(UUID.randomUUID(), encounterFlowState.encounter.id,
                                                              billable.id, 1)
-                encounterBuilder.encounterItems = encounterBuilder.encounterItems.plus(
+                encounterFlowState.encounterItems = encounterFlowState.encounterItems.plus(
                     EncounterItemWithBillable(newBillableEncounterItem, billable))
-                navigationManager.popTo(EncounterFragment.forEncounter(encounterBuilder))
+                navigationManager.popTo(EncounterFragment.forEncounter(encounterFlowState))
             }
         }
     }
