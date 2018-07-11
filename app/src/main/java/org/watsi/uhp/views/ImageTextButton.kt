@@ -49,7 +49,7 @@ class ImageTextButton @JvmOverloads constructor(
         leftDrawable.copyBounds(drawableBounds)
         val leftOffset = (interiorWidth - (textBounds.width() + drawableBounds.width()) +
                 rightPaddingOffset) / 2 - compoundDrawablePadding - imageTextSpace
-        drawableBounds.offset(leftOffset, 0)
+        drawableBounds.set(leftOffset, drawableBounds.top, leftOffset + drawableBounds.width(), drawableBounds.bottom)
         leftDrawable.bounds = drawableBounds
     }
 

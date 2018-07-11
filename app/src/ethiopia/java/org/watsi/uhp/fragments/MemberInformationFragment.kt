@@ -57,6 +57,7 @@ class MemberInformationFragment : DaggerFragment() {
         observable.observe(this, Observer {
             it?.let { viewState ->
                 gender_field.setGender(viewState.gender)
+                membership_number.setText(viewState.membershipNumber)
             }
         })
     }
@@ -67,7 +68,6 @@ class MemberInformationFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        membership_number.setText(membershipNumber)
         gender_field.setOnGenderChange { gender -> viewModel.onGenderChange(gender) }
 
         medical_record_number.addTextChangedListener(LayoutHelper.OnChangedListener {
