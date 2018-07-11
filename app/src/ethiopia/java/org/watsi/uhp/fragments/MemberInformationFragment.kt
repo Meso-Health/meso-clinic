@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.gender_field
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
@@ -66,6 +67,7 @@ class MemberInformationFragment : DaggerFragment() {
         observable.observe(this, Observer {
             it?.let { viewState ->
                 gender_field.setGender(viewState.gender)
+                membership_number.setText(viewState.membershipNumber)
             }
         })
     }
