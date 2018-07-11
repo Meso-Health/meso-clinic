@@ -26,7 +26,6 @@ import kotlinx.android.synthetic.uganda.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -37,6 +36,7 @@ import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -69,7 +69,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->

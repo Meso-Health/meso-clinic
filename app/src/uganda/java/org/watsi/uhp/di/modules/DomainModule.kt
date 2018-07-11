@@ -17,6 +17,7 @@ import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
+import org.watsi.domain.usecases.LoadPhotoUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
@@ -25,7 +26,6 @@ import org.watsi.domain.usecases.SyncMemberPhotoUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
-import org.watsi.domain.usecases.LoadPhotoUseCase
 
 @Module
 class DomainModule {

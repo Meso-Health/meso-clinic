@@ -28,12 +28,12 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom
@@ -74,7 +74,7 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
 
         val billableTypeOptions = Billable.Type.values()
                 .map { it.toString().titleize() }

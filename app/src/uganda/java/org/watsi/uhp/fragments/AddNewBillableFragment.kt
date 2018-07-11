@@ -22,9 +22,9 @@ import kotlinx.android.synthetic.uganda.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
 import org.watsi.uhp.views.SpinnerField
@@ -56,7 +56,7 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         compositionAdapter = SpinnerField.createAdapter(context, mutableListOf())
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)

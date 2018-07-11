@@ -17,11 +17,11 @@ import kotlinx.android.synthetic.uganda.fragment_encounter_form.encounter_form_l
 import kotlinx.android.synthetic.uganda.fragment_encounter_form.photo_btn
 import kotlinx.android.synthetic.uganda.fragment_encounter_form.save_button
 import org.watsi.device.managers.Logger
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.adapters.EncounterFormAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper.setRecyclerView
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EncounterFormViewModel
@@ -54,7 +54,7 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterFormViewModel::class.java)
         observable = viewModel.getObservable()
         observable.observe(this, Observer {

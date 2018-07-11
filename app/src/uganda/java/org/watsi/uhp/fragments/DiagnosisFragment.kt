@@ -19,10 +19,10 @@ import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_search
 import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.DiagnosisAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
@@ -54,7 +54,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterBuilder
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiagnosisViewModel::class.java)
         observable = viewModel.getObservable(encounterFlowState.diagnoses)
         observable.observe(this, Observer {
