@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -35,6 +33,7 @@ import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -155,8 +154,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         dialog.show()
     }
 
-    private fun submitEncounter(copaymentPaid: Boolean) {
-        viewModel.submitEncounter(encounterFlowState, copaymentPaid).subscribe({
+    private fun submitEncounter() {
+        viewModel.submitEncounter(encounterFlowState).subscribe({
             navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             ))
@@ -172,20 +171,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu?.let {
-            it.findItem(R.id.menu_submit_without_copayment).isVisible = true
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             android.R.id.home -> {
                 navigationManager.goBack()
-                true
-            }
-            R.id.menu_submit_without_copayment -> {
-                submitEncounter(false)
                 true
             }
             else -> super.onOptionsItemSelected(item)

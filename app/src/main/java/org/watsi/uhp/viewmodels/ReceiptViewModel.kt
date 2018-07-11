@@ -37,8 +37,8 @@ class ReceiptViewModel @Inject constructor(
     }
 
     fun submitEncounter(
-            encounterFlowState: EncounterFlowState,
-            copaymentPaid: Boolean
+        encounterFlowState: EncounterFlowState,
+        copaymentPaid: Boolean? = null
     ): Completable {
         return observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
