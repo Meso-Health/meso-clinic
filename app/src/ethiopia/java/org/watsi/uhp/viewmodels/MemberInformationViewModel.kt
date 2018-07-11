@@ -7,12 +7,11 @@ import io.reactivex.Single
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Member
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.domain.utils.Age
 import org.watsi.domain.utils.AgeUnit
+import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
-
 
 class MemberInformationViewModel @Inject constructor(private val clock: Clock) : ViewModel() {
     private val observable = MutableLiveData<ViewState>()
@@ -55,21 +54,21 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
             if (viewState.gender != null && viewState.age != null && viewState.medicalRecordNumber != null) {
                 val birthdate = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy().first
                 return Member(
-                        id = memberId,
-                        name = "Member Name", // Placeholder until we make a platform decision that "Member" doesn't require a name.
-                        enrolledAt = Instant.now(clock),
-                        birthdate = birthdate,
-                        gender = viewState.gender,
-                        photoId = null,
-                        thumbnailPhotoId = null,
-                        fingerprintsGuid = null,
-                        cardId = null,
-                        householdId = null,
-                        language = null,
-                        phoneNumber = null,
-                        photoUrl = null,
-                        membershipNumber = viewState.membershipNumber,
-                        medicalRecordNumber = viewState.medicalRecordNumber
+                    id = memberId,
+                    name = "Member Name", // Placeholder until we make a platform decision that "Member" doesn't require a name.
+                    enrolledAt = Instant.now(clock),
+                    birthdate = birthdate,
+                    gender = viewState.gender,
+                    photoId = null,
+                    thumbnailPhotoId = null,
+                    fingerprintsGuid = null,
+                    cardId = null,
+                    householdId = null,
+                    language = null,
+                    phoneNumber = null,
+                    photoUrl = null,
+                    membershipNumber = viewState.membershipNumber,
+                    medicalRecordNumber = viewState.medicalRecordNumber
                 )
             } else {
                 throw IllegalStateException("MemberInformationViewModel.toMember should only be called with a valid viewState. " + viewState.toString())
