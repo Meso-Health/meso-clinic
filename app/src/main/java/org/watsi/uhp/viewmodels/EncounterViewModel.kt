@@ -129,7 +129,7 @@ class EncounterViewModel @Inject constructor(
         return observable.value?.encounterItems
     }
 
-    fun updateEncounterFlowRelationWithLineItems(encounterFlowState: EncounterFlowState) {
+    fun updateEncounterWithLineItems(encounterFlowState: EncounterFlowState) {
         encounterFlowState.encounterItems = observable.value?.encounterItems.orEmpty()
     }
 

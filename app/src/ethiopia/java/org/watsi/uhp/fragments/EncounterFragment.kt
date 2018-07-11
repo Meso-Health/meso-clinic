@@ -249,7 +249,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.updateEncounterFlowRelationWithLineItems(encounterFlowState)
+            viewModel.updateEncounterWithLineItems(encounterFlowState)
             true
         }
     }
