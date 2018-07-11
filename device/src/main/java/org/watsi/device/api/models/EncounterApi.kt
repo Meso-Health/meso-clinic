@@ -21,17 +21,19 @@ data class EncounterApi(
         @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Boolean,
         @SerializedName("copayment_paid") val copaymentPaid: Boolean = false,
         @SerializedName("diagnosis_ids") val diagnoses: JsonArray,
-        @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>
+        @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>,
+        @SerializedName("visit_type") val visitType: String?
 ) {
 
-    constructor (encounterWithItems: EncounterWithItems) :
-            this(id = encounterWithItems.encounter.id,
-                 memberId = encounterWithItems.encounter.memberId,
-                 identificationEventId = encounterWithItems.encounter.identificationEventId,
-                 occurredAt = encounterWithItems.encounter.occurredAt,
-                 backdatedOccurredAt = encounterWithItems.encounter.backdatedOccurredAt,
-                 copaymentPaid  = encounterWithItems.encounter.copaymentPaid,
-                 diagnoses = Gson().fromJson(encounterWithItems.encounter.diagnoses.toString(), JsonArray::class.java),
-                 encounterItems = encounterWithItems.encounterItems.map { EncounterItemApi(it) }
-            )
+    constructor (encounterWithItems: EncounterWithItems) : this(
+        id = encounterWithItems.encounter.id,
+        memberId = encounterWithItems.encounter.memberId,
+        identificationEventId = encounterWithItems.encounter.identificationEventId,
+        occurredAt = encounterWithItems.encounter.occurredAt,
+        backdatedOccurredAt = encounterWithItems.encounter.backdatedOccurredAt,
+        copaymentPaid  = encounterWithItems.encounter.copaymentPaid,
+        diagnoses = Gson().fromJson(encounterWithItems.encounter.diagnoses.toString(), JsonArray::class.java),
+        encounterItems = encounterWithItems.encounterItems.map { EncounterItemApi(it) },
+        visitType = encounterWithItems.encounter.visitType
+    )
 }
