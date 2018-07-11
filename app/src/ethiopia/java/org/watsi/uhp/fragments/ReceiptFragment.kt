@@ -108,7 +108,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         RecyclerViewHelper.setRecyclerView(encounter_items_list, receiptItemAdapter, context, false)
 
         save_button.setOnClickListener {
-            submitEncounter(true)
+            submitEncounter()
         }
     }
 
