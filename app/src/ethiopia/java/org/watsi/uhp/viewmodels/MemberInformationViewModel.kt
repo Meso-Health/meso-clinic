@@ -37,7 +37,7 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         observable.value?.let { observable.value = it.copy(medicalRecordNumber = medicalRecordNumber) }
     }
 
-    fun buildEncounterFlowRelation(memberId: UUID, encounterFlowState: EncounterFlowState): Single<EncounterFlowState> {
+    fun updateEncounterWithMember(memberId: UUID, encounterFlowState: EncounterFlowState): Single<EncounterFlowState> {
         return Single.fromCallable {
             val viewState = observable.value
             if (viewState == null) {

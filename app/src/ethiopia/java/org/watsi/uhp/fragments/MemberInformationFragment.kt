@@ -107,7 +107,7 @@ class MemberInformationFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.buildEncounterFlowRelation(memberId, encounterFlowState).subscribe({ encounterFlowState ->
+            viewModel.updateEncounterWithMember(memberId, encounterFlowState).subscribe({ encounterFlowState ->
                 navigationManager.goTo(EncounterFragment.forEncounter(encounterFlowState))
             }, { throwable ->
                 // TODO when we implement validations
