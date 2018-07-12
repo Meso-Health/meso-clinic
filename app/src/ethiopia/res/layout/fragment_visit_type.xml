@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/space16">
+
+    <org.watsi.uhp.views.SpinnerField
+        android:id="@+id/visit_type_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:label="@string/visit_type_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/next_button"
+        android:text="@string/continue_encounter_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/PrimaryButton" />
+
+</android.support.constraint.ConstraintLayout>

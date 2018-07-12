@@ -13,6 +13,7 @@ import org.watsi.uhp.fragments.MemberInformationFragment
 import org.watsi.uhp.fragments.ReceiptFragment
 import org.watsi.uhp.fragments.SearchMemberFragment
 import org.watsi.uhp.fragments.StatusFragment
+import org.watsi.uhp.fragments.VisitTypeFragment
 
 @Module
 abstract class FragmentModule {
@@ -27,4 +28,5 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindReceiptFragment(): ReceiptFragment
     @ContributesAndroidInjector abstract fun bindSearchMemberFragment(): SearchMemberFragment
     @ContributesAndroidInjector abstract fun bindStatusFragment(): StatusFragment
+    @ContributesAndroidInjector abstract fun bindVisitTypeFragment(): VisitTypeFragment
 }

@@ -7,4 +7,8 @@
     <string name="member_information_fragment_label">Member Information</string>
     <string name="medical_record_number">Medical Record Number</string>
     <string name="membership_number_label">Member ID</string>
+
+    <!-- VisitTypeFragment -->
+    <string name="visit_type_fragment_label">Visit Type</string>
+    <string name="visit_type_label">Visit Type</string>
 </resources>
