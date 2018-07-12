@@ -8,12 +8,9 @@ import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.EncounterFormDao
-import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
-import org.watsi.device.db.models.MemberModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterFormWithPhoto
 import org.watsi.domain.repositories.EncounterFormRepository
 import java.util.UUID

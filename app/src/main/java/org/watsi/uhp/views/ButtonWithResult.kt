@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_button_with_result.view.button
 import kotlinx.android.synthetic.main.view_button_with_result.view.result_container
-import kotlinx.android.synthetic.main.view_button_with_result.view.success_icon
 import kotlinx.android.synthetic.main.view_button_with_result.view.result_message
+import kotlinx.android.synthetic.main.view_button_with_result.view.success_icon
 import org.watsi.uhp.R
 
 class ButtonWithResult @JvmOverloads constructor(

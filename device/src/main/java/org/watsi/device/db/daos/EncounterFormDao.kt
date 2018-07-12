@@ -5,7 +5,6 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import android.arch.persistence.room.Update
-import io.reactivex.Completable
 import io.reactivex.Single
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterFormWithPhotoModel

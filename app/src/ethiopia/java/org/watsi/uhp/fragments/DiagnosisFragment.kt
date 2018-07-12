@@ -13,12 +13,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnoses_count
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_search
 import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.DiagnosisAdapter
@@ -28,7 +29,7 @@ import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import javax.inject.Inject
 
-class DiagnosisFragment : DaggerFragment() {
+class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -36,11 +37,12 @@ class DiagnosisFragment : DaggerFragment() {
     private lateinit var diagnosisAdapter: DiagnosisAdapter
     lateinit var viewModel: DiagnosisViewModel
     lateinit var observable: LiveData<DiagnosisViewModel.ViewState>
+    lateinit var encounterFlowState: EncounterFlowState
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: EncounterWithItemsAndForms): DiagnosisFragment {
+        fun forEncounter(encounter: EncounterFlowState): DiagnosisFragment {
             val fragment = DiagnosisFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -52,8 +54,9 @@ class DiagnosisFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiagnosisViewModel::class.java)
-        observable = viewModel.getObservable()
+        observable = viewModel.getObservable(encounterFlowState.diagnoses)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 val cursor = buildSuggestionsCursor(viewState.suggestedDiagnoses)
@@ -107,9 +110,15 @@ class DiagnosisFragment : DaggerFragment() {
         RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
 
         save_button.setOnClickListener {
-            val encounterRelation = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
-            navigationManager.goTo(ReceiptFragment.forEncounter(
-                    encounter = viewModel.updateEncounterWithDiagnoses(encounterRelation)))
+            viewModel.updateEncounterWithDiagnoses(encounterFlowState)
+            navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+        }
+    }
+
+    override fun onBack(): Single<Boolean> {
+        return Single.fromCallable {
+            viewModel.updateEncounterWithDiagnoses(encounterFlowState)
+            true
         }
     }
 

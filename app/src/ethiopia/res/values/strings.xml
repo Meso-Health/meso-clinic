@@ -2,4 +2,16 @@
 <resources>
     <!-- Menu -->
     <string name="menu_switch_language">Switch Language (ቋንቋ ቀይር)</string>
+
+    <!-- MemberInformationFragment -->
+    <string name="member_information_fragment_label">Member Information</string>
+    <string name="medical_record_number">Medical Record Number</string>
+    <string name="membership_number_label">Member ID</string>
+    <string name="age_validation_error">Age is required</string>
+    <string name="gender_validation_error">Gender is required</string>
+    <string name="medical_record_number_validation_error">Medical Record Number is required</string>
+
+    <!-- VisitTypeFragment -->
+    <string name="visit_type_fragment_label">Visit Type</string>
+    <string name="visit_type_label">Visit Type</string>
 </resources>

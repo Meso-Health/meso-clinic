@@ -12,10 +12,12 @@ data class EncounterFormModel(@PrimaryKey val id: UUID,
                               val createdAt: Instant,
                               val updatedAt: Instant,
                               val encounterId: UUID,
-                              val photoId: UUID?) {
+                              val photoId: UUID?,
+                              val thumbnailId: UUID?) {
+
 
     fun toEncounterForm(): EncounterForm {
-        return EncounterForm(id = id, encounterId = encounterId, photoId = photoId)
+        return EncounterForm(id = id, encounterId = encounterId, photoId = photoId, thumbnailId = thumbnailId)
     }
 
     companion object {
@@ -25,7 +27,9 @@ data class EncounterFormModel(@PrimaryKey val id: UUID,
                                       createdAt = now,
                                       updatedAt = now,
                                       encounterId = encounterForm.encounterId,
-                                      photoId = encounterForm.photoId)
+                                      photoId = encounterForm.photoId,
+                                      thumbnailId = encounterForm.thumbnailId)
+
         }
     }
 }

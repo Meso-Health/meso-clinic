@@ -1,13 +1,13 @@
 package org.watsi.uhp.views
 
 import android.content.Context
-import android.util.AttributeSet
 import android.support.constraint.ConstraintLayout
+import android.util.AttributeSet
 import android.view.View
-import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_quantity
+import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_dosage
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_name
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_price
-import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_dosage
+import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_quantity
 import org.watsi.domain.relations.EncounterItemWithBillable
 import java.text.NumberFormat
 

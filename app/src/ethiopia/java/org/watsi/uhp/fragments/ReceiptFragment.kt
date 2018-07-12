@@ -6,13 +6,13 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_label
@@ -24,24 +24,23 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
-import org.watsi.uhp.R.plurals.forms_attached_label
 import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.date_and_time
 import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import java.text.NumberFormat
 import javax.inject.Inject
 
-class ReceiptFragment : DaggerFragment() {
+class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -49,13 +48,13 @@ class ReceiptFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
 
     lateinit var viewModel: ReceiptViewModel
-    lateinit var encounter: EncounterWithItemsAndForms
     lateinit var receiptItemAdapter: ReceiptListItemAdapter
+    lateinit var encounterFlowState: EncounterFlowState
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
 
-        fun forEncounter(encounter: EncounterWithItemsAndForms): ReceiptFragment {
+        fun forEncounter(encounter: EncounterFlowState): ReceiptFragment {
             val fragment = ReceiptFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(PARAM_ENCOUNTER, encounter)
@@ -67,9 +66,9 @@ class ReceiptFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        encounter = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterWithItemsAndForms
+        encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
-        viewModel.getObservable(encounter.encounter.occurredAt, encounter.encounter.backdatedOccurredAt)
+        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->
                 val date_string = DateUtils.formatLocalDate(viewState.occurredAt.atZone(clock.zone).toLocalDate())
                 val time_string = DateUtils.formatLocalTime(viewState.occurredAt.atZone(clock.zone).toLocalDateTime())
@@ -81,7 +80,7 @@ class ReceiptFragment : DaggerFragment() {
             }
             })
 
-        receiptItemAdapter = ReceiptListItemAdapter(encounter.encounterItems)
+        receiptItemAdapter = ReceiptListItemAdapter(encounterFlowState.encounterItems)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,14 +91,14 @@ class ReceiptFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         diagnoses_label.text = resources.getQuantityString(
-            diagnosis_count, encounter.diagnoses.size, encounter.diagnoses.size)
+            diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
         encounter_items_label.text = resources.getQuantityString(
-            receipt_line_item_count, encounter.encounterItems.size, encounter.encounterItems.size)
-        total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounter.price()))
+            receipt_line_item_count, encounterFlowState.encounterItems.size, encounterFlowState.encounterItems.size)
+        total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounterFlowState.price()))
 
-        if (encounter.diagnoses.isNotEmpty()) {
+        if (encounterFlowState.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
-            diagnoses_list.text = encounter.diagnoses.map { it.description }.joinToString(", ")
+            diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
         }
 
         date_edit.setOnClickListener {
@@ -109,7 +108,7 @@ class ReceiptFragment : DaggerFragment() {
         RecyclerViewHelper.setRecyclerView(encounter_items_list, receiptItemAdapter, context, false)
 
         save_button.setOnClickListener {
-            submitEncounter(true)
+            submitEncounter()
         }
     }
 
@@ -155,8 +154,8 @@ class ReceiptFragment : DaggerFragment() {
         dialog.show()
     }
 
-    private fun submitEncounter(copaymentPaid: Boolean) {
-        viewModel.submitEncounter(encounter, copaymentPaid).subscribe({
+    private fun submitEncounter() {
+        viewModel.submitEncounter(encounterFlowState).subscribe({
             navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             ))
@@ -165,9 +164,10 @@ class ReceiptFragment : DaggerFragment() {
         })
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu?.let {
-            it.findItem(R.id.menu_submit_without_copayment).isVisible = true
+    override fun onBack(): Single<Boolean> {
+        return Single.fromCallable {
+            viewModel.updateEncounterWithDate(encounterFlowState)
+            true
         }
     }
 
@@ -175,10 +175,6 @@ class ReceiptFragment : DaggerFragment() {
         return when (item?.itemId) {
             android.R.id.home -> {
                 navigationManager.goBack()
-                true
-            }
-            R.id.menu_submit_without_copayment -> {
-                submitEncounter(false)
                 true
             }
             else -> super.onOptionsItemSelected(item)
