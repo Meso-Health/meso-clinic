@@ -12,22 +12,29 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.gender_field
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_ERROR
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
 import java.util.UUID
 import javax.inject.Inject
 
@@ -36,6 +43,7 @@ class MemberInformationFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var logger: Logger
     lateinit var viewModel: MemberInformationViewModel
     lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
     lateinit var membershipNumber: String
@@ -64,10 +72,36 @@ class MemberInformationFragment : DaggerFragment() {
         observable = viewModel.getObservable(membershipNumber)
         observable.observe(this, Observer {
             it?.let { viewState ->
+                setErrors(it.errors)
                 gender_field.setGender(viewState.gender)
                 membership_number.setText(viewState.membershipNumber)
             }
         })
+    }
+
+    private fun setErrors(errorMap: Map<String, Int>) {
+        errorMap[MEMBER_GENDER_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                gender_field.setError(null)
+            } else {
+                gender_field.setError(getString(errorResourceId))
+            }
+        }
+        errorMap[MEMBER_AGE_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                age_input_layout.error = null
+            } else {
+                age_input_layout.error = getString(errorResourceId)
+            }
+        }
+
+        errorMap[MEMBER_MEDICAL_RECORD_NUMBER_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                medical_record_number_layout.error = null
+            } else {
+                medical_record_number_layout.error = getString(errorResourceId)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -107,11 +141,21 @@ class MemberInformationFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.updateEncounterWithMember(memberId, encounterFlowState).subscribe({ encounterFlowState ->
+            viewModel.updateEncounterWithMember(encounterFlowState).subscribe({ encounterFlowState ->
                 navigationManager.goTo(VisitTypeFragment.forEncounter(encounterFlowState))
             }, { throwable ->
-                // TODO when we implement validations
+                handleOnSaveError(throwable)
             })
         }
+    }
+
+    private fun handleOnSaveError(throwable: Throwable) {
+        var errorMessage = context.getString(R.string.generic_save_error)
+        if (throwable is MemberInformationViewModel.ValidationException) {
+            errorMessage = throwable.localizedMessage
+        } else {
+            logger.error(throwable)
+        }
+        SnackbarHelper.showError(next_button, context, errorMessage)
     }
 }
