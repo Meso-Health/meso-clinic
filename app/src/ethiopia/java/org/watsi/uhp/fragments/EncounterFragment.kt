@@ -240,7 +240,6 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     viewModel.addItem(it)
                     line_items_list.scrollToBottom()
                     drug_search.setQuery("", false)
-                    view?.let { keyboardManager.hideKeyboard(it) }
                 }
                 return true
             }
