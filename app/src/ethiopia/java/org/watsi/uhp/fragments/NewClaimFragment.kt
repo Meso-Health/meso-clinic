@@ -8,6 +8,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.start_button
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -18,11 +21,24 @@ class NewClaimFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var logger: Logger
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar("New Claim", null)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_new_claim, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        start_button.setOnClickListener {
+            val membershipNumber = membership_number.getText().toString()
+
+            if (membershipNumber.isEmpty()) {
+                logger.error("no membership number")
+            } else {
+                navigationManager.goTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
+            }
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
