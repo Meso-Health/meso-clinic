@@ -14,4 +14,7 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">Visit Type</string>
     <string name="visit_type_label">Visit Type</string>
+
+    <!-- ReceiptFragment -->
+    <string name="price">%1$s</string>
 </resources>
