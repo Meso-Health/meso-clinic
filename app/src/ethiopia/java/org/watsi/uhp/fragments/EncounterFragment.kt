@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -57,6 +58,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
     lateinit var encounterFlowState: EncounterFlowState
+    val handler = Handler()
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -214,11 +216,21 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 activity, R.layout.item_billable_search_suggestion, null,
                 arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2),
                 intArrayOf(R.id.text1, R.id.text2), 0)
+
+        var runnable: Runnable? = null
         drug_search.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { viewModel.updateQuery(it) }
+                runnable?.let {
+                    handler.removeCallbacks(runnable)
+                }
+
+                runnable = Runnable({
+                    newText?.let { viewModel.updateQuery(it) }
+                })
+                handler.postDelayed(runnable, 500)
+
                 return true
             }
         })
