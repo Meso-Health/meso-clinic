@@ -32,15 +32,14 @@ import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.plurals.forms_attached_label
 import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.date_and_time
-import org.watsi.uhp.R.string.price_with_currency
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
-import java.text.NumberFormat
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -97,7 +96,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
         encounter_items_label.text = resources.getQuantityString(
             receipt_line_item_count, encounterFlowState.encounterItems.size, encounterFlowState.encounterItems.size)
-        total_price.text = getString(price_with_currency, NumberFormat.getNumberInstance().format(encounterFlowState.price()))
+        total_price.text = getString(R.string.price_with_currency, CurrencyUtil.formatMoney(encounterFlowState.price()))
         forms_label.text = resources.getQuantityString(
             forms_attached_label, encounterFlowState.encounterForms.size, encounterFlowState.encounterForms.size)
 
