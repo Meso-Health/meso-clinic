@@ -3,6 +3,9 @@
     <!-- Menu -->
     <string name="menu_switch_language">Switch Language (ቋንቋ ቀይር)</string>
 
+    <!--NewClaimFragment-->
+    <string name="new_claim_fragment_label">New Claim</string>
+
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
     <string name="medical_record_number">Medical Record Number</string>

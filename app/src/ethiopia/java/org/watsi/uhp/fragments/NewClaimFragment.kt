@@ -24,7 +24,7 @@ class NewClaimFragment : DaggerFragment() {
     @Inject lateinit var logger: Logger
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar("New Claim", null)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.new_claim_fragment_label), null)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_new_claim, container, false)
     }
