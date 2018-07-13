@@ -11,10 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import dagger.android.support.DaggerAppCompatActivity
-import net.hockeyapp.android.UpdateManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BaseApplication
-import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.MemberInformationFragment
 import org.watsi.uhp.helpers.ActivityHelper
@@ -66,22 +64,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) checkForUpdates()
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        UpdateManager.unregister()
-    }
-
-    public override fun onDestroy() {
-        super.onDestroy()
-        UpdateManager.unregister()
-    }
-
     override fun attachBaseContext(base: Context) {
         // pull LocaleManager off of Application because Activity is not injected when this is called
         localeManager = (base.applicationContext as BaseApplication).localeManager
@@ -91,10 +73,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
     private fun startServices() {
         BaseService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
-    }
-
-    private fun checkForUpdates() {
-        UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID)
     }
 
     fun setSoftInputModeToNothing() {
