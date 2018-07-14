@@ -34,6 +34,7 @@ import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom

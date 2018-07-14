@@ -23,6 +23,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
