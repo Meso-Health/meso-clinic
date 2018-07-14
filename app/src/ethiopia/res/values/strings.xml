@@ -7,4 +7,19 @@
     <string name="member_information_fragment_label">Member Information</string>
     <string name="medical_record_number">Medical Record Number</string>
     <string name="membership_number_label">Member ID</string>
+    <string name="age_validation_error">Age is required</string>
+    <string name="gender_validation_error">Gender is required</string>
+    <string name="medical_record_number_validation_error">Medical Record Number is required</string>
+
+    <!-- VisitTypeFragment -->
+    <string name="visit_type_fragment_label">Visit Type</string>
+    <string name="visit_type_label">Visit Type</string>
+
+    <!-- ReceiptFragment -->
+    <string name="price">%1$s</string>
+
+    <!-- EncounterFragment -->
+    <string name="drug_and_supply">Drug and Supply</string>
+    <string name="service">Service</string>
+    <string name="lab">Lab</string>
 </resources>

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +29,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.ethiopia.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.activities.ClinicActivity
@@ -75,8 +75,8 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         super.onCreate(savedInstanceState)
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
 
-        val billableTypeOptions = Billable.Type.values()
-                .map { it.toString().titleize() }
+        val billableTypeOptions = listOf(Billable.Type.SERVICE, Billable.Type.LAB, Billable.Type.DRUG)
+                .map { BillableTypePresenter.toDisplayedString(context, it) }
                 .toMutableList()
         billableTypeOptions.add(0, getString(prompt_category))
         billableTypeAdapter = ArrayAdapter(
@@ -177,7 +177,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedType = if (position > 0) {
-                    Billable.Type.valueOf(billableTypeAdapter.getItem(position).toUpperCase())
+                    BillableTypePresenter.fromDisplayedString(context, billableTypeAdapter.getItem(position))
                 } else {
                     null
                 }
@@ -246,7 +246,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.updateEncounterFlowRelationWithLineItems(encounterFlowState)
+            viewModel.updateEncounterWithLineItems(encounterFlowState)
             true
         }
     }
@@ -270,6 +270,42 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
      */
     data class BillablePresenter(val billable: Billable?) {
         override fun toString(): String = billable?.name ?: "Select..."
+    }
+
+    object BillableTypePresenter {
+        fun toDisplayedString(context: Context, type: Billable.Type): String {
+            return when (type) {
+                Billable.Type.DRUG -> {
+                    context.getString(R.string.drug_and_supply)
+                }
+                Billable.Type.SERVICE -> {
+                    context.getString(R.string.service)
+                }
+                Billable.Type.LAB -> {
+                    context.getString(R.string.lab)
+                }
+                else -> {
+                    throw IllegalStateException("BillableDisplayRepresenter.toDisplayedString called with invalid billable type: $type")
+                }
+            }
+        }
+
+        fun fromDisplayedString(context: Context, billableTypeString: String): Billable.Type {
+            return when (billableTypeString) {
+                context.getString(R.string.drug_and_supply) -> {
+                    Billable.Type.DRUG
+                }
+                context.getString(R.string.service) -> {
+                    Billable.Type.SERVICE
+                }
+                context.getString(R.string.lab) -> {
+                    Billable.Type.LAB
+                }
+                else -> {
+                    throw IllegalStateException("BillableDisplayRepresenter.fromDisplayedString called with invalid string: $billableTypeString")
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
