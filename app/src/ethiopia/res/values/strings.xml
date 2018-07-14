@@ -17,4 +17,9 @@
 
     <!-- ReceiptFragment -->
     <string name="price">%1$s</string>
+
+    <!-- EncounterFragment -->
+    <string name="drug_and_supply">Drug and Supply</string>
+    <string name="service">Service</string>
+    <string name="lab">Lab</string>
 </resources>
