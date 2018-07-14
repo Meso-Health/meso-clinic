@@ -19,10 +19,11 @@ import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_search
 import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.DiagnosisAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
@@ -85,14 +86,10 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         diagnosis_search.suggestionsAdapter = SimpleCursorAdapter(
             activity, R.layout.item_billable_search_suggestion, null,
             arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1), intArrayOf(R.id.text1), 0)
-        diagnosis_search.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = true
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { viewModel.updateQuery(it) }
-                return true
-            }
-        })
+        diagnosis_search.setOnQueryTextListener(QueryHelper.ThrottledQueryListener(
+            diagnosis_search,
+            { query: String -> viewModel.updateQuery(query) }
+        ))
         diagnosis_search.setOnSuggestionListener(object : android.widget.SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean = true
 
