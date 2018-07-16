@@ -20,7 +20,7 @@ import org.watsi.uhp.fragments.VisitTypeFragment
 abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindCheckInMemberDetailFragment(): CheckInMemberDetailFragment
     @ContributesAndroidInjector abstract fun bindCurrentMemberDetailFragment(): CurrentMemberDetailFragment
-//    @ContributesAndroidInjector abstract fun bindCurrentPatientsFragment(): CurrentPatientsFragment
+    @ContributesAndroidInjector abstract fun bindCurrentPatientsFragment(): CurrentPatientsFragment
     @ContributesAndroidInjector abstract fun bindNewClaimFragment(): NewClaimFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment
     @ContributesAndroidInjector abstract fun bindEncounterFragment(): EncounterFragment

@@ -33,7 +33,8 @@ class NewClaimFragment : DaggerFragment() {
         start_button.setOnClickListener {
             val membershipNumber = membership_number.getText().toString()
 
-            if (membershipNumber.isEmpty()) {
+            if (membershipNumber.isBlank()) {
+                // TODO: change this to handle isBlank case better, Kat is checking with Ross to see what should be done here,
                 logger.error("no membership number")
             } else {
                 navigationManager.goTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
