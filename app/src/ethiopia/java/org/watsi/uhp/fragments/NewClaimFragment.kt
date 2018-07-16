@@ -34,7 +34,7 @@ class NewClaimFragment : DaggerFragment() {
             val membershipNumber = membership_number.getText().toString()
 
             if (membershipNumber.isBlank()) {
-                // TODO: change this to handle isBlank case better, Kat is checking with Ross to see what should be done here,
+                // TODO: disable button when membership number field is blank
                 logger.error("no membership number")
             } else {
                 navigationManager.goTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
