@@ -1,5 +1,5 @@
 <resources>
-
+    <string name="app_name">UHP</string>
     <!-- StatusFragment -->
     <string name="sync_encounter_forms_label">Treatment Forms</string>
 
