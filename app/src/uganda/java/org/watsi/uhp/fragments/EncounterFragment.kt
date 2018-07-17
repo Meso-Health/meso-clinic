@@ -34,6 +34,7 @@ import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom
@@ -216,14 +217,10 @@ class EncounterFragment : DaggerFragment() {
                 activity, R.layout.item_billable_search_suggestion, null,
                 arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2),
                 intArrayOf(R.id.text1, R.id.text2), 0)
-        drug_search.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = true
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { viewModel.updateQuery(it) }
-                return true
-            }
-        })
+        drug_search.setOnQueryTextListener(QueryHelper.ThrottledQueryListener(
+            drug_search,
+            { query: String -> viewModel.updateQuery(query) }
+        ))
         drug_search.setOnSuggestionListener(object : android.widget.SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean = true
 

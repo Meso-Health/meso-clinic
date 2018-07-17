@@ -3,6 +3,8 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Diagnosis
@@ -54,31 +56,33 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     fun updateQuery(query: String) {
-        if (query.length > 2) {
-            val topMatchingDescriptions = FuzzySearch.extractTop(query, uniqueDescriptions, 6, 60)
+        Completable.fromCallable {
+            if (query.length > 2) {
+                val topMatchingDescriptions = FuzzySearch.extractTop(query, uniqueDescriptions, 6, 60)
 
-            // This sorts the fuzzy search results by decreasing score, increasing alphabetical order.
-            topMatchingDescriptions.sortWith(Comparator { o1, o2 ->
-                if (o2.score == o1.score)
-                    o1.string.compareTo(o2.string)
-                else
-                    Integer.compare(o2.score, o1.score)
-            })
+                // This sorts the fuzzy search results by decreasing score, increasing alphabetical order.
+                topMatchingDescriptions.sortWith(Comparator { o1, o2 ->
+                    if (o2.score == o1.score)
+                        o1.string.compareTo(o2.string)
+                    else
+                        Integer.compare(o2.score, o1.score)
+                })
 
-            val matchingDescriptionDiagnoses = topMatchingDescriptions.map { result ->
-                diagnoses.find { it.description == result.string }
-            }.filterNotNull()
-            val matchingSearchAliasesDiagnoses = diagnoses.filter { it.searchAliases.contains(query) }
+                val matchingDescriptionDiagnoses = topMatchingDescriptions.map { result ->
+                    diagnoses.find { it.description == result.string }
+                }.filterNotNull()
+                val matchingSearchAliasesDiagnoses = diagnoses.filter { it.searchAliases.contains(query) }
 
-            val suggestedDiagnoses = (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses)
-                    .distinct()
-                    .filterNot { diagnosis ->
-                        observable.value?.selectedDiagnoses.orEmpty().map { it.id }.contains(diagnosis.id)
-                    }
-            observable.value = observable.value?.copy(suggestedDiagnoses = suggestedDiagnoses)
-        } else {
-            observable.value = observable.value?.copy(suggestedDiagnoses = emptyList())
-        }
+                val suggestedDiagnoses = (matchingSearchAliasesDiagnoses + matchingDescriptionDiagnoses)
+                        .distinct()
+                        .filterNot { diagnosis ->
+                            observable.value?.selectedDiagnoses.orEmpty().map { it.id }.contains(diagnosis.id)
+                        }
+                observable.postValue(observable.value?.copy(suggestedDiagnoses = suggestedDiagnoses))
+            } else {
+                observable.postValue(observable.value?.copy(suggestedDiagnoses = emptyList()))
+            }
+        }.subscribeOn(Schedulers.computation()).subscribe()
     }
 
     fun updateEncounterWithDiagnoses(encounterFlowState: EncounterFlowState) {

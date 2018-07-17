@@ -137,6 +137,10 @@ class ClinicActivity : DaggerAppCompatActivity() {
                 localeManager.toggleLocale(this)
                 true
             }
+            android.R.id.home -> {
+                navigationManager.goBack()
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

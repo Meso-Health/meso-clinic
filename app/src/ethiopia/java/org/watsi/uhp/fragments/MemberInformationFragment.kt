@@ -5,12 +5,14 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_spinner
@@ -38,7 +40,7 @@ import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDI
 import java.util.UUID
 import javax.inject.Inject
 
-class MemberInformationFragment : DaggerFragment() {
+class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -146,6 +148,17 @@ class MemberInformationFragment : DaggerFragment() {
             }, { throwable ->
                 handleOnSaveError(throwable)
             })
+        }
+    }
+
+    override fun onBack(): Single<Boolean> {
+        return Single.create<Boolean> { single ->
+            AlertDialog.Builder(activity)
+                    .setMessage(R.string.exit_form_alert)
+                    .setPositiveButton(R.string.yes) { _, _ -> single.onSuccess(true) }
+                    .setNegativeButton(R.string.cancel) { _, _ -> single.onSuccess(false) }
+                    .setOnDismissListener { single.onSuccess(false) }
+                    .show()
         }
     }
 
