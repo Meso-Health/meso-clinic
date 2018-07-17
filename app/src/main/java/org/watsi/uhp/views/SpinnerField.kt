@@ -10,11 +10,15 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.view_spinner_field.view.field_label
 import kotlinx.android.synthetic.main.view_spinner_field.view.spinner
+import org.watsi.device.managers.Logger
 import org.watsi.uhp.R
+import javax.inject.Inject
 
 class SpinnerField @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
+
+    @Inject lateinit var logger: Logger
 
     private lateinit var adapter: ArrayAdapter<String>
 
@@ -30,6 +34,15 @@ class SpinnerField @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.view_spinner_field, this, true)
         val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.SpinnerField)
         field_label.text = customAttributes.getString(R.styleable.SpinnerField_label)
+
+        try {
+            val width = customAttributes.getDimensionPixelSize(R.styleable.SpinnerField_dropDownWidth, 0)
+            if (width > 0) {
+                spinner.dropDownWidth = width
+            }
+        } catch (e: NumberFormatException) {
+            logger.error(e)
+        }
 
         customAttributes.recycle()
     }
