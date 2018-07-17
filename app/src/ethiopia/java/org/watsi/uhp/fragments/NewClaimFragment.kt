@@ -57,6 +57,17 @@ class NewClaimFragment : DaggerFragment() {
             text -> viewModel.onKebeleNumberChange(text)
         })
 
+        member_status.setUpSpinner(
+            // TODO: move member status list as something set in viewModel so it can just be pulled from there
+            listOf("P", "S"),
+            // TODO: initialChoice should be listInViewModel.first()
+            "P",
+            { selected -> viewModel.onMemberStatusChange(selected) },
+            "P",
+            { viewModel.onMemberStatusChange("P") }
+
+        )
+
         household_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             text -> viewModel.onHouseholdNumberChange(text)
         })
