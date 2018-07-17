@@ -6,6 +6,8 @@
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
+    <string name="slash">/</string>
+    <string name="start_claim_button">Start Claim</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
