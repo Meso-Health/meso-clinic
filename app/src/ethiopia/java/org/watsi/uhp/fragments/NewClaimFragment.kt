@@ -14,6 +14,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import javax.inject.Inject
 
@@ -22,6 +23,26 @@ class NewClaimFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var logger: Logger
+
+    private var snackbarMessageToShow: String? = null
+
+    companion object {
+        const val PARAM_SNACKBAR_MESSAGE = "snackbar_message"
+
+        fun withSnackbarMessage(message: String): NewClaimFragment {
+            val fragment = NewClaimFragment()
+            fragment.arguments = Bundle().apply {
+                putString(PARAM_SNACKBAR_MESSAGE, message)
+            }
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.new_claim_fragment_label), null)
@@ -39,6 +60,11 @@ class NewClaimFragment : DaggerFragment() {
             } else {
                 navigationManager.goTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
             }
+        }
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(start_button, context, snackbarMessage)
+            snackbarMessageToShow = null
         }
     }
 

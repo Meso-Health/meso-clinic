@@ -1,10 +1,10 @@
 package org.watsi.uhp.fragments
 
-import android.support.v7.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -162,7 +162,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     private fun submitEncounter() {
         viewModel.submitEncounter(encounterFlowState).subscribe({
-            navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
+            navigationManager.popTo(NewClaimFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             ))
         }, {
