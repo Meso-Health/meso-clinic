@@ -34,7 +34,7 @@
             android:layout_margin="@dimen/space16"
             style="@style/PrimaryButton"
             app:layout_behavior="org.watsi.uhp.behaviors.MovableButtonBehavior"
-            android:text="Start Claim"
+            android:text="@string/new_claim_fragment_label"
             android:layout_gravity="bottom" />
     </android.support.design.widget.CoordinatorLayout>
 </android.support.constraint.ConstraintLayout>

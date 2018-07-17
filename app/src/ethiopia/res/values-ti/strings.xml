@@ -12,7 +12,26 @@
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
-    
+    <string name="prompt_category">ምደብ ምረፅ&#8230;</string>
+
+    <!-- MemberInformationFragment -->
+    <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
+    <string name="medical_record_number">ሕክምና ካርዲ ቁፅሪ</string>
+    <string name="membership_number_label">ናይ ኣባል መፍለይ ቁፅሪ</string>
+    <string name="age_validation_error">ዕድመ ክኣቱ ኣለዎ</string>
+    <string name="gender_validation_error">ፆታ ክምላእ ኣለዎ</string>
+    <string name="medical_record_number_validation_error">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ</string>
+    <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
+    <string name="cancel">ግደፍ</string>
+    <string name="yes">እወ</string>
+    <string name="gender_field_label">ፆታ</string>
+    <string name="age_field_label">ዕድመ</string>
+    <string name="male">ተባዕታይ</string>
+    <string name="female">ኣነስተይቲ</string>
+    <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ  ጎዲሉ ኣሎ</string>
+    <string name="months">ኣዋርሕ</string>
+    <string name="years">ዓመታት</string>
+
     <!-- DiagnosisFragment -->
     <string name="diagnosis_fragment_label">ነፀርታታት ሕማም</string>
     <plurals name="diagnosis_count">
@@ -20,4 +39,59 @@
         <item quantity="other">%d ነፀርታታት ሕማም</item>
     </plurals>
     <string name="search_diagnosis_hint">ነፀርታ ኣልሽ&#8230;</string>
+
+    <!-- ReceiptFragment -->
+    <string name="receipt_fragment_label">ግምገማ</string>
+    <string name="total">ድምር</string>
+    <string name="save_encounter_button">ኣረክብ</string>
+    <plurals name="receipt_line_item_count" >
+        <item quantity="one">%d አገልግሎት/አቅርቦት ዝርዝር</item>
+        <item quantity="other">%d አገልግሎት/አቅርቦት ዝርዝር</item>
+    </plurals>
+    <string name="today_wrapper">ሎማዓንቲ (%1$s)</string>
+    <string name="edit_clickable"><u>ኣርም</u></string>
+
+    <!-- EthiopianDatePicker -->
+    <string name="eth_datepicker_title">ዕለት</string>
+    <string name="eth_datepicker_save">ኣቐምጥ</string>
+    <string name="eth_datepicker_cancel">@string/cancel</string>
+    <string name="eth_datepicker_day">መዓልቲ</string>
+    <string name="eth_datepicker_month">ወርሒ</string>
+    <string name="eth_datepicker_year">ዓመት</string>
+
+    <!-- NewClaimFragment -->
+    <string name="new_claim_fragment_label">ሓዱሽ ሕቶ ክፍሊት</string>
+    <string name="start_claim">ሕቶ ክፍሊት ምዝገባ ጀምር</string>
+    <string name="encounter_submitted">ሕቶ ክፍሊት ብዝግባእ ተመሓላሊፉ</string>
+
+    <!-- VisitTypeFragment -->
+    <string name="visit_type_fragment_label">ዓይነት ቪዚት/ አገልግሎት</string>
+    <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
+
+    <!-- EncounterFragment -->
+    <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
+    <string name="drug_and_supply">ኣፋውስን ቀረባትን</string>
+    <string name="service">ኣገልግሎት</string>
+    <string name="lab">ላብራቶሪ</string>
+    <string name="select_prompt">ምረፅ…</string>
+    <plurals name="encounter_item_count">
+        <item quantity="one">%d አገልግሎት</item>
+        <item quantity="other">%d አገልግሎት</item>
+    </plurals>
+    <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>
+    <string name="error_blank_or_zero_quantity">በይዘኦም ዘይሮ ዘይኮነ መጠን የእትው</string>
+    <string name="search_drug_hint">መድሃኒትን ቀረባትን ኣልሽ&#8230;</string>
+
+    <!-- Menu -->
+    <string name="menu_logout_label">ውፃእ</string>
+    <string name="log_out_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
+    <string name="menu_version_and_sync_label">ኩነታት</string>
+
+    <!-- StatusFragment -->
+    <string name="version_and_sync_label">ኩነታት</string>
+    <string name="version_label">ቅፂ</string>
+    <string name="fetch_billables_label">ዋጋ ተመን ዝተሓደሰሉ እዋን</string>
+    <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
+    <string name="sync_encounters_label">ሕቶታት ክፍሊት</string>
+    <string name="all_synced">ኩሉ ኣዋድድ</string>
 </resources>

@@ -104,9 +104,9 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     }
                     else -> {
                         val billableOptions = viewState.selectableBillables.map {
-                            BillablePresenter(it)
+                            BillablePresenter(it, context)
                         }.toMutableList()
-                        billableOptions.add(0, BillablePresenter(null))
+                        billableOptions.add(0, BillablePresenter(null, context))
                         billableAdapter.clear()
                         billableAdapter.addAll(billableOptions)
                         billable_spinner.setSelection(0)
@@ -268,8 +268,8 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     /**
      * Used to customize toString behavior for use in an ArrayAdapter
      */
-    data class BillablePresenter(val billable: Billable?) {
-        override fun toString(): String = billable?.name ?: "Select..."
+    data class BillablePresenter(val billable: Billable?, val context: Context) {
+        override fun toString(): String = billable?.name ?: context.getString(R.string.select_prompt)
     }
 
     object BillableTypePresenter {

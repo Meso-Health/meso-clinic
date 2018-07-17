@@ -84,8 +84,8 @@ class NewClaimFragment : DaggerFragment() {
             R.id.menu_logout -> {
                 AlertDialog.Builder(activity)
                         .setTitle(R.string.log_out_alert)
-                        .setNegativeButton(android.R.string.no, null)
-                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.yes) { _, _ ->
                             sessionManager.logout()
                             (activity as ClinicActivity).navigateToAuthenticationActivity()
                         }.create().show()
