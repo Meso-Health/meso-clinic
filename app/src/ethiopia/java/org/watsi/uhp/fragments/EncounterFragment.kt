@@ -238,7 +238,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
                 } else {
                     encounterFlowState.encounterItems = encounterItems
-                    navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
+                    navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
                 }
             }
         }

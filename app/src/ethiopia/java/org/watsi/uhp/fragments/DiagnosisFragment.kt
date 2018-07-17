@@ -108,7 +108,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         save_button.setOnClickListener {
             viewModel.updateEncounterWithDiagnoses(encounterFlowState)
-            navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+            navigationManager.goTo(EncounterFragment.forEncounter(encounterFlowState))
         }
     }
 
