@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.region_number
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.woreda_number
@@ -21,6 +22,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.NewClaimViewModel
 import javax.inject.Inject
@@ -28,6 +30,7 @@ import javax.inject.Inject
 class NewClaimFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: NewClaimViewModel
@@ -56,6 +59,19 @@ class NewClaimFragment : DaggerFragment() {
         kebele_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             text -> viewModel.onKebeleNumberChange(text)
         })
+
+        kebele_number.setOnEditorActionListener() { v, actionId, event ->
+            if (v == null) false
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                if (v == kebele_number) {
+                    v?.clearFocus()
+                    keyboardManager.hideKeyboard(v)
+                    member_status.performClick()
+                    true
+                }
+            }
+            false
+        }
 
         member_status.setUpSpinner(
             // TODO: move member status list as something set in viewModel so it can just be pulled from there
