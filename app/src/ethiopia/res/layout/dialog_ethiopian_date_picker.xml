@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/space16"
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16">
+
+    <TextView
+        android:id="@+id/eth_datepicker_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/space24"
+        android:textSize="@dimen/fontSize16"
+        android:text="@string/eth_datepicker_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/date_fields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/space24"
+        app:layout_constraintTop_toBottomOf="@id/eth_datepicker_title" >
+
+        <android.support.constraint.Guideline
+            android:id="@+id/date_guideline_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/date_guideline_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/day_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/space8"
+            app:label="@string/eth_datepicker_day"
+            app:dropDownWidth="@dimen/spinner_width"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/date_guideline_1"/>
+
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/month_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/space8"
+            app:label="@string/eth_datepicker_month"
+            app:dropDownWidth="@dimen/spinner_width"
+            app:layout_constraintStart_toEndOf="@id/date_guideline_1"
+            app:layout_constraintEnd_toStartOf="@id/date_guideline_2"/>
+
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/year_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/space8"
+            app:label="@string/eth_datepicker_year"
+            app:dropDownWidth="@dimen/spinner_width"
+            app:layout_constraintStart_toEndOf="@id/date_guideline_2"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

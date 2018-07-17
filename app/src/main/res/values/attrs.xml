@@ -19,6 +19,7 @@
     </declare-styleable>
     <declare-styleable name="SpinnerField">
         <attr name="label" />
+        <attr name="dropDownWidth" format="dimension" />
     </declare-styleable>
     <declare-styleable name="StatusField">
         <attr name="android:text" />

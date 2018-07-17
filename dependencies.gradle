@@ -13,6 +13,7 @@ ext {
     rollbarVersion = '0.2.1'
     threeTenBackportVersion = "1.3.3"
     threeTenAndroidBackportVersion = "1.0.5"
+    jodaVersion = "2.10"
     glideVersion = "4.7.1"
 
     // Testing
@@ -53,6 +54,7 @@ ext {
             rollbar:                "com.rollbar:rollbar-android:$rollbarVersion",
             threeTenBackport:       "org.threeten:threetenbp:$threeTenBackportVersion",
             threeTenAndroidBackport:"com.jakewharton.threetenabp:threetenabp:$threeTenAndroidBackportVersion",
+            joda:                   "joda-time:joda-time:$jodaVersion",
             glide:                  "com.github.bumptech.glide:glide:$glideVersion",
             glideCompiler:          "com.github.bumptech.glide:compiler:$glideVersion"
     ]

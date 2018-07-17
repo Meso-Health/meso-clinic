@@ -1,6 +1,6 @@
 package org.watsi.uhp.fragments
 
-import android.app.AlertDialog
+import android.support.v7.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -9,11 +9,9 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
-import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_edit
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_list
@@ -22,21 +20,22 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.encounter_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import org.threeten.bp.Clock
-import org.threeten.bp.LocalDateTime
+import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.plurals.receipt_line_item_count
-import org.watsi.uhp.R.string.date_and_time
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EthiopianDateHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
+import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -52,6 +51,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
+        const val DATE_PICKER_START_YEAR = 1850
 
         fun forEncounter(encounter: EncounterFlowState): ReceiptFragment {
             val fragment = ReceiptFragment()
@@ -69,12 +69,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->
-                val date_string = DateUtils.formatLocalDate(viewState.occurredAt.atZone(clock.zone).toLocalDate())
-                val time_string = DateUtils.formatLocalTime(viewState.occurredAt.atZone(clock.zone).toLocalDateTime())
+                val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
                 date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
-                    resources.getString(today_wrapper, date_string)
+                    resources.getString(today_wrapper, dateString)
                 } else {
-                    resources.getString(date_and_time, date_string, time_string)
+                    dateString
                 }
             }
             })
@@ -100,7 +99,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
         }
 
-        date_edit.setOnClickListener {
+        date_container.setOnClickListener {
             launchBackdateDialog()
         }
 
@@ -112,45 +111,52 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun launchBackdateDialog() {
-        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_backdate_encounter, null)
-        val datePicker = dialogView.findViewById<View>(R.id.date_picker) as DatePicker
-        val timePicker = dialogView.findViewById<View>(R.id.time_picker) as TimePicker
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ethiopian_date_picker, null)
+        val daySpinner = dialogView.findViewById<View>(R.id.day_spinner) as SpinnerField
+        val monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
+        val yearSpinner = dialogView.findViewById<View>(R.id.year_spinner) as SpinnerField
 
-        datePicker.maxDate = clock.instant().toEpochMilli()
+        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(
+            viewModel.occurredAt() ?: Instant.now(),
+            clock
+        )
+        val dayAdapter = SpinnerField.createAdapter(
+            context, (1..EthiopianDateHelper.daysInMonth(occurredAtDate.year, occurredAtDate.month)).map { it.toString() })
+        val monthAdapter = SpinnerField.createAdapter(
+            context, (1..EthiopianDateHelper.MONTHS_IN_YEAR).map { it.toString() })
+        val yearAdapter = SpinnerField.createAdapter(
+            context, (DATE_PICKER_START_YEAR..occurredAtDate.year).map { it.toString() })
 
-        viewModel.backdatedOccurredAt()?.let { backdatedOccurredAt ->
-            if (backdatedOccurredAt) {
-                viewModel.occurredAt()?.let { occurredAt ->
-                    val ldt = LocalDateTime.ofInstant(occurredAt, clock.zone)
-                    datePicker.updateDate(ldt.year, ldt.monthValue - 1, ldt.dayOfMonth) // DatePicker months are zero indexed but LocalDateTime's are not
-                    timePicker.hour = ldt.hour
-                    timePicker.minute = ldt.minute
-                }
-            }
-        }
+        daySpinner.setUpSpinner(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
+        monthSpinner.setUpSpinner(monthAdapter, occurredAtDate.month - 1, { monthString ->
+            dayAdapter.clear()
+            dayAdapter.addAll((1..EthiopianDateHelper.daysInMonth(
+                yearSpinner.getSelectedItem().toInt(), monthString.toInt()))
+                .map { it.toString() })
+        })
+        yearSpinner.setUpSpinner(yearAdapter, occurredAtDate.year - DATE_PICKER_START_YEAR, { yearString ->
+            dayAdapter.clear()
+            dayAdapter.addAll((1..EthiopianDateHelper.daysInMonth(
+                yearString.toInt(), monthSpinner.getSelectedItem().toInt()))
+                .map { it.toString() })
+        })
 
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)
-
-        val dialog = builder.create()
-
-        dialogView.findViewById<View>(R.id.done).setOnClickListener {
-            val backdatedLocalDateTime = LocalDateTime.of(datePicker.year,
-                datePicker.month + 1, // DatePicker months are zero indexed but LocalDateTime's are not
-                datePicker.dayOfMonth,
-                timePicker.hour,
-                timePicker.minute
+        builder.setPositiveButton(R.string.eth_datepicker_save) { dialog, _ ->
+            val backdatedDateTime = EthiopianDateHelper.toInstant(
+                yearSpinner.getSelectedItem().toInt(),
+                monthSpinner.getSelectedItem().toInt(),
+                daySpinner.getSelectedItem().toInt(),
+                0, 0, 0, 0, // Arbitrarily choose midnight, since time isn't specified
+                clock
             )
-            viewModel.updateBackdatedOccurredAt(
-                backdatedLocalDateTime.toInstant(clock.zone.rules.getOffset(backdatedLocalDateTime)))
-            dialog.dismiss()
-        }
 
-        dialogView.findViewById<View>(R.id.cancel).setOnClickListener {
-            dialog.dismiss()
+            viewModel.updateBackdatedOccurredAt(backdatedDateTime)
         }
+        builder.setNegativeButton(R.string.eth_datepicker_cancel) { dialog, _ -> /* No-Op */ }
 
-        dialog.show()
+        builder.create().show()
     }
 
     private fun submitEncounter() {

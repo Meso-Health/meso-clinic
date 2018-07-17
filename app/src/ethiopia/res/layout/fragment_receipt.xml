@@ -20,6 +20,7 @@
             android:id="@+id/date_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:padding="@dimen/dialog_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toTopOf="parent">
@@ -36,7 +37,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:clickable="true"
                 android:text="@string/edit_clickable"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

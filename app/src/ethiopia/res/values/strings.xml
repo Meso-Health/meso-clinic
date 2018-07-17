@@ -24,6 +24,14 @@
     <string name="visit_type_fragment_label">Visit Type</string>
     <string name="visit_type_label">Visit Type</string>
 
+    <!-- EthiopianDatePicker -->
+    <string name="eth_datepicker_title">Date</string>
+    <string name="eth_datepicker_save">Save</string>
+    <string name="eth_datepicker_cancel">Cancel</string>
+    <string name="eth_datepicker_day">Day</string>
+    <string name="eth_datepicker_month">Month</string>
+    <string name="eth_datepicker_year">Year</string>
+
     <!-- ReceiptFragment -->
     <string name="price">%1$s</string>
 

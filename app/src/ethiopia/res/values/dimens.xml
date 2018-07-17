@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- dimensions for ethiopian date picker -->
+    <dimen name="spinner_width">96dp</dimen>
+
+</resources>
