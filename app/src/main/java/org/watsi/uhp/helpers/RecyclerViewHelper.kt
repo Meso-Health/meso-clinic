@@ -4,7 +4,6 @@ import android.content.Context
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.ViewGroup
 import org.watsi.uhp.R
 
 fun RecyclerView.scrollToBottom() {
@@ -15,12 +14,6 @@ fun RecyclerView.scrollToBottom() {
 
 fun RecyclerView.setBottomPadding(pixels: Int) {
     this.setPadding(0, 0, 0, pixels)
-}
-
-fun RecyclerView.setBottomMargin(pixels: Int) {
-    val params = this.layoutParams as ViewGroup.MarginLayoutParams
-    params.bottomMargin = pixels
-    this.layoutParams = params
 }
 
 object RecyclerViewHelper {
