@@ -9,8 +9,6 @@ import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
@@ -122,17 +120,13 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             if (!hasFocus) { keyboardManager.hideKeyboard(view) }
         }
 
-        val ageUnitAdapter = ArrayAdapter.createFromResource(
-                context, R.array.age_units, android.R.layout.simple_spinner_dropdown_item)
-
-        age_unit_spinner.adapter = ageUnitAdapter
-        age_unit_spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.onAgeUnitChange(AgeUnit.valueOf(age_unit_spinner.selectedItem.toString()))
+        age_unit_spinner.setUpSpinner(
+            listOf(AgeUnit.years, AgeUnit.months).map { it.toString() },
+            AgeUnit.years.toString(),
+            { selectedString: String? ->
+                viewModel.onAgeUnitChange(AgeUnit.valueOf(selectedString!!))
             }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) { /* no-op */ }
-        }
+        )
 
         age_input.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
             viewModel.onAgeChange(text.toIntOrNull())

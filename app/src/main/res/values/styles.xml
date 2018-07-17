@@ -94,6 +94,7 @@
 
     <style name="EditTextStyle" parent="Base.Widget.AppCompat.EditText">
         <item name="android:textSize">@dimen/fontSize16</item>
+        <item name="android:backgroundTint">@color/gray4</item>
         <item name="android:drawableTint">@color/gray6</item>
     </style>
 
