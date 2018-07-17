@@ -120,12 +120,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             viewModel.occurredAt() ?: Instant.now(),
             clock
         )
+        val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now(), clock)
         val dayAdapter = SpinnerField.createAdapter(
             context, (1..EthiopianDateHelper.daysInMonth(occurredAtDate.year, occurredAtDate.month)).map { it.toString() })
         val monthAdapter = SpinnerField.createAdapter(
             context, (1..EthiopianDateHelper.MONTHS_IN_YEAR).map { it.toString() })
         val yearAdapter = SpinnerField.createAdapter(
-            context, (DATE_PICKER_START_YEAR..occurredAtDate.year).map { it.toString() })
+            context, (DATE_PICKER_START_YEAR..todayDate.year).map { it.toString() })
 
         daySpinner.setUpSpinner(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
         monthSpinner.setUpSpinner(monthAdapter, occurredAtDate.month - 1, { monthString ->
