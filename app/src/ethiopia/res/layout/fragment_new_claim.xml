@@ -18,6 +18,7 @@
             android:id="@+id/membership_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:hint="@string/membership_number_label"
             android:imeOptions="actionDone" />
     </android.support.design.widget.TextInputLayout>
