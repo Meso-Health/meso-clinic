@@ -31,8 +31,8 @@ class EncounterItemListItem @JvmOverloads constructor(
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
-        if (billable.dosageDetails() != null) {
-            billable_details.text = billable.dosageDetails()
+        if (billable.details() != null) {
+            billable_details.text = billable.details()
             billable_details.visibility = View.VISIBLE
         } else {
             billable_details.visibility = View.GONE

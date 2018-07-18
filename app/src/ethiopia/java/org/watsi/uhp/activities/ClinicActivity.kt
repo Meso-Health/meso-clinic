@@ -74,8 +74,8 @@ class ClinicActivity : DaggerAppCompatActivity() {
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
     }
 
-    fun setSoftInputModeToNothing() {
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    fun setSoftInputModeToResize() {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     fun setSoftInputModeToPan() {

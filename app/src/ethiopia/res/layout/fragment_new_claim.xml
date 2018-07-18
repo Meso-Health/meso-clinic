@@ -122,15 +122,20 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/start_button"
-        style="@style/PrimaryButton"
-        android:text="@string/start_claim_button"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/save_button_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/space16"
-        android:layout_marginLeft="@dimen/space16"
-        android:layout_marginTop="@dimen/space16"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space16"
+            style="@style/PrimaryButton"
+            app:layout_behavior="org.watsi.uhp.behaviors.MovableButtonBehavior"
+            android:text="@string/start_claim_button"
+            android:layout_gravity="bottom" />
+    </android.support.design.widget.CoordinatorLayout>
 </android.support.constraint.ConstraintLayout>

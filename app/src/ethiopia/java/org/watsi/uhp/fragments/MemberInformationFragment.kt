@@ -4,13 +4,12 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
@@ -122,17 +121,17 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             if (!hasFocus) { keyboardManager.hideKeyboard(view) }
         }
 
-        val ageUnitAdapter = ArrayAdapter.createFromResource(
-                context, R.array.age_units, android.R.layout.simple_spinner_dropdown_item)
-
-        age_unit_spinner.adapter = ageUnitAdapter
-        age_unit_spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.onAgeUnitChange(AgeUnit.valueOf(age_unit_spinner.selectedItem.toString()))
+        age_unit_spinner.setUpSpinner(
+            listOf(AgeUnit.years, AgeUnit.months).map { AgeUnitPresenter.toDisplayedString(it, context) },
+            AgeUnitPresenter.toDisplayedString(AgeUnit.years, context),
+            { selectedString: String? ->
+                if (selectedString == null) {
+                    logger.error("selectedStringis null when onItemSelected is called in MemberInformationFragment")
+                } else {
+                    viewModel.onAgeUnitChange(AgeUnitPresenter.fromDisplayedString(selectedString, context))
+                }
             }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) { /* no-op */ }
-        }
+        )
 
         age_input.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
             viewModel.onAgeChange(text.toIntOrNull())
@@ -151,6 +150,37 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         }
     }
 
+
+    object AgeUnitPresenter {
+        fun toDisplayedString(ageUnit: AgeUnit, context: Context): String {
+            return when (ageUnit) {
+                AgeUnit.years -> {
+                    context.getString(R.string.years)
+                }
+                AgeUnit.months -> {
+                    context.getString(R.string.months)
+                }
+                else -> {
+                    throw IllegalStateException("AgeUnitPresenter.toDisplayedString called with invalid AgeUnit: $ageUnit")
+                }
+            }
+        }
+
+        fun fromDisplayedString(string: String, context: Context): AgeUnit {
+            return when (string) {
+                context.getString(R.string.years) -> {
+                    AgeUnit.years
+                }
+                context.getString(R.string.months) -> {
+                    AgeUnit.months
+                }
+                else -> {
+                    throw IllegalStateException("AgeUnitPresenter.fromDisplayedString called with invalid string: $string")
+                }
+            }
+        }
+    }
+
     override fun onBack(): Single<Boolean> {
         return Single.create<Boolean> { single ->
             AlertDialog.Builder(activity)
@@ -165,7 +195,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
     private fun handleOnSaveError(throwable: Throwable) {
         var errorMessage = context.getString(R.string.generic_save_error)
         if (throwable is MemberInformationViewModel.ValidationException) {
-            errorMessage = throwable.localizedMessage
+            errorMessage = context.getString(R.string.missing_fields_validation_error)
         } else {
             logger.error(throwable)
         }

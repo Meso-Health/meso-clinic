@@ -38,7 +38,6 @@ import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.scrollToBottom
-import org.watsi.uhp.helpers.setBottomMargin
 import org.watsi.uhp.helpers.setBottomPadding
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -59,10 +58,11 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
     lateinit var encounterFlowState: EncounterFlowState
-
+    lateinit var showSaveButtonRunnable: Runnable
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
+        const val SHOW_BUTTON_DELAY_TIME_IN_MS = 200L
 
         fun forEncounter(encounter: EncounterFlowState): EncounterFragment {
             val fragment = EncounterFragment()
@@ -127,32 +127,27 @@ class EncounterFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_clear_white_24dp)
-        (activity as ClinicActivity).setSoftInputModeToNothing()
+        (activity as ClinicActivity).setSoftInputModeToResize()
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        var searchRunnable: Runnable? = null
+        showSaveButtonRunnable = Runnable({
+            save_button?.let { it.visibility = View.VISIBLE }
+        })
+
         fragment_encounter_container.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 keyboardManager.hideKeyboard(v)
-                select_type_box.visibility = View.VISIBLE
-                select_billable_box.visibility = View.VISIBLE
-
-                line_items_list.setBottomPadding(context.resources.getDimensionPixelSize(R.dimen.scrollingFragmentBottomPadding))
-                line_items_list.setBottomMargin(0)
+                onHideKeyboard()
             }
         }
 
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
-                    select_type_box.visibility = View.GONE
-                    select_billable_box.visibility = View.GONE
-
-                    // manually resize recyclerView when keyboard is shown since neither adjustPan
-                    // nor adjustResize accomplishes the intended behavior.
-                    line_items_list.setBottomPadding(0)
-                    line_items_list.setBottomMargin(context.resources.getDimensionPixelSize(R.dimen.numericKeyboardHeight))
+                    onShowKeyboard()
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int? ->
                     if (newQuantity == null || newQuantity == 0) {
@@ -221,6 +216,9 @@ class EncounterFragment : DaggerFragment() {
             drug_search,
             { query: String -> viewModel.updateQuery(query) }
         ))
+        drug_search.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) { onShowKeyboard(hidePanel = false) }
+        }
         drug_search.setOnSuggestionListener(object : android.widget.SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean = true
 
@@ -251,6 +249,44 @@ class EncounterFragment : DaggerFragment() {
         }
     }
 
+    /**
+     * Android has no native method to detect whether the keyboard is showing, so this is a proxy
+     * method that should be called in places where we assume the keyboard has appeared.
+     */
+    private fun onShowKeyboard(hidePanel: Boolean = true) {
+        line_items_list.setBottomPadding(0)
+
+        if (hidePanel) {
+            select_type_box.visibility = View.GONE
+            select_billable_box.visibility = View.GONE
+        }
+
+        // If the delayed "show button" task has not run at this point, make sure we stop it
+        // so it doesn't run and show the button. This handles race conditions like the case
+        // where a user deselects an EditText (triggering the "show button" delayed task)
+        // and quickly reselects another EditText (before the delayed task has run).
+        save_button.removeCallbacks(showSaveButtonRunnable)
+        save_button.visibility = View.GONE
+    }
+
+    /**
+     * Android has no native method to detect whether the keyboard has been hidden, so this is a proxy
+     * method that should be called in places where we assume the keyboard has been hidden.
+     */
+    private fun onHideKeyboard() {
+        line_items_list.setBottomPadding(context.resources.getDimensionPixelSize(R.dimen.scrollingFragmentBottomPadding))
+
+        if (select_type_box.visibility != View.VISIBLE) {
+            select_type_box.visibility = View.VISIBLE
+            select_billable_box.visibility = View.VISIBLE
+        }
+
+        if (save_button.visibility != View.VISIBLE) {
+            // Delay showing the button to prevent jumpy visual behavior.
+            save_button.postDelayed(showSaveButtonRunnable, SHOW_BUTTON_DELAY_TIME_IN_MS)
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         (activity as ClinicActivity).setSoftInputModeToPan()
@@ -260,7 +296,7 @@ class EncounterFragment : DaggerFragment() {
         val cursorColumns = arrayOf("_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2, "id")
         val cursor = MatrixCursor(cursorColumns)
         billables.forEach {
-            cursor.addRow(arrayOf(it.id.mostSignificantBits, it.name, it.dosageDetails(), it.id.toString()))
+            cursor.addRow(arrayOf(it.id.mostSignificantBits, it.name, it.details(), it.id.toString()))
         }
         return cursor
     }

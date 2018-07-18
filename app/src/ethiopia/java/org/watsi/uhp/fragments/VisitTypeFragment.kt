@@ -54,7 +54,7 @@ class VisitTypeFragment : DaggerFragment() {
         )
 
         next_button.setOnClickListener {
-            navigationManager.goTo(EncounterFragment.forEncounter(encounterFlowState))
+            navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
         }
     }
 

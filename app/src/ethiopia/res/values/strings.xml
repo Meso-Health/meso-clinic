@@ -3,6 +3,7 @@
     <string name="app_name">Claims Submission</string>
     <!-- Menu -->
     <string name="menu_switch_language">Switch Language (ቋንቋ ቀይር)</string>
+    <string name="menu_sync_now">Sync now</string>
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
@@ -16,9 +17,11 @@
     <string name="age_validation_error">Age is required</string>
     <string name="gender_validation_error">Gender is required</string>
     <string name="medical_record_number_validation_error">Medical Record Number is required</string>
-    <string name="are_you_sure">Are you sure you want to exit?</string>
     <string name="cancel">CANCEL</string>
     <string name="yes">OK</string>
+    <string name="missing_fields_validation_error">Some fields are missing</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
 
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">Visit Type</string>
@@ -39,4 +42,5 @@
     <string name="drug_and_supply">Drug and Supply</string>
     <string name="service">Service</string>
     <string name="lab">Lab</string>
+    <string name="select_prompt">Select…</string>
 </resources>
