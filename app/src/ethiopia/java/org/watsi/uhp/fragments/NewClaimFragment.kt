@@ -1,6 +1,8 @@
 package org.watsi.uhp.fragments
 
 import android.app.AlertDialog
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -18,6 +20,8 @@ import kotlinx.android.synthetic.ethiopia.fragment_new_claim.member_status
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.household_number
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.household_member_number
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.start_button
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.membership_number_layout
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -33,12 +37,20 @@ class NewClaimFragment : DaggerFragment() {
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var logger: Logger
     lateinit var viewModel: NewClaimViewModel
+    lateinit var viewStateObservable: LiveData<NewClaimViewModel.ViewState>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NewClaimViewModel::class.java)
+        viewStateObservable = viewModel.getViewStateObservable()
+        viewStateObservable.observe(this, Observer {
+            it?.let {
+                membership_number_layout.setError(it.error)
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -73,14 +85,18 @@ class NewClaimFragment : DaggerFragment() {
             false
         }
 
+        val memberStatusList: List<String> = listOf("P", "S")
+
         member_status.setUpSpinner(
             // TODO: move member status list as something set in viewModel so it can just be pulled from there
-            listOf("P", "S"),
-            // TODO: initialChoice should be listInViewModel.first()
-            "P",
-            { selected -> viewModel.onMemberStatusChange(selected) },
-            "P",
-            { viewModel.onMemberStatusChange("P") }
+            memberStatusList,
+            memberStatusList.first(),
+            { selectedString ->
+                viewModel.onMemberStatusChange(selectedString)
+                logger.error(viewModel.getViewStateObservable().value.toString())
+            }
+//            "P",
+//            { () -> viewModel.onMemberStatusChange("P") }
 
         )
 
@@ -91,6 +107,19 @@ class NewClaimFragment : DaggerFragment() {
         household_member_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             text -> viewModel.onHouseholdMemberNumberChange(text)
         })
+
+//        start_button.setOnClickListener {
+//            val validationError = viewModel.getMembershipNumberError()
+//
+//            if(validationError?.isBlank()) {
+//                // TODO: actually set membershipNumber
+//                val membershipNumber = "00/00/00/P-967/00/0"
+//
+//                navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
+//            } else {
+//                viewModel.setMembershipNumberError(validationError)
+//            }
+//        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
