@@ -85,19 +85,13 @@ class NewClaimFragment : DaggerFragment() {
             false
         }
 
-        val memberStatusList: List<String> = listOf("P", "S")
-
         member_status.setUpSpinner(
-            // TODO: move member status list as something set in viewModel so it can just be pulled from there
-            memberStatusList,
-            memberStatusList.first(),
+            NewClaimViewModel.memberStatusList,
+            NewClaimViewModel.memberStatusList.first(),
             { selectedString ->
                 viewModel.onMemberStatusChange(selectedString)
-                logger.error(viewModel.getViewStateObservable().value.toString())
-            }
-//            "P",
-//            { () -> viewModel.onMemberStatusChange("P") }
 
+            }
         )
 
         household_number.addTextChangedListener(LayoutHelper.OnChangedListener {

@@ -11,6 +11,7 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
 
     companion object {
         const val INVALID_MEMBERSHIP_NUMBER_ERROR = "Invalid membership number"
+        val memberStatusList: List<String> = listOf("P", "S")
     }
 
     fun onRegionNumberChange(regionNumber: String) {
