@@ -50,7 +50,6 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getViewStateObservable(): LiveData<ViewState> = viewStateObservable
 
 //    fun getMembershipNumberError(): String? {
 //        viewStateObservable.value?.let {
@@ -76,6 +75,10 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
 //        }
 //        val regionNumber = viewStateObservable.value.regionNumber
 //    }
+    fun getViewStateObservable(): LiveData<ViewState> {
+        viewStateObservable.value = ViewState()
+        return viewStateObservable
+    }
 
     data class ViewState(val regionNumber: String = "",
                          val woredaNumber: String = "",
