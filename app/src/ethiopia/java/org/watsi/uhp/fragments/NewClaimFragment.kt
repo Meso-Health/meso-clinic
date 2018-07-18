@@ -102,18 +102,17 @@ class NewClaimFragment : DaggerFragment() {
             text -> viewModel.onHouseholdMemberNumberChange(text)
         })
 
-//        start_button.setOnClickListener {
-//            val validationError = viewModel.getMembershipNumberError()
-//
-//            if(validationError?.isBlank()) {
-//                // TODO: actually set membershipNumber
-//                val membershipNumber = "00/00/00/P-967/00/0"
-//
-//                navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
-//            } else {
-//                viewModel.setMembershipNumberError(validationError)
-//            }
-//        }
+        start_button.setOnClickListener {
+            viewStateObservable.value?.let {
+
+                if (viewModel.getMembershipNumberError(it).isBlank()) {
+                    val membershipNumber = viewModel.getMembershipNumber(it)
+                    navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
+                } else {
+                    viewModel.setMembershipNumberError(viewModel.getMembershipNumberError(it))
+                }
+            }
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
