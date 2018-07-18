@@ -20,9 +20,9 @@ class ReceiptListItem @JvmOverloads constructor(
         receipt_billable_quantity.text = NumberFormat.getInstance().format(encounterItemRelation.encounterItem.quantity)
         receipt_billable_name.text = encounterItemRelation.billable.name
         receipt_billable_price.text = CurrencyUtil.formatMoney(encounterItemRelation.price())
-        encounterItemRelation.billable.dosageDetails()?.let { dosageDetails ->
+        encounterItemRelation.billable.details()?.let { details ->
             receipt_billable_dosage.visibility = View.VISIBLE
-            receipt_billable_dosage.text = dosageDetails
+            receipt_billable_dosage.text = details
         }
     }
 }

@@ -297,7 +297,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         val cursorColumns = arrayOf("_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2, "id")
         val cursor = MatrixCursor(cursorColumns)
         billables.forEach {
-            cursor.addRow(arrayOf(it.id.mostSignificantBits, it.name, it.dosageDetails(), it.id.toString()))
+            cursor.addRow(arrayOf(it.id.mostSignificantBits, it.name, it.details(), it.id.toString()))
         }
         return cursor
     }
