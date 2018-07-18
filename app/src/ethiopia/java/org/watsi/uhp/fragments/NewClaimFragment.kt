@@ -27,6 +27,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.managers.KeyboardManager
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.NewClaimViewModel
 import javax.inject.Inject
@@ -41,6 +42,20 @@ class NewClaimFragment : DaggerFragment() {
     lateinit var viewModel: NewClaimViewModel
     lateinit var viewStateObservable: LiveData<NewClaimViewModel.ViewState>
 
+    private var snackbarMessageToShow: String? = null
+
+    companion object {
+        const val PARAM_SNACKBAR_MESSAGE = "snackbar_message"
+
+        fun withSnackbarMessage(message: String): NewClaimFragment {
+            val fragment = NewClaimFragment()
+            fragment.arguments = Bundle().apply {
+                putString(PARAM_SNACKBAR_MESSAGE, message)
+            }
+            return fragment
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,6 +66,8 @@ class NewClaimFragment : DaggerFragment() {
                 membership_number_layout.setError(it.error)
             }
         })
+
+        snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -113,6 +130,11 @@ class NewClaimFragment : DaggerFragment() {
                 }
             }
         }
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(start_button, context, snackbarMessage)
+            snackbarMessageToShow = null
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
@@ -131,8 +153,8 @@ class NewClaimFragment : DaggerFragment() {
             R.id.menu_logout -> {
                 AlertDialog.Builder(activity)
                         .setTitle(R.string.log_out_alert)
-                        .setNegativeButton(android.R.string.no, null)
-                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.yes) { _, _ ->
                             sessionManager.logout()
                             (activity as ClinicActivity).navigateToAuthenticationActivity()
                         }.create().show()
