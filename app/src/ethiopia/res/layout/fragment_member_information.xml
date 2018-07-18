@@ -55,6 +55,7 @@
             android:id="@+id/age_input_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingTop="3.5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/age_guideline">
 
@@ -62,7 +63,6 @@
                 android:id="@+id/age_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="17dp"
                 android:hint="@string/age_field_label"
                 android:selectAllOnFocus="true"
                 android:imeOptions="actionDone"
@@ -73,7 +73,7 @@
         <org.watsi.uhp.views.SpinnerField
             android:id="@+id/age_unit_spinner"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/age_guideline"
             app:layout_constraintEnd_toEndOf="parent" />
 
