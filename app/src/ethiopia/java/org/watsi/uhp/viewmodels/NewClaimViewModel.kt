@@ -3,7 +3,6 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import javax.inject.Inject
 
 class NewClaimViewModel @Inject constructor() : ViewModel() {
@@ -51,31 +50,24 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun getMembershipNumber(viewState: ViewState): String {
+        return viewState.regionNumber + "/" + viewState.woredaNumber + "/" + viewState.kebeleNumber + "/" +
+                    viewState.memberStatus + " " + viewState.householdNumber + "/" + viewState.householdMemberNumber
+    }
 
-//    fun getMembershipNumberError(): String? {
-//        viewStateObservable.value?.let {
-//            val hasError = it.regionNumber.isBlank() || it.woredaNumber.isBlank() || it.kebeleNumber.isBlank() ||
-//                    it.memberStatus.isBlank() || it.householdNumber.isBlank()
-//
-//            // TODO: check this syntax
-//            if (hasError) return INVALID_MEMBERSHIP_NUMBER_ERROR else return ""
-//        }
-//    }
-//
-//    fun setMembershipNumberError(error: String?) {
-//        viewStateObservable.value?.let {
-//            val currentViewState = viewStateObservable.value
-//
-//            viewStateObservable.value = currentViewState?.copy(error = error)
-//        }
-//    }
-//
-//    fun getMembershipNumber(): String? {
-//        viewStateObservable.value?.let {
-//
-//        }
-//        val regionNumber = viewStateObservable.value.regionNumber
-//    }
+    fun getMembershipNumberError(viewState: ViewState): String {
+        val hasError = viewState.regionNumber.isBlank() || viewState.woredaNumber.isBlank() || viewState.kebeleNumber.isBlank() ||
+                viewState.memberStatus.isBlank() || viewState.householdNumber.isBlank()
+
+        if (hasError) return INVALID_MEMBERSHIP_NUMBER_ERROR else return ""
+    }
+
+    fun setMembershipNumberError(error: String) {
+        viewStateObservable.value?.let {
+            viewStateObservable.value = it.copy(error = error)
+        }
+    }
+
     fun getViewStateObservable(): LiveData<ViewState> {
         viewStateObservable.value = ViewState()
         return viewStateObservable
