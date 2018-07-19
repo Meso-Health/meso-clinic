@@ -47,6 +47,15 @@ class SpinnerField @JvmOverloads constructor(
         customAttributes.recycle()
     }
 
+    /**
+     * Fill and initializes the spinner with an immutable list of choices
+     *
+     * @param choices The immutable list of choices to populate the spinner
+     * @param initialChoice The initial choice to be selected by default when the spinner loads
+     * @param onItemSelected The code to execute when an item is selected
+     * @param promptString The "unselected" prompt. For example "Select a billable". This should not be a member of the list
+     * @param onPromptSelected The code to execute if the prompt is selected. For example, clearing data
+     */
     fun setUpSpinner(choices: List<String>,
                      initialChoice: String?,
                      onItemSelected: (choice: String) -> Unit,
@@ -56,6 +65,15 @@ class SpinnerField @JvmOverloads constructor(
             onItemSelected, promptString, onPromptSelected)
     }
 
+    /**
+     * Fill and initializes the spinner with an mutable adapter of choices
+     *
+     * @param choices The mutable adapter of choices to populate the spinner
+     * @param initialChoice The initial choice to be selected by default when the spinner loads
+     * @param onItemSelected The code to execute when an item is selected
+     * @param promptString The "unselected" prompt. For example "Select a billable". This should not be a member of the list
+     * @param onPromptSelected The code to execute if the prompt is selected. For example, clearing data
+     */
     fun setUpSpinner(adapter: ArrayAdapter<String>,
                      initialChoice: Int?,
                      onItemSelected: (choice: String) -> Unit,
