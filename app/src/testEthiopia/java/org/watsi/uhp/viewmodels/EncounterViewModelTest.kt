@@ -34,9 +34,9 @@ class EncounterViewModelTest : AACBaseTest() {
     private val initialViewState = EncounterViewModel.ViewState(encounterId = encounterId, encounterItems = emptyList())
     private val serviceBillable1 = BillableFactory.build(name = "Service A", type = Billable.Type.SERVICE)
     private val serviceBillable2 = BillableFactory.build(name = "Service B", type = Billable.Type.SERVICE)
-    private val drugBillable1 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit="25 mg", type = Billable.Type.DRUG)
-    private val drugBillable2 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit="10 mg", type = Billable.Type.DRUG)
-    private val drugBillable3 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit="50 mg", type = Billable.Type.DRUG)
+    private val drugBillable1 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit = "25 mg", type = Billable.Type.DRUG)
+    private val drugBillable2 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit = "10 mg", type = Billable.Type.DRUG)
+    private val drugBillable3 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit = "50 mg", type = Billable.Type.DRUG)
     private val drugBillable4 = BillableFactory.build(name = "Catgut", type = Billable.Type.DRUG)
     private val drugBillable5 = BillableFactory.build(name = "Anti malaria drugs", type = Billable.Type.DRUG)
     private val drugBillable6 = BillableFactory.build(name = "Panadol", type = Billable.Type.DRUG)
@@ -76,8 +76,8 @@ class EncounterViewModelTest : AACBaseTest() {
         assertEquals(
             observable.value,
             initialViewState.copy(
-                selectableBillables = listOf(labBillable1, labBillable2, labBillable3),
-                type = Billable.Type.LAB
+                type = Billable.Type.LAB,
+                selectableBillables = listOf(labBillable1, labBillable2, labBillable3)
             )
         )
     }
@@ -88,8 +88,8 @@ class EncounterViewModelTest : AACBaseTest() {
         assertEquals(
             observable.value,
             initialViewState.copy(
-                selectableBillables = listOf(serviceBillable1, serviceBillable2),
-                type = Billable.Type.SERVICE
+                type = Billable.Type.SERVICE,
+                selectableBillables = listOf(serviceBillable1, serviceBillable2)
             )
         )
     }
@@ -98,10 +98,9 @@ class EncounterViewModelTest : AACBaseTest() {
     fun selectType_service_alreadyAdded() {
         viewModel.addItem(serviceBillable2)
         viewModel.selectType(Billable.Type.SERVICE)
-        assertEquals(observable.value?.selectableBillables, listOf(serviceBillable1))
+        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(serviceBillable2))
         assertEquals(observable.value?.type, Billable.Type.SERVICE)
         assertEquals(observable.value?.selectableBillables, listOf(serviceBillable1))
-        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(serviceBillable2))
     }
 
     @Test
@@ -111,7 +110,7 @@ class EncounterViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateQuery_lessThan3Characters() {
+    fun updateQuery_lessThan3Characters_noResults() {
         viewModel.selectType(Billable.Type.DRUG)
         viewModel.updateQuery("v")
         assertEquals(observable.value, initialViewState.copy(type = Billable.Type.DRUG))
@@ -151,17 +150,17 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.addItem(drugBillable1)
         viewModel.selectType(Billable.Type.DRUG)
         viewModel.updateQuery("vitamin")
+        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(drugBillable1))
         assertEquals(observable.value?.type, Billable.Type.DRUG)
         assertEquals(observable.value?.selectableBillables, listOf(drugBillable2, drugBillable3))
-        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(drugBillable1))
     }
 
     @Test
     fun addItem() {
         viewModel.selectType(Billable.Type.SERVICE)
         viewModel.addItem(serviceBillable1)
-        assertEquals(observable.value?.type, Billable.Type.SERVICE)
         assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(serviceBillable1))
+        assertEquals(observable.value?.type, Billable.Type.SERVICE)
     }
 
     @Test
