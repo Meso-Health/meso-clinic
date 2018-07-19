@@ -63,7 +63,7 @@ class NewClaimFragment : DaggerFragment() {
         viewStateObservable = viewModel.getViewStateObservable()
         viewStateObservable.observe(this, Observer {
             it?.let {
-                membership_number_layout.setError(it.error)
+                membership_number_layout.error = it.error
             }
         })
 
@@ -89,7 +89,7 @@ class NewClaimFragment : DaggerFragment() {
             text -> viewModel.onKebeleNumberChange(text)
         })
 
-        kebele_number.setOnEditorActionListener() { v, actionId, event ->
+        kebele_number.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 if (v == kebele_number) {
                     v?.clearFocus()
@@ -117,7 +117,6 @@ class NewClaimFragment : DaggerFragment() {
 
         start_button.setOnClickListener {
             viewStateObservable.value?.let {
-
                 if (viewModel.getMembershipNumberError(it).isBlank()) {
                     val membershipNumber = viewModel.getMembershipNumber(it)
                     navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))

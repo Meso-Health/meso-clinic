@@ -58,7 +58,7 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
         val hasError = viewState.regionNumber.isBlank() || viewState.woredaNumber.isBlank() || viewState.kebeleNumber.isBlank() ||
                 viewState.memberStatus.isBlank() || viewState.householdNumber.isBlank()
 
-        if (hasError) return INVALID_MEMBERSHIP_NUMBER_ERROR else return ""
+        return if (hasError) INVALID_MEMBERSHIP_NUMBER_ERROR else ""
     }
 
     fun setMembershipNumberError(error: String) {
