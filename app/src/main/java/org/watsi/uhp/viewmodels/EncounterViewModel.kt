@@ -77,8 +77,7 @@ class EncounterViewModel @Inject constructor(
             updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
             observable.value = viewState.copy(
                     encounterItems = updatedEncounterItems,
-                    selectableBillables = getSelectableBillables(viewState.type, updatedEncounterItems),
-                    searchResults = emptyList()
+                    selectableBillables = getSelectableBillables(viewState.type, updatedEncounterItems)
             )
         }
     }
@@ -110,17 +109,22 @@ class EncounterViewModel @Inject constructor(
     fun updateQuery(query: String) {
         Completable.fromCallable {
             if (query.length > 2) {
-                val currentDrugNames = currentEncounterItems().orEmpty()
+                val currentDrugs = currentEncounterItems().orEmpty()
                         .map { it.billable }
                         .filter { it.type == Billable.Type.DRUG }
-                        .map { it.name }
-                val selectableDrugNames = uniqueDrugNames.minus(currentDrugNames)
+                val selectableDrugNames = uniqueDrugNames
                 val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
                 val drugBillables =  billablesByType[Billable.Type.DRUG].orEmpty()
-                val matchingBillables = topMatchingNames.map { result ->
-                    drugBillables.filter { it.name == result.string }
-                }.flatten().sortedBy { it.name }
+
+                val matchingBillables = topMatchingNames.sortedWith(Comparator { o1, o2 ->
+                    if (o2.score == o1.score)
+                        o1.string.compareTo(o2.string)
+                    else
+                        Integer.compare(o2.score, o1.score)
+                }).map { result ->
+                    drugBillables.filter { it.name == result.string }.minus(currentDrugs).sortedBy { it.details() }
+                }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillables = matchingBillables))
             } else {
                 observable.postValue(observable.value?.copy(selectableBillables = emptyList()))
@@ -139,6 +143,5 @@ class EncounterViewModel @Inject constructor(
     data class ViewState(val type: Billable.Type? = null,
                          val selectableBillables: List<Billable> = emptyList(),
                          val encounterItems: List<EncounterItemWithBillable>,
-                         val encounterId: UUID,
-                         val searchResults: List<Billable> = emptyList())
+                         val encounterId: UUID)
 }
