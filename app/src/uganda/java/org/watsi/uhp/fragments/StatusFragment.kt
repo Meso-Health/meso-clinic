@@ -39,13 +39,13 @@ class StatusFragment : DaggerFragment() {
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 viewState.membersUpdatedAt?.let {
-                    fetch_members_updated_at.setValue(DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString())
+                    fetch_members_updated_at.setValue(formattedUpdatedAt(it.toEpochMilli()))
                 }
                 viewState.billablesUpdatedAt?.let {
-                    fetch_billables_updated_at.setValue(DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString())
+                    fetch_billables_updated_at.setValue(formattedUpdatedAt(it.toEpochMilli()))
                 }
                 viewState.diagnosesUpdatedAt?.let {
-                    fetch_diagnoses_updated_at.setValue(DateUtils.getRelativeTimeSpanString(it.toEpochMilli()).toString())
+                    fetch_diagnoses_updated_at.setValue(formattedUpdatedAt(it.toEpochMilli()))
                 }
                 viewState.photosToFetchCount?.let {
                     unfetched_member_photos.setValue(formattedQuantity(it))
@@ -87,6 +87,14 @@ class StatusFragment : DaggerFragment() {
             getString(R.string.all_synced)
         } else {
             count.toString() + " pending"
+        }
+    }
+
+    private fun formattedUpdatedAt(updatedAt: Long): String {
+        return if (updatedAt == 0L) {
+            getString(R.string.waiting_to_sync)
+        } else {
+            DateUtils.getRelativeTimeSpanString(updatedAt).toString()
         }
     }
 }

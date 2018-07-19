@@ -117,10 +117,6 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             text -> viewModel.onMedicalRecordNumberChange(text)
         })
 
-        medical_record_number.onFocusChangeListener = View.OnFocusChangeListener{ view, hasFocus ->
-            if (!hasFocus) { keyboardManager.hideKeyboard(view) }
-        }
-
         age_unit_spinner.setUpSpinner(
             listOf(AgeUnit.years, AgeUnit.months).map { AgeUnitPresenter.toDisplayedString(it, context) },
             AgeUnitPresenter.toDisplayedString(AgeUnit.years, context),
@@ -137,10 +133,6 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             viewModel.onAgeChange(text.toIntOrNull())
         })
 
-        age_input.onFocusChangeListener = View.OnFocusChangeListener{ view, hasFocus ->
-            if (!hasFocus) { keyboardManager.hideKeyboard(view) }
-        }
-
         next_button.setOnClickListener {
             viewModel.updateEncounterWithMember(encounterFlowState).subscribe({ encounterFlowState ->
                 navigationManager.goTo(VisitTypeFragment.forEncounter(encounterFlowState))
@@ -148,8 +140,16 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 handleOnSaveError(throwable)
             })
         }
-    }
 
+        /* Hide keyboard if no text inputs have focus */
+        listOf(age_input, medical_record_number).forEach {
+            it.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+                if (!age_input.hasFocus() && !medical_record_number.hasFocus()) {
+                    keyboardManager.hideKeyboard(view)
+                }
+            }
+        }
+    }
 
     object AgeUnitPresenter {
         fun toDisplayedString(ageUnit: AgeUnit, context: Context): String {

@@ -26,7 +26,7 @@
         android:id="@+id/border"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/space4"
+        android:layout_marginTop="2dp"
         android:background="@color/gray4"
         app:layout_constraintTop_toBottomOf="@id/spinner" />
 

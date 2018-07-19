@@ -224,6 +224,7 @@
     <string name="sync_id_events_label">Identifications</string>
     <string name="sync_encounters_label">Encounters</string>
     <string name="all_synced">All synced</string>
+    <string name="waiting_to_sync">Pending</string>
 
     <!-- PhotoActivity -->
     <string name="member_photo_overlay_text">Take photo of member</string>
