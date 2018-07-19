@@ -87,7 +87,7 @@
                 android:id="@+id/member_status"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-16dp"
+                android:layout_marginTop="-15dp"
                 android:layout_marginStart="@dimen/space4"
                 android:layout_marginEnd="@dimen/space4" />
 
