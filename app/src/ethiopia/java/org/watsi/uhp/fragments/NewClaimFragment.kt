@@ -90,13 +90,11 @@ class NewClaimFragment : DaggerFragment() {
         })
 
         kebele_number.setOnEditorActionListener() { v, actionId, event ->
-            if (v == null) false
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 if (v == kebele_number) {
                     v?.clearFocus()
-                    keyboardManager.hideKeyboard(v)
                     member_status.performClick()
-                    true
+                    keyboardManager.hideKeyboard(v)
                 }
             }
             false
@@ -107,7 +105,7 @@ class NewClaimFragment : DaggerFragment() {
             NewClaimViewModel.memberStatusList.first(),
             { selectedString ->
                 viewModel.onMemberStatusChange(selectedString)
-
+                household_number.requestFocus()
             }
         )
 

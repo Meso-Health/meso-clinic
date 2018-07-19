@@ -10,11 +10,10 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
 
     companion object {
         const val INVALID_MEMBERSHIP_NUMBER_ERROR = "Invalid membership number"
-        val memberStatusList: List<String> = listOf("P", "S")
+        val memberStatusList: List<String> = listOf("P", "I")
     }
 
     fun onRegionNumberChange(regionNumber: String) {
-
         viewStateObservable.value?.let {
             viewStateObservable.value = it.copy(regionNumber = regionNumber, error = "")
         }
@@ -52,7 +51,7 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
 
     fun getMembershipNumber(viewState: ViewState): String {
         return viewState.regionNumber + "/" + viewState.woredaNumber + "/" + viewState.kebeleNumber + "/" +
-                    viewState.memberStatus + " " + viewState.householdNumber + "/" + viewState.householdMemberNumber
+                    viewState.memberStatus + "-" + viewState.householdNumber + "/" + viewState.householdMemberNumber
     }
 
     fun getMembershipNumberError(viewState: ViewState): String {
