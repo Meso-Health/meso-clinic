@@ -27,7 +27,7 @@ data class Billable(val id: UUID,
             return type == Type.DRUG || type == Type.SUPPLY || type == Type.VACCINE
         }
 
-        const val VACCINE_COMPOSITION = "vail"
+        const val VACCINE_COMPOSITION = "vial"
         const val SUPPLY_COMPOSITION = "unit"
     }
 
