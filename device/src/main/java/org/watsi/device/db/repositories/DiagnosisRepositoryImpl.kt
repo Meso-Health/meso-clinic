@@ -22,6 +22,12 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
         return diagnosisDao.all().map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
     }
 
+    override fun delete(ids: List<Int>): Completable {
+        return Completable.fromAction {
+            ids.chunked(999).map { diagnosisDao.delete(it) }
+        }.subscribeOn(Schedulers.io())
+    }
+
     /**
      * Removes any persisted diagnoses that are not returned in the API results and overwrites
      * any persisted data if the API response contains updated data.
@@ -34,7 +40,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                 val clientDiagnosesIds = diagnosisDao.all().blockingGet().map { it.id }
                 val serverRemovedDiagnosesIds = clientDiagnosesIds.minus(serverDiagnosesIds)
 
-                diagnosisDao.delete(serverRemovedDiagnosesIds)
+                delete(serverRemovedDiagnosesIds).blockingGet()
                 diagnosisDao.upsert(serverDiagnoses.map { diagnosisApi ->
                     DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
                 })

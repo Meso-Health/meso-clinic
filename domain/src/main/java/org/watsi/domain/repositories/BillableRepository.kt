@@ -11,6 +11,7 @@ interface BillableRepository {
     fun all(): Single<List<Billable>>
     fun find(id: UUID): Maybe<Billable>
     fun create(billable: Billable, delta: Delta): Completable
+    fun delete(ids: List<UUID>): Completable
     fun fetch(): Completable
     fun opdDefaults(): Single<List<Billable>>
     fun uniqueCompositions(): Single<List<String>>

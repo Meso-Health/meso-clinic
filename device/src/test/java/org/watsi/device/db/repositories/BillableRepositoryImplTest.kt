@@ -27,6 +27,7 @@ import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.UserFactory
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class BillableRepositoryImplTest {
@@ -66,6 +67,16 @@ class BillableRepositoryImplTest {
         repository.create(billableModel.toBillable(), deltaModel.toDelta()).test().assertComplete()
 
         verify(mockDao).insertWithDelta(billableModel, deltaModel)
+    }
+
+    @Test
+    fun delete() {
+        val ids = List(1001) { UUID.randomUUID() }
+
+        repository.delete(ids).test().assertComplete()
+
+        verify(mockDao).delete(ids.take(999))
+        verify(mockDao).delete(ids.takeLast(2))
     }
 
     @Test

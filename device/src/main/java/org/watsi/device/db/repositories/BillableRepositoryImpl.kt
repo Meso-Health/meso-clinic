@@ -42,6 +42,12 @@ class BillableRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun delete(ids: List<UUID>): Completable {
+        return Completable.fromAction {
+            ids.chunked(999).map { billableDao.delete(it) }
+        }.subscribeOn(Schedulers.io())
+    }
+
     /**
      * Removes any synced persisted billables that are not returned in the API results and
      * overwrites any persisted data if the API response contains updated data. Do not
@@ -57,7 +63,7 @@ class BillableRepositoryImpl(
                 val syncedClientBillableIds = clientBillableIds.minus(unsyncedClientBillableIds)
                 val serverRemovedBillableIds = syncedClientBillableIds.minus(serverBillableIds)
 
-                billableDao.delete(serverRemovedBillableIds)
+                delete(serverRemovedBillableIds).blockingGet()
                 billableDao.upsert(serverBillables.map { billableApi ->
                     BillableModel.fromBillable(billableApi.toBillable(), clock)
                 })
