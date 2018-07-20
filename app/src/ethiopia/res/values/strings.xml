@@ -7,7 +7,11 @@
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
-    <string name="start_claim">Start Claim</string>
+    <string name="slash">/</string>
+    <string name="one_zero_placeholder">0</string>
+    <string name="two_zeroes_placeholder">00</string>
+    <string name="three_zeroes_placeholder">000</string>
+    <string name="start_claim_button">Start Claim</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>

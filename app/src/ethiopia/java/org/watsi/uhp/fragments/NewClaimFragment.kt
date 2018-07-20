@@ -1,28 +1,46 @@
 package org.watsi.uhp.fragments
 
 import android.app.AlertDialog
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_new_claim.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.household_member_number
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.household_number
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.kebele_number
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.member_status
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.membership_number_layout
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.region_number
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.start_button
+import kotlinx.android.synthetic.ethiopia.fragment_new_claim.woreda_number
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.viewmodels.NewClaimViewModel
 import javax.inject.Inject
 
 class NewClaimFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    lateinit var viewModel: NewClaimViewModel
+    lateinit var viewStateObservable: LiveData<NewClaimViewModel.ViewState>
 
     private var snackbarMessageToShow: String? = null
 
@@ -41,6 +59,14 @@ class NewClaimFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(NewClaimViewModel::class.java)
+        viewStateObservable = viewModel.getViewStateObservable()
+        viewStateObservable.observe(this, Observer {
+            it?.let {
+                membership_number_layout.error = it.error
+            }
+        })
+
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
@@ -51,14 +77,52 @@ class NewClaimFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        start_button.setOnClickListener {
-            val membershipNumber = membership_number.getText().toString()
+        region_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+            text -> viewModel.onRegionNumberChange(text)
+        })
 
-            if (membershipNumber.isBlank()) {
-                // TODO: disable button when membership number field is blank
-                logger.error("no membership number")
-            } else {
-                navigationManager.goTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
+        woreda_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+            text -> viewModel.onWoredaNumberChange(text)
+        })
+
+        kebele_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+            text -> viewModel.onKebeleNumberChange(text)
+        })
+
+        kebele_number.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                if (v == kebele_number) {
+                    v?.clearFocus()
+                    household_number.performClick()
+                }
+            }
+            false
+        }
+
+        member_status.setUpSpinner(
+            NewClaimViewModel.memberStatusList,
+            NewClaimViewModel.memberStatusList.first(),
+            { selectedString ->
+                viewModel.onMemberStatusChange(selectedString)
+            }
+        )
+
+        household_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+            text -> viewModel.onHouseholdNumberChange(text)
+        })
+
+        household_member_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+            text -> viewModel.onHouseholdMemberNumberChange(text)
+        })
+
+        start_button.setOnClickListener {
+            viewStateObservable.value?.let {
+                if (viewModel.getMembershipNumberError(it).isBlank()) {
+                    val membershipNumber = viewModel.getMembershipNumber(it)
+                    navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
+                } else {
+                    viewModel.setMembershipNumberError(viewModel.getMembershipNumberError(it))
+                }
             }
         }
 
@@ -94,5 +158,4 @@ class NewClaimFragment : DaggerFragment() {
         }
         return true
     }
-
 }
