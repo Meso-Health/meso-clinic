@@ -5,6 +5,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.managers.PreferencesManager
@@ -24,7 +25,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
 
     override fun delete(ids: List<Int>): Completable {
         return Completable.fromAction {
-            ids.chunked(999).map { diagnosisDao.delete(it) }
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map { diagnosisDao.delete(it) }
         }.subscribeOn(Schedulers.io())
     }
 

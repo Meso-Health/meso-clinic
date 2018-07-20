@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
@@ -44,7 +45,7 @@ class BillableRepositoryImpl(
 
     override fun delete(ids: List<UUID>): Completable {
         return Completable.fromAction {
-            ids.chunked(999).map { billableDao.delete(it) }
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map { billableDao.delete(it) }
         }.subscribeOn(Schedulers.io())
     }
 
