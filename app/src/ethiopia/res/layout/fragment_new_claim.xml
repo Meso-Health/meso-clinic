@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="00"
+                android:hint="@string/two_zeroes_placeholder"
                 android:imeOptions="actionNext"
                 android:maxLength="2"
                 android:layout_marginStart="@dimen/space16"
@@ -43,7 +43,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/slash"
-                android:gravity="center"
                 android:layout_marginStart="@dimen/space4"
                 android:layout_marginEnd="@dimen/space4" />
 
@@ -52,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="00"
+                android:hint="@string/two_zeroes_placeholder"
                 android:imeOptions="actionNext"
                 android:maxLength="2"
                 android:selectAllOnFocus="true" />
@@ -70,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="00"
+                android:hint="@string/two_zeroes_placeholder"
                 android:imeOptions="actionNext"
                 android:maxLength="2"
                 android:selectAllOnFocus="true" />
@@ -96,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="000"
+                android:hint="@string/three_zeroes_placeholder"
                 android:imeOptions="actionNext"
                 android:maxLength="3"
                 android:selectAllOnFocus="true" />
@@ -114,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="0"
+                android:hint="@string/one_zero_placeholder"
                 android:imeOptions="actionDone"
                 android:maxLength="2"
                 android:selectAllOnFocus="true" />
