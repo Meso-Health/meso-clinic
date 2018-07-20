@@ -49,6 +49,16 @@ class DiagnosisRepositoryImplTest {
     }
 
     @Test
+    fun delete() {
+        val ids = (1..1001).map { it }
+
+        repository.delete(ids).test().assertComplete()
+
+        verify(mockDao).delete(ids.take(999))
+        verify(mockDao).delete(ids.takeLast(2))
+    }
+
+    @Test
     fun fetch_noCurrentToken_completes() {
         whenever(mockSessionManager.currentToken()).thenReturn(null)
 

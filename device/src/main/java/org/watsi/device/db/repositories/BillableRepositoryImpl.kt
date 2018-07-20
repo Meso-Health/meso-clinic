@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
@@ -42,6 +43,12 @@ class BillableRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun delete(ids: List<UUID>): Completable {
+        return Completable.fromAction {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map { billableDao.delete(it) }
+        }.subscribeOn(Schedulers.io())
+    }
+
     /**
      * Removes any synced persisted billables that are not returned in the API results and
      * overwrites any persisted data if the API response contains updated data. Do not
@@ -57,7 +64,7 @@ class BillableRepositoryImpl(
                 val syncedClientBillableIds = clientBillableIds.minus(unsyncedClientBillableIds)
                 val serverRemovedBillableIds = syncedClientBillableIds.minus(serverBillableIds)
 
-                billableDao.delete(serverRemovedBillableIds)
+                delete(serverRemovedBillableIds).blockingGet()
                 billableDao.upsert(serverBillables.map { billableApi ->
                     BillableModel.fromBillable(billableApi.toBillable(), clock)
                 })

@@ -5,6 +5,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.managers.PreferencesManager
@@ -22,6 +23,12 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
         return diagnosisDao.all().map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
     }
 
+    override fun delete(ids: List<Int>): Completable {
+        return Completable.fromAction {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map { diagnosisDao.delete(it) }
+        }.subscribeOn(Schedulers.io())
+    }
+
     /**
      * Removes any persisted diagnoses that are not returned in the API results and overwrites
      * any persisted data if the API response contains updated data.
@@ -34,7 +41,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
                 val clientDiagnosesIds = diagnosisDao.all().blockingGet().map { it.id }
                 val serverRemovedDiagnosesIds = clientDiagnosesIds.minus(serverDiagnosesIds)
 
-                diagnosisDao.delete(serverRemovedDiagnosesIds)
+                delete(serverRemovedDiagnosesIds).blockingGet()
                 diagnosisDao.upsert(serverDiagnoses.map { diagnosisApi ->
                     DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
                 })
