@@ -98,4 +98,5 @@
     <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
     <string name="sync_encounters_label">ሕቶታት ክፍሊት</string>
     <string name="all_synced">ኩሉ ኣዋድድ</string>
+    <string name="waiting_to_sync">ብምጽብባይ</string>
 </resources>

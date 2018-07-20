@@ -94,4 +94,5 @@
     <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
     <string name="sync_encounters_label">የክፍያ ጥያቄዎች</string>
     <string name="all_synced">ሁሉንም አሳምር</string>
+    <string name="waiting_to_sync">በመጠባበቅ ላይ</string>
 </resources>
