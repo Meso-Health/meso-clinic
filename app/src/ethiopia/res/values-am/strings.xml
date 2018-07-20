@@ -57,7 +57,7 @@
 
     <!-- NewClaimFragment -->
     <string name="new_claim_fragment_label">ኣዲስ የክፍያ ጥያቄ</string>
-    <string name="start_claim">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
+    <string name="start_claim_button">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
     <string name="encounter_submitted">የክፍያ ጥያቄ በሚገባ ተላልፏል</string>
 
     <!-- VisitTypeFragment -->
