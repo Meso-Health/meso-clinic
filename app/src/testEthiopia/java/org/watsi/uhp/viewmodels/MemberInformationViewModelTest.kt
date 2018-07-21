@@ -146,6 +146,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     @Test
     fun updateEncounterWithMember_validViewState() {
         setValidViewStateOnViewModel()
+        val birthdateWithAccuracy = Age(10, AgeUnit.months).toBirthdateWithAccuracy(clock)
         viewModel.updateEncounterWithMember(encounterFlowState).test().assertValue(
             encounterFlowState.copy(
                 member = MemberFactory.build(
@@ -155,7 +156,8 @@ class MemberInformationViewModelTest : AACBaseTest() {
                     gender = Member.Gender.F,
                     membershipNumber = membershipNumber,
                     medicalRecordNumber = "09900",
-                    birthdate = Age(10, AgeUnit.months).toBirthdateWithAccuracy(clock).first,
+                    birthdate = birthdateWithAccuracy.first,
+                    birthdateAccuracy = birthdateWithAccuracy.second,
                     householdId = null
                 )
             )

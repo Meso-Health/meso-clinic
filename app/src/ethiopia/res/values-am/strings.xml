@@ -29,6 +29,7 @@
     <string name="male">ወንድ</string>
     <string name="female">ሴት</string>
     <string name="missing_fields_validation_error">ያልተሟላ መረጃ</string>
+    <string name="days">ቀናት</string>
     <string name="months">ወራት</string>
     <string name="years">ዓመተ ምህረት</string>
 

@@ -29,6 +29,7 @@
     <string name="male">ተባዕታይ</string>
     <string name="female">ኣነስተይቲ</string>
     <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ  ጎዲሉ ኣሎ</string>
+    <string name="days">መዓልታት</string>
     <string name="months">ኣዋርሕ</string>
     <string name="years">ዓመታት</string>
 

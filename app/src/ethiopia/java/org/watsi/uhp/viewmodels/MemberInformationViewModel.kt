@@ -75,12 +75,13 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         fun toMember(viewState: ViewState, memberId: UUID, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() && viewState.gender != null
                     && viewState.age != null && viewState.medicalRecordNumber != null) {
-                val birthdate = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy().first
+                val birthdateWithAccuracy = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy()
                 return Member(
                     id = memberId,
                     name = "Member Name", // Placeholder until we make a platform decision that "Member" doesn't require a name.
                     enrolledAt = Instant.now(clock),
-                    birthdate = birthdate,
+                    birthdate = birthdateWithAccuracy.first,
+                    birthdateAccuracy = birthdateWithAccuracy.second,
                     gender = viewState.gender,
                     photoId = null,
                     thumbnailPhotoId = null,

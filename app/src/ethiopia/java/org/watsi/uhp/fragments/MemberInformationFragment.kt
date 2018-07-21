@@ -118,11 +118,13 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         })
 
         age_unit_spinner.setUpSpinner(
-            listOf(AgeUnit.years, AgeUnit.months).map { AgeUnitPresenter.toDisplayedString(it, context) },
+            listOf(AgeUnit.years, AgeUnit.months, AgeUnit.days).map {
+                AgeUnitPresenter.toDisplayedString(it, context)
+            },
             AgeUnitPresenter.toDisplayedString(AgeUnit.years, context),
             { selectedString: String? ->
                 if (selectedString == null) {
-                    logger.error("selectedStringis null when onItemSelected is called in MemberInformationFragment")
+                    logger.error("selectedString is null when onItemSelected is called in MemberInformationFragment")
                 } else {
                     viewModel.onAgeUnitChange(AgeUnitPresenter.fromDisplayedString(selectedString, context))
                 }
@@ -160,6 +162,9 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 AgeUnit.months -> {
                     context.getString(R.string.months)
                 }
+                AgeUnit.days -> {
+                    context.getString(R.string.days)
+                }
                 else -> {
                     throw IllegalStateException("AgeUnitPresenter.toDisplayedString called with invalid AgeUnit: $ageUnit")
                 }
@@ -173,6 +178,9 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 }
                 context.getString(R.string.months) -> {
                     AgeUnit.months
+                }
+                context.getString(R.string.days) -> {
+                    AgeUnit.days
                 }
                 else -> {
                     throw IllegalStateException("AgeUnitPresenter.fromDisplayedString called with invalid string: $string")

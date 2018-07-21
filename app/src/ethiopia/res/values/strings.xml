@@ -23,6 +23,7 @@
     <string name="cancel">CANCEL</string>
     <string name="yes">OK</string>
     <string name="missing_fields_validation_error">Some fields are missing</string>
+    <string name="days">Days</string>
     <string name="months">Months</string>
     <string name="years">Years</string>
 
