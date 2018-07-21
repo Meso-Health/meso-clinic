@@ -70,7 +70,7 @@
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">ፆታ መሞላት ኣለበት</string>
+    <string name="drug_and_supply">መድሃኒቶች እና ኣቅረቦቶች</string>
     <string name="service">አገልግሎት</string>
     <string name="lab">ላብራቶሪ</string>
     <string name="select_prompt">ምረጥ…</string>
