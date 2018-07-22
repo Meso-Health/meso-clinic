@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/space16"
-        android:paddingRight="@dimen/space16"
+        android:paddingRight="@dimen/space8"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -36,7 +36,7 @@
                 android:hint="@string/two_zeroes_placeholder"
                 android:imeOptions="actionNext"
                 android:maxLength="2"
-                android:layout_marginStart="@dimen/space16"
+                android:layout_marginStart="@dimen/space12"
                 android:selectAllOnFocus="true" />
 
             <TextView
@@ -95,9 +95,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="@string/three_zeroes_placeholder"
+                android:hint="@string/six_zeroes_placeholder"
+                android:maxLength="6"
                 android:imeOptions="actionNext"
-                android:maxLength="3"
                 android:selectAllOnFocus="true" />
 
             <TextView
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="@string/one_zero_placeholder"
+                android:hint="@string/two_zeroes_placeholder"
                 android:imeOptions="actionDone"
                 android:maxLength="2"
                 android:selectAllOnFocus="true" />

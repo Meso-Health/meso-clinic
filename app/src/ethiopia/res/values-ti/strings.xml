@@ -63,9 +63,9 @@
     <!-- NewClaimFragment -->
     <string name="new_claim_fragment_label">ሓዱሽ ሕቶ ክፍሊት</string>
     <string name="start_claim">ሕቶ ክፍሊት ምዝገባ ጀምር</string>
-    <string name="one_zero_placeholder">0</string>
     <string name="two_zeroes_placeholder">00</string>
     <string name="three_zeroes_placeholder">000</string>
+    <string name="six_zeroes_placeholder">000000</string>
     <string name="start_claim_button">ሕቶ ክፍሊት ምዝገባ ጀምር</string>
     <string name="encounter_submitted">ሕቶ ክፍሊት ብዝግባእ ተመሓላሊፉ</string>
 
