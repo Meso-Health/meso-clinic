@@ -157,8 +157,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
-                },
-                keyboardManager = keyboardManager
+                }
         )
 
         RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
