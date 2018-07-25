@@ -46,12 +46,17 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var clock: Clock
 
     lateinit var viewModel: ReceiptViewModel
+    lateinit var alertDialog: AlertDialog
     lateinit var receiptItemAdapter: ReceiptListItemAdapter
     lateinit var encounterFlowState: EncounterFlowState
 
+    lateinit var daySpinner: SpinnerField
+    lateinit var monthSpinner: SpinnerField
+    lateinit var yearSpinner: SpinnerField
+
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
-        const val DATE_PICKER_START_YEAR = 1850
+        const val DATE_PICKER_START_YEAR = 2008
 
         fun forEncounter(encounter: EncounterFlowState): ReceiptFragment {
             val fragment = ReceiptFragment()
@@ -99,6 +104,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
         }
 
+        setUpDialog()
+
         date_container.setOnClickListener {
             launchBackdateDialog()
         }
@@ -111,35 +118,63 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun launchBackdateDialog() {
+        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(
+            viewModel.occurredAt() ?: Instant.now(),
+            clock
+        )
+        daySpinner.setSelectedItem(occurredAtDate.day - 1)
+        monthSpinner.setSelectedItem(occurredAtDate.month - 1)
+        yearSpinner.setSelectedItem(occurredAtDate.year - DATE_PICKER_START_YEAR)
+
+        alertDialog.show()
+    }
+
+    private fun setUpDialog() {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ethiopian_date_picker, null)
-        val daySpinner = dialogView.findViewById<View>(R.id.day_spinner) as SpinnerField
-        val monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
-        val yearSpinner = dialogView.findViewById<View>(R.id.year_spinner) as SpinnerField
+        daySpinner = dialogView.findViewById<View>(R.id.day_spinner) as SpinnerField
+        monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
+        yearSpinner = dialogView.findViewById<View>(R.id.year_spinner) as SpinnerField
 
         val occurredAtDate = EthiopianDateHelper.toEthiopianDate(
             viewModel.occurredAt() ?: Instant.now(),
             clock
         )
         val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now(), clock)
+
         val dayAdapter = SpinnerField.createAdapter(
-            context, (1..EthiopianDateHelper.daysInMonth(occurredAtDate.year, occurredAtDate.month)).map { it.toString() })
+            context, (1..todayDate.day).map { it.toString() })
         val monthAdapter = SpinnerField.createAdapter(
-            context, (1..EthiopianDateHelper.MONTHS_IN_YEAR).map { it.toString() })
+            context, (1..todayDate.month).map { it.toString() })
         val yearAdapter = SpinnerField.createAdapter(
             context, (DATE_PICKER_START_YEAR..todayDate.year).map { it.toString() })
 
         daySpinner.setUpSpinner(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
         monthSpinner.setUpSpinner(monthAdapter, occurredAtDate.month - 1, { monthString ->
+            val daysToShow = EthiopianDateHelper.daysInMonthNotInFuture(
+                yearSpinner.getSelectedItem().toInt(), monthString.toInt(), todayDate)
+
             dayAdapter.clear()
-            dayAdapter.addAll((1..EthiopianDateHelper.daysInMonth(
-                yearSpinner.getSelectedItem().toInt(), monthString.toInt()))
-                .map { it.toString() })
+            dayAdapter.addAll((1..daysToShow).map { it.toString() })
         })
         yearSpinner.setUpSpinner(yearAdapter, occurredAtDate.year - DATE_PICKER_START_YEAR, { yearString ->
+            // Save the currently selected month in case the list shrinks
+            var selectedMonth = monthSpinner.getSelectedItem().toInt()
+
+            val monthsToShow = EthiopianDateHelper.monthsInYearNotInFuture(yearString.toInt(), todayDate)
+            monthAdapter.clear()
+            monthAdapter.addAll((1..monthsToShow).map { it.toString() })
+
+            // The following code makes sure our selectedMonth is not larger than the list of months.
+            // The Android spinner will do this automatically for us: if we reduce the adapter
+            // to a smaller list than the selected index, it will automatically select the highest index
+            // in the list. However, this has not happened yet, so we need to calculate this ourselves
+            // to calculate the appropriate daysToShow value.
+            if (selectedMonth > monthsToShow) selectedMonth = monthsToShow
+
+            val daysToShow = EthiopianDateHelper.daysInMonthNotInFuture(
+                yearString.toInt(), selectedMonth, todayDate)
             dayAdapter.clear()
-            dayAdapter.addAll((1..EthiopianDateHelper.daysInMonth(
-                yearString.toInt(), monthSpinner.getSelectedItem().toInt()))
-                .map { it.toString() })
+            dayAdapter.addAll((1..daysToShow).map { it.toString() })
         })
 
         val builder = AlertDialog.Builder(context)
@@ -157,7 +192,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
         builder.setNegativeButton(R.string.eth_datepicker_cancel) { dialog, _ -> /* No-Op */ }
 
-        builder.create().show()
+        alertDialog = builder.create()
     }
 
     private fun submitEncounter() {

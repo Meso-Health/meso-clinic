@@ -1,6 +1,5 @@
 package org.watsi.uhp.helpers
 
-import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -26,18 +25,41 @@ class EthiopianDateHelperTest {
     }
 
     @Test
-    fun daysInMonth() {
+    fun daysInMonthNotInFuture() {
         val fullMonth = 3
         val intercalaryMonth = 13
-        val nonLeapYear = 2010
+        val thisMonth = 9
+        val nonLeapYear = 2009
         val leapYear = 2007
+        val thisYear = 2010
         val expectedFullMonth = 30
         val expectedIntercalaryMonth = 5
         val expectedIntercalaryLeapYear = 6
+        val expectedThisMonth = 13
+        val todayDate = EthiopianDate(thisYear, thisMonth, expectedThisMonth)
 
-        assertEquals(expectedFullMonth, EthiopianDateHelper.daysInMonth(nonLeapYear, fullMonth))
-        assertEquals(expectedIntercalaryMonth, EthiopianDateHelper.daysInMonth(nonLeapYear, intercalaryMonth))
-        assertEquals(expectedIntercalaryLeapYear, EthiopianDateHelper.daysInMonth(leapYear, intercalaryMonth))
+        assertEquals(expectedFullMonth,
+            EthiopianDateHelper.daysInMonthNotInFuture(nonLeapYear, fullMonth, todayDate))
+        assertEquals(expectedIntercalaryMonth,
+            EthiopianDateHelper.daysInMonthNotInFuture(nonLeapYear, intercalaryMonth, todayDate))
+        assertEquals(expectedIntercalaryLeapYear,
+            EthiopianDateHelper.daysInMonthNotInFuture(leapYear, intercalaryMonth, todayDate))
+        assertEquals(expectedThisMonth,
+            EthiopianDateHelper.daysInMonthNotInFuture(thisYear, thisMonth, todayDate))
+    }
+
+    @Test
+    fun monthsInYearNotInFuture() {
+        val pastYear = 2009
+        val thisYear = 2010
+        val expectedPastYear = 13
+        val expectedThisYear = 9
+        val todayDate = EthiopianDate(thisYear, expectedThisYear, 1)
+
+        assertEquals(expectedPastYear,
+            EthiopianDateHelper.monthsInYearNotInFuture(pastYear, todayDate))
+        assertEquals(expectedThisYear,
+            EthiopianDateHelper.monthsInYearNotInFuture(thisYear, todayDate))
     }
 
     @Test

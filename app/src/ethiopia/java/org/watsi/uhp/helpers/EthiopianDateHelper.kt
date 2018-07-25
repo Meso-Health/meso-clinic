@@ -15,10 +15,30 @@ object EthiopianDateHelper {
         return DateTimeFormat.forPattern(DATE_FORMAT).print(toEthDateTime(instant, clock))
     }
 
-    fun daysInMonth(year: Int, month: Int): Int {
-        val ethDate = DateTime(EthiopicChronology.getInstance())
-            .withDate(year, month, 1)
-        return ethDate.dayOfMonth().maximumValue
+    /**
+     * Returns the number of days in the month of the year specified. If the date matches "today"
+     * then it will only return the number of days up to today, excluding future days.
+     */
+    fun daysInMonthNotInFuture(year: Int, month: Int, todayDate: EthiopianDate): Int {
+        return if (month == todayDate.month && year == todayDate.year) {
+            todayDate.day
+        } else {
+            DateTime(EthiopicChronology.getInstance())
+                .withDate(year, month, 1) // The dayOfMonth doesn't matter
+                .dayOfMonth().maximumValue
+        }
+    }
+
+    /**
+     * Returns the number of months in the year. If the date matches "today" then it will only
+     * return the number of months up to today, excluding future months.
+     */
+    fun monthsInYearNotInFuture(year: Int, todayDate: EthiopianDate): Int {
+        return if (year == todayDate.year) {
+            todayDate.month
+        } else {
+            MONTHS_IN_YEAR
+        }
     }
 
     fun toInstant(

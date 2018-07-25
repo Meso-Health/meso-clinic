@@ -107,4 +107,8 @@ class SpinnerField @JvmOverloads constructor(
     fun getSelectedItem(): String {
         return spinner.selectedItem.toString()
     }
+
+    fun setSelectedItem(position: Int) {
+        spinner.setSelection(position)
+    }
 }
