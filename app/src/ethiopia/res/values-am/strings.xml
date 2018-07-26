@@ -5,8 +5,9 @@
     <string name="login_username_label">የተጠቃሚ ስም</string>
     <string name="login_password_label">ይለፍ ቃል</string>
     <string name="login_button_text">ግባ</string>
+    <string name="logging_in">እየገባ ነው…</string>
     <string name="login_generic_failure_message">መግባት አልቻለም</string>
-    <string name="login_wrong_password_message">የተሳሳተ የይለፍ ቃል</string>
+    <string name="login_wrong_username_or_password_message">የተሰጠው የተጠቃሚ ስም / ይለፍ ቃል ጥምረት የተሳሳተ ነው</string>
     <string name="login_progress_message">እየገባ ነው</string>
     <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
 

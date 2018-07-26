@@ -100,8 +100,9 @@
     <string name="login_username_label">Username</string>
     <string name="login_password_label">Password</string>
     <string name="login_button_text">Login</string>
+    <string name="logging_in">Logging in…</string>
     <string name="login_generic_failure_message">Failed to login</string>
-    <string name="login_wrong_password_message">Incorrect password</string>
+    <string name="login_wrong_username_or_password_message">The provided username/password combination is incorrect</string>
     <string name="login_progress_message">Logging in…</string>
     <string name="login_offline_error">Cannot login because phone is offline</string>
 

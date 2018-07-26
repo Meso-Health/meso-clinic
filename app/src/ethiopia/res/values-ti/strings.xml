@@ -5,8 +5,9 @@
     <string name="login_username_label">ናይ ተጠቃሚ ሽም</string>
     <string name="login_password_label">መሕልፍ ቃል</string>
     <string name="login_button_text">እቶ</string>
+    <string name="logging_in">ይኣትው ኣሎ…</string>
     <string name="login_generic_failure_message">ክኣትው አይካኣለን</string>
-    <string name="login_wrong_password_message">ጌጋ መሕልፍ ቃል</string>
+    <string name="login_wrong_username_or_password_message">ዝተዋህበ ናይ ተጠቃሚ ስም / ይሕለፍ ቃል ጥምረት ግጉይ እዩ</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
     <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
 

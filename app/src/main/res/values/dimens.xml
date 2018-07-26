@@ -68,4 +68,5 @@
     <dimen name="detail_fragment_photo_height">208dp</dimen>
     <dimen name="detail_fragment_photo_width">156dp</dimen>
 
+    <dimen name="textInputLayoutMarginFix">-4dp</dimen>
 </resources>
