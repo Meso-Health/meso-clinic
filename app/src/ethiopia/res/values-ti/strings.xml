@@ -52,6 +52,8 @@
     </plurals>
     <string name="today_wrapper">ሎማዓንቲ (%1$s)</string>
     <string name="edit_clickable"><u>ኣርም</u></string>
+    <string name="member_info_section_label">ናይ ኣባል መረዳእታ</string>
+    <string name="none">ዋላ\'ኳ</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ዕለት</string>

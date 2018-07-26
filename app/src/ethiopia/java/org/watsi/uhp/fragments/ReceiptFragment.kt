@@ -13,19 +13,30 @@ import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_items_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_none
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_list
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.encounter_items_label
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.encounter_items_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.gender_and_age
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_items_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.Billable
+import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
-import org.watsi.uhp.R.plurals.receipt_line_item_count
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
@@ -46,8 +57,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var clock: Clock
 
     lateinit var viewModel: ReceiptViewModel
+    lateinit var serviceReceiptItemAdapter: ReceiptListItemAdapter
+    lateinit var labReceiptItemAdapter: ReceiptListItemAdapter
+    lateinit var drugAndSupplyReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var alertDialog: AlertDialog
-    lateinit var receiptItemAdapter: ReceiptListItemAdapter
     lateinit var encounterFlowState: EncounterFlowState
 
     lateinit var daySpinner: SpinnerField
@@ -83,7 +96,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             })
 
-        receiptItemAdapter = ReceiptListItemAdapter(encounterFlowState.encounterItems)
+        val services: List<EncounterItemWithBillable> = encounterFlowState.encounterItems.filter { it.billable.type == Billable.Type.SERVICE }
+        val labs: List<EncounterItemWithBillable> = encounterFlowState.encounterItems.filter { it.billable.type == Billable.Type.LAB }
+        val drugsAndSupplies: List<EncounterItemWithBillable> = encounterFlowState.encounterItems.filter { it.billable.type == Billable.Type.DRUG || it.billable.type == Billable.Type.SUPPLY }
+
+        serviceReceiptItemAdapter = ReceiptListItemAdapter(services)
+        labReceiptItemAdapter = ReceiptListItemAdapter(labs)
+        drugAndSupplyReceiptItemAdapter = ReceiptListItemAdapter(drugsAndSupplies)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -93,10 +112,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        val genderAndAgeText = encounterFlowState.member?.formatAgeAndGender(clock)
+
+        membership_number.text = encounterFlowState.member?.membershipNumber
+        gender_and_age.text = genderAndAgeText
+        medical_record_number.text = encounterFlowState.member?.medicalRecordNumber
         diagnoses_label.text = resources.getQuantityString(
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
-        encounter_items_label.text = resources.getQuantityString(
-            receipt_line_item_count, encounterFlowState.encounterItems.size, encounterFlowState.encounterItems.size)
         total_price.text = getString(R.string.price, CurrencyUtil.formatMoney(encounterFlowState.price()))
 
         if (encounterFlowState.diagnoses.isNotEmpty()) {
@@ -110,7 +132,29 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             launchBackdateDialog()
         }
 
-        RecyclerViewHelper.setRecyclerView(encounter_items_list, receiptItemAdapter, context, false)
+        if (serviceReceiptItemAdapter.itemCount == 0) {
+            service_none.visibility = View.VISIBLE
+            service_line_divider.visibility = View.VISIBLE
+        } else {
+            RecyclerViewHelper.setRecyclerView(service_items_list, serviceReceiptItemAdapter, context, false)
+            service_items_list.visibility = View.VISIBLE
+        }
+
+        if (labReceiptItemAdapter.itemCount == 0) {
+            lab_none.visibility = View.VISIBLE
+            lab_line_divider.visibility = View.VISIBLE
+        } else {
+            RecyclerViewHelper.setRecyclerView(lab_items_list, labReceiptItemAdapter, context, false)
+            lab_items_list.visibility = View.VISIBLE
+        }
+
+        if (drugAndSupplyReceiptItemAdapter.itemCount == 0) {
+            drug_and_supply_none.visibility = View.VISIBLE
+            drug_and_supply_line_divider.visibility = View.VISIBLE
+        } else {
+            RecyclerViewHelper.setRecyclerView(drug_and_supply_items_list, drugAndSupplyReceiptItemAdapter, context, false)
+            drug_and_supply_items_list.visibility = View.VISIBLE
+        }
 
         save_button.setOnClickListener {
             submitEncounter()

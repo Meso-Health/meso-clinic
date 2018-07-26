@@ -41,6 +41,8 @@
 
     <!-- ReceiptFragment -->
     <string name="price">%1$s</string>
+    <string name="member_info_section_label">Member Information</string>
+    <string name="none">None</string>
 
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supply</string>

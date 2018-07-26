@@ -44,13 +44,84 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/diagnoses_container"
+            android:id="@+id/member_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:padding="@dimen/dialog_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toBottomOf="@id/date_container">
+
+            <TextView
+                android:id="@+id/member_info_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:textColor="@color/gray6"
+                android:text="@string/member_info_section_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/membership_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/member_info_label" />
+
+            <View
+                android:id="@+id/membership_number_line_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/membership_number" />
+
+            <TextView
+                android:id="@+id/gender_and_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/membership_number_line_divider" />
+
+            <View
+                android:id="@+id/gender_and_age_line_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/gender_and_age" />
+
+            <TextView
+                android:id="@+id/medical_record_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/gender_and_age_line_divider" />
+
+            <View
+                android:id="@+id/medical_record_number_line_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/medical_record_number" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/diagnoses_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/dialog_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/member_info_container">
 
             <TextView
                 android:id="@+id/diagnoses_label"
@@ -81,17 +152,129 @@
             app:layout_constraintLeft_toLeftOf="parent">
 
             <TextView
-                android:id="@+id/encounter_items_label"
+                android:id="@+id/service_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/gray6"
+                android:text="@string/service"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/encounter_items_list"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/service_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/encounter_items_label" />
+                app:layout_constraintTop_toBottomOf="@id/service_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/service_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/service_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <View
+                    android:id="@+id/service_line_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/service_none"
+                    android:visibility="gone" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/lab_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:textColor="@color/gray6"
+                android:text="@string/lab"
+                app:layout_constraintTop_toBottomOf="@id/service_layout" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/lab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/lab_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/lab_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/lab_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"/>
+
+                <View
+                    android:id="@+id/lab_line_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/lab_none"
+                    android:visibility="gone" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/drug_and_supply_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:textColor="@color/gray6"
+                android:text="@string/drug_and_supply"
+                app:layout_constraintTop_toBottomOf="@id/lab_layout" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/drug_and_supply_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/drug_and_supply_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/drug_and_supply_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/drug_and_supply_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    android:text="@string/none"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <View
+                    android:id="@+id/drug_and_supply_line_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/drug_and_supply_none"
+                    android:visibility="gone" />
+
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/total_label"
@@ -101,7 +284,7 @@
                 style="@style/LargeLabel"
                 android:text="@string/total"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/encounter_items_list" />
+                app:layout_constraintTop_toBottomOf="@id/drug_and_supply_layout" />
 
             <TextView
                 android:id="@+id/total_price"
@@ -109,7 +292,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space16"
                 style="@style/LargeLabel"
-                app:layout_constraintTop_toBottomOf="@id/encounter_items_list"
+                app:layout_constraintTop_toBottomOf="@id/drug_and_supply_layout"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
