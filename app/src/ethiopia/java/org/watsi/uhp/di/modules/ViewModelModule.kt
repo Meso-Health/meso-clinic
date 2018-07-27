@@ -11,9 +11,11 @@ import org.watsi.uhp.viewmodels.CurrentMemberDetailViewModel
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
+import org.watsi.uhp.viewmodels.DrugAndSupplyViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
+import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.NewClaimViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -50,8 +52,18 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(DrugAndSupplyViewModel::class)
+    abstract fun bindDrugAndSupplyViewModel(viewModel: DrugAndSupplyViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(EncounterViewModel::class)
     abstract fun bindEncounterViewModel(viewModel: EncounterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SpinnerLineItemViewModel::class)
+    abstract fun bindLineItemViewModel(viewModel: SpinnerLineItemViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -1,5 +1,6 @@
 package org.watsi.uhp.flowstates
 
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
@@ -24,5 +25,9 @@ data class EncounterFlowState(var encounter: Encounter,
 
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
         return EncounterWithItemsAndForms(encounter, encounterItems, clearEncounterFormThumbnails(), diagnoses)
+    }
+
+    fun getEncounterItemsOfType(billableType: Billable.Type): List<EncounterItemWithBillable> {
+        return encounterItems.filter { it.billable.type == billableType }
     }
 }

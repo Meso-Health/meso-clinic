@@ -3,9 +3,19 @@ package org.watsi.device.db.daos
 import org.junit.Test
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DeltaModelFactory
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 
 class BillableDaoTest : DaoBaseTest() {
+
+    @Test
+    fun ofType() {
+        val service1 = BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
+        val service2 = BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
+        BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
+
+        billableDao.ofType(Billable.Type.SERVICE).test().assertValue(listOf(service1, service2))
+    }
 
     @Test
     fun upsert() {

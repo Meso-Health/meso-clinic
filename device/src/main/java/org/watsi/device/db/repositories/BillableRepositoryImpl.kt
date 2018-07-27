@@ -30,6 +30,10 @@ class BillableRepositoryImpl(
         return billableDao.all().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
     }
 
+    override fun ofType(type: Billable.Type): Single<List<Billable>> {
+        return billableDao.ofType(type).map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    }
+
     override fun find(id: UUID): Maybe<Billable> {
         return billableDao.find(id).map { it.toBillable() }.subscribeOn(Schedulers.io())
     }

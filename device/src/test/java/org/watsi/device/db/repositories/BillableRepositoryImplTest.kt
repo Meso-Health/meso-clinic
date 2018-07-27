@@ -24,6 +24,7 @@ import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.UserFactory
@@ -60,6 +61,15 @@ class BillableRepositoryImplTest {
         whenever(mockDao.all()).thenReturn(Single.just(models))
 
         repository.all().test().assertValue(models.map { it.toBillable() })
+    }
+
+    @Test
+    fun ofType() {
+        val type = Billable.Type.DRUG
+        val models = listOf(BillableModelFactory.build(), BillableModelFactory.build())
+        whenever(mockDao.ofType(type)).thenReturn(Single.just(models))
+
+        repository.ofType(type).test().assertValue(models.map { it.toBillable() })
     }
 
     @Test

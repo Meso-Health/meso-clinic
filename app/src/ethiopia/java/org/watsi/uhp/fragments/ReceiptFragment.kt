@@ -33,7 +33,6 @@ import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -87,18 +86,19 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
             .observe(this, Observer { it?.let { viewState ->
-                val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
-                date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
-                    resources.getString(today_wrapper, dateString)
-                } else {
-                    dateString
+                    val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
+                    date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
+                        resources.getString(today_wrapper, dateString)
+                    } else {
+                        dateString
+                    }
                 }
-            }
             })
 
-        val services: List<EncounterItemWithBillable> = encounterFlowState.encounterItems.filter { it.billable.type == Billable.Type.SERVICE }
-        val labs: List<EncounterItemWithBillable> = encounterFlowState.encounterItems.filter { it.billable.type == Billable.Type.LAB }
-        val drugsAndSupplies: List<EncounterItemWithBillable> = encounterFlowState.encounterItems.filter { it.billable.type == Billable.Type.DRUG || it.billable.type == Billable.Type.SUPPLY }
+        val services = encounterFlowState.getEncounterItemsOfType(Billable.Type.SERVICE)
+        val labs = encounterFlowState.getEncounterItemsOfType(Billable.Type.LAB)
+        val drugsAndSupplies = encounterFlowState.getEncounterItemsOfType(Billable.Type.SUPPLY)
+                .plus(encounterFlowState.getEncounterItemsOfType(Billable.Type.DRUG))
 
         serviceReceiptItemAdapter = ReceiptListItemAdapter(services)
         labReceiptItemAdapter = ReceiptListItemAdapter(labs)
