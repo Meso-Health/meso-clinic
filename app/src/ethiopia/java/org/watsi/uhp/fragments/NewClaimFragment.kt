@@ -11,7 +11,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.household_member_number
 import kotlinx.android.synthetic.ethiopia.fragment_new_claim.household_number
@@ -89,16 +88,6 @@ class NewClaimFragment : DaggerFragment() {
             text -> viewModel.onKebeleNumberChange(text)
         })
 
-        kebele_number.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                if (v == kebele_number) {
-                    v?.clearFocus()
-                    household_number.performClick()
-                }
-            }
-            false
-        }
-
         member_status.setUpSpinner(
             NewClaimViewModel.memberStatusList,
             NewClaimViewModel.memberStatusList.first(),
@@ -122,6 +111,16 @@ class NewClaimFragment : DaggerFragment() {
                     navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
                 } else {
                     viewModel.setMembershipNumberError(viewModel.getMembershipNumberError(it))
+                }
+            }
+        }
+
+        /* Hide keyboard if no text inputs have focus */
+        val textFields = listOf(region_number, woreda_number, kebele_number, household_number, household_member_number)
+        textFields.forEach {
+            it.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+                if (textFields.all { !it.hasFocus() }) {
+                    keyboardManager.hideKeyboard(view)
                 }
             }
         }

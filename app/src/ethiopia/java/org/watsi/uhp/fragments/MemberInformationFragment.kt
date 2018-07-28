@@ -144,9 +144,10 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         }
 
         /* Hide keyboard if no text inputs have focus */
-        listOf(age_input, medical_record_number).forEach {
+        val textFields = listOf(age_input, medical_record_number)
+        textFields.forEach {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-                if (!age_input.hasFocus() && !medical_record_number.hasFocus()) {
+                if (textFields.all { !it.hasFocus() }) {
                     keyboardManager.hideKeyboard(view)
                 }
             }
