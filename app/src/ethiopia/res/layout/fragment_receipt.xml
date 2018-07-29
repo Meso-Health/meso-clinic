@@ -56,7 +56,6 @@
                 android:id="@+id/member_info_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/label_vertical_margin"
                 android:textColor="@color/gray6"
                 android:text="@string/member_info_section_label"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -115,13 +114,40 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/diagnoses_container"
+            android:id="@+id/visit_type_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:padding="@dimen/dialog_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toBottomOf="@id/member_info_container">
+
+            <TextView
+                android:id="@+id/visit_type_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/visit_type_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/visit_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize16"
+                android:layout_marginTop="@dimen/space12"
+                app:layout_constraintTop_toBottomOf="@id/visit_type_label" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/diagnoses_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/dialog_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/visit_type_container">
 
             <TextView
                 android:id="@+id/diagnoses_label"
