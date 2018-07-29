@@ -39,9 +39,9 @@ ext {
     minSdkVersion = 24
     targetSdkVersion = 26
     compileSdkVersion = 26
-    applicationId = "org.watsi.uhp"
+    applicationId = "org.watsi.claims_submission"
     versionCode = 1
-    versionName = "1.0"
+    versionName = "0.0.0"
 }
 
 // This adds more custom properties from the dependencies.gradle file and makes them available to
