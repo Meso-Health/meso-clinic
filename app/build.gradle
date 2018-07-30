@@ -14,17 +14,20 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
-        applicationId "org.watsi.uhp"
+        applicationId rootProject.ext.applicationId
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         multiDexEnabled true
-        versionCode System.getenv("VERSION_CODE") as Integer
-        versionName System.getenv("VERSION_NAME") as String
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "Integer", "PROVIDER_ID", "1"
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
         buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
+        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
+        buildConfigField "String", "API_HOST", ENV("API_HOST")
+        buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("HOCKEYAPP_APP_ID")
+        buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SIMPRINTS_API_KEY")
     }
     signingConfigs {
         releaseConfig {
@@ -32,77 +35,6 @@ android {
             storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
             keyAlias System.getenv("RELEASE_KEY_ALIAS")
             keyPassword System.getenv("RELEASE_KEY_PASSWORD")
-        }
-    }
-    buildTypes {
-        debug {
-            applicationIdSuffix ".development"
-            versionNameSuffix "-development"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_dev"
-            ]
-
-            buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
-            buildConfigField "String", "API_HOST", "\"http://localhost:5000\""
-            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
-            buildConfigField "String", "ROLLBAR_API_KEY", "null"
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
-        }
-        sandbox {
-            applicationIdSuffix ".sandbox"
-            versionNameSuffix "-sandbox"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_sandbox"
-            ]
-            buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
-        }
-        demo {
-            signingConfig signingConfigs.releaseConfig
-            applicationIdSuffix ".demo"
-            versionNameSuffix "-demo"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher"
-            ]
-
-            buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("DEMO_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
-        }
-        training {
-            signingConfig signingConfigs.releaseConfig
-            applicationIdSuffix ".training"
-            versionNameSuffix "-training"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher"
-            ]
-
-            buildConfigField "Integer", "PROVIDER_ID", "1"
-            buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("TRAINING_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
-        }
-        release {
-            signingConfig signingConfigs.releaseConfig
-            applicationIdSuffix ".production"
-            versionNameSuffix "-production"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher"
-            ]
-
-            buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
     }
     flavorDimensions "version"
@@ -117,6 +49,66 @@ android {
             applicationIdSuffix ".eth"
             versionNameSuffix "-eth"
         }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".development"
+            versionNameSuffix "-development"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_dev"
+            ]
+
+            buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
+            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
+        }
+        sandbox {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".sandbox"
+            versionNameSuffix "-sandbox"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_sandbox"
+            ]
+        }
+        demo {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
+
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+        }
+        training {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".training"
+            versionNameSuffix "-training"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
+
+            buildConfigField "Integer", "PROVIDER_ID", "1"
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+        }
+        release {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".production"
+            versionNameSuffix "-production"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
+
+            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+        }
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
     }
 
     sourceSets {
