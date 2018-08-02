@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Claims Submission</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="MissingTranslation">Claims Submission</string>
+
+    <!-- Confirmation Messages -->
+    <string name="exit_form_alert">Are you sure you want to exit?</string>
+    <string name="gender_validation_error">Gender is required</string>
+
     <!-- Menu -->
-    <string name="menu_switch_language">Switch Language (ቋንቋ ቀይር)</string>
-    <string name="menu_sync_now">Sync now</string>
+    <string name="menu_switch_language" tools:ignore="MissingTranslation">Switch Language (ቋንቋ ቀይር)</string>
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
-    <string name="slash">/</string>
-    <string name="two_zeroes_placeholder">00</string>
-    <string name="three_zeroes_placeholder">000</string>
-    <string name="six_zeroes_placeholder">000000</string>
+    <string name="slash" translatable="false">/</string>
+    <string name="two_zeroes_placeholder" translatable="false">00</string>
+    <string name="three_zeroes_placeholder" translatable="false">000</string>
+    <string name="six_zeroes_placeholder" translatable="false">000000</string>
     <string name="start_claim_button">Start Claim</string>
 
     <!-- MemberInformationFragment -->
@@ -18,7 +22,6 @@
     <string name="medical_record_number">Medical Record Number</string>
     <string name="membership_number_label">Member ID</string>
     <string name="age_validation_error">Age is required</string>
-    <string name="gender_validation_error">Gender is required</string>
     <string name="medical_record_number_validation_error">Medical Record Number is required</string>
     <string name="cancel">CANCEL</string>
     <string name="yes">OK</string>
@@ -40,7 +43,7 @@
     <string name="eth_datepicker_year">Year</string>
 
     <!-- ReceiptFragment -->
-    <string name="price">%1$s</string>
+    <string name="price" translatable="false">%1$s</string>
     <string name="member_info_section_label">Member Information</string>
     <string name="none">None</string>
 
@@ -49,4 +52,13 @@
     <string name="service">Service</string>
     <string name="lab">Lab</string>
     <string name="select_prompt">Select…</string>
+
+    <!-- DiagnosisFragment -->
+    <string name="diagnosis_fragment_label">Diagnoses</string>
+    <plurals name="diagnosis_count">
+        <item quantity="one">%d diagnosis</item>
+        <item quantity="other">%d diagnoses</item>
+    </plurals>
+    <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
+
 </resources>

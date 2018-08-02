@@ -3,9 +3,9 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
-import kotlinx.android.synthetic.main.view_member_list_item.view.member_description
-import kotlinx.android.synthetic.main.view_member_list_item.view.member_photo
-import kotlinx.android.synthetic.main.view_member_list_item.view.name
+import kotlinx.android.synthetic.uganda.view_member_list_item.view.member_description
+import kotlinx.android.synthetic.uganda.view_member_list_item.view.member_photo
+import kotlinx.android.synthetic.uganda.view_member_list_item.view.name
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto

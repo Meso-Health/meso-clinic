@@ -7,9 +7,9 @@ import android.view.View
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_photo.cancel_container
-import kotlinx.android.synthetic.main.activity_photo.guide
-import kotlinx.android.synthetic.main.activity_photo.photo_hint
+import kotlinx.android.synthetic.uganda.activity_photo.cancel_container
+import kotlinx.android.synthetic.uganda.activity_photo.guide
+import kotlinx.android.synthetic.uganda.activity_photo.photo_hint
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.repositories.PhotoRepository

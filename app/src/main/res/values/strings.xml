@@ -1,99 +1,26 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Error Messages -->
-    <string name="image_capture_failed">Image capture failed</string>
-    <string name="image_failed_to_save">Image failed to save</string>
-
-    <string name="generic_save_error">An unknown error occurred. Try again later.</string>
-    <string name="name_validation_error">Name cannot be blank.</string>
-    <string name="card_id_validation_error">
-        Invalid card ID. ID must be 3 letters followed by 6 numbers.
-    </string>
-    <string name="phone_number_validation_error">
-        Invalid phone number. Phone number must be blank, a 9 digit number, or a 10 digit number starting with 0.
-    </string>
-    <string name="invalid_member_id">Could not find member with the provided ID.</string>
-    <string name="gender_validation_error">Must select a gender.</string>
-    <string name="birthdate_validation_error">Invalid birthdate.</string>
-
-    <!-- Confirmation Messages -->
-    <string name="exit_form_alert">Are you sure you want to exit?</string>
-    <string name="exit_edit_member_form_message">You will lose any information about this member.</string>
+    <string name="generic_save_error" tools:ignore="MissingTranslation">An unknown error occurred. Try again later.</string>
 
     <!-- Menu -->
-    <string name="menu_dismiss_member">Dismiss member</string>
-    <string name="menu_member_edit_label">Edit member</string>
-    <string name="menu_enroll_number_label">Enroll newborn</string>
     <string name="menu_logout_label">Logout</string>
     <string name="log_out_alert">Are you sure you want to log out?</string>
     <string name="menu_version_and_sync_label">Status</string>
-    <string name="menu_submit_without_copayment">Submit (no copayment)</string>
 
     <!-- General Labels -->
-    <string name="training_mode_label">FOR TRAINING ONLY</string>
-    <string name="name_label">Name</string>
-    <string name="card_id_label">Card ID</string>
-    <string name="phone_number_label">Phone number</string>
-    <string name="birthdate_label">Birthdate</string>
-    <string name="date_label">Date</string>
-    <string name="time_label">Time</string>
-    <string name="scan_card_btn_label">Scan new card</string>
+    <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
-    <string name="gender_label">Gender</string>
-    <string name="save_btn_label">Save</string>
-    <string name="photo_btn_label">Take photo</string>
-    <string name="photo_description">Photo</string>
     <string name="cancel">Cancel</string>
-    <string name="price_with_currency">%1$s UGX</string>
     <string name="total">Total</string>
     <string name="save">Save</string>
-    <string name="discard">Discard</string>
-    <string name="done">Done</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
 
     <!-- Form -->
-    <string name="biometrics_panel_header_text">Photo &amp; Fingerprints</string>
-    <string name="member_card_panel_header_text">Member Card</string>
-    <string name="notes_panel_header_text">Flag</string>
-    <string name="missing_information_panel_header_text">Missing Information</string>
-    <string name="member_panel_header_text">Member</string>
-    <string name="photo_field_label">Photo</string>
     <string name="age_field_label">Age</string>
-    <string name="birthdate_field_label">Birthdate</string>
-    <string name="age_dialog_title">Age</string>
-    <string name="birthdate_dialog_title">Birthdate</string>
-    <string name="toggle_date_input">Enter birthdate?</string>
-    <string name="birthdate_day_error">Day cannot be blank</string>
-    <string name="birthdate_month_error">Month cannot be blank</string>
-    <string name="birthdate_year_error">Year cannot be blank</string>
-    <string name="toggle_age_input">Enter age?</string>
-    <string name="day_label">Day</string>
-    <string name="month_label">Month</string>
-    <string name="year_label">Year</string>
-    <string name="invalid_date_error_message">Invalid date</string>
-    <string name="take_photo_button_text">Take photo</string>
-    <string name="fingerprints_age_requirement_message">Fingerprint scans are only for members older than 6 years.</string>
-    <string name="fingerprints_field_label">Fingerprints</string>
-    <string name="scan_fingerprints_button_text">Scan fingerprints</string>
-    <string name="fingerprints_success_message">Fingerprints captured</string>
-    <string name="complete_enrollment">Complete Enrollment</string>
-    <string name="fingerprints_error_message">There was an error and fingerprints will not be able to be scanned for any members. Please contact the Watsi team to fix this.</string>
-    <string name="fingerprints_not_installed_error_message">Could not find the Simprints app. Check that it is installed before continuing.</string>
-    <string name="member_card_field_label">Member Card</string>
-    <string name="scan_member_card_button_text">@string/scan_member_card</string>
-    <string name="edit_input_add">Add</string>
-    <string name="edit_input_edit">Edit</string>
     <string name="edit_clickable"><u>Edit</u></string>
-    <string-array name="age_units">
-        <item>years</item>
-        <item>months</item>
-    </string-array>
-    <string name="member_list_item_gender_age">%1$s, %2$s</string>
     <string name="gender_field_label">Gender</string>
-    <string name="name_field_label">Full Name</string>
-    <string name="phone_number_field_label">Phone Number (optional)</string>
-    <string name="preferred_language_field_label">Preferred Language</string>
 
     <!-- AuthenticationActivity -->
     <string name="authentication_activity_label">User Login</string>
@@ -106,62 +33,13 @@
     <string name="login_progress_message">Logging in…</string>
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
-    <!-- CurrentPatientsFragment -->
-    <string name="current_patients_fragment_label">Checked in members</string>
-    <string name="identification_button">Look up member</string>
-    <string name="current_patients_empty_text">There are no checked-in members.</string>
-    <plurals name="current_patients_label" >
-        <item quantity="one">%d Current Member</item>
-        <item quantity="other">%d Current Members</item>
-    </plurals>
-
-    <!-- QrCodeActivity -->
-    <string name="search_member_hint">Search member name or ID&#8230;</string>
-    <string name="scan_member_card">Scan member card</string>
-
-    <!-- SearchMemberFragment -->
-    <string name="member_no_search_results_text">No search results. Please try again.</string>
-
-    <!-- PresentingConditionsFragment -->
-    <string name="fragment_presenting_conditions">Enter presenting conditions</string>
-
-    <!-- CheckinMemberDetailFragment -->
-    <string name="detail_fragment_label">Member</string>
-    <string name="absentee_notification">Needs to complete enrollment</string>
-    <string name="absentee_action">Enroll</string>
-    <string name="replace_card_notification">Needs new member card</string>
-    <string name="replace_card_action">Issue</string>
-    <string name="check_in">Check In</string>
-    <string name="checked_in">Already Checked In</string>
-    <string name="identification_approved">has been successfully checked in.</string>
-    <string name="household_panel_header">Household</string>
-    <string name="empty_household_list">No other household members</string>
-    <plurals name="household_members_label" >
-        <item quantity="one">%d member</item>
-        <item quantity="other">%d members</item>
-    </plurals>
-    <string name="checked_in_snackbar_message">%1$s was checked in.</string>
-
-    <string name="fingerprint_scan_btn">Verify Fingerprints</string>
-    <string name="fingerprint_scan_failed">Fingerprints could not be scanned. Contact your administrator for help.</string>
-    <string name="good_scan_indicator">Good Fingerprint Match</string>
-    <string name="bad_scan_indicator">Fingerprint Mismatch</string>
-    <string name="fingerprints_missing_no_verify">No fingerprint scans to verify.</string>
-
-    <!-- CurrentMemberDetailFragment -->
-    <string name="current_member_fragment_label">Encounter</string>
-    <string name="detail_create_encounter">Record Encounter</string>
-    <string name="checked_out_snackbar_message">%1$s has been checked out without treatment details.</string>
-    <string name="generic_enter_treatment_info_failure">Unable to enter treatment information. Please try again.</string>
-
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Line items</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="search_drug_hint">Search&#8230;</string>
     <string name="error_blank_or_zero_quantity">Please enter a nonzero quantity</string>
-    <string name="default_billable_quantity">1</string>
+    <string name="default_billable_quantity" translatable="false">1</string>
     <string name="continue_encounter_button">Next</string>
-    <string name="add_billable_prompt"><u>Add new item</u></string>
     <string name="no_line_items_snackbar_message">Must include at least one line item</string>
     <plurals name="encounter_item_count">
         <item quantity="one">%d item</item>
@@ -178,7 +56,6 @@
 
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">Review</string>
-    <string name="back_button">Go back</string>
     <string name="save_encounter_button">Submit</string>
     <string name="receipt_total">Total</string>
     <string name="encounter_submitted">Claim submitted</string>
@@ -186,52 +63,16 @@
         <item quantity="one">%d line item</item>
         <item quantity="other">%d line items</item>
     </plurals>
-    <plurals name="forms_attached_label" >
-        <item quantity="one">%d form attached</item>
-        <item quantity="other">%d forms attached</item>
-    </plurals>
     <string name="today_wrapper">Today (%1$s)</string>
-    <string name="date_and_time">%1$s at %2$s</string>
-    <string name="currency">UGX</string>
-
-    <!-- MemberEditFragment -->
-    <string name="member_edit_label">Edit member details</string>
-    <string name="member_edit_save">@string/save</string>
-    <string name="member_edit_confirmation">Are you sure you wish to edit the member information?</string>
-
-    <!-- ClinicNumberDialogFragment -->
-    <string name="clinic_number_save">Complete check in</string>
-    <string name="radio_opd">OPD</string>
-    <string name="radio_delivery">Delivery</string>
-    <string name="clinic_number">Number</string>
-    <string name="clinic_number_button">Submit</string>
-    <string name="clinic_number_prompt">Enter the member\'s clinic number</string>
-
-    <string name="newborn_error_message">Newborns must be less than 3 months old</string>
-
-    <!-- EnrollNewbornInfoFragment -->
-    <string name="enroll_newborn_activity_title">Newborn</string>
-    <string name="enrollment_completed_snackbar_message">Newborn successfully enrolled.</string>
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">Status</string>
     <string name="version_label">Version</string>
-    <string name="fetch_members_label">Members updated at</string>
     <string name="fetch_billables_label">Pricelist updated at</string>
     <string name="fetch_diagnoses_label">Diagnoses updated at</string>
-    <string name="fetch_member_pictures_label">Member photos</string>
-    <string name="sync_edited_members_label">Edited members</string>
-    <string name="sync_new_members_label">New members</string>
-    <string name="sync_id_events_label">Identifications</string>
+    <string name="sync_new_members_label" tools:ignore="MissingTranslation">New members</string>
     <string name="sync_encounters_label">Encounters</string>
     <string name="all_synced">All synced</string>
     <string name="waiting_to_sync">Pending</string>
 
-    <!-- PhotoActivity -->
-    <string name="member_photo_overlay_text">Take photo of member</string>
-    <string name="form_photo_overlay_text">Take photo of form</string>
-
-    <!-- MemberListItem -->
-    <string name="member_list_item_description">%1$s &#183; %2$s</string>
-    <string name="member_list_item_description_checked_in">%1$s &#183; %2$s &#183; %3$s</string>
 </resources>

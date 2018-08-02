@@ -6,9 +6,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import kotlinx.android.synthetic.main.view_button_with_preview.view.button
-import kotlinx.android.synthetic.main.view_fingerprints_field.view.fingerprints_button_with_preview
-import kotlinx.android.synthetic.main.view_fingerprints_field.view.fingerprints_disabled_message
-import kotlinx.android.synthetic.main.view_fingerprints_field.view.fingerprints_error_message
+import kotlinx.android.synthetic.uganda.view_fingerprints_field.view.fingerprints_button_with_preview
+import kotlinx.android.synthetic.uganda.view_fingerprints_field.view.fingerprints_disabled_message
+import kotlinx.android.synthetic.uganda.view_fingerprints_field.view.fingerprints_error_message
 import org.watsi.uhp.R
 import java.util.UUID
 

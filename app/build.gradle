@@ -107,10 +107,6 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'MissingTranslation'
-    }
-
     sourceSets {
         String sharedTestDir = 'src/sharedTest/java'
         test {

@@ -3,7 +3,7 @@ package org.watsi.uhp.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.activity_qr_code.search_button_container
+import kotlinx.android.synthetic.uganda.activity_qr_code.search_button_container
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.MemberRepository

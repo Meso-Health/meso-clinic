@@ -64,9 +64,5 @@
     <!-- padding for each item in a list view -->
     <dimen name="list_item_vertical_padding">16dp</dimen>
 
-    <!-- dimensions for photo on detail view -->
-    <dimen name="detail_fragment_photo_height">208dp</dimen>
-    <dimen name="detail_fragment_photo_width">156dp</dimen>
-
     <dimen name="textInputLayoutMarginFix">-4dp</dimen>
 </resources>

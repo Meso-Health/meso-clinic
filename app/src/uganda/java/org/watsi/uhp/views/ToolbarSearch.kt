@@ -7,10 +7,10 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.RelativeLayout
-import kotlinx.android.synthetic.main.view_toolbar_search.view.back_button
-import kotlinx.android.synthetic.main.view_toolbar_search.view.clear_button
-import kotlinx.android.synthetic.main.view_toolbar_search.view.scan_button
-import kotlinx.android.synthetic.main.view_toolbar_search.view.search_text
+import kotlinx.android.synthetic.uganda.view_toolbar_search.view.back_button
+import kotlinx.android.synthetic.uganda.view_toolbar_search.view.clear_button
+import kotlinx.android.synthetic.uganda.view_toolbar_search.view.scan_button
+import kotlinx.android.synthetic.uganda.view_toolbar_search.view.search_text
 import org.watsi.uhp.managers.KeyboardManager
 
 class ToolbarSearch @JvmOverloads constructor(

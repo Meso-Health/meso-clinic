@@ -4,11 +4,11 @@ import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import kotlinx.android.synthetic.main.view_member_card.view.clinic_number
-import kotlinx.android.synthetic.main.view_member_card.view.member_age_and_gender
-import kotlinx.android.synthetic.main.view_member_card.view.member_card_id
-import kotlinx.android.synthetic.main.view_member_card.view.member_name
-import kotlinx.android.synthetic.main.view_member_card.view.member_photo
+import kotlinx.android.synthetic.uganda.view_member_card.view.clinic_number
+import kotlinx.android.synthetic.uganda.view_member_card.view.member_age_and_gender
+import kotlinx.android.synthetic.uganda.view_member_card.view.member_card_id
+import kotlinx.android.synthetic.uganda.view_member_card.view.member_name
+import kotlinx.android.synthetic.uganda.view_member_card.view.member_photo
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member

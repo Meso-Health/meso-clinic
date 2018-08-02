@@ -22,10 +22,10 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindCurrentMemberDetailFragment(): CurrentMemberDetailFragment
     @ContributesAndroidInjector abstract fun bindCurrentPatientsFragment(): CurrentPatientsFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment
+    @ContributesAndroidInjector abstract fun bindEditMemberFragment(): EditMemberFragment
     @ContributesAndroidInjector abstract fun bindEncounterFormFragment(): EncounterFormFragment
     @ContributesAndroidInjector abstract fun bindEncounterFragment(): EncounterFragment
     @ContributesAndroidInjector abstract fun bindEnrollNewbornFragment(): EnrollNewbornFragment
-    @ContributesAndroidInjector abstract fun bindEditMemberFragment(): EditMemberFragment
     @ContributesAndroidInjector abstract fun bindReceiptFragment(): ReceiptFragment
     @ContributesAndroidInjector abstract fun bindSearchMemberFragment(): SearchMemberFragment
     @ContributesAndroidInjector abstract fun bindStatusFragment(): StatusFragment

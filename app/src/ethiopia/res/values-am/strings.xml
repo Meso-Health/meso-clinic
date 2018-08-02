@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~ SHARED CODE TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- Menu -->
+    <string name="menu_logout_label">ውጣ</string>
+    <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
+    <string name="menu_version_and_sync_label">ሁኔታ</string>
+
+    <!-- General Labels -->
+    <string name="male">ወንድ</string>
+    <string name="female">ሴት</string>
+    <string name="cancel">ሰርዝ</string>
+    <string name="total">ድምር</string>
+    <string name="save">አስቀምጥ</string>
+    <string name="modal_save">@string/save</string>
+    <string name="modal_cancel">@string/cancel</string>
+
+    <!-- Form -->
+    <string name="age_field_label">እድሜ</string>
+    <string name="edit_clickable"><u>ኣርም</u></string>
+    <string name="gender_field_label">ፆታ</string>
+
     <!-- AuthenticationActivity -->
     <string name="authentication_activity_label">የተጠቃሚ ማስገቢያ</string>
     <string name="login_username_label">የተጠቃሚ ስም</string>
@@ -10,6 +32,41 @@
     <string name="login_wrong_username_or_password_message">የተሰጠው የተጠቃሚ ስም / ይለፍ ቃል ጥምረት የተሳሳተ ነው</string>
     <string name="login_progress_message">እየገባ ነው</string>
     <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
+
+    <!-- EncounterFragment -->
+    <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
+    <string name="drug_and_supply">መድሃኒቶች እና ኣቅረቦቶች</string>
+    <string name="service">አገልግሎት</string>
+    <string name="lab">ላብራቶሪ</string>
+    <string name="select_prompt">ምረጥ…</string>
+    <plurals name="encounter_item_count">
+        <item quantity="one">%d ቀረባትን ዝርዝር</item>
+        <item quantity="other">%d ቀረባትን ዝርዝር</item>
+    </plurals>
+
+    <!-- DiagnosisFragment -->
+    <string name="diagnosis_fragment_label">በሽታዎች ዝርዝር</string>
+    <plurals name="diagnosis_count">
+        <item quantity="one">%d በሽታ</item>
+        <item quantity="other">%d በሽታዎች ዝርዝር</item>
+    </plurals>
+    <string name="search_diagnosis_hint">በሽታ ፈልግ&#8230;</string>
+
+    <!-- ReceiptFragment -->
+    <string name="receipt_fragment_label">ግምገማ</string>
+    <string name="save_encounter_button">አስረክብ</string>
+    <string name="today_wrapper">ዛሬ (%1$s)</string>
+
+    <!-- StatusFragment -->
+    <string name="version_and_sync_label">ሁኔታ</string>
+    <string name="version_label">ስሪት</string>
+    <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
+    <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
+    <string name="sync_encounters_label">የክፍያ ጥያቄዎች</string>
+    <string name="all_synced">ሁሉንም አሳምር</string>
+    <string name="waiting_to_sync">በመጠባበቅ ላይ</string>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -23,47 +80,22 @@
     <string name="gender_validation_error">ፆታ መሞላት ኣለበት</string>
     <string name="medical_record_number_validation_error">የህክምና ካርድ ቁጥር መግባት ኣለበት</string>
     <string name="exit_form_alert">እርግጠኛ ነዎት መውጣት ይፈልጋሉን</string>
-    <string name="cancel">ሰርዝ</string>
     <string name="yes">አዎ</string>
-    <string name="gender_field_label">ፆታ</string>
-    <string name="age_field_label">እድሜ</string>
-    <string name="male">ወንድ</string>
-    <string name="female">ሴት</string>
     <string name="missing_fields_validation_error">ያልተሟላ መረጃ</string>
     <string name="days">ቀናት</string>
     <string name="months">ወራት</string>
     <string name="years">ዓመተ ምህረት</string>
 
-    <!-- DiagnosisFragment -->
-    <string name="diagnosis_fragment_label">በሽታዎች ዝርዝር</string>
-    <plurals name="diagnosis_count">
-        <item quantity="one">%d በሽታ</item>
-        <item quantity="other">%d በሽታዎች ዝርዝር</item>
-    </plurals>
-    <string name="search_diagnosis_hint">በሽታ ፈልግ&#8230;</string>
-
-    <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ግምገማ</string>
-    <string name="total">ድምር</string>
-    <string name="save_encounter_button">አስረክብ</string>
-    <string name="today_wrapper">ዛሬ (%1$s)</string>
-    <string name="edit_clickable"><u>ኣርም</u></string>
-    <string name="member_info_section_label">የኣባል መረጃ</string>
-    <string name="none">ምንም</string>
-
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ቀን</string>
     <string name="eth_datepicker_save">አስቀምጥ</string>
-    <string name="eth_datepicker_cancel">@string/cancel</string>
+    <string name="eth_datepicker_cancel">ሰርዝ</string>
     <string name="eth_datepicker_day">ቀን</string>
     <string name="eth_datepicker_month">ወር</string>
     <string name="eth_datepicker_year">አመት</string>
 
     <!-- NewClaimFragment -->
     <string name="new_claim_fragment_label">ኣዲስ የክፍያ ጥያቄ</string>
-    <string name="two_zeroes_placeholder">00</string>
-    <string name="three_zeroes_placeholder">000</string>
-    <string name="six_zeroes_placeholder">000000</string>
     <string name="start_claim_button">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
     <string name="encounter_submitted">የክፍያ ጥያቄ በሚገባ ተላልፏል</string>
 
@@ -72,30 +104,13 @@
     <string name="visit_type_label">የጉብኝት አይነት</string>
 
     <!-- EncounterFragment -->
-    <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">መድሃኒቶች እና ኣቅረቦቶች</string>
-    <string name="service">አገልግሎት</string>
-    <string name="lab">ላብራቶሪ</string>
-    <string name="select_prompt">ምረጥ…</string>
-    <plurals name="encounter_item_count">
-        <item quantity="one">%d ቀረባትን ዝርዝር</item>
-        <item quantity="other">%d ቀረባትን ዝርዝር</item>
-    </plurals>
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>
     <string name="error_blank_or_zero_quantity">እባኮት ዜሮ ያልሆነ መጠን ያስገቡ</string>
     <string name="search_drug_hint">መድሃኒቶች እና ኣቅርቦቶች ፈልግ&#8230;</string>
 
-    <!-- Menu -->
-    <string name="menu_logout_label">ውጣ</string>
-    <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
-    <string name="menu_version_and_sync_label">ሁኔታ</string>
+    <!-- ReceiptFragment -->
+    <string name="member_info_section_label">የኣባል መረጃ</string>
+    <string name="none">ምንም</string>
+    <string name="receipt_total">ድምር</string>
 
-    <!-- StatusFragment -->
-    <string name="version_and_sync_label">ሁኔታ</string>
-    <string name="version_label">ስሪት</string>
-    <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
-    <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
-    <string name="sync_encounters_label">የክፍያ ጥያቄዎች</string>
-    <string name="all_synced">ሁሉንም አሳምር</string>
-    <string name="waiting_to_sync">በመጠባበቅ ላይ</string>
 </resources>

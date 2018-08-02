@@ -10,11 +10,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_current_member_detail.absentee_notification
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_action_button
-import kotlinx.android.synthetic.main.fragment_current_member_detail.member_detail
-import kotlinx.android.synthetic.main.fragment_current_member_detail.notification_container
-import kotlinx.android.synthetic.main.fragment_current_member_detail.replace_card_notification
+import kotlinx.android.synthetic.uganda.fragment_current_member_detail.absentee_notification
+import kotlinx.android.synthetic.uganda.fragment_current_member_detail.member_action_button
+import kotlinx.android.synthetic.uganda.fragment_current_member_detail.member_detail
+import kotlinx.android.synthetic.uganda.fragment_current_member_detail.notification_container
+import kotlinx.android.synthetic.uganda.fragment_current_member_detail.replace_card_notification
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
