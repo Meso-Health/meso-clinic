@@ -7,7 +7,7 @@
     <string name="gender_validation_error">Gender is required</string>
 
     <!-- Menu -->
-    <string name="menu_switch_language" tools:ignore="MissingTranslation">Switch Language (ቋንቋ ቀይር)</string>
+    <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
