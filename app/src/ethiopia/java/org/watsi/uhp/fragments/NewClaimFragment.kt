@@ -133,6 +133,7 @@ class NewClaimFragment : DaggerFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         menu?.let {
+            it.findItem(R.id.menu_returned_claims).isVisible = true
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_version).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
