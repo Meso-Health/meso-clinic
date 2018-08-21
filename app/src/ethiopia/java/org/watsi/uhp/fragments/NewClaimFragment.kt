@@ -131,9 +131,23 @@ class NewClaimFragment : DaggerFragment() {
         }
     }
 
+    private fun getNumberOfReturnedClaims(): Int {
+        // TODO: actually return count of returned claims
+        return 5
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu?) {
+        val returnedClaimsMenuTitle: String
+
+        if (this.getNumberOfReturnedClaims() > 0) {
+            returnedClaimsMenuTitle = "Returned Claims (" + this.getNumberOfReturnedClaims() + ")"
+        } else {
+            returnedClaimsMenuTitle = "Returned Claims"
+        }
+
         menu?.let {
             it.findItem(R.id.menu_returned_claims).isVisible = true
+            it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_version).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
