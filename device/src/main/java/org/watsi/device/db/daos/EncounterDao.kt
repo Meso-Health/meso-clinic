@@ -26,4 +26,8 @@ interface EncounterDao {
                createdBillables: List<BillableModel>,
                forms: List<EncounterFormModel>,
                deltas: List<DeltaModel>)
+
+    @Transaction
+    @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED'")
+    fun returned(): Single<List<EncounterWithItemsModel>>
 }
