@@ -4,7 +4,7 @@
     <item
         android:id="@+id/menu_returned_claims"
         android:orderInCategory="101"
-        android:title="Returned Claims"
+        android:title="@string/menu_returned_claims_without_number"
         app:showAsAction="never"
         android:visible="false" />
     <item

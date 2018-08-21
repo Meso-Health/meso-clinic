@@ -140,9 +140,9 @@ class NewClaimFragment : DaggerFragment() {
         val returnedClaimsMenuTitle: String
 
         if (this.getNumberOfReturnedClaims() > 0) {
-            returnedClaimsMenuTitle = "Returned Claims (" + this.getNumberOfReturnedClaims() + ")"
+            returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_with_number, this.getNumberOfReturnedClaims())
         } else {
-            returnedClaimsMenuTitle = "Returned Claims"
+            returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_without_number)
         }
 
         menu?.let {
