@@ -8,6 +8,7 @@ import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
@@ -39,6 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun diagnosisDao(): DiagnosisDao
     abstract fun encounterDao(): EncounterDao
     abstract fun encounterFormDao(): EncounterFormDao
+    abstract fun encounterItemDao(): EncounterItemDao
     abstract fun identificationEventDao(): IdentificationEventDao
     abstract fun memberDao(): MemberDao
     abstract fun photoDao(): PhotoDao

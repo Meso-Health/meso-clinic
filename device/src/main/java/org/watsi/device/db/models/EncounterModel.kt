@@ -18,7 +18,13 @@ data class EncounterModel(
     val backdatedOccurredAt: Boolean,
     val copaymentPaid: Boolean?,
     val diagnoses: List<Int>,
-    val visitType: String?
+    val visitType: String?,
+    val claimId: String,
+    val adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+    val adjudicatedAt: Instant? = null,
+    val returnReason: String? = null,
+    val revisedEncounterId: UUID? = null,
+    val providerComment: String? = null
 ) {
 
     fun toEncounter(): Encounter {
@@ -30,7 +36,13 @@ data class EncounterModel(
             backdatedOccurredAt = backdatedOccurredAt,
             copaymentPaid = copaymentPaid,
             diagnoses = diagnoses,
-            visitType = visitType
+            visitType = visitType,
+            claimId = claimId,
+            adjudicationState = adjudicationState,
+            adjudicatedAt = adjudicatedAt,
+            returnReason = returnReason,
+            revisedEncounterId = revisedEncounterId,
+            providerComment = providerComment
         )
     }
 
@@ -47,7 +59,13 @@ data class EncounterModel(
                 backdatedOccurredAt = encounter.backdatedOccurredAt,
                 copaymentPaid = encounter.copaymentPaid,
                 diagnoses = encounter.diagnoses,
-                visitType = encounter.visitType
+                visitType = encounter.visitType,
+                claimId = encounter.claimId,
+                adjudicationState = encounter.adjudicationState,
+                adjudicatedAt = encounter.adjudicatedAt,
+                returnReason = encounter.returnReason,
+                revisedEncounterId = encounter.revisedEncounterId,
+                providerComment = encounter.providerComment
             )
         }
     }
