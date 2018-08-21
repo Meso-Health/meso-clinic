@@ -132,7 +132,7 @@ class NewClaimFragment : DaggerFragment() {
     }
 
     private fun getNumberOfReturnedClaims(): Int {
-        // TODO: actually return count of returned claims
+        // TODO: actually return count of returned encounters
         return 5
     }
 
