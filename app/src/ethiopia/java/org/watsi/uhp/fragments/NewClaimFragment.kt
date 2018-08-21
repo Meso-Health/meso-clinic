@@ -137,12 +137,10 @@ class NewClaimFragment : DaggerFragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        val returnedClaimsMenuTitle: String
-
-        if (this.getNumberOfReturnedClaims() > 0) {
-            returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_with_number, this.getNumberOfReturnedClaims())
+        val returnedClaimsMenuTitle = if (this.getNumberOfReturnedClaims() > 0) {
+            context.getString(R.string.menu_returned_claims_with_number, this.getNumberOfReturnedClaims())
         } else {
-            returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_without_number)
+            context.getString(R.string.menu_returned_claims_without_number)
         }
 
         menu?.let {
