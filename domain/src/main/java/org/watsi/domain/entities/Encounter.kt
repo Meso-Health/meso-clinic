@@ -12,8 +12,16 @@ data class Encounter(
     val backdatedOccurredAt: Boolean = false,
     val copaymentPaid: Boolean? = true,
     val diagnoses: List<Int> = emptyList(),
-    val visitType: String? = null
+    val visitType: String? = null,
+    val claimId: String = id.toString(),
+    val adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+    val adjudicatedAt: Instant? = null,
+    val returnReason: String? = null,
+    val revisedEncounterId: UUID? = null,
+    val providerComment: String? = null
 ) : Serializable {
+
+    enum class AdjudicationState { PENDING, RETURNED, REVISED, APPROVED }
 
     companion object {
         val VISIT_TYPE_CHOICES = listOf(

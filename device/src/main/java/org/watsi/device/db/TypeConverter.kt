@@ -6,6 +6,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import java.util.UUID
@@ -98,5 +99,15 @@ class TypeConverter {
         return string?.let {
             if (it.isEmpty()) emptyList() else it.split(LIST_DELIMITER).map { it.toInt() }
         }
+    }
+
+    @TypeConverter
+    fun toAdjudicationState(value: String?): Encounter.AdjudicationState? {
+        return value?.let { Encounter.AdjudicationState.valueOf(value) }
+    }
+
+    @TypeConverter
+    fun fromAdjudicationState(adjudicationState: Encounter.AdjudicationState?): String? {
+        return adjudicationState?.toString()
     }
 }

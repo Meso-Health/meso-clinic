@@ -14,7 +14,13 @@ object EncounterFactory {
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
-        visitType: String? = null
+        visitType: String? = null,
+        claimId: String? = null,
+        adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+        adjudicatedAt: Instant? = null,
+        returnReason: String? = null,
+        revisedEncounterId: UUID? = null,
+        providerComment: String? = null
     ) : Encounter {
         return Encounter(
             id = id,
@@ -24,7 +30,13 @@ object EncounterFactory {
             backdatedOccurredAt = backdatedOccurredAt,
             copaymentPaid = copaymentPaid,
             diagnoses = diagnoses,
-            visitType = visitType
+            visitType = visitType,
+            claimId = claimId ?: id.toString(),
+            adjudicationState = adjudicationState,
+            adjudicatedAt = adjudicatedAt,
+            returnReason = returnReason,
+            revisedEncounterId = revisedEncounterId,
+            providerComment = providerComment
         )
     }
 }

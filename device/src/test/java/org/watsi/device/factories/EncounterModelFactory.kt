@@ -4,6 +4,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.models.EncounterModel
+import org.watsi.domain.entities.Encounter
 import java.util.UUID
 
 object EncounterModelFactory {
@@ -19,6 +20,12 @@ object EncounterModelFactory {
         createdAt: Instant? = null,
         updatedAt: Instant? = null,
         visitType: String? = null,
+        claimId: String? = null,
+        adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+        adjudicatedAt: Instant? = null,
+        returnReason: String? = null,
+        revisedEncounterId: UUID? = null,
+        providerComment: String? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val now = Instant.now(clock)
@@ -32,7 +39,13 @@ object EncounterModelFactory {
             diagnoses = diagnoses,
             createdAt = createdAt ?: now,
             updatedAt = updatedAt ?: now,
-            visitType = visitType
+            visitType = visitType,
+            claimId = claimId ?: id.toString(),
+            adjudicationState = adjudicationState,
+            adjudicatedAt = adjudicatedAt,
+            returnReason = returnReason,
+            revisedEncounterId = revisedEncounterId,
+            providerComment = providerComment
         )
     }
 
@@ -48,6 +61,12 @@ object EncounterModelFactory {
         createdAt: Instant? = null,
         updatedAt: Instant? = null,
         visitType: String? = null,
+        claimId: String? = null,
+        adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+        adjudicatedAt: Instant? = null,
+        returnReason: String? = null,
+        revisedEncounterId: UUID? = null,
+        providerComment: String? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val model = build(
@@ -61,6 +80,12 @@ object EncounterModelFactory {
             createdAt = createdAt,
             updatedAt = updatedAt,
             visitType = visitType,
+            claimId = claimId ?: id.toString(),
+            adjudicationState = adjudicationState,
+            adjudicatedAt = adjudicatedAt,
+            returnReason = returnReason,
+            revisedEncounterId = revisedEncounterId,
+            providerComment = providerComment,
             clock = clock
         )
         encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList())
