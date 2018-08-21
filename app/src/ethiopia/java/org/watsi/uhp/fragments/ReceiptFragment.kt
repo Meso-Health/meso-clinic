@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
@@ -117,6 +118,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         membership_number.text = encounterFlowState.member?.membershipNumber
         gender_and_age.text = genderAndAgeText
         medical_record_number.text = encounterFlowState.member?.medicalRecordNumber
+        visit_type.text = encounterFlowState.encounter.visitType
         diagnoses_label.text = resources.getQuantityString(
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
         total_price.text = getString(R.string.price, CurrencyUtil.formatMoney(encounterFlowState.price()))
