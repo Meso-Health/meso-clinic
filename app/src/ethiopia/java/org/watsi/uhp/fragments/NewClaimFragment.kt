@@ -131,8 +131,21 @@ class NewClaimFragment : DaggerFragment() {
         }
     }
 
+    private fun getNumberOfReturnedClaims(): Int {
+        // TODO: actually return count of returned encounters
+        return 5
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu?) {
+        val returnedClaimsMenuTitle = if (this.getNumberOfReturnedClaims() > 0) {
+            context.getString(R.string.menu_returned_claims_with_number, this.getNumberOfReturnedClaims())
+        } else {
+            context.getString(R.string.menu_returned_claims_without_number)
+        }
+
         menu?.let {
+            it.findItem(R.id.menu_returned_claims).isVisible = true
+            it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_version).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
@@ -141,6 +154,10 @@ class NewClaimFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_returned_claims -> {
+                // TODO: add returned encounters list fragment here:
+                // navigationManager.goTo(________)
+            }
             R.id.menu_version -> {
                 navigationManager.goTo(StatusFragment())
             }
