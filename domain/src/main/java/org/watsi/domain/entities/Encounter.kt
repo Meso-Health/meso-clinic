@@ -52,5 +52,7 @@ data class Encounter(
             "Growth Monitoring & Promotion (GMP) - Repeat Visit",
             "Dental"
         )
+
+        val CLAIM_ID_RANGE = (0..7)
     }
 }

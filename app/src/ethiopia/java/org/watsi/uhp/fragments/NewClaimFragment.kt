@@ -155,8 +155,7 @@ class NewClaimFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_returned_claims -> {
-                // TODO: add returned encounters list fragment here:
-                // navigationManager.goTo(________)
+                navigationManager.goTo(ReturnedClaimsFragment())
             }
             R.id.menu_version -> {
                 navigationManager.goTo(StatusFragment())

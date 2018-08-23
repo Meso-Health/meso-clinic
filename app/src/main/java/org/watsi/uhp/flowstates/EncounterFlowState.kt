@@ -6,6 +6,7 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.io.Serializable
 
@@ -14,6 +15,14 @@ data class EncounterFlowState(var encounter: Encounter,
                               var encounterForms: List<EncounterForm>,
                               var diagnoses: List<Diagnosis>,
                               var member: Member? = null) : Serializable {
+
+    companion object {
+        fun fromEncounterWithExtras(encounterWithExtras: EncounterWithExtras): EncounterFlowState {
+            return EncounterFlowState(encounterWithExtras.encounter, encounterWithExtras.encounterItems,
+                encounterWithExtras.encounterForms, encounterWithExtras.diagnoses, encounterWithExtras.member
+            )
+        }
+    }
 
     private fun clearEncounterFormThumbnails(): List<EncounterForm> {
         return encounterForms.map { encounterForm ->

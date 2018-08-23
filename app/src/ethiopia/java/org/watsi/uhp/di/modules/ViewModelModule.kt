@@ -14,6 +14,7 @@ import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.NewClaimViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
+import org.watsi.uhp.viewmodels.ReturnedClaimsViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
 
 @Module
@@ -43,6 +44,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ReceiptViewModel::class)
     abstract fun bindReceiptViewModel(viewModel: ReceiptViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReturnedClaimsViewModel::class)
+    abstract fun bindReturnedClaimsViewModel(viewModel: ReturnedClaimsViewModel): ViewModel
 
     @Binds
     @IntoMap
