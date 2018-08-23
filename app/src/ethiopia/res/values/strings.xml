@@ -63,4 +63,12 @@
     </plurals>
     <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
+    <!-- ReturnedClaimsFragment -->
+    <string name="returned_claims_fragment_label">Returned Claims</string>
+    <string name="bullet" translatable="false">\u2022</string>
+    <plurals name="returned_claims_count">
+        <item quantity="one">%d returned claim</item>
+        <item quantity="other">%d returned claims</item>
+    </plurals>
+
 </resources>

@@ -12,4 +12,8 @@ data class EncounterWithExtras(
         val encounterItems: List<EncounterItemWithBillable>,
         val diagnoses: List<Diagnosis>,
         val encounterForms: List<EncounterForm>
-) : Serializable
+) : Serializable {
+
+        fun price(): Int = encounterItems.sumBy { it.price() }
+
+}
