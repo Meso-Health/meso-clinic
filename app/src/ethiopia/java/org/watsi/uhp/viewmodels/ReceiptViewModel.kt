@@ -71,9 +71,6 @@ class ReceiptViewModel @Inject constructor(
                         createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, encounterFlowState.encounterItems, encounterFlowState.encounterForms, encounterFlowState.diagnoses))
                     }
                 }
-
-                encounterFlowState.member?.let { createMemberUseCase.execute(it).blockingAwait() }
-                createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
             }.observeOn(AndroidSchedulers.mainThread())
         } ?: Completable.never()
     }
