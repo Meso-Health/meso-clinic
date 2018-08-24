@@ -11,6 +11,15 @@ data class EncounterItemApi(
         @SerializedName("quantity") val quantity: Int
 ) {
 
+    fun toEncounterItem(): EncounterItem {
+        return EncounterItem(
+            id = id,
+            encounterId = encounterId,
+            billableId = billableId,
+            quantity = quantity
+        )
+    }
+
     constructor (encounterItem: EncounterItem) :
             this(id = encounterItem.id,
                  encounterId = encounterItem.encounterId,

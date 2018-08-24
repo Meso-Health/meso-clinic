@@ -133,11 +133,11 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun save() {
+    fun upsert() {
         val member = MemberFactory.build()
         val delta = DeltaFactory.build(modelName = Delta.ModelName.MEMBER)
 
-        repository.save(member, listOf(delta)).test().assertComplete()
+        repository.upsert(member, listOf(delta)).test().assertComplete()
 
         verify(mockDao).upsert(
                 MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))

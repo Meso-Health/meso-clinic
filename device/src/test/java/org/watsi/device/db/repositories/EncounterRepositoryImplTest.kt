@@ -72,7 +72,7 @@ class EncounterRepositoryImplTest {
         val encounterWithItemsAndForms = EncounterWithItemsAndForms(
                 encounter, listOf(encounterItemWithBillable), listOf(encounterForm), emptyList())
 
-        repository.create(encounterWithItemsAndForms, deltas).test().assertComplete()
+        repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
 
         verify(mockDao).insert(
                 encounter = EncounterModel.fromEncounter(encounter, clock),

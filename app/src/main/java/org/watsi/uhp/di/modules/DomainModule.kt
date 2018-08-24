@@ -12,12 +12,15 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
+import org.watsi.domain.usecases.MarkReturnedEncounterAsRevisedUseCase
+import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
@@ -31,7 +34,7 @@ import org.watsi.domain.usecases.UpdateMemberUseCase
 class DomainModule {
 
     @Provides
-    fun provideCreateMemberUseCase(memberRepository: MemberRepository): CreateMemberUseCase {
+    fun providerCreateMemberUseCase(memberRepository: MemberRepository): CreateMemberUseCase {
         return CreateMemberUseCase(memberRepository)
     }
 
@@ -140,5 +143,27 @@ class DomainModule {
     @Provides
     fun provideIsMemberCheckedInUseCase(memberRepository: MemberRepository): IsMemberCheckedInUseCase {
         return IsMemberCheckedInUseCase(memberRepository)
+    }
+
+    @Provides
+    fun providePersistReturnedEncountersUseCase(
+            encounterRepository: EncounterRepository,
+            memberRepository: MemberRepository
+    ): PersistReturnedEncountersUseCase {
+        return PersistReturnedEncountersUseCase(encounterRepository, memberRepository)
+    }
+
+    @Provides
+    fun provideMarkReturnedEncounterAsRevisedUseCase(encounterRepository: EncounterRepository): MarkReturnedEncounterAsRevisedUseCase {
+        return MarkReturnedEncounterAsRevisedUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideFetchReturnedEncounterUseCase(
+            persistReturnedEncountersUseCase: PersistReturnedEncountersUseCase,
+            markReturnedEncounterAsRevisedUseCase: MarkReturnedEncounterAsRevisedUseCase,
+            encounterRepository: EncounterRepository
+    ): FetchReturnedClaimsUseCase {
+        return FetchReturnedClaimsUseCase(persistReturnedEncountersUseCase, markReturnedEncounterAsRevisedUseCase, encounterRepository)
     }
 }

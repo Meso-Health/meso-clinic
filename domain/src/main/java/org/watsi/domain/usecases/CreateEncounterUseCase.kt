@@ -45,7 +45,7 @@ class CreateEncounterUseCase(
                 billableRepository.create(billable, billableDelta).blockingAwait()
             }
 
-            encounterRepository.create(encounterWithItemsAndForms, encounterDeltas).blockingAwait()
+            encounterRepository.insert(encounterWithItemsAndForms, encounterDeltas).blockingAwait()
         }
     }
 }

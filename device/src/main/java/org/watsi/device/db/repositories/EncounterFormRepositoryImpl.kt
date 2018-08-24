@@ -26,7 +26,7 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
                 .subscribeOn(Schedulers.io())
     }
 
-    fun save(encounterFormModel: EncounterFormModel): Completable {
+    private fun create(encounterFormModel: EncounterFormModel): Completable {
         return Completable.fromAction {
             encounterFormDao.update(encounterFormModel)
         }
@@ -39,7 +39,7 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
                 Completable.concatArray(
                     api.patchEncounterForm(token.getHeaderString(),
                             encounterFormWithPhoto.encounterForm.encounterId, requestBody),
-                    save(EncounterFormModel.fromEncounterForm(encounterFormWithPhoto.encounterForm.copy(photoId =
+                    create(EncounterFormModel.fromEncounterForm(encounterFormWithPhoto.encounterForm.copy(photoId =
                     null), clock))
                 )
 

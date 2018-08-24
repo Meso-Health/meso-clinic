@@ -7,7 +7,6 @@ import kotlinx.android.synthetic.ethiopia.item_returned_claim_list.view.claim_cb
 import kotlinx.android.synthetic.ethiopia.item_returned_claim_list.view.claim_id
 import kotlinx.android.synthetic.ethiopia.item_returned_claim_list.view.claim_price
 import kotlinx.android.synthetic.ethiopia.item_returned_claim_list.view.medical_record_number
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.uhp.utils.CurrencyUtil
 
@@ -21,7 +20,7 @@ class ReturnedClaimListItem @JvmOverloads constructor(
     ) {
         medical_record_number.text = encounterRelation.member.medicalRecordNumber
         claim_cbhi.text = encounterRelation.member.membershipNumber
-        claim_id.text = encounterRelation.encounter.shortenedClaimId()
+        claim_id.text = encounterRelation.encounter.claimId
         claim_price.text = CurrencyUtil.formatMoney(encounterRelation.price())
 
         setOnClickListener {

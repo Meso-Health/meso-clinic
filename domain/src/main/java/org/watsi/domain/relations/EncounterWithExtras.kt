@@ -13,7 +13,14 @@ data class EncounterWithExtras(
         val diagnoses: List<Diagnosis>,
         val encounterForms: List<EncounterForm>
 ) : Serializable {
+    fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
+        return EncounterWithItemsAndForms(
+            encounter = encounter,
+            encounterItems = encounterItems,
+            diagnoses = diagnoses,
+            encounterForms = encounterForms
+        )
+    }
 
-        fun price(): Int = encounterItems.sumBy { it.price() }
-
+    fun price(): Int = encounterItems.sumBy { it.price() }
 }

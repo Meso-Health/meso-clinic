@@ -32,7 +32,7 @@ class CreateMemberUseCaseTest {
 
         useCase.execute(member)
 
-        verify(mockMemberRepository).save(member, listOf(memberDelta))
+        verify(mockMemberRepository).upsert(member, listOf(memberDelta))
     }
 
     @Test
@@ -51,6 +51,6 @@ class CreateMemberUseCaseTest {
 
         useCase.execute(member)
 
-        verify(mockMemberRepository).save(member, listOf(memberDelta, photoDelta))
+        verify(mockMemberRepository).upsert(member, listOf(memberDelta, photoDelta))
     }
 }

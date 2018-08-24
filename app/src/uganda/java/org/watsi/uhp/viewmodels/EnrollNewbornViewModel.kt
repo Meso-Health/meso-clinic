@@ -33,7 +33,7 @@ class EnrollNewbornViewModel(
         viewStateObservable.value = ViewState()
     }
 
-    fun saveMember(memberId: UUID, householdId: UUID, language: String?, formValidator: FormValidator = FormValidator) : Completable {
+    fun createMember(memberId: UUID, householdId: UUID, language: String?, formValidator: FormValidator = FormValidator) : Completable {
         val viewState = viewStateObservable.value
 
         if (viewState == null || viewState.status == MemberStatus.SAVING) {

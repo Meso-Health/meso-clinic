@@ -13,6 +13,8 @@ import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.EncounterRepository
@@ -22,13 +24,41 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                               private val api: CoverageApi,
                               private val sessionManager: SessionManager,
                               private val clock: Clock) : EncounterRepository {
+    override fun revisedIds(): Single<List<UUID>> {
+        return encounterDao.revisedEncounterIds()
+    }
+
+    override fun update(encounters: List<Encounter>): Completable {
+        return Completable.fromAction {
+            encounterDao.update(encounters.map { EncounterModel.fromEncounter(it, clock) })
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun find(ids: List<UUID>): Single<List<Encounter>> {
+        return Single.fromCallable {
+            val encounterModels = encounterDao.find(ids).blockingGet()
+            encounterModels.map { it.toEncounter() }
+        }
+    }
+
+    override fun fetchReturnedClaims(): Single<List<EncounterWithExtras>> {
+        return sessionManager.currentToken()?.let {token ->
+            Single.fromCallable {
+                val returnedClaims = api.getReturnedClaims(token.getHeaderString(), token.user.providerId).blockingGet()
+                returnedClaims.map { it.toEncounterWithExtras() }
+            }.subscribeOn(Schedulers.io())
+        } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))
+    }
+
+    override fun returnedIds(): Single<List<UUID>> {
+        return encounterDao.allReturnedIds()
+    }
 
     override fun find(id: UUID): Single<EncounterWithItems> {
         return encounterDao.find(id).map { it.toEncounterWithItems() }.subscribeOn(Schedulers.io())
     }
 
-    override fun create(encounterWithItemsAndForms: EncounterWithItemsAndForms,
-                        deltas: List<Delta>): Completable {
+    override fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable {
         val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
         val encounterItemModels = encounterWithItemsAndForms.encounterItems.map {
             EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
@@ -44,6 +74,20 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                                 emptyList(),
                                 encounterFormModels,
                                 deltas.map { DeltaModel.fromDelta(it, clock) })
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+        return Completable.fromAction {
+            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
+            val encounterItemModels = encounterWithItemsAndForms.encounterItems.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            }
+
+            encounterDao.upsert(
+                encounter = encounterModel,
+                items = encounterItemModels
+            )
         }.subscribeOn(Schedulers.io())
     }
 

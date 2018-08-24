@@ -72,7 +72,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         }
     }
 
-    override fun save(member: Member, deltas: List<Delta>): Completable {
+    override fun upsert(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
             val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
             memberDao.upsert(MemberModel.fromMember(member, clock), deltaModels)
@@ -149,7 +149,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
                 Completable.concatArray(
                     api.patchPhoto(token.getHeaderString(), memberId, requestBody),
-                    save(memberWithRawPhoto.member.copy(photoId = null), emptyList())
+                    upsert(memberWithRawPhoto.member.copy(photoId = null), emptyList())
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()

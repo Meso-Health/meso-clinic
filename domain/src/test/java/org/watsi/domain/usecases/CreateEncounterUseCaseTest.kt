@@ -39,7 +39,7 @@ class CreateEncounterUseCaseTest {
                 modelId = encounterWithItemsAndForms.encounter.id
         )
 
-        whenever(mockEncounterRepository.create(encounterWithItemsAndForms, listOf(encounterDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta)))
                 .thenReturn(Completable.complete())
 
         useCase.execute(encounterWithItemsAndForms).test().assertComplete()
@@ -69,7 +69,7 @@ class CreateEncounterUseCaseTest {
         whenever(mockBillableRepository.find(billable.id)).thenReturn(Maybe.empty())
         whenever(mockBillableRepository.create(billable, billableDelta))
                 .thenReturn(Completable.complete())
-        whenever(mockEncounterRepository.create(encounterWithItemsAndForms, listOf(encounterDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta)))
                 .thenReturn(Completable.complete())
 
         useCase.execute(encounterWithItemsAndForms).test().assertComplete()
@@ -94,7 +94,7 @@ class CreateEncounterUseCaseTest {
                 modelId = encounterForm.id
         )
 
-        whenever(mockEncounterRepository.create(encounterWithItemsAndForms, listOf(encounterDelta, encounterFormDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta, encounterFormDelta)))
                 .thenReturn(Completable.complete())
 
         useCase.execute(encounterWithItemsAndForms).test().assertComplete()

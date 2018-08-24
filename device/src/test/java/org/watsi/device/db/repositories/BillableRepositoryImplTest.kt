@@ -45,7 +45,8 @@ class BillableRepositoryImplTest {
             action = Delta.Action.ADD,
             modelName = Delta.ModelName.BILLABLE,
             modelId = billableModel.id,
-            synced = false
+            synced = false,
+            clock = clock
     )
 
     @Before

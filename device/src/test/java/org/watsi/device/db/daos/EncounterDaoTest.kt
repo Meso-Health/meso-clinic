@@ -26,4 +26,23 @@ class EncounterDaoTest : DaoBaseTest() {
         assertEquals(returnedEncountersWithItem[1].encounterModel, encounterModel2)
         assertEquals(returnedEncountersWithItem[1].encounterItemModels, listOf(encounterItemModel3))
     }
+
+    @Test
+    fun update_noExistingRecords() {
+        val encounterModel1 = EncounterModelFactory.build()
+        assertEquals(encounterDao.update(listOf(encounterModel1)), 0)
+    }
+
+    @Test
+    fun update_existingRecords() {
+        val encounterModel1 = EncounterModelFactory.create(encounterDao)
+        assertEquals(encounterDao.update(listOf(encounterModel1)), 1)
+    }
+
+    @Test
+    fun allReturnedIds() {
+        val encounterModel1 = EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.RETURNED)
+        EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.REVISED)
+        assertEquals(encounterDao.allReturnedIds().test().values().first(), listOf(encounterModel1.id))
+    }
 }

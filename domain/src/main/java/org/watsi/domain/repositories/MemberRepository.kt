@@ -19,7 +19,7 @@ interface MemberRepository {
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
     fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
-    fun save(member: Member, deltas: List<Delta>): Completable
+    fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
     fun downloadPhotos(): Completable
     fun withPhotosToFetchCount(): Flowable<Int>
