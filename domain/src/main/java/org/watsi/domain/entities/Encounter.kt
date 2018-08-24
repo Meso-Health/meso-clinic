@@ -21,6 +21,10 @@ data class Encounter(
     val providerComment: String? = null
 ) : Serializable {
 
+    fun shortenedClaimId(): String {
+        return claimId.toUpperCase().substring(CLAIM_ID_RANGE)
+    }
+
     enum class AdjudicationState { PENDING, RETURNED, REVISED, APPROVED }
 
     companion object {
