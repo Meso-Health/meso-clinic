@@ -51,7 +51,7 @@ class ReceiptViewModel @Inject constructor(
             )
             Completable.fromCallable {
                 if (encounterFlowState.member == null) {
-                    // TODO: throw error
+                    throw IllegalStateException("Member cannot be null")
                 }
 
                 encounterFlowState.member?.let {
