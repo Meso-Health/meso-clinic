@@ -68,7 +68,7 @@ class ReceiptViewModel @Inject constructor(
                         // create new encounter with new member:
                         val newEncounter = encounterFlowState.encounter.copy(memberId = newMemberId)
 
-                        createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, encounterFlowState.encounterItems, encounterFlowState.encounterForms, encounterFlowState.diagnoses))
+                        createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, encounterFlowState.encounterItems, encounterFlowState.encounterForms, encounterFlowState.diagnoses)).blockingAwait()
                     }
                 }
             }.observeOn(AndroidSchedulers.mainThread())
