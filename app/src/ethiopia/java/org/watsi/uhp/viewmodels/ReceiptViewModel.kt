@@ -64,7 +64,7 @@ class ReceiptViewModel @Inject constructor(
                         val member = it
                         val newMember = member.copy(id = newMemberId)
 
-                        createMemberUseCase.execute(it).blockingAwait()
+                        createMemberUseCase.execute(newMember).blockingAwait()
 
                         // create new encounter with new member:
                         val encounter = encounterFlowState.encounter
