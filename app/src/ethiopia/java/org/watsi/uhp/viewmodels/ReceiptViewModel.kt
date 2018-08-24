@@ -12,8 +12,8 @@ import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
-        private val createEncounterUseCase: CreateEncounterUseCase,
-        private val createMemberUseCase: CreateMemberUseCase
+    private val createEncounterUseCase: CreateEncounterUseCase,
+    private val createMemberUseCase: CreateMemberUseCase
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -30,21 +30,21 @@ class ReceiptViewModel @Inject constructor(
     fun updateEncounterWithDate(encounterFlowState: EncounterFlowState) {
         observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
-                    occurredAt = viewState.occurredAt,
-                    backdatedOccurredAt =  viewState.backdatedOccurredAt
+                occurredAt = viewState.occurredAt,
+                backdatedOccurredAt =  viewState.backdatedOccurredAt
             )
         }
     }
 
     fun submitEncounter(
-            encounterFlowState: EncounterFlowState,
-            copaymentPaid: Boolean? = null
+        encounterFlowState: EncounterFlowState,
+        copaymentPaid: Boolean? = null
     ): Completable {
         return observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
-                    occurredAt = viewState.occurredAt,
-                    backdatedOccurredAt =  viewState.backdatedOccurredAt,
-                    copaymentPaid = copaymentPaid
+                occurredAt = viewState.occurredAt,
+                backdatedOccurredAt =  viewState.backdatedOccurredAt,
+                copaymentPaid = copaymentPaid
             )
             Completable.fromCallable {
                 encounterFlowState.member?.let { createMemberUseCase.execute(it).blockingAwait() }
@@ -64,4 +64,3 @@ class ReceiptViewModel @Inject constructor(
     data class ViewState(val occurredAt: Instant,
                          val backdatedOccurredAt: Boolean)
 }
-
