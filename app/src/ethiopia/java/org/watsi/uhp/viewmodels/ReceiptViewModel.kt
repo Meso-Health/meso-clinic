@@ -61,14 +61,12 @@ class ReceiptViewModel @Inject constructor(
                     } else {
                         // create new member:
                         val newMemberId = UUID.randomUUID()
-                        val member = it
-                        val newMember = member.copy(id = newMemberId)
+                        val newMember = it.copy(id = newMemberId)
 
                         createMemberUseCase.execute(newMember).blockingAwait()
 
                         // create new encounter with new member:
-                        val encounter = encounterFlowState.encounter
-                        val newEncounter = encounter.copy(memberId = newMemberId)
+                        val newEncounter = encounterFlowState.encounter.copy(memberId = newMemberId)
 
                         createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, encounterFlowState.encounterItems, encounterFlowState.encounterForms, encounterFlowState.diagnoses))
                     }
