@@ -6,9 +6,12 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Instant
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
+import java.util.UUID
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
@@ -47,6 +50,30 @@ class ReceiptViewModel @Inject constructor(
                 copaymentPaid = copaymentPaid
             )
             Completable.fromCallable {
+                if (encounterFlowState.member == null) {
+                    // TODO: throw error
+                }
+
+                encounterFlowState.member?.let {
+                    if (encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.PENDING) {
+                        createMemberUseCase.execute(it).blockingAwait()
+                        createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
+                    } else {
+                        // create new member:
+                        val newMemberId = UUID.randomUUID()
+                        val member = it
+                        val newMember = member.copy(id = newMemberId)
+
+                        createMemberUseCase.execute(it).blockingAwait()
+
+                        // create new encounter with new member:
+                        val encounter = encounterFlowState.encounter
+                        val newEncounter = encounter.copy(memberId = newMemberId)
+
+                        createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, encounterFlowState.encounterItems, encounterFlowState.encounterForms, encounterFlowState.diagnoses))
+                    }
+                }
+
                 encounterFlowState.member?.let { createMemberUseCase.execute(it).blockingAwait() }
                 createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
             }.observeOn(AndroidSchedulers.mainThread())
