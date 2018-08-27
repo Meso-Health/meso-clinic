@@ -67,7 +67,8 @@ class ReceiptViewModel @Inject constructor(
                         createMemberUseCase.execute(newMember).blockingAwait()
 
                         // create new encounter with new member:
-                        val newEncounter = encounterFlowState.encounter.copy(memberId = newMemberId)
+                        val oldEncounterId = encounterFlowState.encounter.id
+                        val newEncounter = encounterFlowState.encounter.copy(id = UUID.randomUUID(), memberId = newMemberId, revisedEncounterId = oldEncounterId)
 
                         // create new encounter items:
                         val newEncounterItems = encounterFlowState.encounterItems.map {
