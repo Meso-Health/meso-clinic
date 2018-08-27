@@ -7,6 +7,7 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -68,7 +69,12 @@ class ReceiptViewModel @Inject constructor(
                         // create new encounter with new member:
                         val newEncounter = encounterFlowState.encounter.copy(memberId = newMemberId)
 
-                        createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, encounterFlowState.encounterItems, encounterFlowState.encounterForms, encounterFlowState.diagnoses)).blockingAwait()
+                        // create new encounter items:
+                        val newEncounterItems = encounterFlowState.encounterItems.map {
+                            EncounterItemWithBillable(it.encounterItem.copy(id = UUID.randomUUID()), it.billable)
+                        }
+
+                        createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, newEncounterItems, emptyList(), encounterFlowState.diagnoses)).blockingAwait()
                     }
                 }
             }.observeOn(AndroidSchedulers.mainThread())
