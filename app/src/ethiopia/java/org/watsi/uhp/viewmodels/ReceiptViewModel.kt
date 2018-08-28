@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Instant
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -19,6 +20,8 @@ class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
     private val createMemberUseCase: CreateMemberUseCase
 ) : ViewModel() {
+
+    @Inject lateinit var logger: Logger
 
     private val observable = MutableLiveData<ViewState>()
 
@@ -48,34 +51,40 @@ class ReceiptViewModel @Inject constructor(
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
-                copaymentPaid = copaymentPaid
+                copaymentPaid = null    // no copayment in ethiopia system
             )
             Completable.fromCallable {
                 if (encounterFlowState.member == null) {
-                    throw IllegalStateException("Member cannot be null")
+                    logger.error("Member cannot be null")
                 }
 
                 encounterFlowState.member?.let {
-                    if (encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.PENDING) {
-                        createMemberUseCase.execute(it).blockingAwait()
-                        createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
-                    } else {
-                        // create new member:
-                        val newMemberId = UUID.randomUUID()
-                        val newMember = it.copy(id = newMemberId)
-
-                        createMemberUseCase.execute(newMember).blockingAwait()
-
-                        // create new encounter with new member:
-                        val oldEncounterId = encounterFlowState.encounter.id
-                        val newEncounter = encounterFlowState.encounter.copy(id = UUID.randomUUID(), memberId = newMemberId, revisedEncounterId = oldEncounterId)
-
-                        // create new encounter items:
-                        val newEncounterItems = encounterFlowState.encounterItems.map {
-                            EncounterItemWithBillable(it.encounterItem.copy(id = UUID.randomUUID()), it.billable)
+                    when (encounterFlowState.encounter.adjudicationState) {
+                        Encounter.AdjudicationState.PENDING -> {
+                            createMemberUseCase.execute(it).blockingAwait()
+                            createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
                         }
+                        Encounter.AdjudicationState.RETURNED -> {
+                            // create new member:
+                            val newMemberId = UUID.randomUUID()
+                            val newMember = it.copy(id = newMemberId)
 
-                        createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, newEncounterItems, emptyList(), encounterFlowState.diagnoses)).blockingAwait()
+                            createMemberUseCase.execute(newMember).blockingAwait()
+
+                            // create new encounter with new member and set old encounter ID on revisedEncounterId:
+                            val oldEncounterId = encounterFlowState.encounter.id
+                            val newEncounter = encounterFlowState.encounter.copy(id = UUID.randomUUID(), memberId = newMemberId, revisedEncounterId = oldEncounterId)
+
+                            // create new encounter items:
+                            val newEncounterItems = encounterFlowState.encounterItems.map {
+                                EncounterItemWithBillable(it.encounterItem.copy(id = UUID.randomUUID()), it.billable)
+                            }
+
+                            createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, newEncounterItems, emptyList(), encounterFlowState.diagnoses)).blockingAwait()
+                        }
+                        else -> {
+                            logger.error("Adjudication state must be PENDING or RETURNED")
+                        }
                     }
                 }
             }.observeOn(AndroidSchedulers.mainThread())
