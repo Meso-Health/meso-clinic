@@ -65,6 +65,8 @@ class ReceiptViewModel @Inject constructor(
                             createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
                         }
                         Encounter.AdjudicationState.RETURNED -> {
+                            // TODO: move this logic into it's own usecase (to be done in: https://www.pivotaltracker.com/story/show/159841813)
+
                             // create new member:
                             val newMemberId = UUID.randomUUID()
                             val newMember = it.copy(id = newMemberId)
