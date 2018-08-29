@@ -13,7 +13,7 @@ class FetchReturnedClaimsUseCase(
         return Completable.fromAction {
             val returnedEncounters = encounterRepository.fetchReturnedClaims().blockingGet()
             // I am assuming this use case
-            // - persists edits to existing encounters on fields related to adjuducation (i.e. adjudication state, adjudicated at, return reason)
+            // - persists edits to existing encounters on fields related to adjudication (i.e. adjudication state, adjudicated at, return reason)
             // - persists new encounter with extras (i.e. encounter, member, encounter items).
             persistReturnedEncountersUseCase.execute(returnedEncounters).blockingAwait()
 
