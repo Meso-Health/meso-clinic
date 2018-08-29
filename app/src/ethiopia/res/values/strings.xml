@@ -48,6 +48,16 @@
     <string name="price" translatable="false">%1$s</string>
     <string name="member_info_section_label">Member Information</string>
     <string name="none">None</string>
+    <string name="claim_id_label">Claim ID</string>
+    <string name="comments">Comments</string>
+    <string name="provider_label">You</string>
+    <string name="branch_label">EHIA Branch</string>
+    <plurals name="comment_age">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <string name="date_header">Date of Service</string>
+    <string name="empty_comment">No comment</string>
 
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supply</string>

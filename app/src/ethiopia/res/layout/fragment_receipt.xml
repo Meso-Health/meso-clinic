@@ -17,29 +17,171 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/adjudication_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dialog_padding"
+            android:paddingBottom="@dimen/dialog_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/claim_id_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:textColor="@color/gray6"
+                android:text="@string/claim_id_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/claim_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@id/claim_id_label" />
+
+            <View
+                android:id="@+id/claim_id_line_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/claim_id" />
+
+            <TextView
+                android:id="@+id/adjudication_comments_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:textColor="@color/gray6"
+                android:text="@string/comments"
+                app:layout_constraintTop_toBottomOf="@id/claim_id_line_divider" />
+
+            <TextView
+                android:id="@+id/provider_comment_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/dialog_padding"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:textStyle="bold"
+                android:text="@string/provider_label"
+                app:layout_constraintTop_toBottomOf="@id/adjudication_comments_label" />
+
+            <TextView
+                android:id="@+id/provider_comment_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/space8"
+                android:paddingBottom="@dimen/bottom_text_align_padding"
+                android:textColor="@color/gray6"
+                android:textSize="@dimen/fontSize12"
+                app:layout_constraintLeft_toRightOf="@id/provider_comment_author"
+                app:layout_constraintBottom_toBottomOf="@id/provider_comment_author" />
+
+            <TextView
+                android:id="@+id/provider_comment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingRight="@dimen/space48"
+                app:layout_constraintTop_toBottomOf="@id/provider_comment_author" />
+
+            <View
+                android:id="@+id/adjudication_comments_line_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:layout_marginLeft="@dimen/dialog_padding"
+                app:layout_constraintTop_toBottomOf="@id/provider_comment_text" />
+
+            <TextView
+                android:id="@+id/branch_comment_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/dialog_padding"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:textStyle="bold"
+                android:text="@string/branch_label"
+                app:layout_constraintTop_toBottomOf="@id/adjudication_comments_line_divider" />
+
+            <TextView
+                android:id="@+id/branch_comment_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/space8"
+                android:paddingBottom="@dimen/bottom_text_align_padding"
+                android:textColor="@color/gray6"
+                android:textSize="@dimen/fontSize12"
+                app:layout_constraintLeft_toRightOf="@id/branch_comment_author"
+                app:layout_constraintBottom_toBottomOf="@id/branch_comment_author" />
+
+            <TextView
+                android:id="@+id/branch_comment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingRight="@dimen/space48"
+                app:layout_constraintTop_toBottomOf="@id/branch_comment_author" />
+        </android.support.constraint.ConstraintLayout>
+
+        <!-- This is necessary because we must conditionally include a margin above the date container
+             if the above containers are visible. Android ignores marginBottom, so we must hide or show
+             this view that exists only to provide a margin
+             -->
+        <View
+            android:id="@+id/date_spacer_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/dialog_padding"
+            app:layout_constraintTop_toBottomOf="@id/adjudication_container"
+            android:visibility="gone" />
+
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/date_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:padding="@dimen/dialog_padding"
             android:background="@drawable/panel_background"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/date_spacer_container">
+
+            <TextView
+                android:id="@+id/date_header_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/date_header"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/date_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/date_header_label" />
 
             <TextView
                 android:id="@+id/date_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/list_item_vertical_padding"
                 android:text="@string/edit_clickable"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/date_header_label"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
 

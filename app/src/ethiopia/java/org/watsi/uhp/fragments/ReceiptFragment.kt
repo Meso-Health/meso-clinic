@@ -11,8 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_container
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.claim_id
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_spacer_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_line_divider
@@ -24,6 +29,8 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
@@ -32,11 +39,15 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
+import org.watsi.uhp.R.plurals.comment_age
 import org.watsi.uhp.R.plurals.diagnosis_count
+import org.watsi.uhp.R.string.empty_comment
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
@@ -115,6 +126,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val genderAndAgeText = encounterFlowState.member?.formatAgeAndGender(clock)
 
+        if (encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED) {
+            displayReturnedClaimInfo()
+        }
+
         membership_number.text = encounterFlowState.member?.membershipNumber
         gender_and_age.text = genderAndAgeText
         medical_record_number.text = encounterFlowState.member?.medicalRecordNumber
@@ -160,6 +175,37 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         save_button.setOnClickListener {
             submitEncounter()
+        }
+    }
+
+    private fun displayReturnedClaimInfo() {
+        adjudication_container.visibility = View.VISIBLE
+        date_spacer_container.visibility = View.VISIBLE
+
+        claim_id.text = encounterFlowState.encounter.shortenedClaimId()
+
+        encounterFlowState.encounter.occurredAt?.let {
+            val providerCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
+            provider_comment_date.text = resources.getQuantityString(
+                comment_age, providerCommentDaysAgo, providerCommentDaysAgo
+            )
+        }
+        encounterFlowState.encounter.adjudicatedAt?.let {
+            val branchCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
+            branch_comment_date.text = resources.getQuantityString(
+                comment_age, branchCommentDaysAgo, branchCommentDaysAgo
+            )
+        }
+
+        provider_comment_text.text = if (encounterFlowState.encounter.providerComment != null) {
+            encounterFlowState.encounter.providerComment
+        } else {
+            getString(empty_comment)
+        }
+        branch_comment_text.text = if (encounterFlowState.encounter.returnReason != null) {
+            encounterFlowState.encounter.returnReason
+        } else {
+            getString(empty_comment)
         }
     }
 

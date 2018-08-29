@@ -65,4 +65,7 @@
     <dimen name="list_item_vertical_padding">16dp</dimen>
 
     <dimen name="textInputLayoutMarginFix">-4dp</dimen>
+
+    <!-- padding to fix bottom text alignment -->
+    <dimen name="bottom_text_align_padding">1dp</dimen>
 </resources>
