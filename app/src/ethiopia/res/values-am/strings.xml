@@ -88,8 +88,8 @@
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ቀን</string>
-    <string name="eth_datepicker_save">አስቀምጥ</string>
-    <string name="eth_datepicker_cancel">ሰርዝ</string>
+    <string name="dialog_save">አስቀምጥ</string>
+    <string name="dialog_cancel">ሰርዝ</string>
     <string name="eth_datepicker_day">ቀን</string>
     <string name="eth_datepicker_month">ወር</string>
     <string name="eth_datepicker_year">አመት</string>

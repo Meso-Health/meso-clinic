@@ -92,8 +92,8 @@
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ዕለት</string>
-    <string name="eth_datepicker_save">ኣቐምጥ</string>
-    <string name="eth_datepicker_cancel">ግደፍ</string>
+    <string name="dialog_save">ኣቐምጥ</string>
+    <string name="dialog_cancel">ግደፍ</string>
     <string name="eth_datepicker_day">መዓልቲ</string>
     <string name="eth_datepicker_month">ወርሒ</string>
     <string name="eth_datepicker_year">ዓመት</string>

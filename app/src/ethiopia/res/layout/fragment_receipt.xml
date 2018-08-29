@@ -457,6 +457,47 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/comment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/dialog_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/encounter_items_container">
+
+            <TextView
+                android:id="@+id/comment_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/comment_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/comment_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:paddingRight="@dimen/space48"
+                android:text="@string/none"
+                app:layout_constraintTop_toBottomOf="@id/comment_label"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/comment_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:text="@string/add_clickable"
+                app:layout_constraintTop_toBottomOf="@id/comment_label"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
         <Button
             android:id="@+id/save_button"
             android:layout_width="match_parent"
@@ -464,7 +505,7 @@
             android:layout_margin="@dimen/space16"
             style="@style/PrimaryButton"
             android:text="@string/save_encounter_button"
-            app:layout_constraintTop_toBottomOf="@id/encounter_items_container"
+            app:layout_constraintTop_toBottomOf="@id/comment_container"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="1.0" />
 

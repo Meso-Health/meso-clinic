@@ -38,8 +38,8 @@
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>
-    <string name="eth_datepicker_save">Save</string>
-    <string name="eth_datepicker_cancel">Cancel</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_cancel">Cancel</string>
     <string name="eth_datepicker_day">Day</string>
     <string name="eth_datepicker_month">Month</string>
     <string name="eth_datepicker_year">Year</string>
@@ -57,7 +57,9 @@
         <item quantity="other">%d days ago</item>
     </plurals>
     <string name="date_header">Date of Service</string>
-    <string name="empty_comment">No comment</string>
+    <string name="comment_label">Comment</string>
+    <string name="add_clickable"><u>Add</u></string>
+    <string name="comment_prompt">Add a comment...</string>
 
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supply</string>

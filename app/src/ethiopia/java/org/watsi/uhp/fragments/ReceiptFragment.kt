@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +16,9 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_containe
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.claim_id
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_container
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_edit
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_spacer_container
@@ -47,7 +51,9 @@ import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.comment_age
 import org.watsi.uhp.R.plurals.diagnosis_count
-import org.watsi.uhp.R.string.empty_comment
+import org.watsi.uhp.R.string.add_clickable
+import org.watsi.uhp.R.string.edit_clickable
+import org.watsi.uhp.R.string.none
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
@@ -57,6 +63,7 @@ import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
+import org.watsi.uhp.views.CustomFocusEditText
 import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
@@ -71,7 +78,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var serviceReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var labReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var drugAndSupplyReceiptItemAdapter: ReceiptListItemAdapter
-    lateinit var alertDialog: AlertDialog
+    lateinit var backdateAlertDialog: AlertDialog
     lateinit var encounterFlowState: EncounterFlowState
 
     lateinit var daySpinner: SpinnerField
@@ -103,6 +110,14 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                         resources.getString(today_wrapper, dateString)
                     } else {
                         dateString
+                    }
+
+                    if (viewState.comment == null) {
+                        comment_text.setText(none)
+                        comment_edit.setText(add_clickable)
+                    } else {
+                        comment_text.text = viewState.comment
+                        comment_edit.setText(edit_clickable)
                     }
                 }
             })
@@ -143,7 +158,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
         }
 
-        setUpDialog()
+        setUpDateDialog()
 
         date_container.setOnClickListener {
             launchBackdateDialog()
@@ -173,6 +188,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             drug_and_supply_items_list.visibility = View.VISIBLE
         }
 
+        comment_container.setOnClickListener {
+            launchAddCommentDialog()
+        }
+
         save_button.setOnClickListener {
             submitEncounter()
         }
@@ -200,13 +219,28 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         provider_comment_text.text = if (encounterFlowState.encounter.providerComment != null) {
             encounterFlowState.encounter.providerComment
         } else {
-            getString(empty_comment)
+            getString(none)
         }
         branch_comment_text.text = if (encounterFlowState.encounter.returnReason != null) {
             encounterFlowState.encounter.returnReason
         } else {
-            getString(empty_comment)
+            getString(none)
         }
+    }
+
+    private fun launchAddCommentDialog() {
+        val commentDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_comment, null)
+        val editText = commentDialogView.findViewById<View>(R.id.comment_dialog_input) as CustomFocusEditText
+        viewModel.comment()?.let { comment ->
+            editText.text = Editable.Factory.getInstance().newEditable(comment)
+        }
+
+        AlertDialog.Builder(activity)
+            .setView(commentDialogView)
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .setPositiveButton(R.string.dialog_save) { _, _ ->
+                viewModel.updateComment(editText.text.toString())
+            }.create().show()
     }
 
     private fun launchBackdateDialog() {
@@ -218,10 +252,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         monthSpinner.setSelectedItem(occurredAtDate.month - 1)
         yearSpinner.setSelectedItem(occurredAtDate.year - DATE_PICKER_START_YEAR)
 
-        alertDialog.show()
+        backdateAlertDialog.show()
     }
 
-    private fun setUpDialog() {
+    private fun setUpDateDialog() {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ethiopian_date_picker, null)
         daySpinner = dialogView.findViewById<View>(R.id.day_spinner) as SpinnerField
         monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
@@ -271,7 +305,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)
-        builder.setPositiveButton(R.string.eth_datepicker_save) { dialog, _ ->
+        builder.setPositiveButton(R.string.dialog_save) { dialog, _ ->
             val backdatedDateTime = EthiopianDateHelper.toInstant(
                 yearSpinner.getSelectedItem().toInt(),
                 monthSpinner.getSelectedItem().toInt(),
@@ -282,9 +316,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
             viewModel.updateBackdatedOccurredAt(backdatedDateTime)
         }
-        builder.setNegativeButton(R.string.eth_datepicker_cancel) { dialog, _ -> /* No-Op */ }
+        builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> /* No-Op */ }
 
-        alertDialog = builder.create()
+        backdateAlertDialog = builder.create()
     }
 
     private fun submitEncounter() {
