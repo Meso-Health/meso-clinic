@@ -18,6 +18,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
+import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -44,14 +45,13 @@ import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
-import org.watsi.domain.usecases.LoadDiagnosesListUseCase
 
 @RunWith(MockitoJUnitRunner::class)
 class EncounterRepositoryImplTest {
 
     @Mock lateinit var mockDao: EncounterDao
+    @Mock lateinit var mockDiagnosisDao: DiagnosisDao
     @Mock lateinit var mockApi: CoverageApi
-    @Mock lateinit var mockLoadDiagnosisListUseCase: LoadDiagnosesListUseCase
     @Mock lateinit var mockSessionManager: SessionManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: EncounterRepositoryImpl
@@ -63,7 +63,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockApi, mockLoadDiagnosisListUseCase, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockDiagnosisDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
@@ -136,8 +136,8 @@ class EncounterRepositoryImplTest {
             listOf(encounterFormModel2)
         )
 
-        whenever(mockLoadDiagnosisListUseCase.execute(diagnosesIdList1)).thenReturn(Single.just(diagnosesList1))
-        whenever(mockLoadDiagnosisListUseCase.execute(diagnosesIdList2)).thenReturn(Single.just(diagnosesList2))
+        whenever(mockDiagnosisDao.findAll(diagnosesIdList1)).thenReturn(Single.just(diagnosesModelList1))
+        whenever(mockDiagnosisDao.findAll(diagnosesIdList2)).thenReturn(Single.just(diagnosesModelList2))
         whenever(mockDao.returned()).thenReturn(Flowable.fromArray(
             listOf(encounterWithMemberAndItemsAndFormsModel1, encounterWithMemberAndItemsAndFormsModel2))
         )
@@ -155,7 +155,10 @@ class EncounterRepositoryImplTest {
         )
         assertEquals(
             returnedEncounterWithExtras[0].encounterItems,
-            listOf(encounterItemWithBillableModel1.toEncounterItemWithBillable(), encounterItemWithBillableModel2.toEncounterItemWithBillable())
+            listOf(
+                encounterItemWithBillableModel1.toEncounterItemWithBillable(),
+                encounterItemWithBillableModel2.toEncounterItemWithBillable()
+            )
         )
         assertEquals(
             returnedEncounterWithExtras[0].diagnoses,
