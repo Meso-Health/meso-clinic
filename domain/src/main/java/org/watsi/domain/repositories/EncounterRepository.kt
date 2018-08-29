@@ -1,6 +1,7 @@
 package org.watsi.domain.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
@@ -17,6 +18,8 @@ interface EncounterRepository {
     fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable
     fun sync(delta: Delta): Completable
     fun fetchReturnedClaims(): Single<List<EncounterWithExtras>>
+    fun loadReturnedClaimsCount(): Flowable<Int>
+    fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>>
     fun returnedIds(): Single<List<UUID>>
     fun revisedIds(): Single<List<UUID>>
 }

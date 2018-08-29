@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
@@ -12,6 +13,7 @@ import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
@@ -19,6 +21,7 @@ import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
+import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
 import org.watsi.domain.usecases.MarkReturnedEncounterAsRevisedUseCase
 import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
@@ -165,5 +168,19 @@ class DomainModule {
             encounterRepository: EncounterRepository
     ): FetchReturnedClaimsUseCase {
         return FetchReturnedClaimsUseCase(persistReturnedEncountersUseCase, markReturnedEncounterAsRevisedUseCase, encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadReturnedClaimsCountUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadReturnedClaimsCountUseCase {
+        return LoadReturnedClaimsCountUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadReturnedClaimsUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadReturnedClaimsUseCase {
+        return LoadReturnedClaimsUseCase(encounterRepository)
     }
 }

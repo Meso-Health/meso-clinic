@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import org.watsi.uhp.R.plurals.returned_claims_count
+import org.watsi.uhp.R.string.returned_claims_count_empty
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,9 +45,14 @@ class ReturnedClaimsFragment : DaggerFragment() {
     }
 
     private fun updateReturnedClaims(returnedClaims: List<EncounterWithExtras>) {
-        total_claims_label.text = resources.getQuantityString(
-            returned_claims_count, returnedClaims.size, returnedClaims.size
-        )
+        total_claims_label.text = if (returnedClaims.isEmpty()) {
+            getString(returned_claims_count_empty)
+        } else {
+            resources.getQuantityString(
+                returned_claims_count, returnedClaims.size, returnedClaims.size
+            )
+        }
+
         total_price_label.text = CurrencyUtil.formatMoney(returnedClaims.sumBy { it.price() })
 
         returnedClaimsAdapter.setReturnedClaimsItems(returnedClaims)

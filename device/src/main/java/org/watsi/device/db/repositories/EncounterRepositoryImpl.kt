@@ -1,11 +1,13 @@
 package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
+import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -21,6 +23,7 @@ import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
 
 class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
+                              private val diagnosisDao: DiagnosisDao,
                               private val api: CoverageApi,
                               private val sessionManager: SessionManager,
                               private val clock: Clock) : EncounterRepository {
@@ -48,6 +51,25 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                 returnedClaims.map { it.toEncounterWithExtras() }
             }.subscribeOn(Schedulers.io())
         } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))
+    }
+
+    override fun loadReturnedClaimsCount(): Flowable<Int> {
+        return encounterDao.returnedCount()
+    }
+
+    override fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>> {
+        return encounterDao.returned().map { encounterModelList ->
+            encounterModelList.map { encounterModel ->
+                val encounterRelation = encounterModel.toEncounterWithMemberAndItemsAndForms()
+                val diagnoses =
+                    diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
+                        .map { it.toDiagnosis() }
+                EncounterWithExtras(
+                    encounterRelation.encounter, encounterRelation.member,
+                    encounterRelation.encounterItems, diagnoses, encounterRelation.encounterForms
+                )
+            }
+        }
     }
 
     override fun returnedIds(): Single<List<UUID>> {

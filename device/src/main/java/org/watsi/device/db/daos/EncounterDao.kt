@@ -6,12 +6,14 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import android.arch.persistence.room.Update
+import io.reactivex.Flowable
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
+import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.EncounterWithItemsModel
 import java.util.UUID
 
@@ -45,7 +47,11 @@ interface EncounterDao {
 
     @Transaction
     @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED'")
-    fun returned(): Single<List<EncounterWithItemsModel>>
+    fun returned(): Flowable<List<EncounterWithMemberAndItemsAndFormsModel>>
+
+    @Transaction
+    @Query("SELECT COUNT(*) from encounters WHERE adjudicationState = 'RETURNED'")
+    fun returnedCount(): Flowable<Int>
 
     @Transaction
     @Query("SELECT id from encounters WHERE adjudicationState = 'RETURNED'")

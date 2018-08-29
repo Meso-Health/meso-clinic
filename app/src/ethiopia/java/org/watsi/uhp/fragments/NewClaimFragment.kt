@@ -63,6 +63,8 @@ class NewClaimFragment : DaggerFragment() {
         viewStateObservable.observe(this, Observer {
             it?.let {
                 membership_number_layout.error = it.error
+
+                activity.invalidateOptionsMenu()
             }
         })
 
@@ -131,16 +133,13 @@ class NewClaimFragment : DaggerFragment() {
         }
     }
 
-    private fun getNumberOfReturnedClaims(): Int {
-        // TODO: actually return count of returned encounters
-        return 5
-    }
-
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        val returnedClaimsMenuTitle = if (this.getNumberOfReturnedClaims() > 0) {
-            context.getString(R.string.menu_returned_claims_with_number, this.getNumberOfReturnedClaims())
-        } else {
-            context.getString(R.string.menu_returned_claims_without_number)
+        var returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_without_number)
+
+        viewStateObservable.value?.let {
+            if (it.returnedClaimsCount > 0) {
+                returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_with_number, it.returnedClaimsCount)
+            }
         }
 
         menu?.let {
