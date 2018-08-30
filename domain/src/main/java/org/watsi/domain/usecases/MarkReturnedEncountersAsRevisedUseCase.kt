@@ -6,7 +6,7 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
 
-class MarkReturnedEncounterAsRevisedUseCase(private val encounterRepository: EncounterRepository) {
+class MarkReturnedEncountersAsRevisedUseCase(private val encounterRepository: EncounterRepository) {
     fun execute(encounterIds: List<UUID>): Completable {
         return Completable.fromCallable {
             val encounters = encounterRepository.find(encounterIds).blockingGet()

@@ -7,12 +7,14 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
+import org.watsi.device.db.models.MemberModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
@@ -28,7 +30,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                               private val sessionManager: SessionManager,
                               private val clock: Clock) : EncounterRepository {
     override fun revisedIds(): Single<List<UUID>> {
-        return encounterDao.revisedEncounterIds()
+        return encounterDao.revisedIds()
     }
 
     override fun update(encounters: List<Encounter>): Completable {
@@ -39,8 +41,11 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
 
     override fun find(ids: List<UUID>): Single<List<Encounter>> {
         return Single.fromCallable {
-            val encounterModels = encounterDao.find(ids).blockingGet()
-            encounterModels.map { it.toEncounter() }
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                encounterDao.find(ids).blockingGet()
+            }.flatten().map {
+                it.toEncounter()
+            }
         }
     }
 
@@ -73,7 +78,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
     }
 
     override fun returnedIds(): Single<List<UUID>> {
-        return encounterDao.allReturnedIds()
+        return encounterDao.returnedIds()
     }
 
     override fun find(id: UUID): Single<EncounterWithItems> {
@@ -99,16 +104,20 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+    override fun upsert(encounters: List<EncounterWithExtras>): Completable {
         return Completable.fromAction {
-            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
-            val encounterItemModels = encounterWithItemsAndForms.encounterItems.map {
-                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            val encounterModels = encounters.map {
+                EncounterModel.fromEncounter(it.encounter, clock)
             }
+            val encounterItemModels = encounters.map {
+                it.encounterItems.map { EncounterItemModel.fromEncounterItem(it.encounterItem, clock) }
+            }.flatten()
+            val memberModels = encounters.map { MemberModel.fromMember(it.member, clock) }
 
             encounterDao.upsert(
-                encounter = encounterModel,
-                items = encounterItemModels
+                encounterModels = encounterModels,
+                encounterItemModels = encounterItemModels,
+                memberModels = memberModels
             )
         }.subscribeOn(Schedulers.io())
     }

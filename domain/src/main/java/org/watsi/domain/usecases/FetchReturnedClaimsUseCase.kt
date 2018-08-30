@@ -6,7 +6,7 @@ import org.watsi.domain.repositories.EncounterRepository
 
 class FetchReturnedClaimsUseCase(
         private val persistReturnedEncountersUseCase: PersistReturnedEncountersUseCase,
-        private val markReturnedEncounterAsRevisedUseCase: MarkReturnedEncounterAsRevisedUseCase,
+        private val markReturnedEncountersAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase,
         private val encounterRepository: EncounterRepository
 ) {
     fun execute(): Completable {
@@ -22,7 +22,7 @@ class FetchReturnedClaimsUseCase(
             val returnedClaimIds = returnedEncounters.map { it.encounter.id }
             val clientReturnedEncounterIds = encounterRepository.returnedIds().blockingGet()
             val encountersThatNeedToBeMarkedAsRevised = clientReturnedEncounterIds - returnedClaimIds
-            markReturnedEncounterAsRevisedUseCase.execute(encountersThatNeedToBeMarkedAsRevised).blockingAwait()
+            markReturnedEncountersAsRevisedUseCase.execute(encountersThatNeedToBeMarkedAsRevised).blockingAwait()
         }.subscribeOn(Schedulers.io())
     }
 }

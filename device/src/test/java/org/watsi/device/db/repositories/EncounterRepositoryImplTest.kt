@@ -26,6 +26,7 @@ import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
+import org.watsi.device.db.models.MemberModel
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
 import org.watsi.device.factories.EncounterFormModelFactory
@@ -42,6 +43,7 @@ import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterItemFactory
+import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillable
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -232,5 +234,28 @@ class EncounterRepositoryImplTest {
                 .thenReturn(Completable.complete())
 
         repository.sync(delta).test().assertComplete()
+    }
+
+    @Test
+    fun upsert() {
+        val encounters = (1..10).map {
+            EncounterWithExtrasFactory.build()
+        }
+
+        repository.upsert(encounters).test().assertComplete()
+
+        verify(mockDao).upsert(
+            encounterModels = encounters.map {
+                EncounterModel.fromEncounter(it.encounter, clock)
+            },
+            encounterItemModels = encounters.map {
+                it.encounterItems.map {
+                    EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+                }
+            }.flatten(),
+            memberModels = encounters.map {
+                MemberModel.fromMember(it.member, clock)
+            }
+        )
     }
 }

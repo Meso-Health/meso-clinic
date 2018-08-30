@@ -126,9 +126,21 @@ class EncounterDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun allReturnedIds() {
+    fun returnedIds() {
         val encounterModel1 = EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.RETURNED)
-        EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.REVISED)
-        assertEquals(encounterDao.allReturnedIds().test().values().first(), listOf(encounterModel1.id))
+        val encounterModel2 = EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.REVISED)
+        val encounterModel3 = EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.PENDING)
+        val encounterModel4 = EncounterModelFactory.create(encounterDao, adjudicationState = Encounter.AdjudicationState.RETURNED)
+        assertEquals(encounterDao.returnedIds().test().values().first(), listOf(encounterModel1.id, encounterModel4.id))
+    }
+
+    @Test
+    fun revisedIds() {
+        val encounterModel1 = EncounterModelFactory.create(encounterDao)
+        val encounterModel2 = EncounterModelFactory.create(encounterDao, revisedEncounterId = encounterModel1.id)
+        val encounterModel3 = EncounterModelFactory.create(encounterDao)
+        val encounterModel4 = EncounterModelFactory.create(encounterDao, revisedEncounterId = encounterModel3.id)
+        val encounterModel5 = EncounterModelFactory.create(encounterDao, revisedEncounterId = encounterModel3.id)
+        assertEquals(encounterDao.revisedIds().test().values().first(), listOf(encounterModel1.id, encounterModel3.id))
     }
 }
