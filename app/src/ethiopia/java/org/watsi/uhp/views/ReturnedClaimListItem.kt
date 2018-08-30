@@ -20,7 +20,7 @@ class ReturnedClaimListItem @JvmOverloads constructor(
     ) {
         medical_record_number.text = encounterRelation.member.medicalRecordNumber
         claim_cbhi.text = encounterRelation.member.membershipNumber
-        claim_id.text = encounterRelation.encounter.claimId
+        claim_id.text = encounterRelation.encounter.shortenedClaimId()
         claim_price.text = CurrencyUtil.formatMoney(encounterRelation.price())
 
         setOnClickListener {

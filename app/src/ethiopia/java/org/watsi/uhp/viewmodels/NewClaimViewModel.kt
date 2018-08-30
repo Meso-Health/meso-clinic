@@ -3,9 +3,15 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import org.watsi.device.managers.Logger
+import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
 import javax.inject.Inject
 
-class NewClaimViewModel @Inject constructor() : ViewModel() {
+class NewClaimViewModel @Inject constructor(
+    private val loadReturnedClaimsCountUseCase: LoadReturnedClaimsCountUseCase,
+    private val logger: Logger
+) : ViewModel() {
+
     private val viewStateObservable = MutableLiveData<ViewState>()
 
     companion object {
@@ -69,6 +75,12 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
 
     fun getViewStateObservable(): LiveData<ViewState> {
         viewStateObservable.value = ViewState()
+        loadReturnedClaimsCountUseCase.execute().subscribe({
+            viewStateObservable.postValue(viewStateObservable.value?.copy(returnedClaimsCount = it))
+        }, {
+            logger.error(it)
+        })
+
         return viewStateObservable
     }
 
@@ -78,5 +90,6 @@ class NewClaimViewModel @Inject constructor() : ViewModel() {
                          val memberStatus: String = "",
                          val householdNumber: String = "",
                          val householdMemberNumber: String = "",
+                         val returnedClaimsCount: Int = 0,
                          val error: String = "")
 }

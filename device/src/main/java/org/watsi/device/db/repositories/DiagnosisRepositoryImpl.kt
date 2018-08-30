@@ -29,6 +29,10 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun findAll(ids: List<Int>): Single<List<Diagnosis>> {
+        return diagnosisDao.findAll(ids).map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
+    }
+
     /**
      * Removes any persisted diagnoses that are not returned in the API results and overwrites
      * any persisted data if the API response contains updated data.

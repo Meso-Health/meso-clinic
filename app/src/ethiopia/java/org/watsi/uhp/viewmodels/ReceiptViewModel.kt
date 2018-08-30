@@ -43,14 +43,18 @@ class ReceiptViewModel @Inject constructor(
         }
     }
 
+    fun updateComment(comment: String) {
+        observable.value = observable.value?.copy(comment = comment)
+    }
+
     fun submitEncounter(
-        encounterFlowState: EncounterFlowState,
-        copaymentPaid: Boolean? = null
+        encounterFlowState: EncounterFlowState
     ): Completable {
         return observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
+                providerComment = viewState.comment,
                 copaymentPaid = null    // no copayment in ethiopia system
             )
             Completable.fromCallable {
@@ -101,6 +105,11 @@ class ReceiptViewModel @Inject constructor(
         return observable.value?.backdatedOccurredAt
     }
 
+    fun comment(): String? {
+        return observable.value?.comment
+    }
+
     data class ViewState(val occurredAt: Instant,
-                         val backdatedOccurredAt: Boolean)
+                         val backdatedOccurredAt: Boolean,
+                         val comment: String? = null)
 }

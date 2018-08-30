@@ -19,7 +19,9 @@ import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
-import org.watsi.domain.usecases.MarkReturnedEncounterAsRevisedUseCase
+import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
+import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
+import org.watsi.domain.usecases.MarkReturnedEncountersAsRevisedUseCase
 import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
@@ -146,24 +148,35 @@ class DomainModule {
     }
 
     @Provides
-    fun providePersistReturnedEncountersUseCase(
-            encounterRepository: EncounterRepository,
-            memberRepository: MemberRepository
-    ): PersistReturnedEncountersUseCase {
-        return PersistReturnedEncountersUseCase(encounterRepository, memberRepository)
+    fun providePersistReturnedEncountersUseCase(encounterRepository: EncounterRepository): PersistReturnedEncountersUseCase {
+        return PersistReturnedEncountersUseCase(encounterRepository)
     }
 
     @Provides
-    fun provideMarkReturnedEncounterAsRevisedUseCase(encounterRepository: EncounterRepository): MarkReturnedEncounterAsRevisedUseCase {
-        return MarkReturnedEncounterAsRevisedUseCase(encounterRepository)
+    fun provideMarkReturnedEncounterAsRevisedUseCase(encounterRepository: EncounterRepository): MarkReturnedEncountersAsRevisedUseCase {
+        return MarkReturnedEncountersAsRevisedUseCase(encounterRepository)
     }
 
     @Provides
     fun provideFetchReturnedEncounterUseCase(
             persistReturnedEncountersUseCase: PersistReturnedEncountersUseCase,
-            markReturnedEncounterAsRevisedUseCase: MarkReturnedEncounterAsRevisedUseCase,
+            markReturnedEncountersAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase,
             encounterRepository: EncounterRepository
     ): FetchReturnedClaimsUseCase {
-        return FetchReturnedClaimsUseCase(persistReturnedEncountersUseCase, markReturnedEncounterAsRevisedUseCase, encounterRepository)
+        return FetchReturnedClaimsUseCase(persistReturnedEncountersUseCase, markReturnedEncountersAsRevisedUseCase, encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadReturnedClaimsCountUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadReturnedClaimsCountUseCase {
+        return LoadReturnedClaimsCountUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadReturnedClaimsUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadReturnedClaimsUseCase {
+        return LoadReturnedClaimsUseCase(encounterRepository)
     }
 }
