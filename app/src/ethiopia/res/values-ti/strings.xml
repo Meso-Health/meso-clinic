@@ -60,6 +60,7 @@
         <item quantity="other">%d አገልግሎት/አቅርቦት ዝርዝር</item>
     </plurals>
     <string name="today_wrapper">ሎማዓንቲ (%1$s)</string>
+    <string name="today">ሎማዓንቲ</string>
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">ኩነታት</string>

@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_author
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
@@ -55,6 +56,7 @@ import org.watsi.uhp.R.string.add_clickable
 import org.watsi.uhp.R.string.edit_clickable
 import org.watsi.uhp.R.string.none
 import org.watsi.uhp.R.string.today_wrapper
+import org.watsi.uhp.R.string.today
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -205,15 +207,24 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState.encounter.occurredAt?.let {
             val providerCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
-            provider_comment_date.text = resources.getQuantityString(
-                comment_age, providerCommentDaysAgo, providerCommentDaysAgo
-            )
+            provider_comment_date.text = if (providerCommentDaysAgo > 0) {
+                resources.getQuantityString(
+                    comment_age, providerCommentDaysAgo, providerCommentDaysAgo
+                )
+            } else {
+                getString(today)
+            }
+
         }
         encounterFlowState.encounter.adjudicatedAt?.let {
             val branchCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
-            branch_comment_date.text = resources.getQuantityString(
-                comment_age, branchCommentDaysAgo, branchCommentDaysAgo
-            )
+            branch_comment_date.text = if (branchCommentDaysAgo > 0) {
+                resources.getQuantityString(
+                    comment_age, branchCommentDaysAgo, branchCommentDaysAgo
+                )
+            } else {
+                getString(today)
+            }
         }
 
         provider_comment_text.text = if (encounterFlowState.encounter.providerComment != null) {
