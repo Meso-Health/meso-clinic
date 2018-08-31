@@ -60,6 +60,7 @@
     <string name="comment_label">Comment</string>
     <string name="add_clickable"><u>Add</u></string>
     <string name="comment_prompt">Add a comment...</string>
+    <string name="resubmit">Resubmit Claim</string>
     <string name="today">Today</string>
 
     <!-- EncounterFragment -->

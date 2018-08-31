@@ -8,17 +8,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
-import java.util.UUID
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
-    private val createMemberUseCase: CreateMemberUseCase
+    private val createMemberUseCase: CreateMemberUseCase,
+    private val reviseMemberAndClaimUseCase: ReviseMemberAndClaimUseCase
 ) : ViewModel() {
 
     @Inject lateinit var logger: Logger
@@ -69,24 +68,7 @@ class ReceiptViewModel @Inject constructor(
                             createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
                         }
                         Encounter.AdjudicationState.RETURNED -> {
-                            // TODO: move this logic into it's own usecase (to be done in: https://www.pivotaltracker.com/story/show/159841813)
-
-                            // create new member:
-                            val newMemberId = UUID.randomUUID()
-                            val newMember = it.copy(id = newMemberId)
-
-                            createMemberUseCase.execute(newMember).blockingAwait()
-
-                            // create new encounter with new member and set old encounter ID on revisedEncounterId:
-                            val oldEncounterId = encounterFlowState.encounter.id
-                            val newEncounter = encounterFlowState.encounter.copy(id = UUID.randomUUID(), memberId = newMemberId, revisedEncounterId = oldEncounterId)
-
-                            // create new encounter items:
-                            val newEncounterItems = encounterFlowState.encounterItems.map {
-                                EncounterItemWithBillable(it.encounterItem.copy(id = UUID.randomUUID()), it.billable)
-                            }
-
-                            createEncounterUseCase.execute(EncounterWithItemsAndForms(newEncounter, newEncounterItems, emptyList(), encounterFlowState.diagnoses)).blockingAwait()
+                            reviseMemberAndClaimUseCase.execute(it, encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
                         }
                         else -> {
                             logger.error("Adjudication state must be PENDING or RETURNED")

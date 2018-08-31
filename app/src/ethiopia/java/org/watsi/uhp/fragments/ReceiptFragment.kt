@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_author
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.resubmit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
@@ -55,6 +56,7 @@ import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.string.add_clickable
 import org.watsi.uhp.R.string.edit_clickable
 import org.watsi.uhp.R.string.none
+import org.watsi.uhp.R.string.resubmit
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.R.string.today
 import org.watsi.uhp.activities.ClinicActivity
@@ -197,11 +199,17 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         save_button.setOnClickListener {
             submitEncounter()
         }
+
+        resubmit_button.setOnClickListener {
+            submitEncounter()
+        }
     }
 
     private fun displayReturnedClaimInfo() {
         adjudication_container.visibility = View.VISIBLE
         date_spacer_container.visibility = View.VISIBLE
+        save_button.visibility = View.GONE
+        resubmit_button.visibility = View.VISIBLE
 
         claim_id.text = encounterFlowState.encounter.shortenedClaimId()
 
