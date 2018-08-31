@@ -51,7 +51,7 @@
     <string name="edit_claim_button">Edit Claim</string>
     <string name="claim_id_label">Claim ID</string>
     <string name="comments">Comments</string>
-    <string name="provider_label">You</string>
+    <string name="provider_label">Provider</string>
     <string name="branch_label">EHIA</string>
     <plurals name="comment_age">
         <item quantity="one">%d day ago</item>
