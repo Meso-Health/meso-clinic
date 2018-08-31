@@ -108,7 +108,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
-        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
+        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt, encounterFlowState.encounter.providerComment)
             .observe(this, Observer { it?.let { viewState ->
                     val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
                     date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
@@ -196,8 +196,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         edit_button.setOnClickListener {
             val occurredAt = viewModel.occurredAt() ?: encounterFlowState.encounter.occurredAt
             val backdatedOccurredAt = viewModel.backdatedOccurredAt() ?: encounterFlowState.encounter.backdatedOccurredAt
+            val comment = viewModel.comment()
 
-            encounterFlowState.encounter = encounterFlowState.encounter.copy(occurredAt = occurredAt, backdatedOccurredAt = backdatedOccurredAt)
+            encounterFlowState.encounter = encounterFlowState.encounter.copy(occurredAt = occurredAt, backdatedOccurredAt = backdatedOccurredAt, providerComment = comment)
             navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
         }
 
