@@ -194,6 +194,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
 
         edit_button.setOnClickListener {
+            val occurredAt = viewModel.occurredAt() ?: encounterFlowState.encounter.occurredAt
+            val backdatedOccurredAt = viewModel.backdatedOccurredAt() ?: encounterFlowState.encounter.backdatedOccurredAt
+
+            encounterFlowState.encounter = encounterFlowState.encounter.copy(occurredAt = occurredAt, backdatedOccurredAt = backdatedOccurredAt)
             navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
         }
 
