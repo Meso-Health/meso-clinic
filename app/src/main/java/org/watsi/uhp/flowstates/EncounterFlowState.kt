@@ -14,7 +14,8 @@ data class EncounterFlowState(var encounter: Encounter,
                               var encounterItems: List<EncounterItemWithBillable>,
                               var encounterForms: List<EncounterForm>,
                               var diagnoses: List<Diagnosis>,
-                              var member: Member? = null) : Serializable {
+                              var member: Member? = null,
+                              var newProviderComment: String? = null) : Serializable {
 
     companion object {
         fun fromEncounterWithExtras(encounterWithExtras: EncounterWithExtras): EncounterFlowState {
