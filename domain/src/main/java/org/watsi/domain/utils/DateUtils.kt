@@ -69,6 +69,10 @@ object DateUtils {
         return ChronoUnit.YEARS.between(date, LocalDate.now(clock)).toInt()
     }
 
+    fun getDaysAgo(date: LocalDate, clock: Clock = Clock.systemDefaultZone()): Int {
+        return ChronoUnit.DAYS.between(date, LocalDate.now(clock)).toInt()
+    }
+
     fun getSecondsAgo(time: Long, clock: Clock = Clock.systemDefaultZone()): Double {
         return (Instant.now(clock).toEpochMilli() - time) / 1000.0
     }

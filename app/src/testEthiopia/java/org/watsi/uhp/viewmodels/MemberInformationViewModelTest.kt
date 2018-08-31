@@ -31,7 +31,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     @Before
     fun setup() {
         viewModel = MemberInformationViewModel(clock)
-        observable = viewModel.getObservable(membershipNumber)
+        observable = viewModel.getObservable(null, membershipNumber)
         observable.observeForever{}
     }
 

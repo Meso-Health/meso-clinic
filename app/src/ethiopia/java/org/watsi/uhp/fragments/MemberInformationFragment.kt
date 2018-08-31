@@ -54,6 +54,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
 
     companion object {
         const val PARAM_MEMBERSHIP_NUMBER = "membership_number"
+        const val PARAM_ENCOUNTER = "encounter"
 
         fun withMembershipNumber(membershipNumber: String): MemberInformationFragment {
             val fragment = MemberInformationFragment()
@@ -62,20 +63,47 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             }
             return fragment
         }
+
+        fun forEncounter(encounter: EncounterFlowState): MemberInformationFragment {
+            val fragment = MemberInformationFragment()
+            fragment.arguments = Bundle().apply {
+                putSerializable(PARAM_ENCOUNTER, encounter)
+            }
+            return fragment
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        membershipNumber = arguments.getString(PARAM_MEMBERSHIP_NUMBER)
-        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
-        encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
+
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberInformationViewModel::class.java)
-        observable = viewModel.getObservable(membershipNumber)
+
+        // for case when it's coming from new claim screen (new claim flow):
+        arguments.getString(PARAM_MEMBERSHIP_NUMBER)?.let { membershipNumber ->
+            val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
+            encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
+
+            observable = viewModel.getObservable(null, membershipNumber)
+        }
+
+        // for case when it's coming from returned claim screen (resubmission flow):
+        arguments.getSerializable(PARAM_ENCOUNTER)?.let { encounter ->
+            encounterFlowState = encounter as EncounterFlowState
+
+            observable = viewModel.getObservable(encounterFlowState, null)
+        }
+
         observable.observe(this, Observer {
             it?.let { viewState ->
-                setErrors(it.errors)
+                setErrors(viewState.errors)
                 gender_field.setGender(viewState.gender)
                 membership_number.setText(viewState.membershipNumber)
+
+                age_input.setText(if (viewState.age == null) "" else viewState.age.toString())
+                age_input.setSelection(age_input.text.length)
+
+                medical_record_number.setText(viewState.medicalRecordNumber)
+                medical_record_number.setSelection(medical_record_number.text.length)
             }
         })
     }
@@ -121,7 +149,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             listOf(AgeUnit.years, AgeUnit.months, AgeUnit.days).map {
                 AgeUnitPresenter.toDisplayedString(it, context)
             },
-            AgeUnitPresenter.toDisplayedString(AgeUnit.years, context),
+            AgeUnitPresenter.toDisplayedString(viewModel.getInitialAgeUnit(encounterFlowState), context),
             { selectedString: String? ->
                 if (selectedString == null) {
                     logger.error("selectedString is null when onItemSelected is called in MemberInformationFragment")

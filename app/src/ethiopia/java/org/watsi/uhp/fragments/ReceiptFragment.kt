@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.edit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
@@ -192,6 +193,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             drug_and_supply_items_list.visibility = View.VISIBLE
         }
 
+        edit_button.setOnClickListener {
+            navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
+        }
+
         comment_container.setOnClickListener {
             launchAddCommentDialog()
         }
@@ -206,6 +211,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun displayReturnedClaimInfo() {
+        edit_button.visibility = View.VISIBLE
         adjudication_container.visibility = View.VISIBLE
         date_spacer_container.visibility = View.VISIBLE
         save_button.visibility = View.GONE

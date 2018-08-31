@@ -48,6 +48,7 @@
     <string name="price" translatable="false">%1$s</string>
     <string name="member_info_section_label">Member Information</string>
     <string name="none">None</string>
+    <string name="edit_claim_button">Edit Claim</string>
     <string name="claim_id_label">Claim ID</string>
     <string name="comments">Comments</string>
     <string name="provider_label">You</string>

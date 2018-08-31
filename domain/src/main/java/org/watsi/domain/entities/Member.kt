@@ -79,6 +79,10 @@ data class Member(
         return DateUtils.getMonthsAgo(birthdate, clock)
     }
 
+    fun getAgeDays(clock: Clock): Int {
+        return DateUtils.getDaysAgo(birthdate, clock)
+    }
+
     /**
      * Returns quantity in months if below 2 or in years otherwise, regardless of birthdate accuracy.
      */

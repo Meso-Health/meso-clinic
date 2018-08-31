@@ -17,15 +17,63 @@ import javax.inject.Inject
 class MemberInformationViewModel @Inject constructor(private val clock: Clock) : ViewModel() {
     private val observable = MutableLiveData<ViewState>()
 
-    fun getObservable(membershipNumber: String): LiveData<ViewState> {
+    fun getObservable(encounter: EncounterFlowState?, membershipNumber: String?): LiveData<ViewState> {
+        encounter?.let {
+            return getObservableWithEncounter(it)
+        }
+
+        membershipNumber?.let {
+            return getObservableWithMembershipNumber(it)
+        }
+
+        throw IllegalStateException("Observable requires either encounter or membershipNumber")
+    }
+
+    private fun getObservableWithMembershipNumber(membershipNumber: String): LiveData<ViewState> {
         observable.value = ViewState(membershipNumber = membershipNumber)
         return observable
     }
 
+    private fun getObservableWithEncounter(encounter: EncounterFlowState): LiveData<ViewState> {
+        encounter.member?.let {
+            if (it.membershipNumber == null) {
+                throw IllegalStateException("Membership Number should not be null")
+            }
+
+            val membershipNumber = it.membershipNumber ?: ""
+            val age = when (it.birthdateAccuracy) {
+                Member.DateAccuracy.Y -> it.getAgeYears(clock)
+                Member.DateAccuracy.M -> it.getAgeMonths(clock)
+                Member.DateAccuracy.D -> it.getAgeDays(clock)
+            }
+            val ageUnit = getInitialAgeUnit(encounter)
+            val gender = it.gender
+            val medicalRecordNumber = it.medicalRecordNumber
+
+            observable.value = ViewState(membershipNumber = membershipNumber, age = age, ageUnit = ageUnit, gender = gender, medicalRecordNumber = medicalRecordNumber)
+            return observable
+        }
+
+        throw IllegalStateException("No member on encounter")
+    }
+
+    fun getInitialAgeUnit(encounter: EncounterFlowState): AgeUnit {
+        encounter.member?.let {
+            when (it.birthdateAccuracy) {
+                Member.DateAccuracy.Y -> return AgeUnit.years
+                Member.DateAccuracy.M -> return AgeUnit.months
+                Member.DateAccuracy.D -> return AgeUnit.days
+            }
+        }
+        return AgeUnit.years
+    }
+
     fun onAgeChange(age: Int?) {
         observable.value?.let {
-            val errors = it.errors.filterNot { it.key == MEMBER_AGE_ERROR }
-            observable.value = it.copy(age = age, errors = errors)
+            if (age != it.age) {
+                val errors = it.errors.filterNot { it.key == MEMBER_AGE_ERROR }
+                observable.value = it.copy(age = age, errors = errors)
+            }
         }
     }
 
@@ -42,8 +90,10 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
 
     fun onMedicalRecordNumberChange(medicalRecordNumber: String?) {
         observable.value?.let {
-            val errors = it.errors.filterNot { it.key == MEMBER_MEDICAL_RECORD_NUMBER_ERROR}
-            observable.value = it.copy(medicalRecordNumber = medicalRecordNumber, errors = errors)
+            if (medicalRecordNumber != it.medicalRecordNumber) {
+                val errors = it.errors.filterNot { it.key == MEMBER_MEDICAL_RECORD_NUMBER_ERROR}
+                observable.value = it.copy(medicalRecordNumber = medicalRecordNumber, errors = errors)
+            }
         }
     }
 
