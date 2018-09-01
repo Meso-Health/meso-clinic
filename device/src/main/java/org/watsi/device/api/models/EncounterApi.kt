@@ -23,6 +23,8 @@ data class EncounterApi(
         @SerializedName("diagnosis_ids") val diagnoses: JsonArray,
         @SerializedName("encounter_items") val encounterItems: List<EncounterItemApi>,
         @SerializedName("visit_type") val visitType: String?,
+        @SerializedName("revised_encounter_id") val revisedEncounterId: UUID?,
+        @SerializedName("provider_comment") val providerComment: String?,
         @SerializedName("claim_id") val claimId: String
 ) {
 
@@ -36,6 +38,8 @@ data class EncounterApi(
         diagnoses = Gson().fromJson(encounterWithItems.encounter.diagnoses.toString(), JsonArray::class.java),
         encounterItems = encounterWithItems.encounterItems.map { EncounterItemApi(it) },
         visitType = encounterWithItems.encounter.visitType,
+        revisedEncounterId = encounterWithItems.encounter.revisedEncounterId,
+        providerComment = encounterWithItems.encounter.providerComment,
         claimId = encounterWithItems.encounter.claimId
     )
 }
