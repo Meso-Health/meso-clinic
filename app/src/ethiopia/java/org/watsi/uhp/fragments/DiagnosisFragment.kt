@@ -105,7 +105,12 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
         })
 
-        RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
+        RecyclerViewHelper.setRecyclerView(
+            recyclerView = selected_diagnosis_list,
+            adapter = diagnosisAdapter,
+            context = context,
+            onSwipe = { position: Int -> diagnosisAdapter.removeAt(position) }
+        )
 
         save_button.setOnClickListener {
             viewModel.updateEncounterWithDiagnoses(encounterFlowState)

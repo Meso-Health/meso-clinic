@@ -78,6 +78,12 @@
     </plurals>
     <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
+    <!-- EditPriceFragment -->
+    <string name="edit_price_fragment_label">Edit Price</string>
+    <string name="unit_price_label">Unit Price</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="total_price_label">Total Price</string>
+
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">Returned Claims</string>
     <string name="bullet" translatable="false">\u2022</string>

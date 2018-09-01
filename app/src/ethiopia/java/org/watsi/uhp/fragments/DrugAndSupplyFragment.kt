@@ -137,10 +137,24 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
+                },
+                onPriceTap = { encounterItemId: UUID ->
+                    viewModel.getEncounterFlowState()?.let { flowState ->
+                        encounterFlowState.encounterItems = flowState.encounterItems
+                        navigationManager.goTo(EditPriceFragment.forEncounterItem(
+                                encounterItemId, encounterFlowState))
+                    } ?: run {
+                        logger.error("EncounterFlowState not set")
+                    }
                 }
         )
 
-        RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
+        RecyclerViewHelper.setRecyclerView(
+            recyclerView = line_items_list,
+            adapter = encounterItemAdapter,
+            context = context,
+            onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) }
+        )
 
         drug_search.suggestionsAdapter = SimpleCursorAdapter(
                 activity, R.layout.item_billable_search_suggestion, null,

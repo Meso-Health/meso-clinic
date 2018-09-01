@@ -1,6 +1,7 @@
 package org.watsi.uhp.views
 
 import android.content.Context
+import android.graphics.Paint
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.View
@@ -9,8 +10,9 @@ import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
-import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.remove_line_item_btn
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
 import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.uhp.utils.CurrencyUtil
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -21,7 +23,7 @@ class EncounterItemListItem @JvmOverloads constructor(
             encounterItemRelation: EncounterItemWithBillable,
             onQuantitySelected: () -> Unit,
             onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
-            onRemoveEncounterItem: (encounterItemId: UUID) -> Unit
+            onPriceTap: ((encounterItemId: UUID) -> Unit)?
     ) {
         val billable = encounterItemRelation.billable
         val encounterItem = encounterItemRelation.encounterItem
@@ -65,6 +67,11 @@ class EncounterItemListItem @JvmOverloads constructor(
             false
         }
 
-        remove_line_item_btn.setOnClickListener { onRemoveEncounterItem(encounterItem.id) }
+        line_item_price.text = CurrencyUtil.formatMoney(encounterItemRelation.price())
+
+        onPriceTap?.let {
+            line_item_price.paintFlags = line_item_price.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            line_item_price.setOnClickListener { onPriceTap(encounterItem.id) }
+        }
     }
 }
