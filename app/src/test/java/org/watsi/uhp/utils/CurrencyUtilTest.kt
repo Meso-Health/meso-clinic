@@ -21,4 +21,16 @@ class CurrencyUtilTest {
         assertEquals(CurrencyUtil.formatMoney(0, "uganda"), "0")
         assertEquals(CurrencyUtil.formatMoney(124567800, "uganda"), "124567800")
     }
+
+    @Test
+    fun parseMoney_UGX() {
+        assertEquals(CurrencyUtil.parseMoney("255", "uganda"), 255)
+    }
+
+    @Test
+    fun parseMoney_ETH() {
+        assertEquals(CurrencyUtil.parseMoney("25", "ethiopia"), 2500)
+        assertEquals(CurrencyUtil.parseMoney("310.00", "ethiopia"), 31000)
+        assertEquals(CurrencyUtil.parseMoney("125.50", "ethiopia"), 12550)
+    }
 }
