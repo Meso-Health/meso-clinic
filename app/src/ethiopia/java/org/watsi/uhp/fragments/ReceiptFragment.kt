@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.edit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
@@ -23,11 +22,12 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_spacer_container
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_items_list
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_none
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_items_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_line_divider
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_none
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.edit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.gender_and_age
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
@@ -56,8 +56,8 @@ import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.string.add_clickable
 import org.watsi.uhp.R.string.edit_clickable
 import org.watsi.uhp.R.string.none
-import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.R.string.today
+import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -346,7 +346,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     private fun submitEncounter(resubmit: Boolean) {
 
-        val toFragment= if (resubmit) {
+        val toFragment = if (resubmit) {
             ReturnedClaimsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             )
