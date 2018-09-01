@@ -34,7 +34,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_author
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.resubmit_button
@@ -57,7 +56,6 @@ import org.watsi.uhp.R.plurals.diagnosis_count
 import org.watsi.uhp.R.string.add_clickable
 import org.watsi.uhp.R.string.edit_clickable
 import org.watsi.uhp.R.string.none
-import org.watsi.uhp.R.string.resubmit
 import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.R.string.today
 import org.watsi.uhp.activities.ClinicActivity
@@ -202,11 +200,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
 
         save_button.setOnClickListener {
-            submitEncounter()
+            submitEncounter(false)
         }
 
         resubmit_button.setOnClickListener {
-            submitEncounter()
+            submitEncounter(true)
         }
     }
 
@@ -346,11 +344,20 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         backdateAlertDialog = builder.create()
     }
 
-    private fun submitEncounter() {
-        viewModel.submitEncounter(encounterFlowState).subscribe({
-            navigationManager.popTo(NewClaimFragment.withSnackbarMessage(
+    private fun submitEncounter(resubmit: Boolean) {
+
+        val toFragment= if (resubmit) {
+            ReturnedClaimsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
-            ))
+            )
+        } else {
+            NewClaimFragment.withSnackbarMessage(
+                getString(R.string.encounter_submitted)
+            )
+        }
+
+        viewModel.submitEncounter(encounterFlowState).subscribe({
+            navigationManager.popTo(toFragment)
         }, {
             logger.error(it)
         })
