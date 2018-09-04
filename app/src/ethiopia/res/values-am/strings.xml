@@ -114,4 +114,10 @@
     <string name="none">ምንም</string>
     <string name="receipt_total">ድምር</string>
 
+    <!-- EditPriceFragment -->
+    <string name="edit_price_fragment_label">Edit Price</string>
+    <string name="unit_price_label">Unit Price</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="total_price_label">Total Price</string>
+
 </resources>

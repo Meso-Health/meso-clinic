@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import org.watsi.uhp.R
 
 fun RecyclerView.scrollToBottom() {
@@ -27,7 +28,8 @@ object RecyclerViewHelper {
             recyclerView: RecyclerView,
             adapter: RecyclerView.Adapter<VH>,
             context: Context,
-            nestedScrollingEnabled: Boolean = true
+            nestedScrollingEnabled: Boolean = true,
+            onSwipe: ((position: Int) -> Unit)? = null
     ) {
         val layoutManager = LinearLayoutManager(context)
         val listItemDivider = DividerItemDecoration(context, layoutManager.orientation)
@@ -36,5 +38,16 @@ object RecyclerViewHelper {
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(listItemDivider)
         recyclerView.isNestedScrollingEnabled = nestedScrollingEnabled
+
+        onSwipe?.let{
+            val swipeHandler = object : SwipeCallback(context) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    it(viewHolder.adapterPosition)
+                }
+            }
+            val itemTouchHelper = ItemTouchHelper(swipeHandler)
+
+            itemTouchHelper.attachToRecyclerView(recyclerView)
+        }
     }
 }

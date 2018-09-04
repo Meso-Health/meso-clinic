@@ -9,6 +9,7 @@ import org.watsi.uhp.di.ViewModelKey
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.DrugAndSupplyViewModel
+import org.watsi.uhp.viewmodels.EditPriceViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
@@ -29,6 +30,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(DrugAndSupplyViewModel::class)
     abstract fun bindDrugAndSupplyViewModel(viewModel: DrugAndSupplyViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditPriceViewModel::class)
+    abstract fun bindEditPriceViewModel(viewModel: EditPriceViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -158,7 +158,8 @@ class EncounterFragment : DaggerFragment() {
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
-                }
+                },
+                onPriceTap = null
         )
 
         RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)

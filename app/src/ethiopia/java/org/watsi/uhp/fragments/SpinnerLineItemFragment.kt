@@ -149,10 +149,16 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
-                }
+                },
+                onPriceTap = null
         )
 
-        RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
+        RecyclerViewHelper.setRecyclerView(
+            recyclerView = line_items_list,
+            adapter = encounterItemAdapter,
+            context = context,
+            onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) }
+        )
 
         billable_spinner.adapter = billableAdapter
         billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

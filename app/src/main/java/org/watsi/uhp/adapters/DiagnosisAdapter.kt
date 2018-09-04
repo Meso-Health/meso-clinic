@@ -26,7 +26,7 @@ class DiagnosisAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val diagnosis = diagnoses[position]
         diagnosisListItemView = holder.itemView as DiagnosisListItem
-        diagnosisListItemView.setDiagnosis(diagnosis, onRemoveDiagnosis)
+        diagnosisListItemView.setDiagnosis(diagnosis)
     }
 
     fun setDiagnoses(updatedDiagnoses: List<Diagnosis>) {
@@ -35,6 +35,10 @@ class DiagnosisAdapter(
             diagnoses.addAll(updatedDiagnoses)
             notifyDataSetChanged()
         }
+    }
+
+    fun removeAt(position: Int) {
+        onRemoveDiagnosis(diagnoses[position])
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

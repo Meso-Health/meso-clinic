@@ -19,6 +19,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReturnedClaimListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReturnedClaimsViewModel
@@ -32,6 +33,20 @@ class ReturnedClaimsFragment : DaggerFragment() {
     lateinit var viewModel: ReturnedClaimsViewModel
     lateinit var returnedClaimsAdapter: ReturnedClaimListItemAdapter
 
+    private var snackbarMessageToShow: String? = null
+
+    companion object {
+        const val PARAM_SNACKBAR_MESSAGE = "snackbar_message"
+
+        fun withSnackbarMessage(message: String): ReturnedClaimsFragment {
+            val fragment = ReturnedClaimsFragment()
+            fragment.arguments = Bundle().apply {
+                putString(PARAM_SNACKBAR_MESSAGE, message)
+            }
+            return fragment
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,6 +57,8 @@ class ReturnedClaimsFragment : DaggerFragment() {
                 updateReturnedClaims(viewState.returnedEncounters)
             }
         })
+
+        snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
     private fun updateReturnedClaims(returnedClaims: List<EncounterWithExtras>) {
@@ -78,6 +95,11 @@ class ReturnedClaimsFragment : DaggerFragment() {
                 ))
             }
         )
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(returned_claims_list, context, snackbarMessage)
+            snackbarMessageToShow = null
+        }
     }
 
     override fun onResume() {
