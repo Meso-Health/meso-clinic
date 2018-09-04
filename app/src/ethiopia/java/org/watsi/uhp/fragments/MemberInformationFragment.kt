@@ -222,7 +222,12 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         return Single.create<Boolean> { single ->
             AlertDialog.Builder(activity)
                     .setMessage(R.string.exit_form_alert)
-                    .setPositiveButton(R.string.yes) { _, _ -> single.onSuccess(true) }
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        single.onSuccess(true)
+                        if (encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED) {
+                            navigationManager.popTo(ReceiptFragment.forEncounter(encounterFlowState))
+                        }
+                    }
                     .setNegativeButton(R.string.cancel) { _, _ -> single.onSuccess(false) }
                     .setOnDismissListener { single.onSuccess(false) }
                     .show()
