@@ -84,11 +84,21 @@ data class Member(
     }
 
     /**
-     * Returns quantity in months if below 2 or in years otherwise, regardless of birthdate accuracy.
+     * Returns quantity in days if under 1 month old, quantity in months if under 2 years old,
+     * or in years otherwise, regardless of birthdate accuracy.
      */
     fun getDisplayAge(clock: Clock): String {
         val ageYears = getAgeYears(clock)
-        return if (ageYears >= 2) "${ageYears.toString()} years" else "${getAgeMonths(clock)} months"
+        val ageMonths = getAgeMonths(clock)
+        val ageDays = getAgeDays(clock)
+
+        if (ageYears >= 2) {
+            return "${ageYears} years"
+        } else if (ageMonths >= 1) {
+            return "${ageMonths} months"
+        } else {
+            return "${ageDays} days"
+        }
     }
 
     companion object {
