@@ -82,7 +82,7 @@ data class Age (val quantity: Int, val unit: AgeUnit) {
 
     fun toBirthdateWithAccuracy(clock: Clock = Clock.systemDefaultZone()): Pair<LocalDate, Member.DateAccuracy> {
         return when (unit) {
-            AgeUnit.days -> Pair(LocalDate.now(clock).minusMonths(quantity.toLong()), Member.DateAccuracy.D)
+            AgeUnit.days -> Pair(LocalDate.now(clock).minusDays(quantity.toLong()), Member.DateAccuracy.D)
             AgeUnit.months -> Pair(LocalDate.now(clock).minusMonths(quantity.toLong()), Member.DateAccuracy.M)
             AgeUnit.years -> Pair(LocalDate.now(clock).minusYears(quantity.toLong()), Member.DateAccuracy.Y)
         }
