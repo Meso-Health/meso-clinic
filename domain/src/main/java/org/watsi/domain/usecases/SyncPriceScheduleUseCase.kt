@@ -3,6 +3,7 @@ package org.watsi.domain.usecases
 import io.reactivex.Completable
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.PriceScheduleRepository
 
 class SyncPriceScheduleUseCase(
         private val priceScheduleRepository: PriceScheduleRepository,

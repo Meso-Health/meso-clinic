@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.PriceScheduleRepository
 
 @RunWith(MockitoJUnitRunner::class)
 class SyncPriceScheduleUseCaseTest {
