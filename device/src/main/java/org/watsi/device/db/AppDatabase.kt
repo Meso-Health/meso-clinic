@@ -21,6 +21,7 @@ import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
+import org.watsi.device.db.models.PriceScheduleModel
 
 @Database(exportSchema = true, version = 1, entities = [
     BillableModel::class,
@@ -31,7 +32,8 @@ import org.watsi.device.db.models.PhotoModel
     EncounterFormModel::class,
     IdentificationEventModel::class,
     MemberModel::class,
-    PhotoModel::class
+    PhotoModel::class,
+    PriceScheduleModel::class
 ])
 @TypeConverters(TypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
