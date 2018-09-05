@@ -24,8 +24,8 @@ class ReceiptViewModel @Inject constructor(
 
     private val observable = MutableLiveData<ViewState>()
 
-    fun getObservable(occurredAt: Instant, backdatedOccurredAt: Boolean): LiveData<ViewState> {
-        observable.value = ViewState(occurredAt, backdatedOccurredAt)
+    fun getObservable(occurredAt: Instant, backdatedOccurredAt: Boolean, comment: String?): LiveData<ViewState> {
+        observable.value = ViewState(occurredAt, backdatedOccurredAt, comment)
         return observable
     }
 
@@ -33,12 +33,13 @@ class ReceiptViewModel @Inject constructor(
         observable.value = observable.value?.copy(occurredAt = instant, backdatedOccurredAt = true)
     }
 
-    fun updateEncounterWithDate(encounterFlowState: EncounterFlowState) {
+    fun updateEncounterWithDateAndComment(encounterFlowState: EncounterFlowState) {
         observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt
             )
+            encounterFlowState.newProviderComment = viewState.comment
         }
     }
 
