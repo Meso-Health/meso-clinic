@@ -91,7 +91,7 @@ interface CoverageApi {
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int,
             @Body priceSchedule: PriceScheduleApi
-    )
+    ): Completable
 
     @POST("providers/{providerId}/encounters")
     fun postEncounter(
