@@ -23,6 +23,7 @@ abstract class DaoBaseTest {
     lateinit var identificationEventDao: IdentificationEventDao
     lateinit var memberDao: MemberDao
     lateinit var photoDao: PhotoDao
+    lateinit var priceScheduleDao: PriceScheduleDao
 
     // Instantly execute all DB operations in Dao tests
     @Rule
@@ -42,6 +43,7 @@ abstract class DaoBaseTest {
         identificationEventDao = database.identificationEventDao()
         memberDao = database.memberDao()
         photoDao = database.photoDao()
+        priceScheduleDao = database.priceScheduleDao()
     }
 
     @After

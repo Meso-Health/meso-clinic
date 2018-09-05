@@ -9,6 +9,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
+import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.domain.entities.Billable
 import java.util.UUID
 
@@ -22,7 +23,7 @@ interface BillableDao {
     fun insertWithDelta(model: BillableModel, delta: DeltaModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun upsert(models: List<BillableModel>)
+    fun upsert(billableModels: List<BillableModel>, priceScheduleModels: List<PriceScheduleModel>)
 
     @Delete
     fun delete(model: BillableModel)

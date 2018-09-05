@@ -18,9 +18,11 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DeltaModelFactory
+import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
@@ -109,11 +111,26 @@ class BillableRepositoryImplTest {
     fun fetch_hasToken_savesResponse() {
         val authToken = AuthenticationTokenFactory.build()
         val noChange = BillableModelFactory.build(clock = clock)
-        val noChangeApi = BillableApi(noChange.toBillable())
+        val priceScheduleModelForNoChangeBillable = PriceScheduleModelFactory.build(noChange.id, clock = clock)
+        val noChangeApi = BillableWithPriceScheduleApi(
+            billable = noChange.toBillable(),
+            activePriceSchedule = priceScheduleModelForNoChangeBillable.toPriceSchedule()
+        )
+
         val serverEdited = BillableModelFactory.build(name = "fucap", clock = clock)
-        val serverEditedApi = BillableApi(serverEdited.copy(name = "flucap").toBillable())
+        val priceScheduleModelForServerEditedBillable = PriceScheduleModelFactory.build(serverEdited.id, clock = clock)
+        val serverEditedApi = BillableWithPriceScheduleApi(
+            billable = serverEdited.copy(name = "flucap").toBillable(),
+            activePriceSchedule = priceScheduleModelForServerEditedBillable.toPriceSchedule()
+        )
+
         val serverAdded = BillableModelFactory.build(clock = clock)
-        val serverAddedApi = BillableApi(serverAdded.toBillable())
+        val priceScheduleModelForServerAddedBillable = PriceScheduleModelFactory.build(serverAdded.id, clock = clock)
+        val serverAddedApi = BillableWithPriceScheduleApi(
+            billable = serverAdded.toBillable(),
+            activePriceSchedule = priceScheduleModelForServerAddedBillable.toPriceSchedule()
+        )
+
         val serverRemoved = BillableModelFactory.build(clock = clock)
         val clientAdded = BillableModelFactory.build(clock = clock)
 
@@ -123,6 +140,7 @@ class BillableRepositoryImplTest {
                 serverEditedApi,
                 serverAddedApi
         )))
+
         whenever(mockDao.all()).thenReturn(Single.just(listOf(
                 noChange,
                 serverEdited,
@@ -137,11 +155,18 @@ class BillableRepositoryImplTest {
 
         verify(mockApi).getBillables(authToken.getHeaderString(), authToken.user.providerId)
         verify(mockDao).delete(listOf(serverRemoved.id))
-        verify(mockDao).upsert(listOf(
+        verify(mockDao).upsert(
+            billableModels = listOf(
                 noChange,
                 serverEdited.copy(name = "flucap"),
                 serverAdded
-        ))
+            ),
+            priceScheduleModels = listOf(
+                priceScheduleModelForNoChangeBillable,
+                priceScheduleModelForServerEditedBillable,
+                priceScheduleModelForServerAddedBillable
+            )
+        )
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())
     }
 

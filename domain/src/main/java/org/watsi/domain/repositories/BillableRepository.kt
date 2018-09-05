@@ -5,6 +5,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import java.util.UUID
 
 interface BillableRepository {

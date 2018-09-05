@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7c704636f5dd29d75aa567f514096e39",
+    "identityHash": "3b672bcb6b4fc485ef2f35f3601122bb",
     "entities": [
       {
         "tableName": "billables",
@@ -633,11 +633,67 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "price_schedules",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `issuedAt` INTEGER NOT NULL, `billableId` TEXT NOT NULL, `price` INTEGER NOT NULL, `previousPriceScheduleId` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "issuedAt",
+            "columnName": "issuedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "billableId",
+            "columnName": "billableId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "price",
+            "columnName": "price",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "previousPriceScheduleId",
+            "columnName": "previousPriceScheduleId",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7c704636f5dd29d75aa567f514096e39\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3b672bcb6b4fc485ef2f35f3601122bb\")"
     ]
   }
 }

@@ -12,6 +12,7 @@ import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
+import org.watsi.device.db.daos.PriceScheduleDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.DiagnosisModel
@@ -21,6 +22,7 @@ import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
+import org.watsi.device.db.models.PriceScheduleModel
 
 @Database(exportSchema = true, version = 1, entities = [
     BillableModel::class,
@@ -31,7 +33,8 @@ import org.watsi.device.db.models.PhotoModel
     EncounterFormModel::class,
     IdentificationEventModel::class,
     MemberModel::class,
-    PhotoModel::class
+    PhotoModel::class,
+    PriceScheduleModel::class
 ])
 @TypeConverters(TypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -44,4 +47,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun identificationEventDao(): IdentificationEventDao
     abstract fun memberDao(): MemberDao
     abstract fun photoDao(): PhotoDao
+    abstract fun priceScheduleDao(): PriceScheduleDao
 }

@@ -11,6 +11,7 @@ import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
+import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Billable
@@ -60,18 +61,21 @@ class BillableRepositoryImpl(
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
-            Completable.fromAction {
-                val serverBillables = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
-                val serverBillableIds = serverBillables.map { it.id }
+            Completable.fromCallable {
+                val serverBillablesWithPrice = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
+                        .map { it.toBillableWithPriceSchedule() }
+                val serverBillableIds = serverBillablesWithPrice.map { it.billable.id }
                 val clientBillableIds = billableDao.all().blockingGet().map { it.id }
                 val unsyncedClientBillableIds = billableDao.unsynced().blockingGet().map { it.id }
                 val syncedClientBillableIds = clientBillableIds.minus(unsyncedClientBillableIds)
                 val serverRemovedBillableIds = syncedClientBillableIds.minus(serverBillableIds)
 
-                delete(serverRemovedBillableIds).blockingGet()
-                billableDao.upsert(serverBillables.map { billableApi ->
-                    BillableModel.fromBillable(billableApi.toBillable(), clock)
-                })
+                billableDao.upsert(
+                    serverBillablesWithPrice.map { BillableModel.fromBillable(it.billable, clock) },
+                    serverBillablesWithPrice.map { PriceScheduleModel.fromPriceSchedule(it.priceSchedule, clock) }
+                )
+
+                billableDao.delete(serverRemovedBillableIds)
                 preferencesManager.updateBillablesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()

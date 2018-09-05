@@ -15,6 +15,7 @@ import org.watsi.device.db.daos.EncounterFormDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
+import org.watsi.device.db.daos.PriceScheduleDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
 import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
@@ -76,6 +77,10 @@ class DbModule {
     @Singleton
     @Provides
     fun providePhotoDao(db: AppDatabase): PhotoDao = db.photoDao()
+
+    @Singleton
+    @Provides
+    fun providePriceScheduleDao(db: AppDatabase): PriceScheduleDao = db.priceScheduleDao()
 
     @Provides
     fun provideBillableRepository(billableDao: BillableDao,
