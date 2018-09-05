@@ -7,6 +7,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.watsi.device.api.models.AuthenticationTokenApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
@@ -42,7 +43,7 @@ interface CoverageApi {
     fun getBillables(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int
-    ): Single<List<BillableApi>>
+    ): Single<List<BillableWithPriceScheduleApi>>
 
     @GET("diagnoses")
     fun getDiagnoses(

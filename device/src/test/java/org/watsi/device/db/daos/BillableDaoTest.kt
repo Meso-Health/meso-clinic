@@ -3,6 +3,7 @@ package org.watsi.device.db.daos
 import org.junit.Test
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DeltaModelFactory
+import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 
@@ -20,12 +21,31 @@ class BillableDaoTest : DaoBaseTest() {
     @Test
     fun upsert() {
         val persistedBillable = BillableModelFactory.create(billableDao)
+        val persistedPriceSchedule = PriceScheduleModelFactory.create(priceScheduleDao, billableId = persistedBillable.id)
+        val newPriceScheduleForPersistedBillable = PriceScheduleModelFactory.create(priceScheduleDao, billableId = persistedBillable.id)
         val newBillable = BillableModelFactory.build()
+        val priceScheduleForNewBillable = PriceScheduleModelFactory.create(priceScheduleDao, billableId = newBillable.id)
         val updatedBillable = persistedBillable.copy(price = 500)
 
-        billableDao.upsert(listOf(updatedBillable, newBillable))
+        billableDao.upsert(
+            billableModels = listOf(updatedBillable, newBillable),
+            priceScheduleModels = listOf(
+                persistedPriceSchedule,
+                newPriceScheduleForPersistedBillable,
+                priceScheduleForNewBillable
+            )
+        )
 
-        billableDao.all().test().assertValue(listOf(updatedBillable, newBillable))
+        billableDao.all().test().assertValue(listOf(
+            updatedBillable,
+            newBillable
+        ))
+
+        priceScheduleDao.all().test().assertValue(listOf(
+            persistedPriceSchedule,
+            newPriceScheduleForPersistedBillable,
+            priceScheduleForNewBillable
+        ))
     }
 
     @Test
