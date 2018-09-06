@@ -5,7 +5,9 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.entities.PriceSchedule
+import org.watsi.domain.relations.BillableWithPriceSchedule
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
@@ -52,7 +54,7 @@ data class ReturnedEncounterApi(
                 revisedEncounterId = revisedEncounterId,
                 providerComment = providerComment
             ),
-            encounterItems = combineEncounterItemsWithBillables(
+            encounterItemRelations = combineEncounterItemsWithBillables(
                 encounterItemsApi.map { it.toEncounterItem() },
                 billablesApi.map { it.toBillable() }
             ),
@@ -65,11 +67,17 @@ data class ReturnedEncounterApi(
     private fun combineEncounterItemsWithBillables(
         encounterItems: List<EncounterItem>,
         billables: List<Billable>
-    ): List<EncounterItemWithBillable> {
+    ): List<EncounterItemWithBillableAndPrice> {
         return encounterItems.map { encounterItem ->
             val correspondingBillable = billables.find { it.id == encounterItem.billableId }
             if (correspondingBillable != null) {
-                EncounterItemWithBillable(encounterItem, correspondingBillable)
+                // TODO: Fetch price schedules
+                /* This is temp placeholder code until the above TODO is resolved */
+                val priceSchedule = PriceSchedule(UUID.randomUUID(), Instant.now(), correspondingBillable.id, correspondingBillable.price, null)
+                val billableWithPriceSchedule = BillableWithPriceSchedule(correspondingBillable, priceSchedule)
+                /* End temp code */
+
+                EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
             } else {
                 throw IllegalStateException("Backend returned a encounterItem with a billable thats not inflated in the Encounter. EncounterItem: $encounterItem \n Billables: $billables \n EncounterItems: $encounterItem")
             }

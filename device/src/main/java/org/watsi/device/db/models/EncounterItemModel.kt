@@ -13,24 +13,34 @@ data class EncounterItemModel(@PrimaryKey val id: UUID,
                               val updatedAt: Instant,
                               val encounterId: UUID,
                               val billableId: UUID,
-                              val quantity: Int) {
+                              val quantity: Int,
+                              val priceScheduleId: UUID,
+                              val priceScheduleIssued: Boolean) {
 
     fun toEncounterItem(): EncounterItem {
-        return EncounterItem(id = id,
-                             encounterId = encounterId,
-                             billableId = billableId,
-                             quantity = quantity)
+        return EncounterItem(
+            id = id,
+            encounterId = encounterId,
+            billableId = billableId,
+            quantity = quantity,
+            priceScheduleId = priceScheduleId,
+            priceScheduleIssued = priceScheduleIssued
+        )
     }
 
     companion object {
         fun fromEncounterItem(encounterItem: EncounterItem, clock: Clock): EncounterItemModel {
             val now = clock.instant()
-            return EncounterItemModel(id = encounterItem.id,
-                                      createdAt = now,
-                                      updatedAt = now,
-                                      encounterId = encounterItem.encounterId,
-                                      billableId = encounterItem.billableId,
-                                      quantity = encounterItem.quantity)
+            return EncounterItemModel(
+                id = encounterItem.id,
+                createdAt = now,
+                updatedAt = now,
+                encounterId = encounterItem.encounterId,
+                billableId = encounterItem.billableId,
+                quantity = encounterItem.quantity,
+                priceScheduleId = encounterItem.priceScheduleId,
+                priceScheduleIssued = encounterItem.priceScheduleIssued
+            )
         }
     }
 }

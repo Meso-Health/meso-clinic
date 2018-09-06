@@ -29,11 +29,12 @@ class CreateEncounterUseCase(
                         modelId = encounterForm.id))
             }
 
-            encounterWithItemsAndForms.encounterItems.map { encounterItem ->
-                val billable = encounterItem.billable
+            encounterWithItemsAndForms.encounterItemRelations.map { encounterItem ->
+                val billable = encounterItem.billableWithPriceSchedule.billable
                 if (billableRepository.find(billable.id).blockingGet() == null) {
                     newBillables.add(billable)
                 }
+                // TODO: Persist new price schedules [#160207918]
             }
 
             newBillables.map { billable ->

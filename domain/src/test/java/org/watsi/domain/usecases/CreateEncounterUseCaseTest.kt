@@ -10,10 +10,11 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.BillableFactory
+import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterItemFactory
-import org.watsi.domain.factories.EncounterItemWithBillableFactory
+import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
 import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.EncounterRepository
@@ -50,10 +51,12 @@ class CreateEncounterUseCaseTest {
         val encounter = EncounterFactory.build()
         val billable = BillableFactory.build()
         val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id)
-        val encounterItemWithBillable = EncounterItemWithBillableFactory.build(billable, encounterItem)
+        val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
+            BillableWithPriceScheduleFactory.build(billable), encounterItem
+        )
         val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
-                encounter = encounter,
-                items = listOf(encounterItemWithBillable)
+            encounter = encounter,
+            encounterItemRelations = listOf(encounterItemRelation)
         )
         val encounterDelta = Delta(
                 action = Delta.Action.ADD,

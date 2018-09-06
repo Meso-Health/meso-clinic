@@ -34,7 +34,7 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
     <!-- EncounterFragment -->
-    <string name="encounter_fragment_label">Line items</string>
+    <string name="encounter_fragment_label">Line itemPriceScheduleAnds</string>
     <string name="prompt_category">Select a category&#8230;</string>
     <string name="search_drug_hint">Search&#8230;</string>
     <string name="error_blank_or_zero_quantity">Please enter a nonzero quantity</string>
@@ -44,7 +44,7 @@
     <string name="no_line_items_snackbar_message">Must include at least one line item</string>
     <plurals name="encounter_item_count">
         <item quantity="one">%d item</item>
-        <item quantity="other">%d items</item>
+        <item quantity="other">%d itemPriceScheduleAnds</item>
     </plurals>
 
     <!-- DiagnosisFragment -->
@@ -62,7 +62,7 @@
     <string name="encounter_submitted">Claim submitted</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d line item</item>
-        <item quantity="other">%d line items</item>
+        <item quantity="other">%d line itemPriceScheduleAnds</item>
     </plurals>
     <string name="today_wrapper">Today (%1$s)</string>
 

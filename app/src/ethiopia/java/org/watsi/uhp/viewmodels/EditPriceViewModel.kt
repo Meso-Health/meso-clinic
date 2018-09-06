@@ -15,7 +15,7 @@ class EditPriceViewModel @Inject constructor() : ViewModel() {
             encounterItemId: UUID,
             encounterFlowState: EncounterFlowState
     ): LiveData<ViewState> {
-        val encounterItem = encounterFlowState.encounterItems.find {
+        val encounterItem = encounterFlowState.encounterItemRelations.find {
             it.encounterItem.id == encounterItemId
         }
         encounterItem?.let {

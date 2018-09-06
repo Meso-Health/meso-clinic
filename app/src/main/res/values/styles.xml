@@ -55,7 +55,7 @@
         <item name="android:textColorPrimary">@color/white</item>
         <!-- Subtitle and icons -->
         <item name="android:textColorSecondary">@color/white</item>
-        <!-- Menu items -->
+        <!-- Menu itemPriceScheduleAnds -->
         <item name="android:textColor">@color/gray9</item>
     </style>
 

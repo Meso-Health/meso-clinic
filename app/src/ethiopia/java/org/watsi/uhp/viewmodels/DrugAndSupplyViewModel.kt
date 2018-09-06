@@ -9,14 +9,15 @@ import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.BillableWithPriceSchedule
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
 class DrugAndSupplyViewModel @Inject constructor(
-        private val billableRepository: BillableRepository,
+        private val billableRepository: BillableRepository, // TODO: Replace this with a use case to fetch List<BillableWithPriceSchedule>
         private val logger: Logger
 ) : ViewModel() {
 
@@ -37,21 +38,22 @@ class DrugAndSupplyViewModel @Inject constructor(
     }
 
     private fun getSelectableBillables(): List<Billable>  {
-        val encounterItems = observable.value?.encounterFlowState?.encounterItems.orEmpty()
-        val selectedBillables = encounterItems.map { it.billable }
+        val encounterItems = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
+        val selectedBillables = encounterItems.map { it.billableWithPriceSchedule.billable }
         return billables.minus(selectedBillables).sortedBy { it.name }
     }
 
-    private fun updateEncounterItems(viewState: ViewState, encounterItems: List<EncounterItemWithBillable>) {
+    private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
         observable.value = viewState.copy(selectableBillables = getSelectableBillables(),
-                encounterFlowState = viewState.encounterFlowState.copy(encounterItems = encounterItems))
+                encounterFlowState = viewState.encounterFlowState.copy(encounterItemRelations = encounterItemRelations))
     }
 
     fun updateQuery(query: String) {
         Completable.fromCallable {
             if (query.length > 2) {
                 val currentDrugs = getEncounterFlowState()
-                        ?.getEncounterItemsOfType(Billable.Type.DRUG)?.map { it.billable }.orEmpty()
+                    ?.getEncounterItemsOfType(Billable.Type.DRUG)
+                    ?.map { it.billableWithPriceSchedule.billable }.orEmpty()
                 val selectableDrugNames = uniqueDrugNames
                 val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
@@ -70,13 +72,24 @@ class DrugAndSupplyViewModel @Inject constructor(
         }.subscribeOn(Schedulers.computation()).subscribe()
     }
 
-    fun addItem(billable: Billable) {
+    fun addItem(billableWithPrice: BillableWithPriceSchedule) {
         observable.value?.let { viewState ->
             val encounterState = viewState.encounterFlowState
-            val updatedEncounterItems = encounterState.encounterItems.toMutableList()
+            val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
             val encounterItem = EncounterItem(
-                    UUID.randomUUID(), encounterState.encounter.id, billable.id, 1)
-            updatedEncounterItems.add(EncounterItemWithBillable(encounterItem, billable))
+                UUID.randomUUID(),
+                encounterState.encounter.id,
+                billableWithPrice.billable.id,
+                1,
+                billableWithPrice.priceSchedule.id,
+                false
+            )
+            updatedEncounterItems.add(
+                EncounterItemWithBillableAndPrice(
+                    encounterItem,
+                    billableWithPrice
+                )
+            )
             updateEncounterItems(viewState, updatedEncounterItems)
         }
     }
@@ -84,7 +97,7 @@ class DrugAndSupplyViewModel @Inject constructor(
     fun removeItem(encounterItemId: UUID) {
         observable.value?.let { viewState ->
             val encounterState = viewState.encounterFlowState
-            val updatedEncounterItems = encounterState.encounterItems.toMutableList()
+            val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
                     .filterNot { it.encounterItem.id == encounterItemId }
             updateEncounterItems(viewState, updatedEncounterItems)
         }
@@ -92,14 +105,14 @@ class DrugAndSupplyViewModel @Inject constructor(
 
     fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
         observable.value?.let { viewState ->
-            val updatedEncounterItems = viewState.encounterFlowState.encounterItems
-                    .map { encounterItemWithBillable ->
-                        if (encounterItemWithBillable.encounterItem.id == encounterItemId) {
-                            val oldEncounterItem = encounterItemWithBillable.encounterItem
+            val updatedEncounterItems = viewState.encounterFlowState.encounterItemRelations
+                    .map { encounterItemRelation ->
+                        if (encounterItemRelation.encounterItem.id == encounterItemId) {
+                            val oldEncounterItem = encounterItemRelation.encounterItem
                             val newEncounterItem = oldEncounterItem.copy(quantity = quantity)
-                            encounterItemWithBillable.copy(encounterItem = newEncounterItem)
+                            encounterItemRelation.copy(encounterItem = newEncounterItem)
                         } else {
-                            encounterItemWithBillable
+                            encounterItemRelation
                         }
                     }
             updateEncounterItems(viewState, updatedEncounterItems)
@@ -108,6 +121,6 @@ class DrugAndSupplyViewModel @Inject constructor(
 
     fun getEncounterFlowState(): EncounterFlowState? = observable.value?.encounterFlowState
 
-    data class ViewState(val selectableBillables: List<Billable> = emptyList(),
+    data class ViewState(val selectableBillables: List<BillableWithPriceSchedule> = emptyList(),
                          val encounterFlowState: EncounterFlowState)
 }

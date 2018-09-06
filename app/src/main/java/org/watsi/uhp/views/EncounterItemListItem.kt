@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billabl
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.uhp.utils.CurrencyUtil
 import java.util.UUID
 
@@ -20,13 +20,13 @@ class EncounterItemListItem @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     fun setEncounterItem(
-            encounterItemRelation: EncounterItemWithBillable,
-            onQuantitySelected: () -> Unit,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
-            onPriceTap: ((encounterItemId: UUID) -> Unit)?
+        encounterItemRelationPriceScheduleAnd: EncounterItemWithBillableAndPrice,
+        onQuantitySelected: () -> Unit,
+        onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
+        onPriceTap: ((encounterItemId: UUID) -> Unit)?
     ) {
-        val billable = encounterItemRelation.billable
-        val encounterItem = encounterItemRelation.encounterItem
+        val billable = encounterItemRelationPriceScheduleAnd.billable
+        val encounterItem = encounterItemRelationPriceScheduleAnd.encounterItem
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
@@ -67,7 +67,7 @@ class EncounterItemListItem @JvmOverloads constructor(
             false
         }
 
-        line_item_price.text = CurrencyUtil.formatMoney(encounterItemRelation.price())
+        line_item_price.text = CurrencyUtil.formatMoney(encounterItemRelationPriceScheduleAnd.price())
 
         onPriceTap?.let {
             line_item_price.paintFlags = line_item_price.paintFlags or Paint.UNDERLINE_TEXT_FLAG

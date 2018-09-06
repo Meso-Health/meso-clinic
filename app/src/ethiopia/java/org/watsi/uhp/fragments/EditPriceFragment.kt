@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_price.quantity
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.unit_price
+import org.threeten.bp.Instant
+import org.watsi.domain.entities.PriceSchedule
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -134,24 +136,41 @@ class EditPriceFragment : DaggerFragment() {
         save_button.setOnClickListener {
             observable.value?.let { viewState ->
                 // TODO: replace this logic once we implement price schedules
-                val updatedEncounterItems = encounterFlowState.encounterItems.map { encounterItemWithBillable ->
-                    if (encounterItemWithBillable.encounterItem.id == encounterItemId) {
+                val updatedEncounterItems = encounterFlowState.encounterItemRelations.map { encounterItemRelation ->
+                    if (encounterItemRelation.encounterItem.id == encounterItemId) {
                         // handle case of 0 quantity by setting it back to original quantity
                         val qty = if (viewState.quantity == 0) {
-                            encounterItemWithBillable.encounterItem.quantity
+                            encounterItemRelation.encounterItem.quantity
                         } else {
                             viewState.quantity
                         }
-                        encounterItemWithBillable.copy(
-                                encounterItem = encounterItemWithBillable.encounterItem.copy(
-                                        quantity = qty),
-                                billable = encounterItemWithBillable.billable.copy(
-                                        price = viewState.unitPrice))
+
+                        val priceSchedule = PriceSchedule( // TODO: Fix this when actually implementing new price schedule creation
+                            id = UUID.randomUUID(),
+                            billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,
+                            issuedAt = Instant.now(),
+                            price = viewState.unitPrice,
+                            previousPriceScheduleModelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
+                        )
+
+                        encounterItemRelation.copy(
+                            encounterItem = encounterItemRelation.encounterItem.copy(
+                                quantity = qty,
+                                priceScheduleId = priceSchedule.id,
+                                priceScheduleIssued = true
+                            ),
+                            billableWithPriceSchedule = encounterItemRelation.billableWithPriceSchedule.copy(
+                                billable = encounterItemRelation.billableWithPriceSchedule.billable.copy(
+                                    price = viewState.unitPrice
+                                ),
+                                priceSchedule = priceSchedule
+                            )
+                        )
                     } else {
-                        encounterItemWithBillable
+                        encounterItemRelation
                     }
                 }
-                encounterFlowState.encounterItems = updatedEncounterItems
+                encounterFlowState.encounterItemRelations = updatedEncounterItems
                 navigationManager.popTo(DrugAndSupplyFragment.forEncounter(encounterFlowState))
             }
         }

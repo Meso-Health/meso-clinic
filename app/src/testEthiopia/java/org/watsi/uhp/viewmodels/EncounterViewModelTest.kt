@@ -31,7 +31,7 @@ class EncounterViewModelTest : AACBaseTest() {
     private val encounterId = UUID.randomUUID()
     private val memberId = UUID.randomUUID()
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
-    private val initialViewState = EncounterViewModel.ViewState(encounterId = encounterId, encounterItems = emptyList())
+    private val initialViewState = EncounterViewModel.ViewState(encounterId = encounterId, encounterItemRelations = emptyList())
     private val serviceBillable1 = BillableFactory.build(name = "Service A", type = Billable.Type.SERVICE)
     private val serviceBillable2 = BillableFactory.build(name = "Service B", type = Billable.Type.SERVICE)
     private val drugBillable1 = BillableFactory.build(name = "Vitamin A", composition = "capsule", unit = "25 mg", type = Billable.Type.DRUG)
@@ -98,7 +98,10 @@ class EncounterViewModelTest : AACBaseTest() {
     fun selectType_service_alreadyAdded() {
         viewModel.addItem(serviceBillable2)
         viewModel.selectType(Billable.Type.SERVICE)
-        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(serviceBillable2))
+        assertEquals(
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            listOf(serviceBillable2)
+        )
         assertEquals(observable.value?.type, Billable.Type.SERVICE)
         assertEquals(observable.value?.selectableBillables, listOf(serviceBillable1))
     }
@@ -150,7 +153,10 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.addItem(drugBillable1)
         viewModel.selectType(Billable.Type.DRUG)
         viewModel.updateQuery("vitamin")
-        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(drugBillable1))
+        assertEquals(
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            listOf(drugBillable1)
+        )
         assertEquals(observable.value?.type, Billable.Type.DRUG)
         assertEquals(observable.value?.selectableBillables, listOf(drugBillable2, drugBillable3))
     }
@@ -159,14 +165,17 @@ class EncounterViewModelTest : AACBaseTest() {
     fun addItem() {
         viewModel.selectType(Billable.Type.SERVICE)
         viewModel.addItem(serviceBillable1)
-        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(serviceBillable1))
+        assertEquals(
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            listOf(serviceBillable1)
+        )
         assertEquals(observable.value?.type, Billable.Type.SERVICE)
     }
 
     @Test
     fun removeItem() {
         viewModel.addItem(serviceBillable1)
-        val encounterItemId = observable.value?.encounterItems?.map { it.encounterItem.id }?.first()
+        val encounterItemId = observable.value?.encounterItemRelations?.map { it.encounterItem.id }?.first()
         assertNotNull(encounterItemId)
         viewModel.removeItem(encounterItemId!!)
         assertEquals(observable.value, initialViewState)
@@ -175,11 +184,14 @@ class EncounterViewModelTest : AACBaseTest() {
     @Test
     fun setItemQuantity() {
         viewModel.addItem(drugBillable1)
-        val encounterItemId = observable.value?.encounterItems?.map { it.encounterItem.id }?.first()
+        val encounterItemId = observable.value?.encounterItemRelations?.map { it.encounterItem.id }?.first()
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
-        assertEquals(observable.value?.encounterItems?.map { it.billable }, listOf(drugBillable1))
-        assertEquals(observable.value?.encounterItems?.map { it.encounterItem.quantity }, listOf(5))
+        assertEquals(
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            listOf(drugBillable1)
+        )
+        assertEquals(observable.value?.encounterItemRelations?.map { it.encounterItem.quantity }, listOf(5))
     }
 
     @Test
@@ -187,7 +199,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.addItem(serviceBillable1)
         viewModel.addItem(serviceBillable2)
         viewModel.addItem(drugBillable1)
-        val encounterItemId = observable.value?.encounterItems?.map { it.encounterItem.id }?.first()
+        val encounterItemId = observable.value?.encounterItemRelations?.map { it.encounterItem.id }?.first()
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
 
@@ -196,9 +208,9 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.updateEncounterWithLineItems(encounterFlowState)
 
         assertEquals(encounterFlowState.encounterForms.size, 0)
-        assertEquals(encounterFlowState.encounterItems.size, 3)
+        assertEquals(encounterFlowState.encounterItemRelations.size, 3)
         assertEquals(
-            encounterFlowState.encounterItems.map { it.billable },
+            encounterFlowState.encounterItemRelations.map { it.billableWithPriceSchedule.billable },
             listOf(serviceBillable1, serviceBillable2, drugBillable1)
         )
     }

@@ -140,7 +140,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 },
                 onPriceTap = { encounterItemId: UUID ->
                     viewModel.getEncounterFlowState()?.let { flowState ->
-                        encounterFlowState.encounterItems = flowState.encounterItems
+                        encounterFlowState.encounterItemRelations = flowState.encounterItemRelations
                         navigationManager.goTo(EditPriceFragment.forEncounterItem(
                                 encounterItemId, encounterFlowState))
                     } ?: run {
@@ -240,8 +240,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.getEncounterFlowState()?.encounterItems?.let {
-                encounterFlowState.encounterItems = it
+            viewModel.getEncounterFlowState()?.encounterItemRelations?.let {
+                encounterFlowState.encounterItemRelations = it
             }
             true
         }

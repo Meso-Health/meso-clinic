@@ -4,9 +4,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory
-import org.watsi.device.factories.EncounterItemWithBillableModelFactory
+import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
+import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.domain.entities.Encounter
 
 class EncounterDaoTest : DaoBaseTest() {
@@ -39,35 +40,52 @@ class EncounterDaoTest : DaoBaseTest() {
         val billable2 = BillableModelFactory.build()
         val billable3 = BillableModelFactory.build()
 
+        val priceSchedule1 = PriceScheduleModelFactory.build(billableId = billable1.id)
+        val priceSchedule2 = PriceScheduleModelFactory.build(billableId = billable2.id)
+        val priceSchedule3 = PriceScheduleModelFactory.build(billableId = billable3.id)
+
         val encounterItemModel1 = EncounterItemModelFactory.build(
-            encounterId = encounterModel1.id, billableId = billable1.id
+            encounterId = encounterModel1.id,
+            billableId = billable1.id,
+            priceScheduleId = priceSchedule1.id
         )
         val encounterItemModel2 = EncounterItemModelFactory.build(
-            encounterId = encounterModel1.id, billableId = billable2.id
+            encounterId = encounterModel1.id,
+            billableId = billable2.id,
+            priceScheduleId = priceSchedule2.id
         )
         val encounterItemModel3 = EncounterItemModelFactory.build(
-            encounterId = encounterModel2.id, billableId = billable3.id)
+            encounterId = encounterModel2.id,
+            billableId = billable3.id,
+            priceScheduleId = priceSchedule3.id
+        )
 
 
-        val encounterItemWithBillableModel1 =
-            EncounterItemWithBillableModelFactory.create(
+        val encounterItemRelationModel1 =
+            EncounterItemWithBillableAndPriceModelFactory.create(
                 billableDao,
+                priceScheduleDao,
                 encounterItemDao,
                 billable1,
+                priceSchedule1,
                 encounterItemModel1
             )
-        val encounterItemWithBillableModel2 =
-            EncounterItemWithBillableModelFactory.create(
+        val encounterItemRelationModel2 =
+            EncounterItemWithBillableAndPriceModelFactory.create(
                 billableDao,
+                priceScheduleDao,
                 encounterItemDao,
                 billable2,
+                priceSchedule2,
                 encounterItemModel2
             )
-        val encounterItemWithBillableModel3 =
-            EncounterItemWithBillableModelFactory.create(
+        val encounterItemRelationModel3 =
+            EncounterItemWithBillableAndPriceModelFactory.create(
                 billableDao,
+                priceScheduleDao,
                 encounterItemDao,
                 billable3,
+                priceSchedule3,
                 encounterItemModel3
             )
 
@@ -83,8 +101,8 @@ class EncounterDaoTest : DaoBaseTest() {
             member1
         )
         assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[0].encounterItemWithBillableModels,
-            listOf(encounterItemWithBillableModel1, encounterItemWithBillableModel2)
+            returnedEncountersWithMemberAndItemsAndForms[0].encounterItemWithBillableAndPriceModels,
+            listOf(encounterItemRelationModel1, encounterItemRelationModel2)
         )
 
         assertEquals(
@@ -96,8 +114,8 @@ class EncounterDaoTest : DaoBaseTest() {
             member2
         )
         assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[1].encounterItemWithBillableModels,
-            listOf(encounterItemWithBillableModel3)
+            returnedEncountersWithMemberAndItemsAndForms[1].encounterItemWithBillableAndPriceModels,
+            listOf(encounterItemRelationModel3)
         )
     }
 

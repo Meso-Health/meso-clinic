@@ -228,8 +228,8 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.getEncounterFlowState()?.encounterItems?.let {
-                encounterFlowState.encounterItems = it
+            viewModel.getEncounterFlowState()?.encounterItemRelations?.let {
+                encounterFlowState.encounterItemRelations = it
             }
             true
         }
