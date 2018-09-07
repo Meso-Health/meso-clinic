@@ -27,6 +27,7 @@ import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.models.PriceScheduleWithBillableModel
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
@@ -36,6 +37,7 @@ import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
+import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
@@ -130,17 +132,17 @@ class EncounterRepositoryImplTest {
 
         val encounterItemRelationModel1 =
             EncounterItemWithBillableAndPriceModelFactory.build(
-                BillableWithPriceScheduleListModelFactory.build(billableModel1, listOf(priceScheduleModel1)),
+                PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1),
                 encounterItemModel1
             )
         val encounterItemRelationModel2 =
             EncounterItemWithBillableAndPriceModelFactory.build(
-                BillableWithPriceScheduleListModelFactory.build(billableModel2, listOf(priceScheduleModel2)),
+                PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2),
                 encounterItemModel2
             )
         val encounterItemRelationModel3 =
             EncounterItemWithBillableAndPriceModelFactory.build(
-                BillableWithPriceScheduleListModelFactory.build(billableModel3, listOf(priceScheduleModel3)),
+                PriceScheduleWithBillableModelFactory.build(billableModel3, priceScheduleModel3),
                 encounterItemModel3
             )
 
@@ -180,8 +182,8 @@ class EncounterRepositoryImplTest {
         assertEquals(
             returnedEncounterWithExtras[0].encounterItemRelations,
             listOf(
-                encounterItemRelationModel1.toEncounterItemWithBillableAndPrice().toEncounterItemWithBillableAndCurrentPrice(),
-                encounterItemRelationModel2.toEncounterItemWithBillableAndPrice().toEncounterItemWithBillableAndCurrentPrice()
+                encounterItemRelationModel1.toEncounterItemWithBillableAndPrice(),
+                encounterItemRelationModel2.toEncounterItemWithBillableAndPrice()
             )
         )
         assertEquals(
@@ -203,7 +205,7 @@ class EncounterRepositoryImplTest {
         )
         assertEquals(
             returnedEncounterWithExtras[1].encounterItemRelations,
-            listOf(encounterItemRelationModel3.toEncounterItemWithBillableAndPrice().toEncounterItemWithBillableAndCurrentPrice())
+            listOf(encounterItemRelationModel3.toEncounterItemWithBillableAndPrice())
         )
         assertEquals(
             returnedEncounterWithExtras[1].diagnoses,

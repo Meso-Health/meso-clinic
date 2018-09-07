@@ -10,6 +10,7 @@ import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
+import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.domain.entities.Encounter
 
 class EncounterDaoTest : DaoBaseTest() {
@@ -68,7 +69,7 @@ class EncounterDaoTest : DaoBaseTest() {
                 billableDao,
                 priceScheduleDao,
                 encounterItemDao,
-                BillableWithPriceScheduleListModelFactory.build(billable1, listOf(priceSchedule1)),
+                PriceScheduleWithBillableModelFactory.build(billable1, priceSchedule1),
                 encounterItemModel1
             )
         val encounterItemRelationModel2 =
@@ -76,7 +77,7 @@ class EncounterDaoTest : DaoBaseTest() {
                 billableDao,
                 priceScheduleDao,
                 encounterItemDao,
-                BillableWithPriceScheduleListModelFactory.build(billable2, listOf(priceSchedule2)),
+                PriceScheduleWithBillableModelFactory.build(billable2, priceSchedule2),
                 encounterItemModel2
             )
         val encounterItemRelationModel3 =
@@ -84,7 +85,7 @@ class EncounterDaoTest : DaoBaseTest() {
                 billableDao,
                 priceScheduleDao,
                 encounterItemDao,
-                BillableWithPriceScheduleListModelFactory.build(billable3, listOf(priceSchedule3)),
+                PriceScheduleWithBillableModelFactory.build(billable3, priceSchedule3),
                 encounterItemModel3
             )
 

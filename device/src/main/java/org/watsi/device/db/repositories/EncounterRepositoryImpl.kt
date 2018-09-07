@@ -73,7 +73,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                 EncounterWithExtras(
                     encounterRelation.encounter,
                     encounterRelation.member,
-                    encounterRelation.encounterItemRelations.map { it.toEncounterItemWithBillableAndCurrentPrice() },
+                    encounterRelation.encounterItemRelations,
                     diagnoses,
                     encounterRelation.encounterForms
                 )
