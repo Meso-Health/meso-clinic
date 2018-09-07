@@ -17,7 +17,7 @@ data class BillableWithPriceScheduleListModel(
                     priceScheduleModelList.map { it.toPriceSchedule() }
                 )
             }
-            throw IllegalStateException("PriceScheduleModel cannot be null or empty")
+            throw IllegalStateException("PriceScheduleModel cannot be null or empty. BillableId: " + billable.id)
         }
         throw IllegalStateException("BillableModel cannot be null")
     }
