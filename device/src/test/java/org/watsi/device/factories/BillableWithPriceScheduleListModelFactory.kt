@@ -6,7 +6,7 @@ import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.db.models.PriceScheduleModel
 
-object BillableWithPriceSchedulesListModelFactory {
+object BillableWithPriceScheduleListModelFactory {
 
     fun build(
         billableModel: BillableModel = BillableModelFactory.build(),

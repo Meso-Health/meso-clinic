@@ -3,22 +3,22 @@ package org.watsi.device.factories
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.PriceScheduleDao
-import org.watsi.device.db.models.BillableModel
+import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterItemWithBillableAndPriceModel
-import org.watsi.device.db.models.PriceScheduleModel
+import java.util.*
 
 object EncounterItemWithBillableAndPriceModelFactory {
 
     fun build(
-        billableModel: BillableModel = BillableModelFactory.build(),
-        priceScheduleModel: PriceScheduleModel = PriceScheduleModelFactory.build(billableId = billableModel.id),
-        encounterItemModel: EncounterItemModel = EncounterItemModelFactory.build(billableId = billableModel.id)
-    ) : EncounterItemWithBillableAndPriceModel {
+        billableWithPriceScheduleListModel: BillableWithPriceScheduleListModel = BillableWithPriceScheduleListModelFactory.build(),
+        encounterItemModel: EncounterItemModel = EncounterItemModelFactory.build(
+            billableId = billableWithPriceScheduleListModel.billableModel?.id ?: UUID.randomUUID()
+        )
+    ): EncounterItemWithBillableAndPriceModel {
         return EncounterItemWithBillableAndPriceModel(
             encounterItemModel,
-            listOf(billableModel),
-            listOf(priceScheduleModel)
+            listOf(billableWithPriceScheduleListModel)
         )
     }
 
@@ -26,17 +26,17 @@ object EncounterItemWithBillableAndPriceModelFactory {
         billableDao: BillableDao,
         priceScheduleDao: PriceScheduleDao,
         encounterItemDao: EncounterItemDao,
-        billableModel: BillableModel = BillableModelFactory.build(),
-        priceScheduleModel: PriceScheduleModel = PriceScheduleModelFactory.build(billableId = billableModel.id),
-        encounterItemModel: EncounterItemModel = EncounterItemModelFactory.build(billableId = billableModel.id)
-    ) : EncounterItemWithBillableAndPriceModel {
+        billableWithPriceScheduleListModel: BillableWithPriceScheduleListModel = BillableWithPriceScheduleListModelFactory.build(),
+        encounterItemModel: EncounterItemModel = EncounterItemModelFactory.build(
+            billableId = billableWithPriceScheduleListModel.billableModel?.id ?: UUID.randomUUID()
+        )
+    ): EncounterItemWithBillableAndPriceModel {
         val model = build(
-            billableModel,
-            priceScheduleModel,
+            billableWithPriceScheduleListModel,
             encounterItemModel
         )
-        billableDao.insert(billableModel)
-        priceScheduleDao.insert(priceScheduleModel)
+        billableWithPriceScheduleListModel?.billableModel?.let { billableDao.insert(it) }
+        billableWithPriceScheduleListModel?.priceScheduleModels?.firstOrNull()?.let { priceScheduleDao.insert(it) }
         encounterItemDao.insert(encounterItemModel)
         return model
     }

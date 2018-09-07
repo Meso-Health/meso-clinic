@@ -2,7 +2,9 @@ package org.watsi.device.db.daos
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.factories.BillableModelFactory
+import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory
 import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
 import org.watsi.device.factories.EncounterModelFactory
@@ -66,8 +68,7 @@ class EncounterDaoTest : DaoBaseTest() {
                 billableDao,
                 priceScheduleDao,
                 encounterItemDao,
-                billable1,
-                priceSchedule1,
+                BillableWithPriceScheduleListModelFactory.build(billable1, listOf(priceSchedule1)),
                 encounterItemModel1
             )
         val encounterItemRelationModel2 =
@@ -75,8 +76,7 @@ class EncounterDaoTest : DaoBaseTest() {
                 billableDao,
                 priceScheduleDao,
                 encounterItemDao,
-                billable2,
-                priceSchedule2,
+                BillableWithPriceScheduleListModelFactory.build(billable2, listOf(priceSchedule2)),
                 encounterItemModel2
             )
         val encounterItemRelationModel3 =
@@ -84,8 +84,7 @@ class EncounterDaoTest : DaoBaseTest() {
                 billableDao,
                 priceScheduleDao,
                 encounterItemDao,
-                billable3,
-                priceSchedule3,
+                BillableWithPriceScheduleListModelFactory.build(billable3, listOf(priceSchedule3)),
                 encounterItemModel3
             )
 

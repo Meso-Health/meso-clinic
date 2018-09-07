@@ -21,7 +21,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.BillableWithPriceSchedulesListModelFactory
+import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.managers.PreferencesManager
@@ -70,8 +70,8 @@ class BillableRepositoryImplTest {
     @Test
     fun allWithPrice() {
         val models = listOf(
-            BillableWithPriceSchedulesListModelFactory.build(),
-            BillableWithPriceSchedulesListModelFactory.build()
+            BillableWithPriceScheduleListModelFactory.build(),
+            BillableWithPriceScheduleListModelFactory.build()
         )
         whenever(mockDao.allWithPrice()).thenReturn(Single.just(models))
 
@@ -93,8 +93,8 @@ class BillableRepositoryImplTest {
     fun ofTypeWithPrice() {
         val type = Billable.Type.DRUG
         val models = listOf(
-            BillableWithPriceSchedulesListModelFactory.build(),
-            BillableWithPriceSchedulesListModelFactory.build()
+            BillableWithPriceScheduleListModelFactory.build(),
+            BillableWithPriceScheduleListModelFactory.build()
         )
         whenever(mockDao.ofTypeWithPrice(type)).thenReturn(Single.just(models))
 
@@ -200,7 +200,7 @@ class BillableRepositoryImplTest {
 
     @Test
     fun opdDefaults() {
-        val defaultBillable = BillableWithPriceSchedulesListModelFactory.build()
+        val defaultBillable = BillableWithPriceScheduleListModelFactory.build()
         whenever(mockDao.opdDefaultsWithPrice()).thenReturn(Single.just(listOf(defaultBillable)))
 
         repository.opdDefaultsWithPrice().test()

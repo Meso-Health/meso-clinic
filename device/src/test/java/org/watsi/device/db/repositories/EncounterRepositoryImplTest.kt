@@ -28,6 +28,7 @@ import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.factories.BillableModelFactory
+import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
 import org.watsi.device.factories.EncounterFormModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory
@@ -129,20 +130,17 @@ class EncounterRepositoryImplTest {
 
         val encounterItemRelationModel1 =
             EncounterItemWithBillableAndPriceModelFactory.build(
-                billableModel1,
-                priceScheduleModel1,
+                BillableWithPriceScheduleListModelFactory.build(billableModel1, listOf(priceScheduleModel1)),
                 encounterItemModel1
             )
         val encounterItemRelationModel2 =
             EncounterItemWithBillableAndPriceModelFactory.build(
-                billableModel2,
-                priceScheduleModel2,
+                BillableWithPriceScheduleListModelFactory.build(billableModel2, listOf(priceScheduleModel2)),
                 encounterItemModel2
             )
         val encounterItemRelationModel3 =
             EncounterItemWithBillableAndPriceModelFactory.build(
-                billableModel3,
-                priceScheduleModel3,
+                BillableWithPriceScheduleListModelFactory.build(billableModel3, listOf(priceScheduleModel3)),
                 encounterItemModel3
             )
 
@@ -182,8 +180,8 @@ class EncounterRepositoryImplTest {
         assertEquals(
             returnedEncounterWithExtras[0].encounterItemRelations,
             listOf(
-                encounterItemRelationModel1.toEncounterItemWithBillableAndPrice(),
-                encounterItemRelationModel2.toEncounterItemWithBillableAndPrice()
+                encounterItemRelationModel1.toEncounterItemWithBillableAndPrice().toEncounterItemWithBillableAndCurrentPrice(),
+                encounterItemRelationModel2.toEncounterItemWithBillableAndPrice().toEncounterItemWithBillableAndCurrentPrice()
             )
         )
         assertEquals(
@@ -205,7 +203,7 @@ class EncounterRepositoryImplTest {
         )
         assertEquals(
             returnedEncounterWithExtras[1].encounterItemRelations,
-            listOf(encounterItemRelationModel3.toEncounterItemWithBillableAndPrice())
+            listOf(encounterItemRelationModel3.toEncounterItemWithBillableAndPrice().toEncounterItemWithBillableAndCurrentPrice())
         )
         assertEquals(
             returnedEncounterWithExtras[1].diagnoses,

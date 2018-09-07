@@ -4,7 +4,7 @@ import org.junit.Test
 import org.threeten.bp.Instant
 import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.BillableWithPriceSchedulesListModelFactory
+import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.domain.entities.Billable
@@ -15,11 +15,11 @@ class BillableDaoTest : DaoBaseTest() {
     @Test
     fun allWithPrice() {
         val billable1 =
-            BillableWithPriceSchedulesListModelFactory.create(billableDao, priceScheduleDao)
+            BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
         val billable2 =
-            BillableWithPriceSchedulesListModelFactory.create(billableDao, priceScheduleDao)
+            BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
         val billable3 =
-            BillableWithPriceSchedulesListModelFactory.create(billableDao, priceScheduleDao)
+            BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
 
         billableDao.allWithPrice().test().assertValue(listOf(billable1, billable2, billable3))
     }
@@ -204,17 +204,17 @@ class BillableDaoTest : DaoBaseTest() {
 
     @Test
     fun opdDefaults() {
-        val consultation = BillableWithPriceSchedulesListModelFactory.create(
+        val consultation = BillableWithPriceScheduleListModelFactory.create(
             billableDao,
             priceScheduleDao,
             BillableModelFactory.build(name = "Consultation")
         )
-        val medicalForm = BillableWithPriceSchedulesListModelFactory.create(
+        val medicalForm = BillableWithPriceScheduleListModelFactory.create(
             billableDao,
             priceScheduleDao,
             BillableModelFactory.build(name = "Medical Form")
         )
-        BillableWithPriceSchedulesListModelFactory.create(billableDao, priceScheduleDao)
+        BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
 
         billableDao.opdDefaultsWithPrice().test().assertValue(listOf(consultation, medicalForm))
     }
