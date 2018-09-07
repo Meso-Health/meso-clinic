@@ -119,7 +119,7 @@ class EncounterViewModel @Inject constructor(
         Completable.fromCallable {
             if (query.length > 2) {
                 val currentDrugs = currentEncounterItems().orEmpty()
-                        .map { it.billableWithPriceSchedule}
+                        .map { it.billableWithPriceSchedule }
                         .filter { it.billable.type == Billable.Type.DRUG }
                 val selectableDrugNames = uniqueDrugNames
                 val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)

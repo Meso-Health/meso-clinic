@@ -18,6 +18,7 @@ import org.watsi.device.db.models.MemberModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -70,8 +71,11 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                     diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
                         .map { it.toDiagnosis() }
                 EncounterWithExtras(
-                    encounterRelation.encounter, encounterRelation.member,
-                    encounterRelation.encounterItemRelations, diagnoses, encounterRelation.encounterForms
+                    encounterRelation.encounter,
+                    encounterRelation.member,
+                    encounterRelation.encounterItemRelations.map { it.toEncounterItemWithBillableAndCurrentPrice() },
+                    diagnoses,
+                    encounterRelation.encounterForms
                 )
             }
         }
