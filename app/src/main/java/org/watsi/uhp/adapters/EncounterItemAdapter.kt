@@ -34,10 +34,10 @@ class EncounterItemAdapter(
                 onQuantityChanged, onPriceTap)
     }
 
-    fun setEncounterItems(updatedEncounterItemPriceScheduleAnds: List<EncounterItemWithBillableAndPrice>) {
-        if (updatedEncounterItemPriceScheduleAnds != encounterItemRelations) {
+    fun setEncounterItems(updatedEncounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
+        if (updatedEncounterItemRelations != encounterItemRelations) {
             encounterItemRelations.clear()
-            encounterItemRelations.addAll(updatedEncounterItemPriceScheduleAnds)
+            encounterItemRelations.addAll(updatedEncounterItemRelations)
             notifyDataSetChanged()
         }
     }

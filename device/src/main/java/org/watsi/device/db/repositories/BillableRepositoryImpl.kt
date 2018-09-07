@@ -32,6 +32,15 @@ class BillableRepositoryImpl(
         return billableDao.all().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
     }
 
+    override fun allWithPrice(): Single<List<BillableWithPriceSchedule>> {
+        return billableDao.allWithPrice().map { billableWithPriceListModelList ->
+            billableWithPriceListModelList.map { billableWithPriceScheduleListModel ->
+                billableWithPriceScheduleListModel.toBillableWithPriceScheduleList()
+                    .toCurrentBillableWithPrice()
+            }
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun ofType(type: Billable.Type): Single<List<Billable>> {
         return billableDao.ofType(type).map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
     }

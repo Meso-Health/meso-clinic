@@ -68,6 +68,19 @@ class BillableRepositoryImplTest {
     }
 
     @Test
+    fun allWithPrice() {
+        val models = listOf(
+            BillableWithPriceSchedulesListModelFactory.build(),
+            BillableWithPriceSchedulesListModelFactory.build()
+        )
+        whenever(mockDao.allWithPrice()).thenReturn(Single.just(models))
+
+        repository.allWithPrice().test().assertValue(models.map { billableWithPriceScheduleListModel ->
+            billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
+        })
+    }
+
+    @Test
     fun ofType() {
         val type = Billable.Type.DRUG
         val models = listOf(BillableModelFactory.build(), BillableModelFactory.build())
@@ -85,8 +98,8 @@ class BillableRepositoryImplTest {
         )
         whenever(mockDao.ofTypeWithPrice(type)).thenReturn(Single.just(models))
 
-        repository.ofTypeWithPrice(type).test().assertValue(models.map { billableWithPriceSchedulesModel ->
-            billableWithPriceSchedulesModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
+        repository.ofTypeWithPrice(type).test().assertValue(models.map { billableWithPriceScheduleListModel ->
+            billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
         })
     }
 

@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_spinner_line_item.select_billable
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
@@ -167,7 +168,7 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
+                billableAdapter.getItem(position).billableWithPrice?.let { viewModel.addItem(it) }
                 line_items_list.scrollToBottom()
             }
         }
@@ -243,8 +244,8 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
     /**
      * Used to customize toString behavior for use in an ArrayAdapter
      */
-    data class BillablePresenter(val billable: Billable?, val context: Context) {
-        override fun toString(): String = billable?.name ?: context.getString(R.string.select_prompt)
+    data class BillablePresenter(val billableWithPrice: BillableWithPriceSchedule?, val context: Context) {
+        override fun toString(): String = billableWithPrice?.billable?.name ?: context.getString(R.string.select_prompt)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

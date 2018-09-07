@@ -8,37 +8,37 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.domain.repositories.BillableRepository
+import org.watsi.domain.usecases.LoadBillablesOfTypeWithPriceUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
 class SpinnerLineItemViewModel @Inject constructor(
-        private val billableRepository: BillableRepository, // TODO: Replace this with a use case to fetch List<BillableWithPriceSchedule>
-        private val logger: Logger
+    private val loadBillablesOfTypeWithPriceUseCase: LoadBillablesOfTypeWithPriceUseCase,
+    private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
-    private val billables: MutableList<Billable> = mutableListOf()
+    private val billables: MutableList<BillableWithPriceSchedule> = mutableListOf()
 
     fun getObservable(
             encounterFlowState: EncounterFlowState,
             billableType: Billable.Type
     ): LiveData<ViewState> {
-        billableRepository.ofType(billableType).subscribe({
+        loadBillablesOfTypeWithPriceUseCase.execute(billableType).subscribe({
             billables.addAll(it)
             observable.postValue(ViewState(selectableBillables = getSelectableBillables(),
-                    encounterFlowState = encounterFlowState))
+                encounterFlowState = encounterFlowState))
         }, {
             logger.error(it)
         })
         return observable
     }
 
-    private fun getSelectableBillables(): List<Billable>  {
+    private fun getSelectableBillables(): List<BillableWithPriceSchedule>  {
         val encounterItems = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
-        val selectedBillables = encounterItems.map { it.billableWithPriceSchedule.billable }
-        return billables.minus(selectedBillables).sortedBy { it.name }
+        val selectedBillables = encounterItems.map { it.billableWithPriceSchedule }
+        return billables.minus(selectedBillables).sortedBy { it.billable.name }
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
@@ -46,7 +46,7 @@ class SpinnerLineItemViewModel @Inject constructor(
                 encounterFlowState = viewState.encounterFlowState.copy(encounterItemRelations = encounterItemRelations))
     }
 
-    fun addItem(billableWithPrice: BillableWithPriceSchedule) { // TODO: Add price schedule
+    fun addItem(billableWithPrice: BillableWithPriceSchedule) {
         observable.value?.let { viewState ->
             val encounterState = viewState.encounterFlowState
             val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()

@@ -20,13 +20,13 @@ class EncounterItemListItem @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     fun setEncounterItem(
-        encounterItemRelationPriceScheduleAnd: EncounterItemWithBillableAndPrice,
+        encounterItemRelation: EncounterItemWithBillableAndPrice,
         onQuantitySelected: () -> Unit,
         onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
         onPriceTap: ((encounterItemId: UUID) -> Unit)?
     ) {
-        val billable = encounterItemRelationPriceScheduleAnd.billable
-        val encounterItem = encounterItemRelationPriceScheduleAnd.encounterItem
+        val billable = encounterItemRelation.billableWithPriceSchedule.billable
+        val encounterItem = encounterItemRelation.encounterItem
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
@@ -67,7 +67,7 @@ class EncounterItemListItem @JvmOverloads constructor(
             false
         }
 
-        line_item_price.text = CurrencyUtil.formatMoney(encounterItemRelationPriceScheduleAnd.price())
+        line_item_price.text = CurrencyUtil.formatMoney(encounterItemRelation.price())
 
         onPriceTap?.let {
             line_item_price.paintFlags = line_item_price.paintFlags or Paint.UNDERLINE_TEXT_FLAG

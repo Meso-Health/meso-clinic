@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_drug_and_supply.select_billable_b
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
@@ -77,7 +78,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         observable = viewModel.getObservable(encounterFlowState)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                val cursor = buildSearchResultCursor(viewState.selectableBillables)
+                val cursor = buildSearchResultCursor(viewState.selectableBillables.map { it.billable })
                 drug_search.suggestionsAdapter.changeCursor(cursor)
 
                 updateLineItems(viewState.encounterFlowState)
@@ -250,8 +251,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     /**
      * Used to customize toString behavior for use in an ArrayAdapter
      */
-    data class BillablePresenter(val billable: Billable?, val context: Context) {
-        override fun toString(): String = billable?.name ?: context.getString(R.string.select_prompt)
+    data class BillablePresenter(val billableWithPrice: BillableWithPriceSchedule?, val context: Context) {
+        override fun toString(): String = billableWithPrice?.billable?.name ?: context.getString(R.string.select_prompt)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

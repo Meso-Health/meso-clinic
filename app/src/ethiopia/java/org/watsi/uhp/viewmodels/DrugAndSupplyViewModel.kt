@@ -11,36 +11,36 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.domain.repositories.BillableRepository
+import org.watsi.domain.usecases.LoadBillablesOfTypeWithPriceUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
 class DrugAndSupplyViewModel @Inject constructor(
-        private val billableRepository: BillableRepository, // TODO: Replace this with a use case to fetch List<BillableWithPriceSchedule>
-        private val logger: Logger
+    private val loadBillablesOfTypeWithPriceUseCase: LoadBillablesOfTypeWithPriceUseCase,
+    private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
-    private val billables: MutableList<Billable> = mutableListOf()
+    private val billables: MutableList<BillableWithPriceSchedule> = mutableListOf()
     private var uniqueDrugNames: List<String> = emptyList()
 
     fun getObservable(encounterFlowState: EncounterFlowState): LiveData<ViewState> {
-        billableRepository.ofType(Billable.Type.DRUG).subscribe({
+        loadBillablesOfTypeWithPriceUseCase.execute(Billable.Type.DRUG).subscribe({
             billables.addAll(it)
-            uniqueDrugNames = billables.map { it.name }.distinct()
+            uniqueDrugNames = billables.map { it.billable.name }.distinct()
             observable.postValue(ViewState(selectableBillables = getSelectableBillables(),
-                    encounterFlowState = encounterFlowState))
+                encounterFlowState = encounterFlowState))
         }, {
             logger.error(it)
         })
         return observable
     }
 
-    private fun getSelectableBillables(): List<Billable>  {
+    private fun getSelectableBillables(): List<BillableWithPriceSchedule>  {
         val encounterItems = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
-        val selectedBillables = encounterItems.map { it.billableWithPriceSchedule.billable }
-        return billables.minus(selectedBillables).sortedBy { it.name }
+        val selectedBillables = encounterItems.map { it.billableWithPriceSchedule }
+        return billables.minus(selectedBillables).sortedBy { it.billable.name }
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
@@ -53,7 +53,7 @@ class DrugAndSupplyViewModel @Inject constructor(
             if (query.length > 2) {
                 val currentDrugs = getEncounterFlowState()
                     ?.getEncounterItemsOfType(Billable.Type.DRUG)
-                    ?.map { it.billableWithPriceSchedule.billable }.orEmpty()
+                    ?.map { it.billableWithPriceSchedule }.orEmpty()
                 val selectableDrugNames = uniqueDrugNames
                 val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
@@ -63,7 +63,7 @@ class DrugAndSupplyViewModel @Inject constructor(
                     else
                         Integer.compare(o2.score, o1.score)
                 }).map { result ->
-                    billables.filter { it.name == result.string }.minus(currentDrugs).sortedBy { it.details() }
+                    billables.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
                 }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillables = matchingBillables))
             } else {

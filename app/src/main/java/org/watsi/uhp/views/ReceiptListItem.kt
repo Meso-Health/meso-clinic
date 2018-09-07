@@ -16,11 +16,11 @@ class ReceiptListItem @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    fun setEncounterItem(encounterItemRelationPriceScheduleAnd: EncounterItemWithBillableAndPrice) {
-        receipt_billable_quantity.text = NumberFormat.getInstance().format(encounterItemRelationPriceScheduleAnd.encounterItem.quantity)
-        receipt_billable_name.text = encounterItemRelationPriceScheduleAnd.billable.name
-        receipt_billable_price.text = CurrencyUtil.formatMoney(encounterItemRelationPriceScheduleAnd.price())
-        encounterItemRelationPriceScheduleAnd.billable.details()?.let { details ->
+    fun setEncounterItem(encounterItemRelations: EncounterItemWithBillableAndPrice) {
+        receipt_billable_quantity.text = NumberFormat.getInstance().format(encounterItemRelations.encounterItem.quantity)
+        receipt_billable_name.text = encounterItemRelations.billableWithPriceSchedule.billable.name
+        receipt_billable_price.text = CurrencyUtil.formatMoney(encounterItemRelations.price())
+        encounterItemRelations.billableWithPriceSchedule.billable.details()?.let { details ->
             receipt_billable_dosage.visibility = View.VISIBLE
             receipt_billable_dosage.text = details
         }

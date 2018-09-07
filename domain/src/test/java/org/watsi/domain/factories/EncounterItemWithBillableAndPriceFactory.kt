@@ -6,12 +6,12 @@ import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 
 object EncounterItemWithBillableAndPriceFactory {
     fun build(
-        priceScheduleAndBillable: BillableWithPriceSchedule = BillableWithPriceScheduleFactory.build(),
+        billableWithPrice: BillableWithPriceSchedule = BillableWithPriceScheduleFactory.build(),
         encounterItem: EncounterItem = EncounterItemFactory.build(
-            billableId = priceScheduleAndBillable.billable.id,
-            priceScheduleId = priceScheduleAndBillable.priceSchedule.id
+            billableId = billableWithPrice.billable.id,
+            priceScheduleId = billableWithPrice.priceSchedule.id
         )
     ): EncounterItemWithBillableAndPrice {
-        return EncounterItemWithBillableAndPrice(encounterItem, priceScheduleAndBillable)
+        return EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
     }
 }

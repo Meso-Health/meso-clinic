@@ -20,7 +20,11 @@ class EditPriceViewModel @Inject constructor() : ViewModel() {
         }
         encounterItem?.let {
             observable.value = ViewState(
-                    it.billable, it.billable.price, it.encounterItem.quantity, it.price())
+                it.billableWithPriceSchedule.billable,
+                it.billableWithPriceSchedule.priceSchedule.price,
+                it.encounterItem.quantity,
+                it.price()
+            )
         }
         return observable
     }

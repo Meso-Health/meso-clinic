@@ -32,6 +32,9 @@ interface BillableDao {
     @Query("SELECT * FROM billables")
     fun all(): Single<List<BillableModel>>
 
+    @Query("SELECT * FROM billables")
+    fun allWithPrice(): Single<List<BillableWithPriceScheduleListModel>>
+
     @Query("SELECT * FROM billables WHERE type = :type")
     fun ofType(type: Billable.Type): Single<List<BillableModel>>
 
