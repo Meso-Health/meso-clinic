@@ -16,6 +16,7 @@ import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 
@@ -33,6 +34,15 @@ class BillableRepositoryImpl(
 
     override fun ofType(type: Billable.Type): Single<List<Billable>> {
         return billableDao.ofType(type).map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    }
+
+    override fun ofTypeWithPrice(type: Billable.Type): Single<List<BillableWithPriceSchedule>> {
+        return billableDao.ofTypeWithPrice(type).map { billableWithPriceListModel ->
+            billableWithPriceListModel.map { billableWithPriceScheduleModel ->
+                billableWithPriceScheduleModel.toBillableWithPriceScheduleList()
+                    .toCurrentBillableWithPrice()
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun find(id: UUID): Maybe<Billable> {

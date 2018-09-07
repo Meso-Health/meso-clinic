@@ -21,6 +21,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.factories.BillableModelFactory
+import org.watsi.device.factories.BillableWithPriceSchedulesListModelFactory
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.managers.PreferencesManager
@@ -73,6 +74,20 @@ class BillableRepositoryImplTest {
         whenever(mockDao.ofType(type)).thenReturn(Single.just(models))
 
         repository.ofType(type).test().assertValue(models.map { it.toBillable() })
+    }
+
+    @Test
+    fun ofTypeWithPrice() {
+        val type = Billable.Type.DRUG
+        val models = listOf(
+            BillableWithPriceSchedulesListModelFactory.build(),
+            BillableWithPriceSchedulesListModelFactory.build()
+        )
+        whenever(mockDao.ofTypeWithPrice(type)).thenReturn(Single.just(models))
+
+        repository.ofTypeWithPrice(type).test().assertValue(models.map { billableWithPriceSchedulesModel ->
+            billableWithPriceSchedulesModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
+        })
     }
 
     @Test

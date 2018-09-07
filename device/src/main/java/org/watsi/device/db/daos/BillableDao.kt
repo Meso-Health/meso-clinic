@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
+import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.domain.entities.Billable
@@ -33,6 +34,9 @@ interface BillableDao {
 
     @Query("SELECT * FROM billables WHERE type = :type")
     fun ofType(type: Billable.Type): Single<List<BillableModel>>
+
+    @Query("SELECT * FROM billables WHERE type = :type")
+    fun ofTypeWithPrice(type: Billable.Type): Single<List<BillableWithPriceScheduleListModel>>
 
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<BillableModel>

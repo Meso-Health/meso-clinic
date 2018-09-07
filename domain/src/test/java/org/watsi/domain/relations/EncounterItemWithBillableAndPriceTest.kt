@@ -7,7 +7,7 @@ import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.PriceScheduleFactory
 
-class EncounterItemWithPriceScheduleAndBillableTest {
+class EncounterItemWithBillableAndPriceTest {
 
     @Test
     fun price() {
