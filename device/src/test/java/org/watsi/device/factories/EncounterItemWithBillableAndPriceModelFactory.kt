@@ -6,7 +6,7 @@ import org.watsi.device.db.daos.PriceScheduleDao
 import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterItemWithBillableAndPriceModel
-import java.util.*
+import java.util.UUID
 
 object EncounterItemWithBillableAndPriceModelFactory {
 
