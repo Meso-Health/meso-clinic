@@ -39,6 +39,7 @@
     <string name="service">አገልግሎት</string>
     <string name="lab">ላብራቶሪ</string>
     <string name="select_prompt">ምረጥ…</string>
+    <string name="done_encounter_button">ተጠናቀቀ</string>
     <plurals name="encounter_item_count">
         <item quantity="one">%d ቀረባትን ዝርዝር</item>
         <item quantity="other">%d ቀረባትን ዝርዝር</item>
@@ -68,6 +69,10 @@
     <string name="waiting_to_sync">በመጠባበቅ ላይ</string>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- Menu -->
+    <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
+    <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -113,11 +118,33 @@
     <string name="member_info_section_label">የኣባል መረጃ</string>
     <string name="none">ምንም</string>
     <string name="receipt_total">ድምር</string>
+    <string name="edit_claim_button">የክፍያ ጥያቄ አርም</string>
+    <string name="claim_id_label">የክፍያ ጥያቄ መለያ ቁጥር</string>
+    <string name="comments">ኣስተያየቶች</string>
+    <string name="provider_label">አገልግሎት ሰጪ</string>
+    <string name="branch_label">የኢትዮጲያ ጤና መድህን ኤጀንሲ</string>
+    <plurals name="comment_age">
+        <item quantity="one">%d ከአንድ ቀን በፊት</item>
+        <item quantity="other">%d ከቀናት በፊት</item>
+    </plurals>
+    <string name="date_header">አገልግሎት የተሰጠበት ቀን</string>
+    <string name="comment_label">ኣስተያየት</string>
+    <string name="add_clickable"><u>ኣስተያየቶች</u></string>
+    <string name="comment_prompt">ኣስተያየት ጨምር&#8230;</string>
+    <string name="resubmit">የክፍያ ጥያቄ ደግመህ ላክ</string>
 
     <!-- EditPriceFragment -->
-    <string name="edit_price_fragment_label">Edit Price</string>
-    <string name="unit_price_label">Unit Price</string>
-    <string name="quantity_label">Quantity</string>
-    <string name="total_price_label">Total Price</string>
+    <string name="edit_price_fragment_label">ዋጋ አስተካክል</string>
+    <string name="unit_price_label">ነጠላ ዋጋ</string>
+    <string name="quantity_label">ብዛት</string>
+    <string name="total_price_label">ጠቅላላ ዋጋ</string>
+
+    <!-- ReturnedClaimsFragment -->
+    <string name="returned_claims_fragment_label">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
+    <string name="returned_claims_count_empty">የክፍያ ጥያቄዎች</string>
+    <plurals name="returned_claims_count">
+        <item quantity="one">%d ተመላሽ የተድርገ የክፍያ ጥያቄ</item>
+        <item quantity="other">%d ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</item>
+    </plurals>
 
 </resources>

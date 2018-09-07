@@ -8,7 +8,7 @@
 
     <!-- Menu -->
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
-    <string name="menu_returned_claims_with_number">Returned Claims (%1$d)</string>
+    <string name="menu_returned_claims_with_number">Returned Claims (%1$s)</string>
     <string name="menu_returned_claims_without_number">Returned Claims</string>
 
     <!--NewClaimFragment-->
@@ -60,7 +60,7 @@
     <string name="date_header">Date of Service</string>
     <string name="comment_label">Comment</string>
     <string name="add_clickable"><u>Add</u></string>
-    <string name="comment_prompt">Add a comment...</string>
+    <string name="comment_prompt">Add a comment&#8230;</string>
     <string name="resubmit">Resubmit Claim</string>
     <string name="today">Today</string>
 
