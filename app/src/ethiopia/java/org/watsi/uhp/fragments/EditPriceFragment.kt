@@ -135,7 +135,6 @@ class EditPriceFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             observable.value?.let { viewState ->
-                // TODO: replace this logic once we implement price schedules
                 val updatedEncounterItems = encounterFlowState.encounterItemRelations.map { encounterItemRelation ->
                     if (encounterItemRelation.encounterItem.id == encounterItemId) {
                         // handle case of 0 quantity by setting it back to original quantity
@@ -145,7 +144,7 @@ class EditPriceFragment : DaggerFragment() {
                             viewState.quantity
                         }
 
-                        val priceSchedule = PriceSchedule( // TODO: Fix this when actually implementing new price schedule creation
+                        val priceSchedule = PriceSchedule(
                             id = UUID.randomUUID(),
                             billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,
                             issuedAt = Instant.now(),
