@@ -200,10 +200,11 @@ class BillableRepositoryImplTest {
 
     @Test
     fun opdDefaults() {
-        val defaultBillable = BillableModelFactory.build()
-        whenever(mockDao.opdDefaults()).thenReturn(Single.just(listOf(defaultBillable)))
+        val defaultBillable = BillableWithPriceSchedulesListModelFactory.build()
+        whenever(mockDao.opdDefaultsWithPrice()).thenReturn(Single.just(listOf(defaultBillable)))
 
-        repository.opdDefaults().test().assertValue(listOf(defaultBillable.toBillable()))
+        repository.opdDefaultsWithPrice().test()
+            .assertValue(listOf(defaultBillable.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()))
     }
 
     @Test

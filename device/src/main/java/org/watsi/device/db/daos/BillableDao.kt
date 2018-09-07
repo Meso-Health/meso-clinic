@@ -58,5 +58,5 @@ interface BillableDao {
     fun unsynced(): Single<List<BillableModel>>
 
     @Query("SELECT * FROM billables WHERE name IN ('Consultation', 'Medical Form')")
-    fun opdDefaults(): Single<List<BillableModel>>
+    fun opdDefaultsWithPrice(): Single<List<BillableWithPriceScheduleListModel>>
 }

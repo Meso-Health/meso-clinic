@@ -82,7 +82,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
         })
 
-        receiptItemAdapter = ReceiptListItemAdapter(encounterFlowState.encounterItems)
+        receiptItemAdapter = ReceiptListItemAdapter(encounterFlowState.encounterItemRelations)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -95,7 +95,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         diagnoses_label.text = resources.getQuantityString(
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
         encounter_items_label.text = resources.getQuantityString(
-            receipt_line_item_count, encounterFlowState.encounterItems.size, encounterFlowState.encounterItems.size)
+            receipt_line_item_count, encounterFlowState.encounterItemRelations.size, encounterFlowState.encounterItemRelations.size)
         total_price.text = getString(R.string.price_with_currency, CurrencyUtil.formatMoney(encounterFlowState.price()))
         forms_label.text = resources.getQuantityString(
             forms_attached_label, encounterFlowState.encounterForms.size, encounterFlowState.encounterForms.size)

@@ -17,7 +17,7 @@ interface BillableRepository {
     fun create(billable: Billable, delta: Delta): Completable
     fun delete(ids: List<UUID>): Completable
     fun fetch(): Completable
-    fun opdDefaults(): Single<List<Billable>>
+    fun opdDefaultsWithPrice(): Single<List<BillableWithPriceSchedule>>
     fun uniqueCompositions(): Single<List<String>>
     fun sync(delta: Delta): Completable
 }

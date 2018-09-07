@@ -3,8 +3,11 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.entities.PriceSchedule
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
@@ -49,10 +52,11 @@ class AddNewBillableViewModel @Inject constructor(
         validateAndUpdate(observable.value?.copy(price = price))
     }
 
-    fun getBillable(): Billable? {
+    fun getBillable(): BillableWithPriceSchedule? {
         val state = observable.value
         return if (state?.name != null && state.type != null && state.price != null && state.isValid) {
-            Billable(id = UUID.randomUUID(),
+            val billable = Billable(
+                id = UUID.randomUUID(),
                 type = state.type,
                 composition = when (state.type) {
                     Billable.Type.DRUG -> state.composition
@@ -65,7 +69,16 @@ class AddNewBillableViewModel @Inject constructor(
                     else -> null
                 },
                 price = state.price,
-                name = state.name)
+                name = state.name
+            )
+            val priceSchedule = PriceSchedule(
+                id = UUID.randomUUID(),
+                issuedAt = Instant.now(),
+                billableId = billable.id,
+                price = state.price,
+                previousPriceScheduleModelId = null
+            )
+            return BillableWithPriceSchedule(billable, priceSchedule)
         } else {
             null
         }

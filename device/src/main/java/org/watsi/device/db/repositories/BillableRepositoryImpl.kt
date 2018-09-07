@@ -104,8 +104,13 @@ class BillableRepositoryImpl(
         return billableDao.distinctCompositions().subscribeOn(Schedulers.io())
     }
 
-    override fun opdDefaults(): Single<List<Billable>> {
-        return billableDao.opdDefaults().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    override fun opdDefaultsWithPrice(): Single<List<BillableWithPriceSchedule>> {
+        return billableDao.opdDefaultsWithPrice().map { billableWithPriceListModelList ->
+            billableWithPriceListModelList.map { billableWithPriceScheduleListModel ->
+                billableWithPriceScheduleListModel.toBillableWithPriceScheduleList()
+                    .toCurrentBillableWithPrice()
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun sync(delta: Delta): Completable {

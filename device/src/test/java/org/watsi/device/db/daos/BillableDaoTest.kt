@@ -204,10 +204,18 @@ class BillableDaoTest : DaoBaseTest() {
 
     @Test
     fun opdDefaults() {
-        val consultation = BillableModelFactory.create(billableDao, name = "Consultation")
-        val medicalForm = BillableModelFactory.create(billableDao, name = "Medical Form")
-        BillableModelFactory.create(billableDao)
+        val consultation = BillableWithPriceSchedulesListModelFactory.create(
+            billableDao,
+            priceScheduleDao,
+            BillableModelFactory.build(name = "Consultation")
+        )
+        val medicalForm = BillableWithPriceSchedulesListModelFactory.create(
+            billableDao,
+            priceScheduleDao,
+            BillableModelFactory.build(name = "Medical Form")
+        )
+        BillableWithPriceSchedulesListModelFactory.create(billableDao, priceScheduleDao)
 
-        billableDao.opdDefaults().test().assertValue(listOf(consultation, medicalForm))
+        billableDao.opdDefaultsWithPrice().test().assertValue(listOf(consultation, medicalForm))
     }
 }

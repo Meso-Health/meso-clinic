@@ -11,7 +11,6 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.usecases.LoadAllBillablesWithPriceUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
