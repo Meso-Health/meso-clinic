@@ -18,11 +18,8 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
-import org.watsi.domain.factories.PriceScheduleFactory
-import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.usecases.LoadAllBillablesWithPriceUseCase
-import org.watsi.domain.usecases.LoadBillablesOfTypeWithPriceUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.testutils.AACBaseTest
 import java.util.UUID
@@ -31,7 +28,7 @@ class EncounterViewModelTest : AACBaseTest() {
     private lateinit var viewModel: EncounterViewModel
     private lateinit var observable: LiveData<EncounterViewModel.ViewState>
     @Mock lateinit var mockBillableRepository: BillableRepository
-    @Mock lateinit var loadAllBillablesWithPriceUseCase: LoadAllBillablesWithPriceUseCase
+    @Mock lateinit var mockLoadAllBillablesWithPriceUseCase: LoadAllBillablesWithPriceUseCase
     @Mock lateinit var mockLogger: Logger
 
     private val encounterId = UUID.randomUUID()
@@ -66,7 +63,8 @@ class EncounterViewModelTest : AACBaseTest() {
             labBillable2,
             labBillable3
         )))
-        viewModel = EncounterViewModel(loadAllBillablesWithPriceUseCase, mockLogger)
+        mockLoadAllBillablesWithPriceUseCase = LoadAllBillablesWithPriceUseCase(mockBillableRepository)
+        viewModel = EncounterViewModel(mockLoadAllBillablesWithPriceUseCase, mockLogger)
         observable = viewModel.getObservable(encounterId, emptyList())
         observable.observeForever{}
     }
@@ -105,7 +103,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.addItem(serviceBillable2)
         viewModel.selectType(Billable.Type.SERVICE)
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(serviceBillable2)
         )
         assertEquals(observable.value?.type, Billable.Type.SERVICE)
@@ -160,7 +158,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.selectType(Billable.Type.DRUG)
         viewModel.updateQuery("vitamin")
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(drugBillable1)
         )
         assertEquals(observable.value?.type, Billable.Type.DRUG)
@@ -172,7 +170,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.selectType(Billable.Type.SERVICE)
         viewModel.addItem(serviceBillable1)
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(serviceBillable1)
         )
         assertEquals(observable.value?.type, Billable.Type.SERVICE)
@@ -194,7 +192,7 @@ class EncounterViewModelTest : AACBaseTest() {
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule.billable },
+            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(drugBillable1)
         )
         assertEquals(observable.value?.encounterItemRelations?.map { it.encounterItem.quantity }, listOf(5))
@@ -216,7 +214,7 @@ class EncounterViewModelTest : AACBaseTest() {
         assertEquals(encounterFlowState.encounterForms.size, 0)
         assertEquals(encounterFlowState.encounterItemRelations.size, 3)
         assertEquals(
-            encounterFlowState.encounterItemRelations.map { it.billableWithPriceSchedule.billable },
+            encounterFlowState.encounterItemRelations.map { it.billableWithPriceSchedule },
             listOf(serviceBillable1, serviceBillable2, drugBillable1)
         )
     }
