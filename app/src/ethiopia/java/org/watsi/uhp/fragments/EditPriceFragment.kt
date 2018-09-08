@@ -137,6 +137,7 @@ class EditPriceFragment : DaggerFragment() {
             observable.value?.let { viewState ->
                 val updatedEncounterItems = encounterFlowState.encounterItemRelations.map { encounterItemRelation ->
                     if (encounterItemRelation.encounterItem.id == encounterItemId) {
+                        // TODO: Handle the returned claim flow
                         // handle case of 0 quantity by setting it back to original quantity
                         val qty = if (viewState.quantity == 0) {
                             encounterItemRelation.encounterItem.quantity
@@ -144,26 +145,32 @@ class EditPriceFragment : DaggerFragment() {
                             viewState.quantity
                         }
 
-                        val priceSchedule = PriceSchedule(
-                            id = UUID.randomUUID(),
-                            billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,
-                            issuedAt = Instant.now(),
-                            price = viewState.unitPrice,
-                            previousPriceScheduleModelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
-                        )
+                        // Issue a new price schedule if the price has changed
+                        val priceScheduleIssued = encounterItemRelation.billableWithPriceSchedule.priceSchedule.price != viewState.unitPrice
+                        val billableWithPriceSchedule = if (priceScheduleIssued) {
+                            encounterItemRelation.billableWithPriceSchedule.copy(
+                                billable = encounterItemRelation.billableWithPriceSchedule.billable.copy(
+                                    price = viewState.unitPrice // TODO: This can be removed when price is removed from billable
+                                ),
+                                priceSchedule = PriceSchedule(
+                                    id = UUID.randomUUID(),
+                                    billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,
+                                    issuedAt = Instant.now(),
+                                    price = viewState.unitPrice,
+                                    previousPriceScheduleModelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
+                                )
+                            )
+                        } else {
+                            encounterItemRelation.billableWithPriceSchedule
+                        }
 
                         encounterItemRelation.copy(
                             encounterItem = encounterItemRelation.encounterItem.copy(
                                 quantity = qty,
-                                priceScheduleId = priceSchedule.id,
-                                priceScheduleIssued = true
+                                priceScheduleId = billableWithPriceSchedule.priceSchedule.id,
+                                priceScheduleIssued = priceScheduleIssued
                             ),
-                            billableWithPriceSchedule = encounterItemRelation.billableWithPriceSchedule.copy(
-                                billable = encounterItemRelation.billableWithPriceSchedule.billable.copy(
-                                    price = viewState.unitPrice
-                                ),
-                                priceSchedule = priceSchedule
-                            )
+                            billableWithPriceSchedule = billableWithPriceSchedule
                         )
                     } else {
                         encounterItemRelation
