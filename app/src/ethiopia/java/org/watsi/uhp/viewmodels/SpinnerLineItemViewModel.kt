@@ -8,13 +8,13 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.domain.usecases.LoadBillablesOfTypeWithPriceUseCase
+import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
 class SpinnerLineItemViewModel @Inject constructor(
-    private val loadBillablesOfTypeWithPriceUseCase: LoadBillablesOfTypeWithPriceUseCase,
+    private val loadBillablesOfTypeUseCase: LoadBillablesOfTypeUseCase,
     private val logger: Logger
 ) : ViewModel() {
 
@@ -25,7 +25,7 @@ class SpinnerLineItemViewModel @Inject constructor(
             encounterFlowState: EncounterFlowState,
             billableType: Billable.Type
     ): LiveData<ViewState> {
-        loadBillablesOfTypeWithPriceUseCase.execute(billableType).subscribe({
+        loadBillablesOfTypeUseCase.execute(billableType).subscribe({
             billables.addAll(it)
             observable.postValue(ViewState(selectableBillables = getSelectableBillables(),
                 encounterFlowState = encounterFlowState))

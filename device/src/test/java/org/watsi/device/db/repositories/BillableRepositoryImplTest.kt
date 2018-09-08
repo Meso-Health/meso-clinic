@@ -67,7 +67,7 @@ class BillableRepositoryImplTest {
         )
         whenever(mockDao.allWithPrice()).thenReturn(Single.just(models))
 
-        repository.allWithPrice().test().assertValue(models.map { billableWithPriceScheduleListModel ->
+        repository.all().test().assertValue(models.map { billableWithPriceScheduleListModel ->
             billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
         })
     }
@@ -79,9 +79,9 @@ class BillableRepositoryImplTest {
             BillableWithPriceScheduleListModelFactory.build(),
             BillableWithPriceScheduleListModelFactory.build()
         )
-        whenever(mockDao.ofTypeWithPrice(type)).thenReturn(Single.just(models))
+        whenever(mockDao.ofType(type)).thenReturn(Single.just(models))
 
-        repository.ofTypeWithPrice(type).test().assertValue(models.map { billableWithPriceScheduleListModel ->
+        repository.ofType(type).test().assertValue(models.map { billableWithPriceScheduleListModel ->
             billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
         })
     }
@@ -184,9 +184,9 @@ class BillableRepositoryImplTest {
     @Test
     fun opdDefaults() {
         val defaultBillable = BillableWithPriceScheduleListModelFactory.build()
-        whenever(mockDao.opdDefaultsWithPrice()).thenReturn(Single.just(listOf(defaultBillable)))
+        whenever(mockDao.opdDefaults()).thenReturn(Single.just(listOf(defaultBillable)))
 
-        repository.opdDefaultsWithPrice().test()
+        repository.opdDefaults().test()
             .assertValue(listOf(defaultBillable.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()))
     }
 

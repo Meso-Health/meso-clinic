@@ -9,13 +9,13 @@ import org.watsi.domain.relations.BillableWithPriceSchedule
 import java.util.UUID
 
 interface BillableRepository {
-    fun allWithPrice(): Single<List<BillableWithPriceSchedule>>
-    fun ofTypeWithPrice(type: Billable.Type): Single<List<BillableWithPriceSchedule>>
+    fun all(): Single<List<BillableWithPriceSchedule>>
+    fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedule>>
     fun find(id: UUID): Maybe<Billable>
     fun create(billable: Billable, delta: Delta): Completable
     fun delete(ids: List<UUID>): Completable
     fun fetch(): Completable
-    fun opdDefaultsWithPrice(): Single<List<BillableWithPriceSchedule>>
+    fun opdDefaults(): Single<List<BillableWithPriceSchedule>>
     fun uniqueCompositions(): Single<List<String>>
     fun sync(delta: Delta): Completable
 }

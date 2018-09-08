@@ -15,9 +15,9 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
-import org.watsi.domain.usecases.LoadAllBillablesWithPriceUseCase
-import org.watsi.domain.usecases.LoadBillablesOfTypeWithPriceUseCase
-import org.watsi.domain.usecases.LoadDefaultBillablesWithPriceUseCase
+import org.watsi.domain.usecases.LoadAllBillablesUseCase
+import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
+import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
@@ -134,22 +134,22 @@ class DomainModule {
     @Provides
     fun provideLoadDefaultOpdBillablesUseCase(
             billableRepository: BillableRepository
-    ): LoadDefaultBillablesWithPriceUseCase {
-        return LoadDefaultBillablesWithPriceUseCase(billableRepository)
+    ): LoadDefaultBillablesUseCase {
+        return LoadDefaultBillablesUseCase(billableRepository)
     }
 
     @Provides
     fun provideLoadBillablesofTypeUseCase(
         billableRepository: BillableRepository
-    ): LoadBillablesOfTypeWithPriceUseCase {
-        return LoadBillablesOfTypeWithPriceUseCase(billableRepository)
+    ): LoadBillablesOfTypeUseCase {
+        return LoadBillablesOfTypeUseCase(billableRepository)
     }
 
     @Provides
-    fun provideLoadAllBillablesWithPriceUseCase(
+    fun provideLoadAllBillablesUseCase(
         billableRepository: BillableRepository
-    ): LoadAllBillablesWithPriceUseCase {
-        return LoadAllBillablesWithPriceUseCase(billableRepository)
+    ): LoadAllBillablesUseCase {
+        return LoadAllBillablesUseCase(billableRepository)
     }
 
     @Provides

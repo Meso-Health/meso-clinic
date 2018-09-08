@@ -25,7 +25,7 @@ class BillableDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun ofTypeWithPrice() {
+    fun ofType() {
         val oldDate = Instant.ofEpochMilli(1533090767000) // 2018/08/01
         val middleDate = Instant.ofEpochMilli(1534300367000) // 2018/08/15
         val newDate = Instant.ofEpochMilli(1535769167000) // 2018/09/01
@@ -98,14 +98,14 @@ class BillableDaoTest : DaoBaseTest() {
             issuedAt = oldDate
         )
 
-        billableDao.ofTypeWithPrice(Billable.Type.SERVICE).test().assertValue(
+        billableDao.ofType(Billable.Type.SERVICE).test().assertValue(
             listOf(
                 BillableWithPriceScheduleListModel(service1, listOf(priceScheduleService1)),
                 BillableWithPriceScheduleListModel(service2, listOf(priceScheduleService2))
             )
         )
 
-        billableDao.ofTypeWithPrice(Billable.Type.LAB).test().assertValue(
+        billableDao.ofType(Billable.Type.LAB).test().assertValue(
             listOf(
                 BillableWithPriceScheduleListModel(
                     lab1,
@@ -114,7 +114,7 @@ class BillableDaoTest : DaoBaseTest() {
             )
         )
 
-        billableDao.ofTypeWithPrice(Billable.Type.DRUG).test().assertValue(
+        billableDao.ofType(Billable.Type.DRUG).test().assertValue(
             listOf(
                 BillableWithPriceScheduleListModel(
                     drug1,
@@ -207,6 +207,6 @@ class BillableDaoTest : DaoBaseTest() {
         )
         BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
 
-        billableDao.opdDefaultsWithPrice().test().assertValue(listOf(consultation, medicalForm))
+        billableDao.opdDefaults().test().assertValue(listOf(consultation, medicalForm))
     }
 }

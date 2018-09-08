@@ -11,14 +11,14 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.domain.usecases.LoadAllBillablesWithPriceUseCase
+import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
 class EncounterViewModel @Inject constructor(
-        loadAllBillablesWithPriceUseCase: LoadAllBillablesWithPriceUseCase,
-        private val logger: Logger
+    loadAllBillablesUseCase: LoadAllBillablesUseCase,
+    private val logger: Logger
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -26,7 +26,7 @@ class EncounterViewModel @Inject constructor(
     private var uniqueDrugNames: List<String> = emptyList()
 
     init {
-        loadAllBillablesWithPriceUseCase.execute().subscribe({
+        loadAllBillablesUseCase.execute().subscribe({
             billablesByType = it.groupBy { it.billable.type }
             val drugBillables = billablesByType[Billable.Type.DRUG].orEmpty()
             if (drugBillables.isEmpty()) {

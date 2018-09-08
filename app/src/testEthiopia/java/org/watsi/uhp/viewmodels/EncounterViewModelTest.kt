@@ -19,7 +19,7 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.repositories.BillableRepository
-import org.watsi.domain.usecases.LoadAllBillablesWithPriceUseCase
+import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.testutils.AACBaseTest
 import java.util.UUID
@@ -28,7 +28,7 @@ class EncounterViewModelTest : AACBaseTest() {
     private lateinit var viewModel: EncounterViewModel
     private lateinit var observable: LiveData<EncounterViewModel.ViewState>
     @Mock lateinit var mockBillableRepository: BillableRepository
-    @Mock lateinit var mockLoadAllBillablesWithPriceUseCase: LoadAllBillablesWithPriceUseCase
+    @Mock lateinit var mockLoadAllBillablesUseCase: LoadAllBillablesUseCase
     @Mock lateinit var mockLogger: Logger
 
     private val encounterId = UUID.randomUUID()
@@ -50,7 +50,7 @@ class EncounterViewModelTest : AACBaseTest() {
     @Before
     fun setup() {
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
-        whenever(mockBillableRepository.allWithPrice()).thenReturn(Single.just(listOf(
+        whenever(mockBillableRepository.all()).thenReturn(Single.just(listOf(
             serviceBillable1,
             serviceBillable2,
             drugBillable1,
@@ -63,8 +63,8 @@ class EncounterViewModelTest : AACBaseTest() {
             labBillable2,
             labBillable3
         )))
-        mockLoadAllBillablesWithPriceUseCase = LoadAllBillablesWithPriceUseCase(mockBillableRepository)
-        viewModel = EncounterViewModel(mockLoadAllBillablesWithPriceUseCase, mockLogger)
+        mockLoadAllBillablesUseCase = LoadAllBillablesUseCase(mockBillableRepository)
+        viewModel = EncounterViewModel(mockLoadAllBillablesUseCase, mockLogger)
         observable = viewModel.getObservable(encounterId, emptyList())
         observable.observeForever{}
     }

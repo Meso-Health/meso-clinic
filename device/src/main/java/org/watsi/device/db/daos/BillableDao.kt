@@ -36,7 +36,7 @@ interface BillableDao {
     fun allWithPrice(): Single<List<BillableWithPriceScheduleListModel>>
 
     @Query("SELECT * FROM billables WHERE type = :type")
-    fun ofTypeWithPrice(type: Billable.Type): Single<List<BillableWithPriceScheduleListModel>>
+    fun ofType(type: Billable.Type): Single<List<BillableWithPriceScheduleListModel>>
 
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<BillableModel>
@@ -55,5 +55,5 @@ interface BillableDao {
     fun unsynced(): Single<List<BillableModel>>
 
     @Query("SELECT * FROM billables WHERE name IN ('Consultation', 'Medical Form')")
-    fun opdDefaultsWithPrice(): Single<List<BillableWithPriceScheduleListModel>>
+    fun opdDefaults(): Single<List<BillableWithPriceScheduleListModel>>
 }

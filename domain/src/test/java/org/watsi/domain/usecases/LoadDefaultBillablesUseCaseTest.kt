@@ -13,16 +13,16 @@ import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.repositories.BillableRepository
 
 @RunWith(MockitoJUnitRunner::class)
-class LoadDefaultBillablesWithPriceUseCaseTest {
+class LoadDefaultBillablesUseCaseTest {
 
     @Mock lateinit var mockBillableRepo: BillableRepository
-    lateinit var useCase: LoadDefaultBillablesWithPriceUseCase
+    lateinit var useCase: LoadDefaultBillablesUseCase
     val defaultBillables = listOf(BillableWithPriceScheduleFactory.build())
 
     @Before
     fun setup() {
-        useCase = LoadDefaultBillablesWithPriceUseCase(mockBillableRepo)
-        whenever(mockBillableRepo.opdDefaultsWithPrice()).thenReturn(Single.just(defaultBillables))
+        useCase = LoadDefaultBillablesUseCase(mockBillableRepo)
+        whenever(mockBillableRepo.opdDefaults()).thenReturn(Single.just(defaultBillables))
     }
 
     @Test
