@@ -25,15 +25,6 @@ class BillableDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun ofType() {
-        val service1 = BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
-        val service2 = BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
-        BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
-
-        billableDao.ofType(Billable.Type.SERVICE).test().assertValue(listOf(service1, service2))
-    }
-
-    @Test
     fun ofTypeWithPrice() {
         val oldDate = Instant.ofEpochMilli(1533090767000) // 2018/08/01
         val middleDate = Instant.ofEpochMilli(1534300367000) // 2018/08/15

@@ -60,14 +60,6 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun all() {
-        val models = listOf(BillableModelFactory.build(), BillableModelFactory.build())
-        whenever(mockDao.all()).thenReturn(Single.just(models))
-
-        repository.all().test().assertValue(models.map { it.toBillable() })
-    }
-
-    @Test
     fun allWithPrice() {
         val models = listOf(
             BillableWithPriceScheduleListModelFactory.build(),
@@ -78,15 +70,6 @@ class BillableRepositoryImplTest {
         repository.allWithPrice().test().assertValue(models.map { billableWithPriceScheduleListModel ->
             billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
         })
-    }
-
-    @Test
-    fun ofType() {
-        val type = Billable.Type.DRUG
-        val models = listOf(BillableModelFactory.build(), BillableModelFactory.build())
-        whenever(mockDao.ofType(type)).thenReturn(Single.just(models))
-
-        repository.ofType(type).test().assertValue(models.map { it.toBillable() })
     }
 
     @Test

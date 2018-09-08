@@ -28,10 +28,6 @@ class BillableRepositoryImpl(
         private val clock: Clock
 ) : BillableRepository {
 
-    override fun all(): Single<List<Billable>> {
-        return billableDao.all().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
-    }
-
     override fun allWithPrice(): Single<List<BillableWithPriceSchedule>> {
         return billableDao.allWithPrice().map { billableWithPriceListModelList ->
             billableWithPriceListModelList.map { billableWithPriceScheduleListModel ->
@@ -39,10 +35,6 @@ class BillableRepositoryImpl(
                     .toCurrentBillableWithPrice()
             }
         }.subscribeOn(Schedulers.io())
-    }
-
-    override fun ofType(type: Billable.Type): Single<List<Billable>> {
-        return billableDao.ofType(type).map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
     }
 
     override fun ofTypeWithPrice(type: Billable.Type): Single<List<BillableWithPriceSchedule>> {
