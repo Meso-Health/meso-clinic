@@ -10,15 +10,16 @@ import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -114,13 +115,29 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                 EncounterModel.fromEncounter(it.encounter, clock)
             }
             val encounterItemModels = encounters.map {
-                it.encounterItemRelations.map { EncounterItemModel.fromEncounterItem(it.encounterItem, clock) }
+                it.encounterItemRelations.map {
+                    EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+                }
+            }.flatten()
+            val billableModels = encounters.map {
+                it.encounterItemRelations.map {
+                    BillableModel.fromBillable(it.billableWithPriceSchedule.billable, clock)
+                }
+            }.flatten()
+            val priceScheduleModels = encounters.map {
+                it.encounterItemRelations.map {
+                    it.billableWithPriceSchedule.priceSchedules().map {
+                        PriceScheduleModel.fromPriceSchedule(it, clock)
+                    }
+                }.flatten()
             }.flatten()
             val memberModels = encounters.map { MemberModel.fromMember(it.member, clock) }
 
             encounterDao.upsert(
                 encounterModels = encounterModels,
                 encounterItemModels = encounterItemModels,
+                billableModels = billableModels,
+                priceScheduleModels = priceScheduleModels,
                 memberModels = memberModels
             )
         }.subscribeOn(Schedulers.io())

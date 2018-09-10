@@ -13,9 +13,10 @@ import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
-import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.EncounterWithItemsModel
+import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.models.PriceScheduleModel
 import java.util.UUID
 
 @Dao
@@ -42,6 +43,8 @@ interface EncounterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(encounterModels: List<EncounterModel>,
                encounterItemModels: List<EncounterItemModel>,
+               billableModels: List<BillableModel>,
+               priceScheduleModels: List<PriceScheduleModel>,
                memberModels: List<MemberModel>)
 
     @Transaction

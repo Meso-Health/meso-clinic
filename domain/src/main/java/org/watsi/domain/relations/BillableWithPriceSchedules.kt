@@ -9,9 +9,10 @@ data class BillableWithPriceSchedules(
     val priceScheduleList: List<PriceSchedule>
 ) : Serializable {
     fun toCurrentBillableWithPrice(): BillableWithPriceSchedule {
-        return BillableWithPriceSchedule(
-            billable,
-            priceScheduleList.maxBy { it.issuedAt }
-                ?: throw IllegalStateException("Billable Missing Corresponding Price Schedule"))
+        val currentPriceSchedule = priceScheduleList.maxBy { it.issuedAt }
+                ?: throw IllegalStateException("Billable Missing Corresponding Price Schedule")
+        val prevPriceSchedule = priceScheduleList.find { it.id == currentPriceSchedule.previousPriceScheduleModelId }
+
+        return BillableWithPriceSchedule(billable, currentPriceSchedule, prevPriceSchedule)
     }
 }

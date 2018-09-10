@@ -8,9 +8,10 @@ data class EncounterItemApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("encounter_id") val encounterId: UUID,
         @SerializedName("billable_id") val billableId: UUID,
-        @SerializedName("quantity") val quantity: Int
+        @SerializedName("quantity") val quantity: Int,
+        @SerializedName("priceScheduleId") val priceScheduleId: UUID,
+        @SerializedName("priceScheduleIssued") val priceScheduleIssued: Boolean
 ) {
-    // TODO: Add priceScheduleId and priceScheduleIssued to fetching in [#160180832]
 
     fun toEncounterItem(): EncounterItem {
         return EncounterItem(
@@ -18,16 +19,17 @@ data class EncounterItemApi(
             encounterId = encounterId,
             billableId = billableId,
             quantity = quantity,
-            priceScheduleId = UUID.randomUUID(), /* TODO: This is bad temp code. Fetch price schedules */
-            priceScheduleIssued = false          /* TODO: This is bad temp code. Fetch price schedules */
+            priceScheduleId = priceScheduleId,
+            priceScheduleIssued = priceScheduleIssued
         )
     }
 
-    constructor (encounterItem: EncounterItem) :
-            this(
-                id = encounterItem.id,
-                encounterId = encounterItem.encounterId,
-                billableId = encounterItem.billableId,
-                quantity = encounterItem.quantity
-            )
+    constructor (encounterItem: EncounterItem) : this(
+        id = encounterItem.id,
+        encounterId = encounterItem.encounterId,
+        billableId = encounterItem.billableId,
+        quantity = encounterItem.quantity,
+        priceScheduleId = encounterItem.priceScheduleId,
+        priceScheduleIssued = encounterItem.priceScheduleIssued
+    )
 }

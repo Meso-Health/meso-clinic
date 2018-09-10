@@ -20,6 +20,7 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
@@ -27,6 +28,7 @@ import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
+import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
 import org.watsi.device.factories.EncounterFormModelFactory
@@ -274,6 +276,18 @@ class EncounterRepositoryImplTest {
                 it.encounterItemRelations.map {
                     EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
                 }
+            }.flatten(),
+            billableModels = encounters.map {
+                it.encounterItemRelations.map {
+                    BillableModel.fromBillable(it.billableWithPriceSchedule.billable, clock)
+                }
+            }.flatten(),
+            priceScheduleModels = encounters.map {
+                it.encounterItemRelations.map {
+                    it.billableWithPriceSchedule.priceSchedules().map {
+                        PriceScheduleModel.fromPriceSchedule(it, clock)
+                    }
+                }.flatten()
             }.flatten(),
             memberModels = encounters.map {
                 MemberModel.fromMember(it.member, clock)
