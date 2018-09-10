@@ -10,7 +10,8 @@ import org.watsi.domain.relations.EncounterWithExtras
 object EncounterWithExtrasFactory {
     fun build(
         encounter: Encounter = EncounterFactory.build(),
-        encounterItemRelations: List<EncounterItemWithBillableAndPrice> = emptyList(),
+        encounterItemRelations: List<EncounterItemWithBillableAndPrice> = listOf(
+            EncounterItemWithBillableAndPriceFactory.build(), EncounterItemWithBillableAndPriceFactory.build()),
         member: Member = MemberFactory.build(),
         diagnoses: List<Diagnosis> = emptyList(),
         encounterForms: List<EncounterForm> = emptyList()
