@@ -15,7 +15,7 @@ import org.watsi.domain.entities.Photo
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.repositories.IdentificationEventRepository
-import org.watsi.domain.usecases.LoadDefaultBillablesWithPriceUseCase
+import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class CurrentMemberDetailViewModel @Inject constructor(
     private val loadMemberUseCase: LoadMemberUseCase,
-    private val loadDefaultOpdBillablesWithPrice: LoadDefaultBillablesWithPriceUseCase,
+    private val loadDefaultOpdBillables: LoadDefaultBillablesUseCase,
     private val identificationEventRepository: IdentificationEventRepository,
     private val clock: Clock,
     private val logger: Logger
@@ -32,7 +32,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
     private val defaultBillables: MutableList<BillableWithPriceSchedule> = mutableListOf()
 
     fun getObservable(member: Member, identificationEvent: IdentificationEvent): LiveData<ViewState> {
-        loadDefaultOpdBillablesWithPrice.execute(identificationEvent).subscribe({
+        loadDefaultOpdBillables.execute(identificationEvent).subscribe({
             defaultBillables.clear()
             defaultBillables.addAll(it)
         }, {
