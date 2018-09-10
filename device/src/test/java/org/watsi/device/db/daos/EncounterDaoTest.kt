@@ -2,9 +2,7 @@ package org.watsi.device.db.daos
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.watsi.device.db.models.BillableWithPriceScheduleListModel
 import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory
 import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
 import org.watsi.device.factories.EncounterModelFactory

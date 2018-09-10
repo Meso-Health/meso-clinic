@@ -21,7 +21,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
+import org.watsi.device.factories.BillableWithPriceSchedulesModelFactory
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.managers.PreferencesManager
@@ -62,13 +62,13 @@ class BillableRepositoryImplTest {
     @Test
     fun allWithPrice() {
         val models = listOf(
-            BillableWithPriceScheduleListModelFactory.build(),
-            BillableWithPriceScheduleListModelFactory.build()
+            BillableWithPriceSchedulesModelFactory.build(),
+            BillableWithPriceSchedulesModelFactory.build()
         )
         whenever(mockDao.allWithPrice()).thenReturn(Single.just(models))
 
-        repository.all().test().assertValue(models.map { billableWithPriceScheduleListModel ->
-            billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
+        repository.all().test().assertValue(models.map { billableWithPriceSchedulesModel ->
+            billableWithPriceSchedulesModel.toBillableWithPriceSchedules().toCurrentBillableWithPrice()
         })
     }
 
@@ -76,13 +76,13 @@ class BillableRepositoryImplTest {
     fun ofTypeWithPrice() {
         val type = Billable.Type.DRUG
         val models = listOf(
-            BillableWithPriceScheduleListModelFactory.build(),
-            BillableWithPriceScheduleListModelFactory.build()
+            BillableWithPriceSchedulesModelFactory.build(),
+            BillableWithPriceSchedulesModelFactory.build()
         )
         whenever(mockDao.ofType(type)).thenReturn(Single.just(models))
 
-        repository.ofType(type).test().assertValue(models.map { billableWithPriceScheduleListModel ->
-            billableWithPriceScheduleListModel.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()
+        repository.ofType(type).test().assertValue(models.map { billableWithPriceSchedulesModel ->
+            billableWithPriceSchedulesModel.toBillableWithPriceSchedules().toCurrentBillableWithPrice()
         })
     }
 
@@ -183,11 +183,11 @@ class BillableRepositoryImplTest {
 
     @Test
     fun opdDefaults() {
-        val defaultBillable = BillableWithPriceScheduleListModelFactory.build()
+        val defaultBillable = BillableWithPriceSchedulesModelFactory.build()
         whenever(mockDao.opdDefaults()).thenReturn(Single.just(listOf(defaultBillable)))
 
         repository.opdDefaults().test()
-            .assertValue(listOf(defaultBillable.toBillableWithPriceScheduleList().toCurrentBillableWithPrice()))
+            .assertValue(listOf(defaultBillable.toBillableWithPriceSchedules().toCurrentBillableWithPrice()))
     }
 
     @Test

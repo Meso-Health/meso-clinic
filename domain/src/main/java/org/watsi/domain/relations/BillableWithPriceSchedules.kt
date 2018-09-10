@@ -4,7 +4,7 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.PriceSchedule
 import java.io.Serializable
 
-data class BillableWithPriceScheduleList(
+data class BillableWithPriceSchedules(
     val billable: Billable,
     val priceScheduleList: List<PriceSchedule>
 ) : Serializable {

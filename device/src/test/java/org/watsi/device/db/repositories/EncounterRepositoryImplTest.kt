@@ -27,9 +27,7 @@ import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
-import org.watsi.device.db.models.PriceScheduleWithBillableModel
 import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
 import org.watsi.device.factories.EncounterFormModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory

@@ -22,13 +22,13 @@ class DrugAndSupplyViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
-    private val billables: MutableList<BillableWithPriceSchedule> = mutableListOf()
+    private val billableRelations: MutableList<BillableWithPriceSchedule> = mutableListOf()
     private var uniqueDrugNames: List<String> = emptyList()
 
     fun getObservable(encounterFlowState: EncounterFlowState): LiveData<ViewState> {
         loadBillablesOfTypeUseCase.execute(Billable.Type.DRUG).subscribe({
-            billables.addAll(it)
-            uniqueDrugNames = billables.map { it.billable.name }.distinct()
+            billableRelations.addAll(it)
+            uniqueDrugNames = billableRelations.map { it.billable.name }.distinct()
             observable.postValue(ViewState(selectableBillables = getSelectableBillables(),
                 encounterFlowState = encounterFlowState))
         }, {
@@ -40,7 +40,7 @@ class DrugAndSupplyViewModel @Inject constructor(
     private fun getSelectableBillables(): List<BillableWithPriceSchedule>  {
         val encounterItems = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
         val selectedBillables = encounterItems.map { it.billableWithPriceSchedule }
-        return billables.minus(selectedBillables).sortedBy { it.billable.name }
+        return billableRelations.minus(selectedBillables).sortedBy { it.billable.name }
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
@@ -63,7 +63,7 @@ class DrugAndSupplyViewModel @Inject constructor(
                     else
                         Integer.compare(o2.score, o1.score)
                 }).map { result ->
-                    billables.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
+                    billableRelations.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
                 }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillables = matchingBillables))
             } else {

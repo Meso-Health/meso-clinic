@@ -2,9 +2,9 @@ package org.watsi.device.db.daos
 
 import org.junit.Test
 import org.threeten.bp.Instant
-import org.watsi.device.db.models.BillableWithPriceScheduleListModel
+import org.watsi.device.db.models.BillableWithPriceSchedulesModel
 import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.BillableWithPriceScheduleListModelFactory
+import org.watsi.device.factories.BillableWithPriceSchedulesModelFactory
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.domain.entities.Billable
@@ -15,11 +15,11 @@ class BillableDaoTest : DaoBaseTest() {
     @Test
     fun allWithPrice() {
         val billable1 =
-            BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
+            BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
         val billable2 =
-            BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
+            BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
         val billable3 =
-            BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
+            BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
 
         billableDao.allWithPrice().test().assertValue(listOf(billable1, billable2, billable3))
     }
@@ -100,14 +100,14 @@ class BillableDaoTest : DaoBaseTest() {
 
         billableDao.ofType(Billable.Type.SERVICE).test().assertValue(
             listOf(
-                BillableWithPriceScheduleListModel(service1, listOf(priceScheduleService1)),
-                BillableWithPriceScheduleListModel(service2, listOf(priceScheduleService2))
+                BillableWithPriceSchedulesModel(service1, listOf(priceScheduleService1)),
+                BillableWithPriceSchedulesModel(service2, listOf(priceScheduleService2))
             )
         )
 
         billableDao.ofType(Billable.Type.LAB).test().assertValue(
             listOf(
-                BillableWithPriceScheduleListModel(
+                BillableWithPriceSchedulesModel(
                     lab1,
                     listOf(priceScheduleLab1_1, priceScheduleLab1_2)
                 )
@@ -116,15 +116,15 @@ class BillableDaoTest : DaoBaseTest() {
 
         billableDao.ofType(Billable.Type.DRUG).test().assertValue(
             listOf(
-                BillableWithPriceScheduleListModel(
+                BillableWithPriceSchedulesModel(
                     drug1,
                     listOf(priceScheduleDrug1_1, priceScheduleDrug1_2)
                 ),
-                BillableWithPriceScheduleListModel(
+                BillableWithPriceSchedulesModel(
                     drug2,
                     listOf(priceScheduleDrug2_1, priceScheduleDrug2_2, priceScheduleDrug2_3)
                 ),
-                BillableWithPriceScheduleListModel(drug3, listOf(priceScheduleDrug3))
+                BillableWithPriceSchedulesModel(drug3, listOf(priceScheduleDrug3))
             )
         )
     }
@@ -195,17 +195,17 @@ class BillableDaoTest : DaoBaseTest() {
 
     @Test
     fun opdDefaults() {
-        val consultation = BillableWithPriceScheduleListModelFactory.create(
+        val consultation = BillableWithPriceSchedulesModelFactory.create(
             billableDao,
             priceScheduleDao,
             BillableModelFactory.build(name = "Consultation")
         )
-        val medicalForm = BillableWithPriceScheduleListModelFactory.create(
+        val medicalForm = BillableWithPriceSchedulesModelFactory.create(
             billableDao,
             priceScheduleDao,
             BillableModelFactory.build(name = "Medical Form")
         )
-        BillableWithPriceScheduleListModelFactory.create(billableDao, priceScheduleDao)
+        BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
 
         billableDao.opdDefaults().test().assertValue(listOf(consultation, medicalForm))
     }

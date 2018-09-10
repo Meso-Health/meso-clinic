@@ -3,22 +3,22 @@ package org.watsi.device.factories
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.PriceScheduleDao
 import org.watsi.device.db.models.BillableModel
-import org.watsi.device.db.models.BillableWithPriceScheduleListModel
+import org.watsi.device.db.models.BillableWithPriceSchedulesModel
 import org.watsi.device.db.models.PriceScheduleModel
 
-object BillableWithPriceScheduleListModelFactory {
+object BillableWithPriceSchedulesModelFactory {
 
     fun build(
         billableModel: BillableModel = BillableModelFactory.build(),
-        priceScheduleModelList: List<PriceScheduleModel> = listOf(
+        priceScheduleModels: List<PriceScheduleModel> = listOf(
             PriceScheduleModelFactory.build(
                 billableId = billableModel.id
             )
         )
-    ): BillableWithPriceScheduleListModel {
-        return BillableWithPriceScheduleListModel(
+    ): BillableWithPriceSchedulesModel {
+        return BillableWithPriceSchedulesModel(
             billableModel,
-            priceScheduleModelList
+            priceScheduleModels
         )
     }
 
@@ -26,18 +26,18 @@ object BillableWithPriceScheduleListModelFactory {
         billableDao: BillableDao,
         priceScheduleDao: PriceScheduleDao,
         billableModel: BillableModel = BillableModelFactory.build(),
-        priceScheduleModelList: List<PriceScheduleModel> = listOf(
+        priceScheduleModels: List<PriceScheduleModel> = listOf(
             PriceScheduleModelFactory.build(
                 billableId = billableModel.id
             )
         )
-    ): BillableWithPriceScheduleListModel {
+    ): BillableWithPriceSchedulesModel {
         val model = build(
             billableModel,
-            priceScheduleModelList
+            priceScheduleModels
         )
         billableDao.insert(billableModel)
-        priceScheduleModelList.forEach { priceScheduleModel ->
+        priceScheduleModels.forEach { priceScheduleModel ->
             priceScheduleDao.insert(priceScheduleModel)
         }
         return model
