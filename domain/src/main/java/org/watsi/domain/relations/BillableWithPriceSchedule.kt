@@ -9,6 +9,6 @@ data class BillableWithPriceSchedule(
     val prevPriceSchedule: PriceSchedule? = null
 ) {
     fun priceSchedules(): List<PriceSchedule> {
-        return if (prevPriceSchedule != null) listOf(priceSchedule, prevPriceSchedule) else listOf(priceSchedule)
+        return listOf(priceSchedule, prevPriceSchedule).filterNotNull()
     }
 }
