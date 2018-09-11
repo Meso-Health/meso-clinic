@@ -65,8 +65,7 @@ class EncounterItemListItem @JvmOverloads constructor(
             false
         }
 
-        // TODO: pass previous price if one exists
-        line_item_price.setPrice(encounterItemRelation.price())
+        line_item_price.setPrice(encounterItemRelation.price(), encounterItemRelation.prevPrice())
 
         onPriceTap?.let {
             line_item_price.underline()

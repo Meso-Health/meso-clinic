@@ -18,8 +18,7 @@ class ReceiptListItem @JvmOverloads constructor(
     fun setEncounterItem(encounterItemRelations: EncounterItemWithBillableAndPrice) {
         receipt_billable_quantity.text = NumberFormat.getInstance().format(encounterItemRelations.encounterItem.quantity)
         receipt_billable_name.text = encounterItemRelations.billableWithPriceSchedule.billable.name
-        // TODO: pass previous price if one exists
-        receipt_billable_price.setPrice(encounterItemRelations.price())
+        receipt_billable_price.setPrice(encounterItemRelations.price(), encounterItemRelations.prevPrice())
         encounterItemRelations.billableWithPriceSchedule.billable.details()?.let { details ->
             receipt_billable_dosage.visibility = View.VISIBLE
             receipt_billable_dosage.text = details

@@ -9,4 +9,7 @@ data class EncounterItemWithBillableAndPrice(
 ) : Serializable {
 
     fun price(): Int = encounterItem.quantity * billableWithPriceSchedule.priceSchedule.price
+    fun prevPrice(): Int? = billableWithPriceSchedule.prevPriceSchedule?.let {
+        encounterItem.quantity * it.price
+    }
 }
