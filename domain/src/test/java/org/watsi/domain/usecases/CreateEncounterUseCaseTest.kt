@@ -117,6 +117,7 @@ class CreateEncounterUseCaseTest {
         )
 
         whenever(mockBillableRepository.find(billable.id)).thenReturn(Maybe.just(billable))
+        whenever(mockPriceScheduleRepository.find(priceSchedule.id)).thenReturn(Maybe.empty())
         whenever(mockPriceScheduleRepository.create(priceSchedule, priceScheduleDelta))
             .thenReturn(Completable.complete())
         whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta)))

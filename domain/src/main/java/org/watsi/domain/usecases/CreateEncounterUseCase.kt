@@ -38,9 +38,9 @@ class CreateEncounterUseCase(
                 val billableWithPrice = encounterItemRelation.billableWithPriceSchedule
                 if (billableRepository.find(billableWithPrice.billable.id).blockingGet() == null) {
                     newBillables.add(billableWithPrice.billable)
-                    newPriceSchedules.add(billableWithPrice.priceSchedule)
-                } else if (encounterItemRelation.encounterItem.priceScheduleIssued) {
-                    newPriceSchedules.add(billableWithPrice.priceSchedule)
+                    newPriceSchedules.add(billableWithPrice.priceSchedule) // A new billable always creates a new PriceSchedule
+                } else if (priceScheduleRepository.find(billableWithPrice.priceSchedule.id).blockingGet() == null) {
+                    newPriceSchedules.add(billableWithPrice.priceSchedule) // An existing billable may still have a new PriceSchedule
                 } else {
                     // Billable and PriceSchedule both exist -> No Op
                 }
