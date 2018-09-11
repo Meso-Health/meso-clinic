@@ -78,7 +78,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         observable = viewModel.getObservable(encounterFlowState)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                val cursor = buildSearchResultCursor(viewState.selectableBillables.map { it.billable })
+                val cursor = buildSearchResultCursor(viewState.selectableBillableRelations.map { it.billable })
                 drug_search.suggestionsAdapter.changeCursor(cursor)
 
                 updateLineItems(viewState.encounterFlowState)
@@ -172,7 +172,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             override fun onSuggestionSelect(position: Int): Boolean = true
 
             override fun onSuggestionClick(position: Int): Boolean {
-                observable.value?.selectableBillables?.get(position)?.let {
+                observable.value?.selectableBillableRelations?.get(position)?.let {
                     viewModel.addItem(it)
                     line_items_list.scrollToBottom()
                     drug_search.setQuery("", false)
