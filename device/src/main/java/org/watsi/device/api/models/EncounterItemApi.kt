@@ -9,8 +9,8 @@ data class EncounterItemApi(
         @SerializedName("encounter_id") val encounterId: UUID,
         @SerializedName("billable_id") val billableId: UUID,
         @SerializedName("quantity") val quantity: Int,
-        @SerializedName("priceScheduleId") val priceScheduleId: UUID,
-        @SerializedName("priceScheduleIssued") val priceScheduleIssued: Boolean
+        @SerializedName("price_schedule_id") val priceScheduleId: UUID,
+        @SerializedName("price_schedule_issued") val priceScheduleIssued: Boolean
 ) {
 
     fun toEncounterItem(): EncounterItem {
