@@ -20,6 +20,6 @@ class BillableWithPriceSchedulesTest {
         val priceSchedule3 = PriceScheduleFactory.build(billableId = billable.id, issuedAt = newDate, previousPriceScheduleModelId = priceSchedule1.id)
         val billableWithPriceSchedules = BillableWithPriceSchedules(billable, listOf(priceSchedule1, priceSchedule2, priceSchedule3))
 
-        assertEquals(BillableWithPriceSchedule(billable, priceSchedule3), billableWithPriceSchedules.toCurrentBillableWithPrice())
+        assertEquals(BillableWithPriceSchedule(billable, priceSchedule3, priceSchedule1), billableWithPriceSchedules.toCurrentBillableWithPrice())
     }
 }
