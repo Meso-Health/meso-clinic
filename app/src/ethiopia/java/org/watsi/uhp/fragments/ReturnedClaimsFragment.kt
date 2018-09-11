@@ -112,4 +112,9 @@ class ReturnedClaimsFragment : DaggerFragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        (activity as ClinicActivity).setSoftInputModeToPan()
+    }
+
 }

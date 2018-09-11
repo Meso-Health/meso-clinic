@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.billable_details
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.billable_name
+import kotlinx.android.synthetic.ethiopia.fragment_edit_price.price_indicator
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.quantity
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.total_price
@@ -55,15 +56,21 @@ class EditPriceFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         encounterItemId = arguments.getSerializable(PARAM_ENCOUNTER_ID) as UUID
+        val encounterItemRelation = encounterFlowState.encounterItemRelations.find {
+            it.encounterItem.id == encounterItemId
+        }!!
+        val initialPrice = encounterItemRelation.billableWithPriceSchedule.priceSchedule.price
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditPriceViewModel::class.java)
-        observable = viewModel.getObservable(encounterItemId, encounterFlowState)
+        observable = viewModel.getObservable(encounterItemRelation)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 viewState.billable?.let { billable ->
                     billable_name.text = billable.name
                     billable.details()?.let { billable_details.text = it }
                 }
+
+                price_indicator.setPrice(viewState.unitPrice, initialPrice)
 
                 // don't change value if focused because that means the user is editing the field
                 // and we don't want to reset the cursor position by calling setText

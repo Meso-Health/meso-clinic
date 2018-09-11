@@ -4,28 +4,21 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import org.watsi.domain.entities.Billable
-import org.watsi.uhp.flowstates.EncounterFlowState
-import java.util.UUID
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import javax.inject.Inject
 
 class EditPriceViewModel @Inject constructor() : ViewModel() {
     private val observable = MutableLiveData<ViewState>()
 
     fun getObservable(
-            encounterItemId: UUID,
-            encounterFlowState: EncounterFlowState
+            encounterItemRelation: EncounterItemWithBillableAndPrice
     ): LiveData<ViewState> {
-        val encounterItem = encounterFlowState.encounterItemRelations.find {
-            it.encounterItem.id == encounterItemId
-        }
-        encounterItem?.let {
-            observable.value = ViewState(
-                it.billableWithPriceSchedule.billable,
-                it.billableWithPriceSchedule.priceSchedule.price,
-                it.encounterItem.quantity,
-                it.price()
-            )
-        }
+        observable.value = ViewState(
+            encounterItemRelation.billableWithPriceSchedule.billable,
+            encounterItemRelation.billableWithPriceSchedule.priceSchedule.price,
+            encounterItemRelation.encounterItem.quantity,
+            encounterItemRelation.price()
+        )
         return observable
     }
 

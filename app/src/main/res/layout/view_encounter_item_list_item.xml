@@ -49,15 +49,15 @@
         app:layout_constraintTop_toBottomOf="@id/billable_name"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
+    <org.watsi.uhp.views.PriceChange
         android:id="@+id/line_item_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space16"
         android:layout_marginEnd="@dimen/space16"
-        android:theme="@style/Title"
         app:layout_constraintStart_toEndOf="@id/billable_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
 </org.watsi.uhp.views.EncounterItemListItem>

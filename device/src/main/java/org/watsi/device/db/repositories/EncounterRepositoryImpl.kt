@@ -20,6 +20,7 @@ import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
