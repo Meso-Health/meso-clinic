@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.uganda.fragment_add_new_billable.unit_container
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.unit_field
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -112,11 +112,18 @@ class AddNewBillableFragment : DaggerFragment() {
             getString(R.string.add_new_billable_composition_prompt), { viewModel.updateComposition(null) })
 
         save_button.setOnClickListener {
-            viewModel.getBillable()?.let { billable ->
-                val newBillableEncounterItem = EncounterItem(UUID.randomUUID(), encounterFlowState.encounter.id,
-                                                             billable.id, 1)
-                encounterFlowState.encounterItems = encounterFlowState.encounterItems.plus(
-                    EncounterItemWithBillable(newBillableEncounterItem, billable))
+            viewModel.getBillable()?.let { billableWithPrice ->
+                val newBillableEncounterItem = EncounterItem(
+                    UUID.randomUUID(), encounterFlowState.encounter.id,
+                    billableWithPrice.billable.id, 1, billableWithPrice.priceSchedule.id, true
+                )
+                encounterFlowState.encounterItemRelations =
+                        encounterFlowState.encounterItemRelations.plus(
+                            EncounterItemWithBillableAndPrice(
+                                newBillableEncounterItem,
+                                billableWithPrice
+                            )
+                        )
                 navigationManager.popTo(EncounterFragment.forEncounter(encounterFlowState))
             }
         }

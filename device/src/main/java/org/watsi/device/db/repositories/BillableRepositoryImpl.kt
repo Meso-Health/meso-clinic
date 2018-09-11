@@ -10,12 +10,14 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.models.BillableModel
+import org.watsi.device.db.models.BillableWithPriceSchedulesModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 
@@ -27,12 +29,12 @@ class BillableRepositoryImpl(
         private val clock: Clock
 ) : BillableRepository {
 
-    override fun all(): Single<List<Billable>> {
-        return billableDao.all().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    override fun all(): Single<List<BillableWithPriceSchedule>> {
+        return matchBillablesToCurrentPrice(billableDao.allWithPrice()).subscribeOn(Schedulers.io())
     }
 
-    override fun ofType(type: Billable.Type): Single<List<Billable>> {
-        return billableDao.ofType(type).map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    override fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedule>> {
+        return matchBillablesToCurrentPrice(billableDao.ofType(type)).subscribeOn(Schedulers.io())
     }
 
     override fun find(id: UUID): Maybe<Billable> {
@@ -85,8 +87,8 @@ class BillableRepositoryImpl(
         return billableDao.distinctCompositions().subscribeOn(Schedulers.io())
     }
 
-    override fun opdDefaults(): Single<List<Billable>> {
-        return billableDao.opdDefaults().map { it.map { it.toBillable() } }.subscribeOn(Schedulers.io())
+    override fun opdDefaults(): Single<List<BillableWithPriceSchedule>> {
+        return matchBillablesToCurrentPrice(billableDao.opdDefaults()).subscribeOn(Schedulers.io())
     }
 
     override fun sync(delta: Delta): Completable {
@@ -97,4 +99,11 @@ class BillableRepositoryImpl(
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
+
+    private fun matchBillablesToCurrentPrice(
+        billableWithPriceSchedulesModels: Single<List<BillableWithPriceSchedulesModel>>
+    ): Single<List<BillableWithPriceSchedule>> {
+        return billableWithPriceSchedulesModels.map { it.map { it.toBillableWithCurrentPriceSchedule() } }
+    }
+
 }

@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.factories.BillableFactory
+import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.repositories.BillableRepository
 
@@ -17,7 +17,7 @@ class LoadDefaultBillablesUseCaseTest {
 
     @Mock lateinit var mockBillableRepo: BillableRepository
     lateinit var useCase: LoadDefaultBillablesUseCase
-    val defaultBillables = listOf(BillableFactory.build())
+    val defaultBillables = listOf(BillableWithPriceScheduleFactory.build())
 
     @Before
     fun setup() {
