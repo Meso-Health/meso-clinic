@@ -1,6 +1,7 @@
 package org.watsi.device.db.repositories
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
@@ -73,17 +74,31 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun ofTypeWithPrice() {
+    fun ofType() {
         val type = Billable.Type.DRUG
         val models = listOf(
             BillableWithPriceSchedulesModelFactory.build(),
             BillableWithPriceSchedulesModelFactory.build()
         )
-        whenever(mockDao.ofType(type)).thenReturn(Single.just(models))
+        val modelIds = models.map { it.billableModel!!.id }
+        whenever(mockDao.idsOfType(type)).thenReturn(Single.just(modelIds))
+        whenever(mockDao.findWithPrice(modelIds)).thenReturn(Single.just(models))
 
         repository.ofType(type).test().assertValue(models.map { billableWithPriceSchedulesModel ->
             billableWithPriceSchedulesModel.toBillableWithCurrentPriceSchedule()
         })
+    }
+
+    @Test
+    fun ofType_moreThan1000_findsByChunk() {
+        val type = Billable.Type.DRUG
+        val modelIds = (1..1001).map { UUID.randomUUID() }
+        whenever(mockDao.idsOfType(type)).thenReturn(Single.just(modelIds))
+        whenever(mockDao.findWithPrice(any())).thenReturn(Single.just(emptyList()))
+
+        repository.ofType(type).test().assertComplete()
+
+        verify(mockDao, times(2)).findWithPrice(any())
     }
 
     @Test

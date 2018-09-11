@@ -34,7 +34,14 @@ class BillableRepositoryImpl(
     }
 
     override fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedule>> {
-        return matchBillablesToCurrentPrice(billableDao.ofType(type)).subscribeOn(Schedulers.io())
+        // because we can have over 1,000 billables with type drug, if we do not chunk the find
+        // we run into a too many SQL variables exception due to how the relation is queried
+        return Single.fromCallable {
+            val ids = billableDao.idsOfType(type).blockingGet()
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                billableDao.findWithPrice(it).blockingGet()
+            }.flatten().map { it.toBillableWithCurrentPriceSchedule() }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun find(id: UUID): Maybe<Billable> {
@@ -77,7 +84,7 @@ class BillableRepositoryImpl(
                     serverBillablesWithPrice.map { PriceScheduleModel.fromPriceSchedule(it.priceSchedule, clock) }
                 )
 
-                billableDao.delete(serverRemovedBillableIds)
+                delete(serverRemovedBillableIds).blockingAwait()
                 preferencesManager.updateBillablesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()

@@ -41,8 +41,15 @@ interface BillableDao {
     @Query("SELECT * FROM billables WHERE type = :type")
     fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedulesModel>>
 
+    @Transaction
+    @Query("SELECT id FROM billables WHERE type = :type")
+    fun idsOfType(type: Billable.Type): Single<List<UUID>>
+
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<BillableModel>
+
+    @Query("SELECT * FROM billables WHERE id IN (:ids)")
+    fun findWithPrice(ids: List<UUID>): Single<List<BillableWithPriceSchedulesModel>>
 
     @Query("SELECT DISTINCT(composition) FROM billables WHERE composition IS NOT NULL")
     fun distinctCompositions(): Single<List<String>>
