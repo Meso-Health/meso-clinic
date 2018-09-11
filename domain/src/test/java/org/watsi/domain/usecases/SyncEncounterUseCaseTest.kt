@@ -17,6 +17,7 @@ import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterWithItemsFactory
 import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
+import org.watsi.domain.factories.PriceScheduleFactory
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterRepository
 
@@ -40,42 +41,57 @@ class SyncEncounterUseCaseTest {
         val unsyncedIdEvent = IdentificationEventFactory.build()
         val syncedBillable = BillableFactory.build()
         val unsyncedBillable = BillableFactory.build()
+        val syncedPriceSchedule = PriceScheduleFactory.build()
+        val unsyncedPriceSchedule = PriceScheduleFactory.build()
         val syncedMember = MemberFactory.build()
         val unsyncedMember = MemberFactory.build()
-        val unsyncedEncounter1 = EncounterWithItemsFactory.buildWithBillable(
+        val unsyncedEncounter1 = EncounterWithItemsFactory.buildWithBillableAndPriceSchedule(
             EncounterFactory.build(
                 memberId = syncedMember.id,
                 identificationEventId = syncedIdEvent.id
             ),
-            syncedBillable
+            syncedBillable,
+            syncedPriceSchedule
         )
-        val unsyncedEncounter2 = EncounterWithItemsFactory.buildWithBillable(
+        val unsyncedEncounter2 = EncounterWithItemsFactory.buildWithBillableAndPriceSchedule(
             EncounterFactory.build(
                 memberId = syncedMember.id,
                 identificationEventId = unsyncedIdEvent.id
             ),
-            syncedBillable
+            syncedBillable,
+            syncedPriceSchedule
         )
-        val unsyncedEncounter3 = EncounterWithItemsFactory.buildWithBillable(
+        val unsyncedEncounter3 = EncounterWithItemsFactory.buildWithBillableAndPriceSchedule(
             EncounterFactory.build(
                 memberId = unsyncedMember.id,
                 identificationEventId = syncedIdEvent.id
             ),
-            syncedBillable
+            syncedBillable,
+            syncedPriceSchedule
         )
-        val unsyncedEncounter4 = EncounterWithItemsFactory.buildWithBillable(
+        val unsyncedEncounter4 = EncounterWithItemsFactory.buildWithBillableAndPriceSchedule(
             EncounterFactory.build(
                 memberId = syncedMember.id,
-                identificationEventId = syncedMember.id
+                identificationEventId = syncedIdEvent.id
             ),
-            unsyncedBillable
+            unsyncedBillable,
+            syncedPriceSchedule
         )
-        val unsyncedEncounter5 = EncounterWithItemsFactory.buildWithBillable(
+        val unsyncedEncounter5 = EncounterWithItemsFactory.buildWithBillableAndPriceSchedule(
+            EncounterFactory.build(
+                memberId = syncedMember.id,
+                identificationEventId = syncedIdEvent.id
+            ),
+            syncedBillable,
+            unsyncedPriceSchedule
+        )
+        val unsyncedEncounter6 = EncounterWithItemsFactory.buildWithBillableAndPriceSchedule(
             EncounterFactory.build(
                 memberId = syncedMember.id,
                 identificationEventId = null
             ),
-            syncedBillable
+            syncedBillable,
+            syncedPriceSchedule
         )
         val unsyncedEncounterDelta1 = DeltaFactory.build(
             action = Delta.Action.ADD,
@@ -107,8 +123,15 @@ class SyncEncounterUseCaseTest {
             modelId = unsyncedEncounter5.encounter.id,
             synced = false
         )
+        val unsyncedEncounterDelta6 = DeltaFactory.build(
+            action = Delta.Action.ADD,
+            modelName = Delta.ModelName.ENCOUNTER,
+            modelId = unsyncedEncounter6.encounter.id,
+            synced = false
+        )
+        // encounter with everything synced and encounter with null identification event should sync
         val shouldBeSyncedEncounterDelta1 = unsyncedEncounterDelta1
-        val shouldBeSyncedEncounterDelta2 = unsyncedEncounterDelta5
+        val shouldBeSyncedEncounterDelta2 = unsyncedEncounterDelta6
 
         whenever(deltaRepo.unsynced(Delta.ModelName.ENCOUNTER))
                 .thenReturn(Single.just(listOf(
@@ -116,12 +139,15 @@ class SyncEncounterUseCaseTest {
                     unsyncedEncounterDelta2,
                     unsyncedEncounterDelta3,
                     unsyncedEncounterDelta4,
-                    unsyncedEncounterDelta5
+                    unsyncedEncounterDelta5,
+                    unsyncedEncounterDelta6
                 )))
         whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.IDENTIFICATION_EVENT, Delta.Action.ADD))
                 .thenReturn(Single.just(listOf(unsyncedIdEvent.id)))
         whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.BILLABLE, Delta.Action.ADD))
                 .thenReturn(Single.just(listOf(unsyncedBillable.id)))
+        whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.PRICE_SCHEDULE, Delta.Action.ADD))
+                .thenReturn(Single.just(listOf(unsyncedPriceSchedule.id)))
         whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.MEMBER, Delta.Action.ADD))
                 .thenReturn(Single.just(listOf(unsyncedMember.id)))
 
@@ -135,6 +161,8 @@ class SyncEncounterUseCaseTest {
                 .thenReturn(Single.just(unsyncedEncounter4))
         whenever(encounterRepo.find(unsyncedEncounter5.encounter.id))
                 .thenReturn(Single.just(unsyncedEncounter5))
+        whenever(encounterRepo.find(unsyncedEncounter6.encounter.id))
+                .thenReturn(Single.just(unsyncedEncounter6))
 
         whenever(encounterRepo.sync(shouldBeSyncedEncounterDelta1))
                 .thenReturn(Completable.complete())
