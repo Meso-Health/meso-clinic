@@ -32,6 +32,8 @@ class PriceScheduleRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val user = UserFactory.build()
+    val token = AuthenticationToken("token", clock.instant(), user)
     lateinit var repository: PriceScheduleRepositoryImpl
 
     val priceScheduleModel = PriceScheduleModelFactory.build(clock = clock)
@@ -50,10 +52,22 @@ class PriceScheduleRepositoryImplTest {
     }
 
     @Test
-    fun sync() {
-        val user = UserFactory.build()
-        val token = AuthenticationToken("token", clock.instant(), user)
+    fun sync_noCurrentToken_completes() {
+        whenever(mockSessionManager.currentToken()).thenReturn(null)
 
+        repository.sync(deltaModel.toDelta()).test().assertComplete()
+    }
+
+    @Test
+    fun sync_noPriceSchedule_completes() {
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockDao.find(priceScheduleModel.id)).thenReturn(Maybe.empty())
+
+        repository.sync(deltaModel.toDelta()).test().assertComplete()
+    }
+
+    @Test
+    fun sync() {
         whenever(mockSessionManager.currentToken()).thenReturn(token)
         whenever(mockDao.find(priceScheduleModel.id)).thenReturn(Maybe.just(priceScheduleModel))
         whenever(mockApi.postPriceSchedule(token.getHeaderString(), user.providerId, PriceScheduleApi(priceScheduleModel.toPriceSchedule())))
