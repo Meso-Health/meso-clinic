@@ -60,8 +60,7 @@ class EncounterViewModel @Inject constructor(
             }
             type == Billable.Type.DRUG -> emptyList()
             else -> {
-                val currentBillables =
-                    encounterItemRelations.orEmpty().map { it.billableWithPriceSchedule }
+                val currentBillables = encounterItemRelations.orEmpty().map { it.billableWithPriceSchedule }
                 billableList.minus(currentBillables).sortedBy { it.billable.name }
             }
         }
