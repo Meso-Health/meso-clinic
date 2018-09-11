@@ -24,6 +24,7 @@ import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
 import org.watsi.device.db.repositories.MemberRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
+import org.watsi.device.db.repositories.PriceScheduleRepositoryImpl
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.repositories.BillableRepository
@@ -34,6 +35,7 @@ import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.repositories.PriceScheduleRepository
 import javax.inject.Singleton
 
 @Module
@@ -89,6 +91,12 @@ class DbModule {
                                   preferencesManager: PreferencesManager,
                                   clock: Clock): BillableRepository =
             BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
+
+    @Provides
+    fun providePriceScheduleRepository(priceScheduleDao: PriceScheduleDao,
+                                       api: CoverageApi,
+                                       sessionManager: SessionManager): PriceScheduleRepository =
+            PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager)
 
     @Provides
     fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {

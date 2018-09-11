@@ -9,6 +9,7 @@ import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.repositories.PriceScheduleRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -27,6 +28,7 @@ import org.watsi.domain.usecases.MarkReturnedEncountersAsRevisedUseCase
 import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
+import org.watsi.domain.usecases.SyncPriceScheduleUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
 import org.watsi.domain.usecases.SyncIdentificationEventUseCase
@@ -69,6 +71,14 @@ class DomainModule {
             deltaRepository: DeltaRepository
     ): SyncBillableUseCase {
         return SyncBillableUseCase(billableRepository, deltaRepository)
+    }
+
+    @Provides
+    fun provideSyncPriceScheduleUseCase(
+            priceScheduleRepository: PriceScheduleRepository,
+            deltaRepository: DeltaRepository
+    ): SyncPriceScheduleUseCase {
+        return SyncPriceScheduleUseCase(priceScheduleRepository, deltaRepository)
     }
     
     @Provides
