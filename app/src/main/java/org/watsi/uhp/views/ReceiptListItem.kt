@@ -9,7 +9,6 @@ import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_na
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_price
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_quantity
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.uhp.utils.CurrencyUtil
 import java.text.NumberFormat
 
 class ReceiptListItem @JvmOverloads constructor(
@@ -19,7 +18,8 @@ class ReceiptListItem @JvmOverloads constructor(
     fun setEncounterItem(encounterItemRelations: EncounterItemWithBillableAndPrice) {
         receipt_billable_quantity.text = NumberFormat.getInstance().format(encounterItemRelations.encounterItem.quantity)
         receipt_billable_name.text = encounterItemRelations.billableWithPriceSchedule.billable.name
-        receipt_billable_price.text = CurrencyUtil.formatMoney(encounterItemRelations.price())
+        // TODO: pass previous price if one exists
+        receipt_billable_price.setPrice(encounterItemRelations.price())
         encounterItemRelations.billableWithPriceSchedule.billable.details()?.let { details ->
             receipt_billable_dosage.visibility = View.VISIBLE
             receipt_billable_dosage.text = details
