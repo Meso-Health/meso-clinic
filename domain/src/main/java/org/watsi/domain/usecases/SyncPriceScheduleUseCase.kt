@@ -1,6 +1,7 @@
 package org.watsi.domain.usecases
 
 import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
@@ -17,6 +18,6 @@ class SyncPriceScheduleUseCase(
                 priceScheduleRepository.sync(priceScheduleDelta).blockingAwait()
                 deltaRepository.markAsSynced(listOf(priceScheduleDelta)).blockingAwait()
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 }
