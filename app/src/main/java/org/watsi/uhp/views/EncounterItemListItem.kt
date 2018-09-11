@@ -1,7 +1,6 @@
 package org.watsi.uhp.views
 
 import android.content.Context
-import android.graphics.Paint
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.View
@@ -12,7 +11,6 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billabl
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.uhp.utils.CurrencyUtil
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -67,10 +65,11 @@ class EncounterItemListItem @JvmOverloads constructor(
             false
         }
 
-        line_item_price.text = CurrencyUtil.formatMoney(encounterItemRelation.price())
+        // TODO: pass previous price if one exists
+        line_item_price.setPrice(encounterItemRelation.price())
 
         onPriceTap?.let {
-            line_item_price.paintFlags = line_item_price.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            line_item_price.underline()
             line_item_price.setOnClickListener { onPriceTap(encounterItem.id) }
         }
     }
