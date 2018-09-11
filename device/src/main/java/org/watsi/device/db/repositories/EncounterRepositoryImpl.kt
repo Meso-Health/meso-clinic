@@ -18,6 +18,7 @@ import org.watsi.device.db.models.MemberModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -70,8 +71,11 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                     diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
                         .map { it.toDiagnosis() }
                 EncounterWithExtras(
-                    encounterRelation.encounter, encounterRelation.member,
-                    encounterRelation.encounterItems, diagnoses, encounterRelation.encounterForms
+                    encounterRelation.encounter,
+                    encounterRelation.member,
+                    encounterRelation.encounterItemRelations,
+                    diagnoses,
+                    encounterRelation.encounterForms
                 )
             }
         }
@@ -87,7 +91,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
 
     override fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable {
         val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
-        val encounterItemModels = encounterWithItemsAndForms.encounterItems.map {
+        val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
             EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
         }
         // TODO: select any billables that need to be inserted
@@ -110,7 +114,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                 EncounterModel.fromEncounter(it.encounter, clock)
             }
             val encounterItemModels = encounters.map {
-                it.encounterItems.map { EncounterItemModel.fromEncounterItem(it.encounterItem, clock) }
+                it.encounterItemRelations.map { EncounterItemModel.fromEncounterItem(it.encounterItem, clock) }
             }.flatten()
             val memberModels = encounters.map { MemberModel.fromMember(it.member, clock) }
 

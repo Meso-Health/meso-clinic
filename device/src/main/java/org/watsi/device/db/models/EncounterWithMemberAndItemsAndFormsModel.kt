@@ -9,16 +9,18 @@ data class EncounterWithMemberAndItemsAndFormsModel(
     @Relation(parentColumn = "memberId", entityColumn = "id", entity = MemberModel::class)
     var memberModel: List<MemberModel>? = null,
     @Relation(parentColumn = "id", entityColumn = "encounterId", entity = EncounterItemModel::class)
-    var encounterItemWithBillableModels: List<EncounterItemWithBillableModel>? = null,
+    var encounterItemWithBillableAndPriceModels: List<EncounterItemWithBillableAndPriceModel>? = null,
     @Relation(parentColumn = "id", entityColumn = "encounterId", entity = EncounterFormModel::class)
     var encounterFormModels: List<EncounterFormModel>? = null
 ) {
 
     fun toEncounterWithMemberAndItemsAndForms(): EncounterWithMemberAndItemsAndForms {
         encounterModel?.toEncounter()?.let { encounter ->
-            memberModel?.firstOrNull()?.toMember()?.let {member ->
+            memberModel?.firstOrNull()?.toMember()?.let { member ->
 
-                val items = encounterItemWithBillableModels?.map{ it.toEncounterItemWithBillable() } ?: emptyList()
+                val items =
+                    encounterItemWithBillableAndPriceModels?.map { it.toEncounterItemWithBillableAndPrice() }
+                        ?: emptyList()
                 val forms = encounterFormModels?.map { it.toEncounterForm() } ?: emptyList()
 
                 return EncounterWithMemberAndItemsAndForms(encounter, member, items, forms)

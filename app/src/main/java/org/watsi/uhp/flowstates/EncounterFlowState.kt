@@ -5,13 +5,13 @@ import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.io.Serializable
 
 data class EncounterFlowState(var encounter: Encounter,
-                              var encounterItems: List<EncounterItemWithBillable>,
+                              var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
                               var encounterForms: List<EncounterForm>,
                               var diagnoses: List<Diagnosis>,
                               var member: Member? = null,
@@ -19,7 +19,7 @@ data class EncounterFlowState(var encounter: Encounter,
 
     companion object {
         fun fromEncounterWithExtras(encounterWithExtras: EncounterWithExtras): EncounterFlowState {
-            return EncounterFlowState(encounterWithExtras.encounter, encounterWithExtras.encounterItems,
+            return EncounterFlowState(encounterWithExtras.encounter, encounterWithExtras.encounterItemRelations,
                 encounterWithExtras.encounterForms, encounterWithExtras.diagnoses, encounterWithExtras.member
             )
         }
@@ -31,13 +31,13 @@ data class EncounterFlowState(var encounter: Encounter,
         }
     }
 
-    fun price(): Int = encounterItems.map { it.price() }.sum()
+    fun price(): Int = encounterItemRelations.map { it.price() }.sum()
 
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
-        return EncounterWithItemsAndForms(encounter, encounterItems, clearEncounterFormThumbnails(), diagnoses)
+        return EncounterWithItemsAndForms(encounter, encounterItemRelations, clearEncounterFormThumbnails(), diagnoses)
     }
 
-    fun getEncounterItemsOfType(billableType: Billable.Type): List<EncounterItemWithBillable> {
-        return encounterItems.filter { it.billable.type == billableType }
+    fun getEncounterItemsOfType(billableType: Billable.Type): List<EncounterItemWithBillableAndPrice> {
+        return encounterItemRelations.filter { it.billableWithPriceSchedule.billable.type == billableType }
     }
 }

@@ -5,7 +5,7 @@ import io.reactivex.schedulers.Schedulers
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.util.UUID
 
@@ -30,8 +30,8 @@ class ReviseMemberAndClaimUseCase(
                 returnReason = null
             )
 
-            val newEncounterItems = mutableListOf<EncounterItemWithBillable>()
-            encounterWithItemsAndForms.encounterItems.forEach {
+            val newEncounterItems = mutableListOf<EncounterItemWithBillableAndPrice>()
+            encounterWithItemsAndForms.encounterItemRelations.forEach {
                 newEncounterItems.add(
                     it.copy(
                         encounterItem = it.encounterItem.copy(

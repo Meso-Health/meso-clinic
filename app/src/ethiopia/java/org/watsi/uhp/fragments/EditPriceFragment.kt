@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_price.quantity
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_edit_price.unit_price
+import org.threeten.bp.Instant
+import org.watsi.domain.entities.PriceSchedule
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -133,25 +135,48 @@ class EditPriceFragment : DaggerFragment() {
 
         save_button.setOnClickListener {
             observable.value?.let { viewState ->
-                // TODO: replace this logic once we implement price schedules
-                val updatedEncounterItems = encounterFlowState.encounterItems.map { encounterItemWithBillable ->
-                    if (encounterItemWithBillable.encounterItem.id == encounterItemId) {
+                val updatedEncounterItems = encounterFlowState.encounterItemRelations.map { encounterItemRelation ->
+                    if (encounterItemRelation.encounterItem.id == encounterItemId) {
+                        // TODO: Handle the returned claim flow
                         // handle case of 0 quantity by setting it back to original quantity
                         val qty = if (viewState.quantity == 0) {
-                            encounterItemWithBillable.encounterItem.quantity
+                            encounterItemRelation.encounterItem.quantity
                         } else {
                             viewState.quantity
                         }
-                        encounterItemWithBillable.copy(
-                                encounterItem = encounterItemWithBillable.encounterItem.copy(
-                                        quantity = qty),
-                                billable = encounterItemWithBillable.billable.copy(
-                                        price = viewState.unitPrice))
+
+                        // Issue a new price schedule if the price has changed
+                        val priceScheduleIssued = encounterItemRelation.billableWithPriceSchedule.priceSchedule.price != viewState.unitPrice
+                        val billableWithPriceSchedule = if (priceScheduleIssued) {
+                            encounterItemRelation.billableWithPriceSchedule.copy(
+                                billable = encounterItemRelation.billableWithPriceSchedule.billable.copy(
+                                    price = viewState.unitPrice // TODO: This can be removed when price is removed from billable
+                                ),
+                                priceSchedule = PriceSchedule(
+                                    id = UUID.randomUUID(),
+                                    billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,
+                                    issuedAt = Instant.now(),
+                                    price = viewState.unitPrice,
+                                    previousPriceScheduleModelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
+                                )
+                            )
+                        } else {
+                            encounterItemRelation.billableWithPriceSchedule
+                        }
+
+                        encounterItemRelation.copy(
+                            encounterItem = encounterItemRelation.encounterItem.copy(
+                                quantity = qty,
+                                priceScheduleId = billableWithPriceSchedule.priceSchedule.id,
+                                priceScheduleIssued = priceScheduleIssued
+                            ),
+                            billableWithPriceSchedule = billableWithPriceSchedule
+                        )
                     } else {
-                        encounterItemWithBillable
+                        encounterItemRelation
                     }
                 }
-                encounterFlowState.encounterItems = updatedEncounterItems
+                encounterFlowState.encounterItemRelations = updatedEncounterItems
                 navigationManager.popTo(DrugAndSupplyFragment.forEncounter(encounterFlowState))
             }
         }

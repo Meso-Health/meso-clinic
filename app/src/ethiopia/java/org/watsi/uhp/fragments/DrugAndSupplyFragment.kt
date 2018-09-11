@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_drug_and_supply.select_billable_b
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
@@ -77,7 +78,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         observable = viewModel.getObservable(encounterFlowState)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                val cursor = buildSearchResultCursor(viewState.selectableBillables)
+                val cursor = buildSearchResultCursor(viewState.selectableBillableRelations.map { it.billable })
                 drug_search.suggestionsAdapter.changeCursor(cursor)
 
                 updateLineItems(viewState.encounterFlowState)
@@ -140,7 +141,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 },
                 onPriceTap = { encounterItemId: UUID ->
                     viewModel.getEncounterFlowState()?.let { flowState ->
-                        encounterFlowState.encounterItems = flowState.encounterItems
+                        encounterFlowState.encounterItemRelations = flowState.encounterItemRelations
                         navigationManager.goTo(EditPriceFragment.forEncounterItem(
                                 encounterItemId, encounterFlowState))
                     } ?: run {
@@ -171,7 +172,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             override fun onSuggestionSelect(position: Int): Boolean = true
 
             override fun onSuggestionClick(position: Int): Boolean {
-                observable.value?.selectableBillables?.get(position)?.let {
+                observable.value?.selectableBillableRelations?.get(position)?.let {
                     viewModel.addItem(it)
                     line_items_list.scrollToBottom()
                     drug_search.setQuery("", false)
@@ -240,8 +241,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onBack(): Single<Boolean> {
         return Single.fromCallable {
-            viewModel.getEncounterFlowState()?.encounterItems?.let {
-                encounterFlowState.encounterItems = it
+            viewModel.getEncounterFlowState()?.encounterItemRelations?.let {
+                encounterFlowState.encounterItemRelations = it
             }
             true
         }
@@ -250,8 +251,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     /**
      * Used to customize toString behavior for use in an ArrayAdapter
      */
-    data class BillablePresenter(val billable: Billable?, val context: Context) {
-        override fun toString(): String = billable?.name ?: context.getString(R.string.select_prompt)
+    data class BillablePresenter(val billableWithPrice: BillableWithPriceSchedule?, val context: Context) {
+        override fun toString(): String = billableWithPrice?.billable?.name ?: context.getString(R.string.select_prompt)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

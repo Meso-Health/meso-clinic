@@ -7,6 +7,6 @@ import java.io.Serializable
 
 data class EncounterWithMemberAndItemsAndForms(val encounter: Encounter,
                                                val member: Member,
-                                               val encounterItems: List<EncounterItemWithBillable>,
+                                               val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
                                                val encounterForms: List<EncounterForm>
 ) : Serializable

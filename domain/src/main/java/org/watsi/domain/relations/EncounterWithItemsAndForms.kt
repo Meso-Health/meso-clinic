@@ -6,6 +6,6 @@ import org.watsi.domain.entities.EncounterForm
 import java.io.Serializable
 
 data class EncounterWithItemsAndForms(val encounter: Encounter,
-                                      val encounterItems: List<EncounterItemWithBillable>,
+                                      val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
                                       val encounterForms: List<EncounterForm>,
                                       val diagnoses: List<Diagnosis>) : Serializable

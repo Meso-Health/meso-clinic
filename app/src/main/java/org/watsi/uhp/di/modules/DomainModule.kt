@@ -15,6 +15,8 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
+import org.watsi.domain.usecases.LoadAllBillablesUseCase
+import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
@@ -134,6 +136,20 @@ class DomainModule {
             billableRepository: BillableRepository
     ): LoadDefaultBillablesUseCase {
         return LoadDefaultBillablesUseCase(billableRepository)
+    }
+
+    @Provides
+    fun provideLoadBillablesofTypeUseCase(
+        billableRepository: BillableRepository
+    ): LoadBillablesOfTypeUseCase {
+        return LoadBillablesOfTypeUseCase(billableRepository)
+    }
+
+    @Provides
+    fun provideLoadAllBillablesUseCase(
+        billableRepository: BillableRepository
+    ): LoadAllBillablesUseCase {
+        return LoadAllBillablesUseCase(billableRepository)
     }
 
     @Provides

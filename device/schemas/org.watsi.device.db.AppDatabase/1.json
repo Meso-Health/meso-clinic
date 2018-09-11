@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3b672bcb6b4fc485ef2f35f3601122bb",
+    "identityHash": "08bf3c6e88fde21e926fbfb4cf872acb",
     "entities": [
       {
         "tableName": "billables",
@@ -284,7 +284,7 @@
       },
       {
         "tableName": "encounter_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `encounterId` TEXT NOT NULL, `billableId` TEXT NOT NULL, `quantity` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `encounterId` TEXT NOT NULL, `billableId` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `priceScheduleId` TEXT NOT NULL, `priceScheduleIssued` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -319,6 +319,18 @@
           {
             "fieldPath": "quantity",
             "columnName": "quantity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priceScheduleId",
+            "columnName": "priceScheduleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priceScheduleIssued",
+            "columnName": "priceScheduleIssued",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -693,7 +705,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3b672bcb6b4fc485ef2f35f3601122bb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"08bf3c6e88fde21e926fbfb4cf872acb\")"
     ]
   }
 }

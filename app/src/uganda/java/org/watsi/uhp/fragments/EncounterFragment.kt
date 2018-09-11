@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.prompt_category
@@ -87,7 +88,7 @@ class EncounterFragment : DaggerFragment() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
         observable = viewModel.getObservable(encounterFlowState.encounter.id,
-                                             encounterFlowState.encounterItems)
+                                             encounterFlowState.encounterItemRelations)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 if (viewState.type == null) {
@@ -100,7 +101,7 @@ class EncounterFragment : DaggerFragment() {
                     }
                     Billable.Type.DRUG -> {
                         billable_spinner.visibility = View.GONE
-                        val cursor = buildSearchResultCursor(viewState.selectableBillables)
+                        val cursor = buildSearchResultCursor(viewState.selectableBillables.map { it.billable })
                         drug_search.suggestionsAdapter.changeCursor(cursor)
                         drug_search.visibility = View.VISIBLE
                     }
@@ -118,8 +119,8 @@ class EncounterFragment : DaggerFragment() {
                 }
                 viewState.let {
                     encounter_item_count.text = resources.getQuantityString(
-                            R.plurals.encounter_item_count, it.encounterItems.size, it.encounterItems.size)
-                    encounterItemAdapter.setEncounterItems(it.encounterItems)
+                            R.plurals.encounter_item_count, it.encounterItemRelations.size, it.encounterItemRelations.size)
+                    encounterItemAdapter.setEncounterItems(it.encounterItemRelations)
                 }
             }
         })
@@ -203,7 +204,7 @@ class EncounterFragment : DaggerFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                billableAdapter.getItem(position).billable?.let { viewModel.addItem(it) }
+                billableAdapter.getItem(position).billableWithPrice?.let { viewModel.addItem(it) }
                 line_items_list.scrollToBottom()
             }
         }
@@ -233,7 +234,7 @@ class EncounterFragment : DaggerFragment() {
         })
 
         add_billable_prompt.setOnClickListener {
-            encounterFlowState.encounterItems = viewModel.currentEncounterItems().orEmpty()
+            encounterFlowState.encounterItemRelations = viewModel.currentEncounterItems().orEmpty()
             navigationManager.goTo(AddNewBillableFragment.forEncounter(encounterFlowState))
         }
 
@@ -242,7 +243,7 @@ class EncounterFragment : DaggerFragment() {
                 if (encounterItems.isEmpty()) {
                     SnackbarHelper.show(save_button, context, R.string.no_line_items_snackbar_message)
                 } else {
-                    encounterFlowState.encounterItems = encounterItems
+                    encounterFlowState.encounterItemRelations = encounterItems
                     navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
                 }
             }
@@ -304,8 +305,8 @@ class EncounterFragment : DaggerFragment() {
     /**
      * Used to customize toString behavior for use in an ArrayAdapter
      */
-    data class BillablePresenter(val billable: Billable?) {
-        override fun toString(): String = billable?.name ?: "Select..."
+    data class BillablePresenter(val billableWithPrice: BillableWithPriceSchedule?) {
+        override fun toString(): String = billableWithPrice?.billable?.name ?: "Select..."
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
