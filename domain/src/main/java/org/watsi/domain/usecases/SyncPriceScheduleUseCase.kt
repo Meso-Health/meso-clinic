@@ -13,7 +13,7 @@ class SyncPriceScheduleUseCase(
         return Completable.fromAction {
             val unsyncedPriceScheduleDeltas = deltaRepository.unsynced(Delta.ModelName.PRICE_SCHEDULE).blockingGet()
 
-            unsyncedPriceScheduleDeltas.map { priceScheduleDelta ->
+            unsyncedPriceScheduleDeltas.forEach { priceScheduleDelta ->
                 priceScheduleRepository.sync(priceScheduleDelta).blockingAwait()
                 deltaRepository.markAsSynced(listOf(priceScheduleDelta)).blockingAwait()
             }
