@@ -12,6 +12,15 @@ data class PriceScheduleApi(
         @SerializedName("price") val price: Int,
         @SerializedName("previous_price_schedule_id") val previousPriceScheduleId: UUID?
 ) {
+
+    constructor (priceSchedule: PriceSchedule) : this(
+            id = priceSchedule.id,
+            issuedAt = priceSchedule.issuedAt,
+            billableId = priceSchedule.billableId,
+            price = priceSchedule.price,
+            previousPriceScheduleId = priceSchedule.previousPriceScheduleModelId
+    )
+
     fun toPriceSchedule(): PriceSchedule {
         return PriceSchedule(
             id = id,

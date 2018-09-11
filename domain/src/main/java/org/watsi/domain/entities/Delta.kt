@@ -11,5 +11,5 @@ data class Delta(val id: Int = 0,
 
     enum class Action { ADD, EDIT }
     enum class ModelName {
-        MEMBER, PHOTO, IDENTIFICATION_EVENT, ENCOUNTER, ENCOUNTER_FORM, BILLABLE }
+        MEMBER, PHOTO, IDENTIFICATION_EVENT, ENCOUNTER, ENCOUNTER_FORM, BILLABLE, PRICE_SCHEDULE }
 }
