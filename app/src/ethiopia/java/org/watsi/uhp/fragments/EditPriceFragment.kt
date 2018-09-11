@@ -165,7 +165,8 @@ class EditPriceFragment : DaggerFragment() {
                                     issuedAt = Instant.now(),
                                     price = viewState.unitPrice,
                                     previousPriceScheduleModelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
-                                )
+                                ),
+                                prevPriceSchedule = encounterItemRelation.billableWithPriceSchedule.priceSchedule
                             )
                         } else {
                             encounterItemRelation.billableWithPriceSchedule
