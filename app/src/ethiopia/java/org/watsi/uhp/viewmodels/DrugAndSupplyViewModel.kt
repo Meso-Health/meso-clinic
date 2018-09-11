@@ -40,9 +40,7 @@ class DrugAndSupplyViewModel @Inject constructor(
     private fun getSelectableBillables(): List<BillableWithPriceSchedule>  {
         val encounterItems = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
         val selectedBillables = encounterItems.map { it.billableWithPriceSchedule }
-        return billableRelations.filter {
-            selectedBillables.map { it.billable.id }.contains(it.billable.id)
-        }.sortedBy { it.billable.name }
+        return billableRelations.minus(selectedBillables).sortedBy { it.billable.name }
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
@@ -65,9 +63,7 @@ class DrugAndSupplyViewModel @Inject constructor(
                     else
                         Integer.compare(o2.score, o1.score)
                 }).map { result ->
-                    billableRelations.filter { it.billable.name == result.string }
-                        .filter { currentDrugs.map { it.billable.id }.contains(it.billable.id) }
-                        .sortedBy { it.billable.details() }
+                    billableRelations.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
                 }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillableRelations = matchingBillables))
             } else {
