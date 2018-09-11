@@ -29,7 +29,7 @@ class DrugAndSupplyViewModel @Inject constructor(
         loadBillablesOfTypeUseCase.execute(Billable.Type.DRUG).subscribe({
             billableRelations.addAll(it)
             uniqueDrugNames = billableRelations.map { it.billable.name }.distinct()
-            observable.postValue(ViewState(selectableBillables = getSelectableBillables(),
+            observable.postValue(ViewState(selectableBillableRelations = getSelectableBillables(),
                 encounterFlowState = encounterFlowState))
         }, {
             logger.error(it)
@@ -44,7 +44,7 @@ class DrugAndSupplyViewModel @Inject constructor(
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
-        observable.value = viewState.copy(selectableBillables = getSelectableBillables(),
+        observable.value = viewState.copy(selectableBillableRelations = getSelectableBillables(),
                 encounterFlowState = viewState.encounterFlowState.copy(encounterItemRelations = encounterItemRelations))
     }
 
@@ -65,9 +65,9 @@ class DrugAndSupplyViewModel @Inject constructor(
                 }).map { result ->
                     billableRelations.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
                 }.flatten()
-                observable.postValue(observable.value?.copy(selectableBillables = matchingBillables))
+                observable.postValue(observable.value?.copy(selectableBillableRelations = matchingBillables))
             } else {
-                observable.postValue(observable.value?.copy(selectableBillables = emptyList()))
+                observable.postValue(observable.value?.copy(selectableBillableRelations = emptyList()))
             }
         }.subscribeOn(Schedulers.computation()).subscribe()
     }
@@ -121,6 +121,6 @@ class DrugAndSupplyViewModel @Inject constructor(
 
     fun getEncounterFlowState(): EncounterFlowState? = observable.value?.encounterFlowState
 
-    data class ViewState(val selectableBillables: List<BillableWithPriceSchedule> = emptyList(),
+    data class ViewState(val selectableBillableRelations: List<BillableWithPriceSchedule> = emptyList(),
                          val encounterFlowState: EncounterFlowState)
 }

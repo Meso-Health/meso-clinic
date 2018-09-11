@@ -27,7 +27,7 @@ class SpinnerLineItemViewModel @Inject constructor(
     ): LiveData<ViewState> {
         loadBillablesOfTypeUseCase.execute(billableType).subscribe({
             billables.addAll(it)
-            observable.postValue(ViewState(selectableBillables = getSelectableBillables(),
+            observable.postValue(ViewState(selectableBillableRelations = getSelectableBillables(),
                 encounterFlowState = encounterFlowState))
         }, {
             logger.error(it)
@@ -42,7 +42,7 @@ class SpinnerLineItemViewModel @Inject constructor(
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
-        observable.value = viewState.copy(selectableBillables = getSelectableBillables(),
+        observable.value = viewState.copy(selectableBillableRelations = getSelectableBillables(),
                 encounterFlowState = viewState.encounterFlowState.copy(encounterItemRelations = encounterItemRelations))
     }
 
@@ -90,6 +90,6 @@ class SpinnerLineItemViewModel @Inject constructor(
 
     fun getEncounterFlowState(): EncounterFlowState? = observable.value?.encounterFlowState
 
-    data class ViewState(val selectableBillables: List<BillableWithPriceSchedule> = emptyList(),
+    data class ViewState(val selectableBillableRelations: List<BillableWithPriceSchedule> = emptyList(),
                          val encounterFlowState: EncounterFlowState)
 }
