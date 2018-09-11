@@ -52,13 +52,6 @@ class PriceScheduleRepositoryImplTest {
     }
 
     @Test
-    fun sync_noCurrentToken_completes() {
-        whenever(mockSessionManager.currentToken()).thenReturn(null)
-
-        repository.sync(deltaModel.toDelta()).test().assertComplete()
-    }
-
-    @Test
     fun sync_noPriceSchedule_completes() {
         whenever(mockSessionManager.currentToken()).thenReturn(token)
         whenever(mockDao.find(priceScheduleModel.id)).thenReturn(Maybe.empty())
