@@ -12,6 +12,7 @@ import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
+import org.watsi.device.api.models.PriceScheduleApi
 import org.watsi.device.api.models.ReturnedEncounterApi
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -83,6 +84,13 @@ interface CoverageApi {
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int,
             @Body billable: BillableApi
+    ): Completable
+
+    @POST("providers/{providerId}/price_schedules")
+    fun postPriceSchedule(
+            @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+            @Path("providerId") providerId: Int,
+            @Body priceSchedule: PriceScheduleApi
     ): Completable
 
     @POST("providers/{providerId}/encounters")
