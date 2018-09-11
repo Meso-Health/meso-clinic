@@ -92,9 +92,10 @@ class DomainModule {
     @Provides
     fun provideCreateEncounterUseCase(
             encounterRepository: EncounterRepository,
-            billableRepository: BillableRepository
+            billableRepository: BillableRepository,
+            priceScheduleRepository: PriceScheduleRepository
     ): CreateEncounterUseCase {
-        return CreateEncounterUseCase(encounterRepository, billableRepository)
+        return CreateEncounterUseCase(encounterRepository, billableRepository, priceScheduleRepository)
     }
 
     @Provides

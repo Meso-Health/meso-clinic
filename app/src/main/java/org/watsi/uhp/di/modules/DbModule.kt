@@ -97,8 +97,10 @@ class DbModule {
     @Provides
     fun providePriceScheduleRepository(priceScheduleDao: PriceScheduleDao,
                                        api: CoverageApi,
-                                       sessionManager: SessionManager): PriceScheduleRepository =
-            PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager)
+                                       sessionManager: SessionManager,
+                                       clock: Clock): PriceScheduleRepository {
+        return PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager, clock)
+    }
 
     @Provides
     fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
@@ -152,4 +154,5 @@ class DbModule {
                                clock: Clock): PhotoRepository {
         return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
     }
+
 }

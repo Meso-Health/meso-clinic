@@ -1,5 +1,6 @@
 package org.watsi.device.db.repositories
 
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -48,7 +49,7 @@ class PriceScheduleRepositoryImplTest {
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        repository = PriceScheduleRepositoryImpl(mockDao, mockApi, mockSessionManager)
+        repository = PriceScheduleRepositoryImpl(mockDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
@@ -67,5 +68,12 @@ class PriceScheduleRepositoryImplTest {
                 .thenReturn(Completable.complete())
 
         repository.sync(deltaModel.toDelta()).test().assertComplete()
+    }
+
+    @Test
+    fun create() {
+        repository.create(priceScheduleModel.toPriceSchedule(), deltaModel.toDelta()).test().assertComplete()
+
+        verify(mockDao).insertWithDelta(priceScheduleModel, deltaModel)
     }
 }

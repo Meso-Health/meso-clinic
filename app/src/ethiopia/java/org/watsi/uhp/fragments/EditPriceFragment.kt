@@ -154,6 +154,14 @@ class EditPriceFragment : DaggerFragment() {
 
                         // Issue a new price schedule if the price has changed
                         val priceScheduleIssued = encounterItemRelation.billableWithPriceSchedule.priceSchedule.price != viewState.unitPrice
+                        val prevPriceSchedule = if (encounterItemRelation.encounterItem.priceScheduleIssued) {
+                            // If the priceScheduleIssued field is already set, you are are replacing the new price
+                            // rather than creating a new link in the list. Use the same previousPriceScheduleId
+                            encounterItemRelation.billableWithPriceSchedule.prevPriceSchedule
+                        } else {
+                            encounterItemRelation.billableWithPriceSchedule.priceSchedule
+                        }
+
                         val billableWithPriceSchedule = if (priceScheduleIssued) {
                             encounterItemRelation.billableWithPriceSchedule.copy(
                                 billable = encounterItemRelation.billableWithPriceSchedule.billable.copy(
@@ -164,9 +172,9 @@ class EditPriceFragment : DaggerFragment() {
                                     billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,
                                     issuedAt = Instant.now(),
                                     price = viewState.unitPrice,
-                                    previousPriceScheduleModelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
+                                    previousPriceScheduleModelId = prevPriceSchedule?.id
                                 ),
-                                prevPriceSchedule = encounterItemRelation.billableWithPriceSchedule.priceSchedule
+                                prevPriceSchedule = prevPriceSchedule
                             )
                         } else {
                             encounterItemRelation.billableWithPriceSchedule
