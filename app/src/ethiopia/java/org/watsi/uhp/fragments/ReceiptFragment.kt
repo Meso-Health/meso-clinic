@@ -297,9 +297,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now(), clock)
 
         val dayAdapter = SpinnerField.createAdapter(
-            context, (1..todayDate.day).map { it.toString() })
+            context, (1..occurredAtDate.day).map { it.toString() })
         val monthAdapter = SpinnerField.createAdapter(
-            context, (1..todayDate.month).map { it.toString() })
+            context, (1..occurredAtDate.month).map { it.toString() })
         val yearAdapter = SpinnerField.createAdapter(
             context, (DATE_PICKER_START_YEAR..todayDate.year).map { it.toString() })
 
