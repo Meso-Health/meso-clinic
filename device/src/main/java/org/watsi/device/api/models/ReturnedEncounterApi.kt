@@ -33,6 +33,7 @@ data class ReturnedEncounterApi(
         // Below are inflated fields.
         @SerializedName("member") val memberApi: MemberApi,
         @SerializedName("billables") val billablesApi: List<BillableApi>,
+        @SerializedName("price_schedules") val priceSchedulesApi: List<PriceScheduleApi>,
         @SerializedName("encounter_items") val encounterItemsApi: List<EncounterItemApi>
 ) {
 
@@ -54,9 +55,10 @@ data class ReturnedEncounterApi(
                 revisedEncounterId = revisedEncounterId,
                 providerComment = providerComment
             ),
-            encounterItemRelations = combineEncounterItemsWithBillables(
+            encounterItemRelations = combineEncounterItemsWithBillablesAndPrices(
                 encounterItemsApi.map { it.toEncounterItem() },
-                billablesApi.map { it.toBillable() }
+                billablesApi.map { it.toBillable() },
+                priceSchedulesApi.map { it.toPriceSchedule() }
             ),
             member = memberApi.toMember(null),
             encounterForms = emptyList(),
@@ -64,22 +66,27 @@ data class ReturnedEncounterApi(
         )
     }
 
-    private fun combineEncounterItemsWithBillables(
+    private fun combineEncounterItemsWithBillablesAndPrices(
         encounterItems: List<EncounterItem>,
-        billables: List<Billable>
+        billables: List<Billable>,
+        priceSchedules: List<PriceSchedule>
     ): List<EncounterItemWithBillableAndPrice> {
         return encounterItems.map { encounterItem ->
-            val correspondingBillable = billables.find { it.id == encounterItem.billableId }
-            if (correspondingBillable != null) {
-                // TODO: Fetch price schedules
-                /* This is temp placeholder code until the above TODO is resolved */
-                val priceSchedule = PriceSchedule(UUID.randomUUID(), Instant.now(), correspondingBillable.id, correspondingBillable.price, null)
-                val billableWithPriceSchedule = BillableWithPriceSchedule(correspondingBillable, priceSchedule)
-                /* End temp code */
+            val correspondingPriceSchedule = priceSchedules.find { it.id == encounterItem.priceScheduleId }
+            if (correspondingPriceSchedule != null) {
+                val previousPriceSchedule = priceSchedules.find { it.id == correspondingPriceSchedule.previousPriceScheduleModelId }
+                val correspondingBillable = billables.find { it.id == correspondingPriceSchedule.billableId }
 
-                EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
+                if (correspondingBillable != null) {
+                    val billableWithPriceSchedule = BillableWithPriceSchedule(correspondingBillable, correspondingPriceSchedule, previousPriceSchedule)
+                    EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
+                } else {
+                    throw IllegalStateException("Backend returned a PriceSchedule with a Billable that's not inflated in the Encounter. " +
+                            "EncounterItem: $encounterItem \n PriceSchedule: $correspondingPriceSchedule \n Billables: $billables \n")
+                }
             } else {
-                throw IllegalStateException("Backend returned a encounterItem with a billable thats not inflated in the Encounter. EncounterItem: $encounterItem \n Billables: $billables \n EncounterItems: $encounterItem")
+                throw IllegalStateException("Backend returned an EncounterItem with a PriceSchedule that's not inflated in the Encounter. " +
+                        "EncounterItem: $encounterItem \n PriceSchedules: $priceSchedules")
             }
         }
     }
