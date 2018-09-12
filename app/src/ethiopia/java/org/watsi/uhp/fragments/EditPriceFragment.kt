@@ -144,7 +144,6 @@ class EditPriceFragment : DaggerFragment() {
             observable.value?.let { viewState ->
                 val updatedEncounterItems = encounterFlowState.encounterItemRelations.map { encounterItemRelation ->
                     if (encounterItemRelation.encounterItem.id == encounterItemId) {
-                        // TODO: Handle the returned claim flow
                         // handle case of 0 quantity by setting it back to original quantity
                         val qty = if (viewState.quantity == 0) {
                             encounterItemRelation.encounterItem.quantity
