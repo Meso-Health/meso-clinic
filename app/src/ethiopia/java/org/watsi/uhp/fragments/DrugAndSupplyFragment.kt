@@ -184,7 +184,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         save_button.setOnClickListener {
             viewModel.getEncounterFlowState()?.let { encounterFlowState ->
-                navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+                navigationManager.popTo(ReceiptFragment.forEncounter(encounterFlowState))
             } ?: run {
                 logger.error("EncounterFlowState not set")
             }

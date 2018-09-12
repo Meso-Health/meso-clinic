@@ -33,7 +33,6 @@ class NavigationManager(
      * Use this when you do not want to allow the user to go back through previous screens
      */
     fun popTo(fragment: Fragment) {
-        // TODO: handle case where Fragment is not in backstack
         fragmentManager.popBackStack(parseFragmentName(fragment), FragmentManager.POP_BACK_STACK_INCLUSIVE)
         goTo(fragment)
     }
