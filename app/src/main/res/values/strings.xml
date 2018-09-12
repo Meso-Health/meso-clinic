@@ -16,7 +16,7 @@
     <string name="save">Save</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
-    <string name="prev_price">%1$s&#8194;&#9656;</string>
+    <string name="prev_price" tools:ignore="MissingTranslation">%1$s&#8194;&#9656;</string>
 
     <!-- Form -->
     <string name="age_field_label">Age</string>
