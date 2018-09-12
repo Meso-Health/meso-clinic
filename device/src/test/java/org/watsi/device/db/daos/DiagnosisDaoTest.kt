@@ -1,7 +1,7 @@
 package org.watsi.device.db.daos
 
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 import org.watsi.device.factories.DiagnosisModelFactory
 
 class DiagnosisDaoTest : DaoBaseTest() {
@@ -39,5 +39,14 @@ class DiagnosisDaoTest : DaoBaseTest() {
         val resultDiagnosisList = diagnosisDao.findAll(diagnosisIdList).test().values().first()
 
         assertEquals(expectedDiagnosisList, resultDiagnosisList)
+    }
+
+    @Test
+    fun count() {
+        val diagnosisModel1 = DiagnosisModelFactory.create(diagnosisDao, id = 1)
+        val diagnosisModel2 = DiagnosisModelFactory.create(diagnosisDao, id = 2)
+        val diagnosisModel3 = DiagnosisModelFactory.create(diagnosisDao, id = 3)
+
+        diagnosisDao.count().test().assertValue(3)
     }
 }

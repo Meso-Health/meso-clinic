@@ -30,6 +30,9 @@ interface BillableDao {
     @Delete
     fun delete(model: BillableModel)
 
+    @Query("SELECT count(*) from billables")
+    fun count(): Single<Int>
+
     @Query("SELECT * FROM billables")
     fun all(): Single<List<BillableModel>>
 

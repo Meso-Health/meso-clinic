@@ -28,6 +28,9 @@ class BillableRepositoryImpl(
         private val preferencesManager: PreferencesManager,
         private val clock: Clock
 ) : BillableRepository {
+    override fun count(): Single<Int> {
+        return billableDao.count()
+    }
 
     override fun all(): Single<List<BillableWithPriceSchedule>> {
         return matchBillablesToCurrentPrice(billableDao.allWithPrice()).subscribeOn(Schedulers.io())

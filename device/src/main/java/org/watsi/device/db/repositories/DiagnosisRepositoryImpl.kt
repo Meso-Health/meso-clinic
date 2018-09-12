@@ -29,6 +29,10 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun count(): Single<Int> {
+        return diagnosisDao.count()
+    }
+
     override fun findAll(ids: List<Int>): Single<List<Diagnosis>> {
         return diagnosisDao.findAll(ids).map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
     }

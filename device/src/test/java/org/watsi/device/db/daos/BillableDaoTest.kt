@@ -25,6 +25,18 @@ class BillableDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun count() {
+        val billable1 =
+                BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+        val billable2 =
+                BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+        val billable3 =
+                BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+
+        billableDao.count().test().assertValue(3)
+    }
+
+    @Test
     fun ofType() {
         val oldDate = Instant.ofEpochMilli(1533090767000) // 2018/08/01
         val middleDate = Instant.ofEpochMilli(1534300367000) // 2018/08/15

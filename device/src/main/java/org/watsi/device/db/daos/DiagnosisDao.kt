@@ -24,4 +24,7 @@ interface DiagnosisDao {
 
     @Query("DELETE FROM diagnoses WHERE id IN (:ids)")
     fun delete(ids: List<Int>)
+
+    @Query("SELECT count(*) from diagnoses")
+    fun count(): Single<Int>
 }
