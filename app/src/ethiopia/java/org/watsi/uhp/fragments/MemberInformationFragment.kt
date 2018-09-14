@@ -47,7 +47,6 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
     @Inject lateinit var logger: Logger
     lateinit var viewModel: MemberInformationViewModel
     lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
-    lateinit var membershipNumber: String
     lateinit var encounterFlowState: EncounterFlowState
     internal val memberId = UUID.randomUUID()
     private val encounterId = UUID.randomUUID()
