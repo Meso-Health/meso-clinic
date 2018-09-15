@@ -65,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/age_field_label"
                 android:selectAllOnFocus="true"
+                android:maxLength="3"
                 android:imeOptions="actionNext"
                 android:inputType="number" />
 
