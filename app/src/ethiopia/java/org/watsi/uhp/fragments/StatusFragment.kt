@@ -1,14 +1,17 @@
 package org.watsi.uhp.fragments
 
+import android.app.job.JobScheduler
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -20,6 +23,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.version
 import org.watsi.device.managers.Logger
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.viewmodels.StatusViewModel
 import javax.inject.Inject
 
@@ -82,7 +86,18 @@ class StatusFragment : DaggerFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
-        val switchLanguageItem = menu.findItem(R.id.menu_switch_language)
-        switchLanguageItem.isVisible = true
+        menu.findItem(R.id.menu_sync_now).isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.menu_sync_now -> {
+                val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                jobScheduler.cancelAll()
+                (activity as ClinicActivity).startServices()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

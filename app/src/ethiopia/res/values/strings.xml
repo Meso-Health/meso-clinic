@@ -10,6 +10,7 @@
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
     <string name="menu_returned_claims_with_number">Returned Claims (%1$s)</string>
     <string name="menu_returned_claims_without_number">Returned Claims</string>
+    <string name="menu_sync_now">Sync now</string>
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
