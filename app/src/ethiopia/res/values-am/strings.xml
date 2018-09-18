@@ -18,7 +18,7 @@
     <string name="modal_cancel">@string/cancel</string>
     <string name="days">ቀናት</string>
     <string name="months">ወራት</string>
-    <string name="years">ዓመተ ምህረት</string>
+    <string name="years">ዓመት</string>
 
     <!-- Form -->
     <string name="age_field_label">እድሜ</string>
@@ -41,7 +41,7 @@
     <string name="drug_and_supply">መድሃኒቶች እና ኣቅረቦቶች</string>
     <string name="service">አገልግሎት</string>
     <string name="lab">ላብራቶሪ</string>
-    <string name="select_prompt">ምረጥ…</string>
+    <string name="select_prompt">ምረጥ</string>
     <string name="done_encounter_button">ተጠናቀቀ</string>
     <plurals name="encounter_item_count">
         <item quantity="one">%d ቀረባትን ዝርዝር</item>
@@ -54,11 +54,11 @@
         <item quantity="one">%d በሽታ</item>
         <item quantity="other">%d በሽታዎች ዝርዝር</item>
     </plurals>
-    <string name="search_diagnosis_hint">በሽታ ፈልግ&#8230;</string>
+    <string name="search_diagnosis_hint">በሽታ ፈልግ</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ግምገማ</string>
-    <string name="save_encounter_button">አስረክብ</string>
+    <string name="receipt_fragment_label">ከልስ</string>
+    <string name="save_encounter_button">ላክ</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
     <string name="today">ዛሬ</string>
 
@@ -79,7 +79,7 @@
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
-    <string name="prompt_category">መደብ ምረጥ&#8230;</string>
+    <string name="prompt_category">መደብ ምረጥ</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>
@@ -104,7 +104,7 @@
     <string name="new_claim_fragment_label">ኣዲስ የክፍያ ጥያቄ</string>
     <string name="start_claim_button">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
     <string name="encounter_submitted">የክፍያ ጥያቄ በሚገባ ተላልፏል</string>
-    <string name="invalid_membership_error">ኣባልነት</string>
+    <string name="invalid_membership_error">የኣባልነት መለያ ቁጥር ስሕተት ኣለዉ</string>
 
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">የጉብኝት አይነት</string>
@@ -113,7 +113,7 @@
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>
     <string name="error_blank_or_zero_quantity">እባኮት ዜሮ ያልሆነ መጠን ያስገቡ</string>
-    <string name="search_drug_hint">መድሃኒቶች እና ኣቅርቦቶች ፈልግ&#8230;</string>
+    <string name="search_drug_hint">መድሃኒቶች እና ኣቅርቦቶች ፈልግ</string>
 
     <!-- ReceiptFragment -->
     <string name="member_info_section_label">የኣባል መረጃ</string>
@@ -130,8 +130,8 @@
     </plurals>
     <string name="date_header">አገልግሎት የተሰጠበት ቀን</string>
     <string name="comment_label">ኣስተያየት</string>
-    <string name="add_clickable"><u>ኣስተያየቶች</u></string>
-    <string name="comment_prompt">ኣስተያየት ጨምር&#8230;</string>
+    <string name="add_clickable"><u>ኣስተያየቶች)</u></string>
+    <string name="comment_prompt">ኣስተያየት ጨምር</string>
     <string name="resubmit">የክፍያ ጥያቄ ደግመህ ላክ</string>
 
     <!-- EditPriceFragment -->

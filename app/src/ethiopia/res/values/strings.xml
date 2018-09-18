@@ -26,7 +26,6 @@
     <string name="membership_number_label">Member ID</string>
     <string name="age_validation_error">Age is required</string>
     <string name="medical_record_number_validation_error">Medical Record Number is required</string>
-    <string name="cancel">CANCEL</string>
     <string name="yes">OK</string>
     <string name="missing_fields_validation_error">Some fields are missing</string>
 
@@ -67,14 +66,6 @@
     <string name="service">Service</string>
     <string name="lab">Lab</string>
     <string name="select_prompt">Select…</string>
-
-    <!-- DiagnosisFragment -->
-    <string name="diagnosis_fragment_label">Diagnoses</string>
-    <plurals name="diagnosis_count">
-        <item quantity="one">%d diagnosis</item>
-        <item quantity="other">%d diagnoses</item>
-    </plurals>
-    <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">Edit Price</string>
