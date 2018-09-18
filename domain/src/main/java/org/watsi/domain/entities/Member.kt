@@ -43,25 +43,6 @@ data class Member(
         return DateUtils.getYearsAgo(birthdate, clock)
     }
 
-    fun formattedPhoneNumber(): String? {
-        return when (phoneNumber?.length) {
-            10 -> "(0) ${phoneNumber.substring(1, 4)} ${phoneNumber.substring(4, 7)} " +
-                    "${phoneNumber.substring(7)}"
-            9 -> "(0) ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
-                    "${phoneNumber.substring(6)}"
-            else -> null
-        }
-    }
-
-    fun formatAgeAndGender(clock: Clock): String {
-        val genderString = if (gender == Member.Gender.F) {
-            "Female"
-        } else {
-            "Male"
-        }
-        return "$genderString · ${getDisplayAge(clock)}"
-    }
-
     fun diff(previous: Member): List<Delta> {
         val gson = GsonBuilder().serializeNulls().create()
         val previousMap = gson.fromJson(gson.toJson(previous), Map::class.java) as Map<String, Any?>
@@ -81,24 +62,6 @@ data class Member(
 
     fun getAgeDays(clock: Clock): Int {
         return DateUtils.getDaysAgo(birthdate, clock)
-    }
-
-    /**
-     * Returns quantity in days if under 1 month old, quantity in months if under 2 years old,
-     * or in years otherwise, regardless of birthdate accuracy.
-     */
-    fun getDisplayAge(clock: Clock): String {
-        val ageYears = getAgeYears(clock)
-        val ageMonths = getAgeMonths(clock)
-        val ageDays = getAgeDays(clock)
-
-        if (ageYears >= 2) {
-            return "${ageYears} years"
-        } else if (ageMonths >= 1) {
-            return "${ageMonths} months"
-        } else {
-            return "${ageDays} days"
-        }
     }
 
     companion object {

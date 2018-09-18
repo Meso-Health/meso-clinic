@@ -62,6 +62,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EthiopianDateHelper
+import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
@@ -142,7 +143,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val genderAndAgeText = encounterFlowState.member?.formatAgeAndGender(clock)
+        val genderAndAgeText = encounterFlowState.member?.let {
+            MemberStringHelper.formatAgeAndGender(it, context, clock)
+        }
 
         if (encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED) {
             displayReturnedClaimInfo()

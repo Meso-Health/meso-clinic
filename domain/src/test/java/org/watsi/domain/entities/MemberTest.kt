@@ -72,15 +72,6 @@ class MemberTest {
     }
 
     @Test
-    fun formattedPhoneNumber() {
-        assertNull(MemberFactory.build(phoneNumber = null).formattedPhoneNumber())
-        assertEquals("(0) 775 555 555",
-                MemberFactory.build(phoneNumber = "775555555").formattedPhoneNumber())
-        assertEquals("(0) 775 555 555",
-                MemberFactory.build(phoneNumber = "0775555555").formattedPhoneNumber())
-    }
-
-    @Test
     fun validCardId() {
         assert(Member.validCardId("RWI123456"))
         assertFalse(Member.validCardId("RWI12345X"))
@@ -95,14 +86,6 @@ class MemberTest {
         assertFalse(Member.validPhoneNumber("077555555"))
         assertFalse(Member.validPhoneNumber("77555555"))
         assertFalse(Member.validPhoneNumber("77555555A"))
-    }
-
-    @Test
-    fun formatAgeAndGender() {
-        val m1 = MemberFactory.build(birthdate = tenYearsAgo, gender = Member.Gender.M)
-        val m2 = MemberFactory.build(birthdate = fiveYearsAgo, gender = Member.Gender.F)
-        assertEquals(m1.formatAgeAndGender(fixedClock), "Male · 10 years")
-        assertEquals(m2.formatAgeAndGender(fixedClock), "Female · 5 years")
     }
 
     @Test

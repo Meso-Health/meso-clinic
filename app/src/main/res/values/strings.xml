@@ -17,6 +17,12 @@
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
     <string name="prev_price" tools:ignore="MissingTranslation">%1$s&#8194;&#9656;</string>
+    <string name="days">Days</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
+    <string name="phone_number_prefix" translatable="false">(0)</string>
+    <string name="bullet" translatable="false">\u2022</string>
+    <string name="middle_dot" translatable="false">\u00B7</string>
 
     <!-- Form -->
     <string name="age_field_label">Age</string>

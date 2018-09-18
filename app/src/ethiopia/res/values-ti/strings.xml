@@ -16,6 +16,9 @@
     <string name="save">ኣቐምጥ</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
+    <string name="days">መዓልታት</string>
+    <string name="months">ኣዋርሕ</string>
+    <string name="years">ዓመታት</string>
 
     <!-- Form -->
     <string name="age_field_label">ዕድመ</string>
@@ -81,6 +84,7 @@
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
     <string name="prompt_category">ምደብ ምረፅ&#8230;</string>
+    <string name="invalid_membership_error">ኣባልነት</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
@@ -92,9 +96,6 @@
     <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
     <string name="yes">እወ</string>
     <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ  ጎዲሉ ኣሎ</string>
-    <string name="days">መዓልታት</string>
-    <string name="months">ኣዋርሕ</string>
-    <string name="years">ዓመታት</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ዕለት</string>
