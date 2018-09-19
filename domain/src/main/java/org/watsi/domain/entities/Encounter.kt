@@ -18,7 +18,9 @@ data class Encounter(
     val adjudicatedAt: Instant? = null,
     val returnReason: String? = null,
     val revisedEncounterId: UUID? = null,
-    val providerComment: String? = null
+    val providerComment: String? = null,
+    val preparedAt: Instant,
+    val submittedAt: Instant? = null
 ) : Serializable {
 
     fun shortenedClaimId(): String {

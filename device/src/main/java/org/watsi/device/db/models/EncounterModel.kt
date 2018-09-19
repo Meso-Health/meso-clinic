@@ -24,7 +24,9 @@ data class EncounterModel(
     val adjudicatedAt: Instant? = null,
     val returnReason: String? = null,
     val revisedEncounterId: UUID? = null,
-    val providerComment: String? = null
+    val providerComment: String? = null,
+    val preparedAt: Instant,
+    val submittedAt: Instant? = null
 ) {
 
     fun toEncounter(): Encounter {
@@ -42,7 +44,9 @@ data class EncounterModel(
             adjudicatedAt = adjudicatedAt,
             returnReason = returnReason,
             revisedEncounterId = revisedEncounterId,
-            providerComment = providerComment
+            providerComment = providerComment,
+            preparedAt = preparedAt,
+            submittedAt = submittedAt
         )
     }
 
@@ -65,7 +69,9 @@ data class EncounterModel(
                 adjudicatedAt = encounter.adjudicatedAt,
                 returnReason = encounter.returnReason,
                 revisedEncounterId = encounter.revisedEncounterId,
-                providerComment = encounter.providerComment
+                providerComment = encounter.providerComment,
+                preparedAt = encounter.preparedAt,
+                submittedAt = encounter.submittedAt
             )
         }
     }
