@@ -207,7 +207,7 @@ class EncounterViewModelTest : AACBaseTest() {
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
 
-        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
+        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock), Instant.now(clock))
         val encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
         viewModel.updateEncounterWithLineItems(encounterFlowState)
 
