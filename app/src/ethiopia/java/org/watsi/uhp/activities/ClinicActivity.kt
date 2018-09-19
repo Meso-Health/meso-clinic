@@ -69,7 +69,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
         super.attachBaseContext(localeManager.createLocalizedContext(base))
     }
 
-    private fun startServices() {
+    fun startServices() {
         BaseService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
     }

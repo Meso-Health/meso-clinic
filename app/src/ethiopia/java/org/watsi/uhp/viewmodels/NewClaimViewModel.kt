@@ -15,7 +15,6 @@ class NewClaimViewModel @Inject constructor(
     private val viewStateObservable = MutableLiveData<ViewState>()
 
     companion object {
-        const val INVALID_MEMBERSHIP_NUMBER_ERROR = "Invalid membership number"
         val memberStatusList: List<String> = listOf("P", "I")
     }
 
@@ -60,11 +59,11 @@ class NewClaimViewModel @Inject constructor(
                     viewState.memberStatus + "-" + viewState.householdNumber + "/" + viewState.householdMemberNumber
     }
 
-    fun getMembershipNumberError(viewState: ViewState): String {
+    fun membershipNumberHasError(viewState: ViewState): Boolean {
         val hasError = viewState.regionNumber.isBlank() || viewState.woredaNumber.isBlank() || viewState.kebeleNumber.isBlank() ||
                 viewState.memberStatus.isBlank() || viewState.householdNumber.isBlank()
 
-        return if (hasError) INVALID_MEMBERSHIP_NUMBER_ERROR else ""
+        return hasError
     }
 
     fun setMembershipNumberError(error: String) {

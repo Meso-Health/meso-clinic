@@ -16,6 +16,9 @@
     <string name="save">ኣቐምጥ</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
+    <string name="days">መዓልቲታት</string>
+    <string name="months">ኣዋርሕ</string>
+    <string name="years">ዓመት</string>
 
     <!-- Form -->
     <string name="age_field_label">ዕድመ</string>
@@ -35,10 +38,10 @@
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">ኣፋውስን ቀረባትን</string>
+    <string name="drug_and_supply">ቸ ቀረባትን</string>
     <string name="service">ኣገልግሎት</string>
     <string name="lab">ላብራቶሪ</string>
-    <string name="select_prompt">ምረፅ…</string>
+    <string name="select_prompt">ምረፅ</string>
     <string name="done_encounter_button">ተወዲኡ</string>
     <plurals name="encounter_item_count">
         <item quantity="one">%d አገልግሎት</item>
@@ -51,11 +54,10 @@
         <item quantity="one">%d ነፀርታ ሕማም</item>
         <item quantity="other">%d ነፀርታታት ሕማም</item>
     </plurals>
-    <string name="search_diagnosis_hint">ነፀርታ ኣልሽ&#8230;</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ግምገማ</string>
-    <string name="save_encounter_button">ኣረክብ</string>
+    <string name="receipt_fragment_label">ከልስ</string>
+    <string name="save_encounter_button">ላኣኽ</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d አገልግሎት/አቅርቦት ዝርዝር</item>
         <item quantity="other">%d አገልግሎት/አቅርቦት ዝርዝር</item>
@@ -80,7 +82,8 @@
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
-    <string name="prompt_category">ምደብ ምረፅ&#8230;</string>
+    <string name="prompt_category">ምደብ ምረፅ</string>
+    <string name="invalid_membership_error">ናይ ኣባልነት መፍለይ ቁፅሪ ስሕተት ኣለዎ</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
@@ -91,10 +94,7 @@
     <string name="medical_record_number_validation_error">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ</string>
     <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
     <string name="yes">እወ</string>
-    <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ  ጎዲሉ ኣሎ</string>
-    <string name="days">መዓልታት</string>
-    <string name="months">ኣዋርሕ</string>
-    <string name="years">ዓመታት</string>
+    <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ ጎዲሉ ኣሎ</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ዕለት</string>
@@ -116,14 +116,14 @@
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>
     <string name="error_blank_or_zero_quantity">በይዘኦም ዘይሮ ዘይኮነ መጠን የእትው</string>
-    <string name="search_drug_hint">መድሃኒትን ቀረባትን ኣልሽ&#8230;</string>
+    <string name="search_drug_hint">መድሃኒትን ቀረባትን ኣልሽ</string>
 
     <!-- ReceiptFragment -->
     <string name="member_info_section_label">ናይ ኣባል መረዳእታ</string>
-    <string name="none">ዋላ\'ኳ</string>
+    <string name="none">ምንም</string>
     <string name="receipt_total">ድምር</string>
-    <string name="edit_claim_button">ሕቶ  ክፍሊት አርም</string>
-    <string name="claim_id_label">ሕቶ  ክፍሊት መፍለይ ቁፅሪ</string>
+    <string name="edit_claim_button">ሕቶ ክፍሊት አርም</string>
+    <string name="claim_id_label">ሕቶ ክፍሊት መፍለይ ቁፅሪ</string>
     <string name="comments">ሪኢቶታት</string>
     <string name="provider_label">አገልግሎት ወሃቢ</string>
     <string name="branch_label">ናይ ኢትዮጲያ ጥዕና መድሕን ኤጀንሲ</string>
@@ -133,9 +133,9 @@
     </plurals>
     <string name="date_header">አገልግሎት ዝተውሃበሉ ዕለት</string>
     <string name="comment_label">ሪኢቶ</string>
-    <string name="add_clickable"><u>ሪኢቶታት</u></string>
-    <string name="comment_prompt">ሪኢቶ ወስኽ&#8230;</string>
-    <string name="resubmit">ሕቶ  ክፍሊት ደጊምካ ስደድ</string>
+    <string name="add_clickable"><u>ሪኢቶታት)</u></string>
+    <string name="comment_prompt">ሪኢቶ ወስኽ</string>
+    <string name="resubmit">ሕቶ ክፍሊት ደጊምካ ስደድ</string>
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካኽል</string>
@@ -145,10 +145,11 @@
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
-    <string name="returned_claims_count_empty">ሕቶታት  ክፍሊት</string>
+    <string name="returned_claims_count_empty">ሕቶታት ክፍሊት</string>
     <plurals name="returned_claims_count">
         <item quantity="one">%d ዝተመለሰ ናይ ክፍሊት ሕቶ</item>
         <item quantity="other">%d ዝተመለሱ ናይ ክፍሊት ሕቶታት</item>
     </plurals>
+    <string name="search_diagnosis_hint">ነፀርታ ኣልሽ</string>
 
 </resources>

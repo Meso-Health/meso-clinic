@@ -10,6 +10,7 @@
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
     <string name="menu_returned_claims_with_number">Returned Claims (%1$s)</string>
     <string name="menu_returned_claims_without_number">Returned Claims</string>
+    <string name="menu_sync_now">Sync now</string>
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
@@ -18,6 +19,7 @@
     <string name="three_zeroes_placeholder" translatable="false">000</string>
     <string name="six_zeroes_placeholder" translatable="false">000000</string>
     <string name="start_claim_button">Start Claim</string>
+    <string name="invalid_membership_error">Invalid membership number</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
@@ -25,12 +27,8 @@
     <string name="membership_number_label">Member ID</string>
     <string name="age_validation_error">Age is required</string>
     <string name="medical_record_number_validation_error">Medical Record Number is required</string>
-    <string name="cancel">CANCEL</string>
     <string name="yes">OK</string>
     <string name="missing_fields_validation_error">Some fields are missing</string>
-    <string name="days">Days</string>
-    <string name="months">Months</string>
-    <string name="years">Years</string>
 
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">Visit Type</string>
@@ -70,14 +68,6 @@
     <string name="lab">Lab</string>
     <string name="select_prompt">Select…</string>
 
-    <!-- DiagnosisFragment -->
-    <string name="diagnosis_fragment_label">Diagnoses</string>
-    <plurals name="diagnosis_count">
-        <item quantity="one">%d diagnosis</item>
-        <item quantity="other">%d diagnoses</item>
-    </plurals>
-    <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
-
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">Edit Price</string>
     <string name="unit_price_label">Unit Price</string>
@@ -86,7 +76,6 @@
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">Returned Claims</string>
-    <string name="bullet" translatable="false">\u2022</string>
     <string name="returned_claims_count_empty">No returned claims</string>
     <plurals name="returned_claims_count">
         <item quantity="one">%d returned claim</item>

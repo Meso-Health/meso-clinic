@@ -25,4 +25,10 @@
         android:title="@string/menu_switch_language"
         app:showAsAction="never"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_sync_now"
+        android:orderInCategory="105"
+        android:title="@string/menu_sync_now"
+        app:showAsAction="never"
+        android:visible="false" />
 </menu>

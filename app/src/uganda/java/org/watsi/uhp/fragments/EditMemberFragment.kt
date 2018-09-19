@@ -39,6 +39,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
+import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EditMemberViewModel
@@ -120,9 +121,11 @@ class EditMemberFragment : DaggerFragment() {
                 }
 
                 val genderString = genderOptions.find { it.first == member.gender }?.second
-                top_gender_age.text = resources.getString(R.string.member_list_item_gender_age,
-                        genderString,
-                        member.getDisplayAge(clock))
+                top_gender_age.text = resources.getString(
+                    R.string.member_list_item_gender_age,
+                    genderString,
+                    MemberStringHelper.getDisplayAge(member, context, clock)
+                )
 
                 name_field.setValue(member.name)
                 gender_field.setValue(genderString)

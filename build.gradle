@@ -41,7 +41,7 @@ ext {
     compileSdkVersion = 26
     applicationId = "org.watsi.claims_submission"
     versionCode = 2
-    versionName = "0.1.0"
+    versionName = "0.1.1"
 }
 
 // This adds more custom properties from the dependencies.gradle file and makes them available to

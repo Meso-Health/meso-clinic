@@ -108,11 +108,11 @@ class NewClaimFragment : DaggerFragment() {
 
         start_button.setOnClickListener {
             viewStateObservable.value?.let {
-                if (viewModel.getMembershipNumberError(it).isBlank()) {
+                if (!viewModel.membershipNumberHasError(it)) {
                     val membershipNumber = viewModel.getMembershipNumber(it)
                     navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
                 } else {
-                    viewModel.setMembershipNumberError(viewModel.getMembershipNumberError(it))
+                    viewModel.setMembershipNumberError(getString(R.string.invalid_membership_error))
                 }
             }
         }
