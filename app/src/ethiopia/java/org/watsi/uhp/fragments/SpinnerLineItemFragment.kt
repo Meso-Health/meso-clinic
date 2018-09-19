@@ -79,7 +79,7 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
         observable = viewModel.getObservable(encounterFlowState, billableType)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                val billableOptions = viewState.selectableBillableRelations.map {
+                val billableOptions = viewModel.getSelectableBillables().map {
                     BillablePresenter(it, context)
                 }.toMutableList()
                 billableOptions.add(0, BillablePresenter(null, context))
