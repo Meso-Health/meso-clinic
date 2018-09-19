@@ -26,6 +26,7 @@ import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SwipeHandler
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
@@ -40,6 +41,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var viewModel: DiagnosisViewModel
     lateinit var observable: LiveData<DiagnosisViewModel.ViewState>
     lateinit var encounterFlowState: EncounterFlowState
+    lateinit var swipeHandler: SwipeHandler
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -105,11 +107,13 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
         })
 
+        swipeHandler = SwipeHandler(activity, onSwipe = { position: Int -> diagnosisAdapter.removeAt(position) })
+
         RecyclerViewHelper.setRecyclerView(
             recyclerView = selected_diagnosis_list,
             adapter = diagnosisAdapter,
             context = context,
-            onSwipe = { position: Int -> diagnosisAdapter.removeAt(position) }
+            swipeHandler = swipeHandler
         )
 
         save_button.setOnClickListener {
