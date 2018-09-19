@@ -107,7 +107,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
         })
 
-        swipeHandler = SwipeHandler(activity, onSwipe = { position: Int -> diagnosisAdapter.removeAt(position) })
+        swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> diagnosisAdapter.removeAt(position) })
 
         RecyclerViewHelper.setRecyclerView(
             recyclerView = selected_diagnosis_list,

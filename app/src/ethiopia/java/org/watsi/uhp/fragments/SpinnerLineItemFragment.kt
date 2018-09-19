@@ -157,7 +157,7 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                 onPriceTap = null
         )
 
-        swipeHandler = SwipeHandler(activity, onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) })
+        swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) })
 
         RecyclerViewHelper.setRecyclerView(
             recyclerView = line_items_list,
