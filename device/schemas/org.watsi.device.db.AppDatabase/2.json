@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "08bf3c6e88fde21e926fbfb4cf872acb",
+    "identityHash": "55b5343a9af25de567243253bb495802",
     "entities": [
       {
         "tableName": "billables",
@@ -174,7 +174,7 @@
       },
       {
         "tableName": "encounters",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, `visitType` TEXT, `claimId` TEXT NOT NULL, `adjudicationState` TEXT NOT NULL, `adjudicatedAt` INTEGER, `returnReason` TEXT, `revisedEncounterId` TEXT, `providerComment` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, `visitType` TEXT, `claimId` TEXT NOT NULL, `adjudicationState` TEXT NOT NULL, `adjudicatedAt` INTEGER, `returnReason` TEXT, `revisedEncounterId` TEXT, `providerComment` TEXT, `preparedAt` INTEGER NOT NULL, `submittedAt` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -270,6 +270,18 @@
             "fieldPath": "providerComment",
             "columnName": "providerComment",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "preparedAt",
+            "columnName": "preparedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "submittedAt",
+            "columnName": "submittedAt",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -705,7 +717,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"08bf3c6e88fde21e926fbfb4cf872acb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"55b5343a9af25de567243253bb495802\")"
     ]
   }
 }
