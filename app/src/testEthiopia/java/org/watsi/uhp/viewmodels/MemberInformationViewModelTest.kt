@@ -23,7 +23,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     private val memberId = UUID.randomUUID()
-    private val encounter = Encounter(UUID.randomUUID(), memberId, null, Instant.now(clock))
+    private val encounter = Encounter(UUID.randomUUID(), memberId, null, Instant.now(clock), Instant.now(clock))
     private val encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
     private val membershipNumber = "01/01/06/P-692/3"
     private val initialViewState = MemberInformationViewModel.ViewState(membershipNumber)
