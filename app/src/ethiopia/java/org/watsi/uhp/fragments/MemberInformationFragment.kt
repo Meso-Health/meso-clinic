@@ -80,7 +80,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
 
         // for case when it's coming from new claim screen (new claim flow):
         arguments.getString(PARAM_MEMBERSHIP_NUMBER)?.let { membershipNumber ->
-            // note: passing in Instant.now() for preparedAt on the encounter here for now because it is non-nullable
+            // note: passing in Instant.now() for preparedAt on the encounter here because it is non-nullable
             // but preparedAt should be updated to the time at save at the end of the flow
             val encounter = Encounter(encounterId, memberId, null, Instant.now(clock), Instant.now(clock))
             encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
