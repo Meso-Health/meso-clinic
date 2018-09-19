@@ -9,6 +9,7 @@ data class Encounter(
     val memberId: UUID,
     val identificationEventId: UUID?,
     val occurredAt: Instant,
+    val preparedAt: Instant,
     val backdatedOccurredAt: Boolean = false,
     val copaymentPaid: Boolean? = true,
     val diagnoses: List<Int> = emptyList(),
@@ -19,7 +20,6 @@ data class Encounter(
     val returnReason: String? = null,
     val revisedEncounterId: UUID? = null,
     val providerComment: String? = null,
-    val preparedAt: Instant,
     val submittedAt: Instant? = null
 ) : Serializable {
 

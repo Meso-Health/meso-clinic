@@ -15,6 +15,7 @@ data class EncounterModel(
     val memberId: UUID,
     val identificationEventId: UUID?,
     val occurredAt: Instant,
+    val preparedAt: Instant,
     val backdatedOccurredAt: Boolean,
     val copaymentPaid: Boolean?,
     val diagnoses: List<Int>,
@@ -25,7 +26,6 @@ data class EncounterModel(
     val returnReason: String? = null,
     val revisedEncounterId: UUID? = null,
     val providerComment: String? = null,
-    val preparedAt: Instant,
     val submittedAt: Instant? = null
 ) {
 
