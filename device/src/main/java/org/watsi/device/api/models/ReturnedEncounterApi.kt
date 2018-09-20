@@ -30,8 +30,9 @@ data class ReturnedEncounterApi(
         @SerializedName("return_reason") val returnReason: String,
         @SerializedName("revised_encounter_id") val revisedEncounterId: UUID,
         @SerializedName("provider_comment") val providerComment: String,
-        @SerializedName("prepared_at") val preparedAt: Instant,
-        @SerializedName("submitted_at") val submittedAt: Instant,
+        // TODO: remove Instant.now() defaults on preparedAt and submittedAt when this story is implemented: [#160574]
+        @SerializedName("prepared_at") val preparedAt: Instant? = Instant.now(),
+        @SerializedName("submitted_at") val submittedAt: Instant? = Instant.now(),
         // Below are inflated fields.
         @SerializedName("member") val memberApi: MemberApi,
         @SerializedName("billables") val billablesApi: List<BillableApi>,
