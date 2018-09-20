@@ -146,7 +146,7 @@ class NewClaimFragment : DaggerFragment() {
             it.findItem(R.id.menu_returned_claims).isVisible = true
             it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
             it.findItem(R.id.menu_logout).isVisible = true
-            it.findItem(R.id.menu_version).isVisible = true
+            it.findItem(R.id.menu_status).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
         }
     }
@@ -156,7 +156,7 @@ class NewClaimFragment : DaggerFragment() {
             R.id.menu_returned_claims -> {
                 navigationManager.goTo(ReturnedClaimsFragment())
             }
-            R.id.menu_version -> {
+            R.id.menu_status -> {
                 navigationManager.goTo(StatusFragment())
             }
             R.id.menu_logout -> {

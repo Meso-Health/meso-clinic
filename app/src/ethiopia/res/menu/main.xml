@@ -8,7 +8,7 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_version"
+        android:id="@+id/menu_status"
         android:orderInCategory="102"
         android:title="@string/menu_status_label"
         app:showAsAction="never"
