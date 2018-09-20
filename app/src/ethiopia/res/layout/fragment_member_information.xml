@@ -65,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/age_field_label"
                 android:selectAllOnFocus="true"
+                android:maxLength="3"
                 android:imeOptions="actionNext"
                 android:inputType="number" />
 
@@ -93,6 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/medical_record_number"
+            android:maxLength="7"
             android:imeOptions="actionDone"
             android:inputType="number" />
 
