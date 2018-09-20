@@ -5,7 +5,7 @@
     <!-- Menu -->
     <string name="menu_logout_label">Logout</string>
     <string name="log_out_alert">Are you sure you want to log out?</string>
-    <string name="menu_version_and_sync_label">Status</string>
+    <string name="menu_status_label">Status</string>
 
     <!-- General Labels -->
     <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>

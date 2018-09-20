@@ -10,7 +10,7 @@
     <item
         android:id="@+id/menu_version"
         android:orderInCategory="102"
-        android:title="@string/menu_version_and_sync_label"
+        android:title="@string/menu_status_label"
         app:showAsAction="never"
         android:visible="false" />
     <item
