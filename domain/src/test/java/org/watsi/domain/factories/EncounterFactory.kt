@@ -11,6 +11,7 @@ object EncounterFactory {
         memberId: UUID = UUID.randomUUID(),
         identificationEventId: UUID? = UUID.randomUUID(),
         occurredAt: Instant = Instant.now(),
+        preparedAt: Instant = Instant.now(),
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
@@ -20,13 +21,15 @@ object EncounterFactory {
         adjudicatedAt: Instant? = null,
         returnReason: String? = null,
         revisedEncounterId: UUID? = null,
-        providerComment: String? = null
+        providerComment: String? = null,
+        submittedAt: Instant? = null
     ) : Encounter {
         return Encounter(
             id = id,
             memberId = memberId,
             identificationEventId = identificationEventId,
             occurredAt = occurredAt,
+            preparedAt = preparedAt,
             backdatedOccurredAt = backdatedOccurredAt,
             copaymentPaid = copaymentPaid,
             diagnoses = diagnoses,
@@ -36,7 +39,8 @@ object EncounterFactory {
             adjudicatedAt = adjudicatedAt,
             returnReason = returnReason,
             revisedEncounterId = revisedEncounterId,
-            providerComment = providerComment
+            providerComment = providerComment,
+            submittedAt = submittedAt
         )
     }
 }
