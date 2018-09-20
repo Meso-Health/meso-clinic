@@ -21,6 +21,7 @@ import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
+import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
 import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
 import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
@@ -28,12 +29,12 @@ import org.watsi.domain.usecases.MarkReturnedEncountersAsRevisedUseCase
 import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
-import org.watsi.domain.usecases.SyncPriceScheduleUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
 import org.watsi.domain.usecases.SyncIdentificationEventUseCase
 import org.watsi.domain.usecases.SyncMemberPhotoUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
+import org.watsi.domain.usecases.SyncPriceScheduleUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 
@@ -194,6 +195,13 @@ class DomainModule {
         return FetchReturnedClaimsUseCase(persistReturnedEncountersUseCase, markReturnedEncountersAsRevisedUseCase, encounterRepository)
     }
 
+    @Provides
+    fun provideLoadPendingClaimsCountUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadPendingClaimsCountUseCase {
+        return LoadPendingClaimsCountUseCase(encounterRepository)
+    }
+    
     @Provides
     fun provideLoadReturnedClaimsCountUseCase(
         encounterRepository: EncounterRepository
