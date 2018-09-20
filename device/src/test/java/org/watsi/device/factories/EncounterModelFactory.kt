@@ -27,6 +27,7 @@ object EncounterModelFactory {
         returnReason: String? = null,
         revisedEncounterId: UUID? = null,
         providerComment: String? = null,
+        submittedAt: Instant? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val now = Instant.now(clock)
@@ -47,7 +48,8 @@ object EncounterModelFactory {
             adjudicatedAt = adjudicatedAt,
             returnReason = returnReason,
             revisedEncounterId = revisedEncounterId,
-            providerComment = providerComment
+            providerComment = providerComment,
+            submittedAt = submittedAt
         )
     }
 
@@ -69,6 +71,7 @@ object EncounterModelFactory {
         returnReason: String? = null,
         revisedEncounterId: UUID? = null,
         providerComment: String? = null,
+        submittedAt: Instant? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val model = build(
@@ -88,6 +91,7 @@ object EncounterModelFactory {
             returnReason = returnReason,
             revisedEncounterId = revisedEncounterId,
             providerComment = providerComment,
+            submittedAt = submittedAt,
             clock = clock
         )
         encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList())
