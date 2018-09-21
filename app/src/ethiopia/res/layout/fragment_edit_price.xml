@@ -95,6 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/quantity_label"
+                android:maxLength="3"
                 android:imeOptions="actionDone"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
