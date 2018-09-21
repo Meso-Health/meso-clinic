@@ -15,13 +15,17 @@ import org.watsi.uhp.R
  *
  * Adapted from: https://github.com/kitek/android-rv-swipe-delete/blob/master/app/src/main/java/pl/kitek/rvswipetodelete/SwipeToDeleteCallback.kt
  */
-abstract class SwipeCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+class SwipeHandler(
+    context: Context,
+    private val onSwipe: (position: Int) -> Unit
+) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
     private val icon = ContextCompat.getDrawable(context, R.drawable.ic_delete_white_24dp)
     private val intrinsicWidth = icon.intrinsicWidth
     private val intrinsicHeight = icon.intrinsicHeight
     private val background = ColorDrawable()
     private val backgroundColor = context.getColor(R.color.indicatorRed)
+    private var swipable = true
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         return false // don't support moving items up/down
@@ -54,4 +58,14 @@ abstract class SwipeCallback(context: Context) : ItemTouchHelper.SimpleCallback(
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        onSwipe(viewHolder.adapterPosition)
+    }
+
+    override fun isItemViewSwipeEnabled(): Boolean { return swipable }
+
+    fun disableSwipe() { swipable = false }
+
+    fun enableSwipe() { swipable = true }
 }

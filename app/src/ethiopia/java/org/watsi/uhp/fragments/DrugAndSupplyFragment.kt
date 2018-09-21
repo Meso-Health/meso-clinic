@@ -33,6 +33,7 @@ import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.helpers.SwipeHandler
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.helpers.setBottomPadding
 import org.watsi.uhp.managers.KeyboardManager
@@ -51,6 +52,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var viewModel: DrugAndSupplyViewModel
     lateinit var observable: LiveData<DrugAndSupplyViewModel.ViewState>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
+    lateinit var swipeHandler: SwipeHandler
     lateinit var encounterItemAdapter: EncounterItemAdapter
     lateinit var showSaveButtonRunnable: Runnable
     lateinit var encounterFlowState: EncounterFlowState
@@ -127,6 +129,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
+                    swipeHandler.disableSwipe()
                     onShowKeyboard()
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int? ->
@@ -150,11 +153,13 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 }
         )
 
+        swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) })
+
         RecyclerViewHelper.setRecyclerView(
             recyclerView = line_items_list,
             adapter = encounterItemAdapter,
             context = context,
-            onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) }
+            swipeHandler = swipeHandler
         )
 
         drug_search.suggestionsAdapter = SimpleCursorAdapter(
@@ -224,6 +229,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
      * method that should be called in places where we assume the keyboard has been hidden.
      */
     private fun onHideKeyboard() {
+        swipeHandler.enableSwipe()
+
         line_items_list.setBottomPadding(context.resources.getDimensionPixelSize(R.dimen.scrollingFragmentBottomPadding))
 
         select_billable_box.visibility = View.VISIBLE
