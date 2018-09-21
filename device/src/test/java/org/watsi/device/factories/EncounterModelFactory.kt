@@ -59,7 +59,7 @@ object EncounterModelFactory {
         memberId: UUID = UUID.randomUUID(),
         identificationEventId: UUID? = UUID.randomUUID(),
         occurredAt: Instant = Instant.now(),
-        preparedAt: Instant,
+        preparedAt: Instant = Instant.now(),
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
