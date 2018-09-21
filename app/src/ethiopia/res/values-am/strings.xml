@@ -6,7 +6,7 @@
     <!-- Menu -->
     <string name="menu_logout_label">ውጣ</string>
     <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
-    <string name="menu_version_and_sync_label">ሁኔታ</string>
+    <string name="menu_status_label">ሁኔታ</string>
 
     <!-- General Labels -->
     <string name="male">ወንድ</string>

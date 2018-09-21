@@ -2,7 +2,6 @@ package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Flowable
 import org.threeten.bp.Instant
@@ -17,12 +16,6 @@ class StatusViewModel @Inject constructor (
         private val fetchStatusUseCase: FetchStatusUseCase,
         private val preferencesManager: PreferencesManager
 ) : ViewModel() {
-
-    private val viewStateObservable = MutableLiveData<ViewState>()
-
-    init {
-        viewStateObservable.value = ViewState()
-    }
 
     fun getObservable(): LiveData<ViewState> {
         val flowables = listOf(syncStatusUseCase.execute(), fetchStatusUseCase.execute())
