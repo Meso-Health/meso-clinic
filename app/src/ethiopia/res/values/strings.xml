@@ -8,8 +8,10 @@
 
     <!-- Menu -->
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
-    <string name="menu_returned_claims_with_number">Returned Claims (%1$s)</string>
-    <string name="menu_returned_claims_without_number">Returned Claims</string>
+    <string name="menu_pending_claims_with_number">Pending Approval (%1$s)</string>
+    <string name="menu_pending_claims_without_number">Pending Approval</string>
+    <string name="menu_returned_claims_with_number">Returned (%1$s)</string>
+    <string name="menu_returned_claims_without_number">Returned</string>
     <string name="menu_sync_now">Sync now</string>
 
     <!--NewClaimFragment-->

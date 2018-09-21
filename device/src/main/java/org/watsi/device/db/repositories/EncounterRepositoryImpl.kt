@@ -20,7 +20,6 @@ import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
@@ -59,6 +58,10 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                 returnedClaims.map { it.toEncounterWithExtras() }
             }.subscribeOn(Schedulers.io())
         } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))
+    }
+
+    override fun loadPendingClaimsCount(): Flowable<Int> {
+        return encounterDao.pendingCount()
     }
 
     override fun loadReturnedClaimsCount(): Flowable<Int> {

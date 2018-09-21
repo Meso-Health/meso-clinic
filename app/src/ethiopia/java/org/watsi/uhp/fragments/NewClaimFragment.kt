@@ -39,7 +39,8 @@ class NewClaimFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
     lateinit var viewModel: NewClaimViewModel
-    lateinit var viewStateObservable: LiveData<NewClaimViewModel.ViewState>
+    lateinit var formStateObservable: LiveData<NewClaimViewModel.FormState>
+    lateinit var menuStateObservable: LiveData<NewClaimViewModel.MenuState>
 
     private var snackbarMessageToShow: String? = null
 
@@ -59,11 +60,15 @@ class NewClaimFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NewClaimViewModel::class.java)
-        viewStateObservable = viewModel.getViewStateObservable()
-        viewStateObservable.observe(this, Observer {
+        formStateObservable = viewModel.getFormStateObservable()
+        formStateObservable.observe(this, Observer {
             it?.let {
                 membership_number_layout.error = it.error
-
+            }
+        })
+        menuStateObservable = viewModel.getMenuStateObservable()
+        menuStateObservable.observe(this, Observer {
+            it?.let {
                 activity.invalidateOptionsMenu()
             }
         })
@@ -107,7 +112,7 @@ class NewClaimFragment : DaggerFragment() {
         })
 
         start_button.setOnClickListener {
-            viewStateObservable.value?.let {
+            formStateObservable.value?.let {
                 if (!viewModel.membershipNumberHasError(it)) {
                     val membershipNumber = viewModel.getMembershipNumber(it)
                     navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
@@ -135,18 +140,24 @@ class NewClaimFragment : DaggerFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         var returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_without_number)
+        var pendingClaimsMenuTitle = context.getString(R.string.menu_pending_claims_without_number)
 
-        viewStateObservable.value?.let {
+        menuStateObservable.value?.let {
             if (it.returnedClaimsCount > 0) {
                 returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_with_number, it.returnedClaimsCount)
+            }
+            if (it.pendingClaimsCount > 0) {
+                pendingClaimsMenuTitle = context.getString(R.string.menu_pending_claims_with_number, it.pendingClaimsCount)
             }
         }
 
         menu?.let {
             it.findItem(R.id.menu_returned_claims).isVisible = true
             it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
+            it.findItem(R.id.menu_pending_claims).isVisible = true
+            it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
             it.findItem(R.id.menu_logout).isVisible = true
-            it.findItem(R.id.menu_version).isVisible = true
+            it.findItem(R.id.menu_status).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
         }
     }
@@ -156,7 +167,10 @@ class NewClaimFragment : DaggerFragment() {
             R.id.menu_returned_claims -> {
                 navigationManager.goTo(ReturnedClaimsFragment())
             }
-            R.id.menu_version -> {
+            R.id.menu_pending_claims -> {
+                // TODO: go to PendingClaimsFragment
+            }
+            R.id.menu_status -> {
                 navigationManager.goTo(StatusFragment())
             }
             R.id.menu_logout -> {

@@ -18,6 +18,7 @@ interface EncounterRepository {
     fun upsert(encounters: List<EncounterWithExtras>): Completable
     fun sync(delta: Delta): Completable
     fun fetchReturnedClaims(): Single<List<EncounterWithExtras>>
+    fun loadPendingClaimsCount(): Flowable<Int>
     fun loadReturnedClaimsCount(): Flowable<Int>
     fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>>
     fun returnedIds(): Single<List<UUID>>

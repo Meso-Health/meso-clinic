@@ -107,13 +107,13 @@ class CurrentPatientsFragment : DaggerFragment() {
     override fun onPrepareOptionsMenu(menu: Menu?) {
         menu?.let {
             it.findItem(R.id.menu_logout).isVisible = true
-            it.findItem(R.id.menu_version).isVisible = true
+            it.findItem(R.id.menu_status).isVisible = true
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_version -> {
+            R.id.menu_status -> {
                 navigationManager.goTo(StatusFragment())
             }
             R.id.menu_logout -> {

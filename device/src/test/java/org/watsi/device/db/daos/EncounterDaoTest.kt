@@ -2,6 +2,7 @@ package org.watsi.device.db.daos
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.threeten.bp.Instant
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory
 import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
@@ -12,6 +13,16 @@ import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.domain.entities.Encounter
 
 class EncounterDaoTest : DaoBaseTest() {
+
+    @Test
+    fun pendingCount() {
+        EncounterModelFactory.create(encounterDao, submittedAt = Instant.now())
+        EncounterModelFactory.create(encounterDao, submittedAt = null)
+
+        val pendingCount = encounterDao.pendingCount().test().values().first()
+
+        assertEquals(1, pendingCount)
+    }
 
     @Test
     fun returned() {
