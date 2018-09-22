@@ -80,7 +80,8 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
                     encounterRelation.encounterForms
                 )
             }
-        }    }
+        }
+    }
 
     override fun loadReturnedClaimsCount(): Flowable<Int> {
         return encounterDao.returnedCount()
