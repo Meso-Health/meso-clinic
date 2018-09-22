@@ -64,6 +64,24 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         return encounterDao.pendingCount()
     }
 
+    override fun loadPendingClaims(): Flowable<List<EncounterWithExtras>> {
+        // TODO: DRY this and loadReturnedClaims()
+        return encounterDao.pending().map { encounterModelList ->
+            encounterModelList.map { encounterModel ->
+                val encounterRelation = encounterModel.toEncounterWithMemberAndItemsAndForms()
+                val diagnoses =
+                        diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
+                                .map { it.toDiagnosis() }
+                EncounterWithExtras(
+                    encounterRelation.encounter,
+                    encounterRelation.member,
+                    encounterRelation.encounterItemRelations,
+                    diagnoses,
+                    encounterRelation.encounterForms
+                )
+            }
+        }    }
+
     override fun loadReturnedClaimsCount(): Flowable<Int> {
         return encounterDao.returnedCount()
     }

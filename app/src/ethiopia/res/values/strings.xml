@@ -76,6 +76,14 @@
     <string name="quantity_label">Quantity</string>
     <string name="total_price_label">Total Price</string>
 
+    <!-- PendingClaimsFragment -->
+    <string name="pending_claims_fragment_label">Pending Claims</string>
+    <string name="pending_claims_count_empty">No pending claims</string>
+    <plurals name="pending_claims_count">
+        <item quantity="one">%d pending claim</item>
+        <item quantity="other">%d pending claims</item>
+    </plurals>
+    
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">Returned Claims</string>
     <string name="returned_claims_count_empty">No returned claims</string>

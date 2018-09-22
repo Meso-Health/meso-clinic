@@ -5,11 +5,11 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
+import org.watsi.domain.usecases.LoadPendingClaimsUseCase
 import javax.inject.Inject
 
-class ReturnedClaimsViewModel @Inject constructor(
-    private val loadReturnedClaimsUseCase: LoadReturnedClaimsUseCase,
+class PendingClaimsViewModel @Inject constructor(
+    private val loadPendingClaimsUseCase: LoadPendingClaimsUseCase,
     private val logger: Logger
 ) : ViewModel() {
 
@@ -18,7 +18,7 @@ class ReturnedClaimsViewModel @Inject constructor(
     fun getObservable(): LiveData<ViewState> {
         observable.value = ViewState()
 
-        loadReturnedClaimsUseCase.execute().subscribe({
+        loadPendingClaimsUseCase.execute().subscribe({
             observable.postValue(ViewState(it))
         }, {
             logger.error(it)

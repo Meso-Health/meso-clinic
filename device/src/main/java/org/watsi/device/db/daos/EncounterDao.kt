@@ -48,6 +48,10 @@ interface EncounterDao {
                memberModels: List<MemberModel>)
 
     @Transaction
+    @Query("SELECT * from encounters WHERE submittedAt IS NULL")
+    fun pending(): Flowable<List<EncounterWithMemberAndItemsAndFormsModel>>
+
+    @Transaction
     @Query("SELECT COUNT(*) from encounters WHERE submittedAt IS NULL")
     fun pendingCount(): Flowable<Int>
 

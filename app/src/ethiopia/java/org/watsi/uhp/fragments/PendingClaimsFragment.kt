@@ -13,24 +13,23 @@ import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_labe
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.uhp.R.plurals.returned_claims_count
-import org.watsi.uhp.R.string.returned_claims_count_empty
+import org.watsi.uhp.R.plurals.pending_claims_count
+import org.watsi.uhp.R.string.pending_claims_count_empty
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
-import org.watsi.uhp.viewmodels.ReturnedClaimsViewModel
+import org.watsi.uhp.viewmodels.PendingClaimsViewModel
 import javax.inject.Inject
 
-class ReturnedClaimsFragment : DaggerFragment() {
+class PendingClaimsFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
 
-    lateinit var viewModel: ReturnedClaimsViewModel
+    lateinit var viewModel: PendingClaimsViewModel
     lateinit var claimsAdapter: ClaimListItemAdapter
 
     private var snackbarMessageToShow: String? = null
@@ -38,8 +37,8 @@ class ReturnedClaimsFragment : DaggerFragment() {
     companion object {
         const val PARAM_SNACKBAR_MESSAGE = "snackbar_message"
 
-        fun withSnackbarMessage(message: String): ReturnedClaimsFragment {
-            val fragment = ReturnedClaimsFragment()
+        fun withSnackbarMessage(message: String): PendingClaimsFragment {
+            val fragment = PendingClaimsFragment()
             fragment.arguments = Bundle().apply {
                 putString(PARAM_SNACKBAR_MESSAGE, message)
             }
@@ -50,7 +49,7 @@ class ReturnedClaimsFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReturnedClaimsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(PendingClaimsViewModel::class.java)
         val observable = viewModel.getObservable()
         observable.observe(this, Observer {
             it?.let { viewState ->
@@ -61,24 +60,24 @@ class ReturnedClaimsFragment : DaggerFragment() {
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
-    private fun updateClaims(returnedClaims: List<EncounterWithExtras>) {
-        total_claims_label.text = if (returnedClaims.isEmpty()) {
-            getString(returned_claims_count_empty)
+    private fun updateClaims(pendingClaims: List<EncounterWithExtras>) {
+        total_claims_label.text = if (pendingClaims.isEmpty()) {
+            getString(pending_claims_count_empty)
         } else {
             resources.getQuantityString(
-                returned_claims_count, returnedClaims.size, returnedClaims.size
+                pending_claims_count, pendingClaims.size, pendingClaims.size
             )
         }
 
-        total_price_label.text = CurrencyUtil.formatMoney(returnedClaims.sumBy { it.price() })
+        total_price_label.text = CurrencyUtil.formatMoney(pendingClaims.sumBy { it.price() })
 
-        claimsAdapter.setClaims(returnedClaims)
+        claimsAdapter.setClaims(pendingClaims)
         RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, true)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(
-            context.getString(org.watsi.uhp.R.string.returned_claims_fragment_label),
+            context.getString(org.watsi.uhp.R.string.pending_claims_fragment_label),
             org.watsi.uhp.R.drawable.ic_arrow_back_white_24dp
         )
         setHasOptionsMenu(false)
@@ -90,9 +89,7 @@ class ReturnedClaimsFragment : DaggerFragment() {
 
         claimsAdapter = ClaimListItemAdapter(
             onClaimSelected = { encounterRelation ->
-                navigationManager.goTo(ReceiptFragment.forEncounter(
-                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
-                ))
+                // TODO: navigate to receipt fragment for pending claim
             }
         )
 

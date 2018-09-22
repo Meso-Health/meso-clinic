@@ -5,8 +5,9 @@ import dagger.android.ContributesAndroidInjector
 import org.watsi.uhp.fragments.DiagnosisFragment
 import org.watsi.uhp.fragments.DrugAndSupplyFragment
 import org.watsi.uhp.fragments.EditPriceFragment
-import org.watsi.uhp.fragments.NewClaimFragment
 import org.watsi.uhp.fragments.MemberInformationFragment
+import org.watsi.uhp.fragments.NewClaimFragment
+import org.watsi.uhp.fragments.PendingClaimsFragment
 import org.watsi.uhp.fragments.ReceiptFragment
 import org.watsi.uhp.fragments.ReturnedClaimsFragment
 import org.watsi.uhp.fragments.SpinnerLineItemFragment
@@ -21,6 +22,7 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindMemberInformationFragment(): MemberInformationFragment
     @ContributesAndroidInjector abstract fun bindNewClaimFragment(): NewClaimFragment
     @ContributesAndroidInjector abstract fun bindReceiptFragment(): ReceiptFragment
+    @ContributesAndroidInjector abstract fun bindPendingClaimsFragment(): PendingClaimsFragment
     @ContributesAndroidInjector abstract fun bindReturnedClaimsFragment(): ReturnedClaimsFragment
     @ContributesAndroidInjector abstract fun bindSpinnerLineItemFragment(): SpinnerLineItemFragment
     @ContributesAndroidInjector abstract fun bindStatusFragment(): StatusFragment

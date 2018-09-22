@@ -22,6 +22,7 @@ import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
+import org.watsi.domain.usecases.LoadPendingClaimsUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
 import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
 import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
@@ -200,6 +201,13 @@ class DomainModule {
         encounterRepository: EncounterRepository
     ): LoadPendingClaimsCountUseCase {
         return LoadPendingClaimsCountUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadPendingClaimsUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadPendingClaimsUseCase {
+        return LoadPendingClaimsUseCase(encounterRepository)
     }
     
     @Provides
