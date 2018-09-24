@@ -17,7 +17,6 @@ data class EncounterWithMemberAndItemsAndFormsModel(
     fun toEncounterWithMemberAndItemsAndForms(): EncounterWithMemberAndItemsAndForms {
         encounterModel?.toEncounter()?.let { encounter ->
             memberModel?.firstOrNull()?.toMember()?.let { member ->
-
                 val items =
                     encounterItemWithBillableAndPriceModels?.map { it.toEncounterItemWithBillableAndPrice() }
                         ?: emptyList()

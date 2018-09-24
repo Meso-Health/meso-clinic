@@ -104,16 +104,14 @@ class EncounterRepositoryImplTest {
             billableId = billableModel2.id,
             priceScheduleId = priceScheduleModel2.id
         )
-        val encounterItemRelationModel1 =
-                EncounterItemWithBillableAndPriceModelFactory.build(
-                    PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1),
-                    encounterItemModel1
-                )
-        val encounterItemRelationModel2 =
-                EncounterItemWithBillableAndPriceModelFactory.build(
-                    PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2),
-                    encounterItemModel2
-                )
+        val encounterItemRelationModel1 = EncounterItemWithBillableAndPriceModelFactory.build(
+            PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1),
+            encounterItemModel1
+        )
+        val encounterItemRelationModel2 = EncounterItemWithBillableAndPriceModelFactory.build(
+            PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2),
+            encounterItemModel2
+        )
         val encounterFormModel = EncounterFormModelFactory.build(encounterId = encounterModel.id)
         val encounterWithMemberAndItemsAndFormsModel = EncounterWithMemberAndItemsAndFormsModel(
             encounterModel,
