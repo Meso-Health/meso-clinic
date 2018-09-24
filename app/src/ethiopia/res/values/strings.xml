@@ -77,7 +77,7 @@
     <string name="total_price_label">Total Price</string>
 
     <!-- PendingClaimsFragment -->
-    <string name="pending_claims_fragment_label">Pending Claims</string>
+    <string name="pending_claims_fragment_label">Pending Approval</string>
     <string name="pending_claims_count_empty">No pending claims</string>
     <plurals name="pending_claims_count">
         <item quantity="one">%d pending claim</item>
