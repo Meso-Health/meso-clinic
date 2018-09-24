@@ -29,6 +29,7 @@ import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
 import org.watsi.domain.usecases.MarkReturnedEncountersAsRevisedUseCase
 import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
+import org.watsi.domain.usecases.SubmitMemberAndClaimUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
 import org.watsi.domain.usecases.SyncEncounterUseCase
@@ -231,5 +232,13 @@ class DomainModule {
         markReturnedEncounterAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase
     ): ReviseMemberAndClaimUseCase {
         return ReviseMemberAndClaimUseCase(createMemberUseCase, createEncounterUseCase, markReturnedEncounterAsRevisedUseCase)
+    }
+
+    @Provides
+    fun provideSubmitMemberAndClaimUseCase(
+        deltaRepository: DeltaRepository,
+        encounterRepository: EncounterRepository
+    ): SubmitMemberAndClaimUseCase {
+        return SubmitMemberAndClaimUseCase(deltaRepository, encounterRepository)
     }
 }

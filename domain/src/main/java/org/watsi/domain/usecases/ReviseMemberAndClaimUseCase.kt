@@ -2,6 +2,8 @@ package org.watsi.domain.usecases
 
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
@@ -15,11 +17,11 @@ class ReviseMemberAndClaimUseCase(
     private val markReturnedEncounterAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase
 ) {
 
-    fun execute(member: Member, encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+    fun execute(member: Member, encounterWithItemsAndForms: EncounterWithItemsAndForms, submitNow: Boolean, clock: Clock): Completable {
         return Completable.fromAction {
 
             val newMember = member.copy(id = UUID.randomUUID())
-            createMemberUseCase.execute(newMember).blockingAwait()
+            createMemberUseCase.execute(newMember, submitNow).blockingAwait()
 
             val newEncounter = encounterWithItemsAndForms.encounter.copy(
                 id = UUID.randomUUID(),
@@ -56,7 +58,7 @@ class ReviseMemberAndClaimUseCase(
                     newEncounterItems,
                     newEncounterForms,
                     encounterWithItemsAndForms.diagnoses
-                )
+                ), submitNow, clock
             ).blockingAwait()
 
             markReturnedEncounterAsRevisedUseCase.execute(listOf(encounterWithItemsAndForms.encounter.id))

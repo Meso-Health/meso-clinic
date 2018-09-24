@@ -57,7 +57,7 @@
 
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">ከልስ</string>
-    <string name="save_encounter_button">ላኣኽ</string>
+    <string name="submit_encounter_button">ላኣኽ</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d አገልግሎት/አቅርቦት ዝርዝር</item>
         <item quantity="other">%d አገልግሎት/አቅርቦት ዝርዝር</item>

@@ -58,7 +58,7 @@
 
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">ከልስ</string>
-    <string name="save_encounter_button">ላክ</string>
+    <string name="submit_encounter_button">ላክ</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
     <string name="today">ዛሬ</string>
 

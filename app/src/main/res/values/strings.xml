@@ -64,9 +64,10 @@
 
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">Review</string>
-    <string name="save_encounter_button">Submit</string>
+    <string name="submit_encounter_button">Submit</string>
     <string name="receipt_total">Total</string>
     <string name="encounter_submitted">Claim submitted</string>
+    <string name="encounter_saved">Claim saved</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d line item</item>
         <item quantity="other">%d line items</item>

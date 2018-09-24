@@ -5,22 +5,26 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
-import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
+import org.watsi.domain.usecases.SubmitMemberAndClaimUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
     private val createMemberUseCase: CreateMemberUseCase,
+    private val submitMemberAndClaimUseCase: SubmitMemberAndClaimUseCase,
     private val reviseMemberAndClaimUseCase: ReviseMemberAndClaimUseCase
 ) : ViewModel() {
 
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
 
     private val observable = MutableLiveData<ViewState>()
 
@@ -47,8 +51,9 @@ class ReceiptViewModel @Inject constructor(
         observable.value = observable.value?.copy(comment = comment)
     }
 
-    fun submitEncounter(
-        encounterFlowState: EncounterFlowState
+    fun finishEncounter(
+        encounterFlowState: EncounterFlowState,
+        encounterAction: EncounterAction
     ): Completable {
         return observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
@@ -63,16 +68,16 @@ class ReceiptViewModel @Inject constructor(
                 }
 
                 encounterFlowState.member?.let {
-                    when (encounterFlowState.encounter.adjudicationState) {
-                        Encounter.AdjudicationState.PENDING -> {
-                            createMemberUseCase.execute(it).blockingAwait()
-                            createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
+                    when (encounterAction) {
+                        EncounterAction.PREPARE -> {
+                            createMemberUseCase.execute(it, false).blockingAwait()
+                            createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms(), false, clock).blockingAwait()
                         }
-                        Encounter.AdjudicationState.RETURNED -> {
-                            reviseMemberAndClaimUseCase.execute(it, encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
+                        EncounterAction.SUBMIT -> {
+                            submitMemberAndClaimUseCase.execute(it, encounterFlowState.toEncounterWithItemsAndForms(), clock).blockingAwait()
                         }
-                        else -> {
-                            logger.error("Adjudication state must be PENDING or RETURNED")
+                        EncounterAction.RESUBMIT -> {
+                            reviseMemberAndClaimUseCase.execute(it, encounterFlowState.toEncounterWithItemsAndForms(), true, clock).blockingAwait()
                         }
                     }
                 }

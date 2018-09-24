@@ -51,12 +51,17 @@ class BillableRepositoryImpl(
         return billableDao.find(id).map { it.toBillable() }.subscribeOn(Schedulers.io())
     }
 
-    override fun create(billable: Billable, delta: Delta): Completable {
+    override fun create(billable: Billable, delta: Delta?): Completable {
         return Completable.fromAction {
-            billableDao.insertWithDelta(
-                    BillableModel.fromBillable(billable, clock),
+            val billableModel = BillableModel.fromBillable(billable, clock)
+            if (delta != null) {
+                billableDao.insertWithDelta(
+                    billableModel,
                     DeltaModel.fromDelta(delta, clock)
-            )
+                )
+            } else {
+                billableDao.insert(billableModel)
+            }
         }.subscribeOn(Schedulers.io())
     }
 

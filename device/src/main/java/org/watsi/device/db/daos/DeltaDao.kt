@@ -17,7 +17,7 @@ interface DeltaDao {
     fun getAll(): Single<List<DeltaModel>>
 
     @Insert
-    fun insert(deltaModel: DeltaModel)
+    fun insert(deltaModels: List<DeltaModel>)
 
     @Update
     fun update(deltaModels: List<DeltaModel>)

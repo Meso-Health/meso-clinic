@@ -69,6 +69,7 @@ import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
 import org.watsi.uhp.views.SpinnerField
+import org.watsi.domain.entities.Encounter.EncounterAction
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -209,11 +210,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
 
         save_button.setOnClickListener {
-            submitEncounter(false)
+            finishEncounter(EncounterAction.PREPARE)
         }
 
         resubmit_button.setOnClickListener {
-            submitEncounter(true)
+            finishEncounter(EncounterAction.RESUBMIT)
         }
     }
 
@@ -353,19 +354,26 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         backdateAlertDialog = builder.create()
     }
 
-    private fun submitEncounter(resubmit: Boolean) {
-
-        val toFragment = if (resubmit) {
-            ReturnedClaimsFragment.withSnackbarMessage(
-                getString(R.string.encounter_submitted)
-            )
-        } else {
-            NewClaimFragment.withSnackbarMessage(
-                getString(R.string.encounter_submitted)
-            )
+    private fun finishEncounter(encounterAction: EncounterAction) {
+        val toFragment = when (encounterAction) {
+            EncounterAction.PREPARE -> {
+                NewClaimFragment.withSnackbarMessage(
+                    getString(R.string.encounter_saved)
+                )
+            }
+            EncounterAction.SUBMIT -> {
+                PendingClaimsFragment.withSnackbarMessage(
+                    getString(R.string.encounter_submitted)
+                )
+            }
+            EncounterAction.RESUBMIT -> {
+                ReturnedClaimsFragment.withSnackbarMessage(
+                    getString(R.string.encounter_submitted)
+                )
+            }
         }
 
-        viewModel.submitEncounter(encounterFlowState).subscribe({
+        viewModel.finishEncounter(encounterFlowState, encounterAction).subscribe({
             navigationManager.popTo(toFragment)
         }, {
             logger.error(it)
