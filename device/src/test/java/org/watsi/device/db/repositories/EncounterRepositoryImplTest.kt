@@ -3,7 +3,6 @@ package org.watsi.device.db.repositories
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -41,7 +40,6 @@ import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.EncounterFactory
@@ -50,6 +48,7 @@ import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 @RunWith(MockitoJUnitRunner::class)
@@ -80,142 +79,67 @@ class EncounterRepositoryImplTest {
     }
 
     @Test
-    fun loadReturnedClaims() {
-        val memberModel1 = MemberModelFactory.build()
-        val memberModel2 = MemberModelFactory.build()
+    fun loadClaim() {
+        val billableModel1 = BillableModelFactory.build()
+        val billableModel2 = BillableModelFactory.build()
+        val priceScheduleModel1 = PriceScheduleModelFactory.build(billableId = billableModel1.id)
+        val priceScheduleModel2 = PriceScheduleModelFactory.build(billableId = billableModel2.id)
 
         val diagnosisModel1 = DiagnosisModelFactory.build()
         val diagnosisModel2 = DiagnosisModelFactory.build()
-        val diagnosisModel3 = DiagnosisModelFactory.build()
-        val diagnosesModelList1 = listOf(diagnosisModel1, diagnosisModel2)
-        val diagnosesModelList2 = listOf(diagnosisModel3)
-        val diagnosesIdList1 = diagnosesModelList1.map { it.id }
-        val diagnosesIdList2 = diagnosesModelList2.map { it.id }
-        val diagnosesList1 = diagnosesModelList1.map { it.toDiagnosis() }
-        val diagnosesList2 = diagnosesModelList2.map { it.toDiagnosis() }
+        val diagnosesIdList = listOf(diagnosisModel1.id, diagnosisModel2.id)
 
-        val encounterModel1 = EncounterModelFactory.build(
-            memberId = memberModel1.id,
-            diagnoses = diagnosesIdList1,
-            adjudicationState = Encounter.AdjudicationState.RETURNED
+        val memberModel = MemberModelFactory.build()
+        val encounterModel = EncounterModelFactory.build(
+            memberId = memberModel.id,
+            diagnoses = diagnosesIdList
         )
-        val encounterModel2 = EncounterModelFactory.build(
-            memberId = memberModel2.id,
-            diagnoses = diagnosesIdList2,
-            adjudicationState = Encounter.AdjudicationState.RETURNED
-        )
-
-        val billableModel1 = BillableModelFactory.build()
-        val billableModel2 = BillableModelFactory.build()
-        val billableModel3 = BillableModelFactory.build()
-
-
-        val priceScheduleModel1 = PriceScheduleModelFactory.build(billableId = billableModel1.id)
-        val priceScheduleModel2 = PriceScheduleModelFactory.build(billableId = billableModel2.id)
-        val priceScheduleModel3 = PriceScheduleModelFactory.build(billableId = billableModel3.id)
-
         val encounterItemModel1 = EncounterItemModelFactory.build(
-            encounterId = encounterModel1.id,
+            encounterId = encounterModel.id,
             billableId = billableModel1.id,
             priceScheduleId = priceScheduleModel1.id
         )
         val encounterItemModel2 = EncounterItemModelFactory.build(
-            encounterId = encounterModel1.id,
+            encounterId = encounterModel.id,
             billableId = billableModel2.id,
             priceScheduleId = priceScheduleModel2.id
         )
-        val encounterItemModel3 = EncounterItemModelFactory.build(
-            encounterId = encounterModel2.id,
-            billableId = billableModel3.id,
-            priceScheduleId = priceScheduleModel3.id
-        )
-
         val encounterItemRelationModel1 =
-            EncounterItemWithBillableAndPriceModelFactory.build(
-                PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1),
-                encounterItemModel1
-            )
+                EncounterItemWithBillableAndPriceModelFactory.build(
+                    PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1),
+                    encounterItemModel1
+                )
         val encounterItemRelationModel2 =
-            EncounterItemWithBillableAndPriceModelFactory.build(
-                PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2),
-                encounterItemModel2
-            )
-        val encounterItemRelationModel3 =
-            EncounterItemWithBillableAndPriceModelFactory.build(
-                PriceScheduleWithBillableModelFactory.build(billableModel3, priceScheduleModel3),
-                encounterItemModel3
-            )
-
-        val encounterFormModel1 = EncounterFormModelFactory.build(encounterId = encounterModel1.id)
-        val encounterFormModel2 = EncounterFormModelFactory.build(encounterId = encounterModel2.id)
-
-        val encounterWithMemberAndItemsAndFormsModel1 = EncounterWithMemberAndItemsAndFormsModel(
-            encounterModel1,
-            listOf(memberModel1),
+                EncounterItemWithBillableAndPriceModelFactory.build(
+                    PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2),
+                    encounterItemModel2
+                )
+        val encounterFormModel = EncounterFormModelFactory.build(encounterId = encounterModel.id)
+        val encounterWithMemberAndItemsAndFormsModel = EncounterWithMemberAndItemsAndFormsModel(
+            encounterModel,
+            listOf(memberModel),
             listOf(encounterItemRelationModel1, encounterItemRelationModel2),
-            listOf(encounterFormModel1)
-        )
-        val encounterWithMemberAndItemsAndFormsModel2 = EncounterWithMemberAndItemsAndFormsModel(
-            encounterModel2,
-            listOf(memberModel2),
-            listOf(encounterItemRelationModel3),
-            listOf(encounterFormModel2)
+            listOf(encounterFormModel)
         )
 
-        whenever(mockDiagnosisDao.findAll(diagnosesIdList1)).thenReturn(Single.just(diagnosesModelList1))
-        whenever(mockDiagnosisDao.findAll(diagnosesIdList2)).thenReturn(Single.just(diagnosesModelList2))
-        whenever(mockDao.returned()).thenReturn(Flowable.fromArray(
-            listOf(encounterWithMemberAndItemsAndFormsModel1, encounterWithMemberAndItemsAndFormsModel2))
-        )
+        whenever(mockDiagnosisDao.findAll(diagnosesIdList))
+                .thenReturn(Single.just(listOf(diagnosisModel1, diagnosisModel2)))
 
-        val returnedEncounterWithExtras = repository.loadReturnedClaims().test().values().first()
-
-
-        assertEquals(
-            returnedEncounterWithExtras[0].encounter,
-            encounterModel1.toEncounter()
-        )
-        assertEquals(
-            returnedEncounterWithExtras[0].member,
-            memberModel1.toMember()
-        )
-        assertEquals(
-            returnedEncounterWithExtras[0].encounterItemRelations,
-            listOf(
-                encounterItemRelationModel1.toEncounterItemWithBillableAndPrice(),
-                encounterItemRelationModel2.toEncounterItemWithBillableAndPrice()
+        assertEquals(repository.loadClaim(encounterWithMemberAndItemsAndFormsModel),
+            EncounterWithExtras(
+                encounterModel.toEncounter(),
+                memberModel.toMember(),
+                listOf(
+                    encounterItemRelationModel1.toEncounterItemWithBillableAndPrice(),
+                    encounterItemRelationModel2.toEncounterItemWithBillableAndPrice()
+                ),
+                listOf(
+                    diagnosisModel1.toDiagnosis(),
+                    diagnosisModel2.toDiagnosis()
+                ),
+                listOf(encounterFormModel.toEncounterForm())
             )
         )
-        assertEquals(
-            returnedEncounterWithExtras[0].diagnoses,
-            diagnosesList1
-        )
-        assertEquals(
-            returnedEncounterWithExtras[0].encounterForms,
-            listOf(encounterFormModel1.toEncounterForm())
-        )
-
-        assertEquals(
-            returnedEncounterWithExtras[1].encounter,
-            encounterModel2.toEncounter()
-        )
-        assertEquals(
-            returnedEncounterWithExtras[1].member,
-            memberModel2.toMember()
-        )
-        assertEquals(
-            returnedEncounterWithExtras[1].encounterItemRelations,
-            listOf(encounterItemRelationModel3.toEncounterItemWithBillableAndPrice())
-        )
-        assertEquals(
-            returnedEncounterWithExtras[1].diagnoses,
-            diagnosesList2
-        )
-        assertEquals(
-            returnedEncounterWithExtras[1].encounterForms,
-            listOf(encounterFormModel2.toEncounterForm())
-        )
-
     }
 
     @Test
