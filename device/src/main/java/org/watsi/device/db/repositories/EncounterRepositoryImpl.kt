@@ -15,6 +15,7 @@ import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
+import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.managers.SessionManager
@@ -26,11 +27,14 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
 
-class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
-                              private val diagnosisDao: DiagnosisDao,
-                              private val api: CoverageApi,
-                              private val sessionManager: SessionManager,
-                              private val clock: Clock) : EncounterRepository {
+class EncounterRepositoryImpl(
+    private val encounterDao: EncounterDao,
+    private val diagnosisDao: DiagnosisDao,
+    private val api: CoverageApi,
+    private val sessionManager: SessionManager,
+    private val clock: Clock
+) : EncounterRepository {
+
     override fun revisedIds(): Single<List<UUID>> {
         return encounterDao.revisedIds()
     }
@@ -60,8 +64,27 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
         } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))
     }
 
+    fun loadClaim(encounterModel: EncounterWithMemberAndItemsAndFormsModel): EncounterWithExtras {
+        val encounterRelation = encounterModel.toEncounterWithMemberAndItemsAndForms()
+        val diagnoses = diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
+                .map { it.toDiagnosis() }
+        return EncounterWithExtras(
+            encounterRelation.encounter,
+            encounterRelation.member,
+            encounterRelation.encounterItemRelations,
+            diagnoses,
+            encounterRelation.encounterForms
+        )
+    }
+
     override fun loadPendingClaimsCount(): Flowable<Int> {
         return encounterDao.pendingCount()
+    }
+
+    override fun loadPendingClaims(): Flowable<List<EncounterWithExtras>> {
+        return encounterDao.pending().map { encounterModelList ->
+            encounterModelList.map { encounterModel -> loadClaim(encounterModel) }
+        }
     }
 
     override fun loadReturnedClaimsCount(): Flowable<Int> {
@@ -70,19 +93,7 @@ class EncounterRepositoryImpl(private val encounterDao: EncounterDao,
 
     override fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>> {
         return encounterDao.returned().map { encounterModelList ->
-            encounterModelList.map { encounterModel ->
-                val encounterRelation = encounterModel.toEncounterWithMemberAndItemsAndForms()
-                val diagnoses =
-                    diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
-                        .map { it.toDiagnosis() }
-                EncounterWithExtras(
-                    encounterRelation.encounter,
-                    encounterRelation.member,
-                    encounterRelation.encounterItemRelations,
-                    diagnoses,
-                    encounterRelation.encounterForms
-                )
-            }
+            encounterModelList.map { encounterModel -> loadClaim(encounterModel) }
         }
     }
 

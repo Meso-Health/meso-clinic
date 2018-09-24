@@ -19,6 +19,7 @@ interface EncounterRepository {
     fun sync(delta: Delta): Completable
     fun fetchReturnedClaims(): Single<List<EncounterWithExtras>>
     fun loadPendingClaimsCount(): Flowable<Int>
+    fun loadPendingClaims(): Flowable<List<EncounterWithExtras>>
     fun loadReturnedClaimsCount(): Flowable<Int>
     fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>>
     fun returnedIds(): Single<List<UUID>>

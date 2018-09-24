@@ -5,8 +5,9 @@ import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
 import java.io.Serializable
 
-data class EncounterWithMemberAndItemsAndForms(val encounter: Encounter,
-                                               val member: Member,
-                                               val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
-                                               val encounterForms: List<EncounterForm>
+data class EncounterWithMemberAndItemsAndForms(
+    val encounter: Encounter,
+    val member: Member,
+    val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
+    val encounterForms: List<EncounterForm>
 ) : Serializable

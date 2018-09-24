@@ -164,11 +164,11 @@ class NewClaimFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_pending_claims -> {
+                navigationManager.goTo(PendingClaimsFragment())
+            }
             R.id.menu_returned_claims -> {
                 navigationManager.goTo(ReturnedClaimsFragment())
-            }
-            R.id.menu_pending_claims -> {
-                // TODO: go to PendingClaimsFragment
             }
             R.id.menu_status -> {
                 navigationManager.goTo(StatusFragment())

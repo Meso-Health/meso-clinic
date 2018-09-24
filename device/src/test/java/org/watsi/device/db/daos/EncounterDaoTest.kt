@@ -3,16 +3,23 @@ package org.watsi.device.db.daos
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.Instant
-import org.watsi.device.factories.BillableModelFactory
-import org.watsi.device.factories.EncounterItemModelFactory
-import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
+import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.device.factories.EncounterModelFactory
-import org.watsi.device.factories.MemberModelFactory
-import org.watsi.device.factories.PriceScheduleModelFactory
-import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.domain.entities.Encounter
 
 class EncounterDaoTest : DaoBaseTest() {
+
+    @Test
+    fun pending() {
+        val encounterModel1 = EncounterModelFactory.create(encounterDao, submittedAt = null)
+        val encounterModel2 = EncounterModelFactory.create(encounterDao, submittedAt = null)
+        EncounterModelFactory.create(encounterDao, submittedAt = Instant.now())
+        EncounterModelFactory.create(encounterDao, submittedAt = Instant.now().minus(1, ChronoUnit.HOURS))
+
+        assertEquals(encounterDao.pending().test().values().first().map { it.encounterModel },
+            listOf(encounterModel1, encounterModel2)
+        )
+    }
 
     @Test
     fun pendingCount() {
@@ -26,105 +33,25 @@ class EncounterDaoTest : DaoBaseTest() {
 
     @Test
     fun returned() {
-        val member1 = MemberModelFactory.create(memberDao)
-        val member2 = MemberModelFactory.create(memberDao)
-        val member3 = MemberModelFactory.create(memberDao)
-        val member4 = MemberModelFactory.create(memberDao)
-
         val encounterModel1 = EncounterModelFactory.create(
-            encounterDao, memberId = member1.id,
+            encounterDao,
             adjudicationState = Encounter.AdjudicationState.RETURNED
         )
         val encounterModel2 = EncounterModelFactory.create(
-            encounterDao, memberId = member2.id,
+            encounterDao,
             adjudicationState = Encounter.AdjudicationState.RETURNED
         )
         EncounterModelFactory.create(
-            encounterDao, memberId = member3.id,
+            encounterDao,
             adjudicationState = Encounter.AdjudicationState.PENDING
         )
         EncounterModelFactory.create(
-            encounterDao, memberId = member4.id,
+            encounterDao,
             adjudicationState = Encounter.AdjudicationState.REVISED
         )
 
-        val billable1 = BillableModelFactory.build()
-        val billable2 = BillableModelFactory.build()
-        val billable3 = BillableModelFactory.build()
-
-        val priceSchedule1 = PriceScheduleModelFactory.build(billableId = billable1.id)
-        val priceSchedule2 = PriceScheduleModelFactory.build(billableId = billable2.id)
-        val priceSchedule3 = PriceScheduleModelFactory.build(billableId = billable3.id)
-
-        val encounterItemModel1 = EncounterItemModelFactory.build(
-            encounterId = encounterModel1.id,
-            billableId = billable1.id,
-            priceScheduleId = priceSchedule1.id
-        )
-        val encounterItemModel2 = EncounterItemModelFactory.build(
-            encounterId = encounterModel1.id,
-            billableId = billable2.id,
-            priceScheduleId = priceSchedule2.id
-        )
-        val encounterItemModel3 = EncounterItemModelFactory.build(
-            encounterId = encounterModel2.id,
-            billableId = billable3.id,
-            priceScheduleId = priceSchedule3.id
-        )
-
-
-        val encounterItemRelationModel1 =
-            EncounterItemWithBillableAndPriceModelFactory.create(
-                billableDao,
-                priceScheduleDao,
-                encounterItemDao,
-                PriceScheduleWithBillableModelFactory.build(billable1, priceSchedule1),
-                encounterItemModel1
-            )
-        val encounterItemRelationModel2 =
-            EncounterItemWithBillableAndPriceModelFactory.create(
-                billableDao,
-                priceScheduleDao,
-                encounterItemDao,
-                PriceScheduleWithBillableModelFactory.build(billable2, priceSchedule2),
-                encounterItemModel2
-            )
-        val encounterItemRelationModel3 =
-            EncounterItemWithBillableAndPriceModelFactory.create(
-                billableDao,
-                priceScheduleDao,
-                encounterItemDao,
-                PriceScheduleWithBillableModelFactory.build(billable3, priceSchedule3),
-                encounterItemModel3
-            )
-
-        val returnedEncountersWithMemberAndItemsAndForms =
-            encounterDao.returned().test().values().first()
-
-        assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[0].encounterModel,
-            encounterModel1
-        )
-        assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[0].memberModel?.first(),
-            member1
-        )
-        assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[0].encounterItemWithBillableAndPriceModels,
-            listOf(encounterItemRelationModel1, encounterItemRelationModel2)
-        )
-
-        assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[1].encounterModel,
-            encounterModel2
-        )
-        assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[1].memberModel?.first(),
-            member2
-        )
-        assertEquals(
-            returnedEncountersWithMemberAndItemsAndForms[1].encounterItemWithBillableAndPriceModels,
-            listOf(encounterItemRelationModel3)
+        assertEquals(encounterDao.returned().test().values().first().map { it.encounterModel },
+            listOf(encounterModel1, encounterModel2)
         )
     }
 
