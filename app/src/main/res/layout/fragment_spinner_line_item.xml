@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="@dimen/fragment_horizontal_margin"
+        android:padding="@dimen/fragment_padding"
         android:elevation="@dimen/panelElevation">
 
         <android.support.constraint.ConstraintLayout

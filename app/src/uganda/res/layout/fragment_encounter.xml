@@ -15,9 +15,9 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingTop="@dimen/space8"
-        android:paddingBottom="@dimen/fragment_horizontal_margin"
-        android:paddingLeft="@dimen/fragment_horizontal_margin"
-        android:paddingRight="@dimen/fragment_horizontal_margin"
+        android:paddingBottom="@dimen/fragment_padding"
+        android:paddingLeft="@dimen/fragment_padding"
+        android:paddingRight="@dimen/fragment_padding"
         android:elevation="@dimen/panelElevation">
 
         <!--hacky method to add box around spinner without rewriting material design styles-->

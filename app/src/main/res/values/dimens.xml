@@ -40,11 +40,8 @@
     <!-- elevation for top panels in encounter flow fragments -->
     <dimen name="panelElevation">2dp</dimen>
 
-    <!-- left and right margins on all fragments -->
-    <dimen name="fragment_horizontal_margin">16dp</dimen>
-
-    <!-- top and bottom margins on all fragments -->
-    <dimen name="fragment_vertical_margin">10dp</dimen>
+    <!-- top, bottom, left, and right padding on all fragments -->
+    <dimen name="fragment_padding">16dp</dimen>
 
     <!-- top, bottom, left, and right padding for all dialogs -->
     <dimen name="dialog_padding">16dp</dimen>
