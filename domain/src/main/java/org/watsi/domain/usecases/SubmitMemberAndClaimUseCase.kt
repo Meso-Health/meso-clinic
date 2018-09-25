@@ -26,11 +26,9 @@ class SubmitMemberAndClaimUseCase(
         encounterWithItemsAndForms: EncounterWithItemsAndForms,
         clock: Clock
     ) {
-        val encounterWithItemsAndFormsAndTimestamps =
-            encounterWithItemsAndForms.copy(
-                encounter = encounterWithItemsAndForms.encounter.copy(submittedAt = Instant.now(clock))
-            )
-        encounterRepository.update(listOf(encounterWithItemsAndFormsAndTimestamps.encounter))
+        encounterRepository.update(
+            listOf(encounterWithItemsAndForms.encounter.copy(submittedAt = Instant.now(clock)))
+        )
     }
 
     private fun createDeltas(

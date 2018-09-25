@@ -30,9 +30,18 @@ class CreateMemberUseCaseTest {
                 modelName = Delta.ModelName.MEMBER,
                 modelId = member.id)
 
-        useCase.execute(member)
+        useCase.execute(member, true)
 
         verify(mockMemberRepository).upsert(member, listOf(memberDelta))
+    }
+
+    @Test
+    fun execute_memberDoesNotHavePhoto_createsMemberAndMemberWithoutDelta() {
+        val member = MemberFactory.build(photoId = null)
+
+        useCase.execute(member, false)
+
+        verify(mockMemberRepository).upsert(member, emptyList())
     }
 
     @Test
@@ -49,8 +58,17 @@ class CreateMemberUseCaseTest {
                 modelId = member.id
         )
 
-        useCase.execute(member)
+        useCase.execute(member, true)
 
         verify(mockMemberRepository).upsert(member, listOf(memberDelta, photoDelta))
+    }
+
+    @Test
+    fun execute_memberHasPhoto_createsMemberAndMemberAndPhotoWithoutDeltas() {
+        val member = MemberFactory.build(photoId = UUID.randomUUID())
+
+        useCase.execute(member, false)
+
+        verify(mockMemberRepository).upsert(member, emptyList())
     }
 }

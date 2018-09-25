@@ -10,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.threeten.bp.Clock
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
@@ -30,11 +31,13 @@ class CreateEncounterUseCaseTest {
     @Mock lateinit var mockBillableRepository: BillableRepository
     @Mock lateinit var mockPriceScheduleRepository: PriceScheduleRepository
     lateinit var useCase: CreateEncounterUseCase
+    lateinit var clock: Clock
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         useCase = CreateEncounterUseCase(mockEncounterRepository, mockBillableRepository, mockPriceScheduleRepository)
+        clock = Clock.systemDefaultZone()
     }
 
     @Test
@@ -49,7 +52,17 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta)))
                 .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
+        useCase.execute(encounterWithItemsAndForms, true, clock).test().assertComplete()
+    }
+
+    @Test
+    fun execute_encounterDoesNotHaveNewBillablesOrEncounterForms_createsEncounterWithoutDelta() {
+        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build()
+
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, emptyList()))
+            .thenReturn(Completable.complete())
+
+        useCase.execute(encounterWithItemsAndForms, false, clock).test().assertComplete()
     }
 
     @Test
@@ -89,7 +102,32 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
+        useCase.execute(encounterWithItemsAndForms, true, clock).test().assertComplete()
+    }
+
+    @Test
+    fun execute_encounterHasNewBillables_createsEncounterAndBillablesWithoutDeltas() {
+        val encounter = EncounterFactory.build()
+        val billable = BillableFactory.build()
+        val priceSchedule = PriceScheduleFactory.build(billableId = billable.id)
+        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id)
+        val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
+            BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
+        )
+        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+            encounter = encounter,
+            encounterItemRelations = listOf(encounterItemRelation)
+        )
+
+        whenever(mockBillableRepository.find(billable.id)).thenReturn(Maybe.empty())
+        whenever(mockBillableRepository.create(billable, null))
+            .thenReturn(Completable.complete())
+        whenever(mockPriceScheduleRepository.create(priceSchedule, null))
+            .thenReturn(Completable.complete())
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, emptyList()))
+            .thenReturn(Completable.complete())
+
+        useCase.execute(encounterWithItemsAndForms, false, clock).test().assertComplete()
     }
 
     @Test
@@ -123,7 +161,31 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
+        useCase.execute(encounterWithItemsAndForms, true, clock).test().assertComplete()
+    }
+
+    @Test
+    fun execute_encounterHasNewPriceSchedules_createsEncounterAndPriceSchedulesWithoutDeltas() {
+        val encounter = EncounterFactory.build()
+        val billable = BillableFactory.build()
+        val priceSchedule = PriceScheduleFactory.build(billableId = billable.id)
+        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id, priceScheduleIssued = true)
+        val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
+            BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
+        )
+        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+            encounter = encounter,
+            encounterItemRelations = listOf(encounterItemRelation)
+        )
+
+        whenever(mockBillableRepository.find(billable.id)).thenReturn(Maybe.just(billable))
+        whenever(mockPriceScheduleRepository.find(priceSchedule.id)).thenReturn(Maybe.empty())
+        whenever(mockPriceScheduleRepository.create(priceSchedule, null))
+            .thenReturn(Completable.complete())
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, emptyList()))
+            .thenReturn(Completable.complete())
+
+        useCase.execute(encounterWithItemsAndForms, false, clock).test().assertComplete()
     }
 
     @Test
@@ -148,6 +210,21 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, listOf(encounterDelta, encounterFormDelta)))
                 .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms).test().assertComplete()
+        useCase.execute(encounterWithItemsAndForms, true, clock).test().assertComplete()
+    }
+
+    @Test
+    fun execute_encounterHasEncounterForms_createsEncounterAndEncounterFormWithoutDeltas() {
+        val encounter = EncounterFactory.build()
+        val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
+        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+            encounter = encounter,
+            forms = listOf(encounterForm)
+        )
+
+        whenever(mockEncounterRepository.insert(encounterWithItemsAndForms, emptyList()))
+            .thenReturn(Completable.complete())
+
+        useCase.execute(encounterWithItemsAndForms, false, clock).test().assertComplete()
     }
 }
