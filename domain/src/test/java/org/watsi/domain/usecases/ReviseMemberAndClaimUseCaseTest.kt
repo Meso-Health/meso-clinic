@@ -1,6 +1,7 @@
 package org.watsi.domain.usecases
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.plugins.RxJavaPlugins
@@ -11,6 +12,8 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
@@ -23,18 +26,18 @@ class ReviseMemberAndClaimUseCaseTest {
     @Mock lateinit var mockCreateEncounterUseCase: CreateEncounterUseCase
     @Mock lateinit var mockMarkReturnedEncountersAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase
     lateinit var useCase: ReviseMemberAndClaimUseCase
-    lateinit var clock: Clock
+    lateinit var fixedClock: Clock
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         useCase = ReviseMemberAndClaimUseCase(mockCreateMemberUseCase, mockCreateEncounterUseCase, mockMarkReturnedEncountersAsRevisedUseCase)
-        clock = Clock.systemDefaultZone()
+        fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     }
 
 
     @Test
-    fun execute_encounterHasEncounterForms_submitNowTrue() {
+    fun execute_encounterHasEncounterForms_submitNowTrue_createsEncounterAndMemberAndMarksRevised() {
         val encounter = EncounterFactory.build()
         val member = MemberFactory.build()
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
@@ -43,19 +46,19 @@ class ReviseMemberAndClaimUseCaseTest {
             forms = listOf(encounterForm)
         )
 
-        whenever(mockCreateMemberUseCase.execute(mock(), true))
+        whenever(mockCreateMemberUseCase.execute(any(), eq(true)))
             .thenReturn(Completable.complete())
-        whenever(mockCreateEncounterUseCase.execute(mock(), true, clock))
+        whenever(mockCreateEncounterUseCase.execute(any(), eq(true), any()))
             .thenReturn(Completable.complete())
         whenever(mockMarkReturnedEncountersAsRevisedUseCase.execute(listOf(encounter.id)))
             .thenReturn(Completable.complete())
 
 
-        useCase.execute(member, encounterWithItemsAndForms, true, clock).test().assertComplete()
+        useCase.execute(member, encounterWithItemsAndForms, true, fixedClock).test().assertComplete()
     }
 
     @Test
-    fun execute_encounterHasEncounterForms_submitNowFalse() {
+    fun execute_encounterHasEncounterForms_submitNowFalse_createsEncounterAndMemberAndMarksRevised() {
         val encounter = EncounterFactory.build()
         val member = MemberFactory.build()
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
@@ -64,14 +67,14 @@ class ReviseMemberAndClaimUseCaseTest {
             forms = listOf(encounterForm)
         )
 
-        whenever(mockCreateMemberUseCase.execute(mock(), false))
+        whenever(mockCreateMemberUseCase.execute(any(), eq(false)))
             .thenReturn(Completable.complete())
-        whenever(mockCreateEncounterUseCase.execute(mock(), false, clock))
+        whenever(mockCreateEncounterUseCase.execute(any(), eq(false), any()))
             .thenReturn(Completable.complete())
         whenever(mockMarkReturnedEncountersAsRevisedUseCase.execute(listOf(encounter.id)))
             .thenReturn(Completable.complete())
 
 
-        useCase.execute(member, encounterWithItemsAndForms, false, clock).test().assertComplete()
+        useCase.execute(member, encounterWithItemsAndForms, false, fixedClock).test().assertComplete()
     }
 }

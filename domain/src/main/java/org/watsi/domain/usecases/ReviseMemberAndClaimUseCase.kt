@@ -3,7 +3,6 @@ package org.watsi.domain.usecases
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
