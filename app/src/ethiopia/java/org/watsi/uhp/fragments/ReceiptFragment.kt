@@ -414,19 +414,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     private fun finishEncounter() {
         val toFragment = when (encounterAction) {
             EncounterAction.PREPARE -> {
-                NewClaimFragment.withSnackbarMessage(
-                    getString(R.string.encounter_saved)
-                )
+                NewClaimFragment.withSnackbarMessage(getString(R.string.encounter_saved))
             }
             EncounterAction.SUBMIT -> {
-                PendingClaimsFragment.withSnackbarMessage(
-                    getString(R.string.encounter_submitted)
-                )
+                PendingClaimsFragment.withSnackbarMessage(getString(R.string.encounter_submitted))
             }
             EncounterAction.RESUBMIT -> {
-                ReturnedClaimsFragment.withSnackbarMessage(
-                    getString(R.string.encounter_submitted)
-                )
+                ReturnedClaimsFragment.withSnackbarMessage(getString(R.string.encounter_submitted))
             }
         }
 
