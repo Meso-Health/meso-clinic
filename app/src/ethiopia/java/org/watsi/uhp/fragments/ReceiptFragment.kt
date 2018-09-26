@@ -108,6 +108,19 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
+        setAndObserveViewModel()
+
+        val services = encounterFlowState.getEncounterItemsOfType(Billable.Type.SERVICE)
+        val labs = encounterFlowState.getEncounterItemsOfType(Billable.Type.LAB)
+        val drugsAndSupplies = encounterFlowState.getEncounterItemsOfType(Billable.Type.SUPPLY)
+                .plus(encounterFlowState.getEncounterItemsOfType(Billable.Type.DRUG))
+
+        serviceReceiptItemAdapter = ReceiptListItemAdapter(services)
+        labReceiptItemAdapter = ReceiptListItemAdapter(labs)
+        drugAndSupplyReceiptItemAdapter = ReceiptListItemAdapter(drugsAndSupplies)
+    }
+
+    private fun setAndObserveViewModel() {
         viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt, encounterFlowState.newProviderComment)
             .observe(this, Observer { it?.let { viewState ->
                     val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
@@ -126,15 +139,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     }
                 }
             })
-
-        val services = encounterFlowState.getEncounterItemsOfType(Billable.Type.SERVICE)
-        val labs = encounterFlowState.getEncounterItemsOfType(Billable.Type.LAB)
-        val drugsAndSupplies = encounterFlowState.getEncounterItemsOfType(Billable.Type.SUPPLY)
-                .plus(encounterFlowState.getEncounterItemsOfType(Billable.Type.DRUG))
-
-        serviceReceiptItemAdapter = ReceiptListItemAdapter(services)
-        labReceiptItemAdapter = ReceiptListItemAdapter(labs)
-        drugAndSupplyReceiptItemAdapter = ReceiptListItemAdapter(drugsAndSupplies)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -385,6 +389,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             viewModel.updateEncounterWithDateAndComment(encounterFlowState)
             true
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setAndObserveViewModel()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
