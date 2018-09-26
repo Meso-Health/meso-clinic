@@ -41,7 +41,7 @@ class CreateEncounterUseCase(
 
             createBillables(newBillables, submitNow)
             createPriceSchedules(newPriceSchedules, submitNow)
-            createEncounter(encounterWithItemsAndForms, submitNow)
+            createEncounter(encounterWithItemsAndFormsAndTimestamps, submitNow)
         }.subscribeOn(Schedulers.io())
     }
 

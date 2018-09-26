@@ -23,7 +23,7 @@ class CreateMemberUseCaseTest {
     }
 
     @Test
-    fun execute_memberDoesNotHavePhoto_createsMemberAndMemberDelta() {
+    fun execute_memberDoesNotHavePhoto_submitNowTrue_createsMemberWithDelta() {
         val member = MemberFactory.build(photoId = null)
         val memberDelta = Delta(
                 action = Delta.Action.ADD,
@@ -36,7 +36,7 @@ class CreateMemberUseCaseTest {
     }
 
     @Test
-    fun execute_memberDoesNotHavePhoto_createsMemberAndMemberWithoutDelta() {
+    fun execute_memberDoesNotHavePhoto_submitNowFalse_createsMemberWithoutDelta() {
         val member = MemberFactory.build(photoId = null)
 
         useCase.execute(member, false)
@@ -45,7 +45,7 @@ class CreateMemberUseCaseTest {
     }
 
     @Test
-    fun execute_memberHasPhoto_createsMemberAndMemberAndPhotoDeltas() {
+    fun execute_memberHasPhoto_submitNowTrue_createsMemberAndPhotoWithDeltas() {
         val member = MemberFactory.build(photoId = UUID.randomUUID())
         val memberDelta = Delta(
                 action = Delta.Action.ADD,
@@ -64,7 +64,7 @@ class CreateMemberUseCaseTest {
     }
 
     @Test
-    fun execute_memberHasPhoto_createsMemberAndMemberAndPhotoWithoutDeltas() {
+    fun execute_memberHasPhoto_submitNowFalse_createsMemberAndPhotoWithoutDeltas() {
         val member = MemberFactory.build(photoId = UUID.randomUUID())
 
         useCase.execute(member, false)
