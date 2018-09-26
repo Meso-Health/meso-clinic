@@ -17,6 +17,7 @@ import org.watsi.uhp.R.plurals.pending_claims_count
 import org.watsi.uhp.R.string.pending_claims_count_empty
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
@@ -89,7 +90,9 @@ class PendingClaimsFragment : DaggerFragment() {
 
         claimsAdapter = ClaimListItemAdapter(
             onClaimSelected = { encounterRelation ->
-                // TODO: navigate to receipt fragment for pending claim
+                navigationManager.goTo(ReceiptFragment.forEncounter(
+                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
+                ))
             }
         )
 

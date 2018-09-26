@@ -7,10 +7,7 @@
     android:background="@color/white"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    android:paddingLeft="@dimen/fragment_horizontal_margin"
-    android:paddingRight="@dimen/fragment_horizontal_margin"
-    android:paddingTop="@dimen/fragment_vertical_margin"
-    android:paddingBottom="@dimen/fragment_vertical_margin">
+    android:padding="@dimen/fragment_padding">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/type_container"

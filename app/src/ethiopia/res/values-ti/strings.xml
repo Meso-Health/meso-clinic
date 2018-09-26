@@ -14,6 +14,7 @@
     <string name="cancel">ግደፍ</string>
     <string name="total">ድምር</string>
     <string name="save">ኣቐምጥ</string>
+    <string name="edit">ኣርም</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
     <string name="days">መዓልቲታት</string>

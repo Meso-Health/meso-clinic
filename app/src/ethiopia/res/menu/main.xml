@@ -37,4 +37,10 @@
         android:title="@string/menu_sync_now"
         app:showAsAction="never"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_edit_claim"
+        android:orderInCategory="107"
+        android:title="@string/edit"
+        app:showAsAction="never"
+        android:visible="false" />
 </menu>

@@ -9,7 +9,7 @@ data class Encounter(
     val memberId: UUID,
     val identificationEventId: UUID?,
     val occurredAt: Instant,
-    val preparedAt: Instant,
+    val preparedAt: Instant? = null,
     val backdatedOccurredAt: Boolean = false,
     val copaymentPaid: Boolean? = true,
     val diagnoses: List<Int> = emptyList(),
