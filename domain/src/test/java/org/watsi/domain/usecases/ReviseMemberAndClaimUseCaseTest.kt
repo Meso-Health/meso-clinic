@@ -46,12 +46,6 @@ class ReviseMemberAndClaimUseCaseTest {
             forms = listOf(encounterForm)
         )
 
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
-                submittedAt = Instant.now(fixedClock)
-            )
-        )
-
         whenever(mockCreateMemberUseCase.execute(any(), eq(true)))
             .thenReturn(Completable.complete())
         whenever(mockCreateEncounterUseCase.execute(any(), eq(true), any()))
@@ -71,12 +65,6 @@ class ReviseMemberAndClaimUseCaseTest {
         val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
             encounter = encounter,
             forms = listOf(encounterForm)
-        )
-
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
-                submittedAt = Instant.now(fixedClock)
-            )
         )
 
         whenever(mockCreateMemberUseCase.execute(any(), eq(false)))
