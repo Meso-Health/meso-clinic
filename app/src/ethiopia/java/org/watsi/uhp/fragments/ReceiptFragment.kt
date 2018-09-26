@@ -132,24 +132,32 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun setAndObserveViewModel() {
-        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt, encounterFlowState.newProviderComment)
-            .observe(this, Observer { it?.let { viewState ->
-                    val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
-                    date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
-                        resources.getString(today_wrapper, dateString)
-                    } else {
-                        dateString
-                    }
+        val editableComment = when (encounterAction) {
+            EncounterAction.PREPARE -> null
+            EncounterAction.SUBMIT -> encounterFlowState.encounter.providerComment
+            EncounterAction.RESUBMIT -> encounterFlowState.newProviderComment
+        }
 
-                    if (viewState.comment == null) {
-                        comment_text.setText(none)
-                        comment_edit.setText(add_clickable)
-                    } else {
-                        comment_text.text = viewState.comment
-                        comment_edit.setText(edit_clickable)
-                    }
-                }
-            })
+        viewModel.getObservable(
+            encounterFlowState.encounter.occurredAt,
+            encounterFlowState.encounter.backdatedOccurredAt,
+            editableComment
+        ).observe(this, Observer { it?.let { viewState ->
+            val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
+            date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
+                resources.getString(today_wrapper, dateString)
+            } else {
+                dateString
+            }
+
+            if (viewState.comment == null) {
+                comment_text.setText(none)
+                comment_edit.setText(add_clickable)
+            } else {
+                comment_text.text = viewState.comment
+                comment_edit.setText(edit_clickable)
+            }
+        } })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -293,11 +301,20 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         val backdatedOccurredAt = viewModel.backdatedOccurredAt() ?: encounterFlowState.encounter.backdatedOccurredAt
         val comment = viewModel.comment()
 
-        encounterFlowState.encounter = encounterFlowState.encounter.copy(
-            occurredAt = occurredAt,
-            backdatedOccurredAt = backdatedOccurredAt
-        )
-        encounterFlowState.newProviderComment = comment
+        if (encounterAction == EncounterAction.SUBMIT) {
+            encounterFlowState.encounter = encounterFlowState.encounter.copy(
+                occurredAt = occurredAt,
+                backdatedOccurredAt = backdatedOccurredAt,
+                providerComment = comment
+            )
+        } else if (encounterAction == EncounterAction.RESUBMIT) {
+            encounterFlowState.encounter = encounterFlowState.encounter.copy(
+                occurredAt = occurredAt,
+                backdatedOccurredAt = backdatedOccurredAt
+            )
+            encounterFlowState.newProviderComment = comment
+        }
+
         navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
     }
 
