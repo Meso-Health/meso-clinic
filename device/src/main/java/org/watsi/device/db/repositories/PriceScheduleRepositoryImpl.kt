@@ -26,12 +26,17 @@ class PriceScheduleRepositoryImpl(
         return priceScheduleDao.find(id).map { it.toPriceSchedule() }.subscribeOn(Schedulers.io())
     }
 
-    override fun create(priceSchedule: PriceSchedule, delta: Delta): Completable {
+    override fun create(priceSchedule: PriceSchedule, delta: Delta?): Completable {
         return Completable.fromAction {
-            priceScheduleDao.insertWithDelta(
-                PriceScheduleModel.fromPriceSchedule(priceSchedule, clock),
-                DeltaModel.fromDelta(delta, clock)
-            )
+            val priceScheduleModel = PriceScheduleModel.fromPriceSchedule(priceSchedule, clock)
+            if (delta != null) {
+                priceScheduleDao.insertWithDelta(
+                    priceScheduleModel,
+                    DeltaModel.fromDelta(delta, clock)
+                )
+            } else {
+                priceScheduleDao.insert(priceScheduleModel)
+            }
         }.subscribeOn(Schedulers.io())
     }
 

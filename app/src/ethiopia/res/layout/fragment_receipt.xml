@@ -518,7 +518,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space16"
             style="@style/PrimaryButton"
-            android:text="@string/save_encounter_button"
+            android:text="@string/save"
             app:layout_constraintTop_toBottomOf="@id/comment_container"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="1.0" />

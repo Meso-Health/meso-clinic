@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -12,9 +13,10 @@ import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
-    private val createEncounterUseCase: CreateEncounterUseCase,
-    private val createMemberUseCase: CreateMemberUseCase
+    private val createEncounterUseCase: CreateEncounterUseCase
 ) : ViewModel() {
+
+    @Inject lateinit var clock: Clock
 
     private val observable = MutableLiveData<ViewState>()
 
@@ -47,7 +49,7 @@ class ReceiptViewModel @Inject constructor(
                 copaymentPaid = copaymentPaid
             )
             Completable.fromCallable {
-                createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms()).blockingAwait()
+                createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms(), true, clock).blockingAwait()
             }.observeOn(AndroidSchedulers.mainThread())
         } ?: Completable.never()
     }

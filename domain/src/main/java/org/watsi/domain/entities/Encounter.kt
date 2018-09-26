@@ -29,6 +29,8 @@ data class Encounter(
 
     enum class AdjudicationState { PENDING, RETURNED, REVISED, APPROVED }
 
+    enum class EncounterAction { PREPARE, SUBMIT, RESUBMIT }
+
     companion object {
         val VISIT_TYPE_CHOICES = listOf(
             "OPD - New Visit",

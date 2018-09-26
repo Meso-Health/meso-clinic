@@ -49,7 +49,7 @@ class EnrollNewbornViewModel(
         viewStateObservable.value = viewState.copy(status = MemberStatus.SAVING)
         val member = toMember(viewState, memberId, householdId, language, clock)
 
-        return createMemberUseCase.execute(member).doOnError { onError(it) }
+        return createMemberUseCase.execute(member, true).doOnError { onError(it) }
                 .onErrorResumeNext { Completable.never() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete { setStatusAsSaved() }
