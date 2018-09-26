@@ -14,6 +14,7 @@
     <string name="cancel">Cancel</string>
     <string name="total">Total</string>
     <string name="save">Save</string>
+    <string name="edit">Edit</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
     <string name="prev_price" tools:ignore="MissingTranslation">%1$s&#8194;&#9656;</string>

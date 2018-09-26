@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -211,16 +212,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             drug_and_supply_items_list.visibility = View.VISIBLE
         }
 
-        edit_button.setOnClickListener {
-            val occurredAt = viewModel.occurredAt() ?: encounterFlowState.encounter.occurredAt
-            val backdatedOccurredAt = viewModel.backdatedOccurredAt() ?: encounterFlowState.encounter.backdatedOccurredAt
-            val comment = viewModel.comment()
-
-            encounterFlowState.encounter = encounterFlowState.encounter.copy(occurredAt = occurredAt, backdatedOccurredAt = backdatedOccurredAt)
-            encounterFlowState.newProviderComment = comment
-            navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
-        }
-
         comment_container.setOnClickListener {
             launchAddCommentDialog()
         }
@@ -235,6 +226,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         claim_id.text = encounterFlowState.encounter.shortenedClaimId()
 
         edit_button.visibility = View.VISIBLE
+        edit_button.setOnClickListener {
+            launchEditFlow()
+        }
         date_spacer_container.visibility = View.VISIBLE
 
         save_button.visibility = View.GONE
@@ -282,6 +276,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
 
         edit_button.visibility = View.VISIBLE
+        edit_button.setOnClickListener {
+            launchEditFlow()
+        }
         date_spacer_container.visibility = View.VISIBLE
 
         save_button.visibility = View.GONE
@@ -289,6 +286,19 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         resubmit_button.setOnClickListener {
             finishEncounter()
         }
+    }
+
+    private fun launchEditFlow() {
+        val occurredAt = viewModel.occurredAt() ?: encounterFlowState.encounter.occurredAt
+        val backdatedOccurredAt = viewModel.backdatedOccurredAt() ?: encounterFlowState.encounter.backdatedOccurredAt
+        val comment = viewModel.comment()
+
+        encounterFlowState.encounter = encounterFlowState.encounter.copy(
+            occurredAt = occurredAt,
+            backdatedOccurredAt = backdatedOccurredAt
+        )
+        encounterFlowState.newProviderComment = comment
+        navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
     }
 
     private fun launchAddCommentDialog() {
@@ -422,8 +432,20 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         setAndObserveViewModel()
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        if (encounterAction == EncounterAction.SUBMIT || encounterAction == EncounterAction.RESUBMIT) {
+            menu?.let {
+                it.findItem(R.id.menu_edit_claim).isVisible = true
+            }
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
+            R.id.menu_edit_claim -> {
+                launchEditFlow()
+                true
+            }
             android.R.id.home -> {
                 navigationManager.goBack()
                 true
