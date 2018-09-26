@@ -28,7 +28,7 @@ class SubmitMemberAndClaimUseCase(
     ) {
         encounterRepository.update(
             listOf(encounterWithItemsAndForms.encounter.copy(submittedAt = Instant.now(clock)))
-        )
+        ).blockingAwait()
     }
 
     private fun createDeltas(
@@ -64,6 +64,6 @@ class SubmitMemberAndClaimUseCase(
             }
         }
 
-        deltaRepository.insert(deltas)
+        deltaRepository.insert(deltas).blockingAwait()
     }
 }

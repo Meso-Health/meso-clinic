@@ -24,7 +24,7 @@ class CreateEncounterUseCase(
             val newBillables = mutableListOf<Billable>()
             val newPriceSchedules = mutableListOf<PriceSchedule>()
 
-            var encounterWithItemsAndFormsAndTimestamps =
+            val encounterWithItemsAndFormsAndTimestamps =
                 addEncounterTimeStamps(encounterWithItemsAndForms, submitNow, clock)
 
             encounterWithItemsAndFormsAndTimestamps.encounterItemRelations.forEach { encounterItemRelation ->
@@ -126,6 +126,5 @@ class CreateEncounterUseCase(
 
         encounterRepository.insert(encounterWithItemsAndForms, deltas).blockingAwait()
     }
-
 
 }
