@@ -12,10 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_container
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_comments_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.claim_id
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.claim_id_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_text
@@ -41,6 +42,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_none
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.submit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type
 import org.threeten.bp.Clock
@@ -49,6 +51,7 @@ import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.comment_age
@@ -69,7 +72,6 @@ import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
 import org.watsi.uhp.views.SpinnerField
-import org.watsi.domain.entities.Encounter.EncounterAction
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -85,6 +87,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var drugAndSupplyReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var backdateAlertDialog: AlertDialog
     lateinit var encounterFlowState: EncounterFlowState
+    lateinit var encounterAction: EncounterAction
 
     lateinit var daySpinner: SpinnerField
     lateinit var monthSpinner: SpinnerField
@@ -107,6 +110,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         super.onCreate(savedInstanceState)
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
+        encounterAction = when {
+            encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED -> EncounterAction.RESUBMIT
+            encounterFlowState.encounter.preparedAt == null -> EncounterAction.PREPARE
+            encounterFlowState.encounter.submittedAt == null -> EncounterAction.SUBMIT
+            else -> throw IllegalStateException("EncounterAction for ReceiptFragment cannot be determined.")
+        }
+
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
         setAndObserveViewModel()
 
@@ -152,7 +162,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             MemberStringHelper.formatAgeAndGender(it, context, clock)
         }
 
-        if (encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED) {
+        if (encounterAction == EncounterAction.SUBMIT) {
+            displayPreparedClaimInfo()
+        } else if (encounterAction == EncounterAction.RESUBMIT) {
             displayReturnedClaimInfo()
         }
 
@@ -214,24 +226,30 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
 
         save_button.setOnClickListener {
-            finishEncounter(EncounterAction.PREPARE)
+            finishEncounter()
         }
+    }
 
-        resubmit_button.setOnClickListener {
-            finishEncounter(EncounterAction.RESUBMIT)
+    private fun displayPreparedClaimInfo() {
+        claim_id_container.visibility = View.VISIBLE
+        claim_id.text = encounterFlowState.encounter.shortenedClaimId()
+
+        edit_button.visibility = View.VISIBLE
+        date_spacer_container.visibility = View.VISIBLE
+
+        save_button.visibility = View.GONE
+        submit_button.visibility = View.VISIBLE
+        submit_button.setOnClickListener {
+            finishEncounter()
         }
     }
 
     private fun displayReturnedClaimInfo() {
-        edit_button.visibility = View.VISIBLE
-        adjudication_container.visibility = View.VISIBLE
-        date_spacer_container.visibility = View.VISIBLE
-        save_button.visibility = View.GONE
-        resubmit_button.visibility = View.VISIBLE
-
+        claim_id_container.visibility = View.VISIBLE
         claim_id.text = encounterFlowState.encounter.shortenedClaimId()
 
-        encounterFlowState.encounter.occurredAt?.let {
+        adjudication_comments_container.visibility = View.VISIBLE
+        encounterFlowState.encounter.occurredAt.let {
             val providerCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
             provider_comment_date.text = if (providerCommentDaysAgo > 0) {
                 resources.getQuantityString(
@@ -252,7 +270,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 getString(today)
             }
         }
-
         provider_comment_text.text = if (encounterFlowState.encounter.providerComment != null) {
             encounterFlowState.encounter.providerComment
         } else {
@@ -262,6 +279,15 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             encounterFlowState.encounter.returnReason
         } else {
             getString(none)
+        }
+
+        edit_button.visibility = View.VISIBLE
+        date_spacer_container.visibility = View.VISIBLE
+
+        save_button.visibility = View.GONE
+        resubmit_button.visibility = View.VISIBLE
+        resubmit_button.setOnClickListener {
+            finishEncounter()
         }
     }
 
@@ -358,7 +384,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         backdateAlertDialog = builder.create()
     }
 
-    private fun finishEncounter(encounterAction: EncounterAction) {
+    private fun finishEncounter() {
         val toFragment = when (encounterAction) {
             EncounterAction.PREPARE -> {
                 NewClaimFragment.withSnackbarMessage(

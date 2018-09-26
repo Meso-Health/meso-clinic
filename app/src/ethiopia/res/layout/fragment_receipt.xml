@@ -9,7 +9,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:focusableInTouchMode="true"
         android:focusable="true"
@@ -17,11 +17,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/adjudication_container"
+            android:id="@+id/claim_id_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dialog_padding"
-            android:paddingBottom="@dimen/dialog_padding"
+            android:paddingTop="@dimen/fragment_padding"
+            android:paddingBottom="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone">
@@ -30,7 +30,7 @@
                 android:id="@+id/claim_id_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingStart="@dimen/fragment_padding"
                 android:textColor="@color/gray6"
                 android:text="@string/claim_id_label"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,35 +40,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingStart="@dimen/fragment_padding"
                 android:textSize="@dimen/fontSize16"
                 app:layout_constraintTop_toBottomOf="@id/claim_id_label" />
 
-            <View
-                android:id="@+id/claim_id_line_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray3"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                app:layout_constraintTop_toBottomOf="@id/claim_id" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/adjudication_comments_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/fragment_padding"
+            android:paddingBottom="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/claim_id_container"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/adjudication_comments_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingStart="@dimen/fragment_padding"
                 android:textColor="@color/gray6"
                 android:text="@string/comments"
-                app:layout_constraintTop_toBottomOf="@id/claim_id_line_divider" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/provider_comment_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:paddingTop="@dimen/dialog_padding"
-                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingTop="@dimen/label_vertical_margin"
+                android:paddingStart="@dimen/fragment_padding"
                 android:textStyle="bold"
                 android:text="@string/provider_label"
                 app:layout_constraintTop_toBottomOf="@id/adjudication_comments_label" />
@@ -77,7 +80,7 @@
                 android:id="@+id/provider_comment_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/space8"
+                android:paddingStart="@dimen/space8"
                 android:paddingBottom="@dimen/bottom_text_align_padding"
                 android:textColor="@color/gray6"
                 android:textSize="@dimen/fontSize12"
@@ -89,8 +92,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:paddingLeft="@dimen/dialog_padding"
-                android:paddingRight="@dimen/space48"
+                android:paddingStart="@dimen/fragment_padding"
+                android:paddingEnd="@dimen/space48"
                 app:layout_constraintTop_toBottomOf="@id/provider_comment_author" />
 
             <View
@@ -99,7 +102,7 @@
                 android:layout_height="1dp"
                 android:background="@color/gray3"
                 android:layout_marginTop="@dimen/label_vertical_margin"
-                android:layout_marginLeft="@dimen/dialog_padding"
+                android:layout_marginStart="@dimen/fragment_padding"
                 app:layout_constraintTop_toBottomOf="@id/provider_comment_text" />
 
             <TextView
@@ -107,8 +110,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:paddingTop="@dimen/dialog_padding"
-                android:paddingLeft="@dimen/dialog_padding"
+                android:paddingTop="@dimen/fragment_padding"
+                android:paddingStart="@dimen/fragment_padding"
                 android:textStyle="bold"
                 android:text="@string/branch_label"
                 app:layout_constraintTop_toBottomOf="@id/adjudication_comments_line_divider" />
@@ -117,7 +120,7 @@
                 android:id="@+id/branch_comment_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/space8"
+                android:paddingStart="@dimen/space8"
                 android:paddingBottom="@dimen/bottom_text_align_padding"
                 android:textColor="@color/gray6"
                 android:textSize="@dimen/fontSize12"
@@ -129,9 +132,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:paddingLeft="@dimen/dialog_padding"
-                android:paddingRight="@dimen/space48"
+                android:paddingStart="@dimen/fragment_padding"
+                android:paddingEnd="@dimen/space48"
                 app:layout_constraintTop_toBottomOf="@id/branch_comment_author" />
+            
         </android.support.constraint.ConstraintLayout>
 
         <org.watsi.uhp.views.ImageTextButton
@@ -141,12 +145,12 @@
             style="@style/PrimaryButton"
             android:drawableStart="@drawable/ic_edit_white_24dp"
             android:text="@string/edit_claim_button"
-            android:layout_marginRight="@dimen/space16"
-            android:layout_marginLeft="@dimen/space16"
+            android:layout_marginRight="@dimen/fragment_padding"
+            android:layout_marginLeft="@dimen/fragment_padding"
             android:layout_marginTop="@dimen/space24"
             android:layout_marginBottom="@dimen/space24"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/adjudication_container" />
+            app:layout_constraintTop_toBottomOf="@id/adjudication_comments_container" />
 
         <!-- This is necessary because we must conditionally include a margin above the date container
              if the above containers are visible. Android ignores marginBottom, so we must hide or show
@@ -156,8 +160,8 @@
             android:id="@+id/date_spacer_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space16"
-            android:padding="@dimen/dialog_padding"
+            android:layout_marginTop="@dimen/fragment_padding"
+            android:padding="@dimen/fragment_padding"
             app:layout_constraintTop_toBottomOf="@id/edit_button"
             android:visibility="gone" />
 
@@ -167,9 +171,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/panel_background"
             android:clickable="true"
-            android:padding="@dimen/dialog_padding"
+            android:padding="@dimen/fragment_padding"
             app:layout_constraintTop_toBottomOf="@id/date_spacer_container">
-            
+
             <TextView
                 android:id="@+id/date_header_label"
                 android:layout_width="match_parent"
@@ -204,7 +208,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
-            android:padding="@dimen/dialog_padding"
+            android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toBottomOf="@id/date_container">
 
@@ -266,7 +270,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
-            android:padding="@dimen/dialog_padding"
+            android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toBottomOf="@id/member_info_container">
 
@@ -293,7 +297,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
-            android:padding="@dimen/dialog_padding"
+            android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toBottomOf="@id/visit_type_container">
 
@@ -321,7 +325,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:background="@drawable/panel_background"
-            android:padding="@dimen/dialog_padding"
+            android:padding="@dimen/fragment_padding"
             app:layout_constraintTop_toBottomOf="@id/diagnoses_container"
             app:layout_constraintLeft_toLeftOf="parent">
 
@@ -454,7 +458,7 @@
                 android:id="@+id/total_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space16"
+                android:layout_marginTop="@dimen/fragment_padding"
                 style="@style/LargeLabel"
                 android:text="@string/total"
                 app:layout_constraintStart_toStartOf="parent"
@@ -464,7 +468,7 @@
                 android:id="@+id/total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space16"
+                android:layout_marginTop="@dimen/fragment_padding"
                 style="@style/LargeLabel"
                 app:layout_constraintTop_toBottomOf="@id/drug_and_supply_layout"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -477,7 +481,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:layout_marginTop="@dimen/label_vertical_margin"
-            android:padding="@dimen/dialog_padding"
+            android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
             app:layout_constraintTop_toBottomOf="@id/encounter_items_container">
 
@@ -494,7 +498,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/label_vertical_margin"
-                android:paddingRight="@dimen/space48"
+                android:paddingEnd="@dimen/space48"
                 android:text="@string/none"
                 app:layout_constraintTop_toBottomOf="@id/comment_label"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -511,12 +515,12 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <!-- We only show one of these two buttons, depending on if we are displaying a returned claim or not -->
+        <!-- We only show one of these three buttons, depending on the claim flow -->
         <Button
             android:id="@+id/save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/space16"
+            android:layout_margin="@dimen/fragment_padding"
             style="@style/PrimaryButton"
             android:text="@string/save"
             app:layout_constraintTop_toBottomOf="@id/comment_container"
@@ -524,10 +528,23 @@
             app:layout_constraintVertical_bias="1.0" />
 
         <org.watsi.uhp.views.ImageTextButton
+            android:id="@+id/submit_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fragment_padding"
+            style="@style/PrimaryButton"
+            android:drawableStart="@drawable/ic_send_white_24dp"
+            android:text="@string/submit_encounter_button"
+            app:layout_constraintTop_toBottomOf="@id/comment_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            android:visibility="gone"/>
+
+        <org.watsi.uhp.views.ImageTextButton
             android:id="@+id/resubmit_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/space16"
+            android:layout_margin="@dimen/fragment_padding"
             style="@style/PrimaryButton"
             android:drawableStart="@drawable/ic_return_white_24dp"
             android:text="@string/resubmit"
