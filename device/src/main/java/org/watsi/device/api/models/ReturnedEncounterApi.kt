@@ -30,9 +30,8 @@ data class ReturnedEncounterApi(
         @SerializedName("return_reason") val returnReason: String,
         @SerializedName("revised_encounter_id") val revisedEncounterId: UUID,
         @SerializedName("provider_comment") val providerComment: String,
-        // TODO: change preparedAt and submittedAt to be non-nullable when this story is implemented: [#160574]
-        @SerializedName("prepared_at") val preparedAt: Instant?,
-        @SerializedName("submitted_at") val submittedAt: Instant?,
+        @SerializedName("prepared_at") val preparedAt: Instant,
+        @SerializedName("submitted_at") val submittedAt: Instant,
         // Below are inflated fields.
         @SerializedName("member") val memberApi: MemberApi,
         @SerializedName("billables") val billablesApi: List<BillableApi>,
@@ -57,9 +56,8 @@ data class ReturnedEncounterApi(
                 returnReason = returnReason,
                 revisedEncounterId = revisedEncounterId,
                 providerComment = providerComment,
-                // TODO: remove defaults Instant.now() from preparedAt and submittedAt when this story is implemented: [#160574]
-                preparedAt = preparedAt ?: Instant.now(),
-                submittedAt = submittedAt ?: Instant.now()
+                preparedAt = preparedAt,
+                submittedAt = submittedAt
             ),
             encounterItemRelations = combineEncounterItemsWithBillablesAndPrices(
                 encounterItemsApi.map { it.toEncounterItem() },

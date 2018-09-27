@@ -18,6 +18,7 @@ data class EncounterApi(
         @SerializedName("member_id") val memberId: UUID,
         @SerializedName("identification_event_id") val identificationEventId: UUID?,
         @SerializedName("occurred_at") val occurredAt: Instant,
+        @SerializedName("prepared_at") val preparedAt: Instant?,
         @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Boolean,
         @SerializedName("copayment_paid") val copaymentPaid: Boolean? = false,
         @SerializedName("diagnosis_ids") val diagnoses: JsonArray,
@@ -25,7 +26,8 @@ data class EncounterApi(
         @SerializedName("visit_type") val visitType: String?,
         @SerializedName("revised_encounter_id") val revisedEncounterId: UUID?,
         @SerializedName("provider_comment") val providerComment: String?,
-        @SerializedName("claim_id") val claimId: String
+        @SerializedName("claim_id") val claimId: String,
+        @SerializedName("submitted_at") val submittedAt: Instant?
 ) {
 
     constructor (encounterWithItems: EncounterWithItems) : this(
@@ -33,6 +35,7 @@ data class EncounterApi(
         memberId = encounterWithItems.encounter.memberId,
         identificationEventId = encounterWithItems.encounter.identificationEventId,
         occurredAt = encounterWithItems.encounter.occurredAt,
+        preparedAt = encounterWithItems.encounter.preparedAt,
         backdatedOccurredAt = encounterWithItems.encounter.backdatedOccurredAt,
         copaymentPaid  = encounterWithItems.encounter.copaymentPaid,
         diagnoses = Gson().fromJson(encounterWithItems.encounter.diagnoses.toString(), JsonArray::class.java),
@@ -40,6 +43,7 @@ data class EncounterApi(
         visitType = encounterWithItems.encounter.visitType,
         revisedEncounterId = encounterWithItems.encounter.revisedEncounterId,
         providerComment = encounterWithItems.encounter.providerComment,
-        claimId = encounterWithItems.encounter.claimId
+        claimId = encounterWithItems.encounter.claimId,
+        submittedAt = encounterWithItems.encounter.submittedAt
     )
 }
