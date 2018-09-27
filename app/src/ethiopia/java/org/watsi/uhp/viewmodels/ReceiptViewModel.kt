@@ -20,11 +20,10 @@ class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
     private val createMemberUseCase: CreateMemberUseCase,
     private val submitMemberAndClaimUseCase: SubmitMemberAndClaimUseCase,
-    private val reviseMemberAndClaimUseCase: ReviseMemberAndClaimUseCase
+    private val reviseMemberAndClaimUseCase: ReviseMemberAndClaimUseCase,
+    private val logger: Logger,
+    private val clock: Clock
 ) : ViewModel() {
-
-    @Inject lateinit var logger: Logger
-    @Inject lateinit var clock: Clock
 
     private val observable = MutableLiveData<ViewState>()
 

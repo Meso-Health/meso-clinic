@@ -83,7 +83,13 @@
         <item quantity="one">%d pending claim</item>
         <item quantity="other">%d pending claims</item>
     </plurals>
-    
+    <string name="submit_all_button">Submit all</string>
+    <plurals name="submit_all_form_alert">
+        <item quantity="one">Submit %d claim?</item>
+        <item quantity="other">Submit all %d claims?</item>
+    </plurals>
+    <string name="all_encounter_submitted">All submitted</string>
+
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">Returned Claims</string>
     <string name="returned_claims_count_empty">No returned claims</string>
