@@ -4,17 +4,18 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.claims_list
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_all_button
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.uhp.R.plurals.pending_claims_count
-import org.watsi.uhp.R.string.pending_claims_count_empty
+import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -55,6 +56,12 @@ class PendingClaimsFragment : DaggerFragment() {
         observable.observe(this, Observer {
             it?.let { viewState ->
                 updateClaims(viewState.claims)
+
+                if (viewState.claims.count() > 0) {
+                    submit_all_button.visibility = View.VISIBLE
+                } else {
+                    submit_all_button.visibility = View.GONE
+                }
             }
         })
 
@@ -63,10 +70,10 @@ class PendingClaimsFragment : DaggerFragment() {
 
     private fun updateClaims(pendingClaims: List<EncounterWithExtras>) {
         total_claims_label.text = if (pendingClaims.isEmpty()) {
-            getString(pending_claims_count_empty)
+            getString(R.string.pending_claims_count_empty)
         } else {
             resources.getQuantityString(
-                pending_claims_count, pendingClaims.size, pendingClaims.size
+                R.plurals.pending_claims_count, pendingClaims.size, pendingClaims.size
             )
         }
 
@@ -74,6 +81,14 @@ class PendingClaimsFragment : DaggerFragment() {
 
         claimsAdapter.setClaims(pendingClaims)
         RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, true)
+    }
+
+    private fun submitAll() {
+        viewModel.submitAll().subscribe({
+            SnackbarHelper.show(claims_list, context, getString(R.string.all_encounter_submitted))
+        }, {
+            logger.error(it)
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -95,6 +110,17 @@ class PendingClaimsFragment : DaggerFragment() {
                 ))
             }
         )
+
+        submit_all_button.setOnClickListener {
+            AlertDialog.Builder(activity)
+                    .setTitle(resources.getQuantityString(
+                        R.plurals.submit_all_form_alert, claimsAdapter.itemCount, claimsAdapter.itemCount)
+                    )
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.submit_encounter_button) { _, _ ->
+                        submitAll()
+                    }.create().show()
+        }
 
         snackbarMessageToShow?.let { snackbarMessage ->
             SnackbarHelper.show(claims_list, context, snackbarMessage)

@@ -3,14 +3,20 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.usecases.LoadPendingClaimsUseCase
+import org.watsi.domain.usecases.SubmitMemberAndClaimUseCase
 import javax.inject.Inject
 
 class PendingClaimsViewModel @Inject constructor(
     private val loadPendingClaimsUseCase: LoadPendingClaimsUseCase,
-    private val logger: Logger
+    private val submitMemberAndClaimUseCase: SubmitMemberAndClaimUseCase,
+    private val logger: Logger,
+    private val clock: Clock
 ) : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
@@ -28,6 +34,21 @@ class PendingClaimsViewModel @Inject constructor(
     }
 
     fun getClaims(): List<EncounterWithExtras>? = observable.value?.claims
+
+    fun submitAll(): Completable {
+        return observable.value?.let { viewState ->
+            Completable.fromCallable {
+                viewState.claims.map { encounterWithExtras ->
+                    submitMemberAndClaimUseCase.execute(
+                        encounterWithExtras.member,
+                        encounterWithExtras.toEncounterWithItemsAndForms(),
+                        clock
+                    ).blockingAwait()
+                }
+            // prevent further UI action (e.g. button pressed again) while claims are being submitted
+            }.observeOn(AndroidSchedulers.mainThread())
+        } ?: Completable.never()
+    }
 
     data class ViewState(val claims: List<EncounterWithExtras> = emptyList())
 }
