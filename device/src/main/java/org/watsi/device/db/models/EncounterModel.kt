@@ -70,7 +70,7 @@ data class EncounterModel(
                 returnReason = encounter.returnReason,
                 revisedEncounterId = encounter.revisedEncounterId,
                 providerComment = encounter.providerComment,
-                preparedAt = now,
+                preparedAt = encounter.preparedAt ?: now,
                 submittedAt = encounter.submittedAt
             )
         }

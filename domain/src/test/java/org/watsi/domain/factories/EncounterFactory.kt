@@ -11,7 +11,7 @@ object EncounterFactory {
         memberId: UUID = UUID.randomUUID(),
         identificationEventId: UUID? = UUID.randomUUID(),
         occurredAt: Instant = Instant.now(),
-        preparedAt: Instant = Instant.now(),
+        preparedAt: Instant? = null,
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
