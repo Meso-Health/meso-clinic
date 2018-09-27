@@ -83,7 +83,7 @@
         <item quantity="one">%d pending claim</item>
         <item quantity="other">%d pending claims</item>
     </plurals>
-    <string name="submit_all_button">Submit all</string>
+    <string name="submit_all_button">Submit All</string>
     <plurals name="submit_all_form_alert">
         <item quantity="one">Submit %d claim?</item>
         <item quantity="other">Submit all %d claims?</item>
