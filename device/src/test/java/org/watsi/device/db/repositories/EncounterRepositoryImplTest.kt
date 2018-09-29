@@ -216,4 +216,20 @@ class EncounterRepositoryImplTest {
             }
         )
     }
+
+    @Test
+    fun delete() {
+        val encounterRelation = EncounterWithExtrasFactory.build()
+
+
+        repository.delete(encounterRelation).test().assertComplete()
+
+        verify(mockDao).delete(
+            encounterModel = EncounterModel.fromEncounter(encounterRelation.encounter, clock),
+            encounterItemModels = encounterRelation.encounterItemRelations.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            },
+            memberModel = MemberModel.fromMember(encounterRelation.member, clock)
+        )
+    }
 }

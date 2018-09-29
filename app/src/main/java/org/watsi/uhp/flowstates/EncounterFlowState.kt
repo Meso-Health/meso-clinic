@@ -37,6 +37,10 @@ data class EncounterFlowState(var encounter: Encounter,
         return EncounterWithItemsAndForms(encounter, encounterItemRelations, clearEncounterFormThumbnails(), diagnoses)
     }
 
+    fun toEncounterWithExtras(member: Member): EncounterWithExtras {
+        return EncounterWithExtras(encounter, member, encounterItemRelations, diagnoses, encounterForms)
+    }
+
     fun getEncounterItemsOfType(billableType: Billable.Type): List<EncounterItemWithBillableAndPrice> {
         return encounterItemRelations.filter { it.billableWithPriceSchedule.billable.type == billableType }
     }

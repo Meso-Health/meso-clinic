@@ -69,48 +69,6 @@ class SubmitMemberAndClaimUseCaseTest {
     }
 
     @Test
-    fun execute_encounterHasNewPriceSchedules_createsEncounterAndMemberAndPriceSchedulesWithDeltasAndSetsSubmittedAt() {
-        val encounter = EncounterFactory.build()
-        val member = MemberFactory.build()
-        val billable = BillableFactory.build()
-        val priceSchedule = PriceScheduleFactory.build(billableId = billable.id)
-        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id, priceScheduleIssued = true)
-        val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
-            BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
-        )
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
-            encounter = encounter,
-            encounterItemRelations = listOf(encounterItemRelation)
-        )
-        val encounterDelta = Delta(
-            action = Delta.Action.ADD,
-            modelName = Delta.ModelName.ENCOUNTER,
-            modelId = encounter.id
-        )
-        val priceScheduleDelta = Delta(
-            action = Delta.Action.ADD,
-            modelName = Delta.ModelName.PRICE_SCHEDULE,
-            modelId = priceSchedule.id
-        )
-        val memberDelta = Delta(
-            action = Delta.Action.ADD,
-            modelName = Delta.ModelName.MEMBER,
-            modelId = member.id
-        )
-
-        val encounterWithTimestamp = encounterWithItemsAndForms.encounter.copy(
-            submittedAt = Instant.now(fixedClock)
-        )
-
-        whenever(mockEncounterRepository.update(listOf(encounterWithTimestamp)))
-            .thenReturn(Completable.complete())
-        whenever(mockDeltaRepository.insert(listOf(memberDelta, encounterDelta, priceScheduleDelta)))
-            .thenReturn(Completable.complete())
-
-        useCase.execute(member, encounterWithItemsAndForms, fixedClock).test().assertComplete()
-    }
-
-    @Test
     fun execute_encounterHasEncounterForms_createsEncounterWithDeltaAndEncounterFormDeltasAndSetsSubmittedAt() {
         val encounter = EncounterFactory.build()
         val member = MemberFactory.build()

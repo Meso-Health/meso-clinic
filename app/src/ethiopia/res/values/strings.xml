@@ -13,6 +13,8 @@
     <string name="menu_returned_claims_with_number">Returned (%1$s)</string>
     <string name="menu_returned_claims_without_number">Returned</string>
     <string name="menu_sync_now">Sync now</string>
+    <string name="delete">Delete</string>
+    <string name="delete_claim_confirmation">Delete this claim?</string>
 
     <!--NewClaimFragment-->
     <string name="new_claim_fragment_label">New Claim</string>
@@ -63,6 +65,8 @@
     <string name="comment_prompt">Add a comment&#8230;</string>
     <string name="resubmit">Resubmit Claim</string>
     <string name="today">Today</string>
+    <string name="claim_id_deleted">Claim ID %1$s was deleted</string>
+    <string name="claim_id_submitted">Claim ID %1$s was submitted</string>
 
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supply</string>

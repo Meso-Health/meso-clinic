@@ -14,16 +14,19 @@ class NavigationManager(
         private val logger: Logger) {
 
     /**
-     * Navigate to the supplied Fragment and add the FragmentTransaction to the back-stack
+     * Navigate to the supplied Fragment and optionally add the FragmentTransaction to the back-stack
      */
-    fun goTo(fragment: Fragment) {
+    fun goTo(fragment: Fragment, addToBackStack: Boolean = true) {
         val transaction = fragmentManager.beginTransaction()
         if (fragmentManager.backStackEntryCount == 0) {
             transaction.add(fragmentContainer, fragment)
         } else {
             transaction.replace(fragmentContainer, fragment)
         }
-        transaction.addToBackStack(parseFragmentName(fragment)).commit()
+        if (addToBackStack) {
+            transaction.addToBackStack(parseFragmentName(fragment))
+        }
+        transaction.commit()
     }
 
     /**

@@ -13,12 +13,14 @@ import org.watsi.domain.repositories.PriceScheduleRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
+import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
+import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
@@ -240,5 +242,19 @@ class DomainModule {
         encounterRepository: EncounterRepository
     ): SubmitMemberAndClaimUseCase {
         return SubmitMemberAndClaimUseCase(deltaRepository, encounterRepository)
+    }
+
+    @Provides
+    fun provideDeletePendingClaimAndMemberUseCase(
+        encounterRepository: EncounterRepository
+    ): DeletePendingClaimAndMemberUseCase {
+        return DeletePendingClaimAndMemberUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadEncounterWithExtras(
+        encounterRepository: EncounterRepository
+    ): LoadEncounterWithExtrasUseCase {
+        return LoadEncounterWithExtrasUseCase(encounterRepository)
     }
 }

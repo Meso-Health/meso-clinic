@@ -77,6 +77,8 @@
     <!-- Menu -->
     <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
     <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
+    <string name="delete">ሰርዝ</string>
+    <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ</string>
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -134,6 +136,8 @@
     <string name="add_clickable"><u>ኣስተያየቶች)</u></string>
     <string name="comment_prompt">ኣስተያየት ጨምር</string>
     <string name="resubmit">የክፍያ ጥያቄ ደግመህ ላክ</string>
+    <string name="claim_id_deleted">የክፍያ ጥያቄ መ/ቁ %1$s ተሰርዘዋል</string>
+    <string name="claim_id_submitted">የክፍያ ጥያቄ መ/ቁ %1$s ተልከዋል</string>
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካክል</string>

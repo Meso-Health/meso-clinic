@@ -97,6 +97,10 @@ class EncounterRepositoryImpl(
         }
     }
 
+    override fun findWithExtras(id: UUID): Single<EncounterWithExtras> {
+        return encounterDao.findWithMemberAndForms(id)?.map { loadClaim(it) }
+    }
+
     override fun returnedIds(): Single<List<UUID>> {
         return encounterDao.returnedIds()
     }
@@ -154,6 +158,23 @@ class EncounterRepositoryImpl(
                 billableModels = billableModels,
                 priceScheduleModels = priceScheduleModels,
                 memberModels = memberModels
+            )
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun delete(encounterRelation: EncounterWithExtras): Completable {
+        return Completable.fromAction {
+            val encounterModel = EncounterModel.fromEncounter(encounterRelation.encounter, clock)
+
+            val encounterItemModels = encounterRelation.encounterItemRelations.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            }
+            val memberModel = MemberModel.fromMember(encounterRelation.member, clock)
+
+            encounterDao.delete(
+                encounterModel = encounterModel,
+                encounterItemModels = encounterItemModels,
+                memberModel = memberModel
             )
         }.subscribeOn(Schedulers.io())
     }

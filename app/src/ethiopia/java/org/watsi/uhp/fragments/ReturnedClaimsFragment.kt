@@ -90,9 +90,18 @@ class ReturnedClaimsFragment : DaggerFragment() {
 
         claimsAdapter = ClaimListItemAdapter(
             onClaimSelected = { encounterRelation ->
-                navigationManager.goTo(ReceiptFragment.forEncounter(
-                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
-                ))
+                viewModel.getClaims()?.let { claims ->
+                    val remainingClaimIds = if (claims.size > 1) {
+                        ArrayList(claims.subList(claims.indexOf(encounterRelation) + 1, claims.size).map { it.encounter.id })
+                    } else {
+                        null
+                    }
+
+                    navigationManager.goTo(ReceiptFragment.forEncounterAndRemainingEncountersAndSnackbar(
+                        EncounterFlowState.fromEncounterWithExtras(encounterRelation),
+                        remainingClaimIds
+                    ))
+                }
             }
         )
 

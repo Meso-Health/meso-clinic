@@ -39,8 +39,8 @@ class CreateEncounterUseCase(
                 }
             }
 
-            createBillables(newBillables, submitNow)
-            createPriceSchedules(newPriceSchedules, submitNow)
+            createBillables(newBillables)
+            createPriceSchedules(newPriceSchedules)
             createEncounter(encounterWithItemsAndFormsAndTimestamps, submitNow)
         }.subscribeOn(Schedulers.io())
     }
@@ -60,40 +60,24 @@ class CreateEncounterUseCase(
         )
     }
 
-    private fun createBillables(
-        newBillables: List<Billable>,
-        submitNow: Boolean
-    ) {
+    private fun createBillables(newBillables: List<Billable>) {
         newBillables.forEach { billable ->
-            var billableDelta: Delta? = null
-            if (submitNow) {
-                // TODO: Currently, if a billable's Deltas are not created here, they will NEVER be created.
-                // This is because we have no way of knowing which billables are new after they are persisted.
-                // This works for now because Ethiopia is the only case where we delay creating Deltas and they
-                // don't create billables
-                billableDelta = Delta(
-                    action = Delta.Action.ADD,
-                    modelName = Delta.ModelName.BILLABLE,
-                    modelId = billable.id
-                )
-            }
+            var billableDelta = Delta(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.BILLABLE,
+                modelId = billable.id
+            )
             billableRepository.create(billable, billableDelta).blockingAwait()
         }
     }
 
-    private fun createPriceSchedules(
-        newPriceSchedules: List<PriceSchedule>,
-        submitNow: Boolean
-    ) {
+    private fun createPriceSchedules(newPriceSchedules: List<PriceSchedule>) {
         newPriceSchedules.forEach { priceSchedule ->
-            var priceScheduleDelta: Delta? = null
-            if (submitNow) {
-                priceScheduleDelta = Delta(
-                    action = Delta.Action.ADD,
-                    modelName = Delta.ModelName.PRICE_SCHEDULE,
-                    modelId = priceSchedule.id
-                )
-            }
+            var priceScheduleDelta = Delta(
+                action = Delta.Action.ADD,
+                modelName = Delta.ModelName.PRICE_SCHEDULE,
+                modelId = priceSchedule.id
+            )
             priceScheduleRepository.create(priceSchedule, priceScheduleDelta).blockingAwait()
         }
     }

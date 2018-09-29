@@ -80,6 +80,8 @@
     <!-- Menu -->
     <string name="menu_returned_claims_with_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት (%1$s)</string>
     <string name="menu_returned_claims_without_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
+    <string name="delete">ሰርዝ</string>
+    <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ</string>
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
@@ -137,6 +139,8 @@
     <string name="add_clickable"><u>ሪኢቶታት)</u></string>
     <string name="comment_prompt">ሪኢቶ ወስኽ</string>
     <string name="resubmit">ሕቶ ክፍሊት ደጊምካ ስደድ</string>
+    <string name="claim_id_deleted">ሕቶ ክፍሊት መ/ቁ %1$s ተሰሪዙ</string>
+    <string name="claim_id_submitted">ሕቶ ክፍሊት መ/ቁ %1$s ተሰዲዱ</string>
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካኽል</string>

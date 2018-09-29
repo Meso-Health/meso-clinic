@@ -53,6 +53,9 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
+import org.watsi.domain.relations.EncounterWithExtras
+import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
+import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.comment_age
@@ -68,17 +71,21 @@ import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EthiopianDateHelper
 import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
 import org.watsi.uhp.views.SpinnerField
+import java.util.UUID
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var deletePendingClaimAndMemberUseCase: DeletePendingClaimAndMemberUseCase
+    @Inject lateinit var loadEncounterWithExtrasUseCase: LoadEncounterWithExtrasUseCase
     @Inject lateinit var logger: Logger
     @Inject lateinit var clock: Clock
 
@@ -94,8 +101,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var monthSpinner: SpinnerField
     lateinit var yearSpinner: SpinnerField
 
+    private var snackbarMessageToShow: String? = null
+    private var remainingEncounterIds: ArrayList<UUID>? = null
+
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
+        const val PARAM_REMAINING_ENCOUNTER_IDS = "remaining_encounter_ids"
+        const val PARAM_SNACKBAR_MESSAGE = "snackbar_message"
         const val DATE_PICKER_START_YEAR = 2008
 
         fun forEncounter(encounter: EncounterFlowState): ReceiptFragment {
@@ -105,12 +117,27 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             return fragment
         }
+
+        fun forEncounterAndRemainingEncountersAndSnackbar(
+            encounter: EncounterFlowState,
+            remainingEncounterIds: ArrayList<UUID>?,
+            message: String? = null
+        ): ReceiptFragment {
+            val fragment = ReceiptFragment()
+            fragment.arguments = Bundle().apply {
+                putSerializable(PARAM_ENCOUNTER, encounter)
+                putSerializable(PARAM_REMAINING_ENCOUNTER_IDS, remainingEncounterIds)
+                putSerializable(PARAM_SNACKBAR_MESSAGE, message)
+            }
+            return fragment
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
+        remainingEncounterIds = arguments.getSerializable(PARAM_REMAINING_ENCOUNTER_IDS) as ArrayList<UUID>?
         encounterAction = when {
             encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED -> EncounterAction.RESUBMIT
             encounterFlowState.encounter.preparedAt == null -> EncounterAction.PREPARE
@@ -129,6 +156,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         serviceReceiptItemAdapter = ReceiptListItemAdapter(services)
         labReceiptItemAdapter = ReceiptListItemAdapter(labs)
         drugAndSupplyReceiptItemAdapter = ReceiptListItemAdapter(drugsAndSupplies)
+
+        snackbarMessageToShow = arguments.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
     private fun setAndObserveViewModel() {
@@ -226,6 +255,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         save_button.setOnClickListener {
             finishEncounter()
+        }
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(submit_button, context, snackbarMessage)
+            snackbarMessageToShow = null
         }
     }
 
@@ -412,23 +446,87 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun finishEncounter() {
-        val toFragment = when (encounterAction) {
+        val message = when (encounterAction) {
             EncounterAction.PREPARE -> {
-                NewClaimFragment.withSnackbarMessage(getString(R.string.encounter_saved))
+                getString(R.string.encounter_saved)
             }
             EncounterAction.SUBMIT -> {
-                PendingClaimsFragment.withSnackbarMessage(getString(R.string.encounter_submitted))
+                String.format(
+                    getString(R.string.claim_id_submitted),
+                    encounterFlowState.encounter.shortenedClaimId()
+                )
             }
             EncounterAction.RESUBMIT -> {
-                ReturnedClaimsFragment.withSnackbarMessage(getString(R.string.encounter_submitted))
+                String.format(
+                    getString(R.string.claim_id_submitted),
+                    encounterFlowState.encounter.shortenedClaimId()
+                )
             }
         }
 
         viewModel.finishEncounter(encounterFlowState, encounterAction).subscribe({
-            navigationManager.popTo(toFragment)
+            navigateToNext(message)
         }, {
             logger.error(it)
         })
+    }
+
+    private fun deleteEncounter() {
+        if (encounterFlowState.member == null) {
+            logger.error("Member cannot be null")
+        }
+
+        encounterFlowState.member?.let {
+            deletePendingClaimAndMemberUseCase.execute(
+                encounterFlowState.toEncounterWithExtras(it)
+            ).subscribe({
+                navigateToNext(
+                    String.format(
+                        getString(R.string.claim_id_deleted),
+                        encounterFlowState.encounter.shortenedClaimId()
+                    )
+                )
+            }, {
+                logger.error(it)
+            })
+        }
+    }
+
+    private fun navigateToNext(message: String) {
+        if (remainingEncounterIds.orEmpty().isEmpty()) {
+            when (encounterAction) {
+                EncounterAction.PREPARE -> {
+                    navigationManager.popTo(NewClaimFragment.withSnackbarMessage(message))
+                }
+                EncounterAction.SUBMIT -> {
+                    navigationManager.popTo(PendingClaimsFragment.withSnackbarMessage(message))
+                }
+                EncounterAction.RESUBMIT -> {
+                    navigationManager.popTo(ReturnedClaimsFragment.withSnackbarMessage(message))
+                }
+            }
+
+        } else {
+            remainingEncounterIds?.let { encounterList ->
+                val nextEncounterId = encounterList.first()
+                val newRemainingEncounters = if (encounterList.size > 1) {
+                    ArrayList(encounterList.minus(nextEncounterId))
+                } else {
+                    null
+                }
+
+                loadEncounterWithExtrasUseCase.execute(nextEncounterId).subscribe({ nextEncounter ->
+                    navigationManager.goTo(
+                        ReceiptFragment.forEncounterAndRemainingEncountersAndSnackbar(
+                            EncounterFlowState.fromEncounterWithExtras(nextEncounter),
+                            newRemainingEncounters, message
+                        ), false
+                    )
+                }, {
+                    logger.error(it)
+                })
+            }
+        }
     }
 
     override fun onBack(): Single<Boolean> {
@@ -449,12 +547,27 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 it.findItem(R.id.menu_edit_claim).isVisible = true
             }
         }
+
+        if (encounterAction == EncounterAction.SUBMIT) {
+            menu?.let {
+                it.findItem(R.id.menu_delete_claim).isVisible = true
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.menu_edit_claim -> {
                 launchEditFlow()
+                true
+            }
+            R.id.menu_delete_claim -> {
+                AlertDialog.Builder(activity)
+                    .setTitle(getString(R.string.delete_claim_confirmation))
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.delete, { _, _ ->
+                        deleteEncounter()
+                    }).create().show()
                 true
             }
             android.R.id.home -> {

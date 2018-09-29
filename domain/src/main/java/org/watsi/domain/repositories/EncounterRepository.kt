@@ -12,10 +12,12 @@ import java.util.UUID
 
 interface EncounterRepository {
     fun find(id: UUID): Single<EncounterWithItems>
+    fun findWithExtras(id: UUID): Single<EncounterWithExtras>
     fun find(ids: List<UUID>): Single<List<Encounter>>
     fun update(encounters: List<Encounter>): Completable
     fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable
     fun upsert(encounters: List<EncounterWithExtras>): Completable
+    fun delete(encounters: EncounterWithExtras): Completable
     fun sync(delta: Delta): Completable
     fun fetchReturnedClaims(): Single<List<EncounterWithExtras>>
     fun loadPendingClaimsCount(): Flowable<Int>

@@ -128,38 +128,6 @@ class CreateEncounterUseCaseTest {
     }
 
     @Test
-    fun execute_encounterHasNewBillables_submitNowFalse_createsEncounterWithoutDeltaAndBillablesWithoutDeltasAndWithoutSubmittedAt() {
-        val encounter = EncounterFactory.build()
-        val billable = BillableFactory.build()
-        val priceSchedule = PriceScheduleFactory.build(billableId = billable.id)
-        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id)
-        val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
-            BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
-        )
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
-            encounter = encounter,
-            encounterItemRelations = listOf(encounterItemRelation)
-        )
-
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
-                preparedAt = Instant.now(fixedClock)
-            )
-        )
-
-        whenever(mockBillableRepository.find(billable.id)).thenReturn(Maybe.empty())
-        whenever(mockBillableRepository.create(billable, null))
-            .thenReturn(Completable.complete())
-        whenever(mockPriceScheduleRepository.create(priceSchedule, null))
-            .thenReturn(Completable.complete())
-        whenever(mockEncounterRepository.insert(encounterWithItemsAndFormsAndTimestamps, emptyList()))
-            .thenReturn(Completable.complete())
-
-        useCase.execute(encounterWithItemsAndForms, false, fixedClock).test().assertComplete()
-    }
-
-
-    @Test
     fun execute_encounterHasNewPriceSchedules_submitNowTrue_createsEncounterWithDeltaAndPriceSchedulesWithDeltasAndSetsSubmittedAt() {
         val encounter = EncounterFactory.build()
         val billable = BillableFactory.build()

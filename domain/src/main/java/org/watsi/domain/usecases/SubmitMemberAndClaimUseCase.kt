@@ -54,16 +54,6 @@ class SubmitMemberAndClaimUseCase(
                 modelId = encounterForm.id))
         }
 
-        encounterWithItemsAndForms.encounterItemRelations.forEach { encounterItemRelation ->
-            if (encounterItemRelation.encounterItem.priceScheduleIssued) {
-                deltas.add(Delta(
-                    action = Delta.Action.ADD,
-                    modelName = Delta.ModelName.PRICE_SCHEDULE,
-                    modelId = encounterItemRelation.billableWithPriceSchedule.priceSchedule.id
-                ))
-            }
-        }
-
         deltaRepository.insert(deltas).blockingAwait()
     }
 }

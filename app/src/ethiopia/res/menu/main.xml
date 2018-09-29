@@ -43,4 +43,10 @@
         android:title="@string/edit"
         app:showAsAction="never"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_delete_claim"
+        android:orderInCategory="108"
+        android:title="@string/delete"
+        app:showAsAction="never"
+        android:visible="false" />
 </menu>

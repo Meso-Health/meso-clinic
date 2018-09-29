@@ -159,6 +159,8 @@ class NewClaimFragment : DaggerFragment() {
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_status).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
+            it.findItem(R.id.menu_edit_claim).isVisible = false
+            it.findItem(R.id.menu_delete_claim).isVisible = false
         }
     }
 

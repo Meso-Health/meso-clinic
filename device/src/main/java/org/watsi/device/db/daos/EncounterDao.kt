@@ -1,6 +1,7 @@
 package org.watsi.device.db.daos
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
@@ -27,6 +28,10 @@ interface EncounterDao {
     fun find(id: UUID): Single<EncounterWithItemsModel>
 
     @Transaction
+    @Query("SELECT * FROM encounters WHERE id = :id LIMIT 1")
+    fun findWithMemberAndForms(id: UUID): Single<EncounterWithMemberAndItemsAndFormsModel>
+
+    @Transaction
     @Query("SELECT * FROM encounters WHERE id IN (:ids)")
     fun find(ids: List<UUID>): Single<List<EncounterModel>>
 
@@ -46,6 +51,11 @@ interface EncounterDao {
                billableModels: List<BillableModel>,
                priceScheduleModels: List<PriceScheduleModel>,
                memberModels: List<MemberModel>)
+
+    @Delete
+    fun delete(encounterModel: EncounterModel,
+               encounterItemModels: List<EncounterItemModel>,
+               memberModel: MemberModel)
 
     @Transaction
     @Query("SELECT * from encounters WHERE submittedAt IS NULL")

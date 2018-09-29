@@ -29,7 +29,7 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
     private fun create(encounterFormModel: EncounterFormModel): Completable {
         return Completable.fromAction {
             encounterFormDao.update(encounterFormModel)
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun sync(delta: Delta): Completable {

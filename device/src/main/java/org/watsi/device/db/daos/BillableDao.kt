@@ -51,6 +51,7 @@ interface BillableDao {
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<BillableModel>
 
+    @Transaction
     @Query("SELECT * FROM billables WHERE id IN (:ids)")
     fun findWithPrice(ids: List<UUID>): Single<List<BillableWithPriceSchedulesModel>>
 
