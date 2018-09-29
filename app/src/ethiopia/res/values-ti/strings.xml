@@ -65,13 +65,14 @@
     </plurals>
     <string name="today_wrapper">ሎማዓንቲ (%1$s)</string>
     <string name="today">ሎማዓንቲ</string>
+    <string name="encounter_saved">ሕቶ ክፍሊት ተቐሚጡ</string>
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">ኩነታት</string>
     <string name="version_label">ቅፂ</string>
     <string name="fetch_billables_label">ዋጋ ተመን ዝተሓደሰሉ እዋን</string>
     <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
-    <string name="sync_encounters_label">ሕቶታት ክፍሊት</string>
+    <string name="sync_claims_label">ሕቶታት  ክፍሊት</string>
     <string name="all_synced">ኩሉ ኣዋድድ</string>
     <string name="waiting_to_sync">ብምጽብባይ</string>
 
@@ -82,6 +83,9 @@
     <string name="menu_returned_claims_without_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
     <string name="delete">ሰርዝ</string>
     <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ</string>
+    <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
+    <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
+    <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
@@ -147,6 +151,17 @@
     <string name="unit_price_label">ንፅል ዋጋ</string>
     <string name="quantity_label">በዝሒ</string>
     <string name="total_price_label">ጠቕላላ ዋጋ</string>
+
+    <!-- PendingClaimsFragment -->
+    <string name="pending_claims_fragment_label">ምርግጋፅ ዝፅበ</string>
+    <string name="pending_claims_count_empty">ምንም</string> <!-- TODO This translation was not available and we have used an approximation. Get the real one and fix it -->
+    <plurals name="pending_claims_count">
+        <item quantity="one">%d ገና ዘይተርኣየ ናይ ክፍሊት ሕቶ</item>
+        <item quantity="other">%d ገና ዘይተርኣዩ ናይ ክፍሊት ሕቶታት</item>
+    </plurals>
+    <string name="submit_all_button">ኩሎም ስደዶም</string>
+    <string name="temp_submit_all_claims">ኩሎም ናይ ክፍሊት ሕቶታት ይሰደዱ</string>
+    <string name="all_encounter_submitted">ኩሎም ተላኢኮም</string>
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>

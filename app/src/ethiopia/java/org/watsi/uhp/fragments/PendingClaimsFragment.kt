@@ -124,9 +124,12 @@ class PendingClaimsFragment : DaggerFragment() {
 
         submit_all_button.setOnClickListener {
             AlertDialog.Builder(activity)
+                    /* TODO: We did not have the necessary translations to support this. When they come in, put this code back.
                     .setTitle(resources.getQuantityString(
                         R.plurals.submit_all_form_alert, claimsAdapter.itemCount, claimsAdapter.itemCount)
                     )
+                    */
+                    .setTitle(R.string.temp_submit_all_claims)
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.submit_encounter_button) { _, _ ->
                         submitAll()
