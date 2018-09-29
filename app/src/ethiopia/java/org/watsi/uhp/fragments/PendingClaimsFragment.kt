@@ -52,8 +52,12 @@ class PendingClaimsFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(PendingClaimsViewModel::class.java)
-        val observable = viewModel.getObservable()
-        observable.observe(this, Observer {
+        setAndObserveViewModel()
+        snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
+    }
+
+    private fun setAndObserveViewModel() {
+        viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 updateClaims(viewState.claims)
 
@@ -64,8 +68,6 @@ class PendingClaimsFragment : DaggerFragment() {
                 }
             }
         })
-
-        snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
     private fun updateClaims(pendingClaims: List<EncounterWithExtras>) {
@@ -139,9 +141,6 @@ class PendingClaimsFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
-
-        // this is required for when the user back navigates into this screen
-        // the observable does not trigger, so we need to set the adapter from the viewModel
-        viewModel.getClaims()?.let { updateClaims(it) }
+        setAndObserveViewModel()
     }
 }
