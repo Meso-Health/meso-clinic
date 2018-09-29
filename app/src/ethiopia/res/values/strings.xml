@@ -82,16 +82,19 @@
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">Pending Approval</string>
-    <string name="pending_claims_count_empty">No pending claims</string>
+    <string name="pending_claims_count_empty">No pending claims</string> <!-- TODO This translation was not available and we have used an approximation. Get the real one and fix it -->
     <plurals name="pending_claims_count">
         <item quantity="one">%d pending claim</item>
         <item quantity="other">%d pending claims</item>
     </plurals>
     <string name="submit_all_button">Submit All</string>
+    <string name="temp_submit_all_claims">Submit all claims</string>
+    <!-- TODO Put this back when we have translations ^^ The above is a stand in
     <plurals name="submit_all_form_alert">
         <item quantity="one">Submit %d claim?</item>
         <item quantity="other">Submit all %d claims?</item>
     </plurals>
+    -->
     <string name="all_encounter_submitted">All submitted</string>
 
     <!-- ReturnedClaimsFragment -->

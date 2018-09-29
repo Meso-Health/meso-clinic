@@ -69,7 +69,7 @@
             android:id="@+id/unsynced_encounters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sync_encounters_label"
+            android:text="@string/sync_claims_label"
             app:layout_constraintTop_toBottomOf="@id/unsynced_identifications"/>
 
         <org.watsi.uhp.views.StatusField

@@ -62,13 +62,14 @@
     <string name="submit_encounter_button">ላክ</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
     <string name="today">ዛሬ</string>
+    <string name="encounter_saved">የክፍያ ጥያቄው ተቀምጠዋል</string>
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">ሁኔታ</string>
     <string name="version_label">ስሪት</string>
     <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
     <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
-    <string name="sync_encounters_label">የክፍያ ጥያቄዎች</string>
+    <string name="sync_claims_label">የክፍያ ጥያቄዎች</string>
     <string name="all_synced">ሁሉንም አሳምር</string>
     <string name="waiting_to_sync">በመጠባበቅ ላይ</string>
 
@@ -79,6 +80,9 @@
     <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
     <string name="delete">ሰርዝ</string>
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ</string>
+    <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
+    <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
+    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -144,6 +148,17 @@
     <string name="unit_price_label">ነጠላ ዋጋ</string>
     <string name="quantity_label">ብዛት</string>
     <string name="total_price_label">ጠቅላላ ዋጋ</string>
+
+    <!-- PendingClaimsFragment -->
+    <string name="pending_claims_fragment_label">መረጋገጥ የሚጠብቅ</string>
+    <string name="pending_claims_count_empty">ምንም</string> <!-- TODO This translation was not available and we have used an approximation. Get the real one and fix it -->
+    <plurals name="pending_claims_count">
+        <item quantity="one">%d ገና ያልታዩ የክፍያ ጥያቄዎች</item>
+        <item quantity="other">%d ገና ያልታዩ የክፍያ ጥያቄዎች</item>
+    </plurals>
+    <string name="submit_all_button">ሁሉንም ላካቸው</string>
+    <string name="temp_submit_all_claims">ሁሉንም የክፍያ ጥያቄዎች ይላኩ</string>
+    <string name="all_encounter_submitted">ሁሉም ተልከዋል</string>
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
