@@ -75,6 +75,7 @@
     <string name="sync_claims_label">ሕቶታት  ክፍሊት</string>
     <string name="all_synced">ኩሉ ኣዋድድ</string>
     <string name="waiting_to_sync">ብምጽብባይ</string>
+    <string name="sync_new_members_label">ሓዱስ ኣባል</string>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
@@ -82,7 +83,7 @@
     <string name="menu_returned_claims_with_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት (%1$s)</string>
     <string name="menu_returned_claims_without_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
     <string name="delete">ሰርዝ</string>
-    <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ</string>
+    <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
     <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
@@ -154,7 +155,7 @@
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">ምርግጋፅ ዝፅበ</string>
-    <string name="pending_claims_count_empty">ምንም</string> <!-- TODO This translation was not available and we have used an approximation. Get the real one and fix it -->
+    <string name="pending_claims_count_empty">ገና ዘይተርኣዩ ናይ ክፍሊት ሕቶ የለዉን</string>
     <plurals name="pending_claims_count">
         <item quantity="one">%d ገና ዘይተርኣየ ናይ ክፍሊት ሕቶ</item>
         <item quantity="other">%d ገና ዘይተርኣዩ ናይ ክፍሊት ሕቶታት</item>

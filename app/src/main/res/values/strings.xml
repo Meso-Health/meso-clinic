@@ -80,7 +80,7 @@
     <string name="version_label">Version</string>
     <string name="fetch_billables_label">Pricelist updated at</string>
     <string name="fetch_diagnoses_label">Diagnoses updated at</string>
-    <string name="sync_new_members_label" tools:ignore="MissingTranslation">New members</string>
+    <string name="sync_new_members_label">New members</string>
     <string name="sync_claims_label">Claims</string>
     <string name="all_synced">All synced</string>
     <string name="waiting_to_sync">Pending</string>

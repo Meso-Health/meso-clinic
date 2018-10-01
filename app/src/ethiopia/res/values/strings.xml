@@ -82,7 +82,7 @@
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">Pending Approval</string>
-    <string name="pending_claims_count_empty">No pending claims</string> <!-- TODO This translation was not available and we have used an approximation. Get the real one and fix it -->
+    <string name="pending_claims_count_empty">No pending claims</string>
     <plurals name="pending_claims_count">
         <item quantity="one">%d pending claim</item>
         <item quantity="other">%d pending claims</item>

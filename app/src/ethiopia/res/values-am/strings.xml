@@ -72,6 +72,7 @@
     <string name="sync_claims_label">የክፍያ ጥያቄዎች</string>
     <string name="all_synced">ሁሉንም አሳምር</string>
     <string name="waiting_to_sync">በመጠባበቅ ላይ</string>
+    <string name="sync_new_members_label">አዲሰ አባል</string>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
@@ -79,7 +80,7 @@
     <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
     <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
     <string name="delete">ሰርዝ</string>
-    <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ</string>
+    <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
     <string name="menu_sync_now">አሁን አዋድድ</string>
@@ -151,7 +152,7 @@
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">መረጋገጥ የሚጠብቅ</string>
-    <string name="pending_claims_count_empty">ምንም</string> <!-- TODO This translation was not available and we have used an approximation. Get the real one and fix it -->
+    <string name="pending_claims_count_empty">ገና ያልታዩ የክፍያ ጥያቄዎች የሉም</string>
     <plurals name="pending_claims_count">
         <item quantity="one">%d ገና ያልታዩ የክፍያ ጥያቄዎች</item>
         <item quantity="other">%d ገና ያልታዩ የክፍያ ጥያቄዎች</item>
