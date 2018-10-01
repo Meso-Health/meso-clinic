@@ -53,7 +53,6 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
-import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
 import org.watsi.domain.utils.DateUtils
@@ -285,7 +284,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         claim_id.text = encounterFlowState.encounter.shortenedClaimId()
 
         adjudication_comments_container.visibility = View.VISIBLE
-        encounterFlowState.encounter.occurredAt.let {
+        encounterFlowState.encounter.submittedAt?.let {
             val providerCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
             provider_comment_date.text = if (providerCommentDaysAgo > 0) {
                 resources.getQuantityString(
