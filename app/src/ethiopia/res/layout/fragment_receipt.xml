@@ -515,43 +515,15 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <!-- We only show one of these three buttons, depending on the claim flow -->
-        <Button
-            android:id="@+id/save_button"
+        <org.watsi.uhp.views.ImageTextButton
+            android:id="@+id/finish_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fragment_padding"
             style="@style/PrimaryButton"
-            android:text="@string/save"
             app:layout_constraintTop_toBottomOf="@id/comment_container"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="1.0" />
-
-        <org.watsi.uhp.views.ImageTextButton
-            android:id="@+id/submit_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fragment_padding"
-            style="@style/PrimaryButton"
-            android:drawableStart="@drawable/ic_send_white_24dp"
-            android:text="@string/submit_encounter_button"
-            app:layout_constraintTop_toBottomOf="@id/comment_container"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            android:visibility="gone"/>
-
-        <org.watsi.uhp.views.ImageTextButton
-            android:id="@+id/resubmit_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fragment_padding"
-            style="@style/PrimaryButton"
-            android:drawableStart="@drawable/ic_return_white_24dp"
-            android:text="@string/resubmit"
-            app:layout_constraintTop_toBottomOf="@id/comment_container"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            android:visibility="gone"/>
 
     </android.support.constraint.ConstraintLayout>
 
