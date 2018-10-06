@@ -162,7 +162,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     private fun setAndObserveViewModel() {
         val editableComment = when (encounterAction) {
             EncounterAction.PREPARE -> encounterFlowState.newProviderComment
-            EncounterAction.SUBMIT -> encounterFlowState.newProviderComment ?: encounterFlowState.encounter.providerComment
+            EncounterAction.SUBMIT -> encounterFlowState.encounter.providerComment
             EncounterAction.RESUBMIT -> encounterFlowState.newProviderComment
         }
 
