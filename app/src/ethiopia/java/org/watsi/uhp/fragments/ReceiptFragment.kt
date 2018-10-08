@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_items
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.edit_button
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.finish_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.gender_and_age
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
@@ -38,12 +39,9 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.resubmit_button
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.save_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_none
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.submit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type
 import org.threeten.bp.Clock
@@ -252,12 +250,28 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             launchAddCommentDialog()
         }
 
-        save_button.setOnClickListener {
+        when (encounterAction) {
+            EncounterAction.PREPARE -> {
+                finish_button.text = getString(R.string.save)
+            }
+            EncounterAction.SUBMIT -> {
+                finish_button.setCompoundDrawablesWithIntrinsicBounds(
+                        context.getDrawable(R.drawable.ic_send_white_24dp), null, null, null)
+                finish_button.text = getString(R.string.submit_encounter_button)
+            }
+            EncounterAction.RESUBMIT -> {
+                finish_button.setCompoundDrawablesWithIntrinsicBounds(
+                        context.getDrawable(R.drawable.ic_return_white_24dp), null, null, null)
+                finish_button.text = getString(R.string.resubmit)
+            }
+        }
+
+        finish_button.setOnClickListener {
             finishEncounter()
         }
 
         snackbarMessageToShow?.let { snackbarMessage ->
-            SnackbarHelper.show(submit_button, context, snackbarMessage)
+            SnackbarHelper.show(finish_button, context, snackbarMessage)
             snackbarMessageToShow = null
         }
     }
@@ -271,12 +285,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             launchEditFlow()
         }
         date_spacer_container.visibility = View.VISIBLE
-
-        save_button.visibility = View.GONE
-        submit_button.visibility = View.VISIBLE
-        submit_button.setOnClickListener {
-            finishEncounter()
-        }
     }
 
     private fun displayReturnedClaimInfo() {
@@ -321,12 +329,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             launchEditFlow()
         }
         date_spacer_container.visibility = View.VISIBLE
-
-        save_button.visibility = View.GONE
-        resubmit_button.visibility = View.VISIBLE
-        resubmit_button.setOnClickListener {
-            finishEncounter()
-        }
     }
 
     private fun launchEditFlow() {
@@ -445,6 +447,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun finishEncounter() {
+        if (encounterFlowState.encounterItemRelations.isEmpty()) {
+            SnackbarHelper.showError(finish_button, context, getString(R.string.empty_line_items_warning))
+            return
+        }
+
         val message = when (encounterAction) {
             EncounterAction.PREPARE -> {
                 getString(R.string.encounter_saved)

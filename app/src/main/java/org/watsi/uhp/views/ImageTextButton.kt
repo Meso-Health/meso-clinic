@@ -45,12 +45,13 @@ class ImageTextButton @JvmOverloads constructor(
 
         // this assumes we want to center the leftDrawable
         // we would have to update this if we want to support different orientations
-        val leftDrawable = compoundDrawables[0]
-        leftDrawable.copyBounds(drawableBounds)
-        val leftOffset = (interiorWidth - (textBounds.width() + drawableBounds.width()) +
-                rightPaddingOffset) / 2 - compoundDrawablePadding - imageTextSpace
-        drawableBounds.set(leftOffset, drawableBounds.top, leftOffset + drawableBounds.width(), drawableBounds.bottom)
-        leftDrawable.bounds = drawableBounds
+        compoundDrawables[0]?.let { leftDrawable ->
+            leftDrawable.copyBounds(drawableBounds)
+            val leftOffset = (interiorWidth - (textBounds.width() + drawableBounds.width()) +
+                    rightPaddingOffset) / 2 - compoundDrawablePadding - imageTextSpace
+            drawableBounds.set(leftOffset, drawableBounds.top, leftOffset + drawableBounds.width(), drawableBounds.bottom)
+            leftDrawable.bounds = drawableBounds
+        }
     }
 
     /**
