@@ -41,7 +41,8 @@ class SpinnerLineItemViewModel @Inject constructor(
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
-        observable.value = viewState.copy(encounterFlowState = viewState.encounterFlowState.copy(encounterItemRelations = encounterItemRelations))
+        viewState.encounterFlowState.encounterItemRelations = encounterItemRelations
+        observable.value = viewState.copy(encounterFlowState = viewState.encounterFlowState)
     }
 
     fun addItem(billableWithPrice: BillableWithPriceSchedule) {
