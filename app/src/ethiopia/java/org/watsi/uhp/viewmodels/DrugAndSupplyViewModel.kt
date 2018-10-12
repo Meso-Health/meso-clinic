@@ -44,8 +44,11 @@ class DrugAndSupplyViewModel @Inject constructor(
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
-        observable.value = viewState.copy(selectableBillableRelations = getSelectableBillables(),
-                encounterFlowState = viewState.encounterFlowState.copy(encounterItemRelations = encounterItemRelations))
+        viewState.encounterFlowState.encounterItemRelations = encounterItemRelations
+        observable.value = viewState.copy(
+                selectableBillableRelations = getSelectableBillables(),
+                encounterFlowState = viewState.encounterFlowState
+        )
     }
 
     fun updateQuery(query: String) {
