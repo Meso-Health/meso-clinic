@@ -24,17 +24,46 @@ android {
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
         buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
-        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
-        buildConfigField "String", "API_HOST", ENV("API_HOST")
-        buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("HOCKEYAPP_APP_ID")
-        buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SIMPRINTS_API_KEY")
+
+        if (gradle.ext.has('rollbarApiKey')) {
+            buildConfigField "String", "ROLLBAR_API_KEY", gradle.ext.rollbarApiKey
+        } else {
+            buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
+        }
+
+        if (gradle.ext.has('hockeyappAppId')) {
+            buildConfigField "String", "HOCKEYAPP_APP_ID", gradle.ext.hockeyappAppId
+        } else {
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("HOCKEYAPP_APP_ID")
+        }
+
+        if (gradle.ext.has('simprintsApiKey')) {
+            buildConfigField "String", "SIMPRINTS_API_KEY", gradle.ext.simprintsApiKey
+        } else {
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SIMPRINTS_API_KEY")
+        }
+
+        if (gradle.ext.has('apiHost')) {
+            buildConfigField "String", "API_HOST", gradle.ext.apiHost
+        } else {
+            buildConfigField "String", "API_HOST", ENV("API_HOST")
+        }
     }
     signingConfigs {
         releaseConfig {
             storeFile file("release-key.jks")
-            storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
-            keyAlias System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+
+            if (gradle.ext.has('releaseKeystorePassword') &&
+                    gradle.ext.has('releaseKeyAlias') &&
+                    gradle.ext.has('releaseKeyPassword')) {
+                storePassword gradle.ext.releaseKeystorePassword
+                keyAlias gradle.ext.releaseKeyAlias
+                keyPassword gradle.ext.releaseKeyPassword
+            } else {
+                storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+            }
         }
     }
     flavorDimensions "version"
