@@ -43,8 +43,8 @@ android {
             buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SIMPRINTS_API_KEY")
         }
 
-        if (gradle.ext.has('apiHost')) {
-            buildConfigField "String", "API_HOST", gradle.ext.apiHost
+        if (gradle.ext.has('apiHostDebug')) {
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostDebug
         } else {
             buildConfigField "String", "API_HOST", ENV("API_HOST")
         }
@@ -99,6 +99,12 @@ android {
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
+
+            if (gradle.ext.has('apiHostSandbox')) {
+                buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
+            } else {
+                buildConfigField "String", "API_HOST", ENV("API_HOST")
+            }
         }
         demo {
             signingConfig signingConfigs.releaseConfig
@@ -110,6 +116,12 @@ android {
             ]
 
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+
+            if (gradle.ext.has('apiHostDemo')) {
+                buildConfigField "String", "API_HOST", gradle.ext.apiHostDemo
+            } else {
+                buildConfigField "String", "API_HOST", ENV("API_HOST")
+            }
         }
         training {
             signingConfig signingConfigs.releaseConfig
@@ -133,6 +145,12 @@ android {
             ]
 
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+
+            if (gradle.ext.has('apiHostRelease')) {
+                buildConfigField "String", "API_HOST", gradle.ext.apiHostRelease
+            } else {
+                buildConfigField "String", "API_HOST", ENV("API_HOST")
+            }
         }
     }
 
