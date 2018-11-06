@@ -50,6 +50,11 @@
         <item name="android:textSize">@dimen/fontSize14</item>
     </style>
 
+    <style name="StatusVersion">
+        <item name="android:textColor">@color/gray6</item>
+        <item name="android:textSize">@dimen/fontSize16</item>
+    </style>
+
     <style name="toolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Title -->
         <item name="android:textColorPrimary">@color/white</item>

@@ -69,12 +69,10 @@
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">ኩነታት</string>
-    <string name="version_label">ቅፂ</string>
     <string name="fetch_billables_label">ዋጋ ተመን ዝተሓደሰሉ እዋን</string>
     <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
     <string name="sync_claims_label">ሕቶታት  ክፍሊት</string>
     <string name="all_synced">ኩሉ ኣዋድድ</string>
-    <string name="waiting_to_sync">ብምጽብባይ</string>
     <string name="sync_new_members_label">ሓዱስ ኣባል</string>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
