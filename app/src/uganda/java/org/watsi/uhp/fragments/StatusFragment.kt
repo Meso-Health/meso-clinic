@@ -3,13 +3,15 @@ package org.watsi.uhp.fragments
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.uganda.fragment_status.android_version
+import kotlinx.android.synthetic.uganda.fragment_status.app_version
+import kotlinx.android.synthetic.uganda.fragment_status.current_user
 import kotlinx.android.synthetic.uganda.fragment_status.fetch_billables_updated_at
 import kotlinx.android.synthetic.uganda.fragment_status.fetch_diagnoses_updated_at
 import kotlinx.android.synthetic.uganda.fragment_status.fetch_members_updated_at
@@ -19,18 +21,15 @@ import kotlinx.android.synthetic.uganda.fragment_status.unsynced_encounters
 import kotlinx.android.synthetic.uganda.fragment_status.unsynced_identifications
 import kotlinx.android.synthetic.uganda.fragment_status.unsynced_new_members
 import kotlinx.android.synthetic.uganda.fragment_status.unsynced_treatment_forms
-import kotlinx.android.synthetic.uganda.fragment_status.version
-import org.watsi.device.managers.Logger
-import org.watsi.domain.repositories.MemberRepository
+import org.watsi.device.managers.SessionManager
+import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.viewmodels.StatusViewModel
 import javax.inject.Inject
 
 class StatusFragment : DaggerFragment() {
-
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var memberRepository: MemberRepository
-    @Inject lateinit var logger: Logger
+    @Inject lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,31 +67,31 @@ class StatusFragment : DaggerFragment() {
             }
         })
     }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity.setTitle(R.string.version_and_sync_label)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_status, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        try {
-            val pInfo = activity.packageManager.getPackageInfo(activity.packageName, 0)
-            version.setValue(pInfo.versionName)
-        } catch (e: PackageManager.NameNotFoundException) {
-            logger.error(e)
-        }
+        val username = sessionManager.currentToken()?.user?.username
+        current_user.setValue(username)
+        app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
+        android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
     }
 
     private fun formattedQuantity(count: Int): String {
         return if (count == 0) {
             getString(R.string.all_synced)
         } else {
-            count.toString() + " pending"
+            "$count ${getString(R.string.waiting_to_sync)}"
         }
     }
 
     private fun formattedUpdatedAt(updatedAt: Long): String {
         return if (updatedAt == 0L) {
-            getString(R.string.waiting_to_sync)
+            getString(R.string.never_updated)
         } else {
             DateUtils.getRelativeTimeSpanString(updatedAt).toString()
         }

@@ -65,4 +65,7 @@
 
     <!-- padding to fix bottom text alignment -->
     <dimen name="bottom_text_align_padding">1dp</dimen>
+
+    <!-- margin between status fields on status screen -->
+    <dimen name="status_field_margin">2dp</dimen>
 </resources>
