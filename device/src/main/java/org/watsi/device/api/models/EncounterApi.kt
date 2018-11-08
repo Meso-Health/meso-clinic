@@ -7,12 +7,6 @@ import org.threeten.bp.Instant
 import org.watsi.domain.relations.EncounterWithItems
 import java.util.UUID
 
-/**
- * Data class that defines the structure of a sync Encounter API request.
- *
- * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
- * classes to a format our API accepts.
- */
 data class EncounterApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("member_id") val memberId: UUID,

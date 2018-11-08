@@ -9,12 +9,6 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import java.util.UUID
 
-/**
- * Data class that defines the structure of a sync Member API request.
- *
- * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
- * classes to a format our API accepts.
- */
 data class MemberApi(
     @SerializedName(ID_FIELD) val id: UUID,
     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,

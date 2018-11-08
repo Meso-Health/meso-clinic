@@ -5,12 +5,6 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
-/**
- * Data class that defines the structure of a sync Identification Event API request.
- *
- * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
- * classes to a format our API accepts.
- */
 data class IdentificationEventApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("member_id") val memberId: UUID,

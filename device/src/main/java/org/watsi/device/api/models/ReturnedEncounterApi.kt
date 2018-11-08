@@ -11,12 +11,6 @@ import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
-/**
- * Data class that defines the structure of a fetch returned Encounter API request.
- *
- * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
- * classes to a format our API accepts.
- */
 data class ReturnedEncounterApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("member_id") val memberId: UUID,
