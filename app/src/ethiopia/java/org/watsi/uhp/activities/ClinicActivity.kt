@@ -32,7 +32,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
     companion object {
         private val FETCH_SERVICE_JOB_ID = 0
         private val SYNC_DATA_SERVICE_JOB_ID = 1
-        val requiredPermissions = arrayOf(Manifest.permission.INTERNET)
+        val requiredPermissions = arrayOf(Manifest.permission.INTERNET, Manifest.permission.CAMERA)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

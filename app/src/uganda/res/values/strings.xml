@@ -69,7 +69,6 @@
     <string name="fingerprints_error_message">There was an error and fingerprints will not be able to be scanned for any members. Please contact the Watsi team to fix this.</string>
     <string name="fingerprints_not_installed_error_message">Could not find the Simprints app. Check that it is installed before continuing.</string>
     <string name="member_card_field_label">Member Card</string>
-    <string name="scan_member_card_button_text">@string/scan_member_card</string>
     <string-array name="age_units">
         <item>years</item>
         <item>months</item>
@@ -117,7 +116,6 @@
 
     <!-- QrCodeActivity -->
     <string name="search_member_hint">Search member name or ID&#8230;</string>
-    <string name="scan_member_card">Scan member card</string>
 
     <!-- SearchMemberFragment -->
     <string name="member_no_search_results_text">No search results. Please try again.</string>

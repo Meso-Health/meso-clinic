@@ -42,5 +42,10 @@
             android:label="@string/authentication_activity_label"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".activities.SearchByMemberCardActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
     </application>
 </manifest>

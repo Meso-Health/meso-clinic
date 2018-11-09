@@ -14,9 +14,9 @@ import com.google.android.gms.vision.barcode.Barcode
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.uganda.activity_qr_code.cancel_container
-import kotlinx.android.synthetic.uganda.activity_qr_code.scan_card_error
-import kotlinx.android.synthetic.uganda.activity_qr_code.surface
+import kotlinx.android.synthetic.main.activity_qr_code.cancel_container
+import kotlinx.android.synthetic.main.activity_qr_code.scan_card_error
+import kotlinx.android.synthetic.main.activity_qr_code.surface
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.QrCodeDetectorManager
 import java.util.concurrent.TimeUnit
