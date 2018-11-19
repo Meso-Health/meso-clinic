@@ -83,16 +83,25 @@ class NewClaimFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        region_number.addTextChangedListener(LayoutHelper.OnChangedListener {
-            text -> viewModel.onRegionNumberChange(text)
+        region_number.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+            viewModel.onRegionNumberChange(text)
+            if (text.length == 2) {
+                woreda_number.requestFocus()
+            }
         })
 
-        woreda_number.addTextChangedListener(LayoutHelper.OnChangedListener {
-            text -> viewModel.onWoredaNumberChange(text)
+        woreda_number.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+            viewModel.onWoredaNumberChange(text)
+            if (text.length == 2) {
+                kebele_number.requestFocus()
+            }
         })
 
-        kebele_number.addTextChangedListener(LayoutHelper.OnChangedListener {
-            text -> viewModel.onKebeleNumberChange(text)
+        kebele_number.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+            viewModel.onKebeleNumberChange(text)
+            if (text.length == 2) {
+                household_number.requestFocus()
+            }
         })
 
         member_status.setUpSpinner(
@@ -103,8 +112,11 @@ class NewClaimFragment : DaggerFragment() {
             }
         )
 
-        household_number.addTextChangedListener(LayoutHelper.OnChangedListener {
-            text -> viewModel.onHouseholdNumberChange(text)
+        household_number.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+            viewModel.onHouseholdNumberChange(text)
+            if (text.length == 6) {
+                household_member_number.requestFocus()
+            }
         })
 
         household_member_number.addTextChangedListener(LayoutHelper.OnChangedListener {
