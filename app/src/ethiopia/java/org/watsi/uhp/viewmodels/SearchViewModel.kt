@@ -1,18 +1,11 @@
 package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.reactivex.Flowable
-import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
-import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
 import javax.inject.Inject
 
-class NewClaimViewModel @Inject constructor(
-    private val loadPendingClaimsCountUseCase: LoadPendingClaimsCountUseCase,
-    private val loadReturnedClaimsCountUseCase: LoadReturnedClaimsCountUseCase
-) : ViewModel() {
+class SearchViewModel @Inject constructor() : ViewModel() {
 
     private val formStateObservable = MutableLiveData<FormState>()
 
@@ -82,30 +75,13 @@ class NewClaimViewModel @Inject constructor(
         return formStateObservable
     }
 
-    fun getMenuStateObservable(): LiveData<MenuState> {
-        val flowables = listOf(
-            loadPendingClaimsCountUseCase.execute(),
-            loadReturnedClaimsCountUseCase.execute()
-        )
-
-        return LiveDataReactiveStreams.fromPublisher(
-            Flowable.combineLatest(flowables, { results ->
-                MenuState(
-                    pendingClaimsCount = results[0] as Int,
-                    returnedClaimsCount = results[1] as Int
-                )
-            })
-        )
-    }
-
-    data class FormState(val regionNumber: String = "",
-                         val woredaNumber: String = "",
-                         val kebeleNumber: String = "",
-                         val memberStatus: String = "",
-                         val householdNumber: String = "",
-                         val householdMemberNumber: String = "",
-                         val error: String = "")
-
-    data class MenuState(val pendingClaimsCount: Int = 0,
-                         val returnedClaimsCount: Int = 0)
+    data class FormState(
+        val regionNumber: String = "",
+        val woredaNumber: String = "",
+        val kebeleNumber: String = "",
+        val memberStatus: String = "",
+        val householdNumber: String = "",
+        val householdMemberNumber: String = "",
+        val error: String = ""
+    )
 }

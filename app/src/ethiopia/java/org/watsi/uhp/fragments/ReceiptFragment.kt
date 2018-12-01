@@ -502,7 +502,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         if (remainingEncounterIds.orEmpty().isEmpty()) {
             when (encounterAction) {
                 EncounterAction.PREPARE -> {
-                    navigationManager.popTo(NewClaimFragment.withSnackbarMessage(message))
+                    navigationManager.popTo(HomeFragment.withSnackbarMessage(message))
                 }
                 EncounterAction.SUBMIT -> {
                     navigationManager.popTo(PendingClaimsFragment.withSnackbarMessage(message))
