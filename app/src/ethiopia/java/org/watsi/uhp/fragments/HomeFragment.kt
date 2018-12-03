@@ -78,7 +78,8 @@ class HomeFragment : DaggerFragment() {
             if (it.returnedClaimsCount > 0) {
                 returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_with_number, it.returnedClaimsCount)
             }
-            if (it.pendingClaimsCount > 0) { pendingClaimsMenuTitle = context.getString(R.string.menu_pending_claims_with_number, it.pendingClaimsCount)
+            if (it.pendingClaimsCount > 0) {
+                pendingClaimsMenuTitle = context.getString(R.string.menu_pending_claims_with_number, it.pendingClaimsCount)
             }
         }
 

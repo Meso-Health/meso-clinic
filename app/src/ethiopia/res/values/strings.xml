@@ -17,8 +17,8 @@
     <string name="delete_claim_confirmation">Delete this claim?</string>
 
     <!--HomeFragment-->
-    <string name="home_fragment_label" translatable="false">Claims</string>
-    <string name="no_claims" translatable="false">No claims available</string>
+    <string name="home_fragment_label">Claims</string>
+    <string name="no_claims">No claims available</string>
 
     <!--SearchFragment-->
     <string name="search_fragment_label">New Claim</string>
