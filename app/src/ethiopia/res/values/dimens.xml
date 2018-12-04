@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Photo dimensions scale -->
+    <dimen name="thumbnailSmall">66dp</dimen>
+
     <!-- dimensions for ethiopian date picker -->
     <dimen name="spinner_width">96dp</dimen>
     <dimen name="spinner_field_width">90dp</dimen>

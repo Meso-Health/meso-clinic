@@ -10,9 +10,9 @@ import org.watsi.uhp.R
 import org.watsi.uhp.views.MemberListItem
 
 class MemberAdapter(
-        private val members: MutableList<MemberWithIdEventAndThumbnailPhoto> = mutableListOf(),
-        private val onItemSelect: (memberRelation: MemberWithIdEventAndThumbnailPhoto) -> Unit,
-        private val clock: Clock
+    private val members: MutableList<MemberWithIdEventAndThumbnailPhoto> = mutableListOf(),
+    private val onItemSelect: (memberRelation: MemberWithIdEventAndThumbnailPhoto) -> Unit,
+    private val clock: Clock
 ) : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
 
     lateinit var memberListItemView: MemberListItem

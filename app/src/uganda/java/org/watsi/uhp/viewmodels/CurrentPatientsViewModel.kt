@@ -4,17 +4,17 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.ViewModel
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.usecases.LoadCheckedInMembersUseCase
 import javax.inject.Inject
 
 class CurrentPatientsViewModel @Inject constructor(
-        memberRepository: MemberRepository
+    private val loadCheckedInMembersUseCase: LoadCheckedInMembersUseCase
 ) : ViewModel() {
 
     private val observable: LiveData<ViewState>
 
     init {
-        val transformedFlowable = memberRepository.checkedInMembers().map { ViewState(it) }
+        val transformedFlowable = loadCheckedInMembersUseCase.execute().map { ViewState(it) }
         observable = LiveDataReactiveStreams.fromPublisher(transformedFlowable)
     }
 

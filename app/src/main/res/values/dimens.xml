@@ -22,7 +22,6 @@
     <dimen name="thumbnailSmallPlaceholderPadding">12dp</dimen>
 
     <!-- Photo dimensions scale -->
-    <dimen name="thumbnailSmall">52dp</dimen>
     <dimen name="thumbnailMedium">80dp</dimen>
     <dimen name="thumbnailLarge">120dp</dimen>
 
