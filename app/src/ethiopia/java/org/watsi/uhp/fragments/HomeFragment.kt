@@ -12,11 +12,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_home.search_member
+import kotlinx.android.synthetic.ethiopia.fragment_home.current_patients
+import kotlinx.android.synthetic.ethiopia.fragment_home.empty_container
+import kotlinx.android.synthetic.ethiopia.fragment_home.patients_container
+import kotlinx.android.synthetic.ethiopia.fragment_home.search_button
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.HomeViewModel
 import javax.inject.Inject
@@ -27,8 +35,11 @@ class HomeFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
+
     lateinit var viewModel: HomeViewModel
     lateinit var menuStateObservable: LiveData<HomeViewModel.MenuState>
+    lateinit var memberAdapter: MemberAdapter
 
     private var snackbarMessageToShow: String? = null
 
@@ -55,7 +66,37 @@ class HomeFragment : DaggerFragment() {
             }
         })
 
+        viewModel.getMemberStateObservable().observe(this, Observer {
+            it?.let { memberState ->
+                val checkedInMembers = memberState.checkedInMembers
+                if (checkedInMembers.isEmpty()) {
+                    empty_container.visibility = View.VISIBLE
+                    patients_container.visibility = View.GONE
+                } else {
+                    empty_container.visibility = View.GONE
+                    patients_container.visibility = View.VISIBLE
+                    memberAdapter.setMembers(checkedInMembers)
+                }
+            }
+        })
+
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
+
+        memberAdapter = MemberAdapter(
+            onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
+                if (memberRelation.identificationEvent != null) {
+                    memberRelation.identificationEvent?.let {
+                        // TODO: navigate to VisitTypeFragment
+                    }
+                } else {
+                    logger.error(
+                        "Member shown on HomeFragment has no corresponding IdentificationEvent",
+                        mapOf("memberId" to memberRelation.member.id.toString())
+                    )
+                }
+            },
+            clock = clock
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,8 +106,15 @@ class HomeFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        search_member.setOnClickListener {
+        RecyclerViewHelper.setRecyclerView(current_patients, memberAdapter, context, false)
+
+        search_button.setOnClickListener {
             navigationManager.goTo(SearchFragment())
+        }
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(search_button, context, snackbarMessage)
+            snackbarMessageToShow = null
         }
     }
 

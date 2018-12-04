@@ -34,7 +34,6 @@
     <string name="time_label">Time</string>
     <string name="scan_card_btn_label">Scan new card</string>
     <string name="photo_btn_label">Take photo</string>
-    <string name="photo_description">Photo</string>
     <string name="price_with_currency">%1$s UGX</string>
     <string name="gender_label">Gender</string>
     <string name="save_btn_label">Save</string>

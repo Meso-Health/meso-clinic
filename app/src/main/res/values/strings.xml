@@ -24,6 +24,7 @@
     <string name="phone_number_prefix" translatable="false">(0)</string>
     <string name="bullet" translatable="false">\u2022</string>
     <string name="middle_dot" translatable="false">\u00B7</string>
+    <string name="photo_description">Photo</string>
 
     <!-- Form -->
     <string name="age_field_label">Age</string>
