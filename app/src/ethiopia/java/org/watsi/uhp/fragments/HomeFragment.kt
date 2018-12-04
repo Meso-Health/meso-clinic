@@ -15,7 +15,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_home.current_patients
 import kotlinx.android.synthetic.ethiopia.fragment_home.empty_container
 import kotlinx.android.synthetic.ethiopia.fragment_home.patients_container
-import kotlinx.android.synthetic.ethiopia.fragment_home.search_member
+import kotlinx.android.synthetic.ethiopia.fragment_home.search_button
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
@@ -24,6 +24,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.HomeViewModel
 import javax.inject.Inject
@@ -107,8 +108,13 @@ class HomeFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         RecyclerViewHelper.setRecyclerView(current_patients, memberAdapter, context, false)
 
-        search_member.setOnClickListener {
+        search_button.setOnClickListener {
             navigationManager.goTo(SearchFragment())
+        }
+
+        snackbarMessageToShow?.let { snackbarMessage ->
+            SnackbarHelper.show(search_button, context, snackbarMessage)
+            snackbarMessageToShow = null
         }
     }
 
