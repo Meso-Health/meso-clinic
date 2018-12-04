@@ -76,6 +76,49 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun findHouseholdIdByMembershipNumber() {
+        val householdId = UUID.randomUUID()
+        val membershipNumber = "01/01/01/P/10"
+        val memberModel = MemberModelFactory.build(householdId = householdId, membershipNumber = membershipNumber)
+        val memberWithThumbnailModel = MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findHouseholdIdByMembershipNumber(membershipNumber)
+            .test()
+            .assertValue(householdId)
+    }
+
+    @Test
+    fun findHouseholdIdByMembershipNumberDuplicate() {
+        val householdId1 = UUID.randomUUID()
+        val householdId2 = UUID.randomUUID()
+        val membershipNumber = "01/01/01/P/10"
+        val memberModel1 = MemberModelFactory.build(householdId = householdId1, membershipNumber = membershipNumber)
+        val memberWithThumbnailModel1 = MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel1)
+        val memberModel2 = MemberModelFactory.build(householdId = householdId2, membershipNumber = membershipNumber)
+        val memberWithThumbnailModel2 = MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel2)
+
+        memberDao.findHouseholdIdByMembershipNumber(membershipNumber)
+            .test()
+            .assertValue(householdId2)
+    }
+
+    @Test
+    fun allHouseholdMembers() {
+        val householdId = UUID.randomUUID()
+        val householdMembers = (1..3).map {
+            MemberWithIdEventAndThumbnailPhotoModel(
+                memberModel = MemberModelFactory.create(memberDao, householdId = householdId),
+                identificationEventModels = emptyList()
+            )
+        }
+        MemberModelFactory.create(memberDao)
+
+        memberDao.allHouseholdMembers(householdId)
+            .test()
+            .assertValue(householdMembers)
+    }
+
+    @Test
     fun remainingHouseholdMembers() {
         val householdId = UUID.randomUUID()
         val householdMembers = (1..3).map {

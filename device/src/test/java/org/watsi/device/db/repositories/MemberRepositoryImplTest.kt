@@ -49,6 +49,7 @@ import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PhotoFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class MemberRepositoryImplTest {
@@ -107,6 +108,39 @@ class MemberRepositoryImplTest {
 
         repository.checkedInMembers().test().assertValue(
                 listOf(memberRelation.toMemberWithIdEventAndThumbnailPhoto()))
+    }
+
+    @Test
+    fun findHouseholdByMembershipNumber() {
+        val membershipNumber = "01/01/01/P/10"
+        val householdId = UUID.randomUUID()
+        val householdMemberRelations = listOf(
+            MemberWithIdEventAndThumbnailPhoto(
+                member = MemberFactory.build(membershipNumber = membershipNumber, householdId = householdId),
+                thumbnailPhoto = PhotoFactory.build(),
+                identificationEvent = IdentificationEventFactory.build()
+            ),
+            MemberWithIdEventAndThumbnailPhoto(
+                member = MemberFactory.build(membershipNumber = membershipNumber, householdId = householdId),
+                thumbnailPhoto = PhotoFactory.build(),
+                identificationEvent = IdentificationEventFactory.build()
+            )
+        )
+        whenever(mockDao.findHouseholdIdByMembershipNumber(membershipNumber)).thenReturn(
+            Maybe.just(householdId)
+        )
+
+        whenever(mockDao.allHouseholdMembers(householdId)).thenReturn(
+            Flowable.just(householdMemberRelations.map {
+                MemberWithIdEventAndThumbnailPhotoModel(
+                    memberModel = MemberModel.fromMember(it.member, clock),
+                    photoModels = listOf(PhotoModel.fromPhoto(it.thumbnailPhoto!!, clock)),
+                    identificationEventModels = listOf(
+                        IdentificationEventModel.fromIdentificationEvent(it.identificationEvent!!, clock))
+                )
+            }))
+
+        repository.findHouseholdByMembershipNumber(membershipNumber).test().assertValue(householdMemberRelations)
     }
 
     @Test

@@ -21,6 +21,7 @@ import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
+import org.watsi.domain.usecases.LoadHouseholdByMembershipNumberUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
@@ -140,6 +141,11 @@ class DomainModule {
     @Provides
     fun provideLoadMemberUseCase(memberRepository: MemberRepository): LoadMemberUseCase {
         return LoadMemberUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideLoadHouseholdByMembershipNumberUseCase(memberRepository: MemberRepository): LoadHouseholdByMembershipNumberUseCase {
+        return LoadHouseholdByMembershipNumberUseCase(memberRepository)
     }
 
     @Provides

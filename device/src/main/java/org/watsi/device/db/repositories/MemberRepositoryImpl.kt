@@ -64,6 +64,15 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
     }
 
+    override fun findHouseholdByMembershipNumber(membershipNumber: String): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        val householdId =  memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io()).blockingGet()
+        return memberDao.allHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
+            memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
+                memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
+            }
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithIdEventAndThumbnailModels ->
             memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->

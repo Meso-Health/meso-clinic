@@ -33,6 +33,9 @@ interface MemberDao {
     @Query("SELECT * FROM members where id = :id LIMIT 1")
     fun find(id: UUID): Single<MemberModel>
 
+    @Query("SELECT householdId FROM members where membershipNumber = :membershipNumber ORDER BY members.enrolledAt DESC LIMIT 1")
+    fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
+
     @Query("SELECT * FROM members")
     fun all(): Flowable<List<MemberModel>>
 
@@ -67,6 +70,10 @@ interface MemberDao {
             "IS NOT NULL\n"
     )
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
+
+    @Transaction
+    @Query("SELECT * FROM members WHERE householdId = :householdId")
+    fun allHouseholdMembers(householdId: UUID?): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Transaction
     @Query("SELECT * FROM members WHERE householdId = :householdId AND id != :memberId")
