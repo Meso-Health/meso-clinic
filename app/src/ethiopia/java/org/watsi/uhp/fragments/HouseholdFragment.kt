@@ -50,7 +50,7 @@ class HouseholdFragment : DaggerFragment() {
            it?.let { viewState ->
                val members = viewState.householdMembers
 
-               // TODO: add any necessary household metadata
+               // TODO: show head of household first
                memberAdapter.setMembers(members)
            }
         })
