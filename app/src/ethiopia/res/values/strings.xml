@@ -20,10 +20,6 @@
     <string name="home_fragment_label">Claims</string>
     <string name="no_claims">No claims available</string>
 
-    <!-- MemberListItem -->
-    <string name="member_demographic_info">%1$s &#183; %2$s</string>
-    <string name="member_membership_info">%1$s &#183; %2$s</string>
-
     <!-- SearchFragment -->
     <string name="search_fragment_label">New Claim</string>
     <string name="slash" translatable="false">/</string>

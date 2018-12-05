@@ -4,12 +4,12 @@ import android.content.Context
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
-import org.watsi.uhp.R.string.male
-import org.watsi.uhp.R.string.female
-import org.watsi.uhp.R.string.years
-import org.watsi.uhp.R.string.months
 import org.watsi.uhp.R.string.days
+import org.watsi.uhp.R.string.female
+import org.watsi.uhp.R.string.male
 import org.watsi.uhp.R.string.middle_dot
+import org.watsi.uhp.R.string.months
+import org.watsi.uhp.R.string.years
 
 object MemberStringHelper {
 
@@ -20,6 +20,11 @@ object MemberStringHelper {
             context.getString(male)
         }
         return "$genderString ${context.getString(middle_dot)} ${getDisplayAge(member, context, clock)}"
+    }
+
+    fun formatMembershipInfo(member: Member, context: Context): String {
+        val includeSeparator = member.membershipNumber != null && member.medicalRecordNumber != null
+        return "${member.membershipNumber ?: ""}${if (includeSeparator) " ${context.getString(middle_dot)} " else ""}${member.medicalRecordNumber ?: ""}"
     }
 
     /**
