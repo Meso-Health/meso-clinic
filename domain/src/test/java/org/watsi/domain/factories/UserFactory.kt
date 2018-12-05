@@ -8,7 +8,9 @@ object UserFactory {
             id: Int = 1,
             username: String = "foo",
             name: String = "Foo",
-            providerId: Int = 1) : User {
-        return User(id = id, username = username, name = name, providerId = providerId)
+            providerId: Int = 1,
+            securityPin: String = "0000") : User {
+        return User(id = id, username = username, name = name, providerId = providerId,
+            securityPin = securityPin)
     }
 }

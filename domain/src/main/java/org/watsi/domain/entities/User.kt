@@ -5,4 +5,5 @@ import java.io.Serializable
 data class User(val id: Int,
                 val username: String,
                 val name: String,
-                val providerId: Int): Serializable
+                val providerId: Int,
+                val securityPin: String): Serializable

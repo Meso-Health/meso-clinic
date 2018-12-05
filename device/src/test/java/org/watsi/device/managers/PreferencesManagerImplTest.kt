@@ -8,7 +8,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.AuthenticationToken
-import org.watsi.domain.entities.User
+import org.watsi.domain.factories.UserFactory
 
 @RunWith(RobolectricTestRunner::class)
 class PreferencesManagerImplTest {
@@ -17,7 +17,7 @@ class PreferencesManagerImplTest {
 
     @Test
     fun supportsGettingAndSettingAuthenticationToken() {
-        val user = User(0, "foo", "bar", 0)
+        val user = UserFactory.build()
         val token = AuthenticationToken("token", Instant.now(), user)
         assertNull(preferencesManager.getAuthenticationToken())
         preferencesManager.setAuthenticationToken(token)

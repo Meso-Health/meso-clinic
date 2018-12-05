@@ -15,6 +15,7 @@
     <string name="total">Total</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
+    <string name="submit">Submit</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
     <string name="prev_price" tools:ignore="MissingTranslation">%1$s&#8194;&#9656;</string>
@@ -66,7 +67,7 @@
 
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">Review</string>
-    <string name="submit_encounter_button">Submit</string>
+    <string name="submit_encounter_button">@string/submit</string>
     <string name="receipt_total">Total</string>
     <string name="encounter_submitted">Claim submitted</string>
     <string name="encounter_saved">Claim saved</string>

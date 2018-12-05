@@ -19,6 +19,8 @@
     <!-- HomeFragment -->
     <string name="home_fragment_label">Claims</string>
     <string name="no_claims">No claims available</string>
+    <string name="pending_claims_dialog_label">Enter security PIN</string>
+    <string name="pending_claims_dialog_error_message">Invalid PIN</string>
 
     <!-- MemberListItem -->
     <string name="member_demographic_info">%1$s &#183; %2$s</string>

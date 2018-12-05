@@ -35,7 +35,7 @@ class SessionManagerImplTest {
         val password = "bar"
         val token = AuthenticationTokenFactory.build()
         val authenticationTokenApi = AuthenticationTokenApi(
-                token.token, token.expiresAt.toString(), UserApi(1, username, username, 1))
+                token.token, token.expiresAt.toString(), UserApi(1, username, username, 1, "0000"))
         whenever(mockCoverageApi.getAuthToken(any())).thenReturn(Single.just(authenticationTokenApi))
 
         sessionManager.login(username, password).test()
