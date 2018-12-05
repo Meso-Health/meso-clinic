@@ -103,7 +103,7 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun allHouseholdMembers() {
+    fun findHouseholdMembers() {
         val householdId = UUID.randomUUID()
         val householdMembers = (1..3).map {
             MemberWithIdEventAndThumbnailPhotoModel(
@@ -113,25 +113,9 @@ class MemberDaoTest : DaoBaseTest() {
         }
         MemberModelFactory.create(memberDao)
 
-        memberDao.allHouseholdMembers(householdId)
+        memberDao.findHouseholdMembers(householdId)
             .test()
             .assertValue(householdMembers)
-    }
-
-    @Test
-    fun remainingHouseholdMembers() {
-        val householdId = UUID.randomUUID()
-        val householdMembers = (1..3).map {
-            MemberWithIdEventAndThumbnailPhotoModel(
-                    memberModel = MemberModelFactory.create(memberDao, householdId = householdId),
-                    identificationEventModels = emptyList()
-            )
-        }
-        MemberModelFactory.create(memberDao)
-
-        memberDao.remainingHouseholdMembers(householdMembers[0].memberModel!!.id, householdId)
-                .test()
-                .assertValue(listOf(householdMembers[1], householdMembers[2]))
     }
 
     @Test

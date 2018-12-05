@@ -33,6 +33,9 @@
     <string name="start_claim_button">Start Claim</string>
     <string name="invalid_membership_error">Invalid membership number</string>
 
+    <!-- HouseholdFragment -->
+    <string name="household_fragment_label">Search</string>
+
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
     <string name="medical_record_number">Medical Record Number</string>

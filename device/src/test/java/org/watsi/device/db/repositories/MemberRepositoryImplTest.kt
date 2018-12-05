@@ -130,7 +130,7 @@ class MemberRepositoryImplTest {
             Maybe.just(householdId)
         )
 
-        whenever(mockDao.allHouseholdMembers(householdId)).thenReturn(
+        whenever(mockDao.findHouseholdMembers(householdId)).thenReturn(
             Flowable.just(householdMemberRelations.map {
                 MemberWithIdEventAndThumbnailPhotoModel(
                     memberModel = MemberModel.fromMember(it.member, clock),
@@ -144,26 +144,22 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun remainingHouseholdMembers() {
-        val member = MemberFactory.build()
+    fun findHouseholdMembers() {
+        val householdId = UUID.randomUUID()
+        val member1 = MemberFactory.build(householdId = householdId)
+        val member2 = MemberFactory.build(householdId = householdId)
         val householdMemberRelations = listOf(
-                MemberWithIdEventAndThumbnailPhoto(
-                        member = MemberFactory.build(householdId = member.householdId),
-                        thumbnailPhoto = PhotoFactory.build(),
-                        identificationEvent = IdentificationEventFactory.build()
-                )
+            MemberWithIdEventAndThumbnailPhoto(member = member1, identificationEvent = null, thumbnailPhoto = null),
+            MemberWithIdEventAndThumbnailPhoto(member = member2, identificationEvent = null, thumbnailPhoto = null)
         )
-        whenever(mockDao.remainingHouseholdMembers(member.id, member.householdId)).thenReturn(
-                Flowable.just(householdMemberRelations.map {
-                    MemberWithIdEventAndThumbnailPhotoModel(
-                            memberModel = MemberModel.fromMember(it.member, clock),
-                            photoModels = listOf(PhotoModel.fromPhoto(it.thumbnailPhoto!!, clock)),
-                            identificationEventModels = listOf(
-                                    IdentificationEventModel.fromIdentificationEvent(it.identificationEvent!!, clock))
-                    )
-                }))
 
-        repository.remainingHouseholdMembers(member).test().assertValue(householdMemberRelations)
+        whenever(mockDao.findHouseholdMembers(householdId)).thenReturn(
+            Flowable.just(householdMemberRelations.map {
+                MemberWithIdEventAndThumbnailPhotoModel(memberModel = MemberModel.fromMember(it.member, clock))
+            })
+        )
+
+        repository.findHouseholdMembers(householdId).test().assertValue(householdMemberRelations)
     }
 
     @Test

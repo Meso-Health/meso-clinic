@@ -12,6 +12,7 @@ import org.watsi.uhp.viewmodels.DrugAndSupplyViewModel
 import org.watsi.uhp.viewmodels.EditPriceViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.HomeViewModel
+import org.watsi.uhp.viewmodels.HouseholdViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.PendingClaimsViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -32,6 +33,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SearchViewModel::class)
     abstract fun bindSearchViewModel(viewModel: SearchViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HouseholdViewModel::class)
+    abstract fun bindHouseholdViewModel(viewModel: HouseholdViewModel): ViewModel
 
     @Binds
     @IntoMap
