@@ -55,6 +55,19 @@ class MemberStringHelperTest {
     }
 
     @Test
+    fun formatMembershipInfo() {
+        val m1 = MemberFactory.build(membershipNumber = null, medicalRecordNumber = null)
+        val m2 = MemberFactory.build(membershipNumber = "01/01/01/P-000001/01", medicalRecordNumber = null)
+        val m3 = MemberFactory.build(membershipNumber = null, medicalRecordNumber = "123456")
+        val m4 = MemberFactory.build(membershipNumber = "01/01/01/P-000001/01", medicalRecordNumber = "123456")
+
+        assertEquals(MemberStringHelper.formatMembershipInfo(m1, mockContext), "")
+        assertEquals(MemberStringHelper.formatMembershipInfo(m2, mockContext), "01/01/01/P-000001/01")
+        assertEquals(MemberStringHelper.formatMembershipInfo(m3, mockContext), "123456")
+        assertEquals(MemberStringHelper.formatMembershipInfo(m4, mockContext), "01/01/01/P-000001/01 · 123456")
+    }
+
+    @Test
     fun formatPhoneNumber() {
         val memberNullPhone = MemberFactory.build(phoneNumber = null)
         val member9Digit = MemberFactory.build(phoneNumber = "775555555")

@@ -66,19 +66,19 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
 
     override fun findHouseholdByMembershipNumber(membershipNumber: String): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         val householdId =  memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io()).blockingGet()
-        return memberDao.allHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
+        return memberDao.findHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
             memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
                 memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
             }
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithIdEventAndThumbnailModels ->
+    override fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.findHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
             memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
                 memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun upsert(member: Member, deltas: List<Delta>): Completable {

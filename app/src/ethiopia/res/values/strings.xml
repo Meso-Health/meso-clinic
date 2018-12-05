@@ -22,10 +22,6 @@
     <string name="pending_claims_dialog_label">Enter security PIN</string>
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
 
-    <!-- MemberListItem -->
-    <string name="member_demographic_info">%1$s &#183; %2$s</string>
-    <string name="member_membership_info">%1$s &#183; %2$s</string>
-
     <!-- SearchFragment -->
     <string name="search_fragment_label">New Claim</string>
     <string name="slash" translatable="false">/</string>
@@ -34,6 +30,9 @@
     <string name="six_zeroes_placeholder" translatable="false">000000</string>
     <string name="start_claim_button">Start Claim</string>
     <string name="invalid_membership_error">Invalid membership number</string>
+
+    <!-- HouseholdFragment -->
+    <string name="household_fragment_label">Search</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>

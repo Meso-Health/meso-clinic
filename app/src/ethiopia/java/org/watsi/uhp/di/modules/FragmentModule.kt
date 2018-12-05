@@ -6,6 +6,7 @@ import org.watsi.uhp.fragments.DiagnosisFragment
 import org.watsi.uhp.fragments.DrugAndSupplyFragment
 import org.watsi.uhp.fragments.EditPriceFragment
 import org.watsi.uhp.fragments.HomeFragment
+import org.watsi.uhp.fragments.HouseholdFragment
 import org.watsi.uhp.fragments.MemberInformationFragment
 import org.watsi.uhp.fragments.PendingClaimsFragment
 import org.watsi.uhp.fragments.ReceiptFragment
@@ -19,6 +20,7 @@ import org.watsi.uhp.fragments.VisitTypeFragment
 abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindHomeFragment(): HomeFragment
     @ContributesAndroidInjector abstract fun bindSearchFragment(): SearchFragment
+    @ContributesAndroidInjector abstract fun bindHouseholdFragment(): HouseholdFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment
     @ContributesAndroidInjector abstract fun bindDrugAndSupplyFragment(): DrugAndSupplyFragment
     @ContributesAndroidInjector abstract fun bindEditPriceFragment(): EditPriceFragment

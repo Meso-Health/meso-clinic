@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.member_phot
 import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.membership_info
 import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.name
 import org.threeten.bp.Clock
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.MemberStringHelper
@@ -30,23 +29,7 @@ class MemberListItem @JvmOverloads constructor(
                 memberRelation.thumbnailPhoto?.bytes, member_photo, context, member.gender)
 
         name.text = member.name
-
-        val genderString = if (member.gender == Member.Gender.F) {
-            context.getString(R.string.female)
-        } else {
-            context.getString(R.string.male)
-        }
-
-        demographic_info.text = context.getString(
-            R.string.member_demographic_info,
-            genderString,
-            MemberStringHelper.getDisplayAge(member, context, clock)
-        )
-
-        membership_info.text = context.getString(
-            R.string.member_membership_info,
-            member.membershipNumber,
-            member.medicalRecordNumber
-        )
+        demographic_info.text = MemberStringHelper.formatAgeAndGender(member, context, clock)
+        membership_info.text = MemberStringHelper.formatMembershipInfo(member, context)
     }
 }
