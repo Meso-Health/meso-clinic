@@ -16,13 +16,14 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
+import org.watsi.domain.usecases.FindHouseholdIdByCardIdUseCase
+import org.watsi.domain.usecases.FindHouseholdIdByMembershipNumberUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.domain.usecases.LoadCheckedInMembersUseCase
 import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
-import org.watsi.domain.usecases.LoadHouseholdByMembershipNumberUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
@@ -142,11 +143,6 @@ class DomainModule {
     @Provides
     fun provideLoadMemberUseCase(memberRepository: MemberRepository): LoadMemberUseCase {
         return LoadMemberUseCase(memberRepository)
-    }
-
-    @Provides
-    fun provideLoadHouseholdByMembershipNumberUseCase(memberRepository: MemberRepository): LoadHouseholdByMembershipNumberUseCase {
-        return LoadHouseholdByMembershipNumberUseCase(memberRepository)
     }
 
     @Provides
@@ -270,5 +266,19 @@ class DomainModule {
         memberRepository: MemberRepository
     ): LoadCheckedInMembersUseCase {
         return LoadCheckedInMembersUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideFindHouseholdIdByMembershipNumberUseCase(
+        memberRepository: MemberRepository
+    ): FindHouseholdIdByMembershipNumberUseCase {
+        return FindHouseholdIdByMembershipNumberUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideFindHouseholdIdByCardIdUseCase(
+        memberRepository: MemberRepository
+    ): FindHouseholdIdByCardIdUseCase {
+        return FindHouseholdIdByCardIdUseCase(memberRepository)
     }
 }

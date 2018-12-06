@@ -30,16 +30,19 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
-    @Query("SELECT * FROM members where id = :id LIMIT 1")
+    @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun find(id: UUID): Single<MemberModel>
 
-    @Query("SELECT householdId FROM members where membershipNumber = :membershipNumber ORDER BY members.enrolledAt DESC LIMIT 1")
+    @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
+
+    @Query("SELECT householdId FROM members WHERE cardId = :cardId AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
+    fun findHouseholdIdByCardId(cardId: String): Maybe<UUID>
 
     @Query("SELECT * FROM members")
     fun all(): Flowable<List<MemberModel>>
 
-    @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
+    @Query("SELECT * FROM members WHERE cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): Maybe<MemberModel>
 
     @Transaction

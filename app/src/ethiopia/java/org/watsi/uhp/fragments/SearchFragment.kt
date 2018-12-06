@@ -1,11 +1,16 @@
 package org.watsi.uhp.fragments
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -15,16 +20,20 @@ import kotlinx.android.synthetic.ethiopia.fragment_search.kebele_number
 import kotlinx.android.synthetic.ethiopia.fragment_search.member_status
 import kotlinx.android.synthetic.ethiopia.fragment_search.membership_number_layout
 import kotlinx.android.synthetic.ethiopia.fragment_search.region_number
-import kotlinx.android.synthetic.ethiopia.fragment_search.start_button
+import kotlinx.android.synthetic.ethiopia.fragment_search.search_button
 import kotlinx.android.synthetic.ethiopia.fragment_search.woreda_number
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.usecases.FindHouseholdIdByMembershipNumberUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 class SearchFragment : DaggerFragment() {
@@ -33,9 +42,14 @@ class SearchFragment : DaggerFragment() {
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var findHouseholdIdByMembershipNumberUseCase: FindHouseholdIdByMembershipNumberUseCase
     @Inject lateinit var logger: Logger
     lateinit var viewModel: SearchViewModel
     lateinit var formStateObservable: LiveData<SearchViewModel.FormState>
+
+    companion object {
+        const val SCAN_CARD_INTENT = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +65,7 @@ class SearchFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.search_fragment_label), null)
+        (activity as ClinicActivity).setSoftInputModeToResize()
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_search, container, false)
     }
@@ -96,11 +111,19 @@ class SearchFragment : DaggerFragment() {
             text -> viewModel.onHouseholdMemberNumberChange(text)
         })
 
-        start_button.setOnClickListener {
+        search_button.setOnClickListener { view ->
             formStateObservable.value?.let {
                 if (!viewModel.membershipNumberHasError(it)) {
                     val membershipNumber = viewModel.getMembershipNumber(it)
-                    navigationManager.popTo(MemberInformationFragment.withMembershipNumber(membershipNumber))
+                    findHouseholdIdByMembershipNumberUseCase.execute(membershipNumber).subscribe( {
+                        navigationManager.goTo(HouseholdFragment.forHouseholdId(it))
+                    }, { err ->
+                        logger.error(err)
+                        SnackbarHelper.showError(view, context, err.localizedMessage)
+                    }, {
+                        // TODO: Show error message as described in #162227434 (and remove this snackbar)
+                        SnackbarHelper.showError(view, context, "Could not find CBHI ID")
+                    })
                 } else {
                     viewModel.setMembershipNumberError(getString(R.string.invalid_membership_error))
                 }
@@ -114,6 +137,50 @@ class SearchFragment : DaggerFragment() {
                 if (textFields.all { !it.hasFocus() }) {
                     keyboardManager.hideKeyboard(view)
                 }
+            }
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        menu?.let {
+            it.findItem(R.id.menu_search_card).isVisible = true
+            it.findItem(R.id.menu_logout).isVisible = true
+            it.findItem(R.id.menu_status).isVisible = true
+            it.findItem(R.id.menu_switch_language).isVisible = true
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_search_card -> {
+                startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
+            }
+            R.id.menu_status -> {
+                navigationManager.goTo(StatusFragment())
+            }
+            R.id.menu_logout -> {
+                AlertDialog.Builder(activity)
+                    .setTitle(R.string.log_out_alert)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        sessionManager.logout()
+                        (activity as ClinicActivity).navigateToAuthenticationActivity()
+                    }.create().show()
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        return when (resultCode) {
+            Activity.RESULT_OK -> {
+                val householdId = data?.getSerializableExtra(SearchByMemberCardActivity.MEMBER_RESULT_KEY) as UUID
+                navigationManager.goTo(HouseholdFragment.forHouseholdId(householdId))
+            }
+            Activity.RESULT_CANCELED -> { }
+            else -> {
+                logger.error("QrCodeActivity.parseResult called with resultCode: $resultCode")
             }
         }
     }

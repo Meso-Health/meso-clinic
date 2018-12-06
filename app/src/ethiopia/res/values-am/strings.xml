@@ -107,7 +107,7 @@
     <string name="eth_datepicker_year">አመት</string>
 
     <!-- SearchFragment -->
-    <string name="search_fragment_label">ኣዲስ የክፍያ ጥያቄ</string>
+    <string name="search_fragment_label">@string/search</string>
     <string name="start_claim_button">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
     <string name="encounter_submitted">የክፍያ ጥያቄ በሚገባ ተላልፏል</string>
     <string name="invalid_membership_error">የኣባልነት መለያ ቁጥር ስሕተት ኣለዉ</string>

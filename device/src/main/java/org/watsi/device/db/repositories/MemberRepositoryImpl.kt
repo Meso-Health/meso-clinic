@@ -48,6 +48,14 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
+    override fun findHouseholdIdByMembershipNumber(cardId: String): Maybe<UUID> {
+        return memberDao.findHouseholdIdByMembershipNumber(cardId).subscribeOn(Schedulers.io())
+    }
+
+    override fun findHouseholdIdByCardId(cardId: String): Maybe<UUID> {
+        return memberDao.findHouseholdIdByCardId(cardId).subscribeOn(Schedulers.io())
+    }
+
     override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.byIds(ids).map {
             it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
@@ -62,15 +70,6 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
 
     override fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean> {
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
-    }
-
-    override fun findHouseholdByMembershipNumber(membershipNumber: String): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
-        val householdId =  memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io()).blockingGet()
-        return memberDao.findHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
-            memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
-                memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
-            }
-        }.subscribeOn(Schedulers.io())
     }
 
     override fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {

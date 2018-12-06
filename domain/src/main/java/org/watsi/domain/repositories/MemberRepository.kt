@@ -15,10 +15,11 @@ interface MemberRepository {
     fun find(id: UUID): Single<Member>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun findByCardId(cardId: String): Maybe<Member>
+    fun findHouseholdIdByMembershipNumber(cardId: String): Maybe<UUID>
+    fun findHouseholdIdByCardId(cardId: String): Maybe<UUID>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
-    fun findHouseholdByMembershipNumber(membershipNumber: String): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable

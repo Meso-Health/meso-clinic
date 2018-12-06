@@ -23,7 +23,7 @@
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
 
     <!-- SearchFragment -->
-    <string name="search_fragment_label">New Claim</string>
+    <string name="search_fragment_label">@string/search</string>
     <string name="slash" translatable="false">/</string>
     <string name="two_zeroes_placeholder" translatable="false">00</string>
     <string name="three_zeroes_placeholder" translatable="false">000</string>
@@ -32,7 +32,7 @@
     <string name="invalid_membership_error">Invalid membership number</string>
 
     <!-- HouseholdFragment -->
-    <string name="household_fragment_label">Search</string>
+    <string name="household_fragment_label">@string/search</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
@@ -114,5 +114,9 @@
         <item quantity="one">%d returned claim</item>
         <item quantity="other">%d returned claims</item>
     </plurals>
+
+    <!-- Search Terms -->
+    <string name="search_by_member_card">Search member card</string>
+    <string name="search">Search</string>
 
 </resources>
