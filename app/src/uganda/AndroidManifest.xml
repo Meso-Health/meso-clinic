@@ -23,10 +23,6 @@
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
 
         <service
-            android:name=".services.FetchMemberPhotosService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
-        <service
             android:name=".services.SyncPhotosService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />

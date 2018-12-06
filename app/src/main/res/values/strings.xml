@@ -81,8 +81,10 @@
     <string name="version_and_sync_label">Status</string>
     <string name="status_title" translatable="false">Network</string>
     <string name="current_user_label" translatable="false">Current User</string>
+    <string name="fetch_members_label">Members last updated</string>
     <string name="fetch_billables_label">Prices last updated</string>
     <string name="fetch_diagnoses_label">Diagnoses last updated</string>
+    <string name="fetch_member_pictures_label">Member photos</string>
     <string name="sync_new_members_label">New members</string>
     <string name="sync_claims_label">Claims</string>
     <string name="all_synced">All synced</string>

@@ -5,10 +5,13 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DiagnosisRepository
+import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import javax.inject.Inject
 
 class FetchService : BaseService() {
+
+    @Inject lateinit var memberRepository: MemberRepository
     @Inject lateinit var billableRepository: BillableRepository
     @Inject lateinit var diagnosisRepository: DiagnosisRepository
     @Inject lateinit var fetchReturnedClaimsUseCase: FetchReturnedClaimsUseCase
@@ -28,6 +31,7 @@ class FetchService : BaseService() {
             }
 
             Completable.concatArray(
+                memberRepository.fetch().onErrorComplete { setErrored(it) },
                 billableRepository.fetch().onErrorComplete { setErrored(it) },
                 diagnosisRepository.fetch().onErrorComplete { setErrored(it) },
                 fetchReturnedClaimsUseCase.execute().onErrorComplete { setErrored(it) },

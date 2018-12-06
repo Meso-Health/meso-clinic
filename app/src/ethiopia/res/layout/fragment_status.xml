@@ -30,12 +30,20 @@
             app:layout_constraintTop_toBottomOf="@id/status_header" />
 
         <org.watsi.uhp.views.StatusField
+            android:id="@+id/fetch_members_updated_at"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/status_field_margin"
+            android:text="@string/fetch_members_label"
+            app:layout_constraintTop_toBottomOf="@id/current_user"/>
+
+        <org.watsi.uhp.views.StatusField
             android:id="@+id/fetch_billables_updated_at"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/status_field_margin"
             android:text="@string/fetch_billables_label"
-            app:layout_constraintTop_toBottomOf="@id/current_user"/>
+            app:layout_constraintTop_toBottomOf="@id/fetch_members_updated_at"/>
 
         <org.watsi.uhp.views.StatusField
             android:id="@+id/fetch_diagnoses_updated_at"
@@ -46,12 +54,20 @@
             app:layout_constraintTop_toBottomOf="@id/fetch_billables_updated_at"/>
 
         <org.watsi.uhp.views.StatusField
+            android:id="@+id/unfetched_member_photos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/status_field_margin"
+            android:text="@string/fetch_member_pictures_label"
+            app:layout_constraintTop_toBottomOf="@id/fetch_diagnoses_updated_at"/>
+
+        <org.watsi.uhp.views.StatusField
             android:id="@+id/unsynced_new_members"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/status_field_margin"
             android:text="@string/sync_new_members_label"
-            app:layout_constraintTop_toBottomOf="@id/fetch_diagnoses_updated_at"/>
+            app:layout_constraintTop_toBottomOf="@id/unfetched_member_photos"/>
 
         <org.watsi.uhp.views.StatusField
             android:id="@+id/unsynced_encounters"
