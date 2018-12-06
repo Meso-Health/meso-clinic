@@ -81,8 +81,6 @@
 
     <!-- StatusFragment -->
     <string name="sync_encounter_forms_label">Treatment Forms</string>
-    <string name="fetch_members_label">Members last updated</string>
-    <string name="fetch_member_pictures_label">Member photos</string>
     <string name="sync_edited_members_label">Edited members</string>
     <string name="sync_id_events_label">Identifications</string>
 

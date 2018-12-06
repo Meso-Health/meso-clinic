@@ -19,6 +19,7 @@ import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.LocaleManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.BaseService
+import org.watsi.uhp.services.FetchMemberPhotosService
 import org.watsi.uhp.services.FetchService
 import org.watsi.uhp.services.SyncDataService
 import javax.inject.Inject
@@ -31,7 +32,8 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     companion object {
         private val FETCH_SERVICE_JOB_ID = 0
-        private val SYNC_DATA_SERVICE_JOB_ID = 1
+        private val FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID = 1
+        private val SYNC_DATA_SERVICE_JOB_ID = 2
         val requiredPermissions = arrayOf(Manifest.permission.INTERNET, Manifest.permission.CAMERA)
     }
 
@@ -71,6 +73,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     fun startServices() {
         BaseService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
+        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
     }
 
