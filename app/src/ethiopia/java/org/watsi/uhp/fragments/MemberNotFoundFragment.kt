@@ -11,7 +11,8 @@ import org.watsi.uhp.activities.ClinicActivity
 class MemberNotFoundFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(getString(R.string.household_fragment_label), R.drawable.ic_arrow_back_white_24dp)
+        (activity as ClinicActivity).setToolbar(
+            getString(R.string.member_not_found_fragment_label), R.drawable.ic_arrow_back_white_24dp)
         return inflater?.inflate(R.layout.fragment_member_not_found, container, false)
     }
 }
