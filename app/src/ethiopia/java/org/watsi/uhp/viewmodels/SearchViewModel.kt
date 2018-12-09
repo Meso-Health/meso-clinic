@@ -3,6 +3,7 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import org.watsi.domain.entities.CbhiId
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor() : ViewModel() {
@@ -53,17 +54,23 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getMembershipNumber(formState: FormState): String {
-        return formState.regionNumber + "/" + formState.woredaNumber + "/" + formState.kebeleNumber + "/" +
-                    formState.memberStatus + "-" + formState.householdNumber + "/" + formState.householdMemberNumber
+    private fun parseCbhiId(formState: FormState): CbhiId {
+        return CbhiId(
+            formState.regionNumber.toIntOrNull(),
+            formState.woredaNumber.toIntOrNull(),
+            formState.kebeleNumber.toIntOrNull(),
+            CbhiId.Paying.valueOf(formState.memberStatus),
+            formState.householdNumber.toIntOrNull(),
+            formState.householdMemberNumber.toIntOrNull()
+        )
     }
 
-    fun membershipNumberHasError(formState: FormState): Boolean {
-        val hasError = formState.regionNumber.isBlank() || formState.woredaNumber.isBlank() || formState.kebeleNumber.isBlank() ||
-                formState.memberStatus.isBlank() || formState.householdNumber.isBlank()
+    /**
+     * This function is not null-safe by itself because it assumes validation has passed
+     */
+    fun getMembershipNumber(formState: FormState): String = parseCbhiId(formState).formatted()!!
 
-        return hasError
-    }
+    fun membershipNumberHasError(formState: FormState): Boolean = !parseCbhiId(formState).valid()
 
     fun setMembershipNumberError(error: String) {
         formStateObservable.value?.let {

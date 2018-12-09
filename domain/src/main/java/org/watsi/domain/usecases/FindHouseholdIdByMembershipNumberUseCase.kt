@@ -6,7 +6,7 @@ import org.watsi.domain.repositories.MemberRepository
 import java.util.UUID
 
 class FindHouseholdIdByMembershipNumberUseCase(private val memberRepository: MemberRepository) {
-    fun execute(cardId: String): Maybe<UUID> {
-        return memberRepository.findHouseholdIdByCardId(cardId).subscribeOn(Schedulers.io())
+    fun execute(membershipNumber: String): Maybe<UUID> {
+        return memberRepository.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io())
     }
 }
