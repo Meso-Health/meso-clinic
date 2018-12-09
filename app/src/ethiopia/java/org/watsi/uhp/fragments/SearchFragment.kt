@@ -121,8 +121,7 @@ class SearchFragment : DaggerFragment() {
                         logger.error(err)
                         SnackbarHelper.showError(view, context, err.localizedMessage)
                     }, {
-                        // TODO: Show error message as described in #162227434 (and remove this snackbar)
-                        SnackbarHelper.showError(view, context, "Could not find CBHI ID")
+                        navigationManager.goTo(MemberNotFoundFragment())
                     })
                 } else {
                     viewModel.setMembershipNumberError(getString(R.string.invalid_membership_error))
