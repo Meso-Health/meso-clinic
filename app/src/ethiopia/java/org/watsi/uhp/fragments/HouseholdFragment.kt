@@ -11,6 +11,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_household.member_list
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -33,11 +34,13 @@ class HouseholdFragment : DaggerFragment() {
 
     companion object {
         const val PARAM_HOUSEHOLD_ID = "household_id"
+        const val PARAM_SEARCH_METHOD = "search_method"
 
-        fun forHouseholdId(householdId: UUID): HouseholdFragment {
+        fun forParams(householdId: UUID, searchMethod: IdentificationEvent.SearchMethod): HouseholdFragment {
             val householdFragment = HouseholdFragment()
             householdFragment.arguments = Bundle().apply {
                 putSerializable(PARAM_HOUSEHOLD_ID, householdId)
+                putSerializable(PARAM_SEARCH_METHOD, searchMethod)
             }
             return householdFragment
         }
@@ -46,6 +49,7 @@ class HouseholdFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val householdId = arguments.getSerializable(PARAM_HOUSEHOLD_ID) as UUID
+        val searchMethod = arguments.getSerializable(PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HouseholdViewModel::class.java)
         viewModel.getObservable(householdId).observe(this, Observer {
@@ -59,7 +63,11 @@ class HouseholdFragment : DaggerFragment() {
 
         memberAdapter = MemberAdapter(
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                // TODO: navigate to MemberDetailFragment
+                navigationManager.goTo(MemberDetailFragment.forParams(
+                    member = memberRelation.member,
+                    searchMethod = searchMethod,
+                    isCheckedIn = memberRelation.identificationEvent != null
+                ))
             },
             clock = clock
         )

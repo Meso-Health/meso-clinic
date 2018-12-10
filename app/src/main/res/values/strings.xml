@@ -43,6 +43,11 @@
     <string name="login_progress_message">Logging in…</string>
     <string name="login_offline_error">Cannot login because phone is offline</string>
 
+    <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
+    <string name="check_in">Check In</string>
+    <string name="checked_in">Already Checked In</string>
+    <string name="checked_in_snackbar_message">%1$s was checked in.</string>
+
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Line items</string>
     <string name="prompt_category">Select a category&#8230;</string>

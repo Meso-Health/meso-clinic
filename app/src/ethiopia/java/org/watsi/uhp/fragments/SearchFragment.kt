@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_search.search_button
 import kotlinx.android.synthetic.ethiopia.fragment_search.woreda_number
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.usecases.FindHouseholdIdByMembershipNumberUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -116,7 +117,10 @@ class SearchFragment : DaggerFragment() {
                 if (!viewModel.membershipNumberHasError(it)) {
                     val membershipNumber = viewModel.getMembershipNumber(it)
                     findHouseholdIdByMembershipNumberUseCase.execute(membershipNumber).subscribe( {
-                        navigationManager.goTo(HouseholdFragment.forHouseholdId(it))
+                        // TODO: add new SEARCH_MEMBERSHIP_NUMBER option and use here
+                        navigationManager.goTo(HouseholdFragment.forParams(
+                            it, IdentificationEvent.SearchMethod.SEARCH_ID)
+                        )
                     }, { err ->
                         logger.error(err)
                         SnackbarHelper.showError(view, context, err.localizedMessage)
@@ -175,7 +179,9 @@ class SearchFragment : DaggerFragment() {
         return when (resultCode) {
             Activity.RESULT_OK -> {
                 val householdId = data?.getSerializableExtra(SearchByMemberCardActivity.MEMBER_RESULT_KEY) as UUID
-                navigationManager.goTo(HouseholdFragment.forHouseholdId(householdId))
+                navigationManager.goTo(HouseholdFragment.forParams(
+                    householdId, IdentificationEvent.SearchMethod.SCAN_BARCODE)
+                )
             }
             Activity.RESULT_CANCELED -> { }
             else -> {

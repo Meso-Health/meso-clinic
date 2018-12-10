@@ -126,8 +126,6 @@
     <string name="absentee_action">Enroll</string>
     <string name="replace_card_notification">Needs new member card</string>
     <string name="replace_card_action">Issue</string>
-    <string name="check_in">Check In</string>
-    <string name="checked_in">Already Checked In</string>
     <string name="identification_approved">has been successfully checked in.</string>
     <string name="household_panel_header">Household</string>
     <string name="empty_household_list">No other household members</string>
@@ -135,7 +133,6 @@
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>
     </plurals>
-    <string name="checked_in_snackbar_message">%1$s was checked in.</string>
 
     <string name="fingerprint_scan_btn">Verify Fingerprints</string>
     <string name="fingerprint_scan_failed">Fingerprints could not be scanned. Contact your administrator for help.</string>
