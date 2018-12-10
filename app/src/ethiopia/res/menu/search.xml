@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_search_card"
+        android:orderInCategory="109"
+        android:title="@string/search_by_member_card"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_qr_code_white_24dp"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_search_by_name"
+        android:title="@string/search_by_name"
+        app:showAsAction="never" />
+</menu>

@@ -14,6 +14,7 @@ import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.HomeViewModel
 import org.watsi.uhp.viewmodels.HouseholdViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
+import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import org.watsi.uhp.viewmodels.PendingClaimsViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.viewmodels.ReturnedClaimsViewModel
@@ -88,6 +89,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MemberInformationViewModel::class)
     abstract fun bindMemberInformationViewModel(viewModel: MemberInformationViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MemberSearchViewModel::class)
+    abstract fun bindMemberSearchViewModel(viewModel: MemberSearchViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory

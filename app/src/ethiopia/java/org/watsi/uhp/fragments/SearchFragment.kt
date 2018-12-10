@@ -1,7 +1,6 @@
 package org.watsi.uhp.fragments
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -10,6 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -140,13 +140,9 @@ class SearchFragment : DaggerFragment() {
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu?.let {
-            it.findItem(R.id.menu_search_card).isVisible = true
-            it.findItem(R.id.menu_logout).isVisible = true
-            it.findItem(R.id.menu_status).isVisible = true
-            it.findItem(R.id.menu_switch_language).isVisible = true
-        }
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        menu.clear()
+        menuInflater.inflate(R.menu.search, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -154,17 +150,8 @@ class SearchFragment : DaggerFragment() {
             R.id.menu_search_card -> {
                 startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
             }
-            R.id.menu_status -> {
-                navigationManager.goTo(StatusFragment())
-            }
-            R.id.menu_logout -> {
-                AlertDialog.Builder(activity)
-                    .setTitle(R.string.log_out_alert)
-                    .setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.yes) { _, _ ->
-                        sessionManager.logout()
-                        (activity as ClinicActivity).navigateToAuthenticationActivity()
-                    }.create().show()
+            R.id.menu_search_by_name -> {
+                navigationManager.goTo(MemberSearchFragment())
             }
             else -> super.onOptionsItemSelected(item)
         }

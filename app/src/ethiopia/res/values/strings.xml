@@ -30,6 +30,12 @@
     <string name="six_zeroes_placeholder" translatable="false">000000</string>
     <string name="start_claim_button">Start Claim</string>
     <string name="invalid_membership_error">Invalid membership number</string>
+    <string name="scan_member_card_menu_item_title">Scan card</string>
+
+    <!-- SearchFragment -->
+    <string name="member_search_fragment_label">@string/search</string>
+    <string name="search_by_name">Search by name</string>
+
 
     <!-- MemberNotFoundFragment -->
     <string name="member_not_found_fragment_label">@string/search</string>
