@@ -121,7 +121,7 @@ class SearchFragment : DaggerFragment() {
                         logger.error(err)
                         SnackbarHelper.showError(view, context, err.localizedMessage)
                     }, {
-                        navigationManager.goTo(MemberNotFoundFragment())
+                        navigationManager.goTo(MemberNotFoundFragment.forMembershipNumber(membershipNumber))
                     })
                 } else {
                     viewModel.setMembershipNumberError(getString(R.string.invalid_membership_error))

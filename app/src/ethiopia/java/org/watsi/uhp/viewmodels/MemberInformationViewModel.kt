@@ -88,6 +88,15 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         }
     }
 
+    fun onNameChange(name: String?) {
+        observable.value?.let {
+            if (name != it.name) {
+                val errors = it.errors.filterNot { it.key == MEMBER_NAME_ERROR}
+                observable.value = it.copy(name = name, errors = errors)
+            }
+        }
+    }
+
     fun onMedicalRecordNumberChange(medicalRecordNumber: String?) {
         observable.value?.let {
             if (medicalRecordNumber != it.medicalRecordNumber) {
@@ -118,17 +127,19 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
     data class ValidationException(val msg: String, val errors: Map<String, Int>): Exception(msg)
 
     companion object {
-        const val MEMBER_AGE_ERROR = "member_age_error"
         const val MEMBER_GENDER_ERROR = "member_gender_error"
+        const val MEMBER_NAME_ERROR = "member_age_name"
+        const val MEMBER_AGE_ERROR = "member_age_error"
         const val MEMBER_MEDICAL_RECORD_NUMBER_ERROR = "member_medical_record_number_error"
 
         fun toMember(viewState: ViewState, memberId: UUID, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() && viewState.gender != null
-                    && viewState.age != null && viewState.medicalRecordNumber != null) {
+                    && viewState.name != null && viewState.age != null &&
+                    viewState.medicalRecordNumber != null) {
                 val birthdateWithAccuracy = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy()
                 return Member(
                     id = memberId,
-                    name = "Member Name", // Placeholder until we make a platform decision that "Member" doesn't require a name.
+                    name = viewState.name!!,
                     enrolledAt = Instant.now(clock),
                     birthdate = birthdateWithAccuracy.first,
                     birthdateAccuracy = birthdateWithAccuracy.second,
@@ -159,6 +170,10 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
                 errors[MEMBER_GENDER_ERROR] = R.string.gender_validation_error
             }
 
+            if (viewState.name.isNullOrBlank()) {
+                errors[MEMBER_NAME_ERROR] = R.string.name_validation_error
+            }
+
             if (viewState.age == null) {
                 errors[MEMBER_AGE_ERROR] = R.string.age_validation_error
             }
@@ -172,9 +187,10 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
     }
 
     data class ViewState(val membershipNumber: String,
+                         val gender: Member.Gender? = null,
+                         val name: String? = null,
                          val age: Int? = null,
                          val ageUnit: AgeUnit = AgeUnit.years,
-                         val gender: Member.Gender? = null,
                          val medicalRecordNumber: String? = null,
                          val errors: Map<String, Int> = emptyMap())
 }

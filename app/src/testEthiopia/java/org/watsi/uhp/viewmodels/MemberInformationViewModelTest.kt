@@ -72,6 +72,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         assertEquals(
             initialViewState.copy(errors = hashMapOf(
                 MemberInformationViewModel.MEMBER_GENDER_ERROR to R.string.gender_validation_error,
+                MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.name_validation_error,
                 MemberInformationViewModel.MEMBER_AGE_ERROR to R.string.age_validation_error,
                 MemberInformationViewModel.MEMBER_MEDICAL_RECORD_NUMBER_ERROR to R.string.medical_record_number_validation_error
             )),
@@ -80,17 +81,41 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
+    fun updateEncounterWithMember_blankName() {
+        setValidViewStateOnViewModel()
+        viewModel.onNameChange("")
+        viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
+        )
+        assertEquals(
+            initialViewState.copy(
+                gender = Member.Gender.F,
+                name = "",
+                age = 10,
+                ageUnit = AgeUnit.months,
+                medicalRecordNumber = "09900",
+                errors = hashMapOf(
+                    MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.name_validation_error
+                )
+            ),
+            observable.value
+        )
+    }
+
+    @Test
     fun updateEncounterWithMember_blankAge() {
         viewModel.onGenderChange(Member.Gender.F)
+        viewModel.onNameChange("Foo")
         viewModel.onMedicalRecordNumberChange("09900")
         viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
             initialViewState.copy(
+                gender = Member.Gender.F,
+                name = "Foo",
                 age = null,
                 ageUnit = AgeUnit.years,
-                gender = Member.Gender.F,
                 medicalRecordNumber = "09900",
                 errors = hashMapOf(
                     MemberInformationViewModel.MEMBER_AGE_ERROR to R.string.age_validation_error
@@ -102,6 +127,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
     @Test
     fun updateEncounterWithMember_genderMissing() {
+        viewModel.onNameChange("Foo")
         viewModel.onAgeChange(10)
         viewModel.onAgeUnitChange(AgeUnit.months)
         viewModel.onMedicalRecordNumberChange("09900")
@@ -110,9 +136,10 @@ class MemberInformationViewModelTest : AACBaseTest() {
         )
         assertEquals(
             initialViewState.copy(
+                gender = null,
+                name = "Foo",
                 age = 10,
                 ageUnit = AgeUnit.months,
-                gender = null,
                 medicalRecordNumber = "09900",
                 errors = hashMapOf(
                     MemberInformationViewModel.MEMBER_GENDER_ERROR to R.string.gender_validation_error
@@ -131,9 +158,10 @@ class MemberInformationViewModelTest : AACBaseTest() {
         )
         assertEquals(
             initialViewState.copy(
+                gender = Member.Gender.F,
+                name = "Foo",
                 age = 10,
                 ageUnit = AgeUnit.months,
-                gender = Member.Gender.F,
                 medicalRecordNumber = "",
                 errors = hashMapOf(
                     MemberInformationViewModel.MEMBER_MEDICAL_RECORD_NUMBER_ERROR to R.string.medical_record_number_validation_error
@@ -151,7 +179,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
             encounterFlowState.copy(
                 member = MemberFactory.build(
                     id = memberId,
-                    name = "Member Name",
+                    name = "Foo",
                     enrolledAt = clock.instant(),
                     gender = Member.Gender.F,
                     membershipNumber = membershipNumber,
@@ -166,6 +194,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
     private fun setValidViewStateOnViewModel() {
         viewModel.onAgeChange(10)
+        viewModel.onNameChange("Foo")
         viewModel.onGenderChange(Member.Gender.F)
         viewModel.onAgeUnitChange(AgeUnit.months)
         viewModel.onMedicalRecordNumberChange("09900")

@@ -18,7 +18,9 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_s
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.gender_field
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number_layout
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.member_name
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.name_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
@@ -36,6 +38,7 @@ import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_ERROR
 import java.util.UUID
 import javax.inject.Inject
 
@@ -100,6 +103,9 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 gender_field.setGender(viewState.gender)
                 membership_number.setText(viewState.membershipNumber)
 
+                member_name.setText(viewState.name)
+                member_name.setSelection(member_name.text.length)
+
                 age_input.setText(if (viewState.age == null) "" else viewState.age.toString())
                 age_input.setSelection(age_input.text.length)
 
@@ -117,6 +123,15 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 gender_field.setError(getString(errorResourceId))
             }
         }
+
+        errorMap[MEMBER_NAME_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                name_layout.error = null
+            } else {
+                name_layout.error = getString(errorResourceId)
+            }
+        }
+
         errorMap[MEMBER_AGE_ERROR].let { errorResourceId ->
             if (errorResourceId == null) {
                 age_input_layout.error = null
@@ -141,6 +156,10 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         gender_field.setOnGenderChange { gender -> viewModel.onGenderChange(gender) }
+
+        member_name.addTextChangedListener(LayoutHelper.OnChangedListener {
+                text -> viewModel.onNameChange(text)
+        })
 
         medical_record_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             text -> viewModel.onMedicalRecordNumberChange(text)
