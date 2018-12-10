@@ -9,8 +9,8 @@ data class IdentificationEvent(val id: UUID,
                                val throughMemberId: UUID?,
                                val occurredAt: Instant,
                                val searchMethod: SearchMethod,
-                               val clinicNumber: Int,
-                               val clinicNumberType: ClinicNumberType,
+                               val clinicNumber: Int?,
+                               val clinicNumberType: ClinicNumberType?,
                                val dismissed: Boolean = false,
                                val fingerprintsVerificationResultCode: Int?,
                                val fingerprintsVerificationConfidence: Float?,
@@ -27,6 +27,9 @@ data class IdentificationEvent(val id: UUID,
             }
             ClinicNumberType.DELIVERY -> {
                 "#D$clinicNumber"
+            }
+            else -> {
+                ""
             }
         }
     }
