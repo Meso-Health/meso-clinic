@@ -39,7 +39,7 @@ interface MemberDao {
     @Query("SELECT householdId FROM members WHERE cardId = :cardId AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByCardId(cardId: String): Maybe<UUID>
 
-    @Query("SELECT * FROM members")
+    @Query("SELECT * FROM members WHERE householdId IS NOT NULL")
     fun all(): Flowable<List<MemberModel>>
 
     @Query("SELECT * FROM members WHERE cardId = :cardId LIMIT 1")

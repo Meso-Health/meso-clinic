@@ -241,4 +241,12 @@ class MemberDaoTest : DaoBaseTest() {
 
         memberDao.byIds(listOf(memberModel.id)).test().assertValue(listOf(expectedRelationModel))
     }
+
+    @Test
+    fun all_returnsAllMembersWithHouseholdIds() {
+        val memberWithHousehold = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID())
+        MemberModelFactory.create(memberDao, householdId = null)
+
+        memberDao.all().test().assertValue(listOf(memberWithHousehold))
+    }
 }

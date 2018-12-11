@@ -48,8 +48,8 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
-    override fun findHouseholdIdByMembershipNumber(cardId: String): Maybe<UUID> {
-        return memberDao.findHouseholdIdByMembershipNumber(cardId).subscribeOn(Schedulers.io())
+    override fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID> {
+        return memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io())
     }
 
     override fun findHouseholdIdByCardId(cardId: String): Maybe<UUID> {
