@@ -2,12 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.watsi.uhp">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-
-    <uses-permission android:name="android.permission.CAMERA" />
-
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -39,12 +33,6 @@
         </activity>
         <activity
             android:name=".activities.SearchByMemberCardActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".activities.SavePhotoActivity"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
