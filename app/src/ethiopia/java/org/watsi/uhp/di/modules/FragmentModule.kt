@@ -4,10 +4,10 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import org.watsi.uhp.fragments.DiagnosisFragment
 import org.watsi.uhp.fragments.DrugAndSupplyFragment
+import org.watsi.uhp.fragments.EditMemberFragment
 import org.watsi.uhp.fragments.EditPriceFragment
 import org.watsi.uhp.fragments.HomeFragment
 import org.watsi.uhp.fragments.HouseholdFragment
-import org.watsi.uhp.fragments.MemberDetailFragment
 import org.watsi.uhp.fragments.MemberInformationFragment
 import org.watsi.uhp.fragments.MemberNotFoundFragment
 import org.watsi.uhp.fragments.MemberSearchFragment
@@ -24,9 +24,9 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindHomeFragment(): HomeFragment
     @ContributesAndroidInjector abstract fun bindSearchFragment(): SearchFragment
     @ContributesAndroidInjector abstract fun bindHouseholdFragment(): HouseholdFragment
-    @ContributesAndroidInjector abstract fun bindMemberDetailFragment(): MemberDetailFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment
     @ContributesAndroidInjector abstract fun bindDrugAndSupplyFragment(): DrugAndSupplyFragment
+    @ContributesAndroidInjector abstract fun bindEditMemberFragment(): EditMemberFragment
     @ContributesAndroidInjector abstract fun bindEditPriceFragment(): EditPriceFragment
     @ContributesAndroidInjector abstract fun bindMemberInformationFragment(): MemberInformationFragment
     @ContributesAndroidInjector abstract fun bindMemberNotFoundFragment(): MemberNotFoundFragment

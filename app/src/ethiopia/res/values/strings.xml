@@ -36,7 +36,6 @@
     <string name="member_search_fragment_label">@string/search</string>
     <string name="search_by_name">Search by name</string>
 
-
     <!-- MemberNotFoundFragment -->
     <string name="member_not_found_fragment_label">@string/search</string>
     <string name="member_not_found_message">Error loading member</string>
@@ -45,6 +44,18 @@
 
     <!-- HouseholdFragment -->
     <string name="household_fragment_label">@string/search</string>
+
+    <!-- EditMemberFragment -->
+    <string name="member_list_item_gender_age" translatable="false">%1$s, %2$s</string>
+    <string name="membership_number_field_label">Member CBHI ID</string>
+    <string name="name_field_label">Full name</string>
+    <string name="birthdate_field_label">Birthdate</string>
+    <string name="medical_record_number_field_label">Medical record number</string>
+    <string name="photo_field_label">Photo</string>
+    <string name="photo_panel_header_text">Photo</string>
+    <string name="edit_input_add">Add</string>
+    <string name="edit_input_edit">Edit</string>
+    <string name="take_photo_button_text">Take photo</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>

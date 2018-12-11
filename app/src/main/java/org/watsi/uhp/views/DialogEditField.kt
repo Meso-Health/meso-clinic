@@ -8,9 +8,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import kotlinx.android.synthetic.uganda.view_dialog_edit_field.view.action
-import kotlinx.android.synthetic.uganda.view_dialog_edit_field.view.field_label
-import kotlinx.android.synthetic.uganda.view_dialog_edit_field.view.input_value
+import kotlinx.android.synthetic.main.view_dialog_edit_field.view.action
+import kotlinx.android.synthetic.main.view_dialog_edit_field.view.field_label
+import kotlinx.android.synthetic.main.view_dialog_edit_field.view.input_value
 import org.watsi.uhp.R
 import org.watsi.uhp.managers.KeyboardManager
 

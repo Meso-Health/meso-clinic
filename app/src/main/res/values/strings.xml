@@ -105,4 +105,7 @@
     <string name="scan_member_card_invalid_id">Not a valid member card</string>
     <string name="scan_member_card_not_found">This card is not associated with a member</string>
 
+    <!-- PhotoActivity -->
+    <string name="member_photo_overlay_text">Take photo of member</string>
+
 </resources>

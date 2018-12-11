@@ -8,7 +8,7 @@
         <attr name="label" />
         <attr name="android:inputType" />
     </declare-styleable>
-    <declare-styleable name="ButtonWithContainer">
+    <declare-styleable name="ButtonWithPreview">
         <attr name="buttonText" format="reference" localization="suggested" />
         <attr name="icon" format="reference" localization="suggested" />
     </declare-styleable>

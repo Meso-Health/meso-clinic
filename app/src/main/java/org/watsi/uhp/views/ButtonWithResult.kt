@@ -22,10 +22,10 @@ class ButtonWithResult @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_button_with_result, this, true)
-        val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.ButtonWithContainer)
+        val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.ButtonWithPreview)
 
-        button.text = customAttributes.getString(R.styleable.ButtonWithContainer_buttonText)
-        button.setCompoundDrawablesWithIntrinsicBounds(customAttributes.getDrawable(R.styleable.ButtonWithContainer_icon), null, null, null)
+        button.text = customAttributes.getString(R.styleable.ButtonWithPreview_buttonText)
+        button.setCompoundDrawablesWithIntrinsicBounds(customAttributes.getDrawable(R.styleable.ButtonWithPreview_icon), null, null, null)
 
         customAttributes.recycle()
     }

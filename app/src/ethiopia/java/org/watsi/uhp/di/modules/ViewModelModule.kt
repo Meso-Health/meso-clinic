@@ -9,11 +9,11 @@ import org.watsi.uhp.di.ViewModelKey
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.DrugAndSupplyViewModel
+import org.watsi.uhp.viewmodels.EditMemberViewModel
 import org.watsi.uhp.viewmodels.EditPriceViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.HomeViewModel
 import org.watsi.uhp.viewmodels.HouseholdViewModel
-import org.watsi.uhp.viewmodels.MemberDetailViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import org.watsi.uhp.viewmodels.PendingClaimsViewModel
@@ -40,11 +40,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(HouseholdViewModel::class)
     abstract fun bindHouseholdViewModel(viewModel: HouseholdViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(MemberDetailViewModel::class)
-    abstract fun bindMemberDetailViewModel(viewModel: MemberDetailViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -100,6 +95,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MemberSearchViewModel::class)
     abstract fun bindMemberSearchViewModel(viewModel: MemberSearchViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditMemberViewModel::class)
+    abstract fun bindEditMemberViewModel(viewModel: EditMemberViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory

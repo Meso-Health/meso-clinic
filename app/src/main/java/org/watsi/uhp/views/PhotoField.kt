@@ -6,8 +6,8 @@ import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.view_button_with_preview.view.button
-import kotlinx.android.synthetic.uganda.view_photo_field.view.photo_button_with_preview
-import kotlinx.android.synthetic.uganda.view_photo_field.view.photo_error_message
+import kotlinx.android.synthetic.main.view_photo_field.view.photo_button_with_preview
+import kotlinx.android.synthetic.main.view_photo_field.view.photo_error_message
 import org.watsi.uhp.R
 
 class PhotoField @JvmOverloads constructor(
