@@ -19,16 +19,20 @@ import kotlinx.android.synthetic.ethiopia.fragment_home.patients_container
 import kotlinx.android.synthetic.ethiopia.fragment_home.search_button
 import me.philio.pinentry.PinEntryView
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.MemberAdapter
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.HomeViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 class HomeFragment : DaggerFragment() {
@@ -88,7 +92,16 @@ class HomeFragment : DaggerFragment() {
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                 if (memberRelation.identificationEvent != null) {
                     memberRelation.identificationEvent?.let {
-                        // TODO: navigate to VisitTypeFragment
+                        val encounter = Encounter(
+                            id = UUID.randomUUID(),
+                            memberId = memberRelation.member.id,
+                            identificationEventId = it.id,
+                            occurredAt = Instant.now(clock)
+                        )
+
+                        navigationManager.goTo(VisitTypeFragment.forEncounter(
+                            EncounterFlowState(encounter, emptyList(), emptyList(), emptyList(), memberRelation.member)
+                        ))
                     }
                 } else {
                     logger.error(
