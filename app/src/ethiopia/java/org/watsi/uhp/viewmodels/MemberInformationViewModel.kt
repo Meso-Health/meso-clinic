@@ -3,69 +3,34 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.reactivex.Single
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.usecases.CreateIdentificationEventUseCase
+import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.Age
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
-import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
 import javax.inject.Inject
 
-class MemberInformationViewModel @Inject constructor(private val clock: Clock) : ViewModel() {
+class MemberInformationViewModel @Inject constructor(
+    private val createMemberUseCase: CreateMemberUseCase,
+    private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
+    private val clock: Clock
+) : ViewModel() {
+
     private val observable = MutableLiveData<ViewState>()
 
-    fun getObservable(encounter: EncounterFlowState?, membershipNumber: String?): LiveData<ViewState> {
-        encounter?.let {
-            return getObservableWithEncounter(it)
-        }
-
-        membershipNumber?.let {
-            return getObservableWithMembershipNumber(it)
-        }
-
-        throw IllegalStateException("Observable requires either encounter or membershipNumber")
+    init {
+        observable.value = ViewState()
     }
 
-    private fun getObservableWithMembershipNumber(membershipNumber: String): LiveData<ViewState> {
-        observable.value = ViewState(membershipNumber = membershipNumber)
+    fun getObservable(): LiveData<ViewState> {
         return observable
-    }
-
-    private fun getObservableWithEncounter(encounter: EncounterFlowState): LiveData<ViewState> {
-        encounter.member?.let {
-            if (it.membershipNumber == null) {
-                throw IllegalStateException("Membership Number should not be null")
-            }
-
-            val membershipNumber = it.membershipNumber ?: ""
-            val age = when (it.birthdateAccuracy) {
-                Member.DateAccuracy.Y -> it.getAgeYears(clock)
-                Member.DateAccuracy.M -> it.getAgeMonths(clock)
-                Member.DateAccuracy.D -> it.getAgeDays(clock)
-            }
-            val ageUnit = getInitialAgeUnit(encounter)
-            val gender = it.gender
-            val medicalRecordNumber = it.medicalRecordNumber
-
-            observable.value = ViewState(membershipNumber = membershipNumber, age = age, ageUnit = ageUnit, gender = gender, medicalRecordNumber = medicalRecordNumber)
-            return observable
-        }
-
-        throw IllegalStateException("No member on encounter")
-    }
-
-    fun getInitialAgeUnit(encounter: EncounterFlowState): AgeUnit {
-        encounter.member?.let {
-            when (it.birthdateAccuracy) {
-                Member.DateAccuracy.Y -> return AgeUnit.years
-                Member.DateAccuracy.M -> return AgeUnit.months
-                Member.DateAccuracy.D -> return AgeUnit.days
-            }
-        }
-        return AgeUnit.years
     }
 
     fun onAgeChange(age: Int?) {
@@ -97,6 +62,10 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         }
     }
 
+    fun getName(): String {
+        return observable.value?.name ?: ""
+    }
+
     fun onMedicalRecordNumberChange(medicalRecordNumber: String?) {
         observable.value?.let {
             if (medicalRecordNumber != it.medicalRecordNumber) {
@@ -106,22 +75,35 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         }
     }
 
-    fun updateEncounterWithMember(encounterFlowState: EncounterFlowState): Single<EncounterFlowState> {
-        return Single.fromCallable {
-            val viewState = observable.value
-            if (viewState == null) {
-                throw IllegalStateException("MemberInformationViewModel.buildEncounterFlow should not be called with a null viewState.")
-            }
+    fun createAndCheckInMember(membershipNumber: String): Completable {
+        val viewState = observable.value ?: return Completable.never()
 
-            val validationErrors = FormValidator.formValidationErrors(viewState)
-            if (validationErrors.isNotEmpty()) {
-                observable.value = viewState.copy(errors = validationErrors)
-                throw ValidationException("Some fields are missing", validationErrors)
-            } else {
-                encounterFlowState.member = toMember(viewState, encounterFlowState.encounter.memberId, clock)
-                encounterFlowState
-            }
+        val validationErrors = FormValidator.formValidationErrors(viewState)
+        if (validationErrors.isNotEmpty()) {
+            observable.value = viewState.copy(errors = validationErrors)
+            return Completable.error(ValidationException("Some fields are missing", validationErrors))
         }
+
+        val member = toMember(viewState, membershipNumber, clock)
+        val idEvent = IdentificationEvent(
+            id = UUID.randomUUID(),
+            memberId = member.id,
+            occurredAt = clock.instant(),
+            // TODO: implement correct search method
+            searchMethod = IdentificationEvent.SearchMethod.SEARCH_ID,
+            throughMemberId = null,
+            clinicNumber = null,
+            clinicNumberType = null,
+            fingerprintsVerificationTier = null,
+            fingerprintsVerificationConfidence = null,
+            fingerprintsVerificationResultCode = null
+        )
+
+        // TODO: do not submit either member or idEvent until encounter is approved
+        return Completable.concatArray(
+            createMemberUseCase.execute(member, submitNow = true),
+            createIdentificationEventUseCase.execute(idEvent)
+        ).observeOn(AndroidSchedulers.mainThread())
     }
 
     data class ValidationException(val msg: String, val errors: Map<String, Int>): Exception(msg)
@@ -132,14 +114,14 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         const val MEMBER_AGE_ERROR = "member_age_error"
         const val MEMBER_MEDICAL_RECORD_NUMBER_ERROR = "member_medical_record_number_error"
 
-        fun toMember(viewState: ViewState, memberId: UUID, clock: Clock): Member {
+        fun toMember(viewState: ViewState, membershipNumber: String, clock: Clock): Member {
             if (FormValidator.formValidationErrors(viewState).isEmpty() && viewState.gender != null
                     && viewState.name != null && viewState.age != null &&
                     viewState.medicalRecordNumber != null) {
                 val birthdateWithAccuracy = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy()
                 return Member(
-                    id = memberId,
-                    name = viewState.name!!,
+                    id = UUID.randomUUID(),
+                    name = viewState.name,
                     enrolledAt = Instant.now(clock),
                     birthdate = birthdateWithAccuracy.first,
                     birthdateAccuracy = birthdateWithAccuracy.second,
@@ -152,7 +134,7 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
                     language = null,
                     phoneNumber = null,
                     photoUrl = null,
-                    membershipNumber = viewState.membershipNumber,
+                    membershipNumber = membershipNumber,
                     medicalRecordNumber = viewState.medicalRecordNumber
                 )
             } else {
@@ -186,11 +168,12 @@ class MemberInformationViewModel @Inject constructor(private val clock: Clock) :
         }
     }
 
-    data class ViewState(val membershipNumber: String,
-                         val gender: Member.Gender? = null,
-                         val name: String? = null,
-                         val age: Int? = null,
-                         val ageUnit: AgeUnit = AgeUnit.years,
-                         val medicalRecordNumber: String? = null,
-                         val errors: Map<String, Int> = emptyMap())
+    data class ViewState(
+        val gender: Member.Gender? = null,
+        val name: String? = null,
+        val age: Int? = null,
+        val ageUnit: AgeUnit = AgeUnit.years,
+        val medicalRecordNumber: String? = null,
+        val errors: Map<String, Int> = emptyMap()
+    )
 }

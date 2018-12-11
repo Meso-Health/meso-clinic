@@ -350,7 +350,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             encounterFlowState.newProviderComment = comment
         }
 
-        navigationManager.goTo(MemberInformationFragment.forEncounter(encounterFlowState))
+        navigationManager.goTo(VisitTypeFragment.forEncounter(encounterFlowState))
     }
 
     private fun launchAddCommentDialog() {

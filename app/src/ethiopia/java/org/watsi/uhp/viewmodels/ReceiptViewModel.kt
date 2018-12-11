@@ -10,7 +10,6 @@ import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.usecases.CreateEncounterUseCase
-import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
 import org.watsi.domain.usecases.SubmitMemberAndClaimUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -18,7 +17,6 @@ import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
-    private val createMemberUseCase: CreateMemberUseCase,
     private val submitMemberAndClaimUseCase: SubmitMemberAndClaimUseCase,
     private val reviseMemberAndClaimUseCase: ReviseMemberAndClaimUseCase,
     private val logger: Logger,
@@ -69,7 +67,6 @@ class ReceiptViewModel @Inject constructor(
                 encounterFlowState.member?.let {
                     when (encounterAction) {
                         EncounterAction.PREPARE -> {
-                            createMemberUseCase.execute(it, false).blockingAwait()
                             createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms(), false, clock).blockingAwait()
                         }
                         EncounterAction.SUBMIT -> {
