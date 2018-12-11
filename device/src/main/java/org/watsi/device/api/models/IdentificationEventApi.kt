@@ -11,8 +11,8 @@ data class IdentificationEventApi(
         @SerializedName("through_member_id") val throughMemberId: UUID?,
         @SerializedName("occurred_at") val occurredAt: Instant,
         @SerializedName("search_method") val searchMethod: String,
-        @SerializedName("clinic_number") val clinicNumber: Int,
-        @SerializedName("clinic_number_type") val clinicNumberType: String,
+        @SerializedName("clinic_number") val clinicNumber: Int?,
+        @SerializedName("clinic_number_type") val clinicNumberType: String?,
         @SerializedName("fingerprints_verification_result_code") val fingerprintsVerificationResultCode: Int?,
         @SerializedName("fingerprints_verification_confidence") val fingerprintsVerificationConfidence: Float?,
         @SerializedName("fingerprints_verification_tier") val fingerprintsVerificationTier: String?

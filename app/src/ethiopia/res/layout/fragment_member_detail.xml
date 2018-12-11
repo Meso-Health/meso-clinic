@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space16"
+        android:background="@drawable/panel_background">
+
+        <org.watsi.uhp.views.MemberCard
+            android:id="@+id/member_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/check_in_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/check_in"
+        android:visibility="invisible"
+        style="@style/PrimaryButton" />
+
+</android.support.constraint.ConstraintLayout>

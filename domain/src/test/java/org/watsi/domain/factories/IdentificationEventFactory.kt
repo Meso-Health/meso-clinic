@@ -12,8 +12,8 @@ object IdentificationEventFactory {
               occurredAt: Instant = Instant.now(),
               searchMethod: IdentificationEvent.SearchMethod =
                       IdentificationEvent.SearchMethod.SCAN_BARCODE,
-              clinicNumber: Int = 1,
-              clinicNumberType: IdentificationEvent.ClinicNumberType =
+              clinicNumber: Int? = 1,
+              clinicNumberType: IdentificationEvent.ClinicNumberType? =
                       IdentificationEvent.ClinicNumberType.OPD,
               dismissed: Boolean = false,
               fingerprintsVerificationResultCode: Int? = null,
