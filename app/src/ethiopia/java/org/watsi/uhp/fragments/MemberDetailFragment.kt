@@ -15,7 +15,6 @@ import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -35,23 +34,19 @@ class MemberDetailFragment : DaggerFragment() {
     lateinit var viewModel: MemberDetailViewModel
     lateinit var member: Member
     private lateinit var searchMethod: IdentificationEvent.SearchMethod
-    private var isCheckedIn: Boolean = false
 
     companion object {
         const val PARAM_MEMBER = "member"
         const val PARAM_SEARCH_METHOD = "search_method"
-        const val PARAM_IS_CHECKED_IN = "is_checked_in"
 
         fun forParams(
             member: Member,
-            searchMethod: IdentificationEvent.SearchMethod,
-            isCheckedIn: Boolean
+            searchMethod: IdentificationEvent.SearchMethod
         ): MemberDetailFragment {
             val memberDetailFragment = MemberDetailFragment()
             memberDetailFragment.arguments = Bundle().apply {
                 putSerializable(PARAM_MEMBER, member)
                 putSerializable(PARAM_SEARCH_METHOD, searchMethod)
-                putBoolean(PARAM_IS_CHECKED_IN, isCheckedIn)
             }
             return memberDetailFragment
         }
@@ -61,12 +56,25 @@ class MemberDetailFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         member = arguments.getSerializable(PARAM_MEMBER) as Member
         searchMethod = arguments.getSerializable(PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod
-        isCheckedIn = arguments.getBoolean(PARAM_IS_CHECKED_IN)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberDetailViewModel::class.java)
-        viewModel.getObservable(member).observe(this, Observer<MemberWithThumbnail> { memberWithThumbnail ->
-            memberWithThumbnail?.let {
-                member_detail.setMember(it.member, it.photo, clock)
+        viewModel.getObservable(member).observe(this, Observer {
+            it?.let { viewState ->
+                viewState.memberWithThumbnail?.let {
+                    member_detail.setMember(it.member, it.photo, clock)
+                }
+
+                viewState.isMemberCheckedIn?.let { isMemberCheckedIn ->
+                    if (isMemberCheckedIn) {
+                        check_in_button.isEnabled = false
+                        check_in_button.text = getString(R.string.checked_in)
+                    } else {
+                        check_in_button.isEnabled = true
+                        check_in_button.text = getString(R.string.check_in)
+                    }
+                    // enable visibility after setting correct button text and color to prevent split-second change
+                    check_in_button.visibility = View.VISIBLE
+                }
             }
         })
     }
@@ -85,14 +93,6 @@ class MemberDetailFragment : DaggerFragment() {
             }, {
                 logger.error(it)
             })
-        }
-
-        if (isCheckedIn) {
-            check_in_button.isEnabled = false
-            check_in_button.text = getString(R.string.checked_in)
-        } else {
-            check_in_button.isEnabled = true
-            check_in_button.text = getString(R.string.check_in)
         }
     }
 

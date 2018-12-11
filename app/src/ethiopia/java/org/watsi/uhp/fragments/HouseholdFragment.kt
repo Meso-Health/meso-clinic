@@ -65,8 +65,7 @@ class HouseholdFragment : DaggerFragment() {
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                 navigationManager.goTo(MemberDetailFragment.forParams(
                     member = memberRelation.member,
-                    searchMethod = searchMethod,
-                    isCheckedIn = memberRelation.identificationEvent != null
+                    searchMethod = searchMethod
                 ))
             },
             clock = clock
