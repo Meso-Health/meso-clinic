@@ -14,6 +14,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -39,7 +40,9 @@ class MemberSearchFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         memberAdapter = MemberAdapter(searchResults, {
-            navigationManager.goTo(HouseholdFragment.forHouseholdId(it.member.householdId!!))
+            navigationManager.goTo(HouseholdFragment.forParams(
+                it.member.householdId!!, IdentificationEvent.SearchMethod.SEARCH_NAME)
+            )
         }, clock)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberSearchViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
