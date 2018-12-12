@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_diagnoses_update
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_members_updated_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.unfetched_member_photos
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_encounters
+import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_identifications
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_new_members
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BuildConfig
@@ -54,6 +55,9 @@ class StatusFragment : DaggerFragment() {
                 }
                 viewState.syncStatus.unsyncedNewMemberCount?.let {
                     unsynced_new_members.setValue(formattedQuantity(it))
+                }
+                viewState.syncStatus.unsyncedIdEventCount?.let {
+                    unsynced_identifications.setValue(formattedQuantity(it))
                 }
                 viewState.syncStatus.unsyncedEncounterCount?.let {
                     unsynced_encounters.setValue(formattedQuantity(it))
