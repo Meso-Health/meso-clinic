@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -162,10 +163,10 @@ class HomeFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_pending_claims -> {
-                buildPendingClaimsDialog()
+                confirmSecurityPinAndNavigate(PendingClaimsFragment())
             }
             R.id.menu_returned_claims -> {
-                navigationManager.goTo(ReturnedClaimsFragment())
+                confirmSecurityPinAndNavigate(ReturnedClaimsFragment())
             }
             R.id.menu_status -> {
                 navigationManager.goTo(StatusFragment())
@@ -184,7 +185,7 @@ class HomeFragment : DaggerFragment() {
         return true
     }
 
-    private fun buildPendingClaimsDialog() {
+    private fun confirmSecurityPinAndNavigate(fragment: Fragment) {
         val securityPinView = LayoutInflater.from(context).inflate(R.layout.dialog_security_pin, null, true)
         val pinView = securityPinView.findViewById<PinEntryView>(R.id.security_pin)
         val errorText = securityPinView.findViewById<TextInputLayout>(R.id.error_text)
@@ -203,7 +204,7 @@ class HomeFragment : DaggerFragment() {
                 sessionManager.currentToken()?.user?.securityPin?.let { pin ->
                     if (pin == pinView.text.toString()) {
                         dialog.dismiss()
-                        navigationManager.goTo(PendingClaimsFragment())
+                        navigationManager.goTo(fragment)
                     }
                 }
                 errorText.error = getString(R.string.pending_claims_dialog_error_message)
