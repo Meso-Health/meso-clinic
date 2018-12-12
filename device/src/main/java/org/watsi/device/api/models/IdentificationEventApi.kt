@@ -25,7 +25,8 @@ data class IdentificationEventApi(
                  occurredAt = idEvent.occurredAt,
                  searchMethod = idEvent.searchMethod.toString().toLowerCase(),
                  clinicNumber = idEvent.clinicNumber,
-                 clinicNumberType = idEvent.clinicNumberType.toString().toLowerCase(),
+                 clinicNumberType = if (idEvent.clinicNumberType == null) null
+                         else idEvent.clinicNumberType.toString().toLowerCase(),
                  fingerprintsVerificationResultCode = idEvent.fingerprintsVerificationResultCode,
                  fingerprintsVerificationConfidence = idEvent.fingerprintsVerificationConfidence,
                  fingerprintsVerificationTier = idEvent.fingerprintsVerificationTier
