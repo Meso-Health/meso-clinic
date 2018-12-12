@@ -10,17 +10,15 @@ import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.usecases.CreateEncounterUseCase
-import org.watsi.domain.usecases.CreateMemberUseCase
-import org.watsi.domain.usecases.ReviseMemberAndClaimUseCase
-import org.watsi.domain.usecases.SubmitMemberAndClaimUseCase
+import org.watsi.domain.usecases.ReviseClaimUseCase
+import org.watsi.domain.usecases.SubmitClaimUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
-    private val createMemberUseCase: CreateMemberUseCase,
-    private val submitMemberAndClaimUseCase: SubmitMemberAndClaimUseCase,
-    private val reviseMemberAndClaimUseCase: ReviseMemberAndClaimUseCase,
+    private val submitClaimUseCase: SubmitClaimUseCase,
+    private val reviseClaimUseCase: ReviseClaimUseCase,
     private val logger: Logger,
     private val clock: Clock
 ) : ViewModel() {
@@ -66,18 +64,21 @@ class ReceiptViewModel @Inject constructor(
                     logger.error("Member cannot be null")
                 }
 
-                encounterFlowState.member?.let {
-                    when (encounterAction) {
-                        EncounterAction.PREPARE -> {
-                            createMemberUseCase.execute(it, false).blockingAwait()
-                            createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms(), false, clock).blockingAwait()
-                        }
-                        EncounterAction.SUBMIT -> {
-                            submitMemberAndClaimUseCase.execute(it, encounterFlowState.toEncounterWithItemsAndForms(), clock).blockingAwait()
-                        }
-                        EncounterAction.RESUBMIT -> {
-                            reviseMemberAndClaimUseCase.execute(it, encounterFlowState.toEncounterWithItemsAndForms(), true, clock).blockingAwait()
-                        }
+                when (encounterAction) {
+                    EncounterAction.PREPARE -> {
+                        createEncounterUseCase.execute(
+                            encounterFlowState.toEncounterWithItemsAndForms(), false, clock
+                        ).blockingAwait()
+                    }
+                    EncounterAction.SUBMIT -> {
+                        submitClaimUseCase.execute(
+                            encounterFlowState.toEncounterWithItemsAndForms(), clock
+                        ).blockingAwait()
+                    }
+                    EncounterAction.RESUBMIT -> {
+                        reviseClaimUseCase.execute(
+                            encounterFlowState.toEncounterWithItemsAndForms(), clock
+                        ).blockingAwait()
                     }
                 }
             }.observeOn(AndroidSchedulers.mainThread())

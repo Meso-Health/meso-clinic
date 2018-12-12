@@ -15,21 +15,18 @@ import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_spinner
+import kotlinx.android.synthetic.ethiopia.fragment_member_information.check_in_button
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.gender_field
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.medical_record_number_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.member_name
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.name_layout
-import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
@@ -39,24 +36,22 @@ import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_ERROR
-import java.util.UUID
 import javax.inject.Inject
 
 class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBack {
+
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+
     lateinit var viewModel: MemberInformationViewModel
     lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
-    lateinit var encounterFlowState: EncounterFlowState
-    internal val memberId = UUID.randomUUID()
-    private val encounterId = UUID.randomUUID()
+    lateinit var membershipNumber: String
 
     companion object {
         const val PARAM_MEMBERSHIP_NUMBER = "membership_number"
-        const val PARAM_ENCOUNTER = "encounter"
 
         fun withMembershipNumber(membershipNumber: String): MemberInformationFragment {
             val fragment = MemberInformationFragment()
@@ -65,43 +60,18 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             }
             return fragment
         }
-
-        fun forEncounter(encounter: EncounterFlowState): MemberInformationFragment {
-            val fragment = MemberInformationFragment()
-            fragment.arguments = Bundle().apply {
-                putSerializable(PARAM_ENCOUNTER, encounter)
-            }
-            return fragment
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        membershipNumber = arguments.getString(PARAM_MEMBERSHIP_NUMBER)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberInformationViewModel::class.java)
-
-        // for case when it's coming from new claim screen (new claim flow):
-        arguments.getString(PARAM_MEMBERSHIP_NUMBER)?.let { membershipNumber ->
-            // note: passing in Instant.now() for occurredAt on the encounter here because it is non-nullable
-            // but occurredAt should be updated to the time at save at the end of the flow
-            val encounter = Encounter(encounterId, memberId, null, Instant.now(clock))
-            encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
-
-            observable = viewModel.getObservable(null, membershipNumber)
-        }
-
-        // for case when it's coming from returned claim screen (resubmission flow):
-        arguments.getSerializable(PARAM_ENCOUNTER)?.let { encounter ->
-            encounterFlowState = encounter as EncounterFlowState
-
-            observable = viewModel.getObservable(encounterFlowState, null)
-        }
-
-        observable.observe(this, Observer {
+        viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 setErrors(viewState.errors)
+
                 gender_field.setGender(viewState.gender)
-                membership_number.setText(viewState.membershipNumber)
 
                 member_name.setText(viewState.name)
                 member_name.setSelection(member_name.text.length)
@@ -155,21 +125,23 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        membership_number.setText(membershipNumber)
+
         gender_field.setOnGenderChange { gender -> viewModel.onGenderChange(gender) }
 
         member_name.addTextChangedListener(LayoutHelper.OnChangedListener {
                 text -> viewModel.onNameChange(text)
         })
 
-        medical_record_number.addTextChangedListener(LayoutHelper.OnChangedListener {
-            text -> viewModel.onMedicalRecordNumberChange(text)
+        age_input.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+            viewModel.onAgeChange(text.toIntOrNull())
         })
 
         age_unit_spinner.setUpSpinner(
             listOf(AgeUnit.years, AgeUnit.months, AgeUnit.days).map {
                 AgeUnitPresenter.toDisplayedString(it, context)
             },
-            AgeUnitPresenter.toDisplayedString(viewModel.getInitialAgeUnit(encounterFlowState), context),
+            AgeUnitPresenter.toDisplayedString(AgeUnit.years, context),
             { selectedString: String? ->
                 if (selectedString == null) {
                     logger.error("selectedString is null when onItemSelected is called in MemberInformationFragment")
@@ -179,13 +151,15 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             }
         )
 
-        age_input.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
-            viewModel.onAgeChange(text.toIntOrNull())
+        medical_record_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+                text -> viewModel.onMedicalRecordNumberChange(text)
         })
 
-        next_button.setOnClickListener {
-            viewModel.updateEncounterWithMember(encounterFlowState).subscribe({ encounterFlowState ->
-                navigationManager.goTo(VisitTypeFragment.forEncounter(encounterFlowState))
+        check_in_button.setOnClickListener {
+            viewModel.createAndCheckInMember(membershipNumber).subscribe({
+                navigationManager.popTo(HomeFragment.withSnackbarMessage(
+                    getString(R.string.checked_in_snackbar_message, viewModel.getName())
+                ))
             }, { throwable ->
                 handleOnSaveError(throwable)
             })
@@ -258,6 +232,6 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         } else {
             logger.error(throwable)
         }
-        SnackbarHelper.showError(next_button, context, errorMessage)
+        SnackbarHelper.showError(check_in_button, context, errorMessage)
     }
 }

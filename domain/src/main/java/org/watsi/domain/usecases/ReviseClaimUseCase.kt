@@ -5,26 +5,19 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.util.UUID
 
-class ReviseMemberAndClaimUseCase(
-    private val createMemberUseCase: CreateMemberUseCase,
+class ReviseClaimUseCase(
     private val createEncounterUseCase: CreateEncounterUseCase,
     private val markReturnedEncounterAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase
 ) {
 
-    fun execute(member: Member, encounterWithItemsAndForms: EncounterWithItemsAndForms, submitNow: Boolean, clock: Clock): Completable {
+    fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms, clock: Clock): Completable {
         return Completable.fromAction {
-
-            val newMember = member.copy(id = UUID.randomUUID())
-            createMemberUseCase.execute(newMember, submitNow).blockingAwait()
-
             val newEncounter = encounterWithItemsAndForms.encounter.copy(
                 id = UUID.randomUUID(),
-                memberId = newMember.id,
                 revisedEncounterId = encounterWithItemsAndForms.encounter.id,
                 adjudicationState = Encounter.AdjudicationState.PENDING,
                 adjudicatedAt = null,
@@ -57,7 +50,7 @@ class ReviseMemberAndClaimUseCase(
                     newEncounterItems,
                     newEncounterForms,
                     encounterWithItemsAndForms.diagnoses
-                ), submitNow, clock
+                ), true, clock
             ).blockingAwait()
 
             markReturnedEncounterAsRevisedUseCase.execute(listOf(encounterWithItemsAndForms.encounter.id))

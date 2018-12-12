@@ -6,7 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_member_information.next_button
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
 import org.watsi.domain.entities.Encounter
 import org.watsi.uhp.R

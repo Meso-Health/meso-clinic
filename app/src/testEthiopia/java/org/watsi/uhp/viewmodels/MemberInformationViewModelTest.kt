@@ -1,38 +1,46 @@
 package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.whenever
+import io.reactivex.Completable
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.schedulers.Schedulers
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
-import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
-import org.watsi.domain.factories.MemberFactory
-import org.watsi.domain.utils.Age
+import org.watsi.domain.usecases.CreateIdentificationEventUseCase
+import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
-import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.testutils.AACBaseTest
-import java.util.UUID
 
 class MemberInformationViewModelTest : AACBaseTest() {
     private lateinit var viewModel: MemberInformationViewModel
     private lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
+    @Mock lateinit var mockCreateMemberUseCase: CreateMemberUseCase
+    @Mock lateinit var mockCreateIdentificationEventUseCase: CreateIdentificationEventUseCase
 
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
-    private val memberId = UUID.randomUUID()
-    private val encounter = Encounter(UUID.randomUUID(), memberId, null, Instant.now(clock), Instant.now(clock))
-    private val encounterFlowState = EncounterFlowState(encounter, emptyList(), emptyList(), emptyList())
     private val membershipNumber = "01/01/06/P-692/3"
-    private val initialViewState = MemberInformationViewModel.ViewState(membershipNumber)
+    private val initialViewState = MemberInformationViewModel.ViewState()
 
     @Before
     fun setup() {
-        viewModel = MemberInformationViewModel(clock)
-        observable = viewModel.getObservable(null, membershipNumber)
+        viewModel = MemberInformationViewModel(
+            mockCreateMemberUseCase,
+            mockCreateIdentificationEventUseCase,
+            clock
+        )
+        observable = viewModel.getObservable()
         observable.observeForever{}
+
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
 
     @Test
@@ -65,8 +73,8 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateEncounterWithMember_allFieldsMissing() {
-        viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
+    fun createAndCheckInMember_allFieldsMissing() {
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
@@ -81,10 +89,10 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateEncounterWithMember_blankName() {
+    fun createAndCheckInMember_blankName() {
         setValidViewStateOnViewModel()
         viewModel.onNameChange("")
-        viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
@@ -103,11 +111,11 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateEncounterWithMember_blankAge() {
+    fun createAndCheckInMember_blankAge() {
         viewModel.onGenderChange(Member.Gender.F)
         viewModel.onNameChange("Foo")
         viewModel.onMedicalRecordNumberChange("09900")
-        viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
@@ -126,12 +134,12 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateEncounterWithMember_genderMissing() {
+    fun createAndCheckInMember_genderMissing() {
         viewModel.onNameChange("Foo")
         viewModel.onAgeChange(10)
         viewModel.onAgeUnitChange(AgeUnit.months)
         viewModel.onMedicalRecordNumberChange("09900")
-        viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
@@ -150,10 +158,10 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateEncounterWithMember_blankMedicalRecordNumber() {
+    fun createAndCheckInMember_blankMedicalRecordNumber() {
         setValidViewStateOnViewModel()
         viewModel.onMedicalRecordNumberChange("")
-        viewModel.updateEncounterWithMember(encounterFlowState).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
@@ -172,24 +180,12 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun updateEncounterWithMember_validViewState() {
+    fun createAndCheckInMember_validViewState_completes() {
         setValidViewStateOnViewModel()
-        val birthdateWithAccuracy = Age(10, AgeUnit.months).toBirthdateWithAccuracy(clock)
-        viewModel.updateEncounterWithMember(encounterFlowState).test().assertValue(
-            encounterFlowState.copy(
-                member = MemberFactory.build(
-                    id = memberId,
-                    name = "Foo",
-                    enrolledAt = clock.instant(),
-                    gender = Member.Gender.F,
-                    membershipNumber = membershipNumber,
-                    medicalRecordNumber = "09900",
-                    birthdate = birthdateWithAccuracy.first,
-                    birthdateAccuracy = birthdateWithAccuracy.second,
-                    householdId = null
-                )
-            )
-        )
+        whenever(mockCreateMemberUseCase.execute(any(), any())).thenReturn(Completable.complete())
+        whenever(mockCreateIdentificationEventUseCase.execute(any())).thenReturn(Completable.complete())
+
+        viewModel.createAndCheckInMember(membershipNumber).test().assertComplete()
     }
 
     private fun setValidViewStateOnViewModel() {

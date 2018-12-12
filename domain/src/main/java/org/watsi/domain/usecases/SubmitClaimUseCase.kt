@@ -5,20 +5,19 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterRepository
 
-class SubmitMemberAndClaimUseCase(
+class SubmitClaimUseCase(
     private val deltaRepository: DeltaRepository,
     private val encounterRepository: EncounterRepository
 ) {
 
-    fun execute(member: Member, encounterWithItemsAndForms: EncounterWithItemsAndForms, clock: Clock): Completable {
+    fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms, clock: Clock): Completable {
         return Completable.fromAction {
             updateEncounterTimestamp(encounterWithItemsAndForms, clock)
-            createDeltas(member, encounterWithItemsAndForms)
+            createDeltas(encounterWithItemsAndForms)
         }.subscribeOn(Schedulers.io())
     }
 
@@ -31,16 +30,8 @@ class SubmitMemberAndClaimUseCase(
         ).blockingAwait()
     }
 
-    private fun createDeltas(
-        member: Member,
-        encounterWithItemsAndForms: EncounterWithItemsAndForms
-    ) {
+    private fun createDeltas(encounterWithItemsAndForms: EncounterWithItemsAndForms) {
         val deltas = mutableListOf<Delta>()
-
-        deltas.add(Delta(
-            action = Delta.Action.ADD,
-            modelName = Delta.ModelName.MEMBER,
-            modelId = member.id))
 
         deltas.add(Delta(
             action = Delta.Action.ADD,
