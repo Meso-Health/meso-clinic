@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
@@ -98,6 +99,12 @@ class EditMemberFragment : DaggerFragment() {
                 name_field.setText(member.name)
                 birthdate_field.setText(MemberStringHelper.getDisplayAge(member, activity, clock))
                 medical_record_number_field.setValue(member.medicalRecordNumber)
+
+                photo?.let {
+                    val thumbnailBitmap = BitmapFactory.decodeByteArray(
+                        photo.bytes, 0, photo.bytes.size)
+                    photo_container.setPhotoPreview(thumbnailBitmap)
+                }
             }
 
             viewState?.isCheckedIn?.let { isCheckedIn ->
