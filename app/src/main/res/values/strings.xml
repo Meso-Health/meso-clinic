@@ -85,21 +85,21 @@
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">Status</string>
-    <string name="status_title" translatable="false">Network</string>
-    <string name="current_user_label" translatable="false">Current User</string>
+    <string name="status_title">Network</string>
+    <string name="current_user_label">Current User</string>
     <string name="fetch_members_label">Members last updated</string>
     <string name="fetch_billables_label">Prices last updated</string>
     <string name="fetch_diagnoses_label">Diagnoses last updated</string>
     <string name="fetch_member_pictures_label">Member photos</string>
     <string name="sync_new_members_label">New members</string>
-    <string name="sync_photos_label" translatable="false">New photos</string>
+    <string name="sync_photos_label">New photos</string>
     <string name="sync_id_events_label">Identifications</string>
     <string name="sync_claims_label">Claims</string>
     <string name="all_synced">All synced</string>
-    <string name="all_fetched" translatable="false">All fetched</string>
-    <string name="never_updated" translatable="false">never</string>
-    <string name="waiting_to_sync" translatable="false">unsynced</string>
-    <string name="waiting_to_fetch" translatable="false">unfetched</string>
+    <string name="all_fetched">All fetched</string>
+    <string name="never_updated">never</string>
+    <string name="waiting_to_sync">unsynced</string>
+    <string name="waiting_to_fetch">unfetched</string>
     <string name="app_version" translatable="false">Claims Submission %1$s</string>
     <string name="android_version" translatable="false">Android %1$s</string>
 
