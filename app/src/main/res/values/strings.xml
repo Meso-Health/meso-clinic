@@ -92,11 +92,14 @@
     <string name="fetch_diagnoses_label">Diagnoses last updated</string>
     <string name="fetch_member_pictures_label">Member photos</string>
     <string name="sync_new_members_label">New members</string>
+    <string name="sync_photos_label" translatable="false">New photos</string>
     <string name="sync_id_events_label">Identifications</string>
     <string name="sync_claims_label">Claims</string>
     <string name="all_synced">All synced</string>
+    <string name="all_fetched" translatable="false">All fetched</string>
     <string name="never_updated" translatable="false">never</string>
     <string name="waiting_to_sync" translatable="false">unsynced</string>
+    <string name="waiting_to_fetch" translatable="false">unfetched</string>
     <string name="app_version" translatable="false">Claims Submission %1$s</string>
     <string name="android_version" translatable="false">Android %1$s</string>
 

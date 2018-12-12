@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.unfetched_member_photo
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_encounters
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_identifications
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_new_members
+import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_photos
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
@@ -51,16 +52,19 @@ class StatusFragment : DaggerFragment() {
                     fetch_diagnoses_updated_at.setValue(formattedUpdatedAt(it.toEpochMilli()))
                 }
                 viewState.photosToFetchCount?.let {
-                    unfetched_member_photos.setValue(formattedQuantity(it))
+                    unfetched_member_photos.setValue(formattedFetchQuantity(it))
                 }
                 viewState.syncStatus.unsyncedNewMemberCount?.let {
-                    unsynced_new_members.setValue(formattedQuantity(it))
+                    unsynced_new_members.setValue(formattedSyncQuantity(it))
                 }
                 viewState.syncStatus.unsyncedIdEventCount?.let {
-                    unsynced_identifications.setValue(formattedQuantity(it))
+                    unsynced_identifications.setValue(formattedSyncQuantity(it))
                 }
                 viewState.syncStatus.unsyncedEncounterCount?.let {
-                    unsynced_encounters.setValue(formattedQuantity(it))
+                    unsynced_encounters.setValue(formattedSyncQuantity(it))
+                }
+                viewState.syncStatus.unsyncedPhotosCount?.let {
+                    unsynced_photos.setValue(formattedSyncQuantity(it))
                 }
             }
         })
@@ -79,7 +83,15 @@ class StatusFragment : DaggerFragment() {
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
     }
 
-    private fun formattedQuantity(count: Int): String {
+    private fun formattedFetchQuantity(count: Int): String {
+        return if (count == 0) {
+            getString(R.string.all_fetched)
+        } else {
+            "$count ${getString(R.string.waiting_to_fetch)}"
+        }
+    }
+
+    private fun formattedSyncQuantity(count: Int): String {
         return if (count == 0) {
             getString(R.string.all_synced)
         } else {

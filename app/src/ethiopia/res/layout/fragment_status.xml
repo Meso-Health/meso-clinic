@@ -86,6 +86,14 @@
             android:text="@string/sync_claims_label"
             app:layout_constraintTop_toBottomOf="@id/unsynced_identifications"/>
 
+        <org.watsi.uhp.views.StatusField
+            android:id="@+id/unsynced_photos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/status_field_margin"
+            android:text="@string/sync_photos_label"
+            app:layout_constraintTop_toBottomOf="@id/unsynced_encounters"/>
+
         <TextView
             android:id="@+id/app_version"
             android:layout_width="match_parent"
@@ -95,7 +103,7 @@
             android:paddingEnd="@dimen/fragment_padding"
             style="@style/StatusVersion"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/unsynced_encounters" />
+            app:layout_constraintTop_toBottomOf="@id/unsynced_photos" />
 
         <TextView
             android:id="@+id/android_version"

@@ -18,6 +18,7 @@ interface DeltaRepository {
             val unsyncedEditedMemberCount: Int? = null,
             val unsyncedIdEventCount: Int? = null,
             val unsyncedEncounterCount: Int? = null,
-            val unsyncedEncounterFormCount: Int? = null
+            val unsyncedEncounterFormCount: Int? = null,
+            val unsyncedPhotosCount: Int? = null
     )
 }
