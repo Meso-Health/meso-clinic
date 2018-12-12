@@ -30,9 +30,7 @@ class SubmitClaimUseCase(
         ).blockingAwait()
     }
 
-    private fun createDeltas(
-        encounterWithItemsAndForms: EncounterWithItemsAndForms
-    ) {
+    private fun createDeltas(encounterWithItemsAndForms: EncounterWithItemsAndForms) {
         val deltas = mutableListOf<Delta>()
 
         deltas.add(Delta(
