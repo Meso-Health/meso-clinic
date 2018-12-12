@@ -99,7 +99,6 @@ class MemberInformationViewModel @Inject constructor(
             fingerprintsVerificationResultCode = null
         )
 
-        // TODO: do not submit either member or idEvent until encounter is approved
         return Completable.concatArray(
             createMemberUseCase.execute(member, submitNow = true),
             createIdentificationEventUseCase.execute(idEvent)

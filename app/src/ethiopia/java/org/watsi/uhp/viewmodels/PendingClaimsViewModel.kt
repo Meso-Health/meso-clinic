@@ -9,12 +9,12 @@ import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.usecases.LoadPendingClaimsUseCase
-import org.watsi.domain.usecases.SubmitMemberAndClaimUseCase
+import org.watsi.domain.usecases.SubmitClaimUseCase
 import javax.inject.Inject
 
 class PendingClaimsViewModel @Inject constructor(
     private val loadPendingClaimsUseCase: LoadPendingClaimsUseCase,
-    private val submitMemberAndClaimUseCase: SubmitMemberAndClaimUseCase,
+    private val submitClaimUseCase: SubmitClaimUseCase,
     private val logger: Logger,
     private val clock: Clock
 ) : ViewModel() {
@@ -39,8 +39,7 @@ class PendingClaimsViewModel @Inject constructor(
         return observable.value?.let { viewState ->
             Completable.fromCallable {
                 viewState.claims.map { encounterWithExtras ->
-                    submitMemberAndClaimUseCase.execute(
-                        encounterWithExtras.member,
+                    submitClaimUseCase.execute(
                         encounterWithExtras.toEncounterWithItemsAndForms(),
                         clock
                     ).blockingAwait()
