@@ -134,7 +134,8 @@ class MemberInformationViewModel @Inject constructor(
                     phoneNumber = null,
                     photoUrl = null,
                     membershipNumber = membershipNumber,
-                    medicalRecordNumber = viewState.medicalRecordNumber
+                    medicalRecordNumber = viewState.medicalRecordNumber,
+                    needsRenewal = null
                 )
             } else {
                 throw IllegalStateException("MemberInformationViewModel.toMember should only be called with a valid viewState. " + viewState.toString())

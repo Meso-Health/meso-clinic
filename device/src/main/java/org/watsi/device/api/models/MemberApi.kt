@@ -26,7 +26,9 @@ data class MemberApi(
     @Expose(serialize = false)
     @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?,
     @SerializedName(MEMBERSHIP_NUMBER_FIELD) val membershipNumber: String?,
-    @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?
+    @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?,
+    @Expose(serialize = false)
+    @SerializedName(NEEDS_RENEWAL) val needsRenewal: Boolean?
 ) {
 
     constructor (member: Member) :
@@ -44,7 +46,8 @@ data class MemberApi(
                  otherLanguage = preferredLanguageOther(member),
                  photoUrl = member.photoUrl,
                  membershipNumber = member.membershipNumber,
-                 medicalRecordNumber = member.medicalRecordNumber
+                 medicalRecordNumber = member.medicalRecordNumber,
+                 needsRenewal = member.needsRenewal
             )
 
     fun toMember(persistedMember: Member?): Member {
@@ -74,7 +77,8 @@ data class MemberApi(
             thumbnailPhotoId = thumbnailPhotoId,
             photoUrl = convertedPhotoUrl,
             membershipNumber = membershipNumber,
-            medicalRecordNumber = medicalRecordNumber
+            medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal
         )
     }
 
@@ -94,6 +98,7 @@ data class MemberApi(
         const val PHOTO_URL_FIELD = "photo_url"
         const val MEMBERSHIP_NUMBER_FIELD = "membership_number"
         const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
+        const val NEEDS_RENEWAL = "needs_renewal"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
             val patchParams = JsonObject()

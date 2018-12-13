@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.check_in_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.needs_renewal_notification
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.photo_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
@@ -51,6 +52,7 @@ class EditMemberFragment : DaggerFragment() {
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
 
     private lateinit var viewModel: EditMemberViewModel
+    private lateinit var paramMember: Member
     private lateinit var searchMethod: IdentificationEvent.SearchMethod
 
     private var placeholderPhotoIconPadding = 0
@@ -81,19 +83,21 @@ class EditMemberFragment : DaggerFragment() {
         memberPhotoCornerRadius = resources.getDimensionPixelSize(R.dimen.cornerRadius)
 
         searchMethod = arguments.getSerializable(PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod
-        val paramMember = arguments.getSerializable(PARAM_MEMBER) as Member
+        paramMember = arguments.getSerializable(PARAM_MEMBER) as Member
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(EditMemberViewModel::class.java)
 
         viewModel.getObservable(paramMember).observe(this, Observer { viewState ->
             viewState?.memberWithThumbnail?.let { memberWithThumbnail ->
                 val member = memberWithThumbnail.member
-                activity.title = member.name
-                top_name.text = member.name
-
                 val photo = memberWithThumbnail.photo
-                PhotoLoader.loadMemberPhoto(photo?.bytes, top_photo, activity, member.gender)
 
+                if (member.needsRenewal == true) {
+                    needs_renewal_notification.visibility = View.VISIBLE
+                }
+
+                PhotoLoader.loadMemberPhoto(photo?.bytes, top_photo, activity, member.gender)
+                top_name.text = member.name
                 top_gender_age.text = MemberStringHelper.formatAgeAndGender(member, activity, clock)
 
                 membership_number_field.setText(member.membershipNumber)
@@ -123,7 +127,7 @@ class EditMemberFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(getString(R.string.blank), R.drawable.ic_arrow_back_white_24dp)
+        (activity as ClinicActivity).setToolbar(paramMember.name, R.drawable.ic_arrow_back_white_24dp)
         return inflater?.inflate(R.layout.fragment_edit_member, container, false)
     }
 

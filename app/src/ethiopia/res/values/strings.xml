@@ -47,6 +47,7 @@
 
     <!-- EditMemberFragment -->
     <string name="member_list_item_gender_age" translatable="false">%1$s, %2$s</string>
+    <string name="replace_card_notification">Needs renewal</string>
     <string name="membership_number_field_label">Member CBHI ID</string>
     <string name="name_field_label">Full name</string>
     <string name="birthdate_field_label">Birthdate</string>

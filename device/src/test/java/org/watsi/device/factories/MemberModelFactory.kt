@@ -29,6 +29,7 @@ object MemberModelFactory {
         phoneNumber: String? = null,
         membershipNumber: String? = null,
         medicalRecordNumber: String? = null,
+        needsRenewal: Boolean? = false,
         clock: Clock = Clock.systemUTC()
     ) : MemberModel {
         val now = Instant.now(clock)
@@ -50,7 +51,8 @@ object MemberModelFactory {
             fingerprintsGuid = fingerprintsGuid,
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
-            medicalRecordNumber = medicalRecordNumber
+            medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal
         )
     }
 
@@ -74,6 +76,7 @@ object MemberModelFactory {
         phoneNumber: String? = null,
         membershipNumber: String? = null,
         medicalRecordNumber: String? = null,
+        needsRenewal: Boolean? = false,
         clock: Clock = Clock.systemUTC()
     ) : MemberModel {
         val model = build(
@@ -95,6 +98,7 @@ object MemberModelFactory {
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal,
             clock = clock
         )
         memberDao.insert(model)

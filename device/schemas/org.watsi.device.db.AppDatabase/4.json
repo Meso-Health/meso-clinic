@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "30e8c8197d245c6e17285be25c1841f2",
+    "identityHash": "e921ae1d6506813724031ce693e955a1",
     "entities": [
       {
         "tableName": "billables",
@@ -500,7 +500,7 @@
       },
       {
         "tableName": "members",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `enrolledAt` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `householdId` TEXT, `photoId` TEXT, `thumbnailPhotoId` TEXT, `photoUrl` TEXT, `cardId` TEXT, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `language` TEXT, `birthdate` TEXT NOT NULL, `birthdateAccuracy` TEXT NOT NULL, `fingerprintsGuid` TEXT, `phoneNumber` TEXT, `membershipNumber` TEXT, `medicalRecordNumber` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `enrolledAt` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `householdId` TEXT, `photoId` TEXT, `thumbnailPhotoId` TEXT, `photoUrl` TEXT, `cardId` TEXT, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `language` TEXT, `birthdate` TEXT NOT NULL, `birthdateAccuracy` TEXT NOT NULL, `fingerprintsGuid` TEXT, `phoneNumber` TEXT, `membershipNumber` TEXT, `medicalRecordNumber` TEXT, `needsRenewal` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -608,6 +608,12 @@
             "fieldPath": "medicalRecordNumber",
             "columnName": "medicalRecordNumber",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "needsRenewal",
+            "columnName": "needsRenewal",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -717,7 +723,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"30e8c8197d245c6e17285be25c1841f2\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e921ae1d6506813724031ce693e955a1\")"
     ]
   }
 }
