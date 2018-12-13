@@ -34,6 +34,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.PhotoLoader
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EditMemberViewModel
@@ -136,15 +137,23 @@ class EditMemberFragment : DaggerFragment() {
         }
 
         check_in_button.setOnClickListener {
-            createIdentificationEvent().subscribe({
-                getMember()?.let {
-                    navigationManager.popTo(HomeFragment.withSnackbarMessage(
-                        getString(R.string.checked_in_snackbar_message, it.name)
-                    ))
+            getMember()?.let { member ->
+                if (member.medicalRecordNumber != null) {
+                    createIdentificationEvent().subscribe({
+                        navigationManager.popTo(HomeFragment.withSnackbarMessage(
+                            getString(R.string.checked_in_snackbar_message, member.name)
+                        ))
+                    }, {
+                        logger.error(it)
+                    })
+                } else {
+                    view?.let {
+                        SnackbarHelper.showError(it, activity, getString(R.string.missing_medical_record_number))
+                    }
                 }
-            }, {
-                logger.error(it)
-            })
+            } ?: run {
+                // TODO: handle member not no viewState
+            }
         }
     }
 

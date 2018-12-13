@@ -56,6 +56,7 @@
     <string name="edit_input_add">Add</string>
     <string name="edit_input_edit">Edit</string>
     <string name="take_photo_button_text">Take photo</string>
+    <string name="missing_medical_record_number">Medical record number is required</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
