@@ -14,6 +14,7 @@ import java.util.UUID
 data class ReturnedEncounterApi(
         @SerializedName("id") val id: UUID,
         @SerializedName("member_id") val memberId: UUID,
+        @SerializedName("identification_event_id") val identificationEventId: UUID?,
         @SerializedName("occurred_at") val occurredAt: Instant,
         @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Boolean,
         @SerializedName("diagnosis_ids") val diagnoses: List<Int>,
@@ -38,7 +39,7 @@ data class ReturnedEncounterApi(
             encounter = Encounter(
                 id = id,
                 memberId = memberId,
-                identificationEventId = null,
+                identificationEventId = identificationEventId,
                 copaymentPaid = null,
                 occurredAt = occurredAt,
                 backdatedOccurredAt = backdatedOccurredAt,
