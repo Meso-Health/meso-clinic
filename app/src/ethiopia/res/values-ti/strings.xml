@@ -15,11 +15,13 @@
     <string name="total">ድምር</string>
     <string name="save">ኣቐምጥ</string>
     <string name="edit">ኣርም</string>
+    <string name="submit">ላኣኽ</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
     <string name="days">መዓልቲታት</string>
     <string name="months">ኣዋርሕ</string>
     <string name="years">ዓመት</string>
+    <string name="photo_description">ስእሊ</string>
 
     <!-- Form -->
     <string name="age_field_label">ዕድመ</string>
@@ -36,6 +38,11 @@
     <string name="login_wrong_username_or_password_message">ዝተዋህበ ናይ ተጠቃሚ ስም / ይሕለፍ ቃል ጥምረት ግጉይ እዩ</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
     <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+
+    <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
+    <string name="check_in">ኣእትው</string>
+    <!--<string name="checked_in">Already Checked In</string>-->
+    <string name="checked_in_snackbar_message">%1$s ኣትዩ አሎ.</string>
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
@@ -69,11 +76,30 @@
 
     <!-- StatusFragment -->
     <string name="version_and_sync_label">ኩነታት</string>
+    <string name="status_title">መርበብ</string>
+    <string name="current_user_label">ፈፃሚ</string>
+    <!--<string name="fetch_members_label">Members last updated</string>-->
     <string name="fetch_billables_label">ዋጋ ተመን ዝተሓደሰሉ እዋን</string>
     <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
+    <!--<string name="fetch_member_pictures_label">Member photos</string>-->
     <string name="sync_claims_label">ሕቶታት  ክፍሊት</string>
     <string name="all_synced">ኩሉ ኣዋድድ</string>
+    <!--<string name="all_fetched">All fetched</string>-->
+    <!--<string name="never_updated">never</string>-->
+    <!--<string name="waiting_to_sync">unsynced</string>-->
+    <!--<string name="waiting_to_fetch">unfetched</string>-->
     <string name="sync_new_members_label">ሓዱስ ኣባል</string>
+    <!--<string name="sync_photos_label">New photos</string>-->
+    <!--<string name="sync_id_events_label">Identifications</string>-->
+
+    <!-- ScanMemberCard -->
+    <string name="scan_member_card_button_text">@string/scan_member_card</string>
+    <string name="scan_member_card">ካርዲ ስካን ግበር</string>
+    <string name="scan_member_card_invalid_id">ትኽክለኛ ናይ ኣባልነት ካርዲ አይኮነን</string>
+    <string name="scan_member_card_not_found">እዚ ካርዲ ምስ ኣባል ኣይተዛመደን</string>
+
+    <!-- PhotoActivity -->
+    <string name="member_photo_overlay_text">ናይ ኣባል ስእሊ አልዕል</string>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
@@ -86,21 +112,15 @@
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
     <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
 
+    <!-- HomeFragment -->
+    <string name="home_fragment_label">ሕቶታት ክፍሊት</string>
+    <!--<string name="no_claims">No claims available</string>-->
+    <!--<string name="pending_claims_dialog_label">Enter security PIN</string>-->
+    <!--<string name="pending_claims_dialog_error_message">Invalid PIN</string>-->
+
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
     <string name="prompt_category">ምደብ ምረፅ</string>
-    <string name="invalid_membership_error">ናይ ኣባልነት መፍለይ ቁፅሪ ስሕተት ኣለዎ</string>
-
-    <!-- MemberInformationFragment -->
-    <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
-    <string name="medical_record_number">ሕክምና ካርዲ ቁፅሪ</string>
-    <string name="membership_number_label">ናይ ኣባል መፍለይ ቁፅሪ</string>
-    <string name="age_validation_error">ዕድመ ክኣቱ ኣለዎ</string>
-    <string name="gender_validation_error">ፆታ ክምላእ ኣለዎ</string>
-    <string name="medical_record_number_validation_error">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ</string>
-    <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
-    <string name="yes">እወ</string>
-    <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ ጎዲሉ ኣሎ</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">ዕለት</string>
@@ -114,6 +134,47 @@
     <string name="search_fragment_label">@string/search</string>
     <string name="start_claim_button">ሕቶ ክፍሊት ምዝገባ ጀምር</string>
     <string name="encounter_submitted">ሕቶ ክፍሊት ብዝግባእ ተመሓላሊፉ</string>
+    <string name="invalid_membership_error">ናይ ኣባልነት መፍለይ ቁፅሪ ስሕተት ኣለዎ</string>
+    <string name="scan_member_card_menu_item_title">ካርዲ ስካን ግበር</string>
+
+    <!-- MemberSearchFragment -->
+    <string name="member_search_fragment_label">@string/search</string>
+    <string name="search_by_name">ብሽም ኣልሽ</string>
+
+    <!-- MemberNotFoundFragment -->
+    <string name="member_not_found_fragment_label">@string/search</string>
+    <string name="member_not_found_message">ኣባል እንትእልሽ ስሕተት ገጢሙ</string>
+    <!--<string name="member_not_found_detail">The member is not registered to this phone</string>-->
+    <string name="enter_claim_manually_button_text">ብኢድ ምልኣዩ</string>
+
+    <!-- HouseholdFragment -->
+    <string name="household_fragment_label">@string/search</string>
+
+    <!-- EditMemberFragment -->
+    <!--<string name="replace_card_notification">Needs renewal</string>-->
+    <string name="membership_number_field_label">ናይ ማመመጥ ካርዲ ቁፅሪ</string>
+    <string name="name_field_label">ሙሉእ ሽም</string>
+    <string name="birthdate_field_label">ዕለተ ልደት</string>
+    <string name="medical_record_number_field_label">ሕክምና ካርዲ ቁፅሪ</string>
+    <string name="photo_field_label">ስእሊ</string>
+    <string name="photo_panel_header_text">ስእሊ</string>
+    <string name="edit_input_add">ወስኽ</string>
+    <string name="edit_input_edit">ኣርም</string>
+    <string name="take_photo_button_text">ስእሊ ኣልዕል</string>
+    <!--<string name="missing_medical_record_number">Medical record number is required</string>-->
+
+    <!-- MemberInformationFragment -->
+    <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
+    <!--<string name="member_name_label">Name</string>-->
+    <string name="medical_record_number">ሕክምና ካርዲ ቁፅሪ</string>
+    <string name="membership_number_label">ናይ ኣባል መፍለይ ቁፅሪ</string>
+    <string name="name_validation_error">ሽም ክምላእ አለዎ</string>
+    <string name="age_validation_error">ዕድመ ክኣቱ ኣለዎ</string>
+    <string name="gender_validation_error">ፆታ ክምላእ ኣለዎ</string>
+    <string name="medical_record_number_validation_error">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ</string>
+    <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
+    <string name="yes">እወ</string>
+    <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ ጎዲሉ ኣሎ</string>
 
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">ዓይነት ቪዚት/ አገልግሎት</string>
@@ -170,5 +231,9 @@
         <item quantity="other">%d ዝተመለሱ ናይ ክፍሊት ሕቶታት</item>
     </plurals>
     <string name="search_diagnosis_hint">ነፀርታ ኣልሽ</string>
+
+    <!-- Search Terms -->
+    <!--<string name="search_by_member_card">Search member card</string>-->
+    <string name="search">ኣልሽ/ድለይ</string>
 
 </resources>
