@@ -27,7 +27,8 @@ data class MemberModel(
     val fingerprintsGuid: UUID?,
     val phoneNumber: String?,
     val membershipNumber: String?,
-    val medicalRecordNumber: String?
+    val medicalRecordNumber: String?,
+    val needsRenewal: Boolean?
 ) {
 
     init {
@@ -53,7 +54,8 @@ data class MemberModel(
             fingerprintsGuid = fingerprintsGuid,
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
-            medicalRecordNumber = medicalRecordNumber
+            medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal
         )
     }
 
@@ -78,7 +80,8 @@ data class MemberModel(
                 fingerprintsGuid = member.fingerprintsGuid,
                 phoneNumber = member.phoneNumber,
                 membershipNumber = member.membershipNumber,
-                medicalRecordNumber = member.medicalRecordNumber
+                medicalRecordNumber = member.medicalRecordNumber,
+                needsRenewal = member.needsRenewal
             )
         }
     }

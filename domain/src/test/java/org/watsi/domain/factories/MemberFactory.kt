@@ -23,7 +23,8 @@ object MemberFactory {
         fingerprintsGuid: UUID? = null,
         phoneNumber: String? = null,
         membershipNumber: String? = null,
-        medicalRecordNumber: String? = null
+        medicalRecordNumber: String? = null,
+        needsRenewal: Boolean? = false
     ) : Member {
         return Member(
             id = id,
@@ -41,7 +42,8 @@ object MemberFactory {
             fingerprintsGuid = fingerprintsGuid,
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
-            medicalRecordNumber = medicalRecordNumber
+            medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal
         )
     }
 }

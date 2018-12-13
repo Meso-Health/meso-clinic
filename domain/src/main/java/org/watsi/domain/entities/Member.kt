@@ -24,7 +24,8 @@ data class Member(
     val fingerprintsGuid: UUID?,
     val phoneNumber: String?,
     val membershipNumber: String?,
-    val medicalRecordNumber: String?
+    val medicalRecordNumber: String?,
+    val needsRenewal: Boolean?
 ) : Serializable {
 
     enum class Gender { M, F }
