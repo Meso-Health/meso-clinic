@@ -54,9 +54,9 @@ When you __build__ an app, it will just do the first step. You can then do whate
 
 ### Running or Building Release types
 
-When running or building release variants of the app, Android Studio will ask that you provide a specific release key instead of using a random default key like it does for debug variants. This is because all release builds must be signed with the same signature for the device to recognize it as the same app - otherwise, the phone will wipe all the data on the old app before installing the new one. To ensure that all release builds are signed with the same key, please use the one in Dropbox.
+When running or building release variants of the app, Android Studio will ask that you provide a specific release key instead of using a random default key like it does for debug variants. This is because all release builds must be signed with the same signature for the device to recognize it as the same app - otherwise, the phone will wipe all the data on the old app before installing the new one. To ensure that all release builds are signed with the same key, please use the one in 1Password.
 
-- Go to Dropbox and search for the `release-key.jks` file.
+- Go to 1Password and search for the `release-key.jks` file.
 - Download it to `/your/working/dir/app`.
 
 To __run__ the release build on your phone, follow the steps for running an app above.
