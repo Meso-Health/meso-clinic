@@ -10,21 +10,7 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
-In order to run the application, you also need an `.env` file in your root directory for storing
-private config settings. We can create a symlink of the remote `.env` file in Dropbox so that all
-changes to the file will be synced across all developers.
-
-```
-$ ln -s /path/to/watsi/Dropbox/UHP/Android/.env /your/working/dir/for/.env
-```
-
-The simplest way to load these environment variables into your Android Studio is to launch the app from the Command Line after loading the variables.
-
-```
-$ cd /your/working/dir
-$ source .env
-$ open -a /Applications/Android\ Studio.app /your/working/dir
-```
+In order to run the application, you also need a `variables.gradle` file in your root directory which stores environment variables. You can find and download the file from 1Password.
 
 ## Build variants
 
