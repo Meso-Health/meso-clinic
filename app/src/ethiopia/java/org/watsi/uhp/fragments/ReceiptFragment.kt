@@ -52,7 +52,8 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
-import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
+import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
+import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.comment_age
@@ -74,7 +75,6 @@ import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
 import org.watsi.uhp.views.SpinnerField
-import java.util.UUID
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -82,7 +82,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var deletePendingClaimAndMemberUseCase: DeletePendingClaimAndMemberUseCase
-    @Inject lateinit var loadEncounterWithExtrasUseCase: LoadEncounterWithExtrasUseCase
+    @Inject lateinit var loadOneReturnedClaimUseCase: LoadOneReturnedClaimUseCase
+    @Inject lateinit var loadOnePendingClaimUseCase: LoadOnePendingClaimUseCase
     @Inject lateinit var logger: Logger
     @Inject lateinit var clock: Clock
 
@@ -99,12 +100,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var yearSpinner: SpinnerField
 
     private var snackbarMessageToShow: String? = null
-    private var remainingEncounterIds: ArrayList<UUID>? = null
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
-        const val PARAM_REMAINING_ENCOUNTER_IDS = "remaining_encounter_ids"
-        const val PARAM_SNACKBAR_MESSAGE = "snackbar_message"
         const val DATE_PICKER_START_YEAR = 2008
 
         fun forEncounter(encounter: EncounterFlowState): ReceiptFragment {
@@ -114,27 +112,12 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             return fragment
         }
-
-        fun forEncounterAndRemainingEncountersAndSnackbar(
-            encounter: EncounterFlowState,
-            remainingEncounterIds: ArrayList<UUID>?,
-            message: String? = null
-        ): ReceiptFragment {
-            val fragment = ReceiptFragment()
-            fragment.arguments = Bundle().apply {
-                putSerializable(PARAM_ENCOUNTER, encounter)
-                putSerializable(PARAM_REMAINING_ENCOUNTER_IDS, remainingEncounterIds)
-                putSerializable(PARAM_SNACKBAR_MESSAGE, message)
-            }
-            return fragment
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
-        remainingEncounterIds = arguments.getSerializable(PARAM_REMAINING_ENCOUNTER_IDS) as ArrayList<UUID>?
         encounterAction = when {
             encounterFlowState.encounter.adjudicationState == Encounter.AdjudicationState.RETURNED -> EncounterAction.RESUBMIT
             encounterFlowState.encounter.preparedAt == null -> EncounterAction.PREPARE
@@ -153,8 +136,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         serviceReceiptItemAdapter = ReceiptListItemAdapter(services)
         labReceiptItemAdapter = ReceiptListItemAdapter(labs)
         drugAndSupplyReceiptItemAdapter = ReceiptListItemAdapter(drugsAndSupplies)
-
-        snackbarMessageToShow = arguments.getString(PARAM_SNACKBAR_MESSAGE)
     }
 
     private fun setAndObserveViewModel() {
@@ -499,37 +480,33 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun navigateToNext(message: String) {
-        if (remainingEncounterIds.orEmpty().isEmpty()) {
-            when (encounterAction) {
-                EncounterAction.PREPARE -> {
-                    navigationManager.popTo(HomeFragment.withSnackbarMessage(message))
-                }
-                EncounterAction.SUBMIT -> {
-                    navigationManager.popTo(PendingClaimsFragment.withSnackbarMessage(message))
-                }
-                EncounterAction.RESUBMIT -> {
-                    navigationManager.popTo(ReturnedClaimsFragment.withSnackbarMessage(message))
-                }
+        when (encounterAction) {
+            EncounterAction.PREPARE -> {
+                navigationManager.popTo(HomeFragment.withSnackbarMessage(message))
             }
-
-        } else {
-            remainingEncounterIds?.let { encounterList ->
-                val nextEncounterId = encounterList.first()
-                val newRemainingEncounters = if (encounterList.size > 1) {
-                    ArrayList(encounterList.minus(nextEncounterId))
-                } else {
-                    null
-                }
-
-                loadEncounterWithExtrasUseCase.execute(nextEncounterId).subscribe({ nextEncounter ->
-                    navigationManager.goTo(
-                        ReceiptFragment.forEncounterAndRemainingEncountersAndSnackbar(
-                            EncounterFlowState.fromEncounterWithExtras(nextEncounter),
-                            newRemainingEncounters, message
-                        ), false
-                    )
-                }, {
-                    logger.error(it)
+            EncounterAction.SUBMIT -> {
+                // doOnEvent contains the side-effect that executes whenever the Maybe completes, errors, or succeeds.
+                // In this case, the side-effect is to navigate to the PendingClaimsFragment.
+                // If the Maybe succeeds, we will then navigate to the ReceiptFragment.
+                // doOnEvent always happens before any of the subscribe callbacks.
+                loadOnePendingClaimUseCase.execute().doOnEvent { _, _ ->
+                    navigationManager.popTo(PendingClaimsFragment.withSnackbarMessage(message))
+                }.subscribe( { encounterWithExtras->
+                    val encounterFlowState = EncounterFlowState.fromEncounterWithExtras(encounterWithExtras)
+                    navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+                }, { error ->
+                    logger.warning(error)
+                })
+            }
+            EncounterAction.RESUBMIT -> {
+                // See the `EncounterAction.SUBMIT` comment to understand how doOnEvent works with subscribe.
+                loadOneReturnedClaimUseCase.execute().doOnEvent { _, _ ->
+                    navigationManager.popTo(ReturnedClaimsFragment.withSnackbarMessage(message))
+                }.subscribe( { encounterWithExtras->
+                    val encounterFlowState = EncounterFlowState.fromEncounterWithExtras(encounterWithExtras)
+                    navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+                }, { error ->
+                    logger.warning(error)
                 })
             }
         }

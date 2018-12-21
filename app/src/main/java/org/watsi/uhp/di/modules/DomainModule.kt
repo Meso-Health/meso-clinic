@@ -26,6 +26,8 @@ import org.watsi.domain.usecases.LoadDefaultBillablesUseCase
 import org.watsi.domain.usecases.LoadEncounterWithExtrasUseCase
 import org.watsi.domain.usecases.LoadHouseholdMembersUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
+import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
+import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsUseCase
 import org.watsi.domain.usecases.LoadPhotoUseCase
@@ -279,5 +281,19 @@ class DomainModule {
         memberRepository: MemberRepository
     ): FindHouseholdIdByCardIdUseCase {
         return FindHouseholdIdByCardIdUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideLoadOnePendingClaimUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadOnePendingClaimUseCase {
+        return LoadOnePendingClaimUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideLoadOneReturnedClaimUseCase(
+        encounterRepository: EncounterRepository
+    ): LoadOneReturnedClaimUseCase {
+        return LoadOneReturnedClaimUseCase(encounterRepository)
     }
 }

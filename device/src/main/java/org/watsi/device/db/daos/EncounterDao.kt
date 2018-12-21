@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
@@ -58,16 +59,24 @@ interface EncounterDao {
                memberModel: MemberModel)
 
     @Transaction
-    @Query("SELECT * from encounters WHERE submittedAt IS NULL")
+    @Query("SELECT * from encounters WHERE submittedAt IS NULL ORDER BY occurredAt")
     fun pending(): Flowable<List<EncounterWithMemberAndItemsAndFormsModel>>
+
+    @Transaction
+    @Query("SELECT * from encounters WHERE submittedAt IS NULL ORDER BY occurredAt LIMIT 1")
+    fun loadOnePendingClaim(): Maybe<EncounterWithMemberAndItemsAndFormsModel>
 
     @Transaction
     @Query("SELECT COUNT(*) from encounters WHERE submittedAt IS NULL")
     fun pendingCount(): Flowable<Int>
 
     @Transaction
-    @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED'")
+    @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED' ORDER BY occurredAt")
     fun returned(): Flowable<List<EncounterWithMemberAndItemsAndFormsModel>>
+
+    @Transaction
+    @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED' ORDER BY occurredAt LIMIT 1")
+    fun loadOneReturnedClaim(): Maybe<EncounterWithMemberAndItemsAndFormsModel>
 
     @Transaction
     @Query("SELECT COUNT(*) from encounters WHERE adjudicationState = 'RETURNED'")

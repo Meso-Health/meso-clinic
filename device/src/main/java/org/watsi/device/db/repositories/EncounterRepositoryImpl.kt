@@ -2,6 +2,7 @@ package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
@@ -34,7 +35,6 @@ class EncounterRepositoryImpl(
     private val sessionManager: SessionManager,
     private val clock: Clock
 ) : EncounterRepository {
-
     override fun revisedIds(): Single<List<UUID>> {
         return encounterDao.revisedIds()
     }
@@ -97,8 +97,16 @@ class EncounterRepositoryImpl(
         }
     }
 
+    override fun loadOnePendingClaim(): Maybe<EncounterWithExtras> {
+        return encounterDao.loadOnePendingClaim().map { loadClaim(it) }.subscribeOn(Schedulers.io())
+    }
+
+    override fun loadOneReturnedClaim(): Maybe<EncounterWithExtras> {
+        return encounterDao.loadOneReturnedClaim().map { loadClaim(it) }.subscribeOn(Schedulers.io())
+    }
+
     override fun findWithExtras(id: UUID): Single<EncounterWithExtras> {
-        return encounterDao.findWithMemberAndForms(id)?.map { loadClaim(it) }
+        return encounterDao.findWithMemberAndForms(id).map { loadClaim(it) }
     }
 
     override fun returnedIds(): Single<List<UUID>> {
