@@ -42,6 +42,7 @@ class ApiModule {
     @Provides
     fun provideCoverageApi(httpClient: OkHttpClient): CoverageApi {
         val gson = GsonBuilder()
+                .serializeNulls()
                 .registerTypeAdapter(LocalDate::class.javaObjectType, JsonSerializer<LocalDate> { src, _, _ ->
                     JsonPrimitive(src.toString())
                 })
