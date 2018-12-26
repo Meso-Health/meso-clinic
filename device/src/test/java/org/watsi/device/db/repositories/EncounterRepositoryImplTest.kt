@@ -70,7 +70,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockDiagnosisDao, mockApi, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
