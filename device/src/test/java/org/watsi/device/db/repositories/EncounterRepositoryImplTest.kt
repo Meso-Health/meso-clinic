@@ -151,7 +151,7 @@ class EncounterRepositoryImplTest {
         val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
         val encounterWithItemsAndForms = EncounterWithItemsAndForms(
-                encounter, listOf(encounterItemRelation), listOf(encounterForm), emptyList())
+                encounter, listOf(encounterItemRelation), listOf(encounterForm))
 
         repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
 

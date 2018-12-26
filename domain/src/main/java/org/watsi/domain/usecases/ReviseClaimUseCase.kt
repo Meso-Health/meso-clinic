@@ -48,8 +48,7 @@ class ReviseClaimUseCase(
                 EncounterWithItemsAndForms(
                     newEncounter,
                     newEncounterItems,
-                    newEncounterForms,
-                    encounterWithItemsAndForms.diagnoses
+                    newEncounterForms
                 ), true, clock
             ).blockingAwait()
 
