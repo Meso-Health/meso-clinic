@@ -19,6 +19,7 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -55,6 +56,7 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 class EncounterRepositoryImplTest {
 
     @Mock lateinit var mockDao: EncounterDao
+    @Mock lateinit var mockEncounterItemDao: EncounterItemDao
     @Mock lateinit var mockDiagnosisDao: DiagnosisDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
@@ -220,7 +222,6 @@ class EncounterRepositoryImplTest {
     @Test
     fun delete() {
         val encounterRelation = EncounterWithExtrasFactory.build()
-
 
         repository.delete(encounterRelation).test().assertComplete()
 

@@ -146,13 +146,14 @@ class EncounterRepositoryImpl(
             val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
                 EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
             }
-            val priceScheduleModels = encounterWithItemsAndForms.encounterItemRelations.map { encounterItemRelation ->
-                encounterItemRelation.billableWithPriceSchedule.priceSchedules().map {
-                    PriceScheduleModel.fromPriceSchedule(it, clock)
-                }
-            }.flatten()
 
-            encounterDao.upsert(encounterModel, encounterItemModels, priceScheduleModels)
+            encounterDao.upsert(
+                encounterModels = listOf(encounterModel),
+                encounterItemModels = encounterItemModels,
+                billableModels = emptyList(),
+                priceScheduleModels = emptyList(),
+                memberModels = emptyList()
+            )
         }.subscribeOn(Schedulers.io())
     }
 
