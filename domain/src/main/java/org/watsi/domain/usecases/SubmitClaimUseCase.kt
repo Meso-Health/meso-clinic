@@ -16,12 +16,12 @@ class SubmitClaimUseCase(
 
     fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms, clock: Clock): Completable {
         return Completable.fromAction {
-            updateEncounterTimestamp(encounterWithItemsAndForms, clock)
+            setSubmittedAt(encounterWithItemsAndForms, clock)
             createDeltas(encounterWithItemsAndForms)
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun updateEncounterTimestamp(
+    private fun setSubmittedAt(
         encounterWithItemsAndForms: EncounterWithItemsAndForms,
         clock: Clock
     ) {
