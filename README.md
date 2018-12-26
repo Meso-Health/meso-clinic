@@ -244,7 +244,10 @@ Then, back on the android side you can run your test locally either in Android S
 ### Code Style
 
 In general, these should be your settings:
-<img width="600" alt="screen shot 2018-11-28 at 1 02 15 am" src="https://user-images.githubusercontent.com/4009333/49132215-54bf0600-f2a9-11e8-86ff-8de5210b1b04.png">
+
+<img width="1000" alt="screen shot 2018-12-26 at 2 05 03 am" src="https://user-images.githubusercontent.com/4009333/50436602-be383180-08b4-11e9-8559-4f19aaa48118.png">
+<img width="1000" alt="screen shot 2018-12-26 at 2 05 59 am" src="https://user-images.githubusercontent.com/4009333/50436603-bed0c800-08b4-11e9-8777-b023444e39b6.png">
+<img width="1000" alt="screen shot 2018-12-26 at 2 03 10 am" src="https://user-images.githubusercontent.com/4009333/50436601-be383180-08b4-11e9-8bd4-50d0b8fbcfda.png">
 
 #### Multiline Method Signatures
 > When a function signature does not fit on a single line, break each parameter declaration onto its own line. Parameters defined in this format should use a single indent (+4). The closing parenthesis ()) and return type are placed on their own line with no additional indent. [[source 1](https://kotlinlang.org/docs/reference/coding-conventions.html#function-formatting)] [[source 2](https://android.github.io/kotlin-guides/style.html#functions)]
@@ -267,7 +270,8 @@ drawSquare(
 )
 ```
 
-You may need to go to Android Studio -> Preferences -> Editor -> Code Style -> Kotlin -> Wrapping and Braces and turn off “Use continuation indent” for “Method declaration parameters” and “Method call arguments” so you get the single indent instead of double.
-
 #### Continuation Indents
 > When line-wrapping, each line after the first (each continuation line) is indented at least +8 from the original line. [[source](https://android.github.io/kotlin-guides/style.html#continuation-indent)]
+
+#### Imports
+Avoid wildcard imports since it imports unnecessary files and makes it unclear to the reader which specific files are being used.
