@@ -47,6 +47,11 @@ interface EncounterDao {
                deltas: List<DeltaModel>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upsert(encounterModel: EncounterModel,
+               encounterItemModels: List<EncounterItemModel>,
+               priceScheduleModels: List<PriceScheduleModel>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(encounterModels: List<EncounterModel>,
                encounterItemModels: List<EncounterItemModel>,
                billableModels: List<BillableModel>,

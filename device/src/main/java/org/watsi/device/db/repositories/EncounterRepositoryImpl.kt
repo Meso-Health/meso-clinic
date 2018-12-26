@@ -118,21 +118,39 @@ class EncounterRepositoryImpl(
     }
 
     override fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable {
-        val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
-        val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
-            EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
-        }
-        // TODO: select any billables that need to be inserted
-        val encounterFormModels = encounterWithItemsAndForms.encounterForms.map {
-            EncounterFormModel.fromEncounterForm(it, clock)
-        }
-
         return Completable.fromAction {
-            encounterDao.insert(encounterModel,
-                                encounterItemModels,
-                                emptyList(),
-                                encounterFormModels,
-                                deltas.map { DeltaModel.fromDelta(it, clock) })
+            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
+            val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            }
+            // TODO: select any billables that need to be inserted
+            val encounterFormModels = encounterWithItemsAndForms.encounterForms.map {
+                EncounterFormModel.fromEncounterForm(it, clock)
+            }
+
+            encounterDao.insert(
+                encounterModel,
+                encounterItemModels,
+                emptyList(),
+                encounterFormModels,
+                deltas.map { DeltaModel.fromDelta(it, clock) }
+            )
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+        return Completable.fromAction {
+            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
+            val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            }
+            val priceScheduleModels = encounterWithItemsAndForms.encounterItemRelations.map { encounterItemRelation ->
+                encounterItemRelation.billableWithPriceSchedule.priceSchedules().map {
+                    PriceScheduleModel.fromPriceSchedule(it, clock)
+                }
+            }.flatten()
+
+            encounterDao.upsert(encounterModel, encounterItemModels, priceScheduleModels)
         }.subscribeOn(Schedulers.io())
     }
 

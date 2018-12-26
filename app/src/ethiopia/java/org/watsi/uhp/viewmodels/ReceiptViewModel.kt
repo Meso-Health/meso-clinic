@@ -12,11 +12,13 @@ import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.ReviseClaimUseCase
 import org.watsi.domain.usecases.SubmitClaimUseCase
+import org.watsi.domain.usecases.UpdateEncounterUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class ReceiptViewModel @Inject constructor(
     private val createEncounterUseCase: CreateEncounterUseCase,
+    private val updateEncounterUseCase: UpdateEncounterUseCase,
     private val submitClaimUseCase: SubmitClaimUseCase,
     private val reviseClaimUseCase: ReviseClaimUseCase,
     private val logger: Logger,
@@ -71,8 +73,13 @@ class ReceiptViewModel @Inject constructor(
                         ).blockingAwait()
                     }
                     EncounterAction.SUBMIT -> {
-                        submitClaimUseCase.execute(
-                            encounterFlowState.toEncounterWithItemsAndForms(), clock
+                        Completable.concatArray(
+                            updateEncounterUseCase.execute(
+                                encounterFlowState.toEncounterWithItemsAndForms()
+                            ),
+                            submitClaimUseCase.execute(
+                                encounterFlowState.toEncounterWithItemsAndForms(), clock
+                            )
                         ).blockingAwait()
                     }
                     EncounterAction.RESUBMIT -> {
