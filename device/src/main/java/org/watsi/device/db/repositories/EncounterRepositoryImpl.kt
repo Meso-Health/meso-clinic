@@ -11,6 +11,7 @@ import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -30,6 +31,7 @@ import java.util.UUID
 
 class EncounterRepositoryImpl(
     private val encounterDao: EncounterDao,
+    private val encounterItemDao: EncounterItemDao,
     private val diagnosisDao: DiagnosisDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
@@ -202,6 +204,12 @@ class EncounterRepositoryImpl(
                 encounterItemModels = encounterItemModels,
                 memberModel = memberModel
             )
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun deleteEncounterItems(ids: List<UUID>): Completable {
+        return Completable.fromAction {
+            encounterItemDao.delete(ids)
         }.subscribeOn(Schedulers.io())
     }
 
