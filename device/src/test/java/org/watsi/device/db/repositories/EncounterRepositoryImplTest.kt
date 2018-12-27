@@ -1,8 +1,10 @@
 package org.watsi.device.db.repositories
 
+import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -20,6 +22,7 @@ import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterItemDao
+import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -38,6 +41,7 @@ import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
+import org.watsi.device.factories.ReturnedEncounterApiFactory
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
@@ -47,6 +51,7 @@ import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterWithExtrasFactory
+import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
@@ -58,6 +63,7 @@ class EncounterRepositoryImplTest {
     @Mock lateinit var mockDao: EncounterDao
     @Mock lateinit var mockEncounterItemDao: EncounterItemDao
     @Mock lateinit var mockDiagnosisDao: DiagnosisDao
+    @Mock lateinit var mockMemberDao: MemberDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
@@ -70,7 +76,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao, mockApi, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
@@ -182,6 +188,38 @@ class EncounterRepositoryImplTest {
                 .thenReturn(Completable.complete())
 
         repository.sync(delta).test().assertComplete()
+    }
+
+    @Test
+    fun fetchReturnedClaims() {
+        val user = UserFactory.build()
+        val token = AuthenticationToken("token", clock.instant(), user)
+        val memberOnPhone = MemberFactory.build()
+        val memberNotOnPhone = MemberFactory.build()
+        val returnedClaimWithMemberOnPhone = ReturnedEncounterApiFactory.build(
+            EncounterWithExtrasFactory.build(member = memberOnPhone)
+        )
+        val returnedClaimWithMemberNotOnPhone = ReturnedEncounterApiFactory.build(
+            EncounterWithExtrasFactory.build(member = memberNotOnPhone)
+        )
+        val spyReturnedClaimWithMemberOnPhone = spy(returnedClaimWithMemberOnPhone)
+        val spyReturnedClaimWithMemberNotOnPhone = spy(returnedClaimWithMemberNotOnPhone)
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockApi.getReturnedClaims(token.getHeaderString(), user.providerId)).thenReturn(
+            Single.just(listOf(spyReturnedClaimWithMemberOnPhone, spyReturnedClaimWithMemberNotOnPhone))
+        )
+        whenever(mockMemberDao.findMaybe(memberOnPhone.id)).thenReturn(
+            Maybe.just(MemberModel.fromMember(memberOnPhone, clock))
+        )
+        whenever(mockMemberDao.findMaybe(memberNotOnPhone.id)).thenReturn(
+            Maybe.empty()
+        )
+
+        repository.fetchReturnedClaims().test()
+
+        verify(spyReturnedClaimWithMemberOnPhone).toEncounterWithExtras(persistedMember = memberOnPhone)
+        verify(spyReturnedClaimWithMemberNotOnPhone).toEncounterWithExtras(persistedMember = null)
     }
 
     @Test

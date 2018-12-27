@@ -5,6 +5,7 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.PriceSchedule
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
@@ -24,7 +25,7 @@ data class ReturnedEncounterApi(
         @SerializedName("adjudicated_at") val adjudicatedAt: Instant,
         @SerializedName("return_reason") val returnReason: String,
         @SerializedName("revised_encounter_id") val revisedEncounterId: UUID,
-        @SerializedName("provider_comment") val providerComment: String,
+        @SerializedName("provider_comment") val providerComment: String?,
         @SerializedName("prepared_at") val preparedAt: Instant,
         @SerializedName("submitted_at") val submittedAt: Instant,
         // Below are inflated fields.
@@ -34,7 +35,7 @@ data class ReturnedEncounterApi(
         @SerializedName("encounter_items") val encounterItemsApi: List<EncounterItemApi>
 ) {
 
-    fun toEncounterWithExtras(): EncounterWithExtras {
+    fun toEncounterWithExtras(persistedMember: Member? = null): EncounterWithExtras {
         return EncounterWithExtras(
             encounter = Encounter(
                 id = id,
@@ -59,7 +60,7 @@ data class ReturnedEncounterApi(
                 billablesApi.map { it.toBillable() },
                 priceSchedulesApi.map { it.toPriceSchedule() }
             ),
-            member = memberApi.toMember(null),
+            member = memberApi.toMember(persistedMember),
             encounterForms = emptyList(),
             diagnoses = emptyList() // We don't actually use this field for fetching / persisting.
         )

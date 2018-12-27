@@ -33,6 +33,9 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun find(id: UUID): Single<MemberModel>
 
+    @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
+    fun findMaybe(id: UUID): Maybe<MemberModel>
+
     @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
 
