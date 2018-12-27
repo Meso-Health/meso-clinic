@@ -51,15 +51,9 @@ data class MemberApi(
             )
 
     fun toMember(persistedMember: Member?): Member {
-        // necessary because when running locally, URL is returned relative to app directory
-        val convertedPhotoUrl = if (photoUrl?.first() == '/') {
-            "http://localhost:5000$photoUrl"
-        } else {
-            photoUrl
-        }
         // do not overwrite the local thumbnail photo if the fetched photo is not different
         val thumbnailPhotoId = persistedMember?.let {
-            if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
+            if (it.photoUrl == photoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
         return Member(
             id = id,
@@ -75,7 +69,7 @@ data class MemberApi(
             language = language,
             photoId = persistedMember?.photoId,
             thumbnailPhotoId = thumbnailPhotoId,
-            photoUrl = convertedPhotoUrl,
+            photoUrl = photoUrl,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
             needsRenewal = needsRenewal

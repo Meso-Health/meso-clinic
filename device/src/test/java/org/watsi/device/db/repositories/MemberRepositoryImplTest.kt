@@ -31,7 +31,6 @@ import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
-import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.MemberWithRawPhotoModel
@@ -44,9 +43,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.DeltaFactory
-import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
-import org.watsi.domain.factories.PhotoFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import java.util.UUID
@@ -213,7 +210,7 @@ class MemberRepositoryImplTest {
 
     @Test
     fun downloadPhotos() {
-        val photoUrl = "http://localhost:5000/dragonfly/media/foo-9ce2ca927c19c2b0"
+        val photoUrl = "/dragonfly/media/foo-9ce2ca927c19c2b0"
         val photoBytes = ByteArray(1, { 0xa })
         val member = MemberFactory.build(photoUrl = photoUrl)
         val responseBody = ResponseBody.create(MediaType.parse("image/jpeg"), photoBytes)

@@ -31,10 +31,10 @@ class MemberApiTest {
 
     @Test
     fun toMember_localPhotoUrl_prependsLocalhost() {
-        val localPhotoMemberApi = memberApi.copy(photoUrl = "/foo")
+        val localPhotoMemberApi = memberApi.copy(photoUrl = "/dragonfly/media/foo-9ce2ca927c19c2b0")
         val localPhotoMember = localPhotoMemberApi.toMember(null)
 
-        assertEquals("http://localhost:5000/foo", localPhotoMember.photoUrl)
+        assertEquals("/dragonfly/media/foo-9ce2ca927c19c2b0", localPhotoMember.photoUrl)
     }
 
     @Test
