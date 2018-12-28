@@ -32,6 +32,9 @@ class CreateEncounterUseCase(
                 if (billableRepository.find(billableWithPrice.billable.id).blockingGet() == null) {
                     newBillables.add(billableWithPrice.billable)
                     newPriceSchedules.add(billableWithPrice.priceSchedule) // A new billable always creates a new PriceSchedule
+                // We cannot simply check priceScheduleIssued to determine whether to create a new priceSchedule or not
+                // because in the returned claims flow, returned claims may have encounterItems with priceScheduleIssued = true
+                // but those priceSchedules have already been created.
                 } else if (priceScheduleRepository.find(billableWithPrice.priceSchedule.id).blockingGet() == null) {
                     newPriceSchedules.add(billableWithPrice.priceSchedule) // An existing billable may still have a new PriceSchedule
                 } else {

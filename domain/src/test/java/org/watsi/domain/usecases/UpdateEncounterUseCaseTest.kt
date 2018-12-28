@@ -58,7 +58,8 @@ class UpdateEncounterUseCaseTest {
         encounterId = savedEncounter.id,
         billableId = serviceBillable2.billable.id,
         priceScheduleId = serviceBillable2.priceSchedule.id,
-        quantity = 1
+        quantity = 1,
+        priceScheduleIssued = true
     )
     private val lab1EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
@@ -76,7 +77,8 @@ class UpdateEncounterUseCaseTest {
         encounterId = savedEncounter.id,
         billableId = drugBillable1.billable.id,
         priceScheduleId = drugBillable1.priceSchedule.id,
-        quantity = 5
+        quantity = 5,
+        priceScheduleIssued = true
     )
     private val drug2EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
@@ -127,6 +129,7 @@ class UpdateEncounterUseCaseTest {
             )
         )
     )
+    private val billablesWithIssuedPriceSchedules = listOf(serviceBillable2, drugBillable1)
     private val removedEncounterItemIds = listOf(service1EncounterItem, drug2EncounterItem).map { it.id }
 
     @Before
@@ -137,11 +140,12 @@ class UpdateEncounterUseCaseTest {
     }
 
     @Test
-    fun execute_encounterDoesNotHaveNewPriceSchedules_updatesEncounterAndEncounterItems() {
-        updatedEncounterWithItemsAndForms.encounterItemRelations.map {
-            val priceSchedule = it.billableWithPriceSchedule.priceSchedule
+    fun execute_encounterDoesNotHaveNewUnsavedPriceSchedules_updatesEncounterAndEncounterItems() {
+        billablesWithIssuedPriceSchedules.map {
+            val priceSchedule = it.priceSchedule
             whenever(mockPriceScheduleRepository.find(priceSchedule.id)).thenReturn(Maybe.just(priceSchedule))
         }
+
         whenever(mockEncounterRepository.find(savedEncounter.id)).thenReturn(
             Single.just(savedEncounterWithItems)
         )
@@ -156,9 +160,9 @@ class UpdateEncounterUseCaseTest {
     }
 
     @Test
-    fun execute_encounterHasNewPriceSchedules_updatesEncounterAndEncounterItemsAndCreatesPriceSchedules() {
-        updatedEncounterWithItemsAndForms.encounterItemRelations.map {
-            val priceSchedule = it.billableWithPriceSchedule.priceSchedule
+    fun execute_encounterHasNewUnsavedPriceSchedules_updatesEncounterAndEncounterItemsAndCreatesPriceSchedules() {
+        billablesWithIssuedPriceSchedules.map {
+            val priceSchedule = it.priceSchedule
             val priceScheduleDelta = Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.PRICE_SCHEDULE,

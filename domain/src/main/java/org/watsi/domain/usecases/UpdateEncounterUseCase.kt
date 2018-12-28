@@ -19,6 +19,7 @@ class UpdateEncounterUseCase(
             val removedEncounterItemIds = savedEncounter.encounterItems.map { it.id }
                     .minus(encounterWithItemsAndForms.encounterItemRelations.map { it.encounterItem.id })
             val newPriceSchedules = encounterWithItemsAndForms.encounterItemRelations
+                    .filter { it.encounterItem.priceScheduleIssued }
                     .map { it.billableWithPriceSchedule.priceSchedule }
                     .filter { priceScheduleRepository.find(it.id).blockingGet() == null }
 
