@@ -105,6 +105,7 @@ data class MemberApi(
                         patchParams.addProperty(FINGERPRINTS_GUID_FIELD, member.fingerprintsGuid.toString())
                     }
                     "cardId" -> patchParams.addProperty(CARD_ID_FIELD, member.cardId)
+                    "medicalRecordNumber" -> patchParams.addProperty(MEDICAL_RECORD_NUMBER_FIELD, member.medicalRecordNumber)
                     null -> Unit
                 }
             }
