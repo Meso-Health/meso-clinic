@@ -156,11 +156,11 @@ class EncounterRepositoryImplTest {
         repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
 
         verify(mockDao).insert(
-                encounter = EncounterModel.fromEncounter(encounter, clock),
-                items = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
-                createdBillables = emptyList(),
-                forms = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
-                deltas = deltas.map { DeltaModel.fromDelta(it, clock) }
+                encounterModel = EncounterModel.fromEncounter(encounter, clock),
+                encounterItemModels = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
+                billableModels = emptyList(),
+                encounterFormModels = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
+                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
         )
     }
 

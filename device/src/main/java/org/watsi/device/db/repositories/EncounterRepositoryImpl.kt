@@ -131,11 +131,11 @@ class EncounterRepositoryImpl(
             }
 
             encounterDao.insert(
-                encounterModel,
-                encounterItemModels,
-                emptyList(),
-                encounterFormModels,
-                deltas.map { DeltaModel.fromDelta(it, clock) }
+                encounterModel = encounterModel,
+                encounterItemModels = encounterItemModels,
+                billableModels = emptyList(),
+                encounterFormModels = encounterFormModels,
+                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
             )
         }.subscribeOn(Schedulers.io())
     }
