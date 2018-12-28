@@ -32,6 +32,9 @@ class CreateEncounterUseCase(
                 if (billableRepository.find(billableWithPrice.billable.id).blockingGet() == null) {
                     newBillables.add(billableWithPrice.billable)
                     newPriceSchedules.add(billableWithPrice.priceSchedule) // A new billable always creates a new PriceSchedule
+                // We cannot simply check priceScheduleIssued to determine whether to create a new priceSchedule or not
+                // because in the returned claims flow, returned claims may have encounterItems with priceScheduleIssued = true
+                // but those priceSchedules have already been created.
                 } else if (priceScheduleRepository.find(billableWithPrice.priceSchedule.id).blockingGet() == null) {
                     newPriceSchedules.add(billableWithPrice.priceSchedule) // An existing billable may still have a new PriceSchedule
                 } else {
@@ -62,7 +65,7 @@ class CreateEncounterUseCase(
 
     private fun createBillables(newBillables: List<Billable>) {
         newBillables.forEach { billable ->
-            var billableDelta = Delta(
+            val billableDelta = Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.BILLABLE,
                 modelId = billable.id
@@ -71,9 +74,11 @@ class CreateEncounterUseCase(
         }
     }
 
+    // Always create price schedule with Delta for immediate syncing since we are never deleting
+    // price schedules (see https://watsi.slack.com/archives/C03T9TUT1/p1538150314000100)
     private fun createPriceSchedules(newPriceSchedules: List<PriceSchedule>) {
         newPriceSchedules.forEach { priceSchedule ->
-            var priceScheduleDelta = Delta(
+            val priceScheduleDelta = Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.PRICE_SCHEDULE,
                 modelId = priceSchedule.id

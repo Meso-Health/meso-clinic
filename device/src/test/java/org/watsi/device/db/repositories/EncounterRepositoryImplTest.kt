@@ -19,6 +19,7 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -55,6 +56,7 @@ import org.watsi.domain.relations.EncounterWithItemsAndForms
 class EncounterRepositoryImplTest {
 
     @Mock lateinit var mockDao: EncounterDao
+    @Mock lateinit var mockEncounterItemDao: EncounterItemDao
     @Mock lateinit var mockDiagnosisDao: DiagnosisDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
@@ -68,7 +70,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockDiagnosisDao, mockApi, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
@@ -149,16 +151,16 @@ class EncounterRepositoryImplTest {
         val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
         val encounterWithItemsAndForms = EncounterWithItemsAndForms(
-                encounter, listOf(encounterItemRelation), listOf(encounterForm), emptyList())
+                encounter, listOf(encounterItemRelation), listOf(encounterForm))
 
         repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
 
         verify(mockDao).insert(
-                encounter = EncounterModel.fromEncounter(encounter, clock),
-                items = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
-                createdBillables = emptyList(),
-                forms = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
-                deltas = deltas.map { DeltaModel.fromDelta(it, clock) }
+                encounterModel = EncounterModel.fromEncounter(encounter, clock),
+                encounterItemModels = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
+                billableModels = emptyList(),
+                encounterFormModels = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
+                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
         )
     }
 
@@ -220,7 +222,6 @@ class EncounterRepositoryImplTest {
     @Test
     fun delete() {
         val encounterRelation = EncounterWithExtrasFactory.build()
-
 
         repository.delete(encounterRelation).test().assertComplete()
 

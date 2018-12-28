@@ -40,11 +40,11 @@ interface EncounterDao {
     fun update(encounters: List<EncounterModel>): Int
 
     @Insert
-    fun insert(encounter: EncounterModel,
-               items: List<EncounterItemModel>,
-               createdBillables: List<BillableModel>,
-               forms: List<EncounterFormModel>,
-               deltas: List<DeltaModel>)
+    fun insert(encounterModel: EncounterModel,
+               encounterItemModels: List<EncounterItemModel>,
+               billableModels: List<BillableModel>,
+               encounterFormModels: List<EncounterFormModel>,
+               deltaModels: List<DeltaModel>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(encounterModels: List<EncounterModel>,

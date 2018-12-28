@@ -11,6 +11,7 @@ import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -30,6 +31,7 @@ import java.util.UUID
 
 class EncounterRepositoryImpl(
     private val encounterDao: EncounterDao,
+    private val encounterItemDao: EncounterItemDao,
     private val diagnosisDao: DiagnosisDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
@@ -118,21 +120,40 @@ class EncounterRepositoryImpl(
     }
 
     override fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable {
-        val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
-        val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
-            EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
-        }
-        // TODO: select any billables that need to be inserted
-        val encounterFormModels = encounterWithItemsAndForms.encounterForms.map {
-            EncounterFormModel.fromEncounterForm(it, clock)
-        }
-
         return Completable.fromAction {
-            encounterDao.insert(encounterModel,
-                                encounterItemModels,
-                                emptyList(),
-                                encounterFormModels,
-                                deltas.map { DeltaModel.fromDelta(it, clock) })
+            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
+            val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            }
+            // TODO: select any billables that need to be inserted
+            val encounterFormModels = encounterWithItemsAndForms.encounterForms.map {
+                EncounterFormModel.fromEncounterForm(it, clock)
+            }
+
+            encounterDao.insert(
+                encounterModel = encounterModel,
+                encounterItemModels = encounterItemModels,
+                billableModels = emptyList(),
+                encounterFormModels = encounterFormModels,
+                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            )
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+        return Completable.fromAction {
+            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
+            val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
+                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
+            }
+
+            encounterDao.upsert(
+                encounterModels = listOf(encounterModel),
+                encounterItemModels = encounterItemModels,
+                billableModels = emptyList(),
+                priceScheduleModels = emptyList(),
+                memberModels = emptyList()
+            )
         }.subscribeOn(Schedulers.io())
     }
 
@@ -184,6 +205,12 @@ class EncounterRepositoryImpl(
                 encounterItemModels = encounterItemModels,
                 memberModel = memberModel
             )
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun deleteEncounterItems(ids: List<UUID>): Completable {
+        return Completable.fromAction {
+            encounterItemDao.delete(ids)
         }.subscribeOn(Schedulers.io())
     }
 

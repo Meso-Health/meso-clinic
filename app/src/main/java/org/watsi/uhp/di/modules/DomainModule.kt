@@ -45,6 +45,7 @@ import org.watsi.domain.usecases.SyncMemberPhotoUseCase
 import org.watsi.domain.usecases.SyncMemberUseCase
 import org.watsi.domain.usecases.SyncPriceScheduleUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
+import org.watsi.domain.usecases.UpdateEncounterUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 
 @Module
@@ -106,6 +107,14 @@ class DomainModule {
             priceScheduleRepository: PriceScheduleRepository
     ): CreateEncounterUseCase {
         return CreateEncounterUseCase(encounterRepository, billableRepository, priceScheduleRepository)
+    }
+
+    @Provides
+    fun provideUpdateEncounterUseCase(
+        encounterRepository: EncounterRepository,
+        priceScheduleRepository: PriceScheduleRepository
+    ): UpdateEncounterUseCase {
+        return UpdateEncounterUseCase(encounterRepository, priceScheduleRepository)
     }
 
     @Provides

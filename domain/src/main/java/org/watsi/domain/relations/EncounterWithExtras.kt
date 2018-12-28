@@ -17,7 +17,6 @@ data class EncounterWithExtras(
         return EncounterWithItemsAndForms(
             encounter = encounter,
             encounterItemRelations = encounterItemRelations,
-            diagnoses = diagnoses,
             encounterForms = encounterForms
         )
     }

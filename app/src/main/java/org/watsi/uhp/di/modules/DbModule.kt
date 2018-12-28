@@ -12,6 +12,7 @@ import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
@@ -67,6 +68,10 @@ class DbModule {
 
     @Singleton
     @Provides
+    fun provideEncounterItemDao(db: AppDatabase): EncounterItemDao = db.encounterItemDao()
+
+    @Singleton
+    @Provides
     fun provideEncounterFormDao(db: AppDatabase): EncounterFormDao = db.encounterFormDao()
 
     @Singleton
@@ -117,11 +122,12 @@ class DbModule {
 
     @Provides
     fun provideEncounterRepository(encounterDao: EncounterDao,
+                                   encounterItemDao: EncounterItemDao,
                                    diagnosisDao: DiagnosisDao,
                                    api: CoverageApi,
                                    sessionManager: SessionManager,
                                    clock: Clock): EncounterRepository =
-            EncounterRepositoryImpl(encounterDao, diagnosisDao, api, sessionManager, clock)
+            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, api, sessionManager, clock)
 
     @Provides
     fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,

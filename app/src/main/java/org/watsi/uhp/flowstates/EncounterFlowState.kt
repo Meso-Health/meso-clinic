@@ -34,7 +34,7 @@ data class EncounterFlowState(var encounter: Encounter,
     fun price(): Int = encounterItemRelations.map { it.price() }.sum()
 
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
-        return EncounterWithItemsAndForms(encounter, encounterItemRelations, clearEncounterFormThumbnails(), diagnoses)
+        return EncounterWithItemsAndForms(encounter, encounterItemRelations, clearEncounterFormThumbnails())
     }
 
     fun toEncounterWithExtras(member: Member): EncounterWithExtras {

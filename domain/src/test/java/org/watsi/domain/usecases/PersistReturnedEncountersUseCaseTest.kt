@@ -39,12 +39,8 @@ class PersistReturnedEncountersUseCaseTest {
 
         val revisedIds = (1..10).map { UUID.randomUUID() } + listOf(encounter1.encounter.id, encounter4.encounter.id)
         whenever(mockEncounterRepository.revisedIds()).thenReturn(Single.just(revisedIds))
-        whenever(mockEncounterRepository.upsert(any())).thenReturn(Completable.complete())
+        whenever(mockEncounterRepository.upsert(listOf(encounter2, encounter3, encounter5))).thenReturn(Completable.complete())
 
         useCase.execute(listOf(encounter1, encounter2, encounter3, encounter4, encounter5)).test().assertComplete()
-
-        verify(mockEncounterRepository, times(1)).upsert(
-            listOf(encounter2, encounter3, encounter5)
-        )
     }
 }
