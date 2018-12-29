@@ -33,9 +33,6 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun find(id: UUID): Single<MemberModel>
 
-    @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
-    fun findMaybe(id: UUID): Maybe<MemberModel>
-
     @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
 
@@ -48,9 +45,12 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): Maybe<MemberModel>
 
+    @Query("SELECT * FROM members WHERE id IN (:ids)")
+    fun findMembersByIds(ids: List<UUID>): Single<List<MemberModel>>
+
     @Transaction
     @Query("SELECT * FROM members WHERE members.id IN (:ids)")
-    fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+    fun findMemberRelationsByIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Transaction
     @Query("SELECT members.*\n" +

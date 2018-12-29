@@ -4,7 +4,6 @@ import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -209,11 +208,8 @@ class EncounterRepositoryImplTest {
         whenever(mockApi.getReturnedClaims(token.getHeaderString(), user.providerId)).thenReturn(
             Single.just(listOf(spyReturnedClaimWithMemberOnPhone, spyReturnedClaimWithMemberNotOnPhone))
         )
-        whenever(mockMemberDao.findMaybe(memberOnPhone.id)).thenReturn(
-            Maybe.just(MemberModel.fromMember(memberOnPhone, clock))
-        )
-        whenever(mockMemberDao.findMaybe(memberNotOnPhone.id)).thenReturn(
-            Maybe.empty()
+        whenever(mockMemberDao.findMembersByIds(listOf(memberOnPhone.id, memberNotOnPhone.id))).thenReturn(
+            Single.just(listOf(MemberModel.fromMember(memberOnPhone, clock)))
         )
 
         repository.fetchReturnedClaims().test()

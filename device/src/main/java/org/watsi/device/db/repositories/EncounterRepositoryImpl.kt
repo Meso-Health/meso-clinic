@@ -63,9 +63,12 @@ class EncounterRepositoryImpl(
         return sessionManager.currentToken()?.let { token ->
             Single.fromCallable {
                 val returnedClaims = api.getReturnedClaims(token.getHeaderString(), token.user.providerId).blockingGet()
+                val returnedClaimsMemberIds = returnedClaims.map { it.memberId }
+                val alreadyPersistedMembers = memberDao.findMembersByIds(returnedClaimsMemberIds).blockingGet().map { it.toMember() }
+
                 returnedClaims.map { returnedClaim ->
-                    val member = memberDao.findMaybe(returnedClaim.memberId).blockingGet()
-                    returnedClaim.toEncounterWithExtras(member?.toMember())
+                    val persistedMember = alreadyPersistedMembers.find { it.id == returnedClaim.memberId }
+                    returnedClaim.toEncounterWithExtras(persistedMember)
                 }
             }.subscribeOn(Schedulers.io())
         } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))

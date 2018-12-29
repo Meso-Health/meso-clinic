@@ -57,7 +57,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     }
 
     override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.byIds(ids).map {
+        return memberDao.findMemberRelationsByIds(ids).map {
             it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
         }.subscribeOn(Schedulers.io())
     }
