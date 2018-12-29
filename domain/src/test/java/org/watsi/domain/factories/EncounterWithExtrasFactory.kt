@@ -9,10 +9,12 @@ import org.watsi.domain.relations.EncounterWithExtras
 
 object EncounterWithExtrasFactory {
     fun build(
-        encounter: Encounter = EncounterFactory.build(),
-        encounterItemRelations: List<EncounterItemWithBillableAndPrice> = listOf(
-            EncounterItemWithBillableAndPriceFactory.build(), EncounterItemWithBillableAndPriceFactory.build()),
         member: Member = MemberFactory.build(),
+        encounter: Encounter = EncounterFactory.build(memberId = member.id),
+        encounterItemRelations: List<EncounterItemWithBillableAndPrice> = listOf(
+            EncounterItemWithBillableAndPriceFactory.buildWithEncounter(encounterId = encounter.id),
+            EncounterItemWithBillableAndPriceFactory.buildWithEncounter(encounterId = encounter.id)
+        ),
         diagnoses: List<Diagnosis> = emptyList(),
         encounterForms: List<EncounterForm> = emptyList()
     ) : EncounterWithExtras {

@@ -124,10 +124,11 @@ class DbModule {
     fun provideEncounterRepository(encounterDao: EncounterDao,
                                    encounterItemDao: EncounterItemDao,
                                    diagnosisDao: DiagnosisDao,
+                                   memberDao: MemberDao,
                                    api: CoverageApi,
                                    sessionManager: SessionManager,
                                    clock: Clock): EncounterRepository =
-            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, api, sessionManager, clock)
+            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, memberDao, api, sessionManager, clock)
 
     @Provides
     fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,

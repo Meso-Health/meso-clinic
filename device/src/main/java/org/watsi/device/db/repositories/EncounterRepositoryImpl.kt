@@ -12,6 +12,7 @@ import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterItemDao
+import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
@@ -33,6 +34,7 @@ class EncounterRepositoryImpl(
     private val encounterDao: EncounterDao,
     private val encounterItemDao: EncounterItemDao,
     private val diagnosisDao: DiagnosisDao,
+    private val memberDao: MemberDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
     private val clock: Clock
@@ -58,10 +60,16 @@ class EncounterRepositoryImpl(
     }
 
     override fun fetchReturnedClaims(): Single<List<EncounterWithExtras>> {
-        return sessionManager.currentToken()?.let {token ->
+        return sessionManager.currentToken()?.let { token ->
             Single.fromCallable {
                 val returnedClaims = api.getReturnedClaims(token.getHeaderString(), token.user.providerId).blockingGet()
-                returnedClaims.map { it.toEncounterWithExtras() }
+                val returnedClaimsMemberIds = returnedClaims.map { it.memberId }
+                val alreadyPersistedMembers = memberDao.findMembersByIds(returnedClaimsMemberIds).blockingGet().map { it.toMember() }
+
+                returnedClaims.map { returnedClaim ->
+                    val persistedMember = alreadyPersistedMembers.find { it.id == returnedClaim.memberId }
+                    returnedClaim.toEncounterWithExtras(persistedMember)
+                }
             }.subscribeOn(Schedulers.io())
         } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))
     }

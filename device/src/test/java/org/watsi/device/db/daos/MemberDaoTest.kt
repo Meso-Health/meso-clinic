@@ -230,7 +230,18 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun byIds() {
+    fun findMembersByIds() {
+        val memberModel1 = MemberModelFactory.create(memberDao)
+        val memberModel2 = MemberModelFactory.create(memberDao)
+        val memberModel3 = MemberModelFactory.create(memberDao)
+        val idNotInDB = UUID.randomUUID()
+
+        memberDao.findMembersByIds(listOf(memberModel1.id, idNotInDB, memberModel2.id)).test()
+                .assertValue { value -> value.sortedBy { it.createdAt } == listOf(memberModel1, memberModel2) }
+    }
+
+    @Test
+    fun findMemberRelationsByIds() {
         val photoModel = PhotoModelFactory.create(photoDao)
         val memberModel = MemberModelFactory.create(memberDao, thumbnailPhotoId = photoModel.id)
         val idEventModel = IdentificationEventModelFactory.create(
@@ -239,7 +250,7 @@ class MemberDaoTest : DaoBaseTest() {
         val expectedRelationModel = MemberWithIdEventAndThumbnailPhotoModel(
                 memberModel, listOf(idEventModel), listOf(photoModel))
 
-        memberDao.byIds(listOf(memberModel.id)).test().assertValue(listOf(expectedRelationModel))
+        memberDao.findMemberRelationsByIds(listOf(memberModel.id)).test().assertValue(listOf(expectedRelationModel))
     }
 
     @Test
