@@ -151,8 +151,9 @@ class DbModule {
                                 sessionManager: SessionManager,
                                 preferencesManager: PreferencesManager,
                                 photoDao: PhotoDao,
+                                encounterDao: EncounterDao,
                                 clock: Clock): MemberRepository =
-            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, encounterDao, clock)
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,

@@ -4,7 +4,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
+import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
+import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
+import org.watsi.device.factories.MemberModelFactory
+import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 
 class EncounterDaoTest : DaoBaseTest() {
@@ -96,5 +100,28 @@ class EncounterDaoTest : DaoBaseTest() {
         val encounterModel4 = EncounterModelFactory.create(encounterDao, revisedEncounterId = encounterModel3.id)
         val encounterModel5 = EncounterModelFactory.create(encounterDao, revisedEncounterId = encounterModel3.id)
         assertEquals(encounterDao.revisedIds().test().values().first(), listOf(encounterModel1.id, encounterModel3.id))
+    }
+
+    @Test
+    fun unsynced() {
+        val unsyncedMember = MemberModelFactory.create(memberDao)
+        val unsyncedEncounter = EncounterModelFactory.create(encounterDao = encounterDao, memberId = unsyncedMember.id)
+        val syncedMember = MemberModelFactory.create(memberDao)
+        val syncedEncounter = EncounterModelFactory.create(encounterDao = encounterDao, memberId = syncedMember.id)
+
+        EncounterModelFactory.create(encounterDao)
+
+        DeltaModelFactory.create(deltaDao,
+            modelName = Delta.ModelName.ENCOUNTER, modelId = unsyncedEncounter.id, synced = false)
+        DeltaModelFactory.create(deltaDao,
+            modelName = Delta.ModelName.ENCOUNTER, modelId = syncedEncounter.id, synced = true)
+
+        val unsyncedEncounterRelation = EncounterWithMemberAndItemsAndFormsModel(
+            encounterModel = unsyncedEncounter,
+            memberModel = listOf(unsyncedMember),
+            encounterFormModels = emptyList(),
+            encounterItemWithBillableAndPriceModels = emptyList())
+
+        encounterDao.unsynced().test().assertValue(listOf(unsyncedEncounterRelation))
     }
 }
