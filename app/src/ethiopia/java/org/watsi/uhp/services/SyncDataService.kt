@@ -16,10 +16,10 @@ class SyncDataService : BaseService() {
 
     override fun executeTasks(): Completable {
         return Completable.concatArray(
-            syncMemberUseCase.execute().onErrorComplete { setErrored(it) },
-            syncIdentificationEventUseCase.execute().onErrorComplete { setErrored(it) },
-            syncPriceScheduleUseCase.execute().onErrorComplete { setErrored(it) },
-            syncEncounterUseCase.execute().onErrorComplete { setErrored(it) },
+            syncMemberUseCase.execute { setErrored(it) },
+            syncIdentificationEventUseCase.execute { setErrored(it) },
+            syncPriceScheduleUseCase.execute { setErrored(it) },
+            syncEncounterUseCase.execute { setErrored(it) },
             Completable.fromAction { if (getErrored()) { throw Exception() } }
         )
     }

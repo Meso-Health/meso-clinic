@@ -1,5 +1,8 @@
 package org.watsi.domain.usecases
 
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -21,41 +24,50 @@ class SyncMemberPhotoUseCaseTest {
 
     @Mock lateinit var memberRepo: MemberRepository
     @Mock lateinit var deltaRepo: DeltaRepository
-    lateinit var useCaseMember: SyncMemberPhotoUseCase
+    @Mock lateinit var exception: Exception
+    @Mock lateinit var onErrorCallback: (throwable: Throwable) -> Boolean
 
+    lateinit var useCaseMember: SyncMemberPhotoUseCase
+    private val syncedMember = MemberFactory.build()
+    private val unsyncedMember = MemberFactory.build()
+    private val shouldBeSyncedPhotoDelta = DeltaFactory.build(
+        action = Delta.Action.ADD,
+        modelName = Delta.ModelName.PHOTO,
+        modelId = syncedMember.id,
+        synced = false
+    )
+    private val shouldNotBeSyncedPhotoDelta = DeltaFactory.build(
+        action = Delta.Action.ADD,
+        modelName = Delta.ModelName.PHOTO,
+        modelId = unsyncedMember.id,
+        synced = false
+    )
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-
-        useCaseMember = SyncMemberPhotoUseCase(memberRepo, deltaRepo)
-    }
-
-    @Test
-    fun execute() {
-        val syncedMember = MemberFactory.build()
-        val unsyncedMember = MemberFactory.build()
-        val shouldBeSyncedPhotoDelta = DeltaFactory.build(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.PHOTO,
-                modelId = syncedMember.id,
-                synced = false
-        )
-        val shouldNotBeSyncedPhotoDelta = DeltaFactory.build(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.PHOTO,
-                modelId = unsyncedMember.id,
-                synced = false
-        )
+        whenever(onErrorCallback.invoke(any())).thenReturn(true)
         whenever(deltaRepo.unsyncedModelIds(Delta.ModelName.MEMBER, Delta.Action.ADD))
                 .thenReturn(Single.just(listOf(unsyncedMember.id)))
         whenever(deltaRepo.unsynced(Delta.ModelName.PHOTO))
                 .thenReturn(Single.just(listOf(shouldBeSyncedPhotoDelta,
-                                               shouldNotBeSyncedPhotoDelta)))
-        whenever(memberRepo.syncPhotos(listOf(shouldBeSyncedPhotoDelta)))
-                .thenReturn(Completable.complete())
+                    shouldNotBeSyncedPhotoDelta)))
         whenever(deltaRepo.markAsSynced(listOf(shouldBeSyncedPhotoDelta)))
                 .thenReturn(Completable.complete())
+        useCaseMember = SyncMemberPhotoUseCase(memberRepo, deltaRepo)
+    }
 
-        useCaseMember.execute().test().assertComplete()
+    @Test
+    fun execute_success() {
+        whenever(memberRepo.syncPhotos(listOf(shouldBeSyncedPhotoDelta)))
+                .thenReturn(Completable.complete())
+        useCaseMember.execute(onErrorCallback).test().assertComplete()
+    }
+
+    @Test
+    fun execute_failure() {
+        whenever(memberRepo.syncPhotos(listOf(shouldBeSyncedPhotoDelta)))
+                .thenReturn(Completable.error(exception))
+        useCaseMember.execute(onErrorCallback).test().assertComplete()
+        verify(onErrorCallback, times(1)).invoke(exception)
     }
 }

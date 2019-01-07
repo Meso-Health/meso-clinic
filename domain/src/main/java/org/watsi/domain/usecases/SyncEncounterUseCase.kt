@@ -10,7 +10,7 @@ class SyncEncounterUseCase(
         private val encounterRepository: EncounterRepository,
         private val deltaRepository: DeltaRepository
 ) {
-    fun execute(): Completable {
+    fun execute(onError: (throwable: Throwable) -> Boolean): Completable {
         return Completable.fromAction {
             val unsyncedEncounterDeltas = deltaRepository.unsynced(
                 Delta.ModelName.ENCOUNTER).blockingGet()
@@ -31,8 +31,12 @@ class SyncEncounterUseCase(
                 val hasUnsyncedPriceSchedule = encounterWithItems.encounterItems.any { unsyncedPriceScheduleIds.contains(it.priceScheduleId) }
 
                 if (!hasUnsyncedIdEvent && !hasUnsyncedBillable && !hasUnsyncedMember && !hasUnsyncedPriceSchedule) {
-                    encounterRepository.sync(encounterDelta).blockingAwait()
-                    deltaRepository.markAsSynced(listOf(encounterDelta)).blockingAwait()
+                    Completable.concatArray(
+                        encounterRepository.sync(encounterDelta),
+                        deltaRepository.markAsSynced(listOf(encounterDelta))
+                    ).onErrorComplete {
+                        onError(it)
+                    }.blockingAwait()
                 }
             }
         }.subscribeOn(Schedulers.io())

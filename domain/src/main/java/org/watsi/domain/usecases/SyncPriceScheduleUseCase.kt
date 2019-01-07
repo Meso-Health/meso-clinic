@@ -10,13 +10,17 @@ class SyncPriceScheduleUseCase(
         private val priceScheduleRepository: PriceScheduleRepository,
         private val deltaRepository: DeltaRepository
 ) {
-    fun execute(): Completable {
+    fun execute(onError: (throwable: Throwable) -> Boolean): Completable {
         return Completable.fromAction {
             val unsyncedPriceScheduleDeltas = deltaRepository.unsynced(Delta.ModelName.PRICE_SCHEDULE).blockingGet()
 
             unsyncedPriceScheduleDeltas.forEach { priceScheduleDelta ->
-                priceScheduleRepository.sync(priceScheduleDelta).blockingAwait()
-                deltaRepository.markAsSynced(listOf(priceScheduleDelta)).blockingAwait()
+                Completable.concatArray(
+                    priceScheduleRepository.sync(priceScheduleDelta),
+                    deltaRepository.markAsSynced(listOf(priceScheduleDelta))
+                ).onErrorComplete {
+                    onError(it)
+                }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())
     }

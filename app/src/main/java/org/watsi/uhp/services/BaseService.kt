@@ -44,7 +44,7 @@ abstract class BaseService : JobService() {
      */
     fun setErrored(e: Throwable): Boolean {
         errored = true
-        logger.error(e)
+        logger.warning(e)
         return true
     }
 

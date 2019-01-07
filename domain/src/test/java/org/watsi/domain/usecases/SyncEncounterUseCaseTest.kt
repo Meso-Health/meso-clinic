@@ -26,12 +26,12 @@ class SyncEncounterUseCaseTest {
 
     @Mock lateinit var encounterRepo: EncounterRepository
     @Mock lateinit var deltaRepo: DeltaRepository
+    @Mock lateinit var onErrorCallback: (throwable: Throwable) -> Boolean
     lateinit var usecase: SyncEncounterUseCase
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-
         usecase = SyncEncounterUseCase(encounterRepo, deltaRepo)
     }
 
@@ -173,6 +173,6 @@ class SyncEncounterUseCaseTest {
         whenever(deltaRepo.markAsSynced(listOf(shouldBeSyncedEncounterDelta2)))
                 .thenReturn(Completable.complete())
 
-        usecase.execute().test().assertComplete()
+        usecase.execute(onErrorCallback).test().assertComplete()
     }
 }

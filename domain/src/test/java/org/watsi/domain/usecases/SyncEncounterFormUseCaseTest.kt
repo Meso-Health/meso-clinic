@@ -23,6 +23,8 @@ class SyncEncounterFormFormUseCaseTest {
 
     @Mock lateinit var encounterFormRepo: EncounterFormRepository
     @Mock lateinit var deltaRepo: DeltaRepository
+    @Mock lateinit var exception: Exception
+    @Mock lateinit var onErrorCallback: (throwable: Throwable) -> Boolean
     lateinit var usecase: SyncEncounterFormUseCase
 
     @Before
@@ -65,6 +67,6 @@ class SyncEncounterFormFormUseCaseTest {
         whenever(deltaRepo.markAsSynced(listOf(shouldBeSyncedEncounterFormDelta)))
                 .thenReturn(Completable.complete())
 
-        usecase.execute().test().assertComplete()
+        usecase.execute(onErrorCallback).test().assertComplete()
     }
 }

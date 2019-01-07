@@ -1,8 +1,10 @@
 package org.watsi.domain.usecases
 
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -21,28 +23,39 @@ class SyncPriceScheduleUseCaseTest {
 
     @Mock lateinit var priceScheduleRepository: PriceScheduleRepository
     @Mock lateinit var deltaRepository: DeltaRepository
+    @Mock lateinit var exception: Exception
+    @Mock lateinit var onErrorCallback: (throwable: Throwable) -> Boolean
+
     lateinit var useCase: SyncPriceScheduleUseCase
+
+    private val delta = DeltaFactory.build(
+        action = Delta.Action.ADD,
+        modelName = Delta.ModelName.PRICE_SCHEDULE,
+        synced = false
+    )
+    private val deltaList = listOf(delta)
+    private val unsyncedSingle = Single.just(deltaList)
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+        whenever(onErrorCallback.invoke(any())).thenReturn(true)
+        whenever(deltaRepository.unsynced(Delta.ModelName.PRICE_SCHEDULE)).thenReturn(unsyncedSingle)
+        whenever(deltaRepository.markAsSynced(deltaList)).thenReturn(Completable.complete())
 
         useCase = SyncPriceScheduleUseCase(priceScheduleRepository, deltaRepository)
     }
 
     @Test
-    fun execute() {
-        val delta = DeltaFactory.build(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.PRICE_SCHEDULE,
-                synced = false
-        )
-        val deltaList = listOf(delta)
-        val unsyncedSingle = Single.just(deltaList)
-        whenever(deltaRepository.unsynced(Delta.ModelName.PRICE_SCHEDULE)).thenReturn(unsyncedSingle)
+    fun execute_success() {
         whenever(priceScheduleRepository.sync(delta)).thenReturn(Completable.complete())
-        whenever(deltaRepository.markAsSynced(deltaList)).thenReturn(Completable.complete())
+        useCase.execute(onErrorCallback).test().assertComplete()
+    }
 
-        useCase.execute().test().assertComplete()
+    @Test
+    fun execute_failure() {
+        whenever(priceScheduleRepository.sync(delta)).thenReturn(Completable.error(exception))
+        useCase.execute(onErrorCallback).test().assertComplete()
+        verify(onErrorCallback, times(1)).invoke(exception)
     }
 }

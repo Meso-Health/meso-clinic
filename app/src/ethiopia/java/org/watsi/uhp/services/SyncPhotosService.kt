@@ -10,7 +10,7 @@ class SyncPhotosService : BaseService() {
 
     override fun executeTasks(): Completable {
         return Completable.concatArray(
-            syncMemberPhotoUseCase.execute().onErrorComplete { setErrored(it) },
+            syncMemberPhotoUseCase.execute { setErrored(it) },
             Completable.fromAction { if (getErrored()) { throw Exception() } }
         )
     }
