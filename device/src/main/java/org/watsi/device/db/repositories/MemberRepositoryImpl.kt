@@ -10,6 +10,7 @@ import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
@@ -61,8 +62,10 @@ class MemberRepositoryImpl(
     }
 
     override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.findMemberRelationsByIds(ids).map {
-            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        return Single.fromCallable {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                memberDao.findMemberRelationsByIds(it).blockingGet()
+            }.flatten().map { it.toMemberWithIdEventAndThumbnailPhoto() }
         }.subscribeOn(Schedulers.io())
     }
 

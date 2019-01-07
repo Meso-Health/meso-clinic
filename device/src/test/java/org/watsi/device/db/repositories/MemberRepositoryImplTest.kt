@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import edu.emory.mathcs.backport.java.util.Arrays
@@ -403,5 +404,32 @@ class MemberRepositoryImplTest {
         repository.syncPhotos(listOf(delta)).test().assertError(exception)
 
         verify(mockDao, never()).upsert(memberModel.copy(photoId = null), emptyList())
+    }
+    @Test
+    fun byIds() {
+        val models = listOf(
+            MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build()),
+            MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build())
+        )
+        val modelIds = models.mapNotNull { it.memberModel?.id }
+        whenever(mockDao.findMemberRelationsByIds(modelIds)).thenReturn(Single.just(models))
+
+        repository.byIds(modelIds).test().assertValue(models.map { memberWithIdEventAndThumbnailPhotoModel ->
+            memberWithIdEventAndThumbnailPhotoModel.toMemberWithIdEventAndThumbnailPhoto()
+        })
+    }
+
+    @Test
+    fun byIds_moreThan1000_findsByChunk() {
+        val models = (0..1000).map {
+            MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build())
+        }
+        val modelIds = models.mapNotNull { it.memberModel?.id }
+        whenever(mockDao.findMemberRelationsByIds(any())).thenReturn(Single.just(models))
+
+        repository.byIds(modelIds).test().assertComplete()
+
+        verify(mockDao, times(1)).findMemberRelationsByIds(modelIds.slice(0..998))
+        verify(mockDao, times(1)).findMemberRelationsByIds(modelIds.slice(999..1000))
     }
 }
