@@ -14,6 +14,7 @@ import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
+import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.FindHouseholdIdByCardIdUseCase
@@ -304,5 +305,12 @@ class DomainModule {
         encounterRepository: EncounterRepository
     ): LoadOneReturnedClaimUseCase {
         return LoadOneReturnedClaimUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideDismissMemberUseCase(
+        identificationEventRepository: IdentificationEventRepository
+    ): DismissMemberUseCase {
+        return DismissMemberUseCase(identificationEventRepository)
     }
 }

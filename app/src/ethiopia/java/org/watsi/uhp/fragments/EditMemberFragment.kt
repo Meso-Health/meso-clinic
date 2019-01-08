@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -9,6 +10,8 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -22,17 +25,22 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.needs_renewal_notification
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.photo_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.start_claim_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_photo
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
+import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -50,10 +58,12 @@ class EditMemberFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
+    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
 
     private lateinit var viewModel: EditMemberViewModel
     private lateinit var paramMember: Member
     private lateinit var searchMethod: IdentificationEvent.SearchMethod
+    private lateinit var observable: LiveData<EditMemberViewModel.ViewState>
 
     private var placeholderPhotoIconPadding = 0
     private var memberPhotoCornerRadius = 0
@@ -84,10 +94,9 @@ class EditMemberFragment : DaggerFragment() {
 
         searchMethod = arguments.getSerializable(PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod
         paramMember = arguments.getSerializable(PARAM_MEMBER) as Member
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(EditMemberViewModel::class.java)
-
-        viewModel.getObservable(paramMember).observe(this, Observer { viewState ->
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditMemberViewModel::class.java)
+        observable = viewModel.getObservable(paramMember)
+        observable.observe(this, Observer { viewState ->
             viewState?.memberWithThumbnail?.let { memberWithThumbnail ->
                 val member = memberWithThumbnail.member
                 val photo = memberWithThumbnail.photo
@@ -110,24 +119,23 @@ class EditMemberFragment : DaggerFragment() {
                         photo.bytes, 0, photo.bytes.size)
                     photo_container.setPhotoPreview(thumbnailBitmap)
                 }
+
+                activity.invalidateOptionsMenu()
             }
 
             viewState?.isCheckedIn?.let { isCheckedIn ->
                 if (isCheckedIn) {
-                    check_in_button.isEnabled = false
-                    check_in_button.text = getString(R.string.checked_in)
+                    start_claim_button.visibility = View.VISIBLE
                 } else {
-                    check_in_button.isEnabled = true
-                    check_in_button.text = getString(R.string.check_in)
+                    check_in_button.visibility = View.VISIBLE
                 }
-                // enable visibility after setting correct button text and color to prevent split-second change
-                check_in_button.visibility = View.VISIBLE
             }
         })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(paramMember.name, R.drawable.ic_arrow_back_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_edit_member, container, false)
     }
 
@@ -159,6 +167,24 @@ class EditMemberFragment : DaggerFragment() {
                 // TODO: handle member not no viewState
             }
         }
+
+        start_claim_button.setOnClickListener {
+            getMember()?.let { member ->
+                identificationEventRepository.openCheckIn(member.id).subscribe( { idEvent ->
+                    val encounter = Encounter(
+                        id = UUID.randomUUID(),
+                        memberId = member.id,
+                        identificationEventId = idEvent.id,
+                        occurredAt = Instant.now(clock)
+                    )
+                    navigationManager.goTo(VisitTypeFragment.forEncounter(
+                        EncounterFlowState(encounter, emptyList(), emptyList(), emptyList(), member)
+                    ))
+                }, {
+                    logger.error(it)
+                })
+            }
+        }
     }
 
     private fun createIdentificationEvent(): Completable {
@@ -181,6 +207,38 @@ class EditMemberFragment : DaggerFragment() {
 
     private fun getMember(): Member? {
         return viewModel.liveData.value?.memberWithThumbnail?.member
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        observable.value?.let { viewState ->
+            if (viewState.isCheckedIn != null && viewState.isCheckedIn) {
+                menu?.let { it.findItem(R.id.menu_check_out_member).isVisible = true }
+            } else {
+                menu?.let { it.findItem(R.id.menu_check_out_member).isVisible = false }
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_check_out_member -> {
+                android.app.AlertDialog.Builder(activity)
+                        .setTitle(R.string.check_out_alert_dialog_title)
+                        .setMessage(getString(R.string.check_out_alert_dialog_message, paramMember.name))
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.remove) { _, _ ->
+                            viewModel.dismissIdentificationEvent().subscribe {
+                                navigationManager.popTo(
+                                    HomeFragment.withSnackbarMessage(
+                                        getString(R.string.checked_out_snackbar_message, paramMember.name)
+                                    )
+                                )
+                            }
+                        }.create().show()
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
-import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
@@ -32,12 +32,20 @@ class IdentificationEventRepositoryImpl(
 
     override fun dismiss(identificationEvent: IdentificationEvent): Completable {
         return Completable.fromAction {
-            identificationEventDao.update(IdentificationEventModel.fromIdentificationEvent(
-                    identificationEvent.copy(dismissed = true), clock))
+            val delta = Delta(
+                action = Delta.Action.EDIT,
+                modelName = Delta.ModelName.IDENTIFICATION_EVENT,
+                modelId = identificationEvent.id,
+                field = "dismissed"
+            )
+            identificationEventDao.updateWithDelta(
+                IdentificationEventModel.fromIdentificationEvent(identificationEvent.copy(dismissed = true), clock),
+                DeltaModel.fromDelta(delta, clock)
+            )
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent> {
+    override fun openCheckIn(memberId: UUID): Single<IdentificationEvent> {
         return identificationEventDao.openCheckIn(memberId)
                 .map { it.toIdentificationEvent() }
                 .subscribeOn(Schedulers.io())

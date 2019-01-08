@@ -48,6 +48,7 @@
     <string name="check_in">Check In</string>
     <string name="checked_in" translatable="false">Already Checked In</string>
     <string name="checked_in_snackbar_message">%1$s was checked in.</string>
+    <string name="checked_out_snackbar_message" translatable="false">%1$s was checked out.</string>
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Line items</string>

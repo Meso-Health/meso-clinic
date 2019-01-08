@@ -49,4 +49,10 @@
         android:title="@string/delete"
         app:showAsAction="never"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_check_out_member"
+        android:orderInCategory="109"
+        android:title="@string/remove"
+        app:showAsAction="never"
+        android:visible="false" />
 </menu>

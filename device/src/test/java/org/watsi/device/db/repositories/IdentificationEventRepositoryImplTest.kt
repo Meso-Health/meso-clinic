@@ -37,11 +37,18 @@ class IdentificationEventRepositoryImplTest {
 
     val identificationEvent = IdentificationEventFactory.build()
     val identificationEventModel = IdentificationEventModel.fromIdentificationEvent(identificationEvent, clock)
-    val delta = DeltaFactory.build(
-            action = Delta.Action.ADD,
-            modelName = Delta.ModelName.IDENTIFICATION_EVENT,
-            modelId = identificationEventModel.id,
-            synced = false
+    val addDelta = DeltaFactory.build(
+        action = Delta.Action.ADD,
+        modelName = Delta.ModelName.IDENTIFICATION_EVENT,
+        modelId = identificationEventModel.id,
+        synced = false
+    )
+    val editDelta = DeltaFactory.build(
+        action = Delta.Action.EDIT,
+        modelName = Delta.ModelName.IDENTIFICATION_EVENT,
+        modelId = identificationEventModel.id,
+        field = "dismissed",
+        synced = false
     )
 
     @Before
@@ -53,9 +60,9 @@ class IdentificationEventRepositoryImplTest {
 
     @Test
     fun create() {
-        repository.create(identificationEvent, delta).test().assertComplete()
+        repository.create(identificationEvent, addDelta).test().assertComplete()
 
-        verify(mockDao).insertWithDelta(identificationEventModel, DeltaModel.fromDelta(delta, clock))
+        verify(mockDao).insertWithDelta(identificationEventModel, DeltaModel.fromDelta(addDelta, clock))
     }
 
     @Test
@@ -70,6 +77,16 @@ class IdentificationEventRepositoryImplTest {
                 IdentificationEventApi(identificationEvent)))
                 .thenReturn(Completable.complete())
 
-        repository.sync(delta).test().assertComplete()
+        repository.sync(addDelta).test().assertComplete()
+    }
+
+    @Test
+    fun dismiss() {
+        repository.dismiss(identificationEvent).test().assertComplete()
+
+        verify(mockDao).updateWithDelta(
+            identificationEventModel.copy(dismissed = true),
+            DeltaModel.fromDelta(editDelta, clock)
+        )
     }
 }

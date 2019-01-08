@@ -42,6 +42,7 @@
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">አስገባ</string>
     <!--<string name="checked_in">Already Checked In</string>-->
+    <!--<string name="checked_out_snackbar_message">%1$s was checked out.</string>-->
     <string name="checked_in_snackbar_message">%1$s ገብቷል.</string>
 
     <!-- EncounterFragment -->
@@ -104,6 +105,7 @@
     <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
     <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
     <string name="delete">ሰርዝ</string>
+    <!--<string name="remove">Remove</string>-->
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
@@ -159,6 +161,8 @@
     <string name="edit_input_edit">ኣርም</string>
     <string name="take_photo_button_text">ፎቶ ውሰድ</string>
     <!--<string name="missing_medical_record_number">Medical record number is required</string>-->
+    <!--<string name="check_out_alert_dialog_title">Remove from checked in list?</string>-->
+    <!--<string name="check_out_alert_dialog_message">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>-->
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>

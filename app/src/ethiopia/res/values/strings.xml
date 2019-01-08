@@ -14,6 +14,7 @@
     <string name="menu_returned_claims_without_number">Returned</string>
     <string name="menu_sync_now">Sync now</string>
     <string name="delete">Delete</string>
+    <string name="remove" translatable="false">Remove</string>
     <string name="delete_claim_confirmation">Delete this claim?</string>
 
     <!-- HomeFragment -->
@@ -58,6 +59,8 @@
     <string name="edit_input_edit">Edit</string>
     <string name="take_photo_button_text">Take photo</string>
     <string name="missing_medical_record_number" translatable="false">Medical record number is required</string>
+    <string name="check_out_alert_dialog_title" translatable="false">Remove from checked in list?</string>
+    <string name="check_out_alert_dialog_message" translatable="false">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
