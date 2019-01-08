@@ -14,21 +14,14 @@ class SyncEncounterFormUseCase(
         return Completable.fromAction {
             val unsyncedEncounterFormDeltas = deltaRepository.unsynced(
                     Delta.ModelName.ENCOUNTER_FORM).blockingGet()
-            val unsyncedEncounterIds = deltaRepository.unsyncedModelIds(
-                    Delta.ModelName.ENCOUNTER, Delta.Action.ADD).blockingGet()
 
             unsyncedEncounterFormDeltas.map { encounterFormDelta ->
-                val encounterForm = encounterFormRepository.find(encounterFormDelta.modelId).blockingGet()
-                val hasUnsyncedEncounter = unsyncedEncounterIds.contains(encounterForm.encounterForm.encounterId)
-
-                if (!hasUnsyncedEncounter) {
-                    Completable.concatArray(
-                        encounterFormRepository.sync(encounterFormDelta),
-                        deltaRepository.markAsSynced(listOf(encounterFormDelta))
-                    ).onErrorComplete {
-                        onError(it)
-                    }.blockingAwait()
-                }
+                Completable.concatArray(
+                    encounterFormRepository.sync(encounterFormDelta),
+                    deltaRepository.markAsSynced(listOf(encounterFormDelta))
+                ).onErrorComplete {
+                    onError(it)
+                }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())
     }

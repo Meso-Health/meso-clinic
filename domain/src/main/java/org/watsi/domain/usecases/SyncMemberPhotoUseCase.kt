@@ -14,12 +14,9 @@ class SyncMemberPhotoUseCase(
         return Completable.fromAction {
             val unsyncedMemberPhotoDeltas = deltaRepository.unsynced(
                     Delta.ModelName.PHOTO).blockingGet()
-            val unsyncedMemberIds = deltaRepository.unsyncedModelIds(
-                    Delta.ModelName.MEMBER, Delta.Action.ADD).blockingGet()
             // the modelId in a photo delta corresponds to the member ID and not the photo ID
             // to make querying simpler
             val syncableMemberPhotoDeltas = unsyncedMemberPhotoDeltas
-                    .filter { !unsyncedMemberIds.contains(it.modelId) }
                     .groupBy { it.modelId }
                     .values
 
