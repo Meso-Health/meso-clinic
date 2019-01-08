@@ -7,22 +7,19 @@ import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 
 class SyncIdentificationEventUseCase(
-        private val identificationEventRepository: IdentificationEventRepository,
-        private val deltaRepository: DeltaRepository
+    private val identificationEventRepository: IdentificationEventRepository,
+    private val deltaRepository: DeltaRepository
 ) {
     fun execute(onError: (throwable: Throwable) -> Boolean): Completable {
         return Completable.fromAction {
-            val unsyncedIdEventDeltas = deltaRepository.unsynced(
-                    Delta.ModelName.IDENTIFICATION_EVENT).blockingGet()
-
-            unsyncedIdEventDeltas.map { idEventDelta ->
+            val unsyncedIdEventDeltas = deltaRepository.unsynced(Delta.ModelName.IDENTIFICATION_EVENT).blockingGet()
+            unsyncedIdEventDeltas.groupBy { it.modelId }.values.map { idEventDeltas ->
                 Completable.concatArray(
-                    identificationEventRepository.sync(idEventDelta),
-                    deltaRepository.markAsSynced(listOf(idEventDelta))
+                    identificationEventRepository.sync(idEventDeltas),
+                    deltaRepository.markAsSynced(idEventDeltas)
                 ).onErrorComplete {
                     onError(it)
                 }.blockingAwait()
-
             }
         }.subscribeOn(Schedulers.io())
     }

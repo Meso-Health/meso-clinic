@@ -48,15 +48,14 @@ class SyncIdentificationEventUseCaseTest {
 
     @Test
     fun execute_success() {
-        whenever(identificationEventRepo.sync(delta)).thenReturn(Completable.complete())
+        whenever(identificationEventRepo.sync(deltaList)).thenReturn(Completable.complete())
         useCase.execute(onErrorCallback).test().assertComplete()
     }
 
     @Test
     fun execute_failure() {
-        whenever(identificationEventRepo.sync(delta)).thenReturn(Completable.error(exception))
+        whenever(identificationEventRepo.sync(deltaList)).thenReturn(Completable.error(exception))
         useCase.execute(onErrorCallback).test().assertComplete()
-
         verify(onErrorCallback, times(1)).invoke(exception)
     }
 }

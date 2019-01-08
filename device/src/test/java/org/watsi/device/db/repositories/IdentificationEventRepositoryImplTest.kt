@@ -1,5 +1,7 @@
 package org.watsi.device.db.repositories
 
+import com.google.gson.JsonObject
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
@@ -28,8 +30,7 @@ import org.watsi.domain.factories.UserFactory
 
 @RunWith(MockitoJUnitRunner::class)
 class IdentificationEventRepositoryImplTest {
-
-    @Mock lateinit var mockDao: IdentificationEventDao
+    @Mock lateinit var mockIdentificationEventDao: IdentificationEventDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
@@ -55,36 +56,61 @@ class IdentificationEventRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = IdentificationEventRepositoryImpl(mockDao, mockApi, mockSessionManager, clock)
+        repository = IdentificationEventRepositoryImpl(mockIdentificationEventDao, mockApi, mockSessionManager, clock)
     }
 
     @Test
     fun create() {
         repository.create(identificationEvent, addDelta).test().assertComplete()
-
-        verify(mockDao).insertWithDelta(identificationEventModel, DeltaModel.fromDelta(addDelta, clock))
+        verify(mockIdentificationEventDao).insertWithDelta(identificationEventModel, DeltaModel.fromDelta(addDelta, clock))
     }
 
     @Test
-    fun sync() {
+    fun sync_post() {
         val user = UserFactory.build()
         val token = AuthenticationToken("token", clock.instant(), user)
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockDao.find(identificationEventModel.id))
+        whenever(mockIdentificationEventDao.find(identificationEventModel.id))
                 .thenReturn(Single.just(identificationEventModel))
         whenever(mockApi.postIdentificationEvent(token.getHeaderString(), user.providerId,
                 IdentificationEventApi(identificationEvent)))
                 .thenReturn(Completable.complete())
 
-        repository.sync(addDelta).test().assertComplete()
+        repository.sync(listOf(addDelta)).test().assertComplete()
+        verify(mockApi).postIdentificationEvent(
+            token.getHeaderString(),
+            user.providerId,
+            IdentificationEventApi(identificationEvent)
+        )
+    }
+
+    @Test
+    fun sync_patch() {
+        val user = UserFactory.build()
+        val token = AuthenticationToken("token", clock.instant(), user)
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockIdentificationEventDao.find(identificationEventModel.id))
+                .thenReturn(Single.just(identificationEventModel))
+        whenever(mockApi.patchIdentificationEvent(any(), any(), any()))
+                .thenReturn(Completable.complete())
+
+        repository.sync(listOf(editDelta)).test().assertComplete()
+        verify(mockApi).patchIdentificationEvent(
+            token.getHeaderString(),
+            identificationEvent.id,
+            JsonObject().apply {
+                addProperty("id", identificationEvent.id.toString())
+                addProperty("dismissed", identificationEvent.dismissed)
+            }
+        )
     }
 
     @Test
     fun dismiss() {
         repository.dismiss(identificationEvent).test().assertComplete()
-
-        verify(mockDao).updateWithDelta(
+        verify(mockIdentificationEventDao).upsertWithDelta(
             identificationEventModel.copy(dismissed = true),
             DeltaModel.fromDelta(editDelta, clock)
         )

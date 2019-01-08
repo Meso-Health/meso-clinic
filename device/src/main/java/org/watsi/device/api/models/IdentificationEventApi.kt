@@ -1,7 +1,9 @@
 package org.watsi.device.api.models
 
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import org.threeten.bp.Instant
+import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
@@ -31,4 +33,21 @@ data class IdentificationEventApi(
                  fingerprintsVerificationConfidence = idEvent.fingerprintsVerificationConfidence,
                  fingerprintsVerificationTier = idEvent.fingerprintsVerificationTier
             )
+
+    companion object {
+        const val ID_FIELD = "id"
+        const val DISMISSED_FIELD = "dismissed"
+
+        fun patch(identificationEvent: IdentificationEvent, deltas: List<Delta>): JsonObject {
+            val patchParams = JsonObject()
+            patchParams.addProperty(ID_FIELD, identificationEvent.id.toString())
+            deltas.forEach { delta ->
+                when (delta.field) {
+                    DISMISSED_FIELD -> patchParams.addProperty(DISMISSED_FIELD, identificationEvent.dismissed)
+                    null -> Unit
+                }
+            }
+            return patchParams
+        }
+    }
 }

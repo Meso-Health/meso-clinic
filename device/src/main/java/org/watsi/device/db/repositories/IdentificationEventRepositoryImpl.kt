@@ -38,7 +38,7 @@ class IdentificationEventRepositoryImpl(
                 modelId = identificationEvent.id,
                 field = "dismissed"
             )
-            identificationEventDao.updateWithDelta(
+            identificationEventDao.upsertWithDelta(
                 IdentificationEventModel.fromIdentificationEvent(identificationEvent.copy(dismissed = true), clock),
                 DeltaModel.fromDelta(delta, clock)
             )
@@ -51,13 +51,22 @@ class IdentificationEventRepositoryImpl(
                 .subscribeOn(Schedulers.io())
     }
 
-    override fun sync(delta: Delta): Completable {
+    override fun sync(deltas: List<Delta>): Completable {
         return sessionManager.currentToken()?.let { token ->
-            identificationEventDao.find(delta.modelId).flatMapCompletable { idEventModel ->
-                val identificationEvent = idEventModel.toIdentificationEvent()
-                api.postIdentificationEvent(token.getHeaderString(), token.user.providerId,
-                        IdentificationEventApi(identificationEvent)
-                )
+            identificationEventDao.find(deltas.first().modelId).flatMapCompletable { identificationEventModel ->
+                if (deltas.any { it.action == Delta.Action.ADD }) {
+                    api.postIdentificationEvent(
+                        tokenAuthorization = token.getHeaderString(),
+                        providerId = token.user.providerId,
+                        identificationEvent = IdentificationEventApi(identificationEventModel.toIdentificationEvent())
+                    )
+                } else {
+                    api.patchIdentificationEvent(
+                        tokenAuthorization = token.getHeaderString(),
+                        identificationEventId = identificationEventModel.id,
+                        identificationEvent = IdentificationEventApi.patch(identificationEventModel.toIdentificationEvent(), deltas)
+                    )
+                }
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }

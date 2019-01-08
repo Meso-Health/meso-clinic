@@ -7,8 +7,8 @@ import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.MemberRepository
 
 class SyncMemberUseCase(
-        private val memberRepository: MemberRepository,
-        private val deltaRepository: DeltaRepository
+    private val memberRepository: MemberRepository,
+    private val deltaRepository: DeltaRepository
 ) {
     fun execute(onError: (throwable: Throwable) -> Boolean): Completable {
         return Completable.fromAction {

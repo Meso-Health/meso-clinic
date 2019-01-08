@@ -2,8 +2,8 @@ package org.watsi.device.db.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Update
 import io.reactivex.Single
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.IdentificationEventModel
@@ -21,8 +21,8 @@ interface IdentificationEventDao {
     @Insert
     fun insertWithDelta(model: IdentificationEventModel, delta: DeltaModel)
 
-    @Update
-    fun updateWithDelta(model: IdentificationEventModel, delta: DeltaModel)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upsertWithDelta(model: IdentificationEventModel, delta: DeltaModel)
 
     @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +
