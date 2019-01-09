@@ -10,7 +10,7 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
-In order to run the application, you also need a `variables.gradle` file in your root directory which stores environment variables. You can find and download the file from 1Password.
+In order to run the application, you also need a `variables.gradle` file in your root directory which stores environment variables. Create a file called `variables.gradle` and copy the file contents from 1Password.
 
 ## Build variants
 
