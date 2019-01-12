@@ -59,7 +59,7 @@ class SearchMemberFragment : DaggerFragment() {
                 onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                     val searchMethod = viewModel.searchMethod() ?: run {
                         logger.error("Search method not set")
-                        IdentificationEvent.SearchMethod.SEARCH_ID
+                        IdentificationEvent.SearchMethod.SEARCH_CARD_ID
                     }
 
                     toolbarSearchView.clear()

@@ -37,7 +37,7 @@ class SearchMemberViewModel @Inject constructor (
 
     fun updateQuery(query: String) {
         searchMethod = QueryHelper.searchMethod(query)
-        if (QueryHelper.searchMethod(query) == IdentificationEvent.SearchMethod.SEARCH_ID) {
+        if (QueryHelper.searchMethod(query) == IdentificationEvent.SearchMethod.SEARCH_CARD_ID) {
             members.filter { it.cardId?.contains(query) == true }.sortedBy { it.cardId }.let {
                 memberRepository.byIds(it.map { it.id }).subscribe({
                     observable.postValue(it)

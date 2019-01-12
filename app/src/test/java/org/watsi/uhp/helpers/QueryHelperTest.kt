@@ -15,10 +15,10 @@ class QueryHelperTest {
     }
 
     @Test
-    fun searchMethod_includesNumber_returnsSEARCH_ID() {
+    fun searchMethod_includesNumber_returnsSEARCH_CARD_ID() {
         val query = "RWI096138"
 
-        assertEquals(IdentificationEvent.SearchMethod.SEARCH_ID, QueryHelper.searchMethod(query))
+        assertEquals(IdentificationEvent.SearchMethod.SEARCH_CARD_ID, QueryHelper.searchMethod(query))
     }
 
     @Test

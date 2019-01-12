@@ -89,8 +89,7 @@ class MemberInformationViewModel @Inject constructor(
             id = UUID.randomUUID(),
             memberId = member.id,
             occurredAt = clock.instant(),
-            // TODO: implement correct search method
-            searchMethod = IdentificationEvent.SearchMethod.SEARCH_ID,
+            searchMethod = IdentificationEvent.SearchMethod.MANUAL_ENTRY,
             throughMemberId = null,
             clinicNumber = null,
             clinicNumberType = null,

@@ -117,9 +117,8 @@ class SearchFragment : DaggerFragment() {
                 if (!viewModel.membershipNumberHasError(it)) {
                     val membershipNumber = viewModel.getMembershipNumber(it)
                     findHouseholdIdByMembershipNumberUseCase.execute(membershipNumber).subscribe( {
-                        // TODO: add new SEARCH_MEMBERSHIP_NUMBER option and use here
                         navigationManager.goTo(HouseholdFragment.forParams(
-                            it, IdentificationEvent.SearchMethod.SEARCH_ID)
+                            it, IdentificationEvent.SearchMethod.SEARCH_MEMBERSHIP_NUMBER)
                         )
                     }, { err ->
                         logger.error(err)
