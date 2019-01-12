@@ -10,21 +10,7 @@ import java.util.UUID
 class MemberApiTest {
 
     val member = MemberFactory.build()
-    val memberApi = MemberApi(
-            id = member.id,
-            enrolledAt = member.enrolledAt,
-            householdId = member.householdId,
-            cardId = member.cardId,
-            name = member.name,
-            gender = member.gender,
-            language = member.language,
-            otherLanguage = null,
-            birthdate = member.birthdate,
-            birthdateAccuracy = member.birthdateAccuracy,
-            fingerprintsGuid = member.fingerprintsGuid,
-            phoneNumber = member.phoneNumber,
-            photoUrl = member.photoUrl
-    )
+    val memberApi = MemberApi(member)
 
     @Test
     fun toMember_copiesAttributes() {
@@ -39,14 +25,16 @@ class MemberApiTest {
         assertEquals(memberApi.birthdate, parsedMember.birthdate)
         assertEquals(memberApi.birthdateAccuracy, parsedMember.birthdateAccuracy)
         assertEquals(memberApi.phoneNumber, parsedMember.phoneNumber)
+        assertEquals(memberApi.membershipNumber, parsedMember.membershipNumber)
+        assertEquals(memberApi.medicalRecordNumber, parsedMember.medicalRecordNumber)
     }
 
     @Test
     fun toMember_localPhotoUrl_prependsLocalhost() {
-        val localPhotoMemberApi = memberApi.copy(photoUrl = "/foo")
+        val localPhotoMemberApi = memberApi.copy(photoUrl = "/dragonfly/media/foo-9ce2ca927c19c2b0")
         val localPhotoMember = localPhotoMemberApi.toMember(null)
 
-        assertEquals("http://localhost:5000/foo", localPhotoMember.photoUrl)
+        assertEquals("/dragonfly/media/foo-9ce2ca927c19c2b0", localPhotoMember.photoUrl)
     }
 
     @Test

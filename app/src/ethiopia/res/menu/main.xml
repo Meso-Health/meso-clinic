@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_pending_claims"
+        android:orderInCategory="101"
+        android:title="@string/menu_returned_claims_without_number"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_returned_claims"
+        android:orderInCategory="102"
+        android:title="@string/menu_returned_claims_without_number"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_status"
+        android:orderInCategory="103"
+        android:title="@string/menu_status_label"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_switch_language"
+        android:orderInCategory="104"
+        android:title="@string/menu_switch_language"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_logout"
+        android:orderInCategory="105"
+        android:title="@string/menu_logout_label"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_sync_now"
+        android:orderInCategory="106"
+        android:title="@string/menu_sync_now"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_edit_claim"
+        android:orderInCategory="107"
+        android:title="@string/edit"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_delete_claim"
+        android:orderInCategory="108"
+        android:title="@string/delete"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_check_out_member"
+        android:orderInCategory="109"
+        android:title="@string/remove"
+        app:showAsAction="never"
+        android:visible="false" />
+</menu>

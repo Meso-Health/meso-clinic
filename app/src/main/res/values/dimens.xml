@@ -22,7 +22,7 @@
     <dimen name="thumbnailSmallPlaceholderPadding">12dp</dimen>
 
     <!-- Photo dimensions scale -->
-    <dimen name="thumbnailSmall">52dp</dimen>
+    <dimen name="thumbnailSmall">66dp</dimen>
     <dimen name="thumbnailMedium">80dp</dimen>
     <dimen name="thumbnailLarge">120dp</dimen>
 
@@ -40,11 +40,8 @@
     <!-- elevation for top panels in encounter flow fragments -->
     <dimen name="panelElevation">2dp</dimen>
 
-    <!-- left and right margins on all fragments -->
-    <dimen name="fragment_horizontal_margin">16dp</dimen>
-
-    <!-- top and bottom margins on all fragments -->
-    <dimen name="fragment_vertical_margin">10dp</dimen>
+    <!-- top, bottom, left, and right padding on all fragments -->
+    <dimen name="fragment_padding">16dp</dimen>
 
     <!-- top, bottom, left, and right padding for all dialogs -->
     <dimen name="dialog_padding">16dp</dimen>
@@ -64,8 +61,11 @@
     <!-- padding for each item in a list view -->
     <dimen name="list_item_vertical_padding">16dp</dimen>
 
-    <!-- dimensions for photo on detail view -->
-    <dimen name="detail_fragment_photo_height">208dp</dimen>
-    <dimen name="detail_fragment_photo_width">156dp</dimen>
+    <dimen name="textInputLayoutMarginFix">-4dp</dimen>
 
+    <!-- padding to fix bottom text alignment -->
+    <dimen name="bottom_text_align_padding">1dp</dimen>
+
+    <!-- margin between status fields on status screen -->
+    <dimen name="status_field_margin">2dp</dimen>
 </resources>

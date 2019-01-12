@@ -14,24 +14,69 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
-        applicationId "org.watsi.uhp"
+        applicationId rootProject.ext.applicationId
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         multiDexEnabled true
-        versionCode System.getenv("VERSION_CODE") as Integer
-        versionName System.getenv("VERSION_NAME") as String
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "Integer", "PROVIDER_ID", "1"
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
         buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
+
+        if (gradle.ext.has('rollbarApiKey')) {
+            buildConfigField "String", "ROLLBAR_API_KEY", gradle.ext.rollbarApiKey
+        } else {
+            buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
+        }
+
+        if (gradle.ext.has('hockeyappAppId')) {
+            buildConfigField "String", "HOCKEYAPP_APP_ID", gradle.ext.hockeyappAppId
+        } else {
+            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("HOCKEYAPP_APP_ID")
+        }
+
+        if (gradle.ext.has('simprintsApiKey')) {
+            buildConfigField "String", "SIMPRINTS_API_KEY", gradle.ext.simprintsApiKey
+        } else {
+            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SIMPRINTS_API_KEY")
+        }
+
+        if (gradle.ext.has('apiHostDebug')) {
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostDebug
+        } else {
+            buildConfigField "String", "API_HOST", ENV("API_HOST")
+        }
     }
     signingConfigs {
         releaseConfig {
             storeFile file("release-key.jks")
-            storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
-            keyAlias System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+
+            if (gradle.ext.has('releaseKeystorePassword') &&
+                    gradle.ext.has('releaseKeyAlias') &&
+                    gradle.ext.has('releaseKeyPassword')) {
+                storePassword gradle.ext.releaseKeystorePassword
+                keyAlias gradle.ext.releaseKeyAlias
+                keyPassword gradle.ext.releaseKeyPassword
+            } else {
+                storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        uganda {
+            dimension "version"
+            applicationIdSuffix ".uga"
+            versionNameSuffix "-uga"
+        }
+        ethiopia {
+            dimension "version"
+            applicationIdSuffix ".eth"
+            versionNameSuffix "-eth"
         }
     }
     buildTypes {
@@ -44,22 +89,22 @@ android {
             ]
 
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
-            buildConfigField "String", "API_HOST", "\"http://localhost:5000\""
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
-            buildConfigField "String", "HOCKEYAPP_APP_ID", "null"
-            buildConfigField "String", "ROLLBAR_API_KEY", "null"
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
         }
         sandbox {
+            signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".sandbox"
             versionNameSuffix "-sandbox"
             resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
-            buildConfigField "String", "API_HOST", ENV("SANDBOX_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("SANDBOX_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
+
+            if (gradle.ext.has('apiHostSandbox')) {
+                buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
+            } else {
+                buildConfigField "String", "API_HOST", ENV("API_HOST")
+            }
         }
         demo {
             signingConfig signingConfigs.releaseConfig
@@ -70,10 +115,13 @@ android {
                     appIcon: "@mipmap/ic_launcher"
             ]
 
-            buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("DEMO_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+
+            if (gradle.ext.has('apiHostDemo')) {
+                buildConfigField "String", "API_HOST", gradle.ext.apiHostDemo
+            } else {
+                buildConfigField "String", "API_HOST", ENV("API_HOST")
+            }
         }
         training {
             signingConfig signingConfigs.releaseConfig
@@ -85,9 +133,6 @@ android {
             ]
 
             buildConfigField "Integer", "PROVIDER_ID", "1"
-            buildConfigField "String", "API_HOST", ENV("DEMO_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("TRAINING_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SANDBOX_SIMPRINTS_API_KEY")
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
         release {
@@ -99,10 +144,13 @@ android {
                     appIcon: "@mipmap/ic_launcher"
             ]
 
-            buildConfigField "String", "API_HOST", ENV("PRODUCTION_API_HOST")
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("PRODUCTION_HOCKEYAPP_APP_ID")
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("PRODUCTION_SIMPRINTS_API_KEY")
             buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
+
+            if (gradle.ext.has('apiHostRelease')) {
+                buildConfigField "String", "API_HOST", gradle.ext.apiHostRelease
+            } else {
+                buildConfigField "String", "API_HOST", ENV("API_HOST")
+            }
         }
     }
 
@@ -164,6 +212,7 @@ dependencies {
 
     // Time
     implementation dependencies.threeTenAndroidBackport
+    ethiopiaImplementation dependencies.joda
 
     // RX Java
     implementation dependencies.rxJava

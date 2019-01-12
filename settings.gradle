@@ -1,1 +1,8 @@
 include ':app', ':device', ':domain'
+
+gradle.ext.variablesFile = new File("./variables.gradle").getAbsolutePath()
+
+if ((new File(gradle.ext.variablesFile)).exists()) {
+    logger.warn("Loading variables.gradle")
+    apply from: gradle.ext.variablesFile
+}

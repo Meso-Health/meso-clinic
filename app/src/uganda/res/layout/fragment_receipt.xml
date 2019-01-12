@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/date_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dialog_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/date_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/date_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:text="@string/edit_clickable"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/forms_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:background="@drawable/panel_background"
+            android:padding="@dimen/dialog_padding"
+            android:textColor="@color/gray6"
+            app:layout_constraintTop_toBottomOf="@id/date_container" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/diagnoses_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/dialog_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/forms_label">
+
+            <TextView
+                android:id="@+id/diagnoses_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/diagnoses_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@id/diagnoses_label"
+                android:visibility="gone" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/encounter_items_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:background="@drawable/panel_background"
+            android:padding="@dimen/dialog_padding"
+            app:layout_constraintTop_toBottomOf="@id/diagnoses_container"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <TextView
+                android:id="@+id/encounter_items_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/encounter_items_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/encounter_items_label" />
+
+            <TextView
+                android:id="@+id/total_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                style="@style/LargeLabel"
+                android:text="@string/total"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/encounter_items_list" />
+
+            <TextView
+                android:id="@+id/total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                style="@style/LargeLabel"
+                app:layout_constraintTop_toBottomOf="@id/encounter_items_list"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space16"
+            style="@style/PrimaryButton"
+            android:text="@string/submit_encounter_button"
+            app:layout_constraintTop_toBottomOf="@id/encounter_items_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

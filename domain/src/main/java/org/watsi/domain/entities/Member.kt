@@ -8,20 +8,25 @@ import org.watsi.domain.utils.DateUtils
 import java.io.Serializable
 import java.util.UUID
 
-data class Member(val id: UUID,
-                  val enrolledAt: Instant,
-                  val householdId: UUID,
-                  val photoId: UUID?,
-                  val thumbnailPhotoId: UUID?,
-                  val photoUrl: String?,
-                  val cardId: String?,
-                  val name: String,
-                  val gender: Gender,
-                  val language: String?,
-                  val birthdate: LocalDate,
-                  val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
-                  val fingerprintsGuid: UUID?,
-                  val phoneNumber: String?) : Serializable {
+data class Member(
+    val id: UUID,
+    val enrolledAt: Instant,
+    val householdId: UUID?,
+    val photoId: UUID?,
+    val thumbnailPhotoId: UUID?,
+    val photoUrl: String?,
+    val cardId: String?,
+    val name: String,
+    val gender: Gender,
+    val language: String?,
+    val birthdate: LocalDate,
+    val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
+    val fingerprintsGuid: UUID?,
+    val phoneNumber: String?,
+    val membershipNumber: String?,
+    val medicalRecordNumber: String?,
+    val needsRenewal: Boolean?
+) : Serializable {
 
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
@@ -37,25 +42,6 @@ data class Member(val id: UUID,
 
     fun getAgeYears(clock: Clock): Int {
         return DateUtils.getYearsAgo(birthdate, clock)
-    }
-
-    fun formattedPhoneNumber(): String? {
-        return when (phoneNumber?.length) {
-            10 -> "(0) ${phoneNumber.substring(1, 4)} ${phoneNumber.substring(4, 7)} " +
-                    "${phoneNumber.substring(7)}"
-            9 -> "(0) ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
-                    "${phoneNumber.substring(6)}"
-            else -> null
-        }
-    }
-
-    fun formatAgeAndGender(clock: Clock): String {
-        val genderString = if (gender == Member.Gender.F) {
-            "Female"
-        } else {
-            "Male"
-        }
-        return "$genderString · ${getDisplayAge(clock)}"
     }
 
     fun diff(previous: Member): List<Delta> {
@@ -75,12 +61,8 @@ data class Member(val id: UUID,
         return DateUtils.getMonthsAgo(birthdate, clock)
     }
 
-    /**
-     * Returns quantity in months if below 2 or in years otherwise, regardless of birthdate accuracy.
-     */
-    fun getDisplayAge(clock: Clock): String {
-        val ageYears = getAgeYears(clock)
-        return if (ageYears >= 2) "${ageYears.toString()} years" else "${getAgeMonths(clock)} months"
+    fun getAgeDays(clock: Clock): Int {
+        return DateUtils.getDaysAgo(birthdate, clock)
     }
 
     companion object {

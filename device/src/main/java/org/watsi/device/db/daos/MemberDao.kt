@@ -30,18 +30,27 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
-    @Query("SELECT * FROM members where id = :id LIMIT 1")
+    @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun find(id: UUID): Single<MemberModel>
 
-    @Query("SELECT * FROM members")
+    @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
+    fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
+
+    @Query("SELECT householdId FROM members WHERE cardId = :cardId AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
+    fun findHouseholdIdByCardId(cardId: String): Maybe<UUID>
+
+    @Query("SELECT * FROM members WHERE householdId IS NOT NULL")
     fun all(): Flowable<List<MemberModel>>
 
-    @Query("SELECT * FROM members where cardId = :cardId LIMIT 1")
+    @Query("SELECT * FROM members WHERE cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): Maybe<MemberModel>
+
+    @Query("SELECT * FROM members WHERE id IN (:ids)")
+    fun findMembersByIds(ids: List<UUID>): Single<List<MemberModel>>
 
     @Transaction
     @Query("SELECT * FROM members WHERE members.id IN (:ids)")
-    fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+    fun findMemberRelationsByIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Transaction
     @Query("SELECT members.*\n" +
@@ -69,8 +78,8 @@ interface MemberDao {
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
 
     @Transaction
-    @Query("SELECT * FROM members WHERE householdId = :householdId AND id != :memberId")
-    fun remainingHouseholdMembers(memberId: UUID, householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
+    @Query("SELECT * FROM members WHERE householdId = :householdId")
+    fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL")
     fun needPhotoDownload(): Single<List<MemberModel>>

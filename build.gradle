@@ -39,9 +39,9 @@ ext {
     minSdkVersion = 24
     targetSdkVersion = 26
     compileSdkVersion = 26
-    applicationId = "org.watsi.uhp"
-    versionCode = 1
-    versionName = "1.0"
+    applicationId = "org.watsi.claims_submission"
+    versionCode = 5
+    versionName = "0.3.1"
 }
 
 // This adds more custom properties from the dependencies.gradle file and makes them available to
@@ -60,7 +60,7 @@ task runDeviceUnitTests(dependsOn: [':device:testDebugUnitTest']) {
     description 'Run unit tests for the device module.'
 }
 
-task runAppUnitTests(dependsOn: [':app:testDebugUnitTest']) {
+task runAppUnitTests(dependsOn: [':app:testEthiopiaDebugUnitTest', ':app:testUgandaDebugUnitTest']) {
     description 'Run unit tests for the app module.'
 }
 

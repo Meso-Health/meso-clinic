@@ -5,12 +5,9 @@ import org.threeten.bp.DateTimeException
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.domain.entities.Member
-import java.util.Locale
 
 object DateUtils {
     const val TIME_FORMAT = "h:mma"
@@ -72,6 +69,10 @@ object DateUtils {
         return ChronoUnit.YEARS.between(date, LocalDate.now(clock)).toInt()
     }
 
+    fun getDaysAgo(date: LocalDate, clock: Clock = Clock.systemDefaultZone()): Int {
+        return ChronoUnit.DAYS.between(date, LocalDate.now(clock)).toInt()
+    }
+
     fun getSecondsAgo(time: Long, clock: Clock = Clock.systemDefaultZone()): Double {
         return (Instant.now(clock).toEpochMilli() - time) / 1000.0
     }
@@ -81,6 +82,7 @@ data class Age (val quantity: Int, val unit: AgeUnit) {
 
     fun toBirthdateWithAccuracy(clock: Clock = Clock.systemDefaultZone()): Pair<LocalDate, Member.DateAccuracy> {
         return when (unit) {
+            AgeUnit.days -> Pair(LocalDate.now(clock).minusDays(quantity.toLong()), Member.DateAccuracy.D)
             AgeUnit.months -> Pair(LocalDate.now(clock).minusMonths(quantity.toLong()), Member.DateAccuracy.M)
             AgeUnit.years -> Pair(LocalDate.now(clock).minusYears(quantity.toLong()), Member.DateAccuracy.Y)
         }
@@ -89,4 +91,4 @@ data class Age (val quantity: Int, val unit: AgeUnit) {
     override fun toString() = "$quantity $unit"
 }
 
-enum class AgeUnit { months, years }
+enum class AgeUnit { months, years, days }

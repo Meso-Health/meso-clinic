@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space16"
+        android:clipToPadding="false"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="@color/white">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/membership_number_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/membership_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/membership_number_label"
+                android:enabled="false"
+                android:imeOptions="actionDone"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <org.watsi.uhp.views.GenderField
+            android:id="@+id/gender_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space16"
+            app:layout_constraintTop_toBottomOf="@+id/membership_number_layout" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/space24"
+            app:layout_constraintTop_toBottomOf="@id/gender_field">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/member_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/member_name_label"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords|textNoSuggestions" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/age_fields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space16"
+            app:layout_constraintTop_toBottomOf="@id/name_layout">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/age_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.35" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/age_input_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="3.5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/age_guideline">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/age_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/age_field_label"
+                    android:selectAllOnFocus="true"
+                    android:maxLength="3"
+                    android:imeOptions="actionNext"
+                    android:inputType="number" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <org.watsi.uhp.views.SpinnerField
+                android:id="@+id/age_unit_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/age_guideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/medical_record_number_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space24"
+            app:layout_constraintTop_toBottomOf="@id/age_fields">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/medical_record_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/medical_record_number"
+                android:maxLength="7"
+                android:imeOptions="actionDone"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/check_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space24"
+            style="@style/PrimaryButton"
+            android:text="@string/check_in"
+            app:layout_constraintTop_toBottomOf="@id/medical_record_number_layout"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

@@ -12,6 +12,17 @@ After installing Android Studio it will walk you through downloading the most re
 
 In order to run the application, you also need a `variables.gradle` file in your root directory which stores environment variables. Create a file called `variables.gradle` and copy the file contents from 1Password.
 
+### Environment variable alternative
+Note that if you are using `variables.gradle` the following steps are not necessary, and you can skip to the `Build variants` section.
+
+As an alternative to `variables.gradle`, you can use a `.env` file with environment variables to store your private config settings, which will simulate the way the build server works. You will need to lead these variables before launching Android Studio. The simplest way to do that is to launch the app from the Command Line after loading the variables.
+
+```
+$ cd /your/working/dir
+$ source .env
+$ open -a /Applications/Android\ Studio.app /your/working/dir
+```
+
 ## Build variants
 
 Our app has several different [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) to represent different environments. You can create any one of these build

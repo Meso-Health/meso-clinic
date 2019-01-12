@@ -40,7 +40,7 @@ class UpdateMemberUseCaseTest {
                 modelId = memberId
         ) }
         whenever(mockMember.diff(mockPrevMember)).thenReturn(deltas)
-        whenever(mockMemberRepository.save(mockMember, deltas))
+        whenever(mockMemberRepository.upsert(mockMember, deltas))
                 .thenReturn(Completable.complete())
 
         useCase.execute(mockMember).test().assertComplete()
@@ -57,7 +57,7 @@ class UpdateMemberUseCaseTest {
                          modelName = Delta.ModelName.PHOTO,
                          modelId = memberId))
         whenever(mockMember.diff(mockPrevMember)).thenReturn(deltas)
-        whenever(mockMemberRepository.save(mockMember, deltas))
+        whenever(mockMemberRepository.upsert(mockMember, deltas))
                 .thenReturn(Completable.complete())
 
         useCase.execute(mockMember).test().assertComplete()

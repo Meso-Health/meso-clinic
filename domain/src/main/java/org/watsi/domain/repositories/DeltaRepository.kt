@@ -7,6 +7,7 @@ import org.watsi.domain.entities.Delta
 import java.util.UUID
 
 interface DeltaRepository {
+    fun insert(deltas: List<Delta>): Completable
     fun unsynced(modelName: Delta.ModelName): Single<List<Delta>>
     fun unsyncedModelIds(modelName: Delta.ModelName, action: Delta.Action): Single<List<UUID>>
     fun markAsSynced(deltas: List<Delta>): Completable
@@ -17,6 +18,7 @@ interface DeltaRepository {
             val unsyncedEditedMemberCount: Int? = null,
             val unsyncedIdEventCount: Int? = null,
             val unsyncedEncounterCount: Int? = null,
-            val unsyncedEncounterFormCount: Int? = null
+            val unsyncedEncounterFormCount: Int? = null,
+            val unsyncedPhotosCount: Int? = null
     )
 }

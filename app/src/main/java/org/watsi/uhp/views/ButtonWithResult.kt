@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_button_with_result.view.button
 import kotlinx.android.synthetic.main.view_button_with_result.view.result_container
-import kotlinx.android.synthetic.main.view_button_with_result.view.success_icon
 import kotlinx.android.synthetic.main.view_button_with_result.view.result_message
+import kotlinx.android.synthetic.main.view_button_with_result.view.success_icon
 import org.watsi.uhp.R
 
 class ButtonWithResult @JvmOverloads constructor(
@@ -22,10 +22,10 @@ class ButtonWithResult @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_button_with_result, this, true)
-        val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.ButtonWithContainer)
+        val customAttributes = context.obtainStyledAttributes(attrs, R.styleable.ButtonWithPreview)
 
-        button.text = customAttributes.getString(R.styleable.ButtonWithContainer_buttonText)
-        button.setCompoundDrawablesWithIntrinsicBounds(customAttributes.getDrawable(R.styleable.ButtonWithContainer_icon), null, null, null)
+        button.text = customAttributes.getString(R.styleable.ButtonWithPreview_buttonText)
+        button.setCompoundDrawablesWithIntrinsicBounds(customAttributes.getDrawable(R.styleable.ButtonWithPreview_icon), null, null, null)
 
         customAttributes.recycle()
     }

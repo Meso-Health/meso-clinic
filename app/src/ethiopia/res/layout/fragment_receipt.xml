@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/claim_id_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/fragment_padding"
+            android:paddingBottom="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/claim_id_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/fragment_padding"
+                android:textColor="@color/gray6"
+                android:text="@string/claim_id_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/claim_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingStart="@dimen/fragment_padding"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@id/claim_id_label" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/adjudication_comments_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/fragment_padding"
+            android:paddingBottom="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/claim_id_container"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/adjudication_comments_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/fragment_padding"
+                android:textColor="@color/gray6"
+                android:text="@string/comments"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/provider_comment_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/label_vertical_margin"
+                android:paddingStart="@dimen/fragment_padding"
+                android:textStyle="bold"
+                android:text="@string/provider_label"
+                app:layout_constraintTop_toBottomOf="@id/adjudication_comments_label" />
+
+            <TextView
+                android:id="@+id/provider_comment_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space8"
+                android:paddingBottom="@dimen/bottom_text_align_padding"
+                android:textColor="@color/gray6"
+                android:textSize="@dimen/fontSize12"
+                app:layout_constraintLeft_toRightOf="@id/provider_comment_author"
+                app:layout_constraintBottom_toBottomOf="@id/provider_comment_author" />
+
+            <TextView
+                android:id="@+id/provider_comment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingStart="@dimen/fragment_padding"
+                android:paddingEnd="@dimen/space48"
+                app:layout_constraintTop_toBottomOf="@id/provider_comment_author" />
+
+            <View
+                android:id="@+id/adjudication_comments_line_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:layout_marginStart="@dimen/fragment_padding"
+                app:layout_constraintTop_toBottomOf="@id/provider_comment_text" />
+
+            <TextView
+                android:id="@+id/branch_comment_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/fragment_padding"
+                android:paddingStart="@dimen/fragment_padding"
+                android:textStyle="bold"
+                android:text="@string/branch_label"
+                app:layout_constraintTop_toBottomOf="@id/adjudication_comments_line_divider" />
+
+            <TextView
+                android:id="@+id/branch_comment_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space8"
+                android:paddingBottom="@dimen/bottom_text_align_padding"
+                android:textColor="@color/gray6"
+                android:textSize="@dimen/fontSize12"
+                app:layout_constraintLeft_toRightOf="@id/branch_comment_author"
+                app:layout_constraintBottom_toBottomOf="@id/branch_comment_author" />
+
+            <TextView
+                android:id="@+id/branch_comment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingStart="@dimen/fragment_padding"
+                android:paddingEnd="@dimen/space48"
+                app:layout_constraintTop_toBottomOf="@id/branch_comment_author" />
+            
+        </android.support.constraint.ConstraintLayout>
+
+        <org.watsi.uhp.views.ImageTextButton
+            android:id="@+id/edit_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/PrimaryButton"
+            android:drawableStart="@drawable/ic_edit_white_24dp"
+            android:text="@string/edit_claim_button"
+            android:layout_marginRight="@dimen/fragment_padding"
+            android:layout_marginLeft="@dimen/fragment_padding"
+            android:layout_marginTop="@dimen/space24"
+            android:layout_marginBottom="@dimen/space24"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/adjudication_comments_container" />
+
+        <!-- This is necessary because we must conditionally include a margin above the date container
+             if the above containers are visible. Android ignores marginBottom, so we must hide or show
+             this view that exists only to provide a margin
+             -->
+        <View
+            android:id="@+id/date_spacer_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fragment_padding"
+            android:padding="@dimen/fragment_padding"
+            app:layout_constraintTop_toBottomOf="@id/edit_button"
+            android:visibility="gone" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/date_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/panel_background"
+            android:clickable="true"
+            android:padding="@dimen/fragment_padding"
+            app:layout_constraintTop_toBottomOf="@id/date_spacer_container">
+
+            <TextView
+                android:id="@+id/date_header_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/date_header"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/date_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/date_header_label" />
+
+            <TextView
+                android:id="@+id/date_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toBottomOf="@id/date_header_label"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/member_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/date_container">
+
+            <TextView
+                android:id="@+id/member_info_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/member_info_section_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/membership_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/member_info_label" />
+
+            <View
+                android:id="@+id/membership_number_line_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/membership_number" />
+
+            <TextView
+                android:id="@+id/gender_and_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/membership_number_line_divider" />
+
+            <View
+                android:id="@+id/gender_and_age_line_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/gender_and_age" />
+
+            <TextView
+                android:id="@+id/medical_record_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                android:paddingTop="@dimen/list_item_vertical_padding"
+                app:layout_constraintTop_toBottomOf="@id/gender_and_age_line_divider" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/visit_type_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/member_info_container">
+
+            <TextView
+                android:id="@+id/visit_type_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/visit_type_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/visit_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize16"
+                android:layout_marginTop="@dimen/space12"
+                app:layout_constraintTop_toBottomOf="@id/visit_type_label" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/diagnoses_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/visit_type_container">
+
+            <TextView
+                android:id="@+id/diagnoses_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/diagnoses_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@id/diagnoses_label"
+                android:visibility="gone" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/encounter_items_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:background="@drawable/panel_background"
+            android:padding="@dimen/fragment_padding"
+            app:layout_constraintTop_toBottomOf="@id/diagnoses_container"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <TextView
+                android:id="@+id/service_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/service"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/service_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/service_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/service_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/service_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <View
+                    android:id="@+id/service_line_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/service_none"
+                    android:visibility="gone" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/lab_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:textColor="@color/gray6"
+                android:text="@string/lab"
+                app:layout_constraintTop_toBottomOf="@id/service_layout" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/lab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/lab_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/lab_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/lab_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"/>
+
+                <View
+                    android:id="@+id/lab_line_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/lab_none"
+                    android:visibility="gone" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/drug_and_supply_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:textColor="@color/gray6"
+                android:text="@string/drug_and_supply"
+                app:layout_constraintTop_toBottomOf="@id/lab_layout" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/drug_and_supply_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/drug_and_supply_label">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/drug_and_supply_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/drug_and_supply_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    android:text="@string/none"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone" />
+
+                <View
+                    android:id="@+id/drug_and_supply_line_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/drug_and_supply_none"
+                    android:visibility="gone" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/total_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fragment_padding"
+                style="@style/LargeLabel"
+                android:text="@string/total"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/drug_and_supply_layout" />
+
+            <TextView
+                android:id="@+id/total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fragment_padding"
+                style="@style/LargeLabel"
+                app:layout_constraintTop_toBottomOf="@id/drug_and_supply_layout"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/comment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/encounter_items_container">
+
+            <TextView
+                android:id="@+id/comment_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/comment_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/comment_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:paddingEnd="@dimen/space48"
+                android:text="@string/none"
+                app:layout_constraintTop_toBottomOf="@id/comment_label"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/comment_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:text="@string/add_clickable"
+                app:layout_constraintTop_toBottomOf="@id/comment_label"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <org.watsi.uhp.views.ImageTextButton
+            android:id="@+id/finish_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fragment_padding"
+            style="@style/PrimaryButton"
+            app:layout_constraintTop_toBottomOf="@id/comment_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

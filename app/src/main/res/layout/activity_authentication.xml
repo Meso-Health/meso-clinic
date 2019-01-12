@@ -1,50 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/authentication_activity"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.watsi.uhp.activities.AuthenticationActivity">
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:clickable="true"
+    tools:context=".activities.AuthenticationActivity" >
 
-    <include layout="@layout/training_banner"/>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space16"
+        android:background="@drawable/panel_background"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/fragment_horizontal_margin"
-        android:paddingRight="@dimen/fragment_horizontal_margin" >
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/login_username_label"
-            android:labelFor="@+id/login_username" />
-
-        <EditText
-            android:id="@+id/login_username"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/login_username_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:maxLines="1"
-            android:backgroundTint="@color/gray4" />
+            android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+            android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/login_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionNext"
+                android:hint="@string/login_username_label" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <TextView
+            android:id="@+id/password_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:textSize="@dimen/fontSize12"
+            android:textColor="@color/gray6"
             android:text="@string/login_password_label"
-            android:labelFor="@+id/login_password"/>
+            android:labelFor="@+id/login_password"
+            app:layout_constraintTop_toBottomOf="@+id/login_username_container" />
 
         <me.philio.pinentry.PinEntryView
             android:id="@+id/login_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginTop="@dimen/space16"
             app:accentType="all"
             app:digitBackground="@android:color/white"
             app:digitElevation="2dp"
@@ -52,21 +59,26 @@
             app:numDigits="6"
             app:accentWidth="1dp"
             app:digitWidth="35dp"
-            app:digitHeight="35dp"/>
+            app:digitHeight="35dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password_label" />
 
-        <TextView
+        <android.support.design.widget.TextInputLayout
             android:id="@+id/error_text"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_marginTop="@dimen/space12"
+            app:layout_constraintTop_toBottomOf="@+id/login_password" />
 
         <Button
             android:id="@+id/login_button"
-            android:layout_marginTop="@dimen/space16"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            style="@style/PrimaryButton"
+            android:layout_height="wrap_content"
             android:text="@string/login_button_text"
-            android:enabled="false" />
-    </LinearLayout>
-</LinearLayout>
+            android:layout_marginTop="@dimen/space16"
+            style="@style/PrimaryButton"
+            app:layout_constraintTop_toBottomOf="@+id/error_text" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

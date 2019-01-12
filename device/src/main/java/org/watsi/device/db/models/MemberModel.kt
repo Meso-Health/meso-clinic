@@ -9,22 +9,28 @@ import org.watsi.domain.entities.Member
 import java.util.UUID
 
 @Entity(tableName = "members")
-data class MemberModel(@PrimaryKey val id: UUID,
-                       val enrolledAt: Instant,
-                       val createdAt: Instant,
-                       val updatedAt: Instant,
-                       val householdId: UUID,
-                       val photoId: UUID?,
-                       val thumbnailPhotoId: UUID?,
-                       val photoUrl: String?,
-                       val cardId: String?,
-                       val name: String,
-                       val gender: Member.Gender,
-                       val language: String?,
-                       val birthdate: LocalDate,
-                       val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
-                       val fingerprintsGuid: UUID?,
-                       val phoneNumber: String?) {
+data class MemberModel(
+    @PrimaryKey val id: UUID,
+    val enrolledAt: Instant,
+    val createdAt: Instant,
+    val updatedAt: Instant,
+    val householdId: UUID?,
+    val photoId: UUID?,
+    val thumbnailPhotoId: UUID?,
+    val photoUrl: String?,
+    val cardId: String?,
+    val name: String,
+    val gender: Member.Gender,
+    val language: String?,
+    val birthdate: LocalDate,
+    val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
+    val fingerprintsGuid: UUID?,
+    val phoneNumber: String?,
+    val membershipNumber: String?,
+    val medicalRecordNumber: String?,
+    val needsRenewal: Boolean?
+) {
+
     init {
         if (name.isBlank()) {
             throw ModelValidationException("Name cannot be blank")
@@ -32,41 +38,51 @@ data class MemberModel(@PrimaryKey val id: UUID,
     }
 
     fun toMember(): Member {
-        return Member(id = id,
-                      enrolledAt = enrolledAt,
-                      householdId = householdId,
-                      photoId = photoId,
-                      thumbnailPhotoId = thumbnailPhotoId,
-                      photoUrl = photoUrl,
-                      cardId = cardId,
-                      name = name,
-                      gender = gender,
-                      language = language,
-                      birthdate = birthdate,
-                      birthdateAccuracy = birthdateAccuracy,
-                      fingerprintsGuid = fingerprintsGuid,
-                      phoneNumber = phoneNumber)
+        return Member(
+            id = id,
+            enrolledAt = enrolledAt,
+            householdId = householdId,
+            photoId = photoId,
+            thumbnailPhotoId = thumbnailPhotoId,
+            photoUrl = photoUrl,
+            cardId = cardId,
+            name = name,
+            gender = gender,
+            language = language,
+            birthdate = birthdate,
+            birthdateAccuracy = birthdateAccuracy,
+            fingerprintsGuid = fingerprintsGuid,
+            phoneNumber = phoneNumber,
+            membershipNumber = membershipNumber,
+            medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal
+        )
     }
 
     companion object {
         fun fromMember(member: Member, clock: Clock): MemberModel {
             val now = clock.instant()
-            return MemberModel(id = member.id,
-                               enrolledAt = member.enrolledAt,
-                               createdAt = now,
-                               updatedAt = now,
-                               householdId = member.householdId,
-                               photoId = member.photoId,
-                               thumbnailPhotoId = member.thumbnailPhotoId,
-                               photoUrl = member.photoUrl,
-                               cardId = member.cardId,
-                               name = member.name,
-                               gender = member.gender,
-                               language = member.language,
-                               birthdate = member.birthdate,
-                               birthdateAccuracy = member.birthdateAccuracy,
-                               fingerprintsGuid = member.fingerprintsGuid,
-                               phoneNumber = member.phoneNumber)
+            return MemberModel(
+                id = member.id,
+                enrolledAt = member.enrolledAt,
+                createdAt = now,
+                updatedAt = now,
+                householdId = member.householdId,
+                photoId = member.photoId,
+                thumbnailPhotoId = member.thumbnailPhotoId,
+                photoUrl = member.photoUrl,
+                cardId = member.cardId,
+                name = member.name,
+                gender = member.gender,
+                language = member.language,
+                birthdate = member.birthdate,
+                birthdateAccuracy = member.birthdateAccuracy,
+                fingerprintsGuid = member.fingerprintsGuid,
+                phoneNumber = member.phoneNumber,
+                membershipNumber = member.membershipNumber,
+                medicalRecordNumber = member.medicalRecordNumber,
+                needsRenewal = member.needsRenewal
+            )
         }
     }
 }

@@ -1,21 +1,174 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
+import org.threeten.bp.Instant
+import org.watsi.device.db.models.BillableWithPriceSchedulesModel
 import org.watsi.device.factories.BillableModelFactory
+import org.watsi.device.factories.BillableWithPriceSchedulesModelFactory
 import org.watsi.device.factories.DeltaModelFactory
+import org.watsi.device.factories.PriceScheduleModelFactory
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 
 class BillableDaoTest : DaoBaseTest() {
 
     @Test
+    fun allWithPrice() {
+        val billable1 =
+            BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+        val billable2 =
+            BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+        val billable3 =
+            BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+
+        billableDao.allWithPrice().test().assertValue(listOf(billable1, billable2, billable3))
+    }
+
+    @Test
+    fun count() {
+        val billable1 =
+                BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+        val billable2 =
+                BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+        val billable3 =
+                BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
+
+        billableDao.count().test().assertValue(3)
+    }
+
+    @Test
+    fun ofType() {
+        val oldDate = Instant.ofEpochMilli(1533090767000) // 2018/08/01
+        val middleDate = Instant.ofEpochMilli(1534300367000) // 2018/08/15
+        val newDate = Instant.ofEpochMilli(1535769167000) // 2018/09/01
+
+        val vaccine1 = BillableModelFactory.create(billableDao, type = Billable.Type.VACCINE)
+        val drug1 = BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
+        val drug2 = BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
+        val drug3 = BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
+        val lab1 = BillableModelFactory.create(billableDao, type = Billable.Type.LAB)
+        val service1 = BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
+        val service2 = BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
+
+        val priceScheduleVaccine1 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = vaccine1.id,
+            issuedAt = oldDate
+        )
+        val priceScheduleDrug1_1 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = drug1.id,
+            issuedAt = oldDate
+        )
+        val priceScheduleDrug1_2 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = drug1.id,
+            issuedAt = middleDate,
+            previousPriceScheduleModelId = priceScheduleDrug1_1.id
+        )
+        val priceScheduleDrug2_1 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = drug2.id,
+            issuedAt = oldDate
+        )
+        val priceScheduleDrug2_2 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = drug2.id,
+            issuedAt = middleDate,
+            previousPriceScheduleModelId = priceScheduleDrug2_1.id
+        )
+        val priceScheduleDrug2_3 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = drug2.id,
+            issuedAt = newDate,
+            previousPriceScheduleModelId = priceScheduleDrug2_2.id
+        )
+        val priceScheduleDrug3 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = drug3.id,
+            issuedAt = oldDate
+        )
+        val priceScheduleLab1_1 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = lab1.id,
+            issuedAt = oldDate
+        )
+        val priceScheduleLab1_2 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = lab1.id,
+            issuedAt = middleDate,
+            previousPriceScheduleModelId = priceScheduleLab1_1.id
+        )
+        val priceScheduleService1 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = service1.id,
+            issuedAt = oldDate
+        )
+        val priceScheduleService2 = PriceScheduleModelFactory.create(
+            priceScheduleDao,
+            billableId = service2.id,
+            issuedAt = oldDate
+        )
+
+        billableDao.ofType(Billable.Type.SERVICE).test().assertValue(
+            listOf(
+                BillableWithPriceSchedulesModel(service1, listOf(priceScheduleService1)),
+                BillableWithPriceSchedulesModel(service2, listOf(priceScheduleService2))
+            )
+        )
+
+        billableDao.ofType(Billable.Type.LAB).test().assertValue(
+            listOf(
+                BillableWithPriceSchedulesModel(
+                    lab1,
+                    listOf(priceScheduleLab1_1, priceScheduleLab1_2)
+                )
+            )
+        )
+
+        billableDao.ofType(Billable.Type.DRUG).test().assertValue(
+            listOf(
+                BillableWithPriceSchedulesModel(
+                    drug1,
+                    listOf(priceScheduleDrug1_1, priceScheduleDrug1_2)
+                ),
+                BillableWithPriceSchedulesModel(
+                    drug2,
+                    listOf(priceScheduleDrug2_1, priceScheduleDrug2_2, priceScheduleDrug2_3)
+                ),
+                BillableWithPriceSchedulesModel(drug3, listOf(priceScheduleDrug3))
+            )
+        )
+    }
+
+    @Test
     fun upsert() {
         val persistedBillable = BillableModelFactory.create(billableDao)
+        val persistedPriceSchedule = PriceScheduleModelFactory.create(priceScheduleDao, billableId = persistedBillable.id)
+        val newPriceScheduleForPersistedBillable = PriceScheduleModelFactory.create(priceScheduleDao, billableId = persistedBillable.id)
         val newBillable = BillableModelFactory.build()
+        val priceScheduleForNewBillable = PriceScheduleModelFactory.create(priceScheduleDao, billableId = newBillable.id)
         val updatedBillable = persistedBillable.copy(price = 500)
 
-        billableDao.upsert(listOf(updatedBillable, newBillable))
+        billableDao.upsert(
+            billableModels = listOf(updatedBillable, newBillable),
+            priceScheduleModels = listOf(
+                persistedPriceSchedule,
+                newPriceScheduleForPersistedBillable,
+                priceScheduleForNewBillable
+            )
+        )
 
-        billableDao.all().test().assertValue(listOf(updatedBillable, newBillable))
+        billableDao.all().test().assertValue(listOf(
+            updatedBillable,
+            newBillable
+        ))
+
+        priceScheduleDao.all().test().assertValue(listOf(
+            persistedPriceSchedule,
+            newPriceScheduleForPersistedBillable,
+            priceScheduleForNewBillable
+        ))
     }
 
     @Test
@@ -54,9 +207,17 @@ class BillableDaoTest : DaoBaseTest() {
 
     @Test
     fun opdDefaults() {
-        val consultation = BillableModelFactory.create(billableDao, name = "Consultation")
-        val medicalForm = BillableModelFactory.create(billableDao, name = "Medical Form")
-        BillableModelFactory.create(billableDao)
+        val consultation = BillableWithPriceSchedulesModelFactory.create(
+            billableDao,
+            priceScheduleDao,
+            BillableModelFactory.build(name = "Consultation")
+        )
+        val medicalForm = BillableWithPriceSchedulesModelFactory.create(
+            billableDao,
+            priceScheduleDao,
+            BillableModelFactory.build(name = "Medical Form")
+        )
+        BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
 
         billableDao.opdDefaults().test().assertValue(listOf(consultation, medicalForm))
     }

@@ -1,14 +1,17 @@
 package org.watsi.device.api.models
 
+import com.google.gson.annotations.SerializedName
 import org.watsi.domain.entities.Billable
 import java.util.UUID
 
-data class BillableApi(val id: UUID,
-                       val type: String,
-                       val composition: String?,
-                       val unit: String?,
-                       val price: Int,
-                       val name: String) {
+data class BillableApi(
+        @SerializedName("id") val id: UUID,
+        @SerializedName("type") val type: String,
+        @SerializedName("composition") val composition: String?,
+        @SerializedName("unit") val unit: String?,
+        @SerializedName("price") val price: Int,
+        @SerializedName("name") val name: String
+) {
 
     constructor (billable: Billable) : this(
             id = billable.id,

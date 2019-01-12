@@ -4,23 +4,22 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import org.watsi.domain.relations.EncounterItemWithBillable
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.uhp.R
-import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.views.EncounterItemListItem
 import java.util.UUID
 
 class EncounterItemAdapter(
-        private val encounterItems: MutableList<EncounterItemWithBillable> = mutableListOf(),
-        private val onQuantitySelected: () -> Unit,
-        private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
-        private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
-        private val keyboardManager: KeyboardManager
+    private val encounterItemRelations: MutableList<EncounterItemWithBillableAndPrice> = mutableListOf(),
+    private val onQuantitySelected: () -> Unit,
+    private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
+    private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
+    private val onPriceTap: ((encounterItemId: UUID) -> Unit)?
 ) : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {
 
     lateinit var encounterItemView: EncounterItemListItem
 
-    override fun getItemCount(): Int = encounterItems.size
+    override fun getItemCount(): Int = encounterItemRelations.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -29,18 +28,22 @@ class EncounterItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val encounterItemRelation = encounterItems[position]
+        val encounterItemRelation = encounterItemRelations[position]
         encounterItemView = holder.itemView as EncounterItemListItem
         encounterItemView.setEncounterItem(encounterItemRelation, onQuantitySelected,
-                onQuantityChanged, onRemoveEncounterItem, keyboardManager)
+                onQuantityChanged, onPriceTap)
     }
 
-    fun setEncounterItems(updatedEncounterItems: List<EncounterItemWithBillable>) {
-        if (updatedEncounterItems != encounterItems) {
-            encounterItems.clear()
-            encounterItems.addAll(updatedEncounterItems)
+    fun setEncounterItems(updatedEncounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
+        if (updatedEncounterItemRelations != encounterItemRelations) {
+            encounterItemRelations.clear()
+            encounterItemRelations.addAll(updatedEncounterItemRelations)
             notifyDataSetChanged()
         }
+    }
+
+    fun removeAt(position: Int) {
+        onRemoveEncounterItem(encounterItemRelations[position].encounterItem.id)
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import edu.emory.mathcs.backport.java.util.Arrays
@@ -28,27 +29,29 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
+import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
-import org.watsi.device.db.models.IdentificationEventModel
+import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.MemberWithRawPhotoModel
 import org.watsi.device.db.models.PhotoModel
+import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
+import org.watsi.device.factories.MemberWithIdEventAndThumbnailPhotoModelFactory
 import org.watsi.device.factories.PhotoModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.DeltaFactory
-import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
-import org.watsi.domain.factories.PhotoFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class MemberRepositoryImplTest {
@@ -58,6 +61,7 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     @Mock lateinit var mockPhotoDao: PhotoDao
+    @Mock lateinit var mockEncounterDao: EncounterDao
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: MemberRepositoryImpl
     
@@ -69,7 +73,7 @@ class MemberRepositoryImplTest {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         repository = MemberRepositoryImpl(
-                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock)
+                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, mockEncounterDao, clock)
     }
 
     @Test
@@ -110,34 +114,30 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun remainingHouseholdMembers() {
-        val member = MemberFactory.build()
+    fun findHouseholdMembers() {
+        val householdId = UUID.randomUUID()
+        val member1 = MemberFactory.build(householdId = householdId)
+        val member2 = MemberFactory.build(householdId = householdId)
         val householdMemberRelations = listOf(
-                MemberWithIdEventAndThumbnailPhoto(
-                        member = MemberFactory.build(householdId = member.householdId),
-                        thumbnailPhoto = PhotoFactory.build(),
-                        identificationEvent = IdentificationEventFactory.build()
-                )
+            MemberWithIdEventAndThumbnailPhoto(member = member1, identificationEvent = null, thumbnailPhoto = null),
+            MemberWithIdEventAndThumbnailPhoto(member = member2, identificationEvent = null, thumbnailPhoto = null)
         )
-        whenever(mockDao.remainingHouseholdMembers(member.id, member.householdId)).thenReturn(
-                Flowable.just(householdMemberRelations.map {
-                    MemberWithIdEventAndThumbnailPhotoModel(
-                            memberModel = MemberModel.fromMember(it.member, clock),
-                            photoModels = listOf(PhotoModel.fromPhoto(it.thumbnailPhoto!!, clock)),
-                            identificationEventModels = listOf(
-                                    IdentificationEventModel.fromIdentificationEvent(it.identificationEvent!!, clock))
-                    )
-                }))
 
-        repository.remainingHouseholdMembers(member).test().assertValue(householdMemberRelations)
+        whenever(mockDao.findHouseholdMembers(householdId)).thenReturn(
+            Flowable.just(householdMemberRelations.map {
+                MemberWithIdEventAndThumbnailPhotoModel(memberModel = MemberModel.fromMember(it.member, clock))
+            })
+        )
+
+        repository.findHouseholdMembers(householdId).test().assertValue(householdMemberRelations)
     }
 
     @Test
-    fun save() {
+    fun upsert() {
         val member = MemberFactory.build()
         val delta = DeltaFactory.build(modelName = Delta.ModelName.MEMBER)
 
-        repository.save(member, listOf(delta)).test().assertComplete()
+        repository.upsert(member, listOf(delta)).test().assertComplete()
 
         verify(mockDao).upsert(
                 MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))
@@ -151,7 +151,7 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_succeeds_updatesMembers() {
+    fun fetch_hasToken_noActiveMembers_succeeds_updatesMembers() {
         val noChange = MemberModelFactory.build(clock = clock)
         val noChangeApi = MemberApi(noChange.toMember())
         val serverEdited = MemberModelFactory.build(name = "Bryan", clock = clock)
@@ -189,6 +189,10 @@ class MemberRepositoryImplTest {
                 clientEditedServerEdited,
                 clientEditedServerRemoved
         )))
+        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(emptyList()))
+        whenever(mockEncounterDao.pending()).thenReturn(Flowable.just(emptyList()))
+        whenever(mockEncounterDao.returned()).thenReturn(Flowable.just(emptyList()))
+        whenever(mockEncounterDao.unsynced()).thenReturn(Single.just(emptyList()))
 
         repository.fetch().test().assertComplete()
 
@@ -203,6 +207,81 @@ class MemberRepositoryImplTest {
     }
 
     @Test
+    fun fetch_hasToken_hasActiveMembers_succeeds_updatesMembers_preservesActiveMembers() {
+        val noChange = MemberModelFactory.build(clock = clock)
+        val noChangeApi = MemberApi(noChange.toMember())
+        val serverRemoved = MemberModelFactory.build(clock = clock)
+        val clientAdded = MemberModelFactory.build(clock = clock)
+        val clientEditedServerEdited = MemberModelFactory.build(name = "Mike", clock = clock)
+        val clientEditedServerEditedApi = MemberApi(clientEditedServerEdited.copy(name = "Michael").toMember())
+        val clientEditedServerRemoved = MemberModelFactory.build(clock = clock)
+        val clientCheckedInServerNotRemoved = MemberModelFactory.build(clock = clock)
+        val clientCheckedInServerNotRemovedApi = MemberApi(clientCheckedInServerNotRemoved.toMember())
+        val clientCheckedInServerNotRemovedWithId = MemberWithIdEventAndThumbnailPhotoModelFactory.build(
+            memberModel = clientCheckedInServerNotRemoved,
+            idEvent = IdentificationEventModelFactory.build(memberId = clientCheckedInServerNotRemoved.id)
+        )
+        val clientCheckedInServerRemoved = MemberModelFactory.build(clock = clock)
+        val clientCheckedInServerRemovedWithId = MemberWithIdEventAndThumbnailPhotoModelFactory.build(
+            memberModel = clientCheckedInServerRemoved,
+            idEvent = IdentificationEventModelFactory.build(memberId = clientCheckedInServerRemoved.id)
+        )
+        val pendingEncounterMember = MemberModelFactory.build(clock = clock)
+        val pendingEncounter = EncounterWithMemberAndItemsAndFormsModel(EncounterModelFactory.build(), listOf(pendingEncounterMember), null, null)
+        val returnedEncounterMember = MemberModelFactory.build(clock = clock)
+        val returnedEncounter = EncounterWithMemberAndItemsAndFormsModel(EncounterModelFactory.build(), listOf(returnedEncounterMember), null, null)
+        val unsyncedEncounterMember = MemberModelFactory.build(clock = clock)
+        val unsyncedEncounter = EncounterWithMemberAndItemsAndFormsModel(EncounterModelFactory.build(), listOf(unsyncedEncounterMember), null, null)
+
+        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockApi.getMembers(any(), any())).thenReturn(Single.just(listOf(
+            noChangeApi,
+            clientCheckedInServerNotRemovedApi,
+            clientEditedServerEditedApi
+        )))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(
+            clientAdded,
+            clientEditedServerEdited,
+            clientEditedServerRemoved
+        )))
+        whenever(mockDao.all()).thenReturn(Flowable.just(listOf(
+            noChange,
+            clientCheckedInServerNotRemoved,
+            serverRemoved,
+            clientAdded,
+            clientEditedServerEdited,
+            clientEditedServerRemoved,
+            clientCheckedInServerRemoved,
+            pendingEncounterMember,
+            returnedEncounterMember,
+            unsyncedEncounterMember
+        )))
+        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(listOf(
+            clientCheckedInServerNotRemovedWithId,
+            clientCheckedInServerRemovedWithId
+        )))
+        whenever(mockEncounterDao.pending()).thenReturn(Flowable.just(listOf(
+            pendingEncounter
+        )))
+        whenever(mockEncounterDao.returned()).thenReturn(Flowable.just(listOf(
+            returnedEncounter
+        )))
+        whenever(mockEncounterDao.unsynced()).thenReturn(Single.just(listOf(
+            unsyncedEncounter
+        )))
+
+        repository.fetch().test().assertComplete()
+
+        verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
+        verify(mockDao).delete(listOf(serverRemoved.id))
+        verify(mockDao).upsert(listOf(
+            noChange,
+            clientCheckedInServerNotRemoved
+        ))
+        verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
+    }
+
+    @Test
     fun fetch_hasToken_fails_returnsError() {
         val exception = Exception()
         whenever(mockSessionManager.currentToken()).thenReturn(token)
@@ -212,11 +291,14 @@ class MemberRepositoryImplTest {
 
         verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
         verify(mockDao, never()).unsynced()
+        verify(mockDao, never()).checkedInMembers()
+        verify(mockEncounterDao, never()).pending()
+        verify(mockEncounterDao, never()).returned()
     }
 
     @Test
     fun downloadPhotos() {
-        val photoUrl = "http://localhost:5000/dragonfly/media/foo-9ce2ca927c19c2b0"
+        val photoUrl = "/dragonfly/media/foo-9ce2ca927c19c2b0"
         val photoBytes = ByteArray(1, { 0xa })
         val member = MemberFactory.build(photoUrl = photoUrl)
         val responseBody = ResponseBody.create(MediaType.parse("image/jpeg"), photoBytes)
@@ -322,5 +404,32 @@ class MemberRepositoryImplTest {
         repository.syncPhotos(listOf(delta)).test().assertError(exception)
 
         verify(mockDao, never()).upsert(memberModel.copy(photoId = null), emptyList())
+    }
+    @Test
+    fun byIds() {
+        val models = listOf(
+            MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build()),
+            MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build())
+        )
+        val modelIds = models.mapNotNull { it.memberModel?.id }
+        whenever(mockDao.findMemberRelationsByIds(modelIds)).thenReturn(Single.just(models))
+
+        repository.byIds(modelIds).test().assertValue(models.map { memberWithIdEventAndThumbnailPhotoModel ->
+            memberWithIdEventAndThumbnailPhotoModel.toMemberWithIdEventAndThumbnailPhoto()
+        })
+    }
+
+    @Test
+    fun byIds_moreThan1000_findsByChunk() {
+        val models = (0..1000).map {
+            MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build())
+        }
+        val modelIds = models.mapNotNull { it.memberModel?.id }
+        whenever(mockDao.findMemberRelationsByIds(any())).thenReturn(Single.just(models))
+
+        repository.byIds(modelIds).test().assertComplete()
+
+        verify(mockDao, times(1)).findMemberRelationsByIds(modelIds.slice(0..998))
+        verify(mockDao, times(1)).findMemberRelationsByIds(modelIds.slice(999..1000))
     }
 }

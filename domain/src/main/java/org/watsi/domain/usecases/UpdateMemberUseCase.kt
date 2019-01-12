@@ -18,7 +18,7 @@ class UpdateMemberUseCase(private val memberRepository: MemberRepository) {
                         modelName = Delta.ModelName.PHOTO,
                         modelId = member.id))
             }
-            memberRepository.save(member, deltas)
+            memberRepository.upsert(member, deltas)
         }
     }
 }

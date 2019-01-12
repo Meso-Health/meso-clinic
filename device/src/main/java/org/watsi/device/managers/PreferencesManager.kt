@@ -2,6 +2,7 @@ package org.watsi.device.managers
 
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.AuthenticationToken
+import java.util.Locale
 
 interface PreferencesManager {
     fun getAuthenticationToken(): AuthenticationToken?
@@ -12,4 +13,6 @@ interface PreferencesManager {
     fun updateBillablesLastFetched(instant: Instant)
     fun getDiagnosesLastFetched(): Instant
     fun updateDiagnosesLastFetched(instant: Instant)
+    fun getLocale(): Locale?
+    fun updateLocale(locale: Locale)
 }

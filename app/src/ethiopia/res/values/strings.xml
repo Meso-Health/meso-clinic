@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="MissingTranslation">Claims Submission</string>
+
+    <!-- Confirmation Messages -->
+    <string name="exit_form_alert">Are you sure you want to exit?</string>
+    <string name="gender_validation_error">Gender is required</string>
+
+    <!-- Menu -->
+    <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
+    <string name="menu_pending_claims_with_number">Pending Approval (%1$s)</string>
+    <string name="menu_pending_claims_without_number">Pending Approval</string>
+    <string name="menu_returned_claims_with_number">Returned (%1$s)</string>
+    <string name="menu_returned_claims_without_number">Returned</string>
+    <string name="menu_sync_now">Sync now</string>
+    <string name="delete">Delete</string>
+    <string name="remove" translatable="false">Remove</string>
+    <string name="delete_claim_confirmation">Delete this claim?</string>
+
+    <!-- HomeFragment -->
+    <string name="home_fragment_label">Claims</string>
+    <string name="no_claims" translatable="false">No claims available</string>
+    <string name="pending_claims_dialog_label" translatable="false">Enter security PIN</string>
+    <string name="pending_claims_dialog_error_message" translatable="false">Invalid PIN</string>
+
+    <!-- SearchFragment -->
+    <string name="search_fragment_label">@string/search</string>
+    <string name="slash" translatable="false">/</string>
+    <string name="two_zeroes_placeholder" translatable="false">00</string>
+    <string name="three_zeroes_placeholder" translatable="false">000</string>
+    <string name="six_zeroes_placeholder" translatable="false">000000</string>
+    <string name="start_claim_button">Start Claim</string>
+    <string name="invalid_membership_error">Invalid membership number</string>
+    <string name="scan_member_card_menu_item_title">Scan card</string>
+
+    <!-- MemberSearchFragment -->
+    <string name="member_search_fragment_label">@string/search</string>
+    <string name="search_by_name">Search by name</string>
+
+    <!-- MemberNotFoundFragment -->
+    <string name="member_not_found_fragment_label">@string/search</string>
+    <string name="member_not_found_message">Error loading member</string>
+    <string name="member_not_found_detail" translatable="false">The member is not registered to this phone</string>
+    <string name="enter_claim_manually_button_text">Enter manually</string>
+
+    <!-- HouseholdFragment -->
+    <string name="household_fragment_label">@string/search</string>
+
+    <!-- EditMemberFragment -->
+    <string name="member_list_item_gender_age" translatable="false">%1$s, %2$s</string>
+    <string name="replace_card_notification" translatable="false">Needs renewal</string>
+    <string name="membership_number_field_label">Member CBHI ID</string>
+    <string name="name_field_label">Full name</string>
+    <string name="birthdate_field_label">Birthdate</string>
+    <string name="medical_record_number_field_label">Medical record number</string>
+    <string name="photo_field_label">Photo</string>
+    <string name="photo_panel_header_text">Photo</string>
+    <string name="edit_input_add">Add</string>
+    <string name="edit_input_edit">Edit</string>
+    <string name="take_photo_button_text">Take photo</string>
+    <string name="missing_medical_record_number" translatable="false">Medical record number is required</string>
+    <string name="check_out_alert_dialog_title" translatable="false">Remove from checked in list?</string>
+    <string name="check_out_alert_dialog_message" translatable="false">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>
+
+    <!-- MemberInformationFragment -->
+    <string name="member_information_fragment_label">Member Information</string>
+    <string name="member_name_label" translatable="false">Name</string>
+    <string name="medical_record_number">Medical Record Number</string>
+    <string name="membership_number_label">Member ID</string>
+    <string name="name_validation_error">Name is required</string>
+    <string name="age_validation_error">Age is required</string>
+    <string name="medical_record_number_validation_error">Medical Record Number is required</string>
+    <string name="yes">OK</string>
+    <string name="missing_fields_validation_error">Some fields are missing</string>
+
+    <!-- VisitTypeFragment -->
+    <string name="visit_type_fragment_label">Visit Type</string>
+    <string name="visit_type_label">Visit Type</string>
+
+    <!-- EthiopianDatePicker -->
+    <string name="eth_datepicker_title">Date</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="eth_datepicker_day">Day</string>
+    <string name="eth_datepicker_month">Month</string>
+    <string name="eth_datepicker_year">Year</string>
+
+    <!-- ReceiptFragment -->
+    <string name="price" translatable="false">%1$s</string>
+    <string name="member_info_section_label">Member Information</string>
+    <string name="none">None</string>
+    <string name="edit_claim_button">Edit Claim</string>
+    <string name="claim_id_label">Claim ID</string>
+    <string name="comments">Comments</string>
+    <string name="provider_label">Provider</string>
+    <string name="branch_label">EHIA</string>
+    <plurals name="comment_age">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <string name="date_header">Date of Service</string>
+    <string name="comment_label">Comment</string>
+    <string name="add_clickable"><u>Add</u></string>
+    <string name="comment_prompt">Add a comment&#8230;</string>
+    <string name="resubmit">Resubmit Claim</string>
+    <string name="today">Today</string>
+    <string name="claim_id_deleted">Claim ID %1$s was deleted</string>
+    <string name="claim_id_submitted">Claim ID %1$s was submitted</string>
+    <string name="empty_line_items_warning" tools:ignore="MissingTranslation">Claim must contain line items</string>
+
+    <!-- EncounterFragment -->
+    <string name="drug_and_supply">Drug and Supply</string>
+    <string name="service">Service</string>
+    <string name="lab">Lab</string>
+    <string name="select_prompt">Select…</string>
+
+    <!-- EditPriceFragment -->
+    <string name="edit_price_fragment_label">Edit Price</string>
+    <string name="unit_price_label">Unit Price</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="total_price_label">Total Price</string>
+
+    <!-- PendingClaimsFragment -->
+    <string name="pending_claims_fragment_label">Pending Approval</string>
+    <string name="pending_claims_count_empty">No pending claims</string>
+    <plurals name="pending_claims_count">
+        <item quantity="one">%d pending claim</item>
+        <item quantity="other">%d pending claims</item>
+    </plurals>
+    <string name="submit_all_button">Submit All</string>
+    <string name="temp_submit_all_claims">Submit all claims</string>
+    <!-- TODO Put this back when we have translations ^^ The above is a stand in
+    <plurals name="submit_all_form_alert">
+        <item quantity="one">Submit %d claim?</item>
+        <item quantity="other">Submit all %d claims?</item>
+    </plurals>
+    -->
+    <string name="all_encounter_submitted">All submitted</string>
+
+    <!-- ReturnedClaimsFragment -->
+    <string name="returned_claims_fragment_label">Returned Claims</string>
+    <string name="returned_claims_count_empty">No returned claims</string>
+    <plurals name="returned_claims_count">
+        <item quantity="one">%d returned claim</item>
+        <item quantity="other">%d returned claims</item>
+    </plurals>
+
+    <!-- Search Terms -->
+    <string name="search_by_member_card" translatable="false">Search member card</string>
+    <string name="search">Search</string>
+
+</resources>

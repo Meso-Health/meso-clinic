@@ -9,11 +9,8 @@ import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
-import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.remove_line_item_btn
-import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.EncounterItemWithBillable
-import org.watsi.uhp.managers.KeyboardManager
-import java.text.NumberFormat
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -21,26 +18,24 @@ class EncounterItemListItem @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     fun setEncounterItem(
-            encounterItemRelation: EncounterItemWithBillable,
-            onQuantitySelected: () -> Unit,
-            onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
-            onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
-            keyboardManager: KeyboardManager
+        encounterItemRelation: EncounterItemWithBillableAndPrice,
+        onQuantitySelected: () -> Unit,
+        onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
+        onPriceTap: ((encounterItemId: UUID) -> Unit)?
     ) {
-        val billable = encounterItemRelation.billable
+        val billable = encounterItemRelation.billableWithPriceSchedule.billable
         val encounterItem = encounterItemRelation.encounterItem
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
-        if (billable.dosageDetails() != null) {
-            billable_details.text = billable.dosageDetails()
+        if (billable.details() != null) {
+            billable_details.text = billable.details()
             billable_details.visibility = View.VISIBLE
         } else {
             billable_details.visibility = View.GONE
         }
 
         billable_quantity.setText(currentQuantity.toString())
-        billable_quantity.isEnabled = billable.type in listOf(Billable.Type.DRUG, Billable.Type.SUPPLY, Billable.Type.VACCINE)
         billable_quantity.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) { // execute the following when losing focus
                 val parsedNewQuantity = billable_quantity.text.toString().toIntOrNull()
@@ -70,6 +65,11 @@ class EncounterItemListItem @JvmOverloads constructor(
             false
         }
 
-        remove_line_item_btn.setOnClickListener { onRemoveEncounterItem(encounterItem.id) }
+        line_item_price.setPrice(encounterItemRelation.price(), encounterItemRelation.prevPrice())
+
+        onPriceTap?.let {
+            line_item_price.underline()
+            line_item_price.setOnClickListener { onPriceTap(encounterItem.id) }
+        }
     }
 }

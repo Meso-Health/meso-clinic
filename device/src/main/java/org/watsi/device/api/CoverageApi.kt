@@ -7,10 +7,13 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.watsi.device.api.models.AuthenticationTokenApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
+import org.watsi.device.api.models.PriceScheduleApi
+import org.watsi.device.api.models.ReturnedEncounterApi
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -41,7 +44,7 @@ interface CoverageApi {
     fun getBillables(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int
-    ): Single<List<BillableApi>>
+    ): Single<List<BillableWithPriceScheduleApi>>
 
     @GET("diagnoses")
     fun getDiagnoses(
@@ -76,11 +79,25 @@ interface CoverageApi {
             @Body identificationEvent: IdentificationEventApi
     ): Completable
 
+    @PATCH("identification_events/{identificationEventId}")
+    fun patchIdentificationEvent(
+        @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+        @Path("identificationEventId") identificationEventId: UUID,
+        @Body identificationEvent: JsonObject
+    ): Completable
+
     @POST("providers/{providerId}/billables")
     fun postBillable(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int,
             @Body billable: BillableApi
+    ): Completable
+
+    @POST("providers/{providerId}/price_schedules")
+    fun postPriceSchedule(
+            @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+            @Path("providerId") providerId: Int,
+            @Body priceSchedule: PriceScheduleApi
     ): Completable
 
     @POST("providers/{providerId}/encounters")
@@ -89,6 +106,12 @@ interface CoverageApi {
             @Path("providerId") providerId: Int,
             @Body encounter: EncounterApi
     ): Completable
+
+    @GET("providers/{providerId}/encounters/returned")
+    fun getReturnedClaims(
+            @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+            @Path("providerId") providerId: Int
+    ): Single<List<ReturnedEncounterApi>>
 
     @Multipart
     @PATCH("encounters/{encounterId}")

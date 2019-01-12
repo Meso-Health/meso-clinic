@@ -8,12 +8,9 @@ import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.daos.EncounterFormDao
-import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
-import org.watsi.device.db.models.MemberModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterFormWithPhoto
 import org.watsi.domain.repositories.EncounterFormRepository
 import java.util.UUID
@@ -29,10 +26,10 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
                 .subscribeOn(Schedulers.io())
     }
 
-    fun save(encounterFormModel: EncounterFormModel): Completable {
+    private fun create(encounterFormModel: EncounterFormModel): Completable {
         return Completable.fromAction {
             encounterFormDao.update(encounterFormModel)
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun sync(delta: Delta): Completable {
@@ -42,7 +39,7 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
                 Completable.concatArray(
                     api.patchEncounterForm(token.getHeaderString(),
                             encounterFormWithPhoto.encounterForm.encounterId, requestBody),
-                    save(EncounterFormModel.fromEncounterForm(encounterFormWithPhoto.encounterForm.copy(photoId =
+                    create(EncounterFormModel.fromEncounterForm(encounterFormWithPhoto.encounterForm.copy(photoId =
                     null), clock))
                 )
 

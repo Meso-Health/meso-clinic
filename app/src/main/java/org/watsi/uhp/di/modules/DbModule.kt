@@ -12,9 +12,11 @@ import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
+import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
+import org.watsi.device.db.daos.PriceScheduleDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
 import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
@@ -23,6 +25,7 @@ import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
 import org.watsi.device.db.repositories.MemberRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
+import org.watsi.device.db.repositories.PriceScheduleRepositoryImpl
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.repositories.BillableRepository
@@ -33,6 +36,7 @@ import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.domain.repositories.PriceScheduleRepository
 import javax.inject.Singleton
 
 @Module
@@ -41,7 +45,9 @@ class DbModule {
     @Singleton
     @Provides
     fun provideDatabase(context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "submission").build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "submission")
+                .fallbackToDestructiveMigration()
+                .build()
     }
 
     @Singleton
@@ -62,6 +68,10 @@ class DbModule {
 
     @Singleton
     @Provides
+    fun provideEncounterItemDao(db: AppDatabase): EncounterItemDao = db.encounterItemDao()
+
+    @Singleton
+    @Provides
     fun provideEncounterFormDao(db: AppDatabase): EncounterFormDao = db.encounterFormDao()
 
     @Singleton
@@ -77,6 +87,10 @@ class DbModule {
     @Provides
     fun providePhotoDao(db: AppDatabase): PhotoDao = db.photoDao()
 
+    @Singleton
+    @Provides
+    fun providePriceScheduleDao(db: AppDatabase): PriceScheduleDao = db.priceScheduleDao()
+
     @Provides
     fun provideBillableRepository(billableDao: BillableDao,
                                   api: CoverageApi,
@@ -84,6 +98,14 @@ class DbModule {
                                   preferencesManager: PreferencesManager,
                                   clock: Clock): BillableRepository =
             BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
+
+    @Provides
+    fun providePriceScheduleRepository(priceScheduleDao: PriceScheduleDao,
+                                       api: CoverageApi,
+                                       sessionManager: SessionManager,
+                                       clock: Clock): PriceScheduleRepository {
+        return PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager, clock)
+    }
 
     @Provides
     fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
@@ -100,10 +122,13 @@ class DbModule {
 
     @Provides
     fun provideEncounterRepository(encounterDao: EncounterDao,
+                                   encounterItemDao: EncounterItemDao,
+                                   diagnosisDao: DiagnosisDao,
+                                   memberDao: MemberDao,
                                    api: CoverageApi,
                                    sessionManager: SessionManager,
                                    clock: Clock): EncounterRepository =
-            EncounterRepositoryImpl(encounterDao, api, sessionManager, clock)
+            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, memberDao, api, sessionManager, clock)
 
     @Provides
     fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,
@@ -126,8 +151,9 @@ class DbModule {
                                 sessionManager: SessionManager,
                                 preferencesManager: PreferencesManager,
                                 photoDao: PhotoDao,
+                                encounterDao: EncounterDao,
                                 clock: Clock): MemberRepository =
-            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, encounterDao, clock)
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,
@@ -136,4 +162,5 @@ class DbModule {
                                clock: Clock): PhotoRepository {
         return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
     }
+
 }

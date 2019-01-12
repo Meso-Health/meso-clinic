@@ -11,6 +11,7 @@ object EncounterFormModelFactory {
     fun build(id: UUID = UUID.randomUUID(),
               encounterId: UUID = UUID.randomUUID(),
               photoId: UUID = UUID.randomUUID(),
+              thumbnailId: UUID = UUID.randomUUID(),
               createdAt: Instant? = null,
               updatedAt: Instant? = null,
               clock: Clock = Clock.systemUTC()) : EncounterFormModel {
@@ -18,6 +19,7 @@ object EncounterFormModelFactory {
         return EncounterFormModel(id = id,
                                   encounterId = encounterId,
                                   photoId = photoId,
+                                  thumbnailId = thumbnailId,
                                   createdAt = createdAt ?: now,
                                   updatedAt = updatedAt ?: now)
     }
@@ -26,12 +28,14 @@ object EncounterFormModelFactory {
                id: UUID = UUID.randomUUID(),
                encounterId: UUID = UUID.randomUUID(),
                photoId: UUID = UUID.randomUUID(),
+               thumbnailId: UUID = UUID.randomUUID(),
                createdAt: Instant? = null,
                updatedAt: Instant? = null,
                clock: Clock = Clock.systemUTC()) : EncounterFormModel {
         val model = build(id = id,
                           encounterId = encounterId,
                           photoId = photoId,
+                          thumbnailId = thumbnailId,
                           createdAt = createdAt,
                           updatedAt = updatedAt,
                           clock = clock)

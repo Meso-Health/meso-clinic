@@ -10,13 +10,13 @@ data class Billable(val id: UUID,
                     val price: Int,
                     val name: String) : Serializable {
 
-    fun dosageDetails(): String? {
-        return if (composition != null) {
-            if (unit != null) {
-                "$unit $composition"
-            } else {
-                composition
-            }
+    fun details(): String? {
+        return if (unit != null && composition != null) {
+            "$unit $composition"
+        } else if (unit != null) {
+            unit
+        } else if (composition != null) {
+            composition
         } else {
             null
         }

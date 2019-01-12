@@ -1,5 +1,8 @@
 package org.watsi.domain.usecases
 
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -20,28 +23,37 @@ class SyncBillableUseCaseTest {
 
     @Mock lateinit var billableRepo: BillableRepository
     @Mock lateinit var deltaRepo: DeltaRepository
+    @Mock lateinit var exception: Exception
+    @Mock lateinit var onErrorCallback: (throwable: Throwable) -> Boolean
     lateinit var useCase: SyncBillableUseCase
+
+    val delta = DeltaFactory.build(
+        action = Delta.Action.ADD,
+        modelName = Delta.ModelName.BILLABLE,
+        synced = false
+    )
+    private val deltaList = listOf(delta)
+    private val unsyncedSingle = Single.just(deltaList)
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-
+        whenever(onErrorCallback.invoke(any())).thenReturn(true)
+        whenever(deltaRepo.unsynced(Delta.ModelName.BILLABLE)).thenReturn(unsyncedSingle)
+        whenever(deltaRepo.markAsSynced(deltaList)).thenReturn(Completable.complete())
         useCase = SyncBillableUseCase(billableRepo, deltaRepo)
     }
 
     @Test
-    fun execute() {
-        val delta = DeltaFactory.build(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.BILLABLE,
-                synced = false
-        )
-        val deltaList = listOf(delta)
-        val unsyncedSingle = Single.just(deltaList)
-        whenever(deltaRepo.unsynced(Delta.ModelName.BILLABLE)).thenReturn(unsyncedSingle)
+    fun execute_success() {
         whenever(billableRepo.sync(delta)).thenReturn(Completable.complete())
-        whenever(deltaRepo.markAsSynced(deltaList)).thenReturn(Completable.complete())
+        useCase.execute(onErrorCallback).test().assertComplete()
+    }
 
-        useCase.execute().test().assertComplete()
+    @Test
+    fun execute_failure() {
+        whenever(billableRepo.sync(delta)).thenReturn(Completable.error(exception))
+        useCase.execute(onErrorCallback).test().assertComplete()
+        verify(onErrorCallback, times(1)).invoke(exception)
     }
 }

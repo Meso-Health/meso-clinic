@@ -49,7 +49,7 @@ object DeltaModelFactory {
                 createdAt = createdAt,
                 updatedAt = updatedAt,
                 clock = clock)
-        deltaDao.insert(deltaModel)
+        deltaDao.insert(listOf(deltaModel))
         return deltaModel
     }
 }

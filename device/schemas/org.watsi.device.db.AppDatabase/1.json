@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c7e7e3c833d47cd5c663834a38f1f74d",
+    "identityHash": "8471f90134b0f3f98e0346d514c21b91",
     "entities": [
       {
         "tableName": "billables",
@@ -174,7 +174,7 @@
       },
       {
         "tableName": "encounters",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT NOT NULL, `occurredAt` INTEGER NOT NULL, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER NOT NULL, `diagnoses` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, `visitType` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -204,7 +204,7 @@
             "fieldPath": "identificationEventId",
             "columnName": "identificationEventId",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "occurredAt",
@@ -222,13 +222,19 @@
             "fieldPath": "copaymentPaid",
             "columnName": "copaymentPaid",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "diagnoses",
             "columnName": "diagnoses",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "visitType",
+            "columnName": "visitType",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -292,7 +298,7 @@
       },
       {
         "tableName": "encounter_forms",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `encounterId` TEXT NOT NULL, `photoId` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `encounterId` TEXT NOT NULL, `photoId` TEXT, `thumbnailId` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -321,6 +327,12 @@
           {
             "fieldPath": "photoId",
             "columnName": "photoId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "thumbnailId",
+            "columnName": "thumbnailId",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -428,7 +440,7 @@
       },
       {
         "tableName": "members",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `enrolledAt` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `householdId` TEXT NOT NULL, `photoId` TEXT, `thumbnailPhotoId` TEXT, `photoUrl` TEXT, `cardId` TEXT, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `language` TEXT, `birthdate` TEXT NOT NULL, `birthdateAccuracy` TEXT NOT NULL, `fingerprintsGuid` TEXT, `phoneNumber` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `enrolledAt` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `householdId` TEXT, `photoId` TEXT, `thumbnailPhotoId` TEXT, `photoUrl` TEXT, `cardId` TEXT, `name` TEXT NOT NULL, `gender` TEXT NOT NULL, `language` TEXT, `birthdate` TEXT NOT NULL, `birthdateAccuracy` TEXT NOT NULL, `fingerprintsGuid` TEXT, `phoneNumber` TEXT, `membershipNumber` TEXT, `medicalRecordNumber` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -458,7 +470,7 @@
             "fieldPath": "householdId",
             "columnName": "householdId",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "photoId",
@@ -525,6 +537,18 @@
             "columnName": "phoneNumber",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "membershipNumber",
+            "columnName": "membershipNumber",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "medicalRecordNumber",
+            "columnName": "medicalRecordNumber",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -577,7 +601,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c7e7e3c833d47cd5c663834a38f1f74d\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8471f90134b0f3f98e0346d514c21b91\")"
     ]
   }
 }

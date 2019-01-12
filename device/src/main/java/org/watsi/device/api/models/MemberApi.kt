@@ -9,27 +9,27 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import java.util.UUID
 
-/**
- * Data class that defines the structure of a sync Member API request.
- *
- * Uses Strings for Date/Time fields because GSON does not natively support serializing java.time
- * classes to a format our API accepts.
- */
-data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
-                     @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
-                     @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID,
-                     @SerializedName(CARD_ID_FIELD) val cardId: String?,
-                     @SerializedName(NAME_FIELD) val name: String,
-                     @SerializedName(GENDER_FIELD) val gender: Member.Gender,
-                     @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
-                     @SerializedName(BIRTHDATE_ACCURACY_FIELD)
-                     val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
-                     @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
-                     @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
-                     @SerializedName(LANGUAGE_FIELD) val language: String?,
-                     @SerializedName(OTHER_LANGUAGE_FIELD) val otherLanguage: String?,
-                     @Expose(serialize = false)
-                     @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?) {
+data class MemberApi(
+    @SerializedName(ID_FIELD) val id: UUID,
+    @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
+    @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID?,
+    @SerializedName(CARD_ID_FIELD) val cardId: String?,
+    @SerializedName(NAME_FIELD) val name: String,
+    @SerializedName(GENDER_FIELD) val gender: Member.Gender,
+    @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
+    @SerializedName(BIRTHDATE_ACCURACY_FIELD)
+    val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
+    @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
+    @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
+    @SerializedName(LANGUAGE_FIELD) val language: String?,
+    @SerializedName(OTHER_LANGUAGE_FIELD) val otherLanguage: String?,
+    @Expose(serialize = false)
+    @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?,
+    @SerializedName(MEMBERSHIP_NUMBER_FIELD) val membershipNumber: String?,
+    @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?,
+    @Expose(serialize = false)
+    @SerializedName(NEEDS_RENEWAL) val needsRenewal: Boolean?
+) {
 
     constructor (member: Member) :
             this(id = member.id,
@@ -44,34 +44,36 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                  phoneNumber = member.phoneNumber,
                  language = preferredLanguage(member),
                  otherLanguage = preferredLanguageOther(member),
-                 photoUrl = member.photoUrl
+                 photoUrl = member.photoUrl,
+                 membershipNumber = member.membershipNumber,
+                 medicalRecordNumber = member.medicalRecordNumber,
+                 needsRenewal = member.needsRenewal
             )
 
     fun toMember(persistedMember: Member?): Member {
-        // necessary because when running locally, URL is returned relative to app directory
-        val convertedPhotoUrl = if (photoUrl?.first() == '/') {
-            "http://localhost:5000$photoUrl"
-        } else {
-            photoUrl
-        }
         // do not overwrite the local thumbnail photo if the fetched photo is not different
         val thumbnailPhotoId = persistedMember?.let {
-            if (it.photoUrl == convertedPhotoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
+            if (it.photoUrl == photoUrl || it.photoUrl == null) it.thumbnailPhotoId else null
         }
-        return Member(id = id,
-                      enrolledAt = enrolledAt,
-                      householdId = householdId,
-                      cardId = cardId,
-                      name = name,
-                      gender = gender,
-                      birthdate = birthdate,
-                      birthdateAccuracy = birthdateAccuracy,
-                      fingerprintsGuid = fingerprintsGuid,
-                      phoneNumber = phoneNumber,
-                      language = language,
-                      photoId = persistedMember?.photoId,
-                      thumbnailPhotoId = thumbnailPhotoId,
-                      photoUrl = convertedPhotoUrl)
+        return Member(
+            id = id,
+            enrolledAt = enrolledAt,
+            householdId = householdId,
+            cardId = cardId,
+            name = name,
+            gender = gender,
+            birthdate = birthdate,
+            birthdateAccuracy = birthdateAccuracy,
+            fingerprintsGuid = fingerprintsGuid,
+            phoneNumber = phoneNumber,
+            language = language,
+            photoId = persistedMember?.photoId,
+            thumbnailPhotoId = thumbnailPhotoId,
+            photoUrl = photoUrl,
+            membershipNumber = membershipNumber,
+            medicalRecordNumber = medicalRecordNumber,
+            needsRenewal = needsRenewal
+        )
     }
 
     companion object {
@@ -88,6 +90,9 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
         const val LANGUAGE_FIELD = "preferred_language"
         const val OTHER_LANGUAGE_FIELD = "preferred_language_other"
         const val PHOTO_URL_FIELD = "photo_url"
+        const val MEMBERSHIP_NUMBER_FIELD = "membership_number"
+        const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
+        const val NEEDS_RENEWAL = "needs_renewal"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
             val patchParams = JsonObject()
@@ -100,6 +105,7 @@ data class MemberApi(@SerializedName(ID_FIELD) val id: UUID,
                         patchParams.addProperty(FINGERPRINTS_GUID_FIELD, member.fingerprintsGuid.toString())
                     }
                     "cardId" -> patchParams.addProperty(CARD_ID_FIELD, member.cardId)
+                    "medicalRecordNumber" -> patchParams.addProperty(MEDICAL_RECORD_NUMBER_FIELD, member.medicalRecordNumber)
                     null -> Unit
                 }
             }

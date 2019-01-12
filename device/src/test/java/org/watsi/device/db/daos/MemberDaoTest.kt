@@ -76,19 +76,95 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun remainingHouseholdMembers() {
+    fun findHouseholdIdByCardId() {
+        val householdId = UUID.randomUUID()
+        val cardId = "ETH345987"
+        val memberModel = MemberModelFactory.build(householdId = householdId, cardId = cardId)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findHouseholdIdByCardId(cardId)
+            .test()
+            .assertValue(householdId)
+    }
+
+    @Test
+    fun findHouseholdIdByCardIdNoHousehold() {
+        val cardId = "ETH345987"
+        val memberModel = MemberModelFactory.build(householdId = null, cardId = cardId)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findHouseholdIdByCardId(cardId)
+            .test()
+            .assertNoValues()
+    }
+
+    @Test
+    fun findHouseholdIdByCardIdDuplicate() {
+        val householdId1 = UUID.randomUUID()
+        val householdId2 = UUID.randomUUID()
+        val cardId = "ETH345987"
+        val memberModel1 = MemberModelFactory.build(householdId = householdId1, cardId = cardId)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel1)
+        val memberModel2 = MemberModelFactory.build(householdId = householdId2, cardId = cardId)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel2)
+
+        memberDao.findHouseholdIdByCardId(cardId)
+            .test()
+            .assertValue(householdId2)
+    }
+
+    @Test
+    fun findHouseholdIdByMembershipNumber() {
+        val householdId = UUID.randomUUID()
+        val membershipNumber = "01/01/01/P/10"
+        val memberModel = MemberModelFactory.build(householdId = householdId, membershipNumber = membershipNumber)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findHouseholdIdByMembershipNumber(membershipNumber)
+            .test()
+            .assertValue(householdId)
+    }
+
+    @Test
+    fun findHouseholdIdByMembershipNumberNoHousehold() {
+        val membershipNumber = "01/01/01/P/10"
+        val memberModel = MemberModelFactory.build(householdId = null, membershipNumber = membershipNumber)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+
+        memberDao.findHouseholdIdByMembershipNumber(membershipNumber)
+            .test()
+            .assertNoValues()
+    }
+
+    @Test
+    fun findHouseholdIdByMembershipNumberDuplicate() {
+        val householdId1 = UUID.randomUUID()
+        val householdId2 = UUID.randomUUID()
+        val membershipNumber = "01/01/01/P/10"
+        val memberModel1 = MemberModelFactory.build(householdId = householdId1, membershipNumber = membershipNumber)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel1)
+        val memberModel2 = MemberModelFactory.build(householdId = householdId2, membershipNumber = membershipNumber)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel2)
+
+        memberDao.findHouseholdIdByMembershipNumber(membershipNumber)
+            .test()
+            .assertValue(householdId2)
+    }
+
+    @Test
+    fun findHouseholdMembers() {
         val householdId = UUID.randomUUID()
         val householdMembers = (1..3).map {
             MemberWithIdEventAndThumbnailPhotoModel(
-                    memberModel = MemberModelFactory.create(memberDao, householdId = householdId),
-                    identificationEventModels = emptyList()
+                memberModel = MemberModelFactory.create(memberDao, householdId = householdId),
+                identificationEventModels = emptyList()
             )
         }
         MemberModelFactory.create(memberDao)
 
-        memberDao.remainingHouseholdMembers(householdMembers[0].memberModel!!.id, householdId)
-                .test()
-                .assertValue(listOf(householdMembers[1], householdMembers[2]))
+        memberDao.findHouseholdMembers(householdId)
+            .test()
+            .assertValue(householdMembers)
     }
 
     @Test
@@ -154,7 +230,18 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun byIds() {
+    fun findMembersByIds() {
+        val memberModel1 = MemberModelFactory.create(memberDao)
+        val memberModel2 = MemberModelFactory.create(memberDao)
+        val memberModel3 = MemberModelFactory.create(memberDao)
+        val idNotInDB = UUID.randomUUID()
+
+        memberDao.findMembersByIds(listOf(memberModel1.id, idNotInDB, memberModel2.id)).test()
+                .assertValue { value -> value.sortedBy { it.createdAt } == listOf(memberModel1, memberModel2) }
+    }
+
+    @Test
+    fun findMemberRelationsByIds() {
         val photoModel = PhotoModelFactory.create(photoDao)
         val memberModel = MemberModelFactory.create(memberDao, thumbnailPhotoId = photoModel.id)
         val idEventModel = IdentificationEventModelFactory.create(
@@ -163,6 +250,14 @@ class MemberDaoTest : DaoBaseTest() {
         val expectedRelationModel = MemberWithIdEventAndThumbnailPhotoModel(
                 memberModel, listOf(idEventModel), listOf(photoModel))
 
-        memberDao.byIds(listOf(memberModel.id)).test().assertValue(listOf(expectedRelationModel))
+        memberDao.findMemberRelationsByIds(listOf(memberModel.id)).test().assertValue(listOf(expectedRelationModel))
+    }
+
+    @Test
+    fun all_returnsAllMembersWithHouseholdIds() {
+        val memberWithHousehold = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID())
+        MemberModelFactory.create(memberDao, householdId = null)
+
+        memberDao.all().test().assertValue(listOf(memberWithHousehold))
     }
 }

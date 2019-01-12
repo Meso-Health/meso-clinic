@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.watsi.uhp.views.ClaimListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_item_vertical_padding"
+    android:paddingBottom="@dimen/list_item_vertical_padding">
+
+    <TextView
+        android:id="@+id/medical_record_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space16"
+        android:textSize="@dimen/fontSize18"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/claim_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space16"
+        android:textSize="@dimen/fontSize16"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/member_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space16"
+        android:textColor="@color/gray6"
+        android:textSize="@dimen/fontSize14"
+        app:layout_constraintTop_toBottomOf="@id/medical_record_number"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/claim_cbhi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space16"
+        android:textColor="@color/gray6"
+        android:textSize="@dimen/fontSize14"
+        app:layout_constraintTop_toBottomOf="@id/member_name"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/divider_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/space4"
+        android:paddingRight="@dimen/space4"
+        android:textColor="@color/gray6"
+        android:textSize="@dimen/fontSize14"
+        android:text="@string/bullet"
+        app:layout_constraintTop_toBottomOf="@id/member_name"
+        app:layout_constraintLeft_toRightOf="@id/claim_cbhi"/>
+
+    <TextView
+        android:id="@+id/claim_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray6"
+        android:textSize="@dimen/fontSize14"
+        app:layout_constraintTop_toBottomOf="@id/member_name"
+        app:layout_constraintLeft_toRightOf="@id/divider_dot"/>
+
+</org.watsi.uhp.views.ClaimListItem>

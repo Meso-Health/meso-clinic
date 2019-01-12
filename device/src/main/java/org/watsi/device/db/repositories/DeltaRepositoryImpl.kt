@@ -16,13 +16,22 @@ class DeltaRepositoryImpl(
         private val clock: Clock
 ) : DeltaRepository {
 
+    override fun insert(deltas: List<Delta>): Completable {
+        val deltaModels = deltas.map { DeltaModel.fromDelta(it) }
+
+        return Completable.fromAction {
+            deltaDao.insert(deltaModels)
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun syncStatus(): Flowable<DeltaRepository.SyncStatus> {
         val syncFlowables = listOf(
                 deltaDao.unsyncedCount(Delta.ModelName.MEMBER, Delta.Action.ADD),
                 deltaDao.unsyncedCount(Delta.ModelName.MEMBER, Delta.Action.EDIT),
                 deltaDao.unsyncedCount(Delta.ModelName.IDENTIFICATION_EVENT),
                 deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER),
-                deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER_FORM)
+                deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER_FORM),
+                deltaDao.unsyncedCount(Delta.ModelName.PHOTO)
         )
 
         return Flowable.combineLatest(syncFlowables, { results ->
@@ -31,7 +40,8 @@ class DeltaRepositoryImpl(
                     results[1] as Int,
                     results[2] as Int,
                     results[3] as Int,
-                    results[4] as Int
+                    results[4] as Int,
+                    results[5] as Int
             )
         })
     }

@@ -10,6 +10,8 @@ import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
+import org.watsi.device.db.DbHelper
+import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
@@ -25,12 +27,15 @@ import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.repositories.MemberRepository
 import java.util.UUID
 
-class MemberRepositoryImpl(private val memberDao: MemberDao,
-                           private val api: CoverageApi,
-                           private val sessionManager: SessionManager,
-                           private val preferencesManager: PreferencesManager,
-                           private val photoDao: PhotoDao,
-                           private val clock: Clock) : MemberRepository {
+class MemberRepositoryImpl(
+    private val memberDao: MemberDao,
+    private val api: CoverageApi,
+    private val sessionManager: SessionManager,
+    private val preferencesManager: PreferencesManager,
+    private val photoDao: PhotoDao,
+    private val encounterDao: EncounterDao,
+    private val clock: Clock
+) : MemberRepository {
 
     override fun all(): Flowable<List<Member>> {
         return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
@@ -48,9 +53,19 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
+    override fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID> {
+        return memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io())
+    }
+
+    override fun findHouseholdIdByCardId(cardId: String): Maybe<UUID> {
+        return memberDao.findHouseholdIdByCardId(cardId).subscribeOn(Schedulers.io())
+    }
+
     override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.byIds(ids).map {
-            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        return Single.fromCallable {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                memberDao.findMemberRelationsByIds(it).blockingGet()
+            }.flatten().map { it.toMemberWithIdEventAndThumbnailPhoto() }
         }.subscribeOn(Schedulers.io())
     }
 
@@ -64,15 +79,15 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
     }
 
-    override fun remainingHouseholdMembers(member: Member): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.remainingHouseholdMembers(member.id, member.householdId).map { memberWithIdEventAndThumbnailModels ->
+    override fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return memberDao.findHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
             memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
                 memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
-    override fun save(member: Member, deltas: List<Delta>): Completable {
+    override fun upsert(member: Member, deltas: List<Delta>): Completable {
         return Completable.fromAction {
             val deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
             memberDao.upsert(MemberModel.fromMember(member, clock), deltaModels)
@@ -87,18 +102,50 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val serverMembers = api.getMembers(token.getHeaderString(), token.user.providerId).blockingGet()
+                // Fetch full members list from the server
+                val serverMembers =
+                    api.getMembers(token.getHeaderString(), token.user.providerId).blockingGet()
                 val serverMemberIds = serverMembers.map { it.id }
+
+                // Get all locally stored members
                 val clientMembers = memberDao.all().blockingFirst()
                 val clientMemberIds = clientMembers.map { it.id }
                 val clientMembersById = clientMembers.groupBy { it.id }
-                val unsyncedClientMembers = memberDao.unsynced().blockingGet()
-                val unsyncedClientMemberIds = unsyncedClientMembers.map { it.id }
-                val syncedClientMemberIds = clientMemberIds.minus(unsyncedClientMemberIds)
-                val serverRemovedMemberIds = syncedClientMemberIds.minus(serverMemberIds)
-                val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
 
-                memberDao.delete(serverRemovedMemberIds)
+                // Find all locally stored members that are unsynced or in use, so that we know not to delete them
+                val memberIdsToRetain: MutableList<UUID> = mutableListOf()
+                memberIdsToRetain.addAll(serverMemberIds)
+
+                val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
+                memberIdsToRetain.addAll(unsyncedClientMemberIds)
+
+                val checkedInMemberIds =
+                    memberDao.checkedInMembers().blockingFirst().map { it.memberModel?.id }
+                        .requireNoNulls()
+                memberIdsToRetain.addAll(checkedInMemberIds)
+
+                val pendingEncounterMemberIds =
+                    encounterDao.pending().blockingFirst().map { it.memberModel?.map { it.id } }
+                        .requireNoNulls().flatten()
+                memberIdsToRetain.addAll(pendingEncounterMemberIds)
+
+                val returnedEncounterMemberIds =
+                    encounterDao.returned().blockingFirst().map { it.memberModel?.map { it.id } }
+                        .requireNoNulls().flatten()
+                memberIdsToRetain.addAll(returnedEncounterMemberIds)
+
+                val unsyncedEncounterMemberIds =
+                    encounterDao.unsynced().blockingGet().map { it.memberModel?.map { it.id } }
+                        .requireNoNulls().flatten()
+                memberIdsToRetain.addAll(unsyncedEncounterMemberIds)
+
+                // Delete stale members
+                val membersToDelete = clientMemberIds.minus(memberIdsToRetain)
+                memberDao.delete(membersToDelete)
+
+                // Update remaining members
+                val serverMembersWithoutUnsynced =
+                    serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
                 memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
                     val persistedMember = clientMembersById[memberApi.id]?.firstOrNull()?.toMember()
                     MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
@@ -149,7 +196,7 @@ class MemberRepositoryImpl(private val memberDao: MemberDao,
                 val requestBody = RequestBody.create(MediaType.parse("image/jpg"), memberWithRawPhoto.photo.bytes)
                 Completable.concatArray(
                     api.patchPhoto(token.getHeaderString(), memberId, requestBody),
-                    save(memberWithRawPhoto.member.copy(photoId = null), emptyList())
+                    upsert(memberWithRawPhoto.member.copy(photoId = null), emptyList())
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()

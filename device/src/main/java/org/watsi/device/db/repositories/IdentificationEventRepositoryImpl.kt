@@ -1,7 +1,7 @@
 package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
-import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
@@ -32,24 +32,41 @@ class IdentificationEventRepositoryImpl(
 
     override fun dismiss(identificationEvent: IdentificationEvent): Completable {
         return Completable.fromAction {
-            identificationEventDao.update(IdentificationEventModel.fromIdentificationEvent(
-                    identificationEvent.copy(dismissed = true), clock))
+            val delta = Delta(
+                action = Delta.Action.EDIT,
+                modelName = Delta.ModelName.IDENTIFICATION_EVENT,
+                modelId = identificationEvent.id,
+                field = "dismissed"
+            )
+            identificationEventDao.upsertWithDelta(
+                IdentificationEventModel.fromIdentificationEvent(identificationEvent.copy(dismissed = true), clock),
+                DeltaModel.fromDelta(delta, clock)
+            )
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun openCheckIn(memberId: UUID): Maybe<IdentificationEvent> {
+    override fun openCheckIn(memberId: UUID): Single<IdentificationEvent> {
         return identificationEventDao.openCheckIn(memberId)
                 .map { it.toIdentificationEvent() }
                 .subscribeOn(Schedulers.io())
     }
 
-    override fun sync(delta: Delta): Completable {
+    override fun sync(deltas: List<Delta>): Completable {
         return sessionManager.currentToken()?.let { token ->
-            identificationEventDao.find(delta.modelId).flatMapCompletable { idEventModel ->
-                val identificationEvent = idEventModel.toIdentificationEvent()
-                api.postIdentificationEvent(token.getHeaderString(), token.user.providerId,
-                        IdentificationEventApi(identificationEvent)
-                )
+            identificationEventDao.find(deltas.first().modelId).flatMapCompletable { identificationEventModel ->
+                if (deltas.any { it.action == Delta.Action.ADD }) {
+                    api.postIdentificationEvent(
+                        tokenAuthorization = token.getHeaderString(),
+                        providerId = token.user.providerId,
+                        identificationEvent = IdentificationEventApi(identificationEventModel.toIdentificationEvent())
+                    )
+                } else {
+                    api.patchIdentificationEvent(
+                        tokenAuthorization = token.getHeaderString(),
+                        identificationEventId = identificationEventModel.id,
+                        identificationEvent = IdentificationEventApi.patch(identificationEventModel.toIdentificationEvent(), deltas)
+                    )
+                }
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }

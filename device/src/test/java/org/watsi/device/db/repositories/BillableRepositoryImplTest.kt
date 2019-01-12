@@ -1,6 +1,7 @@
 package org.watsi.device.db.repositories
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
@@ -18,15 +19,20 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.factories.BillableModelFactory
+import org.watsi.device.factories.BillableWithPriceSchedulesModelFactory
 import org.watsi.device.factories.DeltaModelFactory
+import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.UserFactory
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class BillableRepositoryImplTest {
@@ -43,7 +49,8 @@ class BillableRepositoryImplTest {
             action = Delta.Action.ADD,
             modelName = Delta.ModelName.BILLABLE,
             modelId = billableModel.id,
-            synced = false
+            synced = false,
+            clock = clock
     )
 
     @Before
@@ -54,11 +61,44 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun all() {
-        val models = listOf(BillableModelFactory.build(), BillableModelFactory.build())
-        whenever(mockDao.all()).thenReturn(Single.just(models))
+    fun allWithPrice() {
+        val models = listOf(
+            BillableWithPriceSchedulesModelFactory.build(),
+            BillableWithPriceSchedulesModelFactory.build()
+        )
+        whenever(mockDao.allWithPrice()).thenReturn(Single.just(models))
 
-        repository.all().test().assertValue(models.map { it.toBillable() })
+        repository.all().test().assertValue(models.map { billableWithPriceSchedulesModel ->
+            billableWithPriceSchedulesModel.toBillableWithCurrentPriceSchedule()
+        })
+    }
+
+    @Test
+    fun ofType() {
+        val type = Billable.Type.DRUG
+        val models = listOf(
+            BillableWithPriceSchedulesModelFactory.build(),
+            BillableWithPriceSchedulesModelFactory.build()
+        )
+        val modelIds = models.map { it.billableModel!!.id }
+        whenever(mockDao.idsOfType(type)).thenReturn(Single.just(modelIds))
+        whenever(mockDao.findWithPrice(modelIds)).thenReturn(Single.just(models))
+
+        repository.ofType(type).test().assertValue(models.map { billableWithPriceSchedulesModel ->
+            billableWithPriceSchedulesModel.toBillableWithCurrentPriceSchedule()
+        })
+    }
+
+    @Test
+    fun ofType_moreThan1000_findsByChunk() {
+        val type = Billable.Type.DRUG
+        val modelIds = (1..1001).map { UUID.randomUUID() }
+        whenever(mockDao.idsOfType(type)).thenReturn(Single.just(modelIds))
+        whenever(mockDao.findWithPrice(any())).thenReturn(Single.just(emptyList()))
+
+        repository.ofType(type).test().assertComplete()
+
+        verify(mockDao, times(2)).findWithPrice(any())
     }
 
     @Test
@@ -66,6 +106,16 @@ class BillableRepositoryImplTest {
         repository.create(billableModel.toBillable(), deltaModel.toDelta()).test().assertComplete()
 
         verify(mockDao).insertWithDelta(billableModel, deltaModel)
+    }
+
+    @Test
+    fun delete() {
+        val ids = List(1001) { UUID.randomUUID() }
+
+        repository.delete(ids).test().assertComplete()
+
+        verify(mockDao).delete(ids.take(999))
+        verify(mockDao).delete(ids.takeLast(2))
     }
 
     @Test
@@ -87,11 +137,26 @@ class BillableRepositoryImplTest {
     fun fetch_hasToken_savesResponse() {
         val authToken = AuthenticationTokenFactory.build()
         val noChange = BillableModelFactory.build(clock = clock)
-        val noChangeApi = BillableApi(noChange.toBillable())
+        val priceScheduleModelForNoChangeBillable = PriceScheduleModelFactory.build(noChange.id, clock = clock)
+        val noChangeApi = BillableWithPriceScheduleApi(
+            billable = noChange.toBillable(),
+            activePriceSchedule = priceScheduleModelForNoChangeBillable.toPriceSchedule()
+        )
+
         val serverEdited = BillableModelFactory.build(name = "fucap", clock = clock)
-        val serverEditedApi = BillableApi(serverEdited.copy(name = "flucap").toBillable())
+        val priceScheduleModelForServerEditedBillable = PriceScheduleModelFactory.build(serverEdited.id, clock = clock)
+        val serverEditedApi = BillableWithPriceScheduleApi(
+            billable = serverEdited.copy(name = "flucap").toBillable(),
+            activePriceSchedule = priceScheduleModelForServerEditedBillable.toPriceSchedule()
+        )
+
         val serverAdded = BillableModelFactory.build(clock = clock)
-        val serverAddedApi = BillableApi(serverAdded.toBillable())
+        val priceScheduleModelForServerAddedBillable = PriceScheduleModelFactory.build(serverAdded.id, clock = clock)
+        val serverAddedApi = BillableWithPriceScheduleApi(
+            billable = serverAdded.toBillable(),
+            activePriceSchedule = priceScheduleModelForServerAddedBillable.toPriceSchedule()
+        )
+
         val serverRemoved = BillableModelFactory.build(clock = clock)
         val clientAdded = BillableModelFactory.build(clock = clock)
 
@@ -101,6 +166,7 @@ class BillableRepositoryImplTest {
                 serverEditedApi,
                 serverAddedApi
         )))
+
         whenever(mockDao.all()).thenReturn(Single.just(listOf(
                 noChange,
                 serverEdited,
@@ -115,20 +181,28 @@ class BillableRepositoryImplTest {
 
         verify(mockApi).getBillables(authToken.getHeaderString(), authToken.user.providerId)
         verify(mockDao).delete(listOf(serverRemoved.id))
-        verify(mockDao).upsert(listOf(
+        verify(mockDao).upsert(
+            billableModels = listOf(
                 noChange,
                 serverEdited.copy(name = "flucap"),
                 serverAdded
-        ))
+            ),
+            priceScheduleModels = listOf(
+                priceScheduleModelForNoChangeBillable,
+                priceScheduleModelForServerEditedBillable,
+                priceScheduleModelForServerAddedBillable
+            )
+        )
         verify(mockPreferencesManager).updateBillablesLastFetched(clock.instant())
     }
 
     @Test
     fun opdDefaults() {
-        val defaultBillable = BillableModelFactory.build()
+        val defaultBillable = BillableWithPriceSchedulesModelFactory.build()
         whenever(mockDao.opdDefaults()).thenReturn(Single.just(listOf(defaultBillable)))
 
-        repository.opdDefaults().test().assertValue(listOf(defaultBillable.toBillable()))
+        repository.opdDefaults().test()
+            .assertValue(listOf(defaultBillable.toBillableWithCurrentPriceSchedule()))
     }
 
     @Test
