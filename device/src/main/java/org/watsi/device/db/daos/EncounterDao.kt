@@ -55,8 +55,7 @@ interface EncounterDao {
 
     @Delete
     fun delete(encounterModel: EncounterModel,
-               encounterItemModels: List<EncounterItemModel>,
-               memberModel: MemberModel)
+               encounterItemModels: List<EncounterItemModel>)
 
     @Transaction
     @Query("SELECT * from encounters WHERE submittedAt IS NULL ORDER BY occurredAt")

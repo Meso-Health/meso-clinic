@@ -263,8 +263,7 @@ class EncounterRepositoryImplTest {
             encounterModel = EncounterModel.fromEncounter(encounterRelation.encounter, clock),
             encounterItemModels = encounterRelation.encounterItemRelations.map {
                 EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
-            },
-            memberModel = MemberModel.fromMember(encounterRelation.member, clock)
+            }
         )
     }
 }

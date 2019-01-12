@@ -206,12 +206,10 @@ class EncounterRepositoryImpl(
             val encounterItemModels = encounterRelation.encounterItemRelations.map {
                 EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
             }
-            val memberModel = MemberModel.fromMember(encounterRelation.member, clock)
 
             encounterDao.delete(
                 encounterModel = encounterModel,
-                encounterItemModels = encounterItemModels,
-                memberModel = memberModel
+                encounterItemModels = encounterItemModels
             )
         }.subscribeOn(Schedulers.io())
     }
