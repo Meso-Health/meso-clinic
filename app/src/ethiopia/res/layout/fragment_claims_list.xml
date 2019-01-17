@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <EditText
+        android:id="@+id/search_claims"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/meta_container"
         android:layout_width="match_parent"
@@ -13,7 +19,7 @@
         android:padding="@dimen/dialog_padding"
         android:elevation="@dimen/panelElevation"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/search_claims">
 
         <TextView
             android:id="@+id/total_claims_label"
