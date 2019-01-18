@@ -36,11 +36,16 @@ class PendingClaimsViewModel @Inject constructor(
         return observable
     }
 
-    fun filterClaimsByMRN(filterText: String) {
+    fun filterClaimsBySearchText(filterText: String) {
         observable.value?.let { viewState ->
             val filteredClaims = viewState.claims.filter {
                 val mrn = it.member.medicalRecordNumber
-                mrn?.contains(filterText, true) ?: false
+                val cbhid = it.member.membershipNumber
+                if (cbhid?.contains(filterText, true)!!) {
+                    true
+                } else {
+                    mrn?.contains(filterText, true) ?: false
+                }
             }
             observable.value = viewState.copy(visibleClaims = filteredClaims)
         }
