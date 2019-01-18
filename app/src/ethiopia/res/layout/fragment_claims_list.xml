@@ -5,10 +5,14 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <EditText
+    <!--android:iconifiedByDefault="false"-->
+    <SearchView
         android:id="@+id/search_claims"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/viewHeight40"
+        android:queryHint="@string/search_drug_hint"
+        android:queryBackground="@android:color/transparent"
+        android:inputType="number"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.ConstraintLayout

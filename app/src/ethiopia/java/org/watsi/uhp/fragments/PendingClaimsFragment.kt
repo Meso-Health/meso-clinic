@@ -21,6 +21,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
@@ -95,8 +96,8 @@ class PendingClaimsFragment : DaggerFragment() {
         })
     }
 
-    private fun filterClaimsByMRN(text: String) {
-        viewModel.filterClaimsByMRN(text)
+    private fun filterClaimsBySearchText(text: String) {
+        viewModel.filterClaimsBySearchText(text)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -133,9 +134,14 @@ class PendingClaimsFragment : DaggerFragment() {
                     }.create().show()
         }
 
-        search_claims.addTextChangedListener(LayoutHelper.OnChangedListener {
-            text -> filterClaimsByMRN(text)
-        })
+        search_claims.setOnQueryTextListener(QueryHelper.ThrottledQueryListener(
+            search_claims
+        ) { query: String -> viewModel.filterClaimsBySearchText(query) })
+
+//        need to figure out if this needs keyboard manager??
+//        search_claims.setOnQueryTextFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) { onShowKeyboard(hidePanel = false) }
+//        }
 
         snackbarMessageToShow?.let { snackbarMessage ->
             SnackbarHelper.show(claims_list, context, snackbarMessage)
