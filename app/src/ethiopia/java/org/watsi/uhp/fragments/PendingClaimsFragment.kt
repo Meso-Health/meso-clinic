@@ -5,13 +5,15 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_claims_list.*
-import kotlinx.android.synthetic.ethiopia.fragment_member_information.*
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.claims_list
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.search_claims
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_all_button
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.uhp.R
@@ -94,7 +96,6 @@ class PendingClaimsFragment : DaggerFragment() {
     }
 
     private fun filterClaimsByMRN(text: String) {
-        Log.i("meso", "hi we made a search: $text")
         viewModel.filterClaimsByMRN(text)
     }
 

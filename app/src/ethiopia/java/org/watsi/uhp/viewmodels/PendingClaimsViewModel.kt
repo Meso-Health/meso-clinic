@@ -25,7 +25,10 @@ class PendingClaimsViewModel @Inject constructor(
         observable.value = ViewState()
 
         loadPendingClaimsUseCase.execute().subscribe({ claims ->
-            observable.postValue(ViewState(claims, claims))
+            observable.postValue(ViewState(
+                claims = claims,
+                visibleClaims = claims
+            ))
         }, {
             logger.error(it)
         })
@@ -34,13 +37,13 @@ class PendingClaimsViewModel @Inject constructor(
     }
 
     fun filterClaimsByMRN(filterText: String) {
-        val currentViewState = observable.value
-        val filteredClaims = observable.value?.claims.orEmpty().filter {
-            val mrn = it.member.medicalRecordNumber
-            mrn?.contains(filterText, true) ?: false
+        observable.value?.let { viewState ->
+            val filteredClaims = viewState.claims.filter {
+                val mrn = it.member.medicalRecordNumber
+                mrn?.contains(filterText, true) ?: false
+            }
+            observable.value = viewState.copy(visibleClaims = filteredClaims)
         }
-        val updatedViewState = currentViewState?.copy(visibleClaims = filteredClaims)
-        observable.value = updatedViewState
     }
 
     fun getClaims(): List<EncounterWithExtras>? = observable.value?.claims
@@ -59,5 +62,8 @@ class PendingClaimsViewModel @Inject constructor(
         } ?: Completable.never()
     }
 
-    data class ViewState(val claims: List<EncounterWithExtras> = emptyList(), val visibleClaims: List<EncounterWithExtras> = emptyList())
+    data class ViewState(
+        val claims: List<EncounterWithExtras> = emptyList(),
+        val visibleClaims: List<EncounterWithExtras> = emptyList()
+    )
 }
