@@ -73,12 +73,21 @@ data class Member(
         val COMMON_LANGUAGES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA)
         val LANGUAGE_CHOICES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA,
                 LANGUAGE_CHOICE_OTHER)
+        const val MAX_AGE = 200
 
-        fun validCardId(cardId: String): Boolean {
+        fun isValidName(name: String): Boolean {
+            return name.split(' ').filter{ it.isNotBlank() }.count() >= 3
+        }
+
+        fun isValidMedicalRecordNumber(medicalRecordNumber: String): Boolean {
+            return medicalRecordNumber.length in 6..7
+        }
+
+        fun isValidCardId(cardId: String): Boolean {
             return cardId.matches(Regex("[A-Z]{3}[0-9]{6}"))
         }
 
-        fun validPhoneNumber(phoneNumber: String): Boolean {
+        fun isValidPhoneNumber(phoneNumber: String): Boolean {
             return phoneNumber.matches("0?[1-9]\\d{8}".toRegex())
         }
 

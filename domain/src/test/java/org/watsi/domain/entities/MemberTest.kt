@@ -1,8 +1,8 @@
 package org.watsi.domain.entities
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
@@ -72,20 +72,41 @@ class MemberTest {
     }
 
     @Test
-    fun validCardId() {
-        assert(Member.validCardId("RWI123456"))
-        assertFalse(Member.validCardId("RWI12345X"))
-        assertFalse(Member.validCardId("RWI1234567"))
-        assertFalse(Member.validCardId("RWI12345"))
+    fun isValidName() {
+        assertFalse(Member.isValidName(""))
+        assertFalse(Member.isValidName("   "))
+        assertFalse(Member.isValidName("Michael"))
+        assertFalse(Member.isValidName(" Michael "))
+        assertFalse(Member.isValidName("Michael Jordan"))
+        assertFalse(Member.isValidName("  Michael B. "))
+        assertTrue(Member.isValidName("Michael Bakari Jordan"))
+        assertTrue(Member.isValidName(" Michael B. J "))
+        assertTrue(Member.isValidName("Michael B. Jordan Jr"))
     }
 
     @Test
-    fun validPhoneNumber() {
-        assert(Member.validPhoneNumber("775555555"))
-        assert(Member.validPhoneNumber("0775555555"))
-        assertFalse(Member.validPhoneNumber("077555555"))
-        assertFalse(Member.validPhoneNumber("77555555"))
-        assertFalse(Member.validPhoneNumber("77555555A"))
+    fun isValidMedicalRecordNumber() {
+        assertFalse(Member.isValidMedicalRecordNumber("12345"))
+        assertTrue(Member.isValidMedicalRecordNumber("123456"))
+        assertTrue(Member.isValidMedicalRecordNumber("1234567"))
+        assertFalse(Member.isValidMedicalRecordNumber("12345678"))
+    }
+
+    @Test
+    fun isValidCardId() {
+        assert(Member.isValidCardId("RWI123456"))
+        assertFalse(Member.isValidCardId("RWI12345X"))
+        assertFalse(Member.isValidCardId("RWI1234567"))
+        assertFalse(Member.isValidCardId("RWI12345"))
+    }
+
+    @Test
+    fun isValidPhoneNumber() {
+        assert(Member.isValidPhoneNumber("775555555"))
+        assert(Member.isValidPhoneNumber("0775555555"))
+        assertFalse(Member.isValidPhoneNumber("077555555"))
+        assertFalse(Member.isValidPhoneNumber("77555555"))
+        assertFalse(Member.isValidPhoneNumber("77555555A"))
     }
 
     @Test
