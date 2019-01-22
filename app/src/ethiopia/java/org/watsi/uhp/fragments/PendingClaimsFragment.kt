@@ -138,11 +138,6 @@ class PendingClaimsFragment : DaggerFragment() {
             search_claims
         ) { query: String -> viewModel.filterClaimsBySearchText(query) })
 
-//        need to figure out if this needs keyboard manager??
-//        search_claims.setOnQueryTextFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) { onShowKeyboard(hidePanel = false) }
-//        }
-
         snackbarMessageToShow?.let { snackbarMessage ->
             SnackbarHelper.show(claims_list, context, snackbarMessage)
             snackbarMessageToShow = null
