@@ -169,10 +169,13 @@
     <!--<string name="member_name_label">Name</string>-->
     <string name="medical_record_number">የህክምና ካርድ ቁጥር</string>
     <string name="membership_number_label">የኣባል መለያ ቁጥር</string>
-    <string name="name_validation_error">ስም መሞላት አለበት</string>
-    <string name="age_validation_error">እድሜ መግባት ኣለበት</string>
     <string name="gender_validation_error">ፆታ መሞላት ኣለበት</string>
+    <string name="name_validation_error">ስም መሞላት አለበት</string>
+    <string name="three_names_validation_error">ስም ከነአያት ያስፈልጋል</string>
+    <string name="age_validation_error">እድሜ መግባት ኣለበት</string>
+    <!--<string name="age_limit_validation_error"></string>-->
     <string name="medical_record_number_validation_error">የህክምና ካርድ ቁጥር መግባት ኣለበት</string>
+    <!--<string name="medical_record_number_length_validation_error"></string>-->
     <string name="exit_form_alert">እርግጠኛ ነዎት መውጣት ይፈልጋሉን</string>
     <string name="yes">አዎ</string>
     <string name="missing_fields_validation_error">ያልተሟላ መረጃ</string>

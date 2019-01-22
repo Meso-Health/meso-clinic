@@ -4,7 +4,6 @@
 
     <!-- Confirmation Messages -->
     <string name="exit_form_alert">Are you sure you want to exit?</string>
-    <string name="gender_validation_error">Gender is required</string>
 
     <!-- Menu -->
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
@@ -67,9 +66,13 @@
     <string name="member_name_label" translatable="false">Name</string>
     <string name="medical_record_number">Medical Record Number</string>
     <string name="membership_number_label">Member ID</string>
+    <string name="gender_validation_error">Gender is required</string>
     <string name="name_validation_error">Name is required</string>
+    <string name="three_names_validation_error">Three names are required</string>
     <string name="age_validation_error">Age is required</string>
-    <string name="medical_record_number_validation_error">Medical Record Number is required</string>
+    <string name="age_limit_validation_error" translatable="false">Age must be 200 or less</string>
+    <string name="medical_record_number_validation_error">Medical record number is required</string>
+    <string name="medical_record_number_length_validation_error" translatable="false">Medical record number must be 6 or 7 digits</string>
     <string name="yes">OK</string>
     <string name="missing_fields_validation_error">Some fields are missing</string>
 

@@ -29,6 +29,13 @@ class MemberInformationViewModelTest : AACBaseTest() {
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     private val membershipNumber = "01/01/06/P-692/3"
     private val initialViewState = MemberInformationViewModel.ViewState()
+    private val validViewState = MemberInformationViewModel.ViewState(
+        gender = Member.Gender.F,
+        name = "Three Name Here",
+        age = 10,
+        ageUnit = AgeUnit.years,
+        medicalRecordNumber = "123456"
+    )
 
     @Before
     fun setup() {
@@ -62,8 +69,8 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
     @Test
     fun onMedicalRecordNumberChange() {
-        viewModel.onMedicalRecordNumberChange("01292")
-        assertEquals(initialViewState.copy(medicalRecordNumber = "01292"), observable.value)
+        viewModel.onMedicalRecordNumberChange("012926")
+        assertEquals(initialViewState.copy(medicalRecordNumber = "012926"), observable.value)
     }
 
     @Test
@@ -73,7 +80,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun createAndCheckInMember_allFieldsMissing() {
+    fun createAndCheckInMember_allFieldsMissing_returnsError() {
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
@@ -89,94 +96,106 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun createAndCheckInMember_blankName() {
+    fun createAndCheckInMember_blankName_returnsError() {
         setValidViewStateOnViewModel()
-        viewModel.onNameChange("")
+        viewModel.onNameChange(null)
+
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
-        assertEquals(
-            initialViewState.copy(
-                gender = Member.Gender.F,
-                name = "",
-                age = 10,
-                ageUnit = AgeUnit.months,
-                medicalRecordNumber = "09900",
-                errors = hashMapOf(
-                    MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.name_validation_error
-                )
-            ),
-            observable.value
-        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.name_validation_error
+        ))
     }
 
     @Test
-    fun createAndCheckInMember_blankAge() {
-        viewModel.onGenderChange(Member.Gender.F)
-        viewModel.onNameChange("Foo")
-        viewModel.onMedicalRecordNumberChange("09900")
+    fun createAndCheckInMember_invalidName_returnsError() {
+        setValidViewStateOnViewModel()
+        viewModel.onNameChange("Two Names")
+
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
-        assertEquals(
-            initialViewState.copy(
-                gender = Member.Gender.F,
-                name = "Foo",
-                age = null,
-                ageUnit = AgeUnit.years,
-                medicalRecordNumber = "09900",
-                errors = hashMapOf(
-                    MemberInformationViewModel.MEMBER_AGE_ERROR to R.string.age_validation_error
-                )
-            ),
-            observable.value
-        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.three_names_validation_error
+        ))
     }
 
     @Test
-    fun createAndCheckInMember_genderMissing() {
-        viewModel.onNameChange("Foo")
-        viewModel.onAgeChange(10)
+    fun createAndCheckInMember_blankAge_returnsError() {
+        setValidViewStateOnViewModel()
+        viewModel.onAgeChange(null)
+
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
+        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_AGE_ERROR to R.string.age_validation_error
+        ))
+    }
+
+    @Test
+    fun createAndCheckInMember_invalidAge_returnsError() {
+        setValidViewStateOnViewModel()
+        viewModel.onAgeChange(Member.MAX_AGE + 1)
+        viewModel.onAgeUnitChange(AgeUnit.years)
+
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
+        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_AGE_ERROR to R.string.age_limit_validation_error
+        ))
+
         viewModel.onAgeUnitChange(AgeUnit.months)
-        viewModel.onMedicalRecordNumberChange("09900")
+
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
-        assertEquals(
-            initialViewState.copy(
-                gender = null,
-                name = "Foo",
-                age = 10,
-                ageUnit = AgeUnit.months,
-                medicalRecordNumber = "09900",
-                errors = hashMapOf(
-                    MemberInformationViewModel.MEMBER_GENDER_ERROR to R.string.gender_validation_error
-                )
-            ),
-            observable.value
-        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_AGE_ERROR to R.string.age_limit_validation_error
+        ))
     }
 
     @Test
-    fun createAndCheckInMember_blankMedicalRecordNumber() {
+    fun createAndCheckInMember_genderMissing_returnsError() {
+        viewModel.onAgeChange(validViewState.age)
+        viewModel.onNameChange(validViewState.name)
+        viewModel.onAgeUnitChange(validViewState.ageUnit)
+        viewModel.onMedicalRecordNumberChange(validViewState.medicalRecordNumber)
+
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
+        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_GENDER_ERROR to R.string.gender_validation_error
+        ))
+    }
+
+    @Test
+    fun createAndCheckInMember_blankMedicalRecordNumber_returnsError() {
         setValidViewStateOnViewModel()
         viewModel.onMedicalRecordNumberChange("")
+
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
-        assertEquals(
-            initialViewState.copy(
-                gender = Member.Gender.F,
-                name = "Foo",
-                age = 10,
-                ageUnit = AgeUnit.months,
-                medicalRecordNumber = "",
-                errors = hashMapOf(
-                    MemberInformationViewModel.MEMBER_MEDICAL_RECORD_NUMBER_ERROR to R.string.medical_record_number_validation_error
-                )
-            ),
-            observable.value
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_MEDICAL_RECORD_NUMBER_ERROR to R.string.medical_record_number_validation_error
+        ))
+    }
+
+    @Test
+    fun createAndCheckInMember_invalidMedicalRecordNumber_returnsError() {
+        setValidViewStateOnViewModel()
+        viewModel.onMedicalRecordNumberChange("12345")
+
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
         )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_MEDICAL_RECORD_NUMBER_ERROR to R.string.medical_record_number_length_validation_error
+        ))
     }
 
     @Test
@@ -189,10 +208,10 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     private fun setValidViewStateOnViewModel() {
-        viewModel.onAgeChange(10)
-        viewModel.onNameChange("Foo")
-        viewModel.onGenderChange(Member.Gender.F)
-        viewModel.onAgeUnitChange(AgeUnit.months)
-        viewModel.onMedicalRecordNumberChange("09900")
+        viewModel.onAgeChange(validViewState.age)
+        viewModel.onNameChange(validViewState.name)
+        viewModel.onGenderChange(validViewState.gender!!)
+        viewModel.onAgeUnitChange(validViewState.ageUnit)
+        viewModel.onMedicalRecordNumberChange(validViewState.medicalRecordNumber)
     }
 }

@@ -172,10 +172,13 @@
     <!--<string name="member_name_label">Name</string>-->
     <string name="medical_record_number">ሕክምና ካርዲ ቁፅሪ</string>
     <string name="membership_number_label">ናይ ኣባል መፍለይ ቁፅሪ</string>
-    <string name="name_validation_error">ሽም ክምላእ አለዎ</string>
-    <string name="age_validation_error">ዕድመ ክኣቱ ኣለዎ</string>
     <string name="gender_validation_error">ፆታ ክምላእ ኣለዎ</string>
+    <string name="name_validation_error">ሽም ክምላእ አለዎ</string>
+    <string name="three_names_validation_error">ሽም ምስ ኣቦ ሓጎ ክምላእ ኣለዎ</string>
+    <string name="age_validation_error">ዕድመ ክኣቱ ኣለዎ</string>
+    <!--<string name="age_limit_validation_error"></string>-->
     <string name="medical_record_number_validation_error">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ</string>
+    <!--<string name="medical_record_number_length_validation_error"></string>-->
     <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
     <string name="yes">እወ</string>
     <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ ጎዲሉ ኣሎ</string>
