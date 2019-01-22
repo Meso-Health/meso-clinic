@@ -37,20 +37,16 @@ class PendingClaimsViewModel @Inject constructor(
     }
 
     fun filterClaimsBySearchText(filterText: String) {
-        observable.value?.let { viewState ->
-            val filteredClaims = viewState.claims.filter {
-                val medicalRecordNumber = it.member.medicalRecordNumber
-                val membershipNumber = it.member.membershipNumber
-
-                if (membershipNumber != null && membershipNumber.contains(filterText, ignoreCase = true)) {
-                    true
-                } else if (medicalRecordNumber != null && medicalRecordNumber.contains(filterText, ignoreCase = true)) {
-                    true
-                } else {
-                    false
-               }
+        if (filterText.length > 2) {
+            observable.value?.let { viewState ->
+                val filteredClaims = viewState.claims.filter {
+                    val medicalRecordNumber = it.member.medicalRecordNumber
+                    val membershipNumber = it.member.membershipNumber
+                    (membershipNumber != null && membershipNumber.contains(filterText, ignoreCase = true)) ||
+                            (medicalRecordNumber != null && medicalRecordNumber.contains(filterText, ignoreCase = true))
+                }
+                observable.value = viewState.copy(visibleClaims = filteredClaims)
             }
-            observable.value = viewState.copy(visibleClaims = filteredClaims)
         }
     }
 
