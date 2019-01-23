@@ -150,7 +150,7 @@ class MemberInformationViewModel @Inject constructor(
                 errors[MEMBER_GENDER_ERROR] = R.string.gender_validation_error
             }
 
-            if (viewState.name.isNullOrBlank()) {
+            if (viewState.name == null || viewState.name.isBlank()) {
                 errors[MEMBER_NAME_ERROR] = R.string.name_validation_error
             } else if (!Member.isValidName(viewState.name)) {
                 errors[MEMBER_NAME_ERROR] = R.string.three_names_validation_error
@@ -162,7 +162,7 @@ class MemberInformationViewModel @Inject constructor(
                 errors[MEMBER_AGE_ERROR] = R.string.age_limit_validation_error
             }
 
-            if (viewState.medicalRecordNumber.isNullOrBlank()) {
+            if (viewState.medicalRecordNumber == null) {
                 errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_validation_error
             } else if (!Member.isValidMedicalRecordNumber(viewState.medicalRecordNumber)) {
                 errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_length_validation_error
