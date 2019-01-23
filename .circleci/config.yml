@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      - image: circleci/android:api-25-alpha
+      - image: circleci/android:api-24
     environment:
       JAVA_TOOL_OPTIONS: "-Xmx1024m"
     steps:
