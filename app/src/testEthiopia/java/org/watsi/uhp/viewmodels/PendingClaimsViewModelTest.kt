@@ -1,33 +1,34 @@
-package org.watsi.uhp.fragments
+package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Flowable
-import io.reactivex.Single
-import junit.framework.Assert.assertEquals
+import junit.framework.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
-import org.watsi.uhp.testutils.AACBaseTest
-import org.watsi.uhp.viewmodels.PendingClaimsViewModel
 import org.watsi.device.managers.Logger
 import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.factories.MemberFactory
-import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.usecases.LoadPendingClaimsUseCase
 import org.watsi.domain.usecases.SubmitClaimUseCase
+import org.watsi.uhp.testutils.AACBaseTest
 
-class PendingClaimsFragmentTest : AACBaseTest() {
+class PendingClaimsViewModelTest : AACBaseTest() {
     private lateinit var viewModel: PendingClaimsViewModel
     private lateinit var observable: LiveData<PendingClaimsViewModel.ViewState>
-    @Mock lateinit var mockLogger: Logger
-    @Mock lateinit var mockEncounterRepository: EncounterRepository
-    @Mock lateinit var mockLoadPendingClaimsUseCase: LoadPendingClaimsUseCase
-    @Mock lateinit var mockSubmitClaimUseCase: SubmitClaimUseCase
+    @Mock
+    lateinit var mockLogger: Logger
+    @Mock
+    lateinit var mockEncounterRepository: EncounterRepository
+    @Mock
+    lateinit var mockLoadPendingClaimsUseCase: LoadPendingClaimsUseCase
+    @Mock
+    lateinit var mockSubmitClaimUseCase: SubmitClaimUseCase
 
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     private val member1 = MemberFactory.build(membershipNumber = "01/11/11/P-11111/22", medicalRecordNumber = "89463")
@@ -46,7 +47,8 @@ class PendingClaimsFragmentTest : AACBaseTest() {
             pendingClaim1,
             pendingClaim2,
             pendingClaim3
-        ))
+        )
+    )
 
     @Before
     fun setup() {
@@ -68,25 +70,25 @@ class PendingClaimsFragmentTest : AACBaseTest() {
 
     @Test
     fun init() {
-        assertEquals(initialViewState, observable.value)
+        Assert.assertEquals(initialViewState, observable.value)
     }
 
     @Test
     fun filterClaimsBySearchText_lessThan3Characters_allClaims() {
         viewModel.filterClaimsBySearchText("0")
-        assertEquals(observable.value, initialViewState.copy())
+        Assert.assertEquals(observable.value, initialViewState.copy())
         viewModel.filterClaimsBySearchText("08")
-        assertEquals(observable.value, initialViewState.copy())
+        Assert.assertEquals(observable.value, initialViewState.copy())
     }
 
     @Test
     fun filterClaimsBySearchText_atLeast3Characters_matchMRN() {
         viewModel.filterClaimsBySearchText("894")
-        assertEquals(observable.value, initialViewState.copy(
+        Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(pendingClaim1, pendingClaim2)
         ))
         viewModel.filterClaimsBySearchText("8946")
-        assertEquals(observable.value, initialViewState.copy(
+        Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(pendingClaim1)
         ))
     }
@@ -95,7 +97,7 @@ class PendingClaimsFragmentTest : AACBaseTest() {
     @Test
     fun filterClaimsBySearchText_atLeast3Characters_matchCBHID() {
         viewModel.filterClaimsBySearchText("1111")
-        assertEquals(observable.value, initialViewState.copy(
+        Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(pendingClaim1)
         ))
     }
@@ -103,11 +105,11 @@ class PendingClaimsFragmentTest : AACBaseTest() {
     @Test
     fun filterClaimsBySearchText_atLeast3Characters_matchMRNandCBHID() {
         viewModel.filterClaimsBySearchText("234")
-        assertEquals(observable.value, initialViewState.copy(
+        Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(pendingClaim2, pendingClaim3)
         ))
         viewModel.filterClaimsBySearchText("2340")
-        assertEquals(observable.value, initialViewState.copy(
+        Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(pendingClaim3)
         ))
     }
