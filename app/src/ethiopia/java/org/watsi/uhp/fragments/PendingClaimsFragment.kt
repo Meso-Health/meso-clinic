@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.claims_list
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.search_claims
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_all_button
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
@@ -19,6 +20,8 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
@@ -59,9 +62,9 @@ class PendingClaimsFragment : DaggerFragment() {
     private fun setAndObserveViewModel() {
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
-                updateClaims(viewState.claims)
+                updateClaims(viewState.visibleClaims)
 
-                if (viewState.claims.count() > 0) {
+                if (viewState.visibleClaims.count() > 0) {
                     submit_all_button.visibility = View.VISIBLE
                 } else {
                     submit_all_button.visibility = View.GONE
@@ -91,6 +94,10 @@ class PendingClaimsFragment : DaggerFragment() {
         }, {
             logger.error(it)
         })
+    }
+
+    private fun filterClaimsBySearchText(text: String) {
+        viewModel.filterClaimsBySearchText(text)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -126,6 +133,10 @@ class PendingClaimsFragment : DaggerFragment() {
                         submitAll()
                     }.create().show()
         }
+
+        search_claims.setOnQueryTextListener(QueryHelper.ThrottledQueryListener(
+            search_claims
+        ) { query: String -> viewModel.filterClaimsBySearchText(query) })
 
         snackbarMessageToShow?.let { snackbarMessage ->
             SnackbarHelper.show(claims_list, context, snackbarMessage)

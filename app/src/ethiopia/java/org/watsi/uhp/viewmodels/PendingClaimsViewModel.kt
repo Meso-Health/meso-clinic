@@ -24,13 +24,30 @@ class PendingClaimsViewModel @Inject constructor(
     fun getObservable(): LiveData<ViewState> {
         observable.value = ViewState()
 
-        loadPendingClaimsUseCase.execute().subscribe({
-            observable.postValue(ViewState(it))
+        loadPendingClaimsUseCase.execute().subscribe({ claims ->
+            observable.postValue(ViewState(
+                claims = claims,
+                visibleClaims = claims
+            ))
         }, {
             logger.error(it)
         })
 
         return observable
+    }
+
+    fun filterClaimsBySearchText(filterText: String) {
+        if (filterText.length > 2) {
+            observable.value?.let { viewState ->
+                val filteredClaims = viewState.claims.filter {
+                    val medicalRecordNumber = it.member.medicalRecordNumber
+                    val membershipNumber = it.member.membershipNumber
+                    (membershipNumber != null && membershipNumber.contains(filterText, ignoreCase = true)) ||
+                            (medicalRecordNumber != null && medicalRecordNumber.contains(filterText, ignoreCase = true))
+                }
+                observable.value = viewState.copy(visibleClaims = filteredClaims)
+            }
+        }
     }
 
     fun getClaims(): List<EncounterWithExtras>? = observable.value?.claims
@@ -49,5 +66,8 @@ class PendingClaimsViewModel @Inject constructor(
         } ?: Completable.never()
     }
 
-    data class ViewState(val claims: List<EncounterWithExtras> = emptyList())
+    data class ViewState(
+        val claims: List<EncounterWithExtras> = emptyList(),
+        val visibleClaims: List<EncounterWithExtras> = emptyList()
+    )
 }
