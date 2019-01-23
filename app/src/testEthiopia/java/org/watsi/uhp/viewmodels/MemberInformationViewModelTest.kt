@@ -96,9 +96,18 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun createAndCheckInMember_blankName_returnsError() {
+    fun createAndCheckInMember_missingOrBlankName_returnsError() {
         setValidViewStateOnViewModel()
         viewModel.onNameChange(null)
+
+        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
+        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.name_validation_error
+        ))
+
+        viewModel.onNameChange("")
 
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
@@ -122,7 +131,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun createAndCheckInMember_blankAge_returnsError() {
+    fun createAndCheckInMember_missingAge_returnsError() {
         setValidViewStateOnViewModel()
         viewModel.onAgeChange(null)
 
@@ -158,7 +167,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun createAndCheckInMember_genderMissing_returnsError() {
+    fun createAndCheckInMember_missingGender_returnsError() {
         viewModel.onAgeChange(validViewState.age)
         viewModel.onNameChange(validViewState.name)
         viewModel.onAgeUnitChange(validViewState.ageUnit)
@@ -173,9 +182,9 @@ class MemberInformationViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun createAndCheckInMember_blankMedicalRecordNumber_returnsError() {
+    fun createAndCheckInMember_missingMedicalRecordNumber_returnsError() {
         setValidViewStateOnViewModel()
-        viewModel.onMedicalRecordNumberChange("")
+        viewModel.onMedicalRecordNumberChange(null)
 
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
