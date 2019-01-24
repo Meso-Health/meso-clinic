@@ -50,19 +50,19 @@ class MemberTest {
     fun isAbsentee_requiresFingerprints_noFingerprint_isTrue() {
         val member = MemberFactory.build(birthdate = tenYearsAgo, fingerprintsGuid = null)
 
-        assert(member.isAbsentee(fixedClock))
+        assertTrue(member.isAbsentee(fixedClock))
     }
 
     @Test
     fun isAbsentee_noPhoto_isTrue() {
         val member = MemberFactory.build(thumbnailPhotoId = null, photoUrl = null)
 
-        assert(member.isAbsentee(fixedClock))
+        assertTrue(member.isAbsentee(fixedClock))
     }
 
     @Test
     fun requiresFingerprint() {
-        assert(MemberFactory.build(birthdate = tenYearsAgo).requiresFingerprint(fixedClock))
+        assertTrue(MemberFactory.build(birthdate = tenYearsAgo).requiresFingerprint(fixedClock))
         assertFalse(MemberFactory.build(birthdate = fiveYearsAgo).requiresFingerprint(fixedClock))
     }
 
@@ -94,7 +94,7 @@ class MemberTest {
 
     @Test
     fun isValidCardId() {
-        assert(Member.isValidCardId("RWI123456"))
+        assertTrue(Member.isValidCardId("RWI123456"))
         assertFalse(Member.isValidCardId("RWI12345X"))
         assertFalse(Member.isValidCardId("RWI1234567"))
         assertFalse(Member.isValidCardId("RWI12345"))
@@ -102,8 +102,8 @@ class MemberTest {
 
     @Test
     fun isValidPhoneNumber() {
-        assert(Member.isValidPhoneNumber("775555555"))
-        assert(Member.isValidPhoneNumber("0775555555"))
+        assertTrue(Member.isValidPhoneNumber("775555555"))
+        assertTrue(Member.isValidPhoneNumber("0775555555"))
         assertFalse(Member.isValidPhoneNumber("077555555"))
         assertFalse(Member.isValidPhoneNumber("77555555"))
         assertFalse(Member.isValidPhoneNumber("77555555A"))
@@ -117,11 +117,11 @@ class MemberTest {
         val deltas = member.diff(updatedMember)
 
         assertEquals(2, deltas.size)
-        assert(deltas.contains(Delta(action = Delta.Action.EDIT,
+        assertTrue(deltas.contains(Delta(action = Delta.Action.EDIT,
                                      modelName = Delta.ModelName.MEMBER,
                                      modelId = member.id,
                                      field = "phoneNumber")))
-        assert(deltas.contains(Delta(action = Delta.Action.EDIT,
+        assertTrue(deltas.contains(Delta(action = Delta.Action.EDIT,
                                      modelName = Delta.ModelName.MEMBER,
                                      modelId = member.id,
                                      field = "cardId")))
