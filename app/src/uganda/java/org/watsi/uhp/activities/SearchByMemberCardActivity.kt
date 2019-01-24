@@ -31,7 +31,7 @@ class SearchByMemberCardActivity : QrCodeActivity() {
     }
 
     override fun onDetectedQrCode(qrCode: String) {
-        if (!Member.validCardId(qrCode)) {
+        if (!Member.isValidCardId(qrCode)) {
             logger.warning("Invalid card ID scanned", mapOf(Pair("cardId", qrCode)))
             setErrorMessage(getString(R.string.scan_member_card_invalid_id))
         } else {
