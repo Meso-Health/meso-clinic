@@ -101,15 +101,6 @@ class MemberTest {
     }
 
     @Test
-    fun isValidPhoneNumber() {
-        assertTrue(Member.isValidPhoneNumber("775555555"))
-        assertTrue(Member.isValidPhoneNumber("0775555555"))
-        assertFalse(Member.isValidPhoneNumber("077555555"))
-        assertFalse(Member.isValidPhoneNumber("77555555"))
-        assertFalse(Member.isValidPhoneNumber("77555555A"))
-    }
-
-    @Test
     fun diff() {
         val member = MemberFactory.build()
         val updatedMember = member.copy(phoneNumber = "775555555", cardId = "RWI123456")

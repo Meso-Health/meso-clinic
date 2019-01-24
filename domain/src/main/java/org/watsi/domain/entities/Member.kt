@@ -87,10 +87,6 @@ data class Member(
             return cardId.matches(Regex("[A-Z]{3}[0-9]{6}"))
         }
 
-        fun isValidPhoneNumber(phoneNumber: String): Boolean {
-            return phoneNumber.matches("0?[1-9]\\d{8}".toRegex())
-        }
-
         fun formatCardId(cardId: String): String {
             return "${cardId.substring(0, 3)} ${cardId.substring(3, 6)} ${cardId.substring(6, 9)}"
         }
