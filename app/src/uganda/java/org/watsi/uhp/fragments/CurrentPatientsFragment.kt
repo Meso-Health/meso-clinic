@@ -80,8 +80,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                         logger.error("Member shown on CurrentPatientsFragment has no corresponding " +
                                 "IdentificationEvent", mapOf("memberId" to memberRelation.member.id.toString()))
                     }
-                },
-                clock = clock
+                }
         )
     }
 

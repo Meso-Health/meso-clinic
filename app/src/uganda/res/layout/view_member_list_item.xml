@@ -13,8 +13,8 @@
     <ImageView
         android:id="@+id/member_photo"
         android:contentDescription="@string/photo_description"
-        android:layout_width="@dimen/thumbnailSmall"
-        android:layout_height="@dimen/thumbnailSmall"
+        android:layout_width="@dimen/thumbnailHeight66"
+        android:layout_height="@dimen/thumbnailHeight66"
         android:background="@drawable/thumbnail_photo_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

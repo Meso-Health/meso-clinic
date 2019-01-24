@@ -22,9 +22,16 @@
     <dimen name="thumbnailSmallPlaceholderPadding">12dp</dimen>
 
     <!-- Photo dimensions scale -->
-    <dimen name="thumbnailSmall">66dp</dimen>
-    <dimen name="thumbnailMedium">80dp</dimen>
-    <dimen name="thumbnailLarge">120dp</dimen>
+    <dimen name="thumbnailHeight28">28dp</dimen>
+    <dimen name="thumbnailWidth28">28dp</dimen>
+    <dimen name="thumbnailHeight52">52dp</dimen>
+    <dimen name="thumbnailWidth52">52dp</dimen>
+    <dimen name="thumbnailHeight66">66dp</dimen>
+    <dimen name="thumbnailWidth66">66dp</dimen>
+    <dimen name="thumbnailHeight80">80dp</dimen>
+    <dimen name="thumbnailWidth80">80dp</dimen>
+    <dimen name="thumbnailHeight120">120dp</dimen>
+    <dimen name="thumbnailWidth120">120dp</dimen>
 
     <!-- Fragment -->
     <dimen name="scrollingFragmentBottomPadding">80dp</dimen>

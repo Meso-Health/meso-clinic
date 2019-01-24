@@ -31,6 +31,7 @@
     <string name="start_claim_button">Start Claim</string>
     <string name="invalid_membership_error">Invalid membership number</string>
     <string name="scan_member_card_menu_item_title">Scan card</string>
+    <string name="household_title">Member</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>

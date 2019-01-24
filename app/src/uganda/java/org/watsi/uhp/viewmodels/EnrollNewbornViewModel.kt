@@ -179,7 +179,8 @@ class EnrollNewbornViewModel(
                     photoUrl = null,
                     membershipNumber = null,
                     medicalRecordNumber = null,
-                    needsRenewal = null
+                    needsRenewal = null,
+                    relationshipToHead = null
                 )
             } else {
                 throw IllegalStateException("ViewStateToEntityMapper.fromMemberViewStateToMember should only be called with a valid viewState. " + viewState.toString())

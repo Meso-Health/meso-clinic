@@ -9,8 +9,8 @@
     <ImageView
         android:id="@+id/member_photo"
         android:contentDescription="@string/photo_description"
-        android:layout_width="@dimen/thumbnailLarge"
-        android:layout_height="@dimen/thumbnailLarge"
+        android:layout_width="@dimen/thumbnailWidth120"
+        android:layout_height="@dimen/thumbnailHeight120"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

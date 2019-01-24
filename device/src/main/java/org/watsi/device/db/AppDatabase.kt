@@ -24,7 +24,7 @@ import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.db.models.PriceScheduleModel
 
-@Database(exportSchema = true, version = 4, entities = [
+@Database(exportSchema = true, version = 5, entities = [
     BillableModel::class,
     DeltaModel::class,
     DiagnosisModel::class,

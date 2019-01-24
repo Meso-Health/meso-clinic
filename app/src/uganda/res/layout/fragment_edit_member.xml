@@ -19,8 +19,8 @@
 
         <ImageView
             android:id="@+id/top_photo"
-            android:layout_width="@dimen/thumbnailLarge"
-            android:layout_height="@dimen/thumbnailLarge"
+            android:layout_width="@dimen/thumbnailWidth120"
+            android:layout_height="@dimen/thumbnailHeight120"
             android:background="@drawable/thumbnail_photo_background"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

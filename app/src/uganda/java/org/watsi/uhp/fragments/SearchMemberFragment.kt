@@ -66,8 +66,7 @@ class SearchMemberFragment : DaggerFragment() {
                     navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
                             memberRelation.member,
                             searchMethod))
-                },
-                clock = clock
+                }
         )
     }
 

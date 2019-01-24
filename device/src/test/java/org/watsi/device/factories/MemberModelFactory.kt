@@ -6,6 +6,7 @@ import org.threeten.bp.LocalDate
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.MemberModel
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.RelationshipToHead
 import java.util.UUID
 
 object MemberModelFactory {
@@ -30,6 +31,7 @@ object MemberModelFactory {
         membershipNumber: String? = null,
         medicalRecordNumber: String? = null,
         needsRenewal: Boolean? = false,
+        relationshipToHead: RelationshipToHead? = null,
         clock: Clock = Clock.systemUTC()
     ) : MemberModel {
         val now = Instant.now(clock)
@@ -52,7 +54,8 @@ object MemberModelFactory {
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
-            needsRenewal = needsRenewal
+            needsRenewal = needsRenewal,
+            relationshipToHead = relationshipToHead
         )
     }
 
@@ -77,6 +80,7 @@ object MemberModelFactory {
         membershipNumber: String? = null,
         medicalRecordNumber: String? = null,
         needsRenewal: Boolean? = false,
+        relationshipToHead: RelationshipToHead? = null,
         clock: Clock = Clock.systemUTC()
     ) : MemberModel {
         val model = build(
@@ -99,6 +103,7 @@ object MemberModelFactory {
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
             needsRenewal = needsRenewal,
+            relationshipToHead = relationshipToHead,
             clock = clock
         )
         memberDao.insert(model)

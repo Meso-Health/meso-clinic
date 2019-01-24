@@ -153,8 +153,7 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                     navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchFields(
                             memberRelation.member,
                             SearchFields(searchFields.searchMethod, throughMemberId)))
-                },
-                clock = clock
+                }
         )
     }
 

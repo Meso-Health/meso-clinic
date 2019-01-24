@@ -10,8 +10,8 @@ import org.threeten.bp.Clock
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.PhotoLoader
+import org.watsi.uhp.helpers.StringHelper
 
 class MemberListItem @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -19,7 +19,7 @@ class MemberListItem @JvmOverloads constructor(
 
     private val placeholderPadding = resources.getDimensionPixelSize(R.dimen.thumbnailSmallPlaceholderPadding)
 
-    fun setMember(memberRelation: MemberWithIdEventAndThumbnailPhoto, clock: Clock) {
+    fun setMember(memberRelation: MemberWithIdEventAndThumbnailPhoto) {
         val member = memberRelation.member
 
         // set member photo and apply padding if using the placeholder image
@@ -41,13 +41,13 @@ class MemberListItem @JvmOverloads constructor(
                 R.string.member_list_item_description_checked_in,
                 it.formatClinicNumber(),
                 genderString,
-                MemberStringHelper.getDisplayAge(member, context, clock)
+                StringHelper.getDisplayAge(member, context)
             )
         } ?: run {
             context.getString(
                 R.string.member_list_item_description,
                 genderString,
-                MemberStringHelper.getDisplayAge(member, context, clock)
+                StringHelper.getDisplayAge(member, context)
             )
         }
 

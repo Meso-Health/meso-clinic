@@ -24,7 +24,8 @@ object MemberFactory {
         phoneNumber: String? = null,
         membershipNumber: String? = null,
         medicalRecordNumber: String? = null,
-        needsRenewal: Boolean? = false
+        needsRenewal: Boolean? = false,
+        relationshipToHead: Member.RelationshipToHead? = null
     ) : Member {
         return Member(
             id = id,
@@ -43,7 +44,8 @@ object MemberFactory {
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
-            needsRenewal = needsRenewal
+            needsRenewal = needsRenewal,
+            relationshipToHead = relationshipToHead
         )
     }
 }

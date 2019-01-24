@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/encounter_form_photo"
-        android:layout_width="@dimen/thumbnailMedium"
-        android:layout_height="@dimen/thumbnailMedium"
+        android:layout_width="@dimen/thumbnailHeight80"
+        android:layout_height="@dimen/thumbnailHeight80"
         android:contentDescription="@string/photo_description"
         android:background="@drawable/thumbnail_photo_background"
         app:layout_constraintTop_toTopOf="parent"

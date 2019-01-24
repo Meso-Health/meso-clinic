@@ -6,6 +6,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.RelationshipToHead
 import java.util.UUID
 
 @Entity(tableName = "members")
@@ -28,7 +29,8 @@ data class MemberModel(
     val phoneNumber: String?,
     val membershipNumber: String?,
     val medicalRecordNumber: String?,
-    val needsRenewal: Boolean?
+    val needsRenewal: Boolean?,
+    val relationshipToHead: RelationshipToHead?
 ) {
 
     init {
@@ -55,7 +57,8 @@ data class MemberModel(
             phoneNumber = phoneNumber,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
-            needsRenewal = needsRenewal
+            needsRenewal = needsRenewal,
+            relationshipToHead = relationshipToHead
         )
     }
 
@@ -81,7 +84,8 @@ data class MemberModel(
                 phoneNumber = member.phoneNumber,
                 membershipNumber = member.membershipNumber,
                 medicalRecordNumber = member.medicalRecordNumber,
-                needsRenewal = member.needsRenewal
+                needsRenewal = member.needsRenewal,
+                relationshipToHead = member.relationshipToHead
             )
         }
     }

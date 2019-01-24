@@ -15,8 +15,8 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Member.Companion.formatCardId
 import org.watsi.domain.entities.Photo
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.PhotoLoader
+import org.watsi.uhp.helpers.StringHelper
 
 class MemberCard @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -28,7 +28,7 @@ class MemberCard @JvmOverloads constructor(
 
     fun setMember(member: Member, thumbnail: Photo?, clock: Clock) {
         member_name.text = member.name
-        member_age_and_gender.text = MemberStringHelper.formatAgeAndGender(member, context, clock)
+        member_age_and_gender.text = StringHelper.formatAgeAndGender(member, context, clock)
         member.cardId?.let { member_card_id.text = formatCardId(it) }
         PhotoLoader.loadMemberPhoto(
                 thumbnail?.bytes, member_photo, context, member.gender)

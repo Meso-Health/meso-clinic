@@ -53,12 +53,14 @@ class HouseholdFragment : DaggerFragment() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HouseholdViewModel::class.java)
         viewModel.getObservable(householdId).observe(this, Observer {
-           it?.let { viewState ->
-               val members = viewState.householdMembers
+            it?.let { viewState ->
+                val members =
+                    MemberWithIdEventAndThumbnailPhoto.asSortedListWithHeadOfHouseholdsFirst(
+                        viewState.householdMembers
+                    )
 
-               // TODO: show head of household first
-               memberAdapter.setMembers(members)
-           }
+                memberAdapter.setMembers(members)
+            }
         })
 
         memberAdapter = MemberAdapter(
@@ -67,8 +69,7 @@ class HouseholdFragment : DaggerFragment() {
                     member = memberRelation.member,
                     searchMethod = searchMethod
                 ))
-            },
-            clock = clock
+            }
         )
     }
 

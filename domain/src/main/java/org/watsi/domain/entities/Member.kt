@@ -25,11 +25,24 @@ data class Member(
     val phoneNumber: String?,
     val membershipNumber: String?,
     val medicalRecordNumber: String?,
-    val needsRenewal: Boolean?
+    val needsRenewal: Boolean?,
+    val relationshipToHead: RelationshipToHead?
 ) : Serializable {
 
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
+
+    enum class RelationshipToHead {
+        SELF,
+        WIFE,
+        HUSBAND,
+        SON,
+        DAUGHTER,
+        MAID_OR_SHEPHERD,
+        PARENT,
+        SON_IN_LAW,
+        OTHER
+    }
 
     fun isAbsentee(clock: Clock): Boolean {
         return (photoUrl == null && thumbnailPhotoId == null) ||

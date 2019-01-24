@@ -100,8 +100,7 @@ class HomeFragment : DaggerFragment() {
                         mapOf("memberId" to memberRelation.member.id.toString())
                     )
                 }
-            },
-            clock = clock
+            }
         )
     }
 

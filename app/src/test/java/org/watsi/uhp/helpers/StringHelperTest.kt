@@ -18,7 +18,7 @@ import org.watsi.domain.factories.MemberFactory
 import org.watsi.uhp.R
 
 @RunWith(MockitoJUnitRunner::class)
-class MemberStringHelperTest {
+class StringHelperTest {
 
     @Mock private lateinit var mockContext: Context
 
@@ -48,10 +48,10 @@ class MemberStringHelperTest {
         val m3 = MemberFactory.build(birthdate = fiveMonthsAgo, gender = Member.Gender.F)
         val m4 = MemberFactory.build(birthdate = fiveDaysAgo, gender = Member.Gender.F)
 
-        assertEquals(MemberStringHelper.formatAgeAndGender(m1, mockContext, fixedClock), "Male · 10 years")
-        assertEquals(MemberStringHelper.formatAgeAndGender(m2, mockContext, fixedClock), "Female · 5 years")
-        assertEquals(MemberStringHelper.formatAgeAndGender(m3, mockContext, fixedClock), "Female · 5 months")
-        assertEquals(MemberStringHelper.formatAgeAndGender(m4, mockContext, fixedClock), "Female · 5 days")
+        assertEquals(StringHelper.formatAgeAndGender(m1, mockContext, fixedClock), "Male · 10 years")
+        assertEquals(StringHelper.formatAgeAndGender(m2, mockContext, fixedClock), "Female · 5 years")
+        assertEquals(StringHelper.formatAgeAndGender(m3, mockContext, fixedClock), "Female · 5 months")
+        assertEquals(StringHelper.formatAgeAndGender(m4, mockContext, fixedClock), "Female · 5 days")
     }
 
     @Test
@@ -61,10 +61,10 @@ class MemberStringHelperTest {
         val m3 = MemberFactory.build(membershipNumber = null, medicalRecordNumber = "123456")
         val m4 = MemberFactory.build(membershipNumber = "01/01/01/P-000001/01", medicalRecordNumber = "123456")
 
-        assertEquals(MemberStringHelper.formatMembershipInfo(m1, mockContext), "")
-        assertEquals(MemberStringHelper.formatMembershipInfo(m2, mockContext), "01/01/01/P-000001/01")
-        assertEquals(MemberStringHelper.formatMembershipInfo(m3, mockContext), "123456")
-        assertEquals(MemberStringHelper.formatMembershipInfo(m4, mockContext), "01/01/01/P-000001/01 · 123456")
+        assertEquals(StringHelper.formatMembershipInfo(m1, mockContext), "")
+        assertEquals(StringHelper.formatMembershipInfo(m2, mockContext), "01/01/01/P-000001/01")
+        assertEquals(StringHelper.formatMembershipInfo(m3, mockContext), "123456")
+        assertEquals(StringHelper.formatMembershipInfo(m4, mockContext), "01/01/01/P-000001/01 · 123456")
     }
 
     @Test
@@ -75,14 +75,14 @@ class MemberStringHelperTest {
 
         val expectedPhoneNumberString = "(0) 775 555 555"
 
-        assertNull(MemberStringHelper.formatPhoneNumber(memberNullPhone, mockContext))
+        assertNull(StringHelper.formatPhoneNumber(memberNullPhone, mockContext))
         assertEquals(
             expectedPhoneNumberString,
-            MemberStringHelper.formatPhoneNumber(member9Digit, mockContext)
+            StringHelper.formatPhoneNumber(member9Digit, mockContext)
         )
         assertEquals(
             expectedPhoneNumberString,
-            MemberStringHelper.formatPhoneNumber(member10Digit, mockContext)
+            StringHelper.formatPhoneNumber(member10Digit, mockContext)
         )
     }
 }

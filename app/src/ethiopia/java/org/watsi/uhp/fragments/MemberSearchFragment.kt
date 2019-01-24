@@ -39,16 +39,23 @@ class MemberSearchFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        memberAdapter = MemberAdapter(searchResults, {
-            navigationManager.goTo(HouseholdFragment.forParams(
-                it.member.householdId!!, IdentificationEvent.SearchMethod.SEARCH_NAME)
-            )
-        }, clock)
+        memberAdapter = MemberAdapter(
+            members = searchResults,
+            onItemSelect = {
+                navigationManager.goTo(HouseholdFragment.forParams(
+                    it.member.householdId!!, IdentificationEvent.SearchMethod.SEARCH_NAME)
+                )
+            }
+        )
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberSearchViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { matchingMembers ->
+                val sortedMembers =
+                    MemberWithIdEventAndThumbnailPhoto.asSortedListWithHeadOfHouseholdsFirst(
+                        matchingMembers
+                    )
                 searchResults.clear()
-                searchResults.addAll(matchingMembers)
+                searchResults.addAll(sortedMembers)
                 member_search_results.adapter.notifyDataSetChanged()
             }
         })

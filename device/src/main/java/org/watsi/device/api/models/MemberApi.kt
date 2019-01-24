@@ -7,6 +7,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.RelationshipToHead
 import java.util.UUID
 
 data class MemberApi(
@@ -28,7 +29,8 @@ data class MemberApi(
     @SerializedName(MEMBERSHIP_NUMBER_FIELD) val membershipNumber: String?,
     @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?,
     @Expose(serialize = false)
-    @SerializedName(NEEDS_RENEWAL) val needsRenewal: Boolean?
+    @SerializedName(NEEDS_RENEWAL) val needsRenewal: Boolean?,
+    @SerializedName(RELATIONSHIP_TO_HEAD) val relationshipToHead: RelationshipToHead?
 ) {
 
     constructor (member: Member) :
@@ -47,7 +49,8 @@ data class MemberApi(
                  photoUrl = member.photoUrl,
                  membershipNumber = member.membershipNumber,
                  medicalRecordNumber = member.medicalRecordNumber,
-                 needsRenewal = member.needsRenewal
+                 needsRenewal = member.needsRenewal,
+                 relationshipToHead = member.relationshipToHead
             )
 
     fun toMember(persistedMember: Member?): Member {
@@ -72,7 +75,8 @@ data class MemberApi(
             photoUrl = photoUrl,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
-            needsRenewal = needsRenewal
+            needsRenewal = needsRenewal,
+            relationshipToHead = relationshipToHead
         )
     }
 
@@ -93,6 +97,7 @@ data class MemberApi(
         const val MEMBERSHIP_NUMBER_FIELD = "membership_number"
         const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
         const val NEEDS_RENEWAL = "needs_renewal"
+        const val RELATIONSHIP_TO_HEAD = "relationship_to_head"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
             val patchParams = JsonObject()

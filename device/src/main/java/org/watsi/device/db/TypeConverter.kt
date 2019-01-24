@@ -110,4 +110,11 @@ class TypeConverter {
     fun fromAdjudicationState(adjudicationState: Encounter.AdjudicationState?): String? {
         return adjudicationState?.toString()
     }
+
+    @TypeConverter
+    fun toRelationshipToHead(value: String?): Member.RelationshipToHead? = value?.let { Member.RelationshipToHead.valueOf(value) }
+
+    @TypeConverter
+    fun fromRelationshipToHead(type: Member.RelationshipToHead?): String? = type?.let { type.toString() }
+
 }

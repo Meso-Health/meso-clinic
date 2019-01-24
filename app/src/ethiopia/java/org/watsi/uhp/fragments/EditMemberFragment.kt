@@ -41,9 +41,9 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
-import org.watsi.uhp.helpers.MemberStringHelper
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EditMemberViewModel
@@ -105,13 +105,19 @@ class EditMemberFragment : DaggerFragment() {
                     needs_renewal_notification.visibility = View.VISIBLE
                 }
 
-                PhotoLoader.loadMemberPhoto(photo?.bytes, top_photo, activity, member.gender)
+                PhotoLoader.loadMemberPhoto(
+                    photo?.bytes,
+                    top_photo,
+                    activity,
+                    member.gender,
+                    placeholderPhotoIconPadding
+                )
                 top_name.text = member.name
-                top_gender_age.text = MemberStringHelper.formatAgeAndGender(member, activity, clock)
+                top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
 
                 membership_number_field.setText(member.membershipNumber)
                 name_field.setText(member.name)
-                birthdate_field.setText(MemberStringHelper.getDisplayAge(member, activity, clock))
+                birthdate_field.setText(StringHelper.getDisplayAge(member, activity, clock))
                 medical_record_number_field.setValue(member.medicalRecordNumber)
 
                 photo?.let {

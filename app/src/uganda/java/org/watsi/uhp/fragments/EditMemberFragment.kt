@@ -4,10 +4,8 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -39,7 +37,8 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.activities.ScanNewCardActivity
-import org.watsi.uhp.helpers.MemberStringHelper
+import org.watsi.uhp.helpers.PhotoLoader
+import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.EditMemberViewModel
@@ -59,7 +58,6 @@ class EditMemberFragment : DaggerFragment() {
     private lateinit var genderOptions: List<Pair<Member.Gender, String>>
     private var member: Member? = null
     private var placeholderPhotoIconPadding = 0
-    private var memberPhotoCornerRadius = 0
 
     companion object {
         const val PARAM_MEMBER_ID = "member_id"
@@ -80,7 +78,6 @@ class EditMemberFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         placeholderPhotoIconPadding =resources.getDimensionPixelSize(R.dimen.editMemberPhotoPlaceholderPadding)
-        memberPhotoCornerRadius = resources.getDimensionPixelSize(R.dimen.cornerRadius)
 
         genderOptions = listOf(Pair(Member.Gender.F, getString(R.string.female)),
                 Pair(Member.Gender.M, getString(R.string.male)))
@@ -98,33 +95,19 @@ class EditMemberFragment : DaggerFragment() {
                 activity.title = member.name
                 top_name.text = member.name
 
-                val photo = memberWithThumbnail.photo
-                if (photo != null) {
-                    val thumbnailBitmap = BitmapFactory.decodeByteArray(
-                            photo.bytes, 0, photo.bytes.size)
-                    listOf(photo_container, missing_photo_container).forEach {
-                        it.setPhotoPreview(thumbnailBitmap)
-                    }
-                    top_photo.setPadding(0, 0, 0, 0)
-                    val bitmap = BitmapFactory.decodeByteArray(photo.bytes, 0, photo.bytes.size)
-                    val roundedDrawable = RoundedBitmapDrawableFactory.create(resources, bitmap)
-                    roundedDrawable.cornerRadius = memberPhotoCornerRadius.toFloat()
-                    top_photo.setImageDrawable(roundedDrawable)
-                } else {
-                    top_photo.setPadding(placeholderPhotoIconPadding, placeholderPhotoIconPadding,
-                            placeholderPhotoIconPadding, placeholderPhotoIconPadding)
-                    if (member.gender == Member.Gender.F) {
-                        top_photo.setImageResource(R.drawable.ic_member_placeholder_female)
-                    } else {
-                        top_photo.setImageResource(R.drawable.ic_member_placeholder_male)
-                    }
-                }
+                PhotoLoader.loadMemberPhoto(
+                    memberWithThumbnail.photo?.bytes,
+                    top_photo,
+                    context,
+                    member.gender,
+                    placeholderPhotoIconPadding
+                )
 
                 val genderString = genderOptions.find { it.first == member.gender }?.second
                 top_gender_age.text = resources.getString(
                     R.string.member_list_item_gender_age,
                     genderString,
-                    MemberStringHelper.getDisplayAge(member, context, clock)
+                    StringHelper.getDisplayAge(member, context, clock)
                 )
 
                 name_field.setValue(member.name)
@@ -151,7 +134,7 @@ class EditMemberFragment : DaggerFragment() {
                         missing_information_panel_header.visibility = View.VISIBLE
                         member_panel_header.visibility = View.VISIBLE
                     }
-                    if (photo == null) {
+                    if (memberWithThumbnail.photo == null) {
                         missing_photo_container.visibility = View.VISIBLE
                     }
                     if (member.requiresFingerprint(clock) && member.fingerprintsGuid == null) {
