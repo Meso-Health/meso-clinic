@@ -64,6 +64,8 @@
             android:textSize="@dimen/fontSize12"
             android:paddingStart="@dimen/space8"
             android:paddingEnd="@dimen/space8"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:textColor="@color/gray6"
             android:background="@drawable/solid_rectangle" />
     </android.support.constraint.ConstraintLayout>
