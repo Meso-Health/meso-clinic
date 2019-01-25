@@ -31,7 +31,7 @@ interface MemberDao {
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
 
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
-    fun find(id: UUID): Single<MemberModel>
+    fun find(id: UUID): Maybe<MemberModel>
 
     @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>

@@ -10,6 +10,7 @@ import java.util.Locale
 class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) : PreferencesManager {
     companion object {
         private const val AUTHENTICATION_TOKEN_KEY = "authentication_token"
+        private const val MEMBERS_PAGE_KEY = "members_page_key"
         private const val MEMBERS_LAST_FETCHED_KEY = "members_last_fetched"
         private const val BILLABLES_LAST_FETCHED_KEY = "billables_last_fetched"
         private const val DIAGNOSES_LAST_FETCHED_KEY = "diagnoses_last_fetched"
@@ -26,6 +27,14 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
     override fun setAuthenticationToken(token: AuthenticationToken?) {
         val tokenJson = if (token == null) null else gson.toJson(token)
         sharedPreferences.edit().putString(AUTHENTICATION_TOKEN_KEY, tokenJson).apply()
+    }
+
+    override fun getMembersPageKey(): String {
+        return sharedPreferences.getString(MEMBERS_PAGE_KEY, null)
+    }
+
+    override fun updateMembersPageKey(pageKey: String) {
+        sharedPreferences.edit().putString(MEMBERS_PAGE_KEY, pageKey).apply()
     }
 
     override fun getMemberLastFetched(): Instant {

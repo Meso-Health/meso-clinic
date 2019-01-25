@@ -7,6 +7,8 @@ import java.util.Locale
 interface PreferencesManager {
     fun getAuthenticationToken(): AuthenticationToken?
     fun setAuthenticationToken(token: AuthenticationToken?)
+    fun getMembersPageKey(): String
+    fun updateMembersPageKey(pageKey: String)
     fun getMemberLastFetched(): Instant
     fun updateMemberLastFetched(instant: Instant)
     fun getBillablesLastFetched(): Instant

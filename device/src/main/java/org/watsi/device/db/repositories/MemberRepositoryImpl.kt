@@ -8,10 +8,10 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.DbHelper
-import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
@@ -19,6 +19,7 @@ import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Photo
@@ -33,7 +34,6 @@ class MemberRepositoryImpl(
     private val sessionManager: SessionManager,
     private val preferencesManager: PreferencesManager,
     private val photoDao: PhotoDao,
-    private val encounterDao: EncounterDao,
     private val clock: Clock
 ) : MemberRepository {
 
@@ -41,7 +41,7 @@ class MemberRepositoryImpl(
         return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
     }
 
-    override fun find(id: UUID): Single<Member> {
+    override fun find(id: UUID): Maybe<Member> {
         return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
     }
 
@@ -95,64 +95,51 @@ class MemberRepositoryImpl(
     }
 
     /**
-     * Removes any synced client members that are not returned in the API results and
-     * overwrites any synced client members if the API response contains updated data. Does not
-     * remove or overwrite any unsynced data (new or edited members).
+     * Fetches members using pagination. Always overwrites local data with updated
+     * server data, unless the local data has unsynced changes.
      */
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                // Fetch full members list from the server
-                val serverMembers =
-                    api.getMembers(token.getHeaderString(), token.user.providerId).blockingGet()
-                val serverMemberIds = serverMembers.map { it.id }
-
-                // Get all locally stored members
-                val clientMembers = memberDao.all().blockingFirst()
-                val clientMemberIds = clientMembers.map { it.id }
-                val clientMembersById = clientMembers.groupBy { it.id }
-
-                // Find all locally stored members that are unsynced or in use, so that we know not to delete them
-                val memberIdsToRetain: MutableList<UUID> = mutableListOf()
-                memberIdsToRetain.addAll(serverMemberIds)
-
-                val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
-                memberIdsToRetain.addAll(unsyncedClientMemberIds)
-
-                val checkedInMemberIds =
-                    memberDao.checkedInMembers().blockingFirst().map { it.memberModel?.id }
-                        .requireNoNulls()
-                memberIdsToRetain.addAll(checkedInMemberIds)
-
-                val pendingEncounterMemberIds =
-                    encounterDao.pending().blockingFirst().map { it.memberModel?.map { it.id } }
-                        .requireNoNulls().flatten()
-                memberIdsToRetain.addAll(pendingEncounterMemberIds)
-
-                val returnedEncounterMemberIds =
-                    encounterDao.returned().blockingFirst().map { it.memberModel?.map { it.id } }
-                        .requireNoNulls().flatten()
-                memberIdsToRetain.addAll(returnedEncounterMemberIds)
-
-                val unsyncedEncounterMemberIds =
-                    encounterDao.unsynced().blockingGet().map { it.memberModel?.map { it.id } }
-                        .requireNoNulls().flatten()
-                memberIdsToRetain.addAll(unsyncedEncounterMemberIds)
-
-                // Delete stale members
-                val membersToDelete = clientMemberIds.minus(memberIdsToRetain)
-                memberDao.delete(membersToDelete)
-
-                // Update remaining members
-                val serverMembersWithoutUnsynced =
-                    serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
-                memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
-                    val persistedMember = clientMembersById[memberApi.id]?.firstOrNull()?.toMember()
-                    MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
-                })
-                preferencesManager.updateMemberLastFetched(clock.instant())
+                val isInitialFetch = preferencesManager.getMemberLastFetched() == Instant.ofEpochMilli(0)
+                paginatedFetch(token, isInitialFetch)
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
+    }
+
+    private fun paginatedFetch(token: AuthenticationToken, isInitialFetch: Boolean) {
+        val paginatedResponse = api.getMembers(
+            token.getHeaderString(),
+            token.user.providerId,
+            preferencesManager.getMembersPageKey()
+        ).blockingGet()
+        val serverMembers = paginatedResponse.members
+        val hasMore = paginatedResponse.hasMore
+        val updatedPageKey = paginatedResponse.pageKey
+
+        if (isInitialFetch) {
+            memberDao.upsert(serverMembers.map { memberApi ->
+                MemberModel.fromMember(memberApi.toMember(null), clock)
+            })
+        } else {
+            // Do not update members with unsynced local changes
+            val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
+            val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
+
+            memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
+                // Check whether member already exists on phone to perform special logic while upserting
+                val persistedMember = memberDao.find(memberApi.id).blockingGet()
+                MemberModel.fromMember(memberApi.toMember(persistedMember.toMember()), clock)
+            })
+        }
+
+        preferencesManager.updateMembersPageKey(updatedPageKey)
+
+        if (hasMore) {
+            paginatedFetch(token, isInitialFetch)
+        } else {
+            preferencesManager.updateMemberLastFetched(clock.instant())
+        }
     }
 
     override fun downloadPhotos(): Completable {
