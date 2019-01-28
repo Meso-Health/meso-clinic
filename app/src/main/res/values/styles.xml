@@ -102,5 +102,5 @@
         <item name="android:backgroundTint">@color/gray4</item>
         <item name="android:drawableTint">@color/gray6</item>
     </style>
-
+    
 </resources>
