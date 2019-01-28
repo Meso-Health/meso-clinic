@@ -37,8 +37,12 @@ class MemberRepositoryImpl(
     private val clock: Clock
 ) : MemberRepository {
 
-    override fun all(): Flowable<List<Member>> {
-        return memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
+    override fun all(excludeArchived: Boolean): Flowable<List<Member>> {
+        return if (excludeArchived) {
+            memberDao.allUnarchived().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
+        } else {
+            memberDao.all().map { it.map { it.toMember() } }.subscribeOn(Schedulers.io())
+        }
     }
 
     override fun find(id: UUID): Single<Member> {
@@ -49,16 +53,28 @@ class MemberRepositoryImpl(
         return memberDao.findFlowableMemberWithThumbnail(id).map { it.toMemberWithThumbnail() }
     }
 
-    override fun findByCardId(cardId: String): Maybe<Member> {
-        return memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
+    override fun findByCardId(cardId: String, excludeArchived: Boolean): Maybe<Member> {
+        return if (excludeArchived) {
+            memberDao.findByCardIdUnarchived(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
+        } else {
+            memberDao.findByCardId(cardId).map { it.toMember() }.subscribeOn(Schedulers.io())
+        }
     }
 
-    override fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID> {
-        return memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io())
+    override fun findHouseholdIdByMembershipNumber(membershipNumber: String, excludeArchived: Boolean): Maybe<UUID> {
+        return if (excludeArchived) {
+            memberDao.findHouseholdIdByMembershipNumberUnarchived(membershipNumber).subscribeOn(Schedulers.io())
+        } else {
+            memberDao.findHouseholdIdByMembershipNumber(membershipNumber).subscribeOn(Schedulers.io())
+        }
     }
 
-    override fun findHouseholdIdByCardId(cardId: String): Maybe<UUID> {
-        return memberDao.findHouseholdIdByCardId(cardId).subscribeOn(Schedulers.io())
+    override fun findHouseholdIdByCardId(cardId: String, excludeArchived: Boolean): Maybe<UUID> {
+        return if (excludeArchived) {
+            memberDao.findHouseholdIdByCardIdUnarchived(cardId).subscribeOn(Schedulers.io())
+        } else {
+            memberDao.findHouseholdIdByCardId(cardId).subscribeOn(Schedulers.io())
+        }
     }
 
     override fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
@@ -69,7 +85,7 @@ class MemberRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+    override fun checkedInMembers(excludeArchived: Boolean): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.checkedInMembers().map {
             it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
         }
@@ -79,12 +95,23 @@ class MemberRepositoryImpl(
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
     }
 
-    override fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.findHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
-            memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
-                memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
-            }
-        }.subscribeOn(Schedulers.io())
+    override fun findHouseholdMembers(
+        householdId: UUID,
+        excludeArchived: Boolean
+    ): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return if (excludeArchived) {
+            memberDao.findHouseholdMembersUnarchived(householdId).map { memberWithIdEventAndThumbnailModels ->
+                memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
+                    memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
+                }
+            }.subscribeOn(Schedulers.io())
+        } else {
+            memberDao.findHouseholdMembers(householdId).map { memberWithIdEventAndThumbnailModels ->
+                memberWithIdEventAndThumbnailModels.map { memberWithIdEventAndThumbnailModel ->
+                    memberWithIdEventAndThumbnailModel.toMemberWithIdEventAndThumbnailPhoto()
+                }
+            }.subscribeOn(Schedulers.io())
+        }
     }
 
     override fun upsert(member: Member, deltas: List<Delta>): Completable {

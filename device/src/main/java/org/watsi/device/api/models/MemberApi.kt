@@ -7,6 +7,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.ArchivedReason
 import org.watsi.domain.entities.Member.RelationshipToHead
 import java.util.UUID
 
@@ -30,7 +31,9 @@ data class MemberApi(
     @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?,
     @Expose(serialize = false)
     @SerializedName(NEEDS_RENEWAL) val needsRenewal: Boolean?,
-    @SerializedName(RELATIONSHIP_TO_HEAD) val relationshipToHead: RelationshipToHead?
+    @SerializedName(RELATIONSHIP_TO_HEAD) val relationshipToHead: RelationshipToHead?,
+    @SerializedName(ARCHIVED_AT) val archivedAt: Instant?,
+    @SerializedName(ARCHIVED_REASON) val archivedReason: ArchivedReason?
 ) {
 
     constructor (member: Member) :
@@ -50,7 +53,9 @@ data class MemberApi(
                  membershipNumber = member.membershipNumber,
                  medicalRecordNumber = member.medicalRecordNumber,
                  needsRenewal = member.needsRenewal,
-                 relationshipToHead = member.relationshipToHead
+                 relationshipToHead = member.relationshipToHead,
+                 archivedAt = member.archivedAt,
+                 archivedReason = member.archivedReason
             )
 
     fun toMember(persistedMember: Member?): Member {
@@ -76,7 +81,9 @@ data class MemberApi(
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
             needsRenewal = needsRenewal,
-            relationshipToHead = relationshipToHead
+            relationshipToHead = relationshipToHead,
+            archivedAt = archivedAt,
+            archivedReason = archivedReason
         )
     }
 
@@ -98,6 +105,8 @@ data class MemberApi(
         const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
         const val NEEDS_RENEWAL = "needs_renewal"
         const val RELATIONSHIP_TO_HEAD = "relationship_to_head"
+        const val ARCHIVED_AT = "archived_at"
+        const val ARCHIVED_REASON = "archived_reason"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
             val patchParams = JsonObject()

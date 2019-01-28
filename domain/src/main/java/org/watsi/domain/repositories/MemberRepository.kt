@@ -11,16 +11,16 @@ import org.watsi.domain.relations.MemberWithThumbnail
 import java.util.UUID
 
 interface MemberRepository {
-    fun all(): Flowable<List<Member>>
+    fun all(filterArchived: Boolean = true): Flowable<List<Member>>
     fun find(id: UUID): Single<Member>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
-    fun findByCardId(cardId: String): Maybe<Member>
-    fun findHouseholdIdByMembershipNumber(cardId: String): Maybe<UUID>
-    fun findHouseholdIdByCardId(cardId: String): Maybe<UUID>
+    fun findByCardId(cardId: String, filterArchived: Boolean = true): Maybe<Member>
+    fun findHouseholdIdByMembershipNumber(cardId: String, filterArchived: Boolean = true): Maybe<UUID>
+    fun findHouseholdIdByCardId(cardId: String, filterArchived: Boolean = true): Maybe<UUID>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
-    fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
+    fun checkedInMembers(filterArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
-    fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
+    fun findHouseholdMembers(householdId: UUID, filterArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
     fun downloadPhotos(): Completable

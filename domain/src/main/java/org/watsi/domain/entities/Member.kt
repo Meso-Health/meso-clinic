@@ -26,11 +26,22 @@ data class Member(
     val membershipNumber: String?,
     val medicalRecordNumber: String?,
     val needsRenewal: Boolean?,
-    val relationshipToHead: RelationshipToHead?
+    val relationshipToHead: RelationshipToHead?,
+    val archivedAt: Instant?,
+    val archivedReason: ArchivedReason?
 ) : Serializable {
 
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
+    enum class ArchivedReason {
+        DEATH,
+        DIVORCE,
+        FORMED_OWN_HOUSEHOLD,
+        JOINED_FORMAL_SECTOR,
+        RELOCATION,
+        UNPAID,
+        OTHER
+    }
 
     enum class RelationshipToHead {
         SELF,
