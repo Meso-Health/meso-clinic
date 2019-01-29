@@ -5,12 +5,14 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.claims_list
-import kotlinx.android.synthetic.ethiopia.fragment_claims_list.search_claims
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_all_button
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
@@ -20,8 +22,6 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
-import org.watsi.uhp.helpers.LayoutHelper
-import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
@@ -57,6 +57,14 @@ class PendingClaimsFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(PendingClaimsViewModel::class.java)
         setAndObserveViewModel()
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
+
+        claimsAdapter = ClaimListItemAdapter(
+            onClaimSelected = { encounterRelation ->
+                navigationManager.goTo(ReceiptFragment.forEncounter(
+                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
+                ))
+            }
+        )
     }
 
     private fun setAndObserveViewModel() {
@@ -64,7 +72,7 @@ class PendingClaimsFragment : DaggerFragment() {
             it?.let { viewState ->
                 updateClaims(viewState.visibleClaims)
 
-                if (viewState.visibleClaims.count() > 0) {
+                if (viewState.visibleClaims.count() > 0 && viewState.visibleClaims.count() == viewState.claims.count()) {
                     submit_all_button.visibility = View.VISIBLE
                 } else {
                     submit_all_button.visibility = View.GONE
@@ -85,7 +93,6 @@ class PendingClaimsFragment : DaggerFragment() {
         total_price_label.text = CurrencyUtil.formatMoney(pendingClaims.sumBy { it.price() })
 
         claimsAdapter.setClaims(pendingClaims)
-        RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, true)
     }
 
     private fun submitAll() {
@@ -105,20 +112,14 @@ class PendingClaimsFragment : DaggerFragment() {
             context.getString(org.watsi.uhp.R.string.pending_claims_fragment_label),
             org.watsi.uhp.R.drawable.ic_arrow_back_white_24dp
         )
-        setHasOptionsMenu(false)
+        setHasOptionsMenu(true)
         return inflater?.inflate(org.watsi.uhp.R.layout.fragment_claims_list, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        claimsAdapter = ClaimListItemAdapter(
-            onClaimSelected = { encounterRelation ->
-                navigationManager.goTo(ReceiptFragment.forEncounter(
-                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
-                ))
-            }
-        )
+        RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, false)
 
         submit_all_button.setOnClickListener {
             AlertDialog.Builder(activity)
@@ -134,15 +135,39 @@ class PendingClaimsFragment : DaggerFragment() {
                     }.create().show()
         }
 
-        search_claims.setOnQueryTextListener(QueryHelper.ThrottledQueryListener(
-            search_claims
-        ) { query: String -> viewModel.filterClaimsBySearchText(query) })
-
         snackbarMessageToShow?.let { snackbarMessage ->
             SnackbarHelper.show(claims_list, context, snackbarMessage)
             snackbarMessageToShow = null
         }
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        menu.clear()
+        menuInflater.inflate(R.menu.claims_search, menu)
+
+        val searchItem = menu.findItem(R.id.search_claims)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchView.clearFocus()
+                viewModel.filterClaimsBySearchText(query)
+                return false
+            }
+        })
+
+        searchView.setOnCloseListener(object : SearchView.OnCloseListener {
+            override fun onClose(): Boolean {
+                viewModel.filterClaimsBySearchText("")
+                return false
+            }
+        })
+        searchView.isIconified = true
     }
 
     override fun onResume() {
