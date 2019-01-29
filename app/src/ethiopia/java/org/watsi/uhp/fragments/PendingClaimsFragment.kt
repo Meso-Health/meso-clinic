@@ -57,6 +57,14 @@ class PendingClaimsFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(PendingClaimsViewModel::class.java)
         setAndObserveViewModel()
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
+
+        claimsAdapter = ClaimListItemAdapter(
+            onClaimSelected = { encounterRelation ->
+                navigationManager.goTo(ReceiptFragment.forEncounter(
+                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
+                ))
+            }
+        )
     }
 
     private fun setAndObserveViewModel() {
@@ -85,7 +93,6 @@ class PendingClaimsFragment : DaggerFragment() {
         total_price_label.text = CurrencyUtil.formatMoney(pendingClaims.sumBy { it.price() })
 
         claimsAdapter.setClaims(pendingClaims)
-        RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, true)
     }
 
     private fun submitAll() {
@@ -112,13 +119,7 @@ class PendingClaimsFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        claimsAdapter = ClaimListItemAdapter(
-            onClaimSelected = { encounterRelation ->
-                navigationManager.goTo(ReceiptFragment.forEncounter(
-                    EncounterFlowState.fromEncounterWithExtras(encounterRelation)
-                ))
-            }
-        )
+        RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, false)
 
         submit_all_button.setOnClickListener {
             AlertDialog.Builder(activity)
