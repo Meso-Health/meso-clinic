@@ -11,16 +11,16 @@ import org.watsi.domain.relations.MemberWithThumbnail
 import java.util.UUID
 
 interface MemberRepository {
-    fun all(filterArchived: Boolean = true): Flowable<List<Member>>
+    fun all(excludeArchived: Boolean = true): Flowable<List<Member>>
     fun find(id: UUID): Single<Member>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
-    fun findByCardId(cardId: String, filterArchived: Boolean = true): Maybe<Member>
-    fun findHouseholdIdByMembershipNumber(cardId: String, filterArchived: Boolean = true): Maybe<UUID>
-    fun findHouseholdIdByCardId(cardId: String, filterArchived: Boolean = true): Maybe<UUID>
+    fun findByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<Member>
+    fun findHouseholdIdByMembershipNumber(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
+    fun findHouseholdIdByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
-    fun checkedInMembers(filterArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
+    fun checkedInMembers(excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
-    fun findHouseholdMembers(householdId: UUID, filterArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
+    fun findHouseholdMembers(householdId: UUID, excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
     fun downloadPhotos(): Completable
