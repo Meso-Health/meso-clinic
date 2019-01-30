@@ -19,7 +19,7 @@ object MemberFactory {
         name: String = "Akiiki Monday",
         gender: Member.Gender = Member.Gender.F,
         language: String? = null,
-        birthdate: LocalDate = LocalDate.now(),
+        birthdate: LocalDate = LocalDate.of(1993, 5, 11),
         birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
         fingerprintsGuid: UUID? = null,
         phoneNumber: String? = null,

@@ -83,7 +83,7 @@ interface CoverageApi {
     fun patchIdentificationEvent(
         @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
         @Path("identificationEventId") identificationEventId: UUID,
-        @Body identificationEvent: JsonObject
+        @Body patchParams: JsonObject
     ): Completable
 
     @POST("providers/{providerId}/billables")
