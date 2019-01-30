@@ -1,5 +1,6 @@
 package org.watsi.device.testutils
 
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonPrimitive
@@ -57,6 +58,7 @@ abstract class OkReplayTest {
 
     private fun buildApi(replayInterceptor: OkReplayInterceptor): CoverageApi {
         val gson = GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
                 .registerTypeAdapter(LocalDate::class.javaObjectType, JsonSerializer<LocalDate> { src, _, _ ->
                     JsonPrimitive(src.toString())

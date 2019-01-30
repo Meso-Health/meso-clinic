@@ -1,6 +1,5 @@
 package org.watsi.device.api.models
 
-import com.google.gson.annotations.SerializedName
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
@@ -13,26 +12,26 @@ import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 data class ReturnedEncounterApi(
-        @SerializedName("id") val id: UUID,
-        @SerializedName("member_id") val memberId: UUID,
-        @SerializedName("identification_event_id") val identificationEventId: UUID?,
-        @SerializedName("occurred_at") val occurredAt: Instant,
-        @SerializedName("backdated_occurred_at") val backdatedOccurredAt: Boolean,
-        @SerializedName("diagnosis_ids") val diagnoses: List<Int>,
-        @SerializedName("visit_type") val visitType: String?,
-        @SerializedName("claim_id") val claimId: String,
-        @SerializedName("adjudication_state") val adjudicationState: String,
-        @SerializedName("adjudicated_at") val adjudicatedAt: Instant,
-        @SerializedName("return_reason") val returnReason: String,
-        @SerializedName("revised_encounter_id") val revisedEncounterId: UUID,
-        @SerializedName("provider_comment") val providerComment: String?,
-        @SerializedName("prepared_at") val preparedAt: Instant,
-        @SerializedName("submitted_at") val submittedAt: Instant,
+        val id: UUID,
+        val memberId: UUID,
+        val identificationEventId: UUID?,
+        val occurredAt: Instant,
+        val backdatedOccurredAt: Boolean,
+        val diagnosisIds: List<Int>,
+        val visitType: String?,
+        val claimId: String,
+        val adjudicationState: String,
+        val adjudicatedAt: Instant,
+        val returnReason: String,
+        val revisedEncounterId: UUID,
+        val providerComment: String?,
+        val preparedAt: Instant,
+        val submittedAt: Instant,
         // Below are inflated fields.
-        @SerializedName("member") val memberApi: MemberApi,
-        @SerializedName("billables") val billablesApi: List<BillableApi>,
-        @SerializedName("price_schedules") val priceSchedulesApi: List<PriceScheduleApi>,
-        @SerializedName("encounter_items") val encounterItemsApi: List<EncounterItemApi>
+        val member: MemberApi,
+        val billables: List<BillableApi>,
+        val priceSchedules: List<PriceScheduleApi>,
+        val encounterItems: List<EncounterItemApi>
 ) {
 
     fun toEncounterWithExtras(persistedMember: Member? = null): EncounterWithExtras {
@@ -44,7 +43,7 @@ data class ReturnedEncounterApi(
                 copaymentPaid = null,
                 occurredAt = occurredAt,
                 backdatedOccurredAt = backdatedOccurredAt,
-                diagnoses = diagnoses,
+                diagnoses = diagnosisIds,
                 visitType = visitType,
                 claimId = claimId,
                 adjudicationState = Encounter.AdjudicationState.valueOf(adjudicationState.toUpperCase()),
@@ -56,11 +55,11 @@ data class ReturnedEncounterApi(
                 submittedAt = submittedAt
             ),
             encounterItemRelations = combineEncounterItemsWithBillablesAndPrices(
-                encounterItemsApi.map { it.toEncounterItem() },
-                billablesApi.map { it.toBillable() },
-                priceSchedulesApi.map { it.toPriceSchedule() }
+                encounterItems.map { it.toEncounterItem() },
+                billables.map { it.toBillable() },
+                priceSchedules.map { it.toPriceSchedule() }
             ),
-            member = memberApi.toMember(persistedMember),
+            member = member.toMember(persistedMember),
             encounterForms = emptyList(),
             diagnoses = emptyList() // We don't actually use this field for fetching / persisting.
         )

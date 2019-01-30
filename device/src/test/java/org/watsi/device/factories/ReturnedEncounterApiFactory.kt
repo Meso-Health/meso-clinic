@@ -23,7 +23,7 @@ object ReturnedEncounterApiFactory {
             identificationEventId = encounterWithExtras.encounter.identificationEventId,
             occurredAt = encounterWithExtras.encounter.occurredAt,
             backdatedOccurredAt = encounterWithExtras.encounter.backdatedOccurredAt,
-            diagnoses = encounterWithExtras.encounter.diagnoses,
+            diagnosisIds = encounterWithExtras.encounter.diagnoses,
             visitType = encounterWithExtras.encounter.visitType,
             claimId = encounterWithExtras.encounter.claimId,
             adjudicationState = encounterWithExtras.encounter.adjudicationState.toString(),
@@ -33,14 +33,14 @@ object ReturnedEncounterApiFactory {
             providerComment = encounterWithExtras.encounter.providerComment,
             preparedAt = encounterWithExtras.encounter.preparedAt ?: now,
             submittedAt = encounterWithExtras.encounter.submittedAt ?: now,
-            memberApi = MemberApi(encounterWithExtras.member),
-            billablesApi = encounterWithExtras.encounterItemRelations.map {
+            member = MemberApi(encounterWithExtras.member),
+            billables = encounterWithExtras.encounterItemRelations.map {
                 BillableApi(it.billableWithPriceSchedule.billable)
             },
-            priceSchedulesApi = encounterWithExtras.encounterItemRelations.map {
+            priceSchedules = encounterWithExtras.encounterItemRelations.map {
                 PriceScheduleApi(it.billableWithPriceSchedule.priceSchedule)
             },
-            encounterItemsApi = encounterWithExtras.encounterItemRelations.map {
+            encounterItems = encounterWithExtras.encounterItemRelations.map {
                 EncounterItemApi(it.encounterItem)
             }
         )

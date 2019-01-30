@@ -1,19 +1,18 @@
 package org.watsi.device.api.models
 
-import com.google.gson.annotations.SerializedName
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.PriceSchedule
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import java.util.UUID
 
 data class BillableWithPriceScheduleApi(
-    @SerializedName("id") val id: UUID,
-    @SerializedName("type") val type: String,
-    @SerializedName("composition") val composition: String?,
-    @SerializedName("unit") val unit: String?,
-    @SerializedName("price") val price: Int,
-    @SerializedName("name") val name: String,
-    @SerializedName("active_price_schedule") val priceScheduleApi: PriceScheduleApi
+    val id: UUID,
+    val type: String,
+    val composition: String?,
+    val unit: String?,
+    val price: Int,
+    val name: String,
+    val priceScheduleApi: PriceScheduleApi
 ) {
     constructor (billable: Billable, activePriceSchedule: PriceSchedule) : this(
         id = billable.id,

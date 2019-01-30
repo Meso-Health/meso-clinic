@@ -1,16 +1,15 @@
 package org.watsi.device.api.models
 
-import com.google.gson.annotations.SerializedName
 import org.watsi.domain.entities.EncounterItem
 import java.util.UUID
 
 data class EncounterItemApi(
-        @SerializedName("id") val id: UUID,
-        @SerializedName("encounter_id") val encounterId: UUID,
-        @SerializedName("billable_id") val billableId: UUID,
-        @SerializedName("quantity") val quantity: Int,
-        @SerializedName("price_schedule_id") val priceScheduleId: UUID,
-        @SerializedName("price_schedule_issued") val priceScheduleIssued: Boolean
+    val id: UUID,
+    val encounterId: UUID,
+    val billableId: UUID,
+    val quantity: Int,
+    val priceScheduleId: UUID,
+    val priceScheduleIssued: Boolean
 ) {
 
     fun toEncounterItem(): EncounterItem {
