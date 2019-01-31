@@ -30,20 +30,20 @@ class CoverageApiTest : OkReplayTest() {
 
     // Make sure this is a valid token.
     private val tokenString = AuthenticationTokenFactory.build(
-        token = "3NRq698o.tWSUMs6Dufv3GJFyzXcFq2TkAYAEYpWh"
+        token = "Y8eTFNxg.TXoHqdgbVTH5y2fJywtPDGQQJAPQzUDR"
     ).getHeaderString()
 
     // Make sure these IDs exist in the backend
-    private val householdId = UUID.fromString("1c3ce616-33f2-4732-9917-b04ade7be357")
+    private val householdId = UUID.fromString("073e83f2-6e56-4bd8-a9df-ddf11802c9c5")
     private val billableId = UUID.fromString("7276e9e8-60a1-4596-b795-d7bca07a88ed")
-    private val billableLatestPriceScheduleId = UUID.fromString("e76f7dd4-5985-46be-8965-d2cc4707cb4c")
+    private val billableLatestPriceScheduleId = UUID.fromString("718da7c5-13d1-4832-a0b5-4c07131170aa")
 
     // When creating new tapes, make sure the following IDs do not exist in the backend
-    private val memberId = UUID.fromString("918a6308-28c1-4a4a-b123-4c8233f21b15")
-    private val identificationEventId = UUID.fromString("9911e82f2-6e46-4bd4-a9df-ddf11802c9c7")
-    private val priceScheduleId = UUID.fromString("94fba921-13cd-4025-b622-7c8200f21b85")
-    private val encounterId = UUID.fromString("94fba909-24cd-8026-b653-a0ea44080d2d")
-    private val encounterItemId = UUID.fromString("95fba930-29cd-4022-b673-a9ea26180d9a")
+    private val memberId = UUID.fromString("914a6308-28c1-4a4a-b123-4c2233f21b11")
+    private val identificationEventId = UUID.fromString("9914e82f2-6e42-4bd4-a9df-ddf11802c9c1")
+    private val priceScheduleId = UUID.fromString("94fba924-13cd-4022-b622-7c8200f21b81")
+    private val encounterId = UUID.fromString("94fba909-24cd-8026-b253-a0ea44080d1d")
+    private val encounterItemId = UUID.fromString("95fba911-29cd-4022-b273-a9ea26180d1a")
 
     private val member = MemberFactory.build(
         id = memberId,
@@ -64,17 +64,21 @@ class CoverageApiTest : OkReplayTest() {
 
     @Test
     fun test000_getAuthToken() {
-        api.getAuthToken(
+        val result = api.getAuthToken(
             authorization = Credentials.basic(clinicUser, clinicUserPassword)
-        ).test().assertComplete()
+        ).test()
+        result.assertComplete()
+        result.values().first().toAuthenticationToken()
     }
 
     @Test
     fun test001_getMembers() {
-        api.getMembers(
+        val result = api.getMembers(
             tokenAuthorization = tokenString,
             providerId = providerId
-        ).test().assertComplete()
+        ).test()
+        result.assertComplete()
+        assertTrue(result.values().first().map { it.toMember(null) }.isNotEmpty())
     }
 
     @Test
@@ -90,14 +94,17 @@ class CoverageApiTest : OkReplayTest() {
         result.values().first().let { billablesWithPriceSchedules ->
             assertTrue(billablesWithPriceSchedules.any { billableWithPriceScheduleApi ->
                 billableWithPriceScheduleApi.composition != null &&
-                        billableWithPriceScheduleApi.unit != null
+                billableWithPriceScheduleApi.unit != null
             })
+            assertTrue(billablesWithPriceSchedules.map { it.toBillableWithPriceSchedule() }.isNotEmpty())
         }
     }
 
     @Test
     fun test003_getDiagnoses() {
-        api.getDiagnoses(tokenAuthorization = tokenString).test().assertComplete()
+        val result = api.getDiagnoses(tokenAuthorization = tokenString).test()
+        result.assertComplete()
+        assertTrue(result.values().first().map { it.toDiagnosis() }.isNotEmpty())
     }
 
     @Test
@@ -212,6 +219,9 @@ class CoverageApiTest : OkReplayTest() {
                 returnedClaims.any { returnedClaim ->
                     returnedClaim.providerComment != null
                 }
+            )
+            assertTrue(
+                returnedClaims.map { it.toEncounterWithExtras(null) }.isNotEmpty()
             )
         }
     }

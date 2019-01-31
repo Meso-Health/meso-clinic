@@ -12,7 +12,7 @@ data class BillableWithPriceScheduleApi(
     val unit: String?,
     val price: Int,
     val name: String,
-    val priceScheduleApi: PriceScheduleApi
+    val activePriceSchedule: PriceScheduleApi
 ) {
     constructor (billable: Billable, activePriceSchedule: PriceSchedule) : this(
         id = billable.id,
@@ -21,7 +21,7 @@ data class BillableWithPriceScheduleApi(
         unit = billable.unit,
         price = billable.price,
         name = billable.name,
-        priceScheduleApi = PriceScheduleApi(
+        activePriceSchedule = PriceScheduleApi(
             id = activePriceSchedule.id,
             issuedAt = activePriceSchedule.issuedAt,
             billableId = activePriceSchedule.billableId,
@@ -40,7 +40,7 @@ data class BillableWithPriceScheduleApi(
                 price = price,
                 name = name
             ),
-            priceSchedule = priceScheduleApi.toPriceSchedule()
+            priceSchedule = activePriceSchedule.toPriceSchedule()
         )
     }
 }
