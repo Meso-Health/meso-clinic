@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_labe
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
+import org.watsi.domain.usecases.LoadPendingClaimsUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ClaimListItemAdapter
@@ -26,16 +28,18 @@ import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
-import org.watsi.uhp.viewmodels.PendingClaimsViewModel
+import org.watsi.uhp.viewmodels.SearchableClaimsListViewModel
 import javax.inject.Inject
 
 class PendingClaimsFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var loadPendingClaimsUseCase: LoadPendingClaimsUseCase
 
-    lateinit var viewModel: PendingClaimsViewModel
+    lateinit var viewModel: SearchableClaimsListViewModel
     lateinit var claimsAdapter: ClaimListItemAdapter
+    lateinit var observable: LiveData<SearchableClaimsListViewModel.ViewState>
 
     private var snackbarMessageToShow: String? = null
 
@@ -54,7 +58,7 @@ class PendingClaimsFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(PendingClaimsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchableClaimsListViewModel::class.java)
         setAndObserveViewModel()
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
 
@@ -68,7 +72,8 @@ class PendingClaimsFragment : DaggerFragment() {
     }
 
     private fun setAndObserveViewModel() {
-        viewModel.getObservable().observe(this, Observer {
+        observable = viewModel.getObservable(loadPendingClaimsUseCase)
+        observable.observe(this, Observer {
             it?.let { viewState ->
                 updateClaims(viewState.visibleClaims)
 
@@ -103,10 +108,6 @@ class PendingClaimsFragment : DaggerFragment() {
         })
     }
 
-    private fun filterClaimsBySearchText(text: String) {
-        viewModel.filterClaimsBySearchText(text)
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(
             context.getString(org.watsi.uhp.R.string.pending_claims_fragment_label),
@@ -139,7 +140,6 @@ class PendingClaimsFragment : DaggerFragment() {
             SnackbarHelper.show(claims_list, context, snackbarMessage)
             snackbarMessageToShow = null
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -172,6 +172,9 @@ class PendingClaimsFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
-        setAndObserveViewModel()
+
+        // this is required for when the user back navigates into this screen
+        // the observable does not trigger, so we need to set the adapter from the viewModel
+        viewModel.getClaims()?.let { updateClaims(it) }
     }
 }
