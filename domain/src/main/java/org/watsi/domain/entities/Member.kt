@@ -98,13 +98,15 @@ data class Member(
         val LANGUAGE_CHOICES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA,
                 LANGUAGE_CHOICE_OTHER)
         const val MAX_AGE = 200
+        const val MIN_MRN_LENGTH = 6
+        const val MAX_MRN_LENGTH = 7
 
         fun isValidName(name: String): Boolean {
             return name.split(' ').filter{ it.isNotBlank() }.count() >= 3
         }
 
         fun isValidMedicalRecordNumber(medicalRecordNumber: String): Boolean {
-            return medicalRecordNumber.length in 6..7
+            return medicalRecordNumber.length in MIN_MRN_LENGTH..MAX_MRN_LENGTH
         }
 
         fun isValidCardId(cardId: String): Boolean {
