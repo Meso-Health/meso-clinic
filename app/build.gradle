@@ -1,13 +1,18 @@
+plugins {
+    id("com.github.triplet.play") version "2.1.0"
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-android {
-    // building string config fields requires a double-quoted string
-    // For non-strings in buildConfigField, use System.getenv instead of ENV.
-    def ENV = { k -> "\"${System.getenv(k)}\"" }
+play {
+    serviceAccountCredentials = file('google-play-key.json')
+}
 
+android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
@@ -23,47 +28,17 @@ android {
         buildConfigField "Integer", "PROVIDER_ID", "1"
         buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "false"
 
-        if (gradle.ext.has('rollbarApiKey')) {
-            buildConfigField "String", "ROLLBAR_API_KEY", gradle.ext.rollbarApiKey
-        } else {
-            buildConfigField "String", "ROLLBAR_API_KEY", ENV("ROLLBAR_API_KEY")
-        }
-
-        if (gradle.ext.has('hockeyappAppId')) {
-            buildConfigField "String", "HOCKEYAPP_APP_ID", gradle.ext.hockeyappAppId
-        } else {
-            buildConfigField "String", "HOCKEYAPP_APP_ID", ENV("HOCKEYAPP_APP_ID")
-        }
-
-        if (gradle.ext.has('simprintsApiKey')) {
-            buildConfigField "String", "SIMPRINTS_API_KEY", gradle.ext.simprintsApiKey
-        } else {
-            buildConfigField "String", "SIMPRINTS_API_KEY", ENV("SIMPRINTS_API_KEY")
-        }
-
-        if (gradle.ext.has('apiHostDebug')) {
-            buildConfigField "String", "API_HOST", gradle.ext.apiHostDebug
-        } else {
-            buildConfigField "String", "API_HOST", ENV("API_HOST")
-        }
+        buildConfigField "String", "ROLLBAR_API_KEY", gradle.ext.rollbarApiKey
+        buildConfigField "String", "SIMPRINTS_API_KEY", gradle.ext.simprintsApiKey
+        buildConfigField "String", "API_HOST", gradle.ext.apiHostDebug
     }
     signingConfigs {
         releaseConfig {
             storeFile file("release-key.jks")
-
-            if (gradle.ext.has('releaseKeystorePassword') &&
-                    gradle.ext.has('releaseKeyAlias') &&
-                    gradle.ext.has('releaseKeyPassword')) {
-                storePassword gradle.ext.releaseKeystorePassword
-                keyAlias gradle.ext.releaseKeyAlias
-                keyPassword gradle.ext.releaseKeyPassword
-            } else {
-                storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
-                keyAlias System.getenv("RELEASE_KEY_ALIAS")
-                keyPassword System.getenv("RELEASE_KEY_PASSWORD")
-            }
+            storePassword gradle.ext.releaseKeystorePassword
+            keyAlias gradle.ext.releaseKeyAlias
+            keyPassword gradle.ext.releaseKeyPassword
         }
     }
     flavorDimensions "version"
@@ -91,6 +66,17 @@ android {
             buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
             buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
         }
+        staging {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_dev"
+            ]
+
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostStaging
+        }
         sandbox {
             signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".sandbox"
@@ -100,11 +86,7 @@ android {
                     appIcon: "@mipmap/ic_launcher_sandbox"
             ]
 
-            if (gradle.ext.has('apiHostSandbox')) {
-                buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
-            } else {
-                buildConfigField "String", "API_HOST", ENV("API_HOST")
-            }
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
         }
         demo {
             signingConfig signingConfigs.releaseConfig
@@ -114,14 +96,6 @@ android {
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
-
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
-
-            if (gradle.ext.has('apiHostDemo')) {
-                buildConfigField "String", "API_HOST", gradle.ext.apiHostDemo
-            } else {
-                buildConfigField "String", "API_HOST", ENV("API_HOST")
-            }
         }
         training {
             signingConfig signingConfigs.releaseConfig
@@ -131,9 +105,6 @@ android {
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
-
-            buildConfigField "Integer", "PROVIDER_ID", "1"
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
         }
         release {
             signingConfig signingConfigs.releaseConfig
@@ -144,13 +115,7 @@ android {
                     appIcon: "@mipmap/ic_launcher"
             ]
 
-            buildConfigField "boolean", "SHOULD_CHECK_FOR_UPDATES", "true"
-
-            if (gradle.ext.has('apiHostRelease')) {
-                buildConfigField "String", "API_HOST", gradle.ext.apiHostRelease
-            } else {
-                buildConfigField "String", "API_HOST", ENV("API_HOST")
-            }
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostProduction
         }
     }
 
@@ -231,7 +196,6 @@ dependencies {
     // Application dependencies
     implementation 'me.xdrop:fuzzywuzzy:1.1.9'
     implementation 'me.philio:pinentryview:1.0.6'
-    implementation 'net.hockeyapp.android:HockeySDK:4.1.2'
 
     // Testing
     testImplementation project(path: ':domain', configuration: 'testOutput')

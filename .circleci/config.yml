@@ -1,15 +1,23 @@
 version: 2
+
+android_config: &android_config
+  working_directory: ~/code
+  docker:
+    - image: circleci/android:api-24
+  environment:
+    TERM: dumb
+    JAVA_TOOL_OPTIONS: "-Xmx1024m"
+
 jobs:
-  build:
-    working_directory: ~/code
-    docker:
-      - image: circleci/android:api-24
-    environment:
-      JAVA_TOOL_OPTIONS: "-Xmx1024m"
+  build_and_test:
+    <<: *android_config
     steps:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
+      - run:
+          name: Download secrets
+          command: ./deploy_scripts/downloadSecrets.sh
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
@@ -34,3 +42,63 @@ jobs:
             - app/build/test-results
             - device/build/test-results
             - domain/build/test-results
+
+  deploy_staging:
+    <<: *android_config
+    steps:
+      - checkout
+      - run:
+          name: Deploy App to Play Store (Staging)
+          command: |
+            export VERSION_CODE=${CIRCLE_BUILD_NUM}
+            ./deploy_scripts/downloadSecrets.sh
+            ./gradlew assembleEthiopiaStaging
+            ./gradlew publishEthiopiaStaging -Dorg.gradle.project.track=internal
+
+  deploy_sandbox:
+    <<: *android_config
+    steps:
+      - checkout
+      - run:
+          name: Deploy App to Play Store (Sandbox)
+          command: |
+            export VERSION_CODE=$((${CIRCLE_BUILD_NUM} + 240000000))
+            ./deploy_scripts/downloadSecrets.sh
+            ./gradlew assembleEthiopiaSandbox
+            ./gradlew publishEthiopiaSandbox -Dorg.gradle.project.track=production
+
+  deploy_production_ethiopia:
+    <<: *android_config
+    steps:
+      - checkout
+      - run:
+          name: Deploy App to Play Store (Production)
+          command: |
+            export VERSION_CODE=${CIRCLE_BUILD_NUM}
+            ./deploy_scripts/downloadSecrets.sh
+            ./gradlew assembleEthiopiaSandbox
+            ./gradlew publishEthiopiaSandbox -Dorg.gradle.project.track=production
+
+workflows:
+  version: 2
+  build_test_and_deploy:
+    jobs:
+      - build_and_test
+      - deploy_staging:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: master
+      - deploy_sandbox:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: sandbox
+      - deploy_production_ethiopia:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: production

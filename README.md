@@ -41,14 +41,14 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 
 ### Summary
 
-| Variant              | Purpose                  | Color  | Endpoint                       | Simprints API | Error Reporting | Deployment and Updates | Deployed after green run on… |
-|----------------------|--------------------------|--------|--------------------------------|---------------|-----------------|------------------------|------------------------------|
-| Dev (Debug)          | developing               | gray   | http://localhost:5000          | sandbox       | none            | manual                 | -                            |
-| Spec                 | local tests and CI tests | pink   | http://localhost:8000          | sandbox       | none            | manual                 | -                            |
-| Sandbox              | QA and beta-testing      | yellow | https://uhp-sandbox.watsi.org/ | sandbox       | Rollbar         | automatic (HockeyApp)  | master                       |
-| Training             | training                 | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | automatic (HockeyApp)  | production, training         |
-| Demo                 | demo’ing to funders      | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | automatic (HockeyApp)  | production                   |
-| Production (Release) | live use                 | blue   | https://uhp.watsi.org/         | production    | Rollbar         | automatic (HockeyApp)  | production                   |
+| Variant              | Purpose                  | Color  | Api Endpoint                       | Simprints API | Error Reporting | Deployment and Updates | Deployed after green run on… |
+|----------------------|--------------------------|--------|--------------------------------|---------------|-----------------|-------------------------|------------------------------|
+| Dev (Debug)          | developing               | gray   | http://localhost:5000          | sandbox       | none            | manual                  | -                            |
+| Staging              | Internal QA              | black  | https://api-staging.uhp.org/   | sandbox       | Rollbar         | automatic (Google Play) | master                       |
+| Sandbox              | External QA              | yellow | https://uhp-sandbox.watsi.org/ | sandbox       | Rollbar         | automatic (Google Play) | sandbox                      |
+| Training             | training                 | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | manual                  | -                            |
+| Demo                 | demo’ing to funders      | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | manual                  | -                            |
+| Production           | live use                 | blue   | https://uhp.watsi.org          | production-{deployment}| Rollbar| automatic (Google Play) | production                   |
 
 See `build.gradle` for full details on configuration differences between the different variants.
 
@@ -84,7 +84,7 @@ Option 2
 3. **Important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
 4. Choose the flavor and build.
 
-You now have a signed release APK that you can email, manually install on individual phones using `adb install`, or upload to HockeyApp for mass distribution. For more detailed instructions and up-to-date info on signing and publishing, see the [official docs](https://developer.android.com/studio/publish/app-signing.html#release-mode).
+You now have a signed release APK that you can email, manually install on individual phones using `adb install`, or upload to Google Play for mass distribution. For more detailed instructions and up-to-date info on signing and publishing, see the [official docs](https://developer.android.com/studio/publish/app-signing.html#release-mode).
 
 ## Running app against a local server
 
@@ -163,39 +163,23 @@ buildConfigField "String", "API_HOST", "\"http://10.0.2.2:8000\""
 
 ## Continuous Deployment
 
-We use Circle CI and [HockeyApp](https://rink.hockeyapp.net/manage/dashboard) as our continous deployment tools. When Circle CI tests pass on the relevant branch, the following is done automatically:
+Whenever code is merged into `master`, `sandbox`, or `production` branches, circle CI automatically runs tests.
 
-1. Keystore is downloaded from Dropbox.
+If tests pass, then the following is done automatically:
+
+1. Keystore, gradle variables, and google play key are downloaded from S3.
     - This requires the following [env variables](https://circleci.com/gh/Watsi/uhp-android-app/edit#env-vars) to be set in Circle:
-      - ANDROID_SIGNING_KEY_URI
-      - ANDROID_SIGNING_KEY_SAVE_PATH
+      - GOOGLE_PLAY_KEY_S3_URI
+      - GRADLE_VARIABLES_S3_URI
+      - ANDROID_SIGNING_KEY_S3_URI
 2. APK is built and signed with the keystore.
     - The build variant is determined by the github branch (see summary table above)
     - The app's VERSION_CODE is determined by the CIRCLE_BUILD_NUM
-    - The app's VERSION_NAME is determined by the CURRENT_BUILD_MAJOR and CURRENT_BUILD_MINOR env variables set in Circle
-3. APK is deployed to HockeyApp.
-    - This requires the following env variables to be set in Circle:
-      - HOCKEYAPP_ACCESS_TOKEN
-      - HOCKEYAPP_APP_ID (different for each app)
+    - The app's VERSION_NAME is `versionMajor, versionMinor, versionPatch (CIRCLE_BUILD_NUM)`.
+3. APK is deployed to Google Play.
 
-(See `circle.yml` for source code)
+(See `.circleci/config.yml` for source code)
 
-### Deploy to production via hockeyapp
-
-To deploy to production, first merge your changes into `master` and ensure you get a green build. Then:
-
-1. Check what you are going to deploy at [https://github.com/Watsi/uhp-android-app/compare/production...master](https://github.com/Watsi/uhp-android-app/compare/production...master)
-
-2. Locally, fetch the latest changes and merge `master` into `production`:
-```
-$ git pull --rebase
-$ git checkout production
-$ git reset --hard origin/production
-$ git merge master
-$ git push origin head
-```
-
-3. Once the [CI on the production branch](https://circleci.com/gh/Watsi/uhp-android-app/tree/production) goes green, the app will automatically be deployed to all phones running the production app.
 
 ## Testing
 
@@ -203,7 +187,7 @@ Tests can be run directly through the Android Studio UI by right-clicking the te
 
 Because some of our tests are run using [Roboelectric](http://robolectric.org/), we must also edit the default working directory for our JUnit environment to `$MODULE_DIR$` as described [here](http://robolectric.org/getting-started/#note-for-linux-and-mac-users).
 
-Tests can also be run from the terminal. 
+Tests can also be run from the terminal.
 
  ```
  # Make sure the current environment variables are loaded, otherwise this will fail to build.
@@ -217,16 +201,16 @@ Tests can also be run from the terminal.
 
  # Run all feature tests for a specific build variant.
  ./gradlew connected<variant_name>AndroidTest
- 
+
  # Run feature tests in a specific package for a specific build variant.
  ./gradlew connected<variant_name>AndroidTest -Pandroid.testInstrumentationRunnerArguments.package=<package_name>
- 
+
  # Run specific feature test for a specific build variant.
  ./gradlew connected<variant_name>AndroidTest -Pandroid.testInstrumentationRunnerArguments.class=<package_name>
  ```
- 
+
  More options [here](https://developer.android.com/studio/test/command-line.htm).
- 
+
 ### To run offline feature tests locally:
 ```
  ./gradlew connectedSpecDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=org.watsi.uhp.offline

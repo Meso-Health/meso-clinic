@@ -1,5 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+def versionMajor = 0
+def versionMinor = 4
+def versionPatch = 0
+def versionCodeForLocalDevelopment = 1
+def computedVersionCode = (System.getenv("VERSION_CODE") ?: versionCodeForLocalDevelopment) as Integer
+
 buildscript {
     repositories {
         google()
@@ -40,8 +46,8 @@ ext {
     targetSdkVersion = 26
     compileSdkVersion = 26
     applicationId = "org.watsi.claims_submission"
-    versionCode = 7
-    versionName = "0.4.0"
+    versionCode = computedVersionCode
+    versionName = "${versionMajor}.${versionMinor}.${versionPatch} (${computedVersionCode})"
 }
 
 // This adds more custom properties from the dependencies.gradle file and makes them available to
