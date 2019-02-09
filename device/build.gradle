@@ -23,6 +23,7 @@ android {
 
     buildTypes {
         // all buildTypes used in the app gradle file must be present here as well
+        staging {}
         sandbox {}
         demo {}
         training {}

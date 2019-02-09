@@ -43,6 +43,11 @@ class EditMemberViewModel @Inject constructor(
         } ?: Completable.complete()
     }
 
+    fun validateMedicalRecordNumber(medicalRecordNumberString: String?, errorString: String): String? {
+        return if (medicalRecordNumberString == null ||
+            Member.isValidMedicalRecordNumber(medicalRecordNumberString)) { null } else { errorString }
+    }
+
     fun updatePhoto(rawPhotoId: UUID, thumbnailPhotoId: UUID): Completable {
         return liveData.value?.memberWithThumbnail?.member?.let {
             updateMemberUseCase.execute(it.copy(

@@ -9,6 +9,7 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.ArchivedReason
 import java.util.UUID
 
 class TypeConverter {
@@ -110,6 +111,12 @@ class TypeConverter {
     fun fromAdjudicationState(adjudicationState: Encounter.AdjudicationState?): String? {
         return adjudicationState?.toString()
     }
+
+    @TypeConverter
+    fun toArchivedReason(value: String?): ArchivedReason? = value?.let { ArchivedReason.valueOf(value) }
+
+    @TypeConverter
+    fun fromArchivedReason(type: ArchivedReason?): String? = type?.let { type.toString() }
 
     @TypeConverter
     fun toRelationshipToHead(value: String?): Member.RelationshipToHead? = value?.let { Member.RelationshipToHead.valueOf(value) }

@@ -8,12 +8,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.usecases.LoadPendingClaimsUseCase
+import org.watsi.domain.usecases.LoadClaimsUseCase
 import org.watsi.domain.usecases.SubmitClaimUseCase
 import javax.inject.Inject
 
-class PendingClaimsViewModel @Inject constructor(
-    private val loadPendingClaimsUseCase: LoadPendingClaimsUseCase,
+class SearchableClaimsListViewModel @Inject constructor(
     private val submitClaimUseCase: SubmitClaimUseCase,
     private val logger: Logger,
     private val clock: Clock
@@ -21,10 +20,10 @@ class PendingClaimsViewModel @Inject constructor(
 
     private val observable = MutableLiveData<ViewState>()
 
-    fun getObservable(): LiveData<ViewState> {
+    fun getObservable(loadClaimsUseCase: LoadClaimsUseCase): LiveData<ViewState> {
         observable.value = ViewState()
 
-        loadPendingClaimsUseCase.execute().subscribe({ claims ->
+        loadClaimsUseCase.execute().subscribe({ claims ->
             observable.postValue(ViewState(
                 claims = claims,
                 visibleClaims = claims
@@ -37,8 +36,8 @@ class PendingClaimsViewModel @Inject constructor(
     }
 
     fun filterClaimsBySearchText(filterText: String) {
-        if (filterText.length > 2) {
-            observable.value?.let { viewState ->
+        observable.value?.let { viewState ->
+            if (filterText.length > 2) {
                 val filteredClaims = viewState.claims.filter {
                     val medicalRecordNumber = it.member.medicalRecordNumber
                     val membershipNumber = it.member.membershipNumber
@@ -46,6 +45,8 @@ class PendingClaimsViewModel @Inject constructor(
                             (medicalRecordNumber != null && medicalRecordNumber.contains(filterText, ignoreCase = true))
                 }
                 observable.value = viewState.copy(visibleClaims = filteredClaims)
+            } else {
+                observable.value = viewState.copy(visibleClaims = viewState.claims)
             }
         }
     }

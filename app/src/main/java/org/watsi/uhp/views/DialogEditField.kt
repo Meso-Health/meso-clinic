@@ -3,7 +3,9 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
+import android.text.InputFilter
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import kotlinx.android.synthetic.main.view_dialog_edit_field.view.action
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.field_label
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.input_value
 import org.watsi.uhp.R
+import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.managers.KeyboardManager
 
 /**
@@ -28,6 +31,10 @@ class DialogEditField @JvmOverloads constructor(
 
     private var dialogEditTextInputType: Int = 1
     private var value: String? = null
+
+    companion object {
+        const val DEFAULT_MAX_LINES = 20
+    }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_dialog_edit_field, this, true)
@@ -62,27 +69,42 @@ class DialogEditField @JvmOverloads constructor(
      */
     fun configureEditTextDialog(keyboardManager: KeyboardManager,
                                 handleNewValue: (value: String, dialog: AlertDialog) -> Unit,
-                                multiline: Boolean = false) {
+                                multiline: Boolean = false,
+                                validateFieldAndReturnError: (String?) -> (String?) = { null },
+                                maxTextLength: Int? = null
+    ) {
         setOnClickListener {
-            launchEditTextDialog(keyboardManager, handleNewValue, multiline)
+            launchEditTextDialog(
+                keyboardManager = keyboardManager,
+                handleNewValue = handleNewValue,
+                multiline = multiline,
+                validateFieldAndReturnError = validateFieldAndReturnError,
+                maxTextLength = maxTextLength
+            )
         }
     }
 
     fun launchEditTextDialog(keyboardManager: KeyboardManager,
                              handleNewValue: (value: String, dialog: AlertDialog) -> Unit,
                              multiline: Boolean = false,
-                             defaultValue: (value: String?) -> String? = { value -> value }
+                             defaultValue: (value: String?) -> String? = { value -> value },
+                             validateFieldAndReturnError: (String?) -> (String?) = { null },
+                             maxTextLength: Int? = null
     ) {
         val dialogBuilder = AlertDialog.Builder(context)
-        val editTextLayout = LayoutInflater.from(context).inflate(R.layout.dialog_edit_text, null)
-        val editText = editTextLayout.findViewById<TextInputEditText>(R.id.dialog_input)
+        val editTextContainer = LayoutInflater.from(context).inflate(R.layout.dialog_edit_text, null)
+        val editTextLayout = editTextContainer.findViewById<TextInputLayout>(R.id.dialog_input_layout)
+        val editText = editTextContainer.findViewById<TextInputEditText>(R.id.dialog_input)
         editText.setText(defaultValue(value))
         editText.inputType = dialogEditTextInputType
+        maxTextLength?.let {
+            editText.filters = arrayOf(InputFilter.LengthFilter(maxTextLength))
+        }
         if (multiline) {
             editText.setHorizontallyScrolling(false)
-            editText.maxLines = 20
+            editText.maxLines = DEFAULT_MAX_LINES
         }
-        dialogBuilder.setView(editTextLayout)
+        dialogBuilder.setView(editTextContainer)
         dialogBuilder.setTitle(field_label.text)
         dialogBuilder.setPositiveButton(R.string.modal_save, { _, _ ->
             // no-op, handled in onClickListener below
@@ -93,17 +115,30 @@ class DialogEditField @JvmOverloads constructor(
         val dialog = dialogBuilder.create()
         editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handleNewValue(editText.text.toString(), dialog)
+                val newValue = editText.text.toString()
+                editTextLayout.error  = validateFieldAndReturnError(newValue)
+
+                if (editTextLayout.error == null) {
+                    handleNewValue(newValue, dialog)
+                }
                 true
             } else {
                 false
             }
         }
+        editText.addTextChangedListener(LayoutHelper.OnChangedListener {
+                _ -> editTextLayout.error = null
+        })
         dialog.setOnShowListener {
             // need to use post for showKeyboard to work reliably
             editText.post { keyboardManager.showKeyboard(editText) }
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                handleNewValue(editText.text.toString(), dialog)
+                val newValue = editText.text.toString()
+                editTextLayout.error  = validateFieldAndReturnError(newValue)
+
+                if (editTextLayout.error == null) {
+                    handleNewValue(newValue, dialog)
+                }
             }
         }
         dialog.show()

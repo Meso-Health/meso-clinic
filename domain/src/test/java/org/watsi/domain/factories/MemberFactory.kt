@@ -3,6 +3,7 @@ package org.watsi.domain.factories
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.ArchivedReason
 import java.util.UUID
 
 object MemberFactory {
@@ -18,14 +19,16 @@ object MemberFactory {
         name: String = "Akiiki Monday",
         gender: Member.Gender = Member.Gender.F,
         language: String? = null,
-        birthdate: LocalDate = LocalDate.now(),
+        birthdate: LocalDate = LocalDate.of(1993, 5, 11),
         birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
         fingerprintsGuid: UUID? = null,
         phoneNumber: String? = null,
         membershipNumber: String? = null,
         medicalRecordNumber: String? = null,
         needsRenewal: Boolean? = false,
-        relationshipToHead: Member.RelationshipToHead? = null
+        relationshipToHead: Member.RelationshipToHead? = null,
+        archivedAt: Instant? = null,
+        archivedReason: ArchivedReason? = null
     ) : Member {
         return Member(
             id = id,
@@ -45,7 +48,9 @@ object MemberFactory {
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
             needsRenewal = needsRenewal,
-            relationshipToHead = relationshipToHead
+            relationshipToHead = relationshipToHead,
+            archivedAt = archivedAt,
+            archivedReason = archivedReason
         )
     }
 }

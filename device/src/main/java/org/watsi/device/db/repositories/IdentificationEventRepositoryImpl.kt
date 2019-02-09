@@ -64,7 +64,7 @@ class IdentificationEventRepositoryImpl(
                     api.patchIdentificationEvent(
                         tokenAuthorization = token.getHeaderString(),
                         identificationEventId = identificationEventModel.id,
-                        identificationEvent = IdentificationEventApi.patch(identificationEventModel.toIdentificationEvent(), deltas)
+                        patchParams = IdentificationEventApi.patch(identificationEventModel.toIdentificationEvent(), deltas)
                     )
                 }
             }.subscribeOn(Schedulers.io())

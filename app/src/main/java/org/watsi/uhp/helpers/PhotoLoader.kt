@@ -33,8 +33,9 @@ object PhotoLoader {
 
         if (bytes == null) {
             view.setPadding(placeholderPadding, placeholderPadding, placeholderPadding, placeholderPadding)
+        } else {
+            view.setPadding(0, 0, 0, 0)
         }
-
         requestOptions.fallback(placeholder)
 
         Glide.with(context)

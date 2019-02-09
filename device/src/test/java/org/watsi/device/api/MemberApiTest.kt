@@ -20,7 +20,7 @@ class MemberApiTest {
         assertEquals(memberApi.enrolledAt, parsedMember.enrolledAt)
         assertEquals(memberApi.householdId, parsedMember.householdId)
         assertEquals(memberApi.cardId, parsedMember.cardId)
-        assertEquals(memberApi.name, parsedMember.name)
+        assertEquals(memberApi.fullName, parsedMember.name)
         assertEquals(memberApi.gender, parsedMember.gender)
         assertEquals(memberApi.birthdate, parsedMember.birthdate)
         assertEquals(memberApi.birthdateAccuracy, parsedMember.birthdateAccuracy)

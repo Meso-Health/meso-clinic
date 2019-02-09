@@ -9,7 +9,6 @@ import android.support.v4.app.ActivityCompat
 import android.view.Menu
 import android.view.WindowManager
 import dagger.android.support.DaggerAppCompatActivity
-import net.hockeyapp.android.UpdateManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
@@ -65,32 +64,12 @@ class ClinicActivity : DaggerAppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        if (BuildConfig.SHOULD_CHECK_FOR_UPDATES) checkForUpdates()
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        UpdateManager.unregister()
-    }
-
-    public override fun onDestroy() {
-        super.onDestroy()
-        UpdateManager.unregister()
-    }
-
     private fun startServices() {
         BaseService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
         BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
         BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
         BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
-    }
-
-    private fun checkForUpdates() {
-        UpdateManager.register(this, BuildConfig.HOCKEYAPP_APP_ID)
     }
 
     fun setSoftInputModeToResize() {

@@ -51,6 +51,7 @@ import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
+import org.watsi.domain.entities.Member.ArchivedReason
 import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
@@ -78,10 +79,16 @@ class MemberRepositoryImplTest {
 
     @Test
     fun all() {
-        val memberList = listOf(MemberModelFactory.build(), MemberModelFactory.build())
+        val member1 = MemberModelFactory.build()
+        val member2 = MemberModelFactory.build()
+        val archivedMember = MemberModelFactory.build(archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
+        val memberList = listOf(member1, member2, archivedMember)
+        val filteredMemberList = listOf(member1, member2)
         whenever(mockDao.all()).thenReturn(Flowable.just(memberList))
+        whenever(mockDao.allUnarchived()).thenReturn(Flowable.just(filteredMemberList))
 
-        repository.all().test().assertValue(memberList.map { it.toMember() })
+        repository.all(excludeArchived = true).test().assertValue(filteredMemberList.map { it.toMember() })
+        repository.all(excludeArchived = false).test().assertValue(memberList.map { it.toMember() })
     }
 
     @Test
@@ -95,11 +102,18 @@ class MemberRepositoryImplTest {
     @Test
     fun findByCardId() {
         val cardId = "RWI123456"
+        val archivedCardId = "RWI123457"
         val member = MemberFactory.build(cardId = cardId)
-        whenever(mockDao.findByCardId(cardId)).thenReturn(
-                Maybe.just(MemberModel.fromMember(member, clock)))
+        val archivedMember = MemberFactory.build(cardId = archivedCardId, archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
+        whenever(mockDao.findByCardId(archivedCardId)).thenReturn(
+            Maybe.just(MemberModel.fromMember(archivedMember, clock)))
+        whenever(mockDao.findByCardIdUnarchived(cardId)).thenReturn(
+            Maybe.just(MemberModel.fromMember(member, clock))
+        )
 
-        repository.findByCardId(cardId).test().assertValue(member)
+        repository.findByCardId(cardId = archivedCardId, excludeArchived = false).test().assertValue(archivedMember)
+        repository.findByCardId(cardId = cardId, excludeArchived = true).test().assertValue(member)
+
     }
 
     @Test
@@ -118,10 +132,31 @@ class MemberRepositoryImplTest {
         val householdId = UUID.randomUUID()
         val member1 = MemberFactory.build(householdId = householdId)
         val member2 = MemberFactory.build(householdId = householdId)
-        val householdMemberRelations = listOf(
-            MemberWithIdEventAndThumbnailPhoto(member = member1, identificationEvent = null, thumbnailPhoto = null),
-            MemberWithIdEventAndThumbnailPhoto(member = member2, identificationEvent = null, thumbnailPhoto = null)
+        val archivedMember = MemberFactory.build(
+            householdId = householdId,
+            archivedReason = ArchivedReason.DEATH,
+            archivedAt = Instant.now()
         )
+        val memberRelation1 = MemberWithIdEventAndThumbnailPhoto(
+            member = member1,
+            identificationEvent = null,
+            thumbnailPhoto = null
+        )
+        val memberRelation2 = MemberWithIdEventAndThumbnailPhoto(
+            member = member2,
+            identificationEvent = null,
+            thumbnailPhoto = null
+        )
+        val archivedMemberRelation = MemberWithIdEventAndThumbnailPhoto(
+            member = archivedMember,
+            identificationEvent = null,
+            thumbnailPhoto = null
+        )
+        val householdMemberRelations =
+            listOf(memberRelation1, memberRelation2, archivedMemberRelation)
+        val filteredHouseholdMemberRelations =
+            listOf(memberRelation1, memberRelation2)
+
 
         whenever(mockDao.findHouseholdMembers(householdId)).thenReturn(
             Flowable.just(householdMemberRelations.map {
@@ -129,7 +164,16 @@ class MemberRepositoryImplTest {
             })
         )
 
-        repository.findHouseholdMembers(householdId).test().assertValue(householdMemberRelations)
+        whenever(mockDao.findHouseholdMembersUnarchived(householdId)).thenReturn(
+            Flowable.just(filteredHouseholdMemberRelations.map {
+                MemberWithIdEventAndThumbnailPhotoModel(memberModel = MemberModel.fromMember(it.member, clock))
+            })
+        )
+
+        repository.findHouseholdMembers(householdId = householdId, excludeArchived = true).test()
+            .assertValue(filteredHouseholdMemberRelations)
+        repository.findHouseholdMembers(householdId = householdId, excludeArchived = false).test()
+            .assertValue(householdMemberRelations)
     }
 
     @Test

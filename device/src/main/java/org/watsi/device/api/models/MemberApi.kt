@@ -2,35 +2,34 @@ package org.watsi.device.api.models
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.ArchivedReason
 import org.watsi.domain.entities.Member.RelationshipToHead
 import java.util.UUID
 
 data class MemberApi(
-    @SerializedName(ID_FIELD) val id: UUID,
-    @SerializedName(ENROLLED_AT_FIELD) val enrolledAt: Instant,
-    @SerializedName(HOUSEHOLD_ID_FIELD) val householdId: UUID?,
-    @SerializedName(CARD_ID_FIELD) val cardId: String?,
-    @SerializedName(NAME_FIELD) val name: String,
-    @SerializedName(GENDER_FIELD) val gender: Member.Gender,
-    @SerializedName(BIRTHDATE_FIELD) val birthdate: LocalDate,
-    @SerializedName(BIRTHDATE_ACCURACY_FIELD)
+    val id: UUID,
+    val enrolledAt: Instant,
+    val householdId: UUID?,
+    val cardId: String?,
+    val fullName: String,
+    val gender: Member.Gender,
+    val birthdate: LocalDate,
     val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
-    @SerializedName(FINGERPRINTS_GUID_FIELD) val fingerprintsGuid: UUID?,
-    @SerializedName(PHONE_NUMBER_FIELD) val phoneNumber: String?,
-    @SerializedName(LANGUAGE_FIELD) val language: String?,
-    @SerializedName(OTHER_LANGUAGE_FIELD) val otherLanguage: String?,
-    @Expose(serialize = false)
-    @SerializedName(PHOTO_URL_FIELD) val photoUrl: String?,
-    @SerializedName(MEMBERSHIP_NUMBER_FIELD) val membershipNumber: String?,
-    @SerializedName(MEDICAL_RECORD_NUMBER_FIELD) val medicalRecordNumber: String?,
-    @Expose(serialize = false)
-    @SerializedName(NEEDS_RENEWAL) val needsRenewal: Boolean?,
-    @SerializedName(RELATIONSHIP_TO_HEAD) val relationshipToHead: RelationshipToHead?
+    val fingerprintsGuid: UUID?,
+    val phoneNumber: String?,
+    val preferredLanguage: String?,
+    val preferredLanguageOther: String?,
+    @Expose(serialize = false) val photoUrl: String?,
+    val membershipNumber: String?,
+    val medicalRecordNumber: String?,
+    @Expose(serialize = false) val needsRenewal: Boolean?,
+    val relationshipToHead: RelationshipToHead?,
+    val archivedAt: Instant?,
+    val archivedReason: ArchivedReason?
 ) {
 
     constructor (member: Member) :
@@ -38,19 +37,21 @@ data class MemberApi(
                  enrolledAt = member.enrolledAt,
                  householdId = member.householdId,
                  cardId = member.cardId,
-                 name = member.name,
+                 fullName = member.name,
                  gender = member.gender,
                  birthdate = member.birthdate,
                  birthdateAccuracy = member.birthdateAccuracy,
                  fingerprintsGuid = member.fingerprintsGuid,
                  phoneNumber = member.phoneNumber,
-                 language = preferredLanguage(member),
-                 otherLanguage = preferredLanguageOther(member),
+                 preferredLanguage = preferredLanguage(member),
+                 preferredLanguageOther = preferredLanguageOther(member),
                  photoUrl = member.photoUrl,
                  membershipNumber = member.membershipNumber,
                  medicalRecordNumber = member.medicalRecordNumber,
                  needsRenewal = member.needsRenewal,
-                 relationshipToHead = member.relationshipToHead
+                 relationshipToHead = member.relationshipToHead,
+                 archivedAt = member.archivedAt,
+                 archivedReason = member.archivedReason
             )
 
     fun toMember(persistedMember: Member?): Member {
@@ -63,41 +64,32 @@ data class MemberApi(
             enrolledAt = enrolledAt,
             householdId = householdId,
             cardId = cardId,
-            name = name,
+            name = fullName,
             gender = gender,
             birthdate = birthdate,
             birthdateAccuracy = birthdateAccuracy,
             fingerprintsGuid = fingerprintsGuid,
             phoneNumber = phoneNumber,
-            language = language,
+            language = preferredLanguage,
             photoId = persistedMember?.photoId,
             thumbnailPhotoId = thumbnailPhotoId,
             photoUrl = photoUrl,
             membershipNumber = membershipNumber,
             medicalRecordNumber = medicalRecordNumber,
             needsRenewal = needsRenewal,
-            relationshipToHead = relationshipToHead
+            relationshipToHead = relationshipToHead,
+            archivedAt = archivedAt,
+            archivedReason = archivedReason
         )
     }
 
     companion object {
         const val ID_FIELD = "id"
-        const val ENROLLED_AT_FIELD = "enrolled_at"
-        const val HOUSEHOLD_ID_FIELD = "household_id"
         const val CARD_ID_FIELD = "card_id"
         const val NAME_FIELD = "full_name"
-        const val GENDER_FIELD = "gender"
-        const val BIRTHDATE_FIELD = "birthdate"
-        const val BIRTHDATE_ACCURACY_FIELD = "birthdate_accuracy"
         const val FINGERPRINTS_GUID_FIELD = "fingerprints_guid"
         const val PHONE_NUMBER_FIELD = "phone_number"
-        const val LANGUAGE_FIELD = "preferred_language"
-        const val OTHER_LANGUAGE_FIELD = "preferred_language_other"
-        const val PHOTO_URL_FIELD = "photo_url"
-        const val MEMBERSHIP_NUMBER_FIELD = "membership_number"
         const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
-        const val NEEDS_RENEWAL = "needs_renewal"
-        const val RELATIONSHIP_TO_HEAD = "relationship_to_head"
 
         fun patch(member: Member, deltas: List<Delta>): JsonObject {
             val patchParams = JsonObject()

@@ -16,10 +16,9 @@ import org.watsi.uhp.viewmodels.HomeViewModel
 import org.watsi.uhp.viewmodels.HouseholdViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
-import org.watsi.uhp.viewmodels.PendingClaimsViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
-import org.watsi.uhp.viewmodels.ReturnedClaimsViewModel
 import org.watsi.uhp.viewmodels.SearchViewModel
+import org.watsi.uhp.viewmodels.SearchableClaimsListViewModel
 import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
 
@@ -73,14 +72,9 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(PendingClaimsViewModel::class)
-    abstract fun bindPendingClaimsViewModel(viewModel: PendingClaimsViewModel): ViewModel
+    @ViewModelKey(SearchableClaimsListViewModel::class)
+    abstract fun bindSearchableClaimsListViewModel(listViewModel: SearchableClaimsListViewModel): ViewModel
     
-    @Binds
-    @IntoMap
-    @ViewModelKey(ReturnedClaimsViewModel::class)
-    abstract fun bindReturnedClaimsViewModel(viewModel: ReturnedClaimsViewModel): ViewModel
-
     @Binds
     @IntoMap
     @ViewModelKey(StatusViewModel::class)

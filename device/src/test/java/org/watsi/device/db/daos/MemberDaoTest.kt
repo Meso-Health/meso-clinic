@@ -1,6 +1,7 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
+import org.threeten.bp.Instant
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
@@ -9,6 +10,7 @@ import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.MemberWithThumbnailModelFactory
 import org.watsi.device.factories.PhotoModelFactory
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.Member.ArchivedReason
 import java.util.UUID
 
 class MemberDaoTest : DaoBaseTest() {
@@ -17,31 +19,31 @@ class MemberDaoTest : DaoBaseTest() {
     fun checkedInMembers() {
         val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
         val memberWithOpenCheckIn = MemberModelFactory.create(
-                memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
+            memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
         val memberWithDismissedCheckIn = MemberModelFactory.create(memberDao)
         val memberWithEncounter = MemberModelFactory.create(memberDao)
         MemberModelFactory.create(memberDao)
 
         // open identification event
         val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithOpenCheckIn.id,
-                dismissed = false)
+            memberId = memberWithOpenCheckIn.id,
+            dismissed = false)
 
         // dismissed identification event
         IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithDismissedCheckIn.id,
-                dismissed = true)
+            memberId = memberWithDismissedCheckIn.id,
+            dismissed = true)
 
         // open identification event but with corresponding encounter
         val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithEncounter.id,
-                dismissed = false)
+            memberId = memberWithEncounter.id,
+            dismissed = false)
         EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
 
         val memberWithOpenCheckInRelation = MemberWithIdEventAndThumbnailPhotoModel(
-                memberWithOpenCheckIn,
-                listOf(openCheckIn),
-                listOf(memberThumbnailPhoto))
+            memberWithOpenCheckIn,
+            listOf(openCheckIn),
+            listOf(memberThumbnailPhoto))
         memberDao.checkedInMembers().test().assertValue(listOf(memberWithOpenCheckInRelation))
     }
 
@@ -114,6 +116,25 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun findHouseholdIdByCardIdUnarchived() {
+        val householdId = UUID.randomUUID()
+        val cardId = "ETH345987"
+        val archivedCardId = "ETH345988"
+        val memberModel = MemberModelFactory.build(householdId = householdId, cardId = cardId)
+        val archivedMemberModel = MemberModelFactory.build(householdId = householdId, cardId = archivedCardId, archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, archivedMemberModel)
+
+        memberDao.findHouseholdIdByCardIdUnarchived(cardId)
+            .test()
+            .assertValue(householdId)
+
+        memberDao.findHouseholdIdByCardIdUnarchived(archivedCardId)
+            .test()
+            .assertNoValues()
+    }
+
+    @Test
     fun findHouseholdIdByMembershipNumber() {
         val householdId = UUID.randomUUID()
         val membershipNumber = "01/01/01/P/10"
@@ -152,6 +173,25 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun findHouseholdIdByMembershipNumberUnarchived() {
+        val householdId = UUID.randomUUID()
+        val membershipNumber = "01/01/01/P/10"
+        val archivedMembershipNumber = "01/01/01/P/11"
+        val memberModel = MemberModelFactory.build(householdId = householdId, membershipNumber = membershipNumber)
+        val archivedMemberModel = MemberModelFactory.build(householdId = householdId, membershipNumber = archivedMembershipNumber, archivedAt = Instant.now(), archivedReason = ArchivedReason.DEATH)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, memberModel)
+        MemberWithThumbnailModelFactory.create(memberDao, photoDao, archivedMemberModel)
+
+        memberDao.findHouseholdIdByMembershipNumberUnarchived(membershipNumber)
+            .test()
+            .assertValue(householdId)
+
+        memberDao.findHouseholdIdByMembershipNumberUnarchived(archivedMembershipNumber)
+            .test()
+            .assertNoValues()
+    }
+
+    @Test
     fun findHouseholdMembers() {
         val householdId = UUID.randomUUID()
         val householdMembers = (1..3).map {
@@ -168,12 +208,34 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun findHouseholdMembersUnarchived() {
+        val householdId = UUID.randomUUID()
+        val householdMembers = (1..3).map {
+            MemberWithIdEventAndThumbnailPhotoModel(
+                memberModel = MemberModelFactory.create(memberDao, householdId = householdId),
+                identificationEventModels = emptyList()
+            )
+        }
+        MemberModelFactory.create(memberDao)
+        MemberWithIdEventAndThumbnailPhotoModel(
+            memberModel = MemberModelFactory.create(memberDao, householdId = householdId, archivedAt = Instant.now(), archivedReason = ArchivedReason.DEATH),
+            identificationEventModels = emptyList()
+        )
+
+        memberDao.findHouseholdMembersUnarchived(householdId)
+            .test()
+            .assertValue(householdMembers)
+    }
+
+    @Test
     fun needPhotoDownload() {
         val needsPhoto = MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
         // photo downloaded
         MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
         // does not have photo
         MemberModelFactory.create(memberDao, photoUrl = null)
+        // is archived
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null, archivedAt = Instant.now(), archivedReason = ArchivedReason.DEATH)
 
         memberDao.needPhotoDownload().test().assertValue(listOf(needsPhoto))
     }
@@ -210,6 +272,8 @@ class MemberDaoTest : DaoBaseTest() {
         MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
         // does not have photo
         MemberModelFactory.create(memberDao, photoUrl = null)
+        // is archived
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null, archivedAt = Instant.now(), archivedReason = ArchivedReason.DEATH)
 
         memberDao.needPhotoDownloadCount().test().assertValue(1)
     }
@@ -259,5 +323,14 @@ class MemberDaoTest : DaoBaseTest() {
         MemberModelFactory.create(memberDao, householdId = null)
 
         memberDao.all().test().assertValue(listOf(memberWithHousehold))
+    }
+
+    @Test
+    fun allUnarchived_returnsAllUnarchivedMembersWithHouseholdIds() {
+        val memberWithHousehold = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID())
+        val archivedMember = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID(), archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
+        MemberModelFactory.create(memberDao, householdId = null)
+
+        memberDao.allUnarchived().test().assertValue(listOf(memberWithHousehold))
     }
 }

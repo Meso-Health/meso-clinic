@@ -146,9 +146,18 @@ class EditMemberFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        medical_record_number_field.configureEditTextDialog(keyboardManager, { medicalRecordNumberString, dialog ->
-            viewModel.updateMedicalRecordNumber(medicalRecordNumberString).subscribe(UpdateFieldObserver(dialog))
-        })
+        medical_record_number_field.configureEditTextDialog(
+            keyboardManager = keyboardManager,
+            handleNewValue = { medicalRecordNumberString, dialog ->
+                viewModel.updateMedicalRecordNumber(medicalRecordNumberString)
+                    .subscribe(UpdateFieldObserver(dialog))
+            },
+            validateFieldAndReturnError = { medicalRecordNumberString ->
+                viewModel.validateMedicalRecordNumber(medicalRecordNumberString,
+                    getString(R.string.medical_record_number_length_validation_error))
+            },
+            maxTextLength = Member.MAX_MRN_LENGTH
+        )
 
         photo_container.setOnClickListener {
             startActivityForResult(Intent(activity, SavePhotoActivity::class.java), CAPTURE_PHOTO_INTENT)
