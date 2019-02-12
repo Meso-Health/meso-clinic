@@ -29,7 +29,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         sharedPreferences.edit().putString(AUTHENTICATION_TOKEN_KEY, tokenJson).apply()
     }
 
-    override fun getMembersPageKey(): String {
+    override fun getMembersPageKey(): String? {
         return sharedPreferences.getString(MEMBERS_PAGE_KEY, null)
     }
 

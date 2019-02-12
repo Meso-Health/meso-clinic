@@ -40,7 +40,7 @@ interface CoverageApi {
     fun getMembers(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
             @Path("providerId") providerId: Int,
-            @Query("page_key") pageKey: String
+            @Query("page_key") pageKey: String?
     ): Single<MemberPaginationApi>
 
     @GET("providers/{providerId}/billables")
