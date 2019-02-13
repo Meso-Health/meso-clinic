@@ -12,17 +12,6 @@ After installing Android Studio it will walk you through downloading the most re
 
 In order to run the application, you also need a `variables.gradle` file in your root directory which stores environment variables. Create a file called `variables.gradle` and copy the file contents from 1Password.
 
-### Environment variable alternative
-Note that if you are using `variables.gradle` the following steps are not necessary, and you can skip to the `Build variants` section.
-
-As an alternative to `variables.gradle`, you can use a `.env` file with environment variables to store your private config settings, which will simulate the way the build server works. You will need to lead these variables before launching Android Studio. The simplest way to do that is to launch the app from the Command Line after loading the variables.
-
-```
-$ cd /your/working/dir
-$ source .env
-$ open -a /Applications/Android\ Studio.app /your/working/dir
-```
-
 ## Build variants
 
 Our app has several different [build variants](https://developer.android.com/studio/build/build-variants.html#build-types) to represent different environments. You can create any one of these build
@@ -80,7 +69,7 @@ Option 1
 
 Option 2
 1. Go to Build > Generate Signed APK (this will pop open a dialog).
-2. Use the keystore credentials (keystore password, key name, and key password) in the `.env` file to fill out the dialog.
+2. Use the keystore credentials (keystore password, key name, and key password) in the `variables.gradle` file to fill out the dialog.
 3. **Important**: when prompted to specify the signature version, check both "V1 (Iar Signature)" and "V2 (Full APK Signature)". APKs signed with only V2 [cannot be installed on Android versions lower than 7.0](http://stackoverflow.com/questions/42648499/difference-between-signature-versions-v1jar-signature-and-v2full-apk-signat).
 4. Choose the flavor and build.
 
@@ -190,9 +179,6 @@ Because some of our tests are run using [Roboelectric](http://robolectric.org/),
 Tests can also be run from the terminal.
 
  ```
- # Make sure the current environment variables are loaded, otherwise this will fail to build.
- source .env
-
  # Run all unit tests for a specific build variant.
  ./gradlew test<variant_name>
 
