@@ -156,7 +156,7 @@ class MemberRepositoryImpl(
             memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
                 // Check whether member already exists on phone to perform special logic while upserting
                 val persistedMember = memberDao.find(memberApi.id).blockingGet()
-                MemberModel.fromMember(memberApi.toMember(persistedMember.toMember()), clock)
+                MemberModel.fromMember(memberApi.toMember(persistedMember?.toMember()), clock)
             })
         }
 

@@ -22,6 +22,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.threeten.bp.Clock
@@ -29,16 +30,14 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
-import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.api.models.MemberPaginationApi
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
-import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.MemberWithRawPhotoModel
 import org.watsi.device.db.models.PhotoModel
-import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.MemberWithIdEventAndThumbnailPhotoModelFactory
@@ -47,11 +46,11 @@ import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.Member.ArchivedReason
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.entities.Member.ArchivedReason
 import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
@@ -62,7 +61,6 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     @Mock lateinit var mockPhotoDao: PhotoDao
-    @Mock lateinit var mockEncounterDao: EncounterDao
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: MemberRepositoryImpl
     
@@ -74,7 +72,7 @@ class MemberRepositoryImplTest {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         repository = MemberRepositoryImpl(
-                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, mockEncounterDao, clock)
+                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock)
     }
 
     @Test
@@ -94,7 +92,7 @@ class MemberRepositoryImplTest {
     @Test
     fun find() {
         val model = MemberModelFactory.build()
-        whenever(mockDao.find(model.id)).thenReturn(Single.just(model))
+        whenever(mockDao.find(model.id)).thenReturn(Maybe.just(model))
 
         repository.find(model.id).test().assertValue(model.toMember())
     }
@@ -195,149 +193,121 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_noActiveMembers_succeeds_updatesMembers() {
-        val noChange = MemberModelFactory.build(clock = clock)
-        val noChangeApi = MemberApi(noChange.toMember())
-        val serverEdited = MemberModelFactory.build(name = "Bryan", clock = clock)
-        val serverEditedApi = MemberApi(serverEdited.copy(name = "Byron").toMember())
-        val serverAdded = MemberModelFactory.build(clock = clock)
-        val serverAddedApi = MemberApi(serverAdded.toMember())
-        val serverRemoved = MemberModelFactory.build(clock = clock)
-        val clientEdited = MemberModelFactory.build(name = "Ross", clock = clock)
-        val clientEditedApi = MemberApi(clientEdited.copy(name = "Rocks").toMember())
-        val clientAdded = MemberModelFactory.build(clock = clock)
-        val clientEditedServerEdited = MemberModelFactory.build(name = "Mike", clock = clock)
-        val clientEditedServerEditedApi = MemberApi(clientEditedServerEdited.copy(name = "Michael").toMember())
-        val clientEditedServerRemoved = MemberModelFactory.build(clock = clock)
+    fun fetch_hasToken_initialFetch_downloadsAllPagedMembersAndUpdatesTimestamp() {
+        val member1 = MemberModelFactory.build(clock = clock)
+        val member2 = MemberModelFactory.build(clock = clock)
+        val member3 = MemberModelFactory.build(clock = clock)
+        val member4 = MemberModelFactory.build(clock = clock)
+        val member5 = MemberModelFactory.build(clock = clock)
+        val member6 = MemberModelFactory.build(clock = clock)
+        val member7 = MemberModelFactory.build(clock = clock)
+        val member8 = MemberModelFactory.build(clock = clock)
+        val storedMemberLastFetched = Instant.ofEpochMilli(0)
+        val storedPageKey = null
+        val memberPaginationApi1 = MemberPaginationApi(
+            pageKey = "page key 1",
+            hasMore = true,
+            members = listOf(
+                MemberApi(member1.toMember()),
+                MemberApi(member2.toMember()),
+                MemberApi(member3.toMember())
+            )
+        )
+        val memberPaginationApi2 = MemberPaginationApi(
+            pageKey = "page key 2",
+            hasMore = true,
+            members = listOf(
+                MemberApi(member4.toMember()),
+                MemberApi(member5.toMember()),
+                MemberApi(member6.toMember())
+            )
+        )
+        val memberPaginationApi3 = MemberPaginationApi(
+            pageKey = "page key 3",
+            hasMore = false,
+            members = listOf(
+                MemberApi(member7.toMember()),
+                MemberApi(member8.toMember())
+            )
+        )
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockApi.getMembers(any(), any())).thenReturn(Single.just(listOf(
-                noChangeApi,
-                serverEditedApi,
-                serverAddedApi,
-                clientEditedApi,
-                clientEditedServerEditedApi
-        )))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(
-                clientEdited,
-                clientAdded,
-                clientEditedServerEdited,
-                clientEditedServerRemoved
-        )))
-        whenever(mockDao.all()).thenReturn(Flowable.just(listOf(
-                noChange,
-                serverEdited,
-                serverRemoved,
-                clientEdited,
-                clientAdded,
-                clientEditedServerEdited,
-                clientEditedServerRemoved
-        )))
-        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(emptyList()))
-        whenever(mockEncounterDao.pending()).thenReturn(Flowable.just(emptyList()))
-        whenever(mockEncounterDao.returned()).thenReturn(Flowable.just(emptyList()))
-        whenever(mockEncounterDao.unsynced()).thenReturn(Single.just(emptyList()))
+        whenever(mockPreferencesManager.getMemberLastFetched()).thenReturn(storedMemberLastFetched)
+        whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey, memberPaginationApi2.pageKey)
+        whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
+        whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
+        whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi2.pageKey))).thenReturn(Single.just(memberPaginationApi3))
 
         repository.fetch().test().assertComplete()
 
-        verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
-        verify(mockDao).delete(listOf(serverRemoved.id))
-        verify(mockDao).upsert(listOf(
-                noChange,
-                serverEdited.copy(name = "Byron"),
-                serverAdded
-        ))
+        verify(mockDao).upsert(listOf(member1, member2, member3))
+        verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi1.pageKey)
+        verify(mockDao).upsert(listOf(member4, member5, member6))
+        verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi2.pageKey)
+        verify(mockDao).upsert(listOf(member7, member8))
+        verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi3.pageKey)
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
 
     @Test
-    fun fetch_hasToken_hasActiveMembers_succeeds_updatesMembers_preservesActiveMembers() {
-        val noChange = MemberModelFactory.build(clock = clock)
-        val noChangeApi = MemberApi(noChange.toMember())
-        val serverRemoved = MemberModelFactory.build(clock = clock)
-        val clientAdded = MemberModelFactory.build(clock = clock)
-        val clientEditedServerEdited = MemberModelFactory.build(name = "Mike", clock = clock)
-        val clientEditedServerEditedApi = MemberApi(clientEditedServerEdited.copy(name = "Michael").toMember())
-        val clientEditedServerRemoved = MemberModelFactory.build(clock = clock)
-        val clientCheckedInServerNotRemoved = MemberModelFactory.build(clock = clock)
-        val clientCheckedInServerNotRemovedApi = MemberApi(clientCheckedInServerNotRemoved.toMember())
-        val clientCheckedInServerNotRemovedWithId = MemberWithIdEventAndThumbnailPhotoModelFactory.build(
-            memberModel = clientCheckedInServerNotRemoved,
-            idEvent = IdentificationEventModelFactory.build(memberId = clientCheckedInServerNotRemoved.id)
+    fun fetch_hasToken_subsequentFetch_serverReturnsChanges_updatesMembersWithoutUnsyncedChangesAndUpdatesTimestamp() {
+        val member1 = MemberModelFactory.build(clock = clock)
+        val member2 = MemberModelFactory.build(clock = clock)
+        val member3 = MemberModelFactory.build(clock = clock)
+        val member4 = MemberModelFactory.build(clock = clock)
+        val storedMemberLastFetched = clock.instant()
+        val storedPageKey = "stored page key"
+        val memberPaginationApi1 = MemberPaginationApi(
+            pageKey = "page key 1",
+            hasMore = true,
+            members = listOf(
+                MemberApi(member1.toMember()),
+                MemberApi(member2.toMember()),
+                MemberApi(member3.toMember())
+            )
         )
-        val clientCheckedInServerRemoved = MemberModelFactory.build(clock = clock)
-        val clientCheckedInServerRemovedWithId = MemberWithIdEventAndThumbnailPhotoModelFactory.build(
-            memberModel = clientCheckedInServerRemoved,
-            idEvent = IdentificationEventModelFactory.build(memberId = clientCheckedInServerRemoved.id)
+        val memberPaginationApi2 = MemberPaginationApi(
+            pageKey = "page key 2",
+            hasMore = false,
+            members = listOf(
+                MemberApi(member4.toMember())
+            )
         )
-        val pendingEncounterMember = MemberModelFactory.build(clock = clock)
-        val pendingEncounter = EncounterWithMemberAndItemsAndFormsModel(EncounterModelFactory.build(), listOf(pendingEncounterMember), null, null)
-        val returnedEncounterMember = MemberModelFactory.build(clock = clock)
-        val returnedEncounter = EncounterWithMemberAndItemsAndFormsModel(EncounterModelFactory.build(), listOf(returnedEncounterMember), null, null)
-        val unsyncedEncounterMember = MemberModelFactory.build(clock = clock)
-        val unsyncedEncounter = EncounterWithMemberAndItemsAndFormsModel(EncounterModelFactory.build(), listOf(unsyncedEncounterMember), null, null)
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockApi.getMembers(any(), any())).thenReturn(Single.just(listOf(
-            noChangeApi,
-            clientCheckedInServerNotRemovedApi,
-            clientEditedServerEditedApi
-        )))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(
-            clientAdded,
-            clientEditedServerEdited,
-            clientEditedServerRemoved
-        )))
-        whenever(mockDao.all()).thenReturn(Flowable.just(listOf(
-            noChange,
-            clientCheckedInServerNotRemoved,
-            serverRemoved,
-            clientAdded,
-            clientEditedServerEdited,
-            clientEditedServerRemoved,
-            clientCheckedInServerRemoved,
-            pendingEncounterMember,
-            returnedEncounterMember,
-            unsyncedEncounterMember
-        )))
-        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(listOf(
-            clientCheckedInServerNotRemovedWithId,
-            clientCheckedInServerRemovedWithId
-        )))
-        whenever(mockEncounterDao.pending()).thenReturn(Flowable.just(listOf(
-            pendingEncounter
-        )))
-        whenever(mockEncounterDao.returned()).thenReturn(Flowable.just(listOf(
-            returnedEncounter
-        )))
-        whenever(mockEncounterDao.unsynced()).thenReturn(Single.just(listOf(
-            unsyncedEncounter
-        )))
+        whenever(mockPreferencesManager.getMemberLastFetched()).thenReturn(storedMemberLastFetched)
+        whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey)
+        whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
+        whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(member1, member3)), Single.just(emptyList()))
+        whenever(mockDao.find(member2.id)).thenReturn(Maybe.just(member2))
+        whenever(mockDao.find(member4.id)).thenReturn(Maybe.empty())
 
         repository.fetch().test().assertComplete()
 
-        verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
-        verify(mockDao).delete(listOf(serverRemoved.id))
-        verify(mockDao).upsert(listOf(
-            noChange,
-            clientCheckedInServerNotRemoved
-        ))
+        verify(mockDao).upsert(listOf(member2))
+        verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi1.pageKey)
+        verify(mockDao).upsert(listOf(member4))
+        verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi2.pageKey)
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
 
     @Test
     fun fetch_hasToken_fails_returnsError() {
         val exception = Exception()
+        val storedMemberLastFetched = Instant.ofEpochMilli(0)
+        val storedPageKey = null
+
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockApi.getMembers(any(), any())).then { throw exception }
+        whenever(mockPreferencesManager.getMemberLastFetched()).thenReturn(storedMemberLastFetched)
+        whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
+        whenever(mockApi.getMembers(token.getHeaderString(), token.user.providerId, storedPageKey)).then { throw exception }
 
         repository.fetch().test().assertError(exception)
 
-        verify(mockApi).getMembers(token.getHeaderString(), token.user.providerId)
-        verify(mockDao, never()).unsynced()
-        verify(mockDao, never()).checkedInMembers()
-        verify(mockEncounterDao, never()).pending()
-        verify(mockEncounterDao, never()).returned()
+        verify(mockDao, never()).upsert(anyList())
+        verify(mockPreferencesManager, never()).updateMemberLastFetched(any())
+        verify(mockPreferencesManager, never()).updateMembersPageKey(any())
     }
 
     @Test
@@ -371,7 +341,7 @@ class MemberRepositoryImplTest {
         )
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockDao.find(memberModel.id)).thenReturn(Single.just(memberModel))
+        whenever(mockDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
         whenever(mockApi.postMember(token.getHeaderString(), MemberApi(member)))
                 .thenReturn(Completable.complete())
 
@@ -391,7 +361,7 @@ class MemberRepositoryImplTest {
         ) }
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockDao.find(memberModel.id)).thenReturn(Single.just(memberModel))
+        whenever(mockDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
         whenever(mockApi.patchMember(token.getHeaderString(), member.id, MemberApi.patch(member, deltas)))
                 .thenReturn(Completable.complete())
 
