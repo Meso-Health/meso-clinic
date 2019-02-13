@@ -1,6 +1,24 @@
 !tape
 name: CoverageApiTest
 interactions:
+- recorded: 2019-02-13T03:05:09.655Z
+  request:
+    method: POST
+    uri: http://localhost:5000/authentication_token
+    headers:
+      Authorization: Basic a2xpbmlrOjEyMzQ1Ng==
+    body: ''
+  response:
+    status: 201
+    headers:
+      Cache-Control: max-age=0, private, must-revalidate
+      Content-Type: application/json; charset=utf-8
+      ETag: W/"5331b286bbab8d6b30010defb022a7c7"
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding, Origin
+      X-Request-Id: 91a3292e-38bb-4190-b8db-2cb8ee904625
+      X-Runtime: '0.026963'
+    body: '{"token":"qNSo9JJi.dg57J6YkRKUqjZGa26Y8HjrhMLnKUwwx","expires_at":"2019-02-27T06:05:09.632+03:00","user":{"id":2,"created_at":"2019-02-13T05:26:22.821+03:00","name":"klinik","username":"klinik","role":"provider","provider_id":1,"added_by":"byron","security_pin":"0000"}}'
 - recorded: 2019-02-13T02:30:49.774Z
   request:
     method: GET
