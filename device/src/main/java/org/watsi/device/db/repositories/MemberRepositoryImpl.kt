@@ -129,12 +129,16 @@ class MemberRepositoryImpl(
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
                 val isInitialFetch = preferencesManager.getMemberLastFetched() == Instant.ofEpochMilli(0)
-                paginatedFetch(token, isInitialFetch)
+                var hasMore = paginatedFetch(token, isInitialFetch)
+                while (hasMore) {
+                    hasMore = paginatedFetch(token, isInitialFetch)
+                }
+                preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
 
-    private fun paginatedFetch(token: AuthenticationToken, isInitialFetch: Boolean) {
+    private fun paginatedFetch(token: AuthenticationToken, isInitialFetch: Boolean): Boolean {
         val paginatedResponse = api.getMembers(
             token.getHeaderString(),
             token.user.providerId,
@@ -162,11 +166,7 @@ class MemberRepositoryImpl(
 
         preferencesManager.updateMembersPageKey(updatedPageKey)
 
-        if (hasMore) {
-            paginatedFetch(token, isInitialFetch)
-        } else {
-            preferencesManager.updateMemberLastFetched(clock.instant())
-        }
+        return hasMore
     }
 
     override fun downloadPhotos(): Completable {
