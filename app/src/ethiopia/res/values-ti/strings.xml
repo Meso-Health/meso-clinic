@@ -163,7 +163,7 @@
     <string name="edit_input_add">ወስኽ</string>
     <string name="edit_input_edit">ኣርም</string>
     <string name="take_photo_button_text">ስእሊ ኣልዕል</string>
-    <!--<string name="missing_medical_record_number">Medical record number is required</string>-->
+    <string name="missing_medical_record_number">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ </string>
     <!--<string name="check_out_alert_dialog_title">Remove from checked in list?</string>-->
     <!--<string name="check_out_alert_dialog_message">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>-->
 
