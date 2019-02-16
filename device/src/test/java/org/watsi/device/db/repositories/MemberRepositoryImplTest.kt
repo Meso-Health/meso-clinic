@@ -193,7 +193,7 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_initialFetch_downloadsAllPagedMembersAndUpdatesTimestamp() {
+    fun fetch_hasToken_initialFetch_downloadsAllPaginatedMembers_updatesPageKey_updatesLastUpdatedAt() {
         val member1 = MemberModelFactory.build(clock = clock)
         val member2 = MemberModelFactory.build(clock = clock)
         val member3 = MemberModelFactory.build(clock = clock)
@@ -250,7 +250,7 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_subsequentFetch_serverReturnsChanges_updatesMembersWithoutUnsyncedChangesAndUpdatesTimestamp() {
+    fun fetch_hasToken_subsequentFetch_serverReturnsChanges_updatesMembersWithoutUnsyncedChanges_updatesPageKey_updatesLastUpdatedAt() {
         val member1 = MemberModelFactory.build(clock = clock)
         val member2 = MemberModelFactory.build(clock = clock)
         val member3 = MemberModelFactory.build(clock = clock)
@@ -293,7 +293,7 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_hasToken_fails_returnsError() {
+    fun fetch_hasToken_fails_returnsError_doesNotUpdateAnything() {
         val exception = Exception()
         val storedMemberLastFetched = Instant.ofEpochMilli(0)
         val storedPageKey = null
