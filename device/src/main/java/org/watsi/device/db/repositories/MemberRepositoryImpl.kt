@@ -156,7 +156,7 @@ class MemberRepositoryImpl(
         val hasMore = paginatedResponse.hasMore
         val updatedPageKey = paginatedResponse.pageKey
 
-        // Do not update local members with unsynced changes
+        // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
         val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
         val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
         val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
