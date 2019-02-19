@@ -5,10 +5,9 @@ import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.View
 import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.gender_age
-import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.member_tag
+import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.member_icon
 import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.name
 import kotlinx.android.synthetic.ethiopia.view_member_list_item.view.photo_container
-import org.threeten.bp.Clock
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Member.Gender
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
@@ -36,7 +35,7 @@ class MemberListItem @JvmOverloads constructor(
             StringHelper.getDisplayAge(member, context))
 
         if (member.relationshipToHead == Member.RelationshipToHead.SELF) {
-            member_tag.visibility = View.VISIBLE
+            member_icon.visibility = View.VISIBLE
         }
 
         PhotoLoader.loadMemberPhoto(

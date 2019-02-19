@@ -31,7 +31,6 @@
     <string name="start_claim_button">Start Claim</string>
     <string name="invalid_membership_error">Invalid membership number</string>
     <string name="scan_member_card_menu_item_title">Scan card</string>
-    <string name="household_title">Member</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
@@ -58,7 +57,7 @@
     <string name="edit_input_add">Add</string>
     <string name="edit_input_edit">Edit</string>
     <string name="take_photo_button_text">Take photo</string>
-    <string name="missing_medical_record_number" translatable="false">Medical record number is required</string>
+    <string name="missing_medical_record_number">Medical record number is required</string>
     <string name="check_out_alert_dialog_title" translatable="false">Remove from checked in list?</string>
     <string name="check_out_alert_dialog_message" translatable="false">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>
 

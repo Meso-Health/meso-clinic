@@ -22,12 +22,11 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/demographic_container"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space16"
+        android:layout_marginStart="68dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/photo_container"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent" >
 
         <TextView
             android:id="@+id/name"
@@ -43,30 +42,15 @@
             android:textSize="@dimen/fontSize14"
             app:layout_constraintTop_toBottomOf="@id/name"
             app:layout_constraintBottom_toBottomOf="parent" />
-
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/member_tag"
+    <ImageView
+        android:id="@+id/member_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space8"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/household_title"
-            android:textAllCaps="true"
-            android:textSize="@dimen/fontSize12"
-            android:paddingStart="@dimen/space8"
-            android:paddingEnd="@dimen/space8"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:textColor="@color/gray6"
-            android:background="@drawable/solid_rectangle" />
-    </android.support.constraint.ConstraintLayout>
+        android:src="@drawable/ic_baseline_person_18px"
+        app:layout_constraintEnd_toEndOf="@+id/demographic_container"
+        app:layout_constraintBottom_toBottomOf="@+id/demographic_container"
+        android:visibility="gone"
+        />
 </org.watsi.uhp.views.MemberListItem>
