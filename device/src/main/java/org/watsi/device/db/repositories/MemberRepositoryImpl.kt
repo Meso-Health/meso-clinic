@@ -8,7 +8,6 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.DbHelper
@@ -47,6 +46,16 @@ class MemberRepositoryImpl(
 
     override fun find(id: UUID): Maybe<Member> {
         return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
+    }
+
+    override fun findAll(ids: List<UUID>): Single<List<Member>> {
+        return Single.fromCallable {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                memberDao.findAll(it).blockingGet()
+            }.flatten().map {
+                it.toMember()
+            }
+        }
     }
 
     override fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail> {
@@ -128,17 +137,16 @@ class MemberRepositoryImpl(
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val isInitialFetch = preferencesManager.getMemberLastFetched() == Instant.ofEpochMilli(0)
-                var hasMore = paginatedFetch(token, isInitialFetch)
+                var hasMore = paginatedFetch(token)
                 while (hasMore) {
-                    hasMore = paginatedFetch(token, isInitialFetch)
+                    hasMore = paginatedFetch(token)
                 }
                 preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
 
-    private fun paginatedFetch(token: AuthenticationToken, isInitialFetch: Boolean): Boolean {
+    private fun paginatedFetch(token: AuthenticationToken): Boolean {
         val paginatedResponse = api.getMembers(
             token.getHeaderString(),
             token.user.providerId,
@@ -148,21 +156,16 @@ class MemberRepositoryImpl(
         val hasMore = paginatedResponse.hasMore
         val updatedPageKey = paginatedResponse.pageKey
 
-        if (isInitialFetch) {
-            memberDao.upsert(serverMembers.map { memberApi ->
-                MemberModel.fromMember(memberApi.toMember(null), clock)
-            })
-        } else {
-            // Do not update members with unsynced local changes
-            val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
-            val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
+        // Do not update local members with unsynced changes
+        val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
+        val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
+        val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
 
-            memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
-                // Check whether member already exists on phone to perform special logic while upserting
-                val persistedMember = memberDao.find(memberApi.id).blockingGet()
-                MemberModel.fromMember(memberApi.toMember(persistedMember?.toMember()), clock)
-            })
-        }
+        memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
+            val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
+            // Pass local member to upsert logic to preserve photo
+            MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+        })
 
         preferencesManager.updateMembersPageKey(updatedPageKey)
 

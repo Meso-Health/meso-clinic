@@ -232,14 +232,16 @@ class MemberRepositoryImplTest {
         )
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockPreferencesManager.getMemberLastFetched()).thenReturn(storedMemberLastFetched)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey, memberPaginationApi2.pageKey)
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi2.pageKey))).thenReturn(Single.just(memberPaginationApi3))
+        whenever(mockDao.unsynced()).thenReturn(Single.just(emptyList()))
+        whenever(mockDao.findAll(listOf(member1.id, member2.id, member3.id))).thenReturn(Single.just(listOf(member1, member2, member3)))
+        whenever(mockDao.findAll(listOf(member4.id, member5.id, member6.id))).thenReturn(Single.just(listOf(member4, member5, member6)))
+        whenever(mockDao.findAll(listOf(member7.id, member8.id))).thenReturn(Single.just(listOf(member7, member8)))
 
         repository.fetch().test().assertComplete()
-
         verify(mockDao).upsert(listOf(member1, member2, member3))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi1.pageKey)
         verify(mockDao).upsert(listOf(member4, member5, member6))
@@ -255,7 +257,6 @@ class MemberRepositoryImplTest {
         val member2 = MemberModelFactory.build(clock = clock)
         val member3 = MemberModelFactory.build(clock = clock)
         val member4 = MemberModelFactory.build(clock = clock)
-        val storedMemberLastFetched = clock.instant()
         val storedPageKey = "stored page key"
         val memberPaginationApi1 = MemberPaginationApi(
             pageKey = "page key 1",
@@ -275,13 +276,12 @@ class MemberRepositoryImplTest {
         )
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockPreferencesManager.getMemberLastFetched()).thenReturn(storedMemberLastFetched)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey)
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
         whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(member1, member3)), Single.just(emptyList()))
-        whenever(mockDao.find(member2.id)).thenReturn(Maybe.just(member2))
-        whenever(mockDao.find(member4.id)).thenReturn(Maybe.empty())
+        whenever(mockDao.findAll(listOf(member2.id))).thenReturn(Single.just(listOf(member2)))
+        whenever(mockDao.findAll(listOf(member4.id))).thenReturn(Single.just(listOf(member4)))
 
         repository.fetch().test().assertComplete()
 
@@ -295,11 +295,9 @@ class MemberRepositoryImplTest {
     @Test
     fun fetch_hasToken_fails_returnsError_doesNotUpdateAnything() {
         val exception = Exception()
-        val storedMemberLastFetched = Instant.ofEpochMilli(0)
         val storedPageKey = null
 
         whenever(mockSessionManager.currentToken()).thenReturn(token)
-        whenever(mockPreferencesManager.getMemberLastFetched()).thenReturn(storedMemberLastFetched)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
         whenever(mockApi.getMembers(token.getHeaderString(), token.user.providerId, storedPageKey)).then { throw exception }
 

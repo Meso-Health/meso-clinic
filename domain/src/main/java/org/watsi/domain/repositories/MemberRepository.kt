@@ -13,6 +13,7 @@ import java.util.UUID
 interface MemberRepository {
     fun all(excludeArchived: Boolean = true): Flowable<List<Member>>
     fun find(id: UUID): Maybe<Member>
+    fun findAll(ids: List<UUID>): Single<List<Member>>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun findByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<Member>
     fun findHouseholdIdByMembershipNumber(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
