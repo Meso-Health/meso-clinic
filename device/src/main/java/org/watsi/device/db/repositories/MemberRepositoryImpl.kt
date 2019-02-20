@@ -1,6 +1,5 @@
 package org.watsi.device.db.repositories
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -138,13 +137,9 @@ class MemberRepositoryImpl(
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromAction {
-                val batchId = UUID.randomUUID().toString().slice(0..8)
-                Thread.sleep(1000 * 60 * 5) // Sleep for 2 minutes before fetching the next member.
-                Log.i("meso", "batch $batchId: begin paginatedFetch called now.")
                 var hasMore = paginatedFetch(token)
                 while (hasMore) {
                     hasMore = paginatedFetch(token)
-                    Log.i("meso", "batch $batchId: paginated fetch finished. Hasmore is $hasMore")
                 }
                 preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())

@@ -1,6 +1,5 @@
 package org.watsi.device.db.repositories
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -80,7 +79,6 @@ class BillableRepositoryImpl(
     override fun fetch(): Completable {
         return sessionManager.currentToken()?.let { token ->
             Completable.fromCallable {
-                Log.i("meso", "fetching billables is called")
                 val serverBillablesWithPrice = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
                         .map { it.toBillableWithPriceSchedule() }
                 val serverBillableIds = serverBillablesWithPrice.map { it.billable.id }
