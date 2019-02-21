@@ -12,6 +12,7 @@ import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
+import org.watsi.device.api.models.MemberPaginationApi
 import org.watsi.device.api.models.PriceScheduleApi
 import org.watsi.device.api.models.ReturnedEncounterApi
 import retrofit2.http.Body
@@ -22,6 +23,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.Url
 import java.util.UUID
 
@@ -37,8 +39,9 @@ interface CoverageApi {
     @GET("providers/{providerId}/members")
     fun getMembers(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
-            @Path("providerId") providerId: Int
-    ): Single<List<MemberApi>>
+            @Path("providerId") providerId: Int,
+            @Query("page_key") pageKey: String?
+    ): Single<MemberPaginationApi>
 
     @GET("providers/{providerId}/billables")
     fun getBillables(

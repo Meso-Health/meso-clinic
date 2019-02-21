@@ -52,7 +52,7 @@ class EncounterRepositoryImpl(
     override fun find(ids: List<UUID>): Single<List<Encounter>> {
         return Single.fromCallable {
             ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
-                encounterDao.find(ids).blockingGet()
+                encounterDao.find(it).blockingGet()
             }.flatten().map {
                 it.toEncounter()
             }
