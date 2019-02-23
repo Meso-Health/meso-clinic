@@ -30,15 +30,15 @@ class CoverageApiTest : OkReplayTest() {
 
     // Make sure this is a valid token.
     private val tokenString = AuthenticationTokenFactory.build(
-        token = "Y8eTFNxg.TXoHqdgbVTH5y2fJywtPDGQQJAPQzUDR"
+        token = "MDSQkAYS.DfqtUXJvC75xSHuYYLkjY1YZhJ4QcQ3S"
     ).getHeaderString()
 
-    // Make sure these IDs exist in the backend
-    private val householdId = UUID.fromString("073e83f2-6e56-4bd8-a9df-ddf11802c9c5")
-    private val billableId = UUID.fromString("7276e9e8-60a1-4596-b795-d7bca07a88ed")
-    private val billableLatestPriceScheduleId = UUID.fromString("718da7c5-13d1-4832-a0b5-4c07131170aa")
+    // Make sure these correspond to real ids in the backend.
+    private val householdId = UUID.fromString("014fd5be-e988-43a0-8848-89c14daeb50d")
+    private val billableId = UUID.fromString("00614e1c-5d4b-4b1e-87a7-f2e7436cb3cd")
+    private val billableLatestPriceScheduleId = UUID.fromString("3c4a87c8-43c8-4a69-9833-77ae0f869651")
 
-    // When creating new tapes, make sure the following IDs do not exist in the backend
+    // When creating new tapes, make sure the following IDs do not exist in the backend.
     private val memberId = UUID.fromString("914a6308-28c1-4a4a-b123-4c2233f21b11")
     private val identificationEventId = UUID.fromString("9914e82f2-6e42-4bd4-a9df-ddf11802c9c1")
     private val priceScheduleId = UUID.fromString("94fba924-13cd-4022-b622-7c8200f21b81")
@@ -75,10 +75,11 @@ class CoverageApiTest : OkReplayTest() {
     fun test001_getMembers() {
         val result = api.getMembers(
             tokenAuthorization = tokenString,
-            providerId = providerId
+            providerId = providerId,
+            pageKey = null
         ).test()
         result.assertComplete()
-        assertTrue(result.values().first().map { it.toMember(null) }.isNotEmpty())
+        assertTrue(result.values().first().members.map { it.toMember(null) }.isNotEmpty())
     }
 
     @Test
