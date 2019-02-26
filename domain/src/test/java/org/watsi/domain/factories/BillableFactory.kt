@@ -10,13 +10,11 @@ object BillableFactory {
             type: Billable.Type = Billable.Type.SERVICE,
             composition: String? = null,
             unit: String? = null,
-            price: Int = 0,
             name: String = "Delivery") : Billable {
         return Billable(id = id,
                         type = type,
                         composition = composition,
                         unit = unit,
-                        price = price,
                         name = name)
     }
 }

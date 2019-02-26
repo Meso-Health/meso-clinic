@@ -14,7 +14,6 @@ data class BillableModel(@PrimaryKey val id: UUID,
                          val type: Billable.Type,
                          val composition: String?,
                          val unit: String?,
-                         val price: Int,
                          val name: String) {
 
     fun toBillable(): Billable {
@@ -22,7 +21,6 @@ data class BillableModel(@PrimaryKey val id: UUID,
                         type = type,
                         composition = composition,
                         unit = unit,
-                        price = price,
                         name = name)
     }
 
@@ -35,7 +33,6 @@ data class BillableModel(@PrimaryKey val id: UUID,
                                  type = billable.type,
                                  composition = billable.composition,
                                  unit = billable.unit,
-                                 price = billable.price,
                                  name = billable.name)
         }
     }

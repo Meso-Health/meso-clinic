@@ -163,9 +163,6 @@ class EditPriceFragment : DaggerFragment() {
 
                         val billableWithPriceSchedule = if (priceScheduleIssued) {
                             encounterItemRelation.billableWithPriceSchedule.copy(
-                                billable = encounterItemRelation.billableWithPriceSchedule.billable.copy(
-                                    price = viewState.unitPrice // TODO: This can be removed when price is removed from billable
-                                ),
                                 priceSchedule = PriceSchedule(
                                     id = UUID.randomUUID(),
                                     billableId = encounterItemRelation.billableWithPriceSchedule.billable.id,

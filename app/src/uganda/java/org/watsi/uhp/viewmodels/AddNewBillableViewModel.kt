@@ -68,7 +68,6 @@ class AddNewBillableViewModel @Inject constructor(
                     in listOf(Billable.Type.DRUG, Billable.Type.VACCINE) -> state.unit
                     else -> null
                 },
-                price = state.price,
                 name = state.name
             )
             val priceSchedule = PriceSchedule(
