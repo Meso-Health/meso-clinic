@@ -23,6 +23,7 @@ import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.db.models.PriceScheduleModel
+import org.watsi.device.db.models.ReferralModel
 
 @Database(exportSchema = true, version = 7, entities = [
     BillableModel::class,
@@ -34,7 +35,8 @@ import org.watsi.device.db.models.PriceScheduleModel
     IdentificationEventModel::class,
     MemberModel::class,
     PhotoModel::class,
-    PriceScheduleModel::class
+    PriceScheduleModel::class,
+    ReferralModel::class
 ])
 @TypeConverters(TypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
