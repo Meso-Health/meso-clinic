@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "c059e20591ef05ea6e9e4564d0b76aec",
+    "identityHash": "58283b812c3eb93fffb4e4cdc920984b",
     "entities": [
       {
         "tableName": "billables",
@@ -734,7 +734,7 @@
       },
       {
         "tableName": "referrals",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `referredToFacility` TEXT NOT NULL, `referralReason` TEXT NOT NULL, `encounterId` TEXT NOT NULL, `referralNumber` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`encounterId`) REFERENCES `encounters`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `receivingFacility` TEXT NOT NULL, `reason` TEXT NOT NULL, `encounterId` TEXT NOT NULL, `number` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`encounterId`) REFERENCES `encounters`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -743,14 +743,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "referredToFacility",
-            "columnName": "referredToFacility",
+            "fieldPath": "receivingFacility",
+            "columnName": "receivingFacility",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "referralReason",
-            "columnName": "referralReason",
+            "fieldPath": "reason",
+            "columnName": "reason",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -761,8 +761,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "referralNumber",
-            "columnName": "referralNumber",
+            "fieldPath": "number",
+            "columnName": "number",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -791,7 +791,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c059e20591ef05ea6e9e4564d0b76aec\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"58283b812c3eb93fffb4e4cdc920984b\")"
     ]
   }
 }

@@ -16,8 +16,8 @@ import java.util.UUID
 )
 data class ReferralModel(
         @PrimaryKey val id: UUID,
-        val referredToFacility: String,
-        val referralReason: String,
+        val receivingFacility: String,
+        val reason: String,
         val encounterId: UUID,
-        val referralNumber: String?
+        val number: String?
 )
