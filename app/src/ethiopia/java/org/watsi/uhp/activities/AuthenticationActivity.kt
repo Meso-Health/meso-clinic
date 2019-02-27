@@ -52,6 +52,8 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                     }, {
                         if (it is HttpException && it.code() == 401) {
                             error_text.error = getString(R.string.login_wrong_username_or_password_message)
+                        } else if (it is SessionManager.PermissionException) {
+                            error_text.error = getString(R.string.login_permission_error)
                         } else if (it is IOException && it.message.orEmpty().contains("unexpected end of stream")) {
                             error_text.error = getString(R.string.login_offline_error)
                         } else {

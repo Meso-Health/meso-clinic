@@ -3,6 +3,7 @@ package org.watsi.device.managers
 import io.reactivex.Completable
 import okhttp3.Credentials
 import org.watsi.device.api.CoverageApi
+import org.watsi.device.managers.SessionManager.Companion.ALLOWED_ROLES
 import org.watsi.domain.entities.AuthenticationToken
 
 class SessionManagerImpl(
@@ -14,14 +15,16 @@ class SessionManagerImpl(
     private var token: AuthenticationToken? = preferencesManager.getAuthenticationToken()
 
     override fun login(username: String, password: String): Completable {
-        val apiAuthorizationHeader = Credentials.basic(username, password)
-        return api.getAuthToken(apiAuthorizationHeader).flatMapCompletable {
-            it.toAuthenticationToken().let { newToken ->
-                preferencesManager.setAuthenticationToken(newToken)
-                logger.setUser(newToken.user)
-                token = newToken
+        return Completable.fromAction {
+            val apiAuthorizationHeader = Credentials.basic(username, password)
+            val newTokenApi = api.login(apiAuthorizationHeader).blockingGet()
+            if (!ALLOWED_ROLES.contains(newTokenApi.user.role)) {
+                throw SessionManager.PermissionException()
             }
-            Completable.complete()
+            val newToken = newTokenApi.toAuthenticationToken()
+            preferencesManager.setAuthenticationToken(newToken)
+            logger.setUser(newToken.user)
+            token = newToken
         }
     }
 
@@ -31,5 +34,5 @@ class SessionManagerImpl(
         token = null
     }
 
-    override fun currentToken(): AuthenticationToken? = token
+    override fun currentAuthenticationToken(): AuthenticationToken? = token
 }

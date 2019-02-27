@@ -59,7 +59,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
         if (!hasPermissions) {
             ActivityCompat.requestPermissions(this, requiredPermissions, 0)
-        } else if (sessionManager.currentToken() == null) {
+        } else if (sessionManager.currentAuthenticationToken() == null) {
             navigateToAuthenticationActivity()
         }
     }

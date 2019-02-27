@@ -190,7 +190,7 @@ class HomeFragment : DaggerFragment() {
             val submitBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             submitBtn.setOnClickListener {
                 errorText.error = ""
-                sessionManager.currentToken()?.user?.securityPin?.let { pin ->
+                sessionManager.currentAuthenticationToken()?.user?.securityPin?.let { pin ->
                     if (pin == pinView.text.toString()) {
                         dialog.dismiss()
                         navigationManager.goTo(fragment)

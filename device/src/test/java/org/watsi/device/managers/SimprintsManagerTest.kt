@@ -60,7 +60,7 @@ class SimprintsManagerTest {
         whenever(mockSimHelper.register(any(), eq(mockMetadata))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(mockComponentName)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
 
         assertEquals(spySimprintsManager.captureFingerprint(memberId, mockFragment, requestCode), true)
         verify(mockFragment).startActivityForResult(mockIntent, requestCode)
@@ -76,7 +76,7 @@ class SimprintsManagerTest {
         whenever(mockSimHelper.register(any(), eq(mockMetadata))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(null)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
 
         assertEquals(spySimprintsManager.captureFingerprint(memberId, mockFragment, 0), false)
     }
@@ -91,7 +91,7 @@ class SimprintsManagerTest {
         whenever(mockSimHelper.verify(any(), eq(memberId))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(mockComponentName)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
 
         assertEquals(spySimprintsManager.verifyFingerprint(memberId, mockFragment, requestCode), true)
         verify(mockFragment).startActivityForResult(mockIntent, requestCode)
@@ -106,7 +106,7 @@ class SimprintsManagerTest {
         whenever(mockSimHelper.verify(any(), eq(memberId))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(null)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
 
         assertEquals(spySimprintsManager.verifyFingerprint(memberId, mockFragment, 0), false)
     }

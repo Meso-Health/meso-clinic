@@ -59,8 +59,8 @@ class DiagnosisRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentToken_completes() {
-        whenever(mockSessionManager.currentToken()).thenReturn(null)
+    fun fetch_noCurrentAuthenticationToken_completes() {
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
         repository.fetch().test().assertComplete()
     }
@@ -76,7 +76,7 @@ class DiagnosisRepositoryImplTest {
         val serverAddedApi = DiagnosisApi(serverAdded.toDiagnosis())
         val serverRemoved = DiagnosisModelFactory.build(id = 3, clock = clock)
 
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
         whenever(mockApi.getDiagnoses(any())).thenReturn(Single.just(listOf(
                 noChangeApi,
                 serverEditedApi,

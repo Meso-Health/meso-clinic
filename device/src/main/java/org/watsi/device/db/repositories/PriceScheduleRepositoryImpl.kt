@@ -41,7 +41,7 @@ class PriceScheduleRepositoryImpl(
     }
 
     override fun sync(delta: Delta): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             priceScheduleDao.find(delta.modelId).flatMapCompletable { priceScheduleModel ->
                 val priceSchedule = priceScheduleModel.toPriceSchedule()
                 api.postPriceSchedule(token.getHeaderString(), token.user.providerId, PriceScheduleApi(priceSchedule))

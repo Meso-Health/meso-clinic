@@ -70,7 +70,7 @@ class IdentificationEventRepositoryImplTest {
         val user = UserFactory.build()
         val token = AuthenticationToken("token", clock.instant(), user)
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockIdentificationEventDao.find(identificationEventModel.id))
                 .thenReturn(Single.just(identificationEventModel))
         whenever(mockApi.postIdentificationEvent(token.getHeaderString(), user.providerId,
@@ -90,7 +90,7 @@ class IdentificationEventRepositoryImplTest {
         val user = UserFactory.build()
         val token = AuthenticationToken("token", clock.instant(), user)
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockIdentificationEventDao.find(identificationEventModel.id))
                 .thenReturn(Single.just(identificationEventModel))
         whenever(mockApi.patchIdentificationEvent(any(), any(), any()))

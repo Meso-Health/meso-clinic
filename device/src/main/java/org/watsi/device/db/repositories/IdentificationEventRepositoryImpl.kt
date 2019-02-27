@@ -52,7 +52,7 @@ class IdentificationEventRepositoryImpl(
     }
 
     override fun sync(deltas: List<Delta>): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             identificationEventDao.find(deltas.first().modelId).flatMapCompletable { identificationEventModel ->
                 if (deltas.any { it.action == Delta.Action.ADD }) {
                     api.postIdentificationEvent(

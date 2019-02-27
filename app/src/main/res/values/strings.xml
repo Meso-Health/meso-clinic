@@ -43,6 +43,7 @@
     <string name="login_wrong_username_or_password_message">The provided username/password combination is incorrect</string>
     <string name="login_progress_message">Logging in…</string>
     <string name="login_offline_error">Cannot login because phone is offline</string>
+    <string name="login_permission_error" translatable="false">This user cannot be used for claims submission</string>
 
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">Check In</string>

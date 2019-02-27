@@ -63,8 +63,8 @@ class CoverageApiTest : OkReplayTest() {
     }
 
     @Test
-    fun test000_getAuthToken() {
-        val result = api.getAuthToken(
+    fun test000_login() {
+        val result = api.login(
             authorization = Credentials.basic(clinicUser, clinicUserPassword)
         ).test()
         result.assertComplete()

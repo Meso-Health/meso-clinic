@@ -186,8 +186,8 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentToken_completes() {
-        whenever(mockSessionManager.currentToken()).thenReturn(null)
+    fun fetch_noCurrentAuthenticationToken_completes() {
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
         repository.fetch().test().assertComplete()
     }
@@ -231,7 +231,7 @@ class MemberRepositoryImplTest {
             )
         )
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey, memberPaginationApi2.pageKey)
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
@@ -275,7 +275,7 @@ class MemberRepositoryImplTest {
             )
         )
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey)
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
@@ -297,7 +297,7 @@ class MemberRepositoryImplTest {
         val exception = Exception()
         val storedPageKey = null
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
         whenever(mockApi.getMembers(token.getHeaderString(), token.user.providerId, storedPageKey)).then { throw exception }
 
@@ -338,7 +338,7 @@ class MemberRepositoryImplTest {
                 synced = false
         )
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
         whenever(mockApi.postMember(token.getHeaderString(), MemberApi(member)))
                 .thenReturn(Completable.complete())
@@ -358,7 +358,7 @@ class MemberRepositoryImplTest {
                 synced = false
         ) }
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
         whenever(mockApi.patchMember(token.getHeaderString(), member.id, MemberApi.patch(member, deltas)))
                 .thenReturn(Completable.complete())
@@ -379,7 +379,7 @@ class MemberRepositoryImplTest {
         )
         val captor = argumentCaptor<RequestBody>()
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPhotoDao.findMemberWithRawPhoto(memberModel.id))
                 .thenReturn(Single.just(memberWithRawPhotoModel))
         whenever(mockApi.patchPhoto(eq(token.getHeaderString()), eq(memberModel.id), captor.capture()))
@@ -407,7 +407,7 @@ class MemberRepositoryImplTest {
         )
         val exception = Exception()
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPhotoDao.findMemberWithRawPhoto(memberModel.id))
                 .thenReturn(Single.just(memberWithRawPhotoModel))
         whenever(mockApi.patchPhoto(eq(token.getHeaderString()), eq(memberModel.id), any()))
