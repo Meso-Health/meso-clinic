@@ -180,7 +180,7 @@ class EncounterRepositoryImplTest {
                 synced = false
         )
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(encounterModel.id)).thenReturn(Single.just(encounterWithItemsModel))
         whenever(mockApi.postEncounter(token.getHeaderString(), user.providerId,
                 EncounterApi(encounterWithItemsModel.toEncounterWithItems())))
@@ -204,7 +204,7 @@ class EncounterRepositoryImplTest {
         val spyReturnedClaimWithMemberOnPhone = spy(returnedClaimWithMemberOnPhone)
         val spyReturnedClaimWithMemberNotOnPhone = spy(returnedClaimWithMemberNotOnPhone)
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockApi.getReturnedClaims(token.getHeaderString(), user.providerId)).thenReturn(
             Single.just(listOf(spyReturnedClaimWithMemberOnPhone, spyReturnedClaimWithMemberNotOnPhone))
         )

@@ -54,7 +54,7 @@ class PriceScheduleRepositoryImplTest {
 
     @Test
     fun sync_noPriceSchedule_completes() {
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(priceScheduleModel.id)).thenReturn(Maybe.empty())
 
         repository.sync(deltaModel.toDelta()).test().assertComplete()
@@ -62,7 +62,7 @@ class PriceScheduleRepositoryImplTest {
 
     @Test
     fun sync() {
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(priceScheduleModel.id)).thenReturn(Maybe.just(priceScheduleModel))
         whenever(mockApi.postPriceSchedule(token.getHeaderString(), user.providerId, PriceScheduleApi(priceScheduleModel.toPriceSchedule())))
                 .thenReturn(Completable.complete())

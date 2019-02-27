@@ -7,10 +7,26 @@ data class UserApi(
     val username: String,
     val name: String,
     val providerId: Int,
+    val role: String,
     val securityPin: String
 ) {
+    constructor(user: User): this(
+        id = user.id,
+        username = user.username,
+        name = user.name,
+        providerId = user.providerId,
+        role = user.role,
+        securityPin = user.securityPin
+    )
 
     fun toUser(): User {
-        return User(id, username, name, providerId, securityPin)
+        return User(
+            id = id,
+            username = username,
+            name = name,
+            providerId = providerId,
+            role = role,
+            securityPin = securityPin
+        )
     }
 }

@@ -72,7 +72,7 @@ class EncounterFormRepositoryImplTest {
         )
         val captor = argumentCaptor<RequestBody>()
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(encounterFormModel.id)).thenReturn(Single.just(encounterFormWithPhotoModel))
         whenever(mockApi.patchEncounterForm(
                 eq(token.getHeaderString()),
@@ -101,7 +101,7 @@ class EncounterFormRepositoryImplTest {
         )
         val exception = Exception()
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(encounterFormModel.id)).thenReturn(Single.just(encounterFormWithPhotoModel))
         whenever(mockApi.patchEncounterForm(
                 eq(token.getHeaderString()), eq(encounterFormModel.encounterId), any()

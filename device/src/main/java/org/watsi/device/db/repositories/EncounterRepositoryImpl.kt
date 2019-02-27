@@ -60,7 +60,7 @@ class EncounterRepositoryImpl(
     }
 
     override fun fetchReturnedClaims(): Single<List<EncounterWithExtras>> {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             Single.fromCallable {
                 val returnedClaims = api.getReturnedClaims(token.getHeaderString(), token.user.providerId).blockingGet()
                 val returnedClaimsMemberIds = returnedClaims.map { it.memberId }
@@ -221,7 +221,7 @@ class EncounterRepositoryImpl(
     }
 
     override fun sync(delta: Delta): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             find(delta.modelId).flatMapCompletable { encounterModel ->
                 api.postEncounter(token.getHeaderString(), token.user.providerId, EncounterApi(encounterModel))
             }.subscribeOn(Schedulers.io())

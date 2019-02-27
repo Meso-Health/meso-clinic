@@ -127,8 +127,8 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentToken_completes() {
-        whenever(mockSessionManager.currentToken()).thenReturn(null)
+    fun fetch_noCurrentAuthenticationToken_completes() {
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
         repository.fetch().test().assertComplete()
     }
@@ -160,7 +160,7 @@ class BillableRepositoryImplTest {
         val serverRemoved = BillableModelFactory.build(clock = clock)
         val clientAdded = BillableModelFactory.build(clock = clock)
 
-        whenever(mockSessionManager.currentToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
         whenever(mockApi.getBillables(any(), any())).thenReturn(Single.just(listOf(
                 noChangeApi,
                 serverEditedApi,
@@ -210,7 +210,7 @@ class BillableRepositoryImplTest {
         val user = UserFactory.build()
         val token = AuthenticationToken("token", clock.instant(), user)
 
-        whenever(mockSessionManager.currentToken()).thenReturn(token)
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(billableModel.id))
                 .thenReturn(Maybe.just(billableModel))
         whenever(mockApi.postBillable(token.getHeaderString(), user.providerId,

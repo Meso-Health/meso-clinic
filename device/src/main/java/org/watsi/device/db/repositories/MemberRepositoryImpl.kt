@@ -135,7 +135,7 @@ class MemberRepositoryImpl(
      * server data, unless the local data has unsynced changes.
      */
     override fun fetch(): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             Completable.fromAction {
                 var hasMore = true
                 while (hasMore) {
@@ -192,7 +192,7 @@ class MemberRepositoryImpl(
     }
 
     override fun sync(deltas: List<Delta>): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             find(deltas.first().modelId).flatMapCompletable { member ->
                 if (deltas.any { it.action == Delta.Action.ADD }) {
                     api.postMember(token.getHeaderString(), MemberApi(member))
@@ -204,7 +204,7 @@ class MemberRepositoryImpl(
     }
 
     override fun syncPhotos(deltas: List<Delta>): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             // the modelId in a photo delta corresponds to the member ID and not the photo ID
             // to make this querying and formatting of the sync request simpler
             val memberId = deltas.first().modelId
