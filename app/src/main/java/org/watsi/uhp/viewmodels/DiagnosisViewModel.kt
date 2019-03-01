@@ -13,7 +13,7 @@ import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
 class DiagnosisViewModel @Inject constructor(
-        private val diagnosisRepository: DiagnosisRepository,
+        diagnosisRepository: DiagnosisRepository,
         private val logger: Logger
 ) : ViewModel() {
 
@@ -21,23 +21,17 @@ class DiagnosisViewModel @Inject constructor(
     private var diagnoses: List<Diagnosis> = emptyList()
     private var uniqueDescriptions: List<String> = emptyList()
 
-
-    fun getObservable(initialDiagnosis: List<Diagnosis> = emptyList()): LiveData<ViewState> {
-        diagnosisRepository.all().subscribe({ diagnoses ->
+    init {
+        diagnosisRepository.all().subscribe({
+            diagnoses = it
             uniqueDescriptions = diagnoses.map { it.description }.distinct()
-            if (diagnoses.isEmpty()) {
-                observable.postValue(ViewState(
-                    diagnosesExistOnDevice = false
-                ))
-            } else {
-                observable.postValue(ViewState(
-                    selectedDiagnoses = initialDiagnosis,
-                    suggestedDiagnoses = emptyList()
-                ))
-            }
         }, {
             logger.error(it)
         })
+    }
+
+    fun getObservable(initialDiagnosis: List<Diagnosis> = emptyList()): LiveData<ViewState> {
+        observable.value = ViewState(selectedDiagnoses = initialDiagnosis)
         return observable
     }
 
@@ -97,9 +91,6 @@ class DiagnosisViewModel @Inject constructor(
         encounterFlowState.diagnoses = diagnoses
     }
 
-    data class ViewState(
-        val diagnosesExistOnDevice: Boolean? = null,
-        val selectedDiagnoses: List<Diagnosis> = emptyList(),
-        val suggestedDiagnoses: List<Diagnosis> = emptyList()
-    )
+    data class ViewState(val selectedDiagnoses: List<Diagnosis> = emptyList(),
+                         val suggestedDiagnoses: List<Diagnosis> = emptyList())
 }
