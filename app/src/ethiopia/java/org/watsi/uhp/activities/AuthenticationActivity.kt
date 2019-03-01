@@ -32,6 +32,9 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (sessionManager.currentAuthenticationToken()?.token != null) {
+            navigateToClinicActivity()
+        }
         setContentView(R.layout.activity_authentication)
         setTitle(R.string.authentication_activity_label)
 
