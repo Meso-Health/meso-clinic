@@ -19,7 +19,7 @@ interface MemberRepository {
     fun findHouseholdIdByMembershipNumber(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun findHouseholdIdByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
-    fun checkedInMembers(excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
+    fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
     fun findHouseholdMembers(householdId: UUID, excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable

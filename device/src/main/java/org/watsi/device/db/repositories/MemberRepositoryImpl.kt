@@ -94,7 +94,7 @@ class MemberRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun checkedInMembers(excludeArchived: Boolean): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+    override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.checkedInMembers().map {
             it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
         }
