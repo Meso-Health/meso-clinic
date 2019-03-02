@@ -82,6 +82,7 @@
     <string name="referral_label">Referral</string>
     <string name="receiving_facility_validation_error">Receiving facility is required</string>
     <string name="referral_reason_validation_error">Referral reason is required</string>
+    <string name="mark_as_stockout">Mark %s as stockout</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>
@@ -125,6 +126,7 @@
     <string name="unit_price_label">Unit Price</string>
     <string name="quantity_label">Quantity</string>
     <string name="total_price_label">Total Price</string>
+    <string name="stockout">Stockout</string>
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">Pending Approval</string>

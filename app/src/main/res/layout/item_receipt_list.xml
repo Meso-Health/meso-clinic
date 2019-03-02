@@ -41,13 +41,32 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
+        android:id="@+id/stockout_negative_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red6"
+        app:layout_constraintTop_toBottomOf="@+id/receipt_billable_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
         android:id="@+id/receipt_billable_dosage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/gray6"
-        android:layout_marginLeft="@dimen/dialog_padding"
+        android:layout_marginStart="@dimen/dialog_padding"
         app:layout_constraintTop_toBottomOf="@id/receipt_billable_name"
         app:layout_constraintStart_toEndOf="@id/receipt_billable_guideline"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/stockout_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red6"
+        android:layout_marginStart="@dimen/dialog_padding"
+        android:text="@string/stockout"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/receipt_billable_dosage"
+        app:layout_constraintStart_toEndOf="@id/receipt_billable_guideline" />
 </org.watsi.uhp.views.ReceiptListItem>

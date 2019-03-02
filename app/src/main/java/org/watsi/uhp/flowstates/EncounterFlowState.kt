@@ -35,7 +35,13 @@ data class EncounterFlowState(
         }
     }
 
-    fun price(): Int = encounterItemRelations.map { it.price() }.sum()
+    fun price(): Int = encounterItemRelations.map {
+        if (it.encounterItem.stockout) {
+            0
+        } else {
+            it.price()
+        }
+    }.sum()
 
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
         return EncounterWithItemsAndForms(encounter, encounterItemRelations, clearEncounterFormThumbnails())
