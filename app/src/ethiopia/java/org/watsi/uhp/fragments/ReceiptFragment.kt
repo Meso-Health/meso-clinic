@@ -39,6 +39,10 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_reason
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_serial_number
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.referrals_container
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.referring_to
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_none
@@ -67,9 +71,9 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EthiopianDateHelper
-import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -195,6 +199,14 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         if (encounterFlowState.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
             diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
+        }
+
+        if (encounterFlowState.referrals.isNotEmpty()) {
+            referrals_container.visibility = View.VISIBLE
+            val referral = encounterFlowState.referrals.first()
+            referring_to.text = referral.receivingFacility
+            referral_serial_number.text = referral.number
+            referral_reason.text = referral.reason
         }
 
         setUpDateDialog()

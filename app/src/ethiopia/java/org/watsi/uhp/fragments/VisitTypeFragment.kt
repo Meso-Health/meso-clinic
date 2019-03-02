@@ -11,13 +11,17 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
 import org.watsi.domain.entities.Encounter
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.VisitTypeViewModel
 import javax.inject.Inject
@@ -80,6 +84,18 @@ class VisitTypeFragment : DaggerFragment() {
                 viewModel.onSelectVisitType(selectedVisitType)
             }
         )
+
+        referral_reason.addTextChangedListener(LayoutHelper.OnChangedListener {
+            reason -> viewModel.onReasonChange(reason)
+        })
+
+        referral_serial_number.addTextChangedListener(LayoutHelper.OnChangedListener {
+            number -> viewModel.onNumberChange(number)
+        })
+
+        receiving_facility.addTextChangedListener(LayoutHelper.OnChangedListener {
+            receivingFacility -> viewModel.onReceivingFacilityChange(receivingFacility)
+        })
 
         referral_check_box.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onToggleReferralCheckBox(isChecked)

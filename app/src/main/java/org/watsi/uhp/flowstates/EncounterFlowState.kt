@@ -18,7 +18,7 @@ data class EncounterFlowState(
     var diagnoses: List<Diagnosis>,
     var member: Member? = null,
     var newProviderComment: String? = null,
-    var referrals: List<Referral>? = emptyList()
+    var referrals: List<Referral> = emptyList()
 ) : Serializable {
 
     companion object {

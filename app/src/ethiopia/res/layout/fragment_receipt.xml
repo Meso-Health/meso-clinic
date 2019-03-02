@@ -320,13 +320,98 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/referrals_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/diagnoses_container">
+
+            <TextView
+                android:id="@+id/referring_to_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Referring to"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/referring_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@+id/referring_to_label" />
+
+            <View
+                android:id="@+id/referrals_line1"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/referring_to"/>
+
+            <TextView
+                android:id="@+id/referral_reason_label"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reason for referral"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toBottomOf="@+id/referrals_line1" />
+
+            <TextView
+                android:id="@+id/referral_reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@id/referral_reason_label" />
+
+            <View
+                android:id="@+id/referrals_line2"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/referral_reason"/>
+
+            <TextView
+                android:id="@+id/referral_serial_number_label"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Referral SN"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toBottomOf="@+id/referrals_line2" />
+
+            <TextView
+                android:id="@+id/referral_serial_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_view_vertical_margin"
+                android:textSize="@dimen/fontSize16"
+                app:layout_constraintTop_toBottomOf="@id/referral_serial_number_label" />
+
+            <View
+                android:id="@+id/referrals_line3"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/referral_serial_number"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/encounter_items_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:background="@drawable/panel_background"
             android:padding="@dimen/fragment_padding"
-            app:layout_constraintTop_toBottomOf="@id/diagnoses_container"
+            app:layout_constraintTop_toBottomOf="@+id/referrals_container"
             app:layout_constraintLeft_toLeftOf="parent">
 
             <TextView
