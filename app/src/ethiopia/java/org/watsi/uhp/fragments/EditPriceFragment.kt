@@ -99,25 +99,43 @@ class EditPriceFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        if (billableType == Billable.Type.DRUG) {
+            // This logic uses a TextWatcher to update the ViewModel when valid numbers are entered into
+            // the inputs and we require a separate OnFocusChangeListener to handle resetting the
+            // the value of the field to a previously set value if an invalid number is entered.
+            // We can't include the reset behavior in the TextWatcher because that causes an
+            // awkward UX behavior where you aren't able to clear the input while editing because
+            // null is an invalid value.
+            unit_price.addTextChangedListener(LayoutHelper.OnChangedListener { s ->
+                s.toBigDecimalOrNull()?.let {
+                    viewModel.updateUnitPrice(CurrencyUtil.parseMoney(it.toString()))
+                }
+            })
 
-        // This logic uses a TextWatcher to update the ViewModel when valid numbers are entered into
-        // the inputs and we require a separate OnFocusChangeListener to handle resetting the
-        // the value of the field to a previously set value if an invalid number is entered.
-        // We can't include the reset behavior in the TextWatcher because that causes an
-        // awkward UX behavior where you aren't able to clear the input while editing because
-        // null is an invalid value.
-        unit_price.addTextChangedListener(LayoutHelper.OnChangedListener { s ->
-            s.toBigDecimalOrNull()?.let {
-                viewModel.updateUnitPrice(CurrencyUtil.parseMoney(it.toString()))
-            }
-        })
-
-        unit_price.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && unit_price.text.toString().toBigDecimalOrNull() == null) {
-                observable.value?.let { viewState ->
-                    unit_price.setText(CurrencyUtil.formatMoney(viewState.unitPrice))
+            unit_price.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus && unit_price.text.toString().toBigDecimalOrNull() == null) {
+                    observable.value?.let { viewState ->
+                        unit_price.setText(CurrencyUtil.formatMoney(viewState.unitPrice))
+                    }
                 }
             }
+
+            total_price.addTextChangedListener(LayoutHelper.OnChangedListener { s ->
+                s.toBigDecimalOrNull()?.let {
+                    viewModel.updateTotalPrice(CurrencyUtil.parseMoney(it.toString()))
+                }
+            })
+
+            total_price.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus && total_price.text.toString().toBigDecimalOrNull() == null) {
+                    observable.value?.let { viewState ->
+                        total_price.setText(CurrencyUtil.formatMoney(viewState.totalPrice))
+                    }
+                }
+            }
+        } else {
+            unit_price.isEnabled = false
+            total_price.isEnabled = false
         }
 
         quantity.addTextChangedListener(LayoutHelper.OnChangedListener { s ->
@@ -135,20 +153,6 @@ class EditPriceFragment : DaggerFragment() {
         stockout_check_box.text = getString(R.string.mark_as_stockout, billableType)
         stockout_check_box.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateStockout(isChecked)
-        }
-
-        total_price.addTextChangedListener(LayoutHelper.OnChangedListener { s ->
-            s.toBigDecimalOrNull()?.let {
-                viewModel.updateTotalPrice(CurrencyUtil.parseMoney(it.toString()))
-            }
-        })
-
-        total_price.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus && total_price.text.toString().toBigDecimalOrNull() == null) {
-                observable.value?.let { viewState ->
-                    total_price.setText(CurrencyUtil.formatMoney(viewState.totalPrice))
-                }
-            }
         }
 
         save_button.setOnClickListener {
@@ -201,7 +205,7 @@ class EditPriceFragment : DaggerFragment() {
                     }
                 }
                 encounterFlowState.encounterItemRelations = updatedEncounterItems
-                navigationManager.popTo(DrugAndSupplyFragment.forEncounter(encounterFlowState))
+                navigationManager.goBack()
             }
         }
     }
