@@ -154,7 +154,15 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
                 },
-                onPriceTap = null
+                onPriceTap = { encounterItemId: UUID ->
+                    viewModel.getEncounterFlowState()?.let { flowState ->
+                        encounterFlowState.encounterItemRelations = flowState.encounterItemRelations
+                        navigationManager.goTo(EditPriceFragment.forEncounterItem(
+                            encounterItemId, encounterFlowState))
+                    } ?: run {
+                        logger.error("EncounterFlowState not set")
+                    }
+                }
         )
 
         swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) })
