@@ -12,11 +12,14 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -29,6 +32,7 @@ import javax.inject.Inject
 class VisitTypeFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var logger: Logger
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var viewModel: VisitTypeViewModel
     lateinit var observable: LiveData<VisitTypeViewModel.ViewState>
@@ -64,8 +68,22 @@ class VisitTypeFragment : DaggerFragment() {
         })
     }
 
-    fun setErrors(errors: Map<String, Int>) {
-        // TODO
+    private fun setErrors(errors: Map<String, Int>) {
+        errors[VisitTypeViewModel.REASON_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                referral_reason_container.error = null
+            } else {
+                referral_reason_container.error = getString(errorResourceId)
+            }
+        }
+
+        errors[VisitTypeViewModel.RECEIVING_FACILITY_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                receiving_facility_container.error = null
+            } else {
+                receiving_facility_container.error = getString(errorResourceId)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -102,8 +120,15 @@ class VisitTypeFragment : DaggerFragment() {
         }
 
         next_button.setOnClickListener {
-            viewModel.validateAndUpdateEncounterFlowState(encounterFlowState)
-            navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
+            viewModel.validateAndUpdateEncounterFlowState(encounterFlowState).subscribe({
+                navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
+            }, { throwable ->
+                if (throwable is VisitTypeViewModel.ValidationException) {
+                    // do nothing for now. No need to say "some fields are invalid"
+                } else {
+                    logger.error(throwable)
+                }
+            })
         }
     }
 
