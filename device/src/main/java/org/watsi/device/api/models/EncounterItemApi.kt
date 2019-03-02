@@ -6,7 +6,6 @@ import java.util.UUID
 data class EncounterItemApi(
     val id: UUID,
     val encounterId: UUID,
-    val billableId: UUID,
     val quantity: Int,
     val priceScheduleId: UUID,
     val priceScheduleIssued: Boolean
@@ -16,7 +15,6 @@ data class EncounterItemApi(
         return EncounterItem(
             id = id,
             encounterId = encounterId,
-            billableId = billableId,
             quantity = quantity,
             priceScheduleId = priceScheduleId,
             priceScheduleIssued = priceScheduleIssued,
@@ -27,7 +25,6 @@ data class EncounterItemApi(
     constructor (encounterItem: EncounterItem) : this(
         id = encounterItem.id,
         encounterId = encounterItem.encounterId,
-        billableId = encounterItem.billableId,
         quantity = encounterItem.quantity,
         priceScheduleId = encounterItem.priceScheduleId,
         priceScheduleIssued = encounterItem.priceScheduleIssued

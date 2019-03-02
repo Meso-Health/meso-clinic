@@ -114,8 +114,11 @@ class AddNewBillableFragment : DaggerFragment() {
         save_button.setOnClickListener {
             viewModel.getBillable()?.let { billableWithPrice ->
                 val newBillableEncounterItem = EncounterItem(
-                    UUID.randomUUID(), encounterFlowState.encounter.id,
-                    billableWithPrice.billable.id, 1, billableWithPrice.priceSchedule.id, true
+                    id = UUID.randomUUID(),
+                    encounterId = encounterFlowState.encounter.id,
+                    quantity = 1,
+                    priceScheduleId = billableWithPrice.priceSchedule.id,
+                    priceScheduleIssued = true
                 )
                 encounterFlowState.encounterItemRelations =
                         encounterFlowState.encounterItemRelations.plus(

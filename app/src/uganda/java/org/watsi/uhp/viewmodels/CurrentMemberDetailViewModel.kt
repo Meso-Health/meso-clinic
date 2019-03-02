@@ -55,7 +55,13 @@ class CurrentMemberDetailViewModel @Inject constructor(
     fun buildEncounter(idEvent: IdentificationEvent): EncounterFlowState {
         val encounterId = UUID.randomUUID()
         val defaultEncounterItems = defaultBillables.map {
-            val encounterItem = EncounterItem(UUID.randomUUID(), encounterId, it.billable.id, 1, it.priceSchedule.id, false)
+            val encounterItem = EncounterItem(
+                id = UUID.randomUUID(),
+                encounterId = encounterId,
+                quantity = 1,
+                priceScheduleId = it.priceSchedule.id,
+                priceScheduleIssued = false
+            )
             EncounterItemWithBillableAndPrice(encounterItem, it)
         }
         val encounter = Encounter(encounterId, idEvent.memberId, idEvent.id, Instant.now(clock), Instant.now(clock))

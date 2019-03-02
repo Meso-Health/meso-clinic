@@ -26,6 +26,7 @@ import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
+import org.watsi.device.db.models.EncounterItemWithBillableAndPriceModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
@@ -35,7 +36,6 @@ import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
 import org.watsi.device.factories.EncounterFormModelFactory
 import org.watsi.device.factories.EncounterItemModelFactory
-import org.watsi.device.factories.EncounterItemWithBillableAndPriceModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
@@ -103,22 +103,21 @@ class EncounterRepositoryImplTest {
         )
         val encounterItemModel1 = EncounterItemModelFactory.build(
             encounterId = encounterModel.id,
-            billableId = billableModel1.id,
             priceScheduleId = priceScheduleModel1.id
         )
         val encounterItemModel2 = EncounterItemModelFactory.build(
             encounterId = encounterModel.id,
-            billableId = billableModel2.id,
             priceScheduleId = priceScheduleModel2.id
         )
-        val encounterItemRelationModel1 = EncounterItemWithBillableAndPriceModelFactory.build(
-            PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1),
-            encounterItemModel1
+        val encounterItemRelationModel1 = EncounterItemWithBillableAndPriceModel(
+            encounterItemModel = encounterItemModel1,
+            priceScheduleWithBillableModel = listOf(PriceScheduleWithBillableModelFactory.build(billableModel1, priceScheduleModel1))
         )
-        val encounterItemRelationModel2 = EncounterItemWithBillableAndPriceModelFactory.build(
-            PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2),
-            encounterItemModel2
+        val encounterItemRelationModel2 = EncounterItemWithBillableAndPriceModel(
+            encounterItemModel = encounterItemModel2,
+            priceScheduleWithBillableModel = listOf(PriceScheduleWithBillableModelFactory.build(billableModel2, priceScheduleModel2))
         )
+
         val encounterFormModel = EncounterFormModelFactory.build(encounterId = encounterModel.id)
         val encounterWithMemberAndItemsAndFormsModel = EncounterWithMemberAndItemsAndFormsModel(
             encounterModel,

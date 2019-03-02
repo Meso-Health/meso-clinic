@@ -9,7 +9,6 @@ object EncounterItemWithBillableAndPriceFactory {
     fun build(
         billableWithPrice: BillableWithPriceSchedule = BillableWithPriceScheduleFactory.build(),
         encounterItem: EncounterItem = EncounterItemFactory.build(
-            billableId = billableWithPrice.billable.id,
             priceScheduleId = billableWithPrice.priceSchedule.id
         )
     ): EncounterItemWithBillableAndPrice {
@@ -21,7 +20,6 @@ object EncounterItemWithBillableAndPriceFactory {
         billableWithPrice: BillableWithPriceSchedule = BillableWithPriceScheduleFactory.build(),
         encounterItem: EncounterItem = EncounterItemFactory.build(
             encounterId = encounterId,
-            billableId = billableWithPrice.billable.id,
             priceScheduleId = billableWithPrice.priceSchedule.id
         )
     ): EncounterItemWithBillableAndPrice {

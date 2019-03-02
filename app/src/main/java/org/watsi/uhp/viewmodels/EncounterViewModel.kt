@@ -75,12 +75,11 @@ class EncounterViewModel @Inject constructor(
         observable.value?.let { viewState ->
             val updatedEncounterItems = viewState.encounterItemRelations.toMutableList()
             val encounterItem = EncounterItem(
-                UUID.randomUUID(),
-                viewState.encounterId,
-                billableWithPrice.billable.id,
-                1,
-                billableWithPrice.priceSchedule.id,
-                false
+                id = UUID.randomUUID(),
+                encounterId = viewState.encounterId,
+                quantity = 1,
+                priceScheduleId = billableWithPrice.priceSchedule.id,
+                priceScheduleIssued = false
             )
             updatedEncounterItems.add(EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice))
             observable.value = viewState.copy(

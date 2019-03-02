@@ -189,7 +189,6 @@ class CoverageApiTest : OkReplayTest() {
         val encounterItem = EncounterItemFactory.build(
             id = encounterItemId,
             encounterId = encounter.id,
-            billableId = billableId,
             priceScheduleId = priceScheduleId
         )
 
