@@ -15,7 +15,8 @@ data class EncounterItemModel(@PrimaryKey val id: UUID,
                               val billableId: UUID,
                               val quantity: Int,
                               val priceScheduleId: UUID,
-                              val priceScheduleIssued: Boolean) {
+                              val priceScheduleIssued: Boolean,
+                              val stockout: Boolean = false) {
 
     fun toEncounterItem(): EncounterItem {
         return EncounterItem(
@@ -24,7 +25,8 @@ data class EncounterItemModel(@PrimaryKey val id: UUID,
             billableId = billableId,
             quantity = quantity,
             priceScheduleId = priceScheduleId,
-            priceScheduleIssued = priceScheduleIssued
+            priceScheduleIssued = priceScheduleIssued,
+            stockout = stockout
         )
     }
 
@@ -39,7 +41,8 @@ data class EncounterItemModel(@PrimaryKey val id: UUID,
                 billableId = encounterItem.billableId,
                 quantity = encounterItem.quantity,
                 priceScheduleId = encounterItem.priceScheduleId,
-                priceScheduleIssued = encounterItem.priceScheduleIssued
+                priceScheduleIssued = encounterItem.priceScheduleIssued,
+                stockout = encounterItem.stockout
             )
         }
     }

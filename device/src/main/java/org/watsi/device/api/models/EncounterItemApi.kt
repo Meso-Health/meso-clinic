@@ -19,7 +19,8 @@ data class EncounterItemApi(
             billableId = billableId,
             quantity = quantity,
             priceScheduleId = priceScheduleId,
-            priceScheduleIssued = priceScheduleIssued
+            priceScheduleIssued = priceScheduleIssued,
+            stockout = false // TODO: Implement this when we need to fetch encounter items
         )
     }
 

@@ -9,5 +9,6 @@ data class EncounterItem(
     val billableId: UUID,
     val quantity: Int,
     val priceScheduleId: UUID,
-    val priceScheduleIssued: Boolean
+    val priceScheduleIssued: Boolean,
+    val stockout: Boolean = false
 ) : Serializable
