@@ -79,6 +79,9 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">Visit Type</string>
     <string name="visit_type_label">Visit Type</string>
+    <string name="referral_label">Referral</string>
+    <string name="receiving_facility_validation_error">Receiving facility is required</string>
+    <string name="referral_reason_validation_error">Referral reason is required</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>

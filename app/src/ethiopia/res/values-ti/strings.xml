@@ -187,6 +187,7 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
+    <!--<string name="referral_label">Referral</string>-->
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>

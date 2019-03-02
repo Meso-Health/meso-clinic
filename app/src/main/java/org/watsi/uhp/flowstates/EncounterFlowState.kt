@@ -5,17 +5,21 @@ import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Referral
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.io.Serializable
 
-data class EncounterFlowState(var encounter: Encounter,
-                              var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
-                              var encounterForms: List<EncounterForm>,
-                              var diagnoses: List<Diagnosis>,
-                              var member: Member? = null,
-                              var newProviderComment: String? = null) : Serializable {
+data class EncounterFlowState(
+    var encounter: Encounter,
+    var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
+    var encounterForms: List<EncounterForm>,
+    var diagnoses: List<Diagnosis>,
+    var member: Member? = null,
+    var newProviderComment: String? = null,
+    var referrals: List<Referral>? = emptyList()
+) : Serializable {
 
     companion object {
         fun fromEncounterWithExtras(encounterWithExtras: EncounterWithExtras): EncounterFlowState {

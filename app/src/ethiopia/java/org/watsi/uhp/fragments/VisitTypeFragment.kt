@@ -1,5 +1,9 @@
 package org.watsi.uhp.fragments
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -7,17 +11,23 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
 import org.watsi.domain.entities.Encounter
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.viewmodels.VisitTypeViewModel
 import javax.inject.Inject
 
 class VisitTypeFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var encounterFlowState: EncounterFlowState
+    lateinit var viewModel: VisitTypeViewModel
+    lateinit var observable: LiveData<VisitTypeViewModel.ViewState>
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"
@@ -34,6 +44,24 @@ class VisitTypeFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(VisitTypeViewModel::class.java)
+        viewModel.getObservable(encounterFlowState).observe(this, Observer {
+            it?.let { viewState ->
+                setErrors(viewState.validationErrors)
+
+                if (viewState.referralBoxChecked) {
+                    referral_check_box.isChecked = true
+                    referral_form.visibility = View.VISIBLE
+                } else {
+                    referral_check_box.isChecked = false
+                    referral_form.visibility = View.GONE
+                }
+            }
+        })
+    }
+
+    fun setErrors(errors: Map<String, Int>) {
+        // TODO
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,12 +76,17 @@ class VisitTypeFragment : DaggerFragment() {
         visit_type_spinner.setUpSpinner(
             visitTypes,
             encounterFlowState.encounter.visitType ?: visitTypes[0],
-            { selectedString ->
-                encounterFlowState.encounter = encounterFlowState.encounter.copy(visitType = selectedString)
+            { selectedVisitType ->
+                viewModel.onSelectVisitType(selectedVisitType)
             }
         )
 
+        referral_check_box.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onToggleReferralCheckBox(isChecked)
+        }
+
         next_button.setOnClickListener {
+            viewModel.validateAndUpdateEncounterFlowState(encounterFlowState)
             navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
         }
     }

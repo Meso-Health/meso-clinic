@@ -184,6 +184,7 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">የጉብኝት አይነት</string>
     <string name="visit_type_label">የጉብኝት አይነት</string>
+    <!--<string name="referral_label">Referral</string>-->
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>
