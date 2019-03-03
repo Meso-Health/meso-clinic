@@ -45,7 +45,7 @@
                 android:id="@+id/receiving_facility"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Facility name"
+                android:hint="@string/referred_to_facility"
                 android:imeOptions="actionNext"
                 android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
@@ -63,7 +63,7 @@
                 android:id="@+id/referral_reason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Referral reason"
+                android:hint="@string/referral_reason"
                 android:imeOptions="actionNext"
                 android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
@@ -81,7 +81,7 @@
                 android:id="@+id/referral_serial_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="SN (optional)"
+                android:hint="@string/serial_number"
                 android:imeOptions="actionDone"
                 android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
