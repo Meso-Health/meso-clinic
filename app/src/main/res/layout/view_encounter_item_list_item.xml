@@ -4,8 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="false"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/viewHeight64"
-    android:paddingStart="@dimen/space16">
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/viewHeight64"
+    android:padding="@dimen/space16">
 
     <org.watsi.uhp.views.CustomFocusEditText
         android:id="@+id/billable_quantity"
@@ -19,45 +20,56 @@
         android:maxLength="3"
         android:backgroundTint="@null"
         android:background="@drawable/view_outline_rectangle"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/billable_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space16"
-        android:layout_marginEnd="@dimen/space16"
-        android:theme="@style/Title"
-        app:layout_constraintStart_toEndOf="@id/billable_quantity"
-        app:layout_constraintEnd_toStartOf="@id/line_item_price"
+        android:layout_marginLeft="@dimen/dialog_padding"
+        android:layout_marginRight="@dimen/dialog_padding"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/billable_details"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <TextView
-        android:id="@+id/billable_details"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space16"
-        android:layout_marginEnd="@dimen/space16"
-        android:visibility="gone"
-        android:textColor="@color/gray6"
         app:layout_constraintStart_toEndOf="@id/billable_quantity"
         app:layout_constraintEnd_toStartOf="@id/line_item_price"
-        app:layout_constraintTop_toBottomOf="@id/billable_name"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintHorizontal_chainStyle="spread"/>
 
     <org.watsi.uhp.views.PriceChange
         android:id="@+id/line_item_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/space16"
-        android:layout_marginEnd="@dimen/space16"
-        app:layout_constraintStart_toEndOf="@id/billable_name"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/billable_name"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/stockout_negative_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red6"
+        app:layout_constraintTop_toBottomOf="@+id/line_item_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/billable_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray6"
+        android:layout_marginStart="@dimen/dialog_padding"
+        app:layout_constraintTop_toBottomOf="@id/billable_name"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/stockout_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red6"
+        android:layout_marginStart="@dimen/dialog_padding"
+        android:text="@string/stockout"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/billable_details"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity" />
 
 </org.watsi.uhp.views.EncounterItemListItem>
