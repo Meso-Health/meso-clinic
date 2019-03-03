@@ -383,7 +383,7 @@
                 android:layout_marginTop="@dimen/label_vertical_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Referral SN"
+                android:text="Referral Number"
                 android:textColor="@color/gray6"
                 app:layout_constraintTop_toBottomOf="@+id/referrals_line2" />
 
