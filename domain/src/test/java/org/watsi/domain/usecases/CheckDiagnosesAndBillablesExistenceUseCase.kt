@@ -13,17 +13,17 @@ import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 
 @RunWith(MockitoJUnitRunner::class)
-class CheckDiagnosesAndBillablesExistenceUseCaseTest {
+class ValidateDiagnosesAndBillablesExistenceUseCaseTest {
 
     @Mock lateinit var billablesRepository: BillableRepository
     @Mock lateinit var diagnosisRepository: DiagnosisRepository
 
-    lateinit var useCase: CheckDiagnosesAndBillablesExistenceUseCase
+    lateinit var useCase: ValidateDiagnosesAndBillablesExistenceUseCase
 
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        useCase = CheckDiagnosesAndBillablesExistenceUseCase(billablesRepository, diagnosisRepository)
+        useCase = ValidateDiagnosesAndBillablesExistenceUseCase(billablesRepository, diagnosisRepository)
     }
 
     @Test
@@ -31,7 +31,7 @@ class CheckDiagnosesAndBillablesExistenceUseCaseTest {
         whenever(billablesRepository.count()).thenReturn(Single.just(0))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(0))
 
-        useCase.execute().test().assertValue(false)
+        useCase.execute().test().assertError(ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException::class.java)
     }
 
     @Test
@@ -39,7 +39,7 @@ class CheckDiagnosesAndBillablesExistenceUseCaseTest {
         whenever(billablesRepository.count()).thenReturn(Single.just(5))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(0))
 
-        useCase.execute().test().assertValue(false)
+        useCase.execute().test().assertError(ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException::class.java)
     }
 
     @Test
@@ -47,7 +47,7 @@ class CheckDiagnosesAndBillablesExistenceUseCaseTest {
         whenever(billablesRepository.count()).thenReturn(Single.just(1))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(0))
 
-        useCase.execute().test().assertValue(false)
+        useCase.execute().test().assertError(ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException::class.java)
     }
 
     @Test
@@ -55,6 +55,6 @@ class CheckDiagnosesAndBillablesExistenceUseCaseTest {
         whenever(billablesRepository.count()).thenReturn(Single.just(1))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(1))
 
-        useCase.execute().test().assertValue(true)
+        useCase.execute().test().assertComplete()
     }
 }
