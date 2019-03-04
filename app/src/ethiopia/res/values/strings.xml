@@ -85,7 +85,7 @@
     <string name="mark_as_stockout">Mark %s as stockout</string>
     <string name="serial_number">Number (optional)"</string>
     <string name="referral_reason">Reason</string>
-    <string name="referred_to_facility">Facility</string>
+    <string name="referred_to_facility">Referred To Facility</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>
