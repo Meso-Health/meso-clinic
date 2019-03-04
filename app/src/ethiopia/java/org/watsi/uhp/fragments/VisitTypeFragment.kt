@@ -89,6 +89,7 @@ class VisitTypeFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(getString(R.string.visit_type_fragment_label), R.drawable.ic_arrow_back_white_24dp)
         setHasOptionsMenu(true)
+        (activity as ClinicActivity).setSoftInputModeToPan()
         return inflater?.inflate(R.layout.fragment_visit_type, container, false)
     }
 
@@ -140,5 +141,10 @@ class VisitTypeFragment : DaggerFragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as ClinicActivity).setSoftInputModeToPan()
     }
 }
