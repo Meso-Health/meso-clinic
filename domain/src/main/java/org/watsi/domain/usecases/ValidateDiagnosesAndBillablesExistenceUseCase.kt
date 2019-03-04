@@ -1,19 +1,23 @@
 package org.watsi.domain.usecases
 
-import io.reactivex.Single
+import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 
-class CheckDiagnosesAndBillablesExistenceUseCase(
+class ValidateDiagnosesAndBillablesExistenceUseCase(
     private val billableRepository: BillableRepository,
     private val diagnosisRepository: DiagnosisRepository
 ) {
-    fun execute(): Single<Boolean> {
-        return Single.fromCallable {
+    fun execute(): Completable {
+        return Completable.fromCallable {
             val billableCount = billableRepository.count().blockingGet()
             val diagnosisCount = diagnosisRepository.count().blockingGet()
-            billableCount > 0 && diagnosisCount > 0
+            if (billableCount == 0 || diagnosisCount == 0) {
+                throw BillableAndDiagnosesMissingException("Either billables or diagnoses have not been downloaded yet.")
+            }
         }.subscribeOn(Schedulers.io())
     }
+
+    class BillableAndDiagnosesMissingException(msg: String): Exception(msg)
 }
