@@ -9,7 +9,6 @@ class FetchMemberPhotosService : BaseService() {
     @Inject lateinit var memberRepository: MemberRepository
 
     override fun executeTasks(): Completable {
-        return Completable.complete()
-        //return memberRepository.downloadPhotos()
+        return memberRepository.downloadPhotos()
     }
 }
