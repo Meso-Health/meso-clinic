@@ -190,7 +190,6 @@ class EditMemberFragment : DaggerFragment() {
 
         start_claim_button.setOnClickListener {
             getMember()?.let { member ->
-                // Figure out how this rxjava stuff works
                 Single.fromCallable {
                     validateDiagnosesAndBillablesExistenceUseCase.execute().blockingAwait()
                     identificationEventRepository.openCheckIn(member.id).blockingGet()
