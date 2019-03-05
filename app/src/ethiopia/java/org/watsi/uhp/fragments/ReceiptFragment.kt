@@ -186,6 +186,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             displayPreparedClaimInfo()
         } else if (encounterAction == EncounterAction.RESUBMIT) {
             displayReturnedClaimInfo()
+        } else {
+            claim_id.text = encounterFlowState.encounter.shortenedClaimId()
         }
 
         membership_number.text = encounterFlowState.member?.membershipNumber

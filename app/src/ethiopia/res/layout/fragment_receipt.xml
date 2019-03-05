@@ -23,8 +23,7 @@
             android:paddingTop="@dimen/fragment_padding"
             android:paddingBottom="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/claim_id_label"
@@ -170,6 +169,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/panel_background"
+            android:layout_marginTop="@dimen/space16"
             android:clickable="true"
             android:padding="@dimen/fragment_padding"
             app:layout_constraintTop_toBottomOf="@id/date_spacer_container">
