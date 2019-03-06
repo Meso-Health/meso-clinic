@@ -30,14 +30,14 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 
 ### Summary
 
-| Variant              | Purpose                  | Color  | Api Endpoint                       | Simprints API | Error Reporting | Deployment and Updates | Deployed after green run on… |
-|----------------------|--------------------------|--------|--------------------------------|---------------|-----------------|-------------------------|------------------------------|
-| Dev (Debug)          | developing               | gray   | http://localhost:5000          | sandbox       | none            | manual                  | -                            |
-| Staging              | Internal QA              | black  | https://api-staging.uhp.org/   | sandbox       | Rollbar         | automatic (Google Play) | master                       |
-| Sandbox              | External QA              | yellow | https://uhp-sandbox.watsi.org/ | sandbox       | Rollbar         | automatic (Google Play) | sandbox                      |
-| Training             | training                 | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | manual                  | -                            |
-| Demo                 | demo’ing to funders      | blue   | https://uhp-demo.watsi.org/    | sandbox       | Rollbar         | manual                  | -                            |
-| Production           | live use                 | blue   | https://uhp.watsi.org          | production-{deployment}| Rollbar| automatic (Google Play) | production                   |
+| Variant  | Purpose             | Color  | Api Endpoint                            | Simprints API           | Error Reporting | Deployment and Updates  | Deployed after green run on… |
+|----------|---------------------|--------|-----------------------------------------|-------------------------|-----------------|-------------------------|------------------------------|
+| Debug    | development         | gray   | http://localhost:5000                   | sandbox                 | none            | manual                  | -                            |
+| Staging  | Internal QA         | black  | https://api-staging.uhp.org             | sandbox                 | Rollbar         | automatic (Google Play) | master                       |
+| Sandbox  | External QA         | yellow | https://coverage-ethiopia.herokuapp.com | sandbox                 | Rollbar         | automatic (Google Play) | sandbox                      |
+| Training | training            | blue   | https://uhp-demo.watsi.org              | sandbox                 | Rollbar         | manual                  | -                            |
+| Demo     | demo’ing to funders | blue   | https://uhp-demo.watsi.org              | sandbox                 | Rollbar         | manual                  | -                            |
+| Release  | production          | blue   | https://uhp.watsi.org                   | production-{deployment} | Rollbar         | automatic (Google Play) | production                   |
 
 See `build.gradle` for full details on configuration differences between the different variants.
 
