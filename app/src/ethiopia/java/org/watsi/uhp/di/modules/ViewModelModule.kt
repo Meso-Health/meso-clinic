@@ -21,6 +21,7 @@ import org.watsi.uhp.viewmodels.SearchViewModel
 import org.watsi.uhp.viewmodels.SearchableClaimsListViewModel
 import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
+import org.watsi.uhp.viewmodels.VisitTypeViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -94,6 +95,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EditMemberViewModel::class)
     abstract fun bindEditMemberViewModel(viewModel: EditMemberViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(VisitTypeViewModel::class)
+    abstract fun bindVisitTypeViewModel(viewModel: VisitTypeViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: DaggerViewModelFactory): ViewModelProvider.Factory

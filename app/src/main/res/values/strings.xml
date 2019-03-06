@@ -64,6 +64,7 @@
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
     </plurals>
+    <string name="stockout" translatable="false">Stockout</string>
 
     <!-- DiagnosisFragment -->
     <string name="diagnosis_fragment_label">Diagnoses</string>
