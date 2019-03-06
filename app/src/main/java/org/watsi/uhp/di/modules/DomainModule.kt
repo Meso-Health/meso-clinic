@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
@@ -48,6 +49,7 @@ import org.watsi.domain.usecases.SyncPriceScheduleUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import org.watsi.domain.usecases.UpdateEncounterUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
+import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 
 @Module
 class DomainModule {
@@ -312,5 +314,13 @@ class DomainModule {
         identificationEventRepository: IdentificationEventRepository
     ): DismissMemberUseCase {
         return DismissMemberUseCase(identificationEventRepository)
+    }
+
+    @Provides
+    fun provideValidateDiagnosesAndBillablesExistenceUseCase(
+        billableRepository: BillableRepository,
+        diagnosisRepository: DiagnosisRepository
+    ): ValidateDiagnosesAndBillablesExistenceUseCase {
+        return ValidateDiagnosesAndBillablesExistenceUseCase(billableRepository, diagnosisRepository)
     }
 }
