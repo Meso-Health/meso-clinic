@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.WindowManager
 import dagger.android.support.DaggerAppCompatActivity
 import org.watsi.device.managers.SessionManager
-import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.CurrentPatientsFragment
 import org.watsi.uhp.helpers.ActivityHelper
@@ -29,7 +28,7 @@ class ClinicActivity : DaggerAppCompatActivity() {
     @Inject lateinit var navigationManager: NavigationManager
 
     companion object {
-        private val FETCH_SERVICE_JOB_ID = 0
+        private val FETCH_DATA_SERVICE_JOB_ID = 0
         private val FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID = 1
         private val SYNC_DATA_SERVICE_JOB_ID = 2
         private val SYNC_PHOTOS_SERVICE_JOB_ID = 3
@@ -59,15 +58,15 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
         if (!hasPermissions) {
             ActivityCompat.requestPermissions(this, requiredPermissions, 0)
-        } else if (sessionManager.currentToken() == null) {
+        } else if (sessionManager.currentAuthenticationToken() == null) {
             navigateToAuthenticationActivity()
         }
     }
 
     private fun startServices() {
-        BaseService.schedule(FETCH_SERVICE_JOB_ID, this, FetchService::class.java)
-        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
+        BaseService.schedule(FETCH_DATA_SERVICE_JOB_ID, this, FetchService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
+        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
         BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
         BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
     }
@@ -127,5 +126,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
 
     fun navigateToAuthenticationActivity() {
         startActivity(Intent(this, AuthenticationActivity::class.java))
+        finish()
     }
 }

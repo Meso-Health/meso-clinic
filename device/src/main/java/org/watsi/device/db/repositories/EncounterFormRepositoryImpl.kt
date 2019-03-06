@@ -33,7 +33,7 @@ class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao
     }
 
     override fun sync(delta: Delta): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             find(delta.modelId).flatMapCompletable { encounterFormWithPhoto ->
                 val requestBody = RequestBody.create(MediaType.parse("image/jpg"), encounterFormWithPhoto.photo.bytes)
                 Completable.concatArray(

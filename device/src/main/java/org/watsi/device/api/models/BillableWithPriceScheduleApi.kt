@@ -10,7 +10,6 @@ data class BillableWithPriceScheduleApi(
     val type: String,
     val composition: String?,
     val unit: String?,
-    val price: Int,
     val name: String,
     val activePriceSchedule: PriceScheduleApi
 ) {
@@ -19,7 +18,6 @@ data class BillableWithPriceScheduleApi(
         type = billable.type.toString().toLowerCase(),
         composition = billable.composition?.toLowerCase(),
         unit = billable.unit,
-        price = billable.price,
         name = billable.name,
         activePriceSchedule = PriceScheduleApi(
             id = activePriceSchedule.id,
@@ -37,7 +35,6 @@ data class BillableWithPriceScheduleApi(
                 type = Billable.Type.valueOf(type.toUpperCase()),
                 composition = composition,
                 unit = unit,
-                price = price,
                 name = name
             ),
             priceSchedule = activePriceSchedule.toPriceSchedule()

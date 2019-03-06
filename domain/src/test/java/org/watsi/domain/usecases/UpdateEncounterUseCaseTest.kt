@@ -50,45 +50,38 @@ class UpdateEncounterUseCaseTest {
     )
     private val service1EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = serviceBillable1.billable.id,
         priceScheduleId = serviceBillable1.priceSchedule.id,
         quantity = 1
     )
     private val service2EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = serviceBillable2.billable.id,
         priceScheduleId = serviceBillable2.priceSchedule.id,
         quantity = 1,
         priceScheduleIssued = true
     )
     private val lab1EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = labBillable1.billable.id,
         priceScheduleId = labBillable1.priceSchedule.id,
         quantity = 1
     )
     private val lab2EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = labBillable2.billable.id,
         priceScheduleId = labBillable2.priceSchedule.id,
         quantity = 1
     )
     private val drug1EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = drugBillable1.billable.id,
         priceScheduleId = drugBillable1.priceSchedule.id,
         quantity = 5,
         priceScheduleIssued = true
     )
     private val drug2EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = drugBillable2.billable.id,
         priceScheduleId = drugBillable2.priceSchedule.id,
         quantity = 10
     )
     private val drug3EncounterItem = EncounterItemFactory.build(
         encounterId = savedEncounter.id,
-        billableId = drugBillable3.billable.id,
         priceScheduleId = drugBillable3.priceSchedule.id,
         quantity = 20
     )

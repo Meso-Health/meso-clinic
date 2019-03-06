@@ -8,7 +8,6 @@ data class BillableApi(
     val type: String,
     val composition: String?,
     val unit: String?,
-    val price: Int,
     val name: String
 ) {
 
@@ -17,7 +16,6 @@ data class BillableApi(
         type = billable.type.toString().toLowerCase(),
         composition = billable.composition?.toLowerCase(),
         unit = billable.unit,
-        price = billable.price,
         name = billable.name
     )
 
@@ -27,7 +25,6 @@ data class BillableApi(
             type = Billable.Type.valueOf(type.toUpperCase()),
             composition = composition,
             unit = unit,
-            price = price,
             name = name
         )
     }

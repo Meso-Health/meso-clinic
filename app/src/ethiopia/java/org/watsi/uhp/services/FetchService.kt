@@ -31,10 +31,10 @@ class FetchService : BaseService() {
             }
 
             Completable.concatArray(
-                memberRepository.fetch().onErrorComplete { setErrored(it) },
                 billableRepository.fetch().onErrorComplete { setErrored(it) },
                 diagnosisRepository.fetch().onErrorComplete { setErrored(it) },
                 fetchReturnedClaimsUseCase.execute().onErrorComplete { setErrored(it) },
+                memberRepository.fetch().onErrorComplete { setErrored(it) },
                 Completable.fromAction { if (getErrored()) { throw Exception() } }
             ).blockingAwait()
         }.subscribeOn(Schedulers.io())

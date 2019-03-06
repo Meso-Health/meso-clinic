@@ -38,6 +38,7 @@
     <string name="login_wrong_username_or_password_message">ዝተዋህበ ናይ ተጠቃሚ ስም / ይሕለፍ ቃል ጥምረት ግጉይ እዩ</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
     <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+    <!--<string name="login_permission_error">This user cannot be used for enrollment</string>-->
 
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">ኣእትው</string>
@@ -186,6 +187,7 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
+    <!--<string name="referral_label">Referral</string>-->
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>
@@ -218,6 +220,7 @@
     <string name="unit_price_label">ንፅል ዋጋ</string>
     <string name="quantity_label">በዝሒ</string>
     <string name="total_price_label">ጠቕላላ ዋጋ</string>
+    <!--<string name="stockout">Stockout</string>-->
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">ምርግጋፅ ዝፅበ</string>

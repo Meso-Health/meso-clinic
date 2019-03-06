@@ -50,12 +50,11 @@ class SpinnerLineItemViewModel @Inject constructor(
             val encounterState = viewState.encounterFlowState
             val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
             val encounterItem = EncounterItem(
-                UUID.randomUUID(),
-                encounterState.encounter.id,
-                billableWithPrice.billable.id,
-                1,
-                billableWithPrice.priceSchedule.id,
-                false
+                id = UUID.randomUUID(),
+                encounterId = encounterState.encounter.id,
+                quantity = 1,
+                priceScheduleId = billableWithPrice.priceSchedule.id,
+                priceScheduleIssued = false
             )
             updatedEncounterItems.add(EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice))
             updateEncounterItems(viewState, updatedEncounterItems)

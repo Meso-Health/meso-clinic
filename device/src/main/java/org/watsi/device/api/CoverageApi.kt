@@ -32,7 +32,7 @@ private const val AUTHORIZATION_HEADER = "Authorization"
 interface CoverageApi {
 
     @POST("authentication_token")
-    fun getAuthToken(
+    fun login(
             @Header(AUTHORIZATION_HEADER) authorization: String
     ): Single<AuthenticationTokenApi>
 

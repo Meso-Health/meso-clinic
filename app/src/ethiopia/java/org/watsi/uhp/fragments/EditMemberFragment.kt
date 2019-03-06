@@ -17,7 +17,10 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.birthdate_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.check_in_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_number_field
@@ -37,6 +40,7 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
+import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
@@ -59,6 +63,7 @@ class EditMemberFragment : DaggerFragment() {
     @Inject lateinit var logger: Logger
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
+    @Inject lateinit var validateDiagnosesAndBillablesExistenceUseCase: ValidateDiagnosesAndBillablesExistenceUseCase
 
     private lateinit var viewModel: EditMemberViewModel
     private lateinit var paramMember: Member
@@ -185,7 +190,10 @@ class EditMemberFragment : DaggerFragment() {
 
         start_claim_button.setOnClickListener {
             getMember()?.let { member ->
-                identificationEventRepository.openCheckIn(member.id).subscribe( { idEvent ->
+                Single.fromCallable {
+                    validateDiagnosesAndBillablesExistenceUseCase.execute().blockingAwait()
+                    identificationEventRepository.openCheckIn(member.id).blockingGet()
+                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe( { idEvent ->
                     val encounter = Encounter(
                         id = UUID.randomUUID(),
                         memberId = member.id,
@@ -196,7 +204,11 @@ class EditMemberFragment : DaggerFragment() {
                         EncounterFlowState(encounter, emptyList(), emptyList(), emptyList(), member)
                     ))
                 }, {
-                    logger.error(it)
+                    if (it.cause is ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException) {
+                        showDiagnosisAndBillableMissingDialog()
+                    } else {
+                        logger.error(it)
+                    }
                 })
             }
         }
@@ -232,6 +244,12 @@ class EditMemberFragment : DaggerFragment() {
                 menu?.let { it.findItem(R.id.menu_check_out_member).isVisible = false }
             }
         }
+    }
+
+    fun showDiagnosisAndBillableMissingDialog() {
+        android.app.AlertDialog.Builder(activity)
+                .setMessage(getString(R.string.diagnoses_and_billable_missing_dialog))
+                .create().show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -15,6 +15,7 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.AuthenticationTokenApi
 import org.watsi.device.api.models.UserApi
 import org.watsi.domain.factories.AuthenticationTokenFactory
+import org.watsi.domain.factories.UserFactory
 
 @RunWith(MockitoJUnitRunner::class)
 class SessionManagerImplTest {
@@ -30,20 +31,40 @@ class SessionManagerImplTest {
     }
 
     @Test
-    fun login() {
+    fun login_allowedRole() {
         val username = "foo"
         val password = "bar"
-        val token = AuthenticationTokenFactory.build()
+        val token = AuthenticationTokenFactory.build(user = UserFactory.build(role = "provider"))
         val authenticationTokenApi = AuthenticationTokenApi(
-                token.token, token.expiresAt.toString(), UserApi(1, username, username, 1, "0000"))
-        whenever(mockCoverageApi.getAuthToken(any())).thenReturn(Single.just(authenticationTokenApi))
+            token = token.token,
+            expiresAt = token.expiresAt.toString(),
+            user = UserApi(token.user)
+        )
+        whenever(mockCoverageApi.login(any())).thenReturn(Single.just(authenticationTokenApi))
 
-        sessionManager.login(username, password).test()
+        sessionManager.login(username, password).test().assertComplete()
 
         val parsedToken = authenticationTokenApi.toAuthenticationToken()
         verify(mockPreferencesManager).setAuthenticationToken(parsedToken)
         verify(mockLogger).setUser(parsedToken.user)
-        assertEquals(sessionManager.currentToken(), parsedToken)
+        assertEquals(sessionManager.currentAuthenticationToken(), parsedToken)
+    }
+
+    @Test
+    fun login_admin() {
+        val username = "foo"
+        val password = "bar"
+        val disallowedRoles = listOf("admin", "enrollment_worker")
+        disallowedRoles.forEach { disallowedRole ->
+            val token = AuthenticationTokenFactory.build(user = UserFactory.build(role = disallowedRole))
+            val authenticationTokenApi = AuthenticationTokenApi(
+                token.token, token.expiresAt.toString(), UserApi(token.user))
+            whenever(mockCoverageApi.login(any())).thenReturn(Single.just(authenticationTokenApi))
+
+            val result = sessionManager.login(username, password).test()
+
+            result.assertError(SessionManager.PermissionException::class.java)
+        }
     }
 
     @Test
@@ -52,6 +73,6 @@ class SessionManagerImplTest {
 
         verify(mockPreferencesManager).setAuthenticationToken(null)
         verify(mockLogger).clearUser()
-        assertNull(sessionManager.currentToken())
+        assertNull(sessionManager.currentAuthenticationToken())
     }
 }

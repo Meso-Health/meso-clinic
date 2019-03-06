@@ -96,6 +96,8 @@ android {
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher"
             ]
+
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostDemo
         }
         training {
             signingConfig signingConfigs.releaseConfig

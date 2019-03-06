@@ -26,6 +26,9 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (sessionManager.currentAuthenticationToken()?.token != null) {
+            navigateToClinicActivity()
+        }
         setContentView(R.layout.activity_authentication)
         setTitle(R.string.authentication_activity_label)
 
@@ -65,5 +68,6 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
         val intent = Intent(this, ClinicActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
+        finish()
     }
 }

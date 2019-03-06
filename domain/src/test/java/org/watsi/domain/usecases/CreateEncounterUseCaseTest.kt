@@ -85,7 +85,7 @@ class CreateEncounterUseCaseTest {
         val encounter = EncounterFactory.build()
         val billable = BillableFactory.build()
         val priceSchedule = PriceScheduleFactory.build(billableId = billable.id)
-        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id)
+        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, priceScheduleId = priceSchedule.id)
         val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
             BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
         )
@@ -132,7 +132,11 @@ class CreateEncounterUseCaseTest {
         val encounter = EncounterFactory.build()
         val billable = BillableFactory.build()
         val priceSchedule = PriceScheduleFactory.build(billableId = billable.id)
-        val encounterItem = EncounterItemFactory.build(encounterId = encounter.id, billableId = billable.id, priceScheduleIssued = true)
+        val encounterItem = EncounterItemFactory.build(
+            encounterId = encounter.id,
+            priceScheduleId = priceSchedule.id,
+            priceScheduleIssued = true
+        )
         val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
             BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
         )

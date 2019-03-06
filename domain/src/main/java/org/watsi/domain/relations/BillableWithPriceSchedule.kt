@@ -10,6 +10,6 @@ data class BillableWithPriceSchedule(
     val prevPriceSchedule: PriceSchedule? = null
 ): Serializable {
     fun priceSchedules(): List<PriceSchedule> {
-        return listOf(priceSchedule, prevPriceSchedule).filterNotNull()
+        return listOfNotNull(priceSchedule, prevPriceSchedule)
     }
 }

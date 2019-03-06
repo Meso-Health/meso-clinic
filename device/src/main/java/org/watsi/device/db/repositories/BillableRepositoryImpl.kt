@@ -77,7 +77,7 @@ class BillableRepositoryImpl(
      * remove or overwrite any unsynced data (new billables).
      */
     override fun fetch(): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             Completable.fromCallable {
                 val serverBillablesWithPrice = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
                         .map { it.toBillableWithPriceSchedule() }
@@ -107,7 +107,7 @@ class BillableRepositoryImpl(
     }
 
     override fun sync(delta: Delta): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             billableDao.find(delta.modelId).flatMapCompletable { billableModel ->
                 val billable = billableModel.toBillable()
                 api.postBillable(token.getHeaderString(), token.user.providerId, BillableApi(billable))

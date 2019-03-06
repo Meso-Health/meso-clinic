@@ -94,7 +94,7 @@ class MemberRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun checkedInMembers(excludeArchived: Boolean): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
+    override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.checkedInMembers().map {
             it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
         }
@@ -135,18 +135,18 @@ class MemberRepositoryImpl(
      * server data, unless the local data has unsynced changes.
      */
     override fun fetch(): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             Completable.fromAction {
-                var hasMore = paginatedFetch(token)
+                var hasMore = true
                 while (hasMore) {
-                    hasMore = paginatedFetch(token)
+                    hasMore = paginatedFetch(token).blockingGet()
                 }
                 preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }
 
-    private fun paginatedFetch(token: AuthenticationToken): Boolean {
+    private fun paginatedFetch(token: AuthenticationToken): Single<Boolean> {
         val paginatedResponse = api.getMembers(
             token.getHeaderString(),
             token.user.providerId,
@@ -169,7 +169,7 @@ class MemberRepositoryImpl(
 
         preferencesManager.updateMembersPageKey(updatedPageKey)
 
-        return hasMore
+        return Single.just(hasMore)
     }
 
     override fun downloadPhotos(): Completable {
@@ -192,7 +192,7 @@ class MemberRepositoryImpl(
     }
 
     override fun sync(deltas: List<Delta>): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             find(deltas.first().modelId).flatMapCompletable { member ->
                 if (deltas.any { it.action == Delta.Action.ADD }) {
                     api.postMember(token.getHeaderString(), MemberApi(member))
@@ -204,7 +204,7 @@ class MemberRepositoryImpl(
     }
 
     override fun syncPhotos(deltas: List<Delta>): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             // the modelId in a photo delta corresponds to the member ID and not the photo ID
             // to make this querying and formatting of the sync request simpler
             val memberId = deltas.first().modelId

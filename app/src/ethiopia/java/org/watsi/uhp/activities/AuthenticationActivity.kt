@@ -32,6 +32,9 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (sessionManager.currentAuthenticationToken()?.token != null) {
+            navigateToClinicActivity()
+        }
         setContentView(R.layout.activity_authentication)
         setTitle(R.string.authentication_activity_label)
 
@@ -52,6 +55,8 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                     }, {
                         if (it is HttpException && it.code() == 401) {
                             error_text.error = getString(R.string.login_wrong_username_or_password_message)
+                        } else if (it is SessionManager.PermissionException) {
+                            error_text.error = getString(R.string.login_permission_error)
                         } else if (it is IOException && it.message.orEmpty().contains("unexpected end of stream")) {
                             error_text.error = getString(R.string.login_offline_error)
                         } else {

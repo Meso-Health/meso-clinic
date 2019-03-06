@@ -499,7 +499,7 @@ interactions:
     uri: http://localhost:5000/providers/1/encounters
     headers:
       Authorization: Token MDSQkAYS.DfqtUXJvC75xSHuYYLkjY1YZhJ4QcQ3S
-    body: '{"id":"94fba909-24cd-8026-b253-a0ea44080d1d","member_id":"914a6308-28c1-4a4a-b123-4c2233f21b11","identification_event_id":"914e82f2-6e42-4bd4-a9df-ddf11802c9c1","occurred_at":"2018-03-23T08:10:36.306Z","prepared_at":null,"backdated_occurred_at":false,"copayment_paid":true,"diagnosis_ids":[],"encounter_items":[{"id":"95fba911-29cd-4022-b273-a9ea26180d1a","encounter_id":"94fba909-24cd-8026-b253-a0ea44080d1d","billable_id":"00614e1c-5d4b-4b1e-87a7-f2e7436cb3cd","quantity":1,"price_schedule_id":"94fba924-13cd-4022-b622-7c8200f21b81","price_schedule_issued":false}],"visit_type":null,"revised_encounter_id":null,"provider_comment":null,"claim_id":"94fba909-24cd-8026-b253-a0ea44080d1d","submitted_at":null}'
+    body: '{"id":"94fba909-24cd-8026-b253-a0ea44080d1d","member_id":"914a6308-28c1-4a4a-b123-4c2233f21b11","identification_event_id":"914e82f2-6e42-4bd4-a9df-ddf11802c9c1","occurred_at":"2018-03-23T08:10:36.306Z","prepared_at":null,"backdated_occurred_at":false,"copayment_paid":true,"diagnosis_ids":[],"encounter_items":[{"id":"95fba911-29cd-4022-b273-a9ea26180d1a","encounter_id":"94fba909-24cd-8026-b253-a0ea44080d1d","quantity":1,"price_schedule_id":"94fba924-13cd-4022-b622-7c8200f21b81","price_schedule_issued":false}],"visit_type":null,"revised_encounter_id":null,"provider_comment":null,"claim_id":"94fba909-24cd-8026-b253-a0ea44080d1d","submitted_at":null}'
   response:
     status: 201
     headers:

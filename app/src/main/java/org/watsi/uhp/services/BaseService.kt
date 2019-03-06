@@ -76,7 +76,7 @@ abstract class BaseService : JobService() {
         private const val SYNC_INTERVAL = 15 * 60 * 1000 // 15 minutes (JobScheduler minimum)
 
         fun <T : BaseService> schedule(jobId: Int, context: Context, jobClass: Class<T>) {
-            val requireNetwork = BuildConfig.BUILD_TYPE == "release"
+            val requireNetwork = BuildConfig.BUILD_TYPE != "debug"
 
             val jobInfo = JobInfo.Builder(jobId, ComponentName(context, jobClass))
                     .setRequiredNetworkType(if (requireNetwork) JobInfo.NETWORK_TYPE_ANY else JobInfo.NETWORK_TYPE_NONE)

@@ -38,9 +38,7 @@ class DrugAndSupplyViewModel @Inject constructor(
     }
 
     private fun getSelectableBillables(): List<BillableWithPriceSchedule>  {
-        val encounterItems = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
-        val selectedBillables = encounterItems.map { it.billableWithPriceSchedule }
-        return billableRelations.minus(selectedBillables).sortedBy { it.billable.name }
+        return billableRelations.sortedBy { it.billable.name }
     }
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
@@ -54,9 +52,6 @@ class DrugAndSupplyViewModel @Inject constructor(
     fun updateQuery(query: String) {
         Completable.fromCallable {
             if (query.length > 2) {
-                val currentDrugs = getEncounterFlowState()
-                    ?.getEncounterItemsOfType(Billable.Type.DRUG)
-                    ?.map { it.billableWithPriceSchedule }.orEmpty()
                 val selectableDrugNames = uniqueDrugNames
                 val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
 
@@ -66,7 +61,7 @@ class DrugAndSupplyViewModel @Inject constructor(
                     else
                         Integer.compare(o2.score, o1.score)
                 }).map { result ->
-                    billableRelations.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
+                    billableRelations.filter { it.billable.name == result.string }.sortedBy { it.billable.details() }
                 }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillableRelations = matchingBillables))
             } else {
@@ -80,12 +75,11 @@ class DrugAndSupplyViewModel @Inject constructor(
             val encounterState = viewState.encounterFlowState
             val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
             val encounterItem = EncounterItem(
-                UUID.randomUUID(),
-                encounterState.encounter.id,
-                billableWithPrice.billable.id,
-                1,
-                billableWithPrice.priceSchedule.id,
-                false
+                id = UUID.randomUUID(),
+                encounterId = encounterState.encounter.id,
+                quantity = 1,
+                priceScheduleId = billableWithPrice.priceSchedule.id,
+                priceScheduleIssued = false
             )
             updatedEncounterItems.add(
                 EncounterItemWithBillableAndPrice(

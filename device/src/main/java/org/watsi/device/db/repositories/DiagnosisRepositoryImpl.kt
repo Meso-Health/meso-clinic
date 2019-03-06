@@ -42,7 +42,7 @@ class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
      * any persisted data if the API response contains updated data.
      */
     override fun fetch(): Completable {
-        return sessionManager.currentToken()?.let { token ->
+        return sessionManager.currentAuthenticationToken()?.let { token ->
             Completable.fromAction {
                 val serverDiagnoses = api.getDiagnoses(token.getHeaderString()).blockingGet()
                 val serverDiagnosesIds = serverDiagnoses.map { it.id }

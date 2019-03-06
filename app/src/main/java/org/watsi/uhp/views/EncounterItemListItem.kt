@@ -10,7 +10,10 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billabl
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.stockout_indicator
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.stockout_negative_price
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
+import org.watsi.uhp.utils.CurrencyUtil
 import java.util.UUID
 
 class EncounterItemListItem @JvmOverloads constructor(
@@ -70,6 +73,14 @@ class EncounterItemListItem @JvmOverloads constructor(
         onPriceTap?.let {
             line_item_price.underline()
             line_item_price.setOnClickListener { onPriceTap(encounterItem.id) }
+        }
+
+        if (encounterItem.stockout) {
+            stockout_indicator.visibility = View.VISIBLE
+            stockout_negative_price.text = "-${CurrencyUtil.formatMoney(encounterItemRelation.price())}"
+        } else {
+            stockout_indicator.visibility = View.GONE
+            stockout_negative_price.text = null
         }
     }
 }

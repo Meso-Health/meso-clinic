@@ -59,7 +59,7 @@ class DeviceModule {
 
     @Provides
     fun provideSimHelper(sessionManager: SessionManager): SimHelper {
-        val userId = sessionManager.currentToken()!!.user.id
+        val userId = sessionManager.currentAuthenticationToken()!!.user.id
         return SimHelper(BuildConfig.SIMPRINTS_API_KEY, userId.toString())
     }
 
