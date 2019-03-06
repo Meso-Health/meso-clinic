@@ -247,19 +247,6 @@ class EditMemberFragment : DaggerFragment() {
     }
 
     fun showDiagnosisAndBillableMissingDialog() {
-//        android.app.AlertDialog.Builder(activity)
-//                .setTitle(R.string.check_out_alert_dialog_title)
-//                .setMessage(getString(R.string.check_out_alert_dialog_message, paramMember.name))
-//                .setNegativeButton(R.string.cancel, null)
-//                .setPositiveButton(R.string.remove) { _, _ ->
-//                    viewModel.dismissIdentificationEvent().subscribe {
-//                        navigationManager.popTo(
-//                            HomeFragment.withSnackbarMessage(
-//                                getString(R.string.checked_out_snackbar_message, paramMember.name)
-//                            )
-//                        )
-//                    }
-//                }.create().show()
         android.app.AlertDialog.Builder(activity)
                 .setMessage(getString(R.string.diagnoses_and_billable_missing_dialog))
                 .create().show()
