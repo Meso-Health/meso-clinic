@@ -27,7 +27,6 @@ android {
         sandbox {}
         demo {}
         training {}
-        prototype {}
     }
 
     testOptions {

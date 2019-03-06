@@ -88,18 +88,6 @@ android {
 
             buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
         }
-        prototype {
-            initWith(buildTypes.debug)
-            applicationIdSuffix ".prototype"
-            versionNameSuffix "-prototype"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_dev"
-            ]
-
-            buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
-            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
-        }
         demo {
             signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".demo"
