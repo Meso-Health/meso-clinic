@@ -217,6 +217,7 @@
     <string name="unit_price_label">ነጠላ ዋጋ</string>
     <string name="quantity_label">ብዛት</string>
     <string name="total_price_label">ጠቅላላ ዋጋ</string>
+    <!--<string name="stockout">Stockout</string>-->
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">መረጋገጥ የሚጠብቅ</string>

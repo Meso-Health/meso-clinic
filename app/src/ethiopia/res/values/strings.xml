@@ -130,7 +130,7 @@
     <string name="unit_price_label">Unit Price</string>
     <string name="quantity_label">Quantity</string>
     <string name="total_price_label">Total Price</string>
-    <string name="stockout">Stockout</string>
+    <string name="stockout" translatable="false">Stockout</string>
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">Pending Approval</string>

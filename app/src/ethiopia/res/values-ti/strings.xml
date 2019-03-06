@@ -220,6 +220,7 @@
     <string name="unit_price_label">ንፅል ዋጋ</string>
     <string name="quantity_label">በዝሒ</string>
     <string name="total_price_label">ጠቕላላ ዋጋ</string>
+    <!--<string name="stockout">Stockout</string>-->
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">ምርግጋፅ ዝፅበ</string>
