@@ -184,6 +184,7 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">የጉብኝት አይነት</string>
     <string name="visit_type_label">የጉብኝት አይነት</string>
+    <!--<string name="referral_label">Referral</string>-->
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>
@@ -216,6 +217,7 @@
     <string name="unit_price_label">ነጠላ ዋጋ</string>
     <string name="quantity_label">ብዛት</string>
     <string name="total_price_label">ጠቅላላ ዋጋ</string>
+    <!--<string name="stockout">Stockout</string>-->
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">መረጋገጥ የሚጠብቅ</string>

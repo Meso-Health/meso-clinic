@@ -8,7 +8,10 @@ import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_do
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_name
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_price
 import kotlinx.android.synthetic.main.item_receipt_list.view.receipt_billable_quantity
+import kotlinx.android.synthetic.main.item_receipt_list.view.stockout_indicator
+import kotlinx.android.synthetic.main.item_receipt_list.view.stockout_negative_price
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
+import org.watsi.uhp.utils.CurrencyUtil
 import java.text.NumberFormat
 
 class ReceiptListItem @JvmOverloads constructor(
@@ -22,6 +25,10 @@ class ReceiptListItem @JvmOverloads constructor(
         encounterItemRelations.billableWithPriceSchedule.billable.details()?.let { details ->
             receipt_billable_dosage.visibility = View.VISIBLE
             receipt_billable_dosage.text = details
+        }
+        if (encounterItemRelations.encounterItem.stockout) {
+            stockout_indicator.visibility = View.VISIBLE
+            stockout_negative_price.text = "-${CurrencyUtil.formatMoney(encounterItemRelations.price())}"
         }
     }
 }

@@ -17,7 +17,8 @@ class EditPriceViewModel @Inject constructor() : ViewModel() {
             encounterItemRelation.billableWithPriceSchedule.billable,
             encounterItemRelation.billableWithPriceSchedule.priceSchedule.price,
             encounterItemRelation.encounterItem.quantity,
-            encounterItemRelation.price()
+            encounterItemRelation.price(),
+            encounterItemRelation.encounterItem.stockout
         )
         return observable
     }
@@ -25,11 +26,9 @@ class EditPriceViewModel @Inject constructor() : ViewModel() {
     fun updateUnitPrice(unitPrice: Int) {
         observable.value?.let { viewState ->
             if (unitPrice != viewState.unitPrice) {
-                observable.value = ViewState(
-                        viewState.billable,
-                        unitPrice,
-                        viewState.quantity,
-                        unitPrice * viewState.quantity
+                observable.value = viewState.copy(
+                    unitPrice = unitPrice,
+                    totalPrice = unitPrice * viewState.quantity
                 )
             }
         }
@@ -38,11 +37,9 @@ class EditPriceViewModel @Inject constructor() : ViewModel() {
     fun updateQuantity(quantity: Int) {
         observable.value?.let { viewState ->
             if (quantity != viewState.quantity) {
-                observable.value = ViewState(
-                        viewState.billable,
-                        viewState.unitPrice,
-                        quantity,
-                        viewState.unitPrice * quantity
+                observable.value = viewState.copy(
+                    quantity = quantity,
+                    totalPrice = viewState.unitPrice * quantity
                 )
             }
         }
@@ -51,18 +48,27 @@ class EditPriceViewModel @Inject constructor() : ViewModel() {
     fun updateTotalPrice(totalPrice: Int) {
         observable.value?.let { viewState ->
             if (totalPrice != viewState.totalPrice) {
-                observable.value = ViewState(
-                        viewState.billable,
-                        totalPrice / viewState.quantity,
-                        viewState.quantity,
-                        totalPrice
+                observable.value = viewState.copy(
+                    unitPrice = totalPrice / viewState.quantity,
+                    totalPrice = totalPrice
                 )
             }
         }
     }
 
-    data class ViewState(val billable: Billable?,
-                         val unitPrice: Int,
-                         val quantity: Int,
-                         val totalPrice: Int)
+    fun updateStockout(stockout: Boolean) {
+        observable.value?.let { viewState ->
+            if (stockout != viewState.stockout) {
+                observable.value = viewState.copy(stockout = stockout)
+            }
+        }
+    }
+
+    data class ViewState(
+        val billable: Billable?,
+        val unitPrice: Int,
+        val quantity: Int,
+        val totalPrice: Int,
+        val stockout: Boolean
+    )
 }

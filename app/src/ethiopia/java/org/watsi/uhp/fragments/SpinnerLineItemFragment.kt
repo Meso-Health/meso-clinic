@@ -139,6 +139,16 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
             }
         }
 
+        val onPriceTap = { encounterItemId: UUID ->
+            viewModel.getEncounterFlowState()?.let { flowState ->
+                encounterFlowState.encounterItemRelations = flowState.encounterItemRelations
+                navigationManager.goTo(EditPriceFragment.forEncounterItem(
+                    encounterItemId, encounterFlowState))
+            } ?: run {
+                logger.error("EncounterFlowState not set")
+            }
+        }
+
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
                     swipeHandler.disableSwipe()
@@ -154,7 +164,7 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
                 },
-                onPriceTap = null
+                onPriceTap = if (billableType.equals(Billable.Type.SERVICE)) null else onPriceTap
         )
 
         swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) })
