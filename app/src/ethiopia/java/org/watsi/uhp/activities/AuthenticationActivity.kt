@@ -21,6 +21,7 @@ import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.LocaleManager
 import retrofit2.HttpException
 import java.io.IOException
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 class AuthenticationActivity : DaggerAppCompatActivity() {
@@ -57,7 +58,8 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                             error_text.error = getString(R.string.login_wrong_username_or_password_message)
                         } else if (it is SessionManager.PermissionException) {
                             error_text.error = getString(R.string.login_permission_error)
-                        } else if (it is IOException && it.message.orEmpty().contains("unexpected end of stream")) {
+                        } else if ((it is RuntimeException && it.message.orEmpty().contains("Unable to resolve host"))
+                                || (it is IOException && it.message.orEmpty().contains("unexpected end of stream"))) {
                             error_text.error = getString(R.string.login_offline_error)
                         } else {
                             error_text.error = getString(R.string.login_generic_failure_message)
