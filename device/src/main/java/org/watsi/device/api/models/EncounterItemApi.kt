@@ -8,7 +8,8 @@ data class EncounterItemApi(
     val encounterId: UUID,
     val quantity: Int,
     val priceScheduleId: UUID,
-    val priceScheduleIssued: Boolean
+    val priceScheduleIssued: Boolean,
+    val stockout: Boolean
 ) {
 
     fun toEncounterItem(): EncounterItem {
@@ -18,7 +19,7 @@ data class EncounterItemApi(
             quantity = quantity,
             priceScheduleId = priceScheduleId,
             priceScheduleIssued = priceScheduleIssued,
-            stockout = false // TODO: Implement this when we need to fetch encounter items
+            stockout = stockout
         )
     }
 
@@ -27,6 +28,7 @@ data class EncounterItemApi(
         encounterId = encounterItem.encounterId,
         quantity = encounterItem.quantity,
         priceScheduleId = encounterItem.priceScheduleId,
-        priceScheduleIssued = encounterItem.priceScheduleIssued
+        priceScheduleIssued = encounterItem.priceScheduleIssued,
+        stockout = encounterItem.stockout
     )
 }
