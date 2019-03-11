@@ -201,7 +201,14 @@ class EditMemberFragment : DaggerFragment() {
                         occurredAt = Instant.now(clock)
                     )
                     navigationManager.goTo(VisitTypeFragment.forEncounter(
-                        EncounterFlowState(encounter, emptyList(), emptyList(), emptyList(), member)
+                        EncounterFlowState(
+                            encounter = encounter,
+                            encounterItemRelations = emptyList(),
+                            encounterForms = emptyList(),
+                            referrals = emptyList(),
+                            diagnoses = emptyList(),
+                            member = member
+                        )
                     ))
                 }, {
                     if (it.cause is ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException) {

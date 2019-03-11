@@ -4,6 +4,7 @@ import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Referral
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 
@@ -16,8 +17,16 @@ object EncounterWithExtrasFactory {
             EncounterItemWithBillableAndPriceFactory.buildWithEncounter(encounterId = encounter.id)
         ),
         diagnoses: List<Diagnosis> = emptyList(),
-        encounterForms: List<EncounterForm> = emptyList()
+        encounterForms: List<EncounterForm> = emptyList(),
+        referrals: List<Referral> = emptyList()
     ) : EncounterWithExtras {
-        return EncounterWithExtras(encounter, member, encounterItemRelations, diagnoses, encounterForms)
+        return EncounterWithExtras(
+            encounter = encounter,
+            member = member,
+            encounterItemRelations = encounterItemRelations,
+            diagnoses = diagnoses,
+            encounterForms = encounterForms,
+            referrals = referrals
+        )
     }
 }

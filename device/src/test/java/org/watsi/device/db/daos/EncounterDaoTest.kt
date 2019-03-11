@@ -120,7 +120,9 @@ class EncounterDaoTest : DaoBaseTest() {
             encounterModel = unsyncedEncounter,
             memberModel = listOf(unsyncedMember),
             encounterFormModels = emptyList(),
-            encounterItemWithBillableAndPriceModels = emptyList())
+            encounterItemWithBillableAndPriceModels = emptyList(),
+            referralModels = emptyList()
+        )
 
         encounterDao.unsynced().test().assertValue(listOf(unsyncedEncounterRelation))
     }

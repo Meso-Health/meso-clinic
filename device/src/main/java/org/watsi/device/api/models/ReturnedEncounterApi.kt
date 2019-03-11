@@ -61,7 +61,8 @@ data class ReturnedEncounterApi(
             ),
             member = member.toMember(persistedMember),
             encounterForms = emptyList(),
-            diagnoses = emptyList() // We don't actually use this field for fetching / persisting.
+            diagnoses = emptyList(), // We don't actually use this field for fetching / persisting.
+            referrals = emptyList() // TODO for later when we implement actual syncing and fetching
         )
     }
 

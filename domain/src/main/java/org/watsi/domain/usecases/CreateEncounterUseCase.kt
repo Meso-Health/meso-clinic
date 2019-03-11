@@ -115,5 +115,4 @@ class CreateEncounterUseCase(
 
         encounterRepository.insert(encounterWithItemsAndForms, deltas).blockingAwait()
     }
-
 }

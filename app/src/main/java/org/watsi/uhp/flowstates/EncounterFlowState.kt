@@ -16,15 +16,20 @@ data class EncounterFlowState(
     var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     var encounterForms: List<EncounterForm>,
     var diagnoses: List<Diagnosis>,
+    var referrals: List<Referral>,
     var member: Member? = null,
-    var newProviderComment: String? = null,
-    var referrals: List<Referral> = emptyList()
+    var newProviderComment: String? = null
 ) : Serializable {
 
     companion object {
         fun fromEncounterWithExtras(encounterWithExtras: EncounterWithExtras): EncounterFlowState {
-            return EncounterFlowState(encounterWithExtras.encounter, encounterWithExtras.encounterItemRelations,
-                encounterWithExtras.encounterForms, encounterWithExtras.diagnoses, encounterWithExtras.member
+            return EncounterFlowState(
+                encounter = encounterWithExtras.encounter,
+                encounterItemRelations = encounterWithExtras.encounterItemRelations,
+                encounterForms = encounterWithExtras.encounterForms,
+                diagnoses = encounterWithExtras.diagnoses,
+                member = encounterWithExtras.member,
+                referrals = encounterWithExtras.referrals
             )
         }
     }
@@ -44,11 +49,23 @@ data class EncounterFlowState(
     }.sum()
 
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
-        return EncounterWithItemsAndForms(encounter, encounterItemRelations, clearEncounterFormThumbnails())
+        return EncounterWithItemsAndForms(
+            encounter = encounter,
+            encounterItemRelations = encounterItemRelations,
+            encounterForms = clearEncounterFormThumbnails(),
+            referrals = referrals
+        )
     }
 
     fun toEncounterWithExtras(member: Member): EncounterWithExtras {
-        return EncounterWithExtras(encounter, member, encounterItemRelations, diagnoses, encounterForms)
+        return EncounterWithExtras(
+            encounter = encounter,
+            member = member,
+            encounterItemRelations = encounterItemRelations,
+            diagnoses = diagnoses,
+            encounterForms = encounterForms,
+            referrals = referrals
+        )
     }
 
     fun getEncounterItemsOfType(billableType: Billable.Type): List<EncounterItemWithBillableAndPrice> {
