@@ -197,7 +197,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     @Test
     fun createAndCheckInMember_invalidMedicalRecordNumber_returnsError() {
         setValidViewStateOnViewModel()
-        viewModel.onMedicalRecordNumberChange("12345")
+        viewModel.onMedicalRecordNumberChange("1234")
 
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
