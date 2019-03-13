@@ -98,7 +98,7 @@ data class Member(
         val LANGUAGE_CHOICES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA,
                 LANGUAGE_CHOICE_OTHER)
         const val MAX_AGE = 200
-        const val MIN_MRN_LENGTH = 6
+        const val MIN_MRN_LENGTH = 5
         const val MAX_MRN_LENGTH = 7
 
         fun isValidName(name: String): Boolean {
