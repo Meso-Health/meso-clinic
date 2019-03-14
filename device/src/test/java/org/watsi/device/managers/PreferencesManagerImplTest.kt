@@ -23,4 +23,12 @@ class PreferencesManagerImplTest {
         preferencesManager.setAuthenticationToken(token)
         assertEquals(preferencesManager.getAuthenticationToken().toString(), token.toString())
     }
+
+    @Test
+    fun supportsGettingAndSettingPreviousUser() {
+        val user = UserFactory.build()
+        assertNull(preferencesManager.getPreviousUser())
+        preferencesManager.setPreviousUser(user)
+        assertEquals(preferencesManager.getPreviousUser(), user)
+    }
 }
