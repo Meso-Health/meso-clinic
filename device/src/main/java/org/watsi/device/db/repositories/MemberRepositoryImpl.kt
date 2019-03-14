@@ -156,18 +156,20 @@ class MemberRepositoryImpl(
         val hasMore = paginatedResponse.hasMore
         val updatedPageKey = paginatedResponse.pageKey
 
-        // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
-        val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
-        val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
-        val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
+        if (serverMembers.isNotEmpty()) {
+            // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
+            val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
+            val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
+            val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
 
-        memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
-            val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
-            // Pass local member to upsert logic to preserve photo
-            MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
-        })
+            memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
+                val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
+                // Pass local member to upsert logic to preserve photo
+                MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+            })
 
-        preferencesManager.updateMembersPageKey(updatedPageKey)
+            preferencesManager.updateMembersPageKey(updatedPageKey)
+        }
 
         return Single.just(hasMore)
     }

@@ -293,6 +293,26 @@ class MemberRepositoryImplTest {
     }
 
     @Test
+    fun fetch_hasToken_subsequentFetch_serverReturnsEmptyPage_doesNotUpdateMembers_doesNotUpdatePageKey_updatesLastUpdatedAt() {
+        val storedPageKey = "stored page key"
+        val emptyPage = MemberPaginationApi(
+            pageKey = storedPageKey,
+            hasMore = false,
+            members = emptyList()
+        )
+
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
+        whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
+        whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(emptyPage))
+
+        repository.fetch().test().assertComplete()
+
+        verify(mockDao, never()).upsert(anyList())
+        verify(mockPreferencesManager, never()).updateMembersPageKey(any())
+        verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
+    }
+
+    @Test
     fun fetch_hasToken_fails_returnsError_doesNotUpdateAnything() {
         val exception = Exception()
         val storedPageKey = null
