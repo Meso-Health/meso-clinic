@@ -68,7 +68,7 @@
 
     <!-- ReceiptFragment -->
     <string name="receipt_fragment_label">ከልስ</string>
-    <string name="submit_encounter_button">ላክ</string>
+    <string name="submit_encounter_button">@string/submit</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
     <string name="today">ዛሬ</string>
     <string name="encounter_saved">የክፍያ ጥያቄው ተቀምጠዋል</string>
@@ -80,20 +80,22 @@
     <!--<string name="fetch_members_label">Members last updated</string>-->
     <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
     <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
-    <!--<string name="fetch_member_pictures_label">Member photos</string>-->
+    <string name="fetch_member_pictures_label">የአባል ፎቶ</string>
     <string name="sync_claims_label">የክፍያ ጥያቄዎች</string>
     <string name="all_synced">ሁሉንም አሳምር</string>
     <!--<string name="all_fetched">All fetched</string>-->
-    <!--<string name="never_updated">never</string>-->
+    <string name="never_updated">በፍፁም</string>
     <!--<string name="waiting_to_sync">unsynced</string>-->
     <!--<string name="waiting_to_fetch">unfetched</string>-->
-    <string name="sync_new_members_label">አዲሰ አባል</string>
+    <string name="sync_new_members_label">አዲስ አባላት</string>
     <!--<string name="sync_photos_label">New photos</string>-->
     <!--<string name="sync_id_events_label">Identifications</string>-->
+    <string name="app_version">የክፍያ ጥያቄ መላክ</string>
+    <string name="android_version">አንድሮይድ %1$S</string>
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
-    <string name="scan_member_card">ካርድ ስካን አድርግ</string>
+    <string name="scan_member_card">የኣባል ካርድ ስካን አድርግ</string>
     <string name="scan_member_card_invalid_id">ትክክለኛ አባል ካርድ አይደለም</string>
     <string name="scan_member_card_not_found">ይህ ካርድ ከአባል ጋር አልተጎዳኘም</string>
 
@@ -106,7 +108,7 @@
     <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
     <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
     <string name="delete">ሰርዝ</string>
-    <!--<string name="remove">Remove</string>-->
+    <string name="remove">አስወግድ</string>
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
@@ -114,9 +116,9 @@
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">የክፍያ ጥያቄዎች</string>
-    <!--<string name="no_claims">No claims available</string>-->
-    <!--<string name="pending_claims_dialog_label">Enter security PIN</string>-->
-    <!--<string name="pending_claims_dialog_error_message">Invalid PIN</string>-->
+    <string name="no_claims">የተገኘ የክፍያ ጥያቄ የለም</string>
+    <string name="pending_claims_dialog_label">የይለፍ ቁጥር አስገባ</string>
+    <string name="pending_claims_dialog_error_message">የተሳሳተ የይለፍ ቁጥር</string>
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -144,14 +146,14 @@
     <!-- MemberNotFoundFragment -->
     <string name="member_not_found_fragment_label">@string/search</string>
     <string name="member_not_found_message">አባል በመፈለግ ላይ እንከን ገጥሟል</string>
-    <!--<string name="member_not_found_detail">The member is not registered to this phone</string>-->
+    <string name="member_not_found_detail">ይህ አባል በዚህ ስልክ አልተመዘገበም</string>
     <string name="enter_claim_manually_button_text">በእጅ ሙላው</string>
 
     <!-- HouseholdFragment -->
     <string name="household_fragment_label">@string/search</string>
 
     <!-- EditMemberFragment -->
-    <!--<string name="replace_card_notification">Needs renewal</string>-->
+    <string name="replace_card_notification">ማሳደስ ያስፈልገዋል</string>
     <string name="membership_number_field_label">የማዐጤመ ካርድ ቁጥር</string>
     <string name="name_field_label">ሙሉ ስም</string>
     <string name="birthdate_field_label">የትውልድ ቀን</string>
@@ -162,21 +164,21 @@
     <string name="edit_input_edit">ኣርም</string>
     <string name="take_photo_button_text">ፎቶ ውሰድ</string>
     <string name="missing_medical_record_number">የህክምና ካርድ ቁጥር መግባት ኣለበት </string>
-    <!--<string name="check_out_alert_dialog_title">Remove from checked in list?</string>-->
-    <!--<string name="check_out_alert_dialog_message">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>-->
+    <string name="check_out_alert_dialog_title">ከገቡት ዝርዝር ውስጥ ይወገድ?</string>
+    <string name="check_out_alert_dialog_message">%1$s  ከገቡት ዝርዝር ውስጥ ይወገዳል፡፡ ከተወገደ ደግሞ በስሙ የክፍያ ጥያቄ ማቅረብ አይችሉም፡፡</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>
-    <!--<string name="member_name_label">Name</string>-->
+    <string name="member_name_label">ስም</string>
     <string name="medical_record_number">የህክምና ካርድ ቁጥር</string>
     <string name="membership_number_label">የኣባል መለያ ቁጥር</string>
     <string name="gender_validation_error">ፆታ መሞላት ኣለበት</string>
     <string name="name_validation_error">ስም መሞላት አለበት</string>
     <string name="three_names_validation_error">ስም ከነአያት ያስፈልጋል</string>
     <string name="age_validation_error">እድሜ መግባት ኣለበት</string>
-    <!--<string name="age_limit_validation_error"></string>-->
+    <string name="age_limit_validation_error">እድሜ ከ 200 በታች መሆን አለበት</string>
     <string name="medical_record_number_validation_error">የህክምና ካርድ ቁጥር መግባት ኣለበት</string>
-    <!--<string name="medical_record_number_length_validation_error"></string>-->
+    <string name="medical_record_number_length_validation_error">የህክምና ካርድ ቁጥር 5 ወይም 7 አሃዝ መሆን አለበት</string>
     <string name="exit_form_alert">እርግጠኛ ነዎት መውጣት ይፈልጋሉን</string>
     <string name="yes">አዎ</string>
     <string name="missing_fields_validation_error">ያልተሟላ መረጃ</string>
@@ -211,6 +213,7 @@
     <string name="resubmit">የክፍያ ጥያቄ ደግመህ ላክ</string>
     <string name="claim_id_deleted">የክፍያ ጥያቄ መ/ቁ %1$s ተሰርዘዋል</string>
     <string name="claim_id_submitted">የክፍያ ጥያቄ መ/ቁ %1$s ተልከዋል</string>
+    <string name="empty_line_items_warning">የክፍያ ጥያቄ ዝርዝር ሊኖረው ይገባል</string>
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካክል</string>
@@ -232,14 +235,14 @@
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
-    <string name="returned_claims_count_empty">የክፍያ ጥያቄዎች</string>
+    <string name="returned_claims_count_empty">ተመላሽ የተደረጉ የክፍያ ጥያቄዎች የሉም</string>
     <plurals name="returned_claims_count">
         <item quantity="one">%d ተመላሽ የተድርገ የክፍያ ጥያቄ</item>
         <item quantity="other">%d ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</item>
     </plurals>
 
     <!-- Search Terms -->
-    <!--<string name="search_by_member_card">Search member card</string>-->
+    <string name="search_by_member_card">የአባል ካርድ ፈልግ</string>
     <string name="search">ፈልግ</string>
 
 </resources>
