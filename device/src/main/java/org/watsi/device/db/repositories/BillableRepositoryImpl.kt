@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.BillableApi
@@ -26,7 +27,8 @@ class BillableRepositoryImpl(
         private val api: CoverageApi,
         private val sessionManager: SessionManager,
         private val preferencesManager: PreferencesManager,
-        private val clock: Clock
+        private val clock: Clock,
+        private val okHttpClient: OkHttpClient
 ) : BillableRepository {
     override fun count(): Single<Int> {
         return billableDao.count()
@@ -121,4 +123,10 @@ class BillableRepositoryImpl(
         return billableWithPriceSchedulesModels.map { it.map { it.toBillableWithCurrentPriceSchedule() } }
     }
 
+    override fun deleteAll(): Completable {
+        return Completable.fromAction {
+            okHttpClient.cache().evictAll()
+            billableDao.deleteAll()
+        }.subscribeOn(Schedulers.io())
+    }
 }

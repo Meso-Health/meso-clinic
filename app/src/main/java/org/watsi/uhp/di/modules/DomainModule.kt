@@ -15,6 +15,7 @@ import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
+import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
@@ -322,5 +323,20 @@ class DomainModule {
         diagnosisRepository: DiagnosisRepository
     ): ValidateDiagnosesAndBillablesExistenceUseCase {
         return ValidateDiagnosesAndBillablesExistenceUseCase(billableRepository, diagnosisRepository)
+    }
+
+    @Provides
+    fun provideDeleteUserDataUseCase(
+        billableRepository: BillableRepository,
+        identificationEventRepository: IdentificationEventRepository,
+        memberRepository: MemberRepository,
+        priceScheduleRepository: PriceScheduleRepository
+    ): DeleteUserDataUseCase {
+        return DeleteUserDataUseCase(
+            billableRepository,
+            identificationEventRepository,
+            memberRepository,
+            priceScheduleRepository
+        )
     }
 }

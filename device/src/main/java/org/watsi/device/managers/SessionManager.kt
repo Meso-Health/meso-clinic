@@ -7,6 +7,7 @@ interface SessionManager {
     fun login(username: String, password: String): Completable
     fun logout()
     fun currentAuthenticationToken(): AuthenticationToken?
+    fun shouldClearUserData(): Boolean
 
     class PermissionException : Exception()
 

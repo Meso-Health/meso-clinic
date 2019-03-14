@@ -61,6 +61,9 @@ interface BillableDao {
     @Query("DELETE FROM billables WHERE id IN (:ids)")
     fun delete(ids: List<UUID>)
 
+    @Query("DELETE FROM billables")
+    fun deleteAll()
+
     @Query("SELECT billables.* FROM billables\n" +
             "INNER JOIN deltas ON\n" +
                 "(billables.id = deltas.modelId AND\n" +

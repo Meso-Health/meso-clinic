@@ -5,6 +5,7 @@ import android.preference.PreferenceManager
 import com.google.gson.Gson
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.AuthenticationToken
+import org.watsi.domain.entities.User
 import java.util.Locale
 
 class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) : PreferencesManager {
@@ -15,6 +16,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         private const val BILLABLES_LAST_FETCHED_KEY = "billables_last_fetched"
         private const val DIAGNOSES_LAST_FETCHED_KEY = "diagnoses_last_fetched"
         private const val LOCALE_KEY = "locale"
+        private const val USER = "user"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -74,5 +76,15 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
 
     override fun updateLocale(locale: Locale) {
         sharedPreferences.edit().putString(LOCALE_KEY, locale.toString()).apply()
+    }
+
+    override fun getPreviousUser(): User? {
+        val userJson = sharedPreferences.getString(USER, null)
+        return if (userJson == null) null else gson.fromJson(userJson, User::class.java)
+    }
+
+    override fun setPreviousUser(user: User?) {
+        val userJson = if (user == null) null else gson.toJson(user)
+        sharedPreferences.edit().putString(USER, userJson).apply()
     }
 }

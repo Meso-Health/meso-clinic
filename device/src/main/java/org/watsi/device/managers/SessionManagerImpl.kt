@@ -29,9 +29,16 @@ class SessionManagerImpl(
     }
 
     override fun logout() {
+        preferencesManager.setPreviousUser(token?.user)
         preferencesManager.setAuthenticationToken(null)
         logger.clearUser()
         token = null
+    }
+
+    override fun shouldClearUserData(): Boolean {
+        val previousUser = preferencesManager.getPreviousUser()
+        val currentUser = token?.user
+        return previousUser != null && currentUser != null && previousUser != currentUser && previousUser.providerId != currentUser.providerId
     }
 
     override fun currentAuthenticationToken(): AuthenticationToken? = token

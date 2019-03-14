@@ -4,6 +4,7 @@ import android.arch.persistence.room.Room
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.AppDatabase
@@ -96,15 +97,17 @@ class DbModule {
                                   api: CoverageApi,
                                   sessionManager: SessionManager,
                                   preferencesManager: PreferencesManager,
-                                  clock: Clock): BillableRepository =
-            BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
+                                  clock: Clock,
+                                  okHttpClient: OkHttpClient): BillableRepository =
+            BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock, okHttpClient)
 
     @Provides
     fun providePriceScheduleRepository(priceScheduleDao: PriceScheduleDao,
                                        api: CoverageApi,
                                        sessionManager: SessionManager,
-                                       clock: Clock): PriceScheduleRepository {
-        return PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager, clock)
+                                       clock: Clock,
+                                       okHttpClient: OkHttpClient): PriceScheduleRepository {
+        return PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager, clock, okHttpClient)
     }
 
     @Provides
@@ -141,8 +144,9 @@ class DbModule {
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
                                              api: CoverageApi,
                                              sessionManager: SessionManager,
-                                             clock: Clock): IdentificationEventRepository {
-        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
+                                             clock: Clock,
+                                             okHttpClient: OkHttpClient): IdentificationEventRepository {
+        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock, okHttpClient)
     }
 
     @Provides
@@ -151,8 +155,9 @@ class DbModule {
                                 sessionManager: SessionManager,
                                 preferencesManager: PreferencesManager,
                                 photoDao: PhotoDao,
-                                clock: Clock): MemberRepository =
-            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
+                                clock: Clock,
+                                okHttpClient: OkHttpClient): MemberRepository =
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock, okHttpClient)
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao,
