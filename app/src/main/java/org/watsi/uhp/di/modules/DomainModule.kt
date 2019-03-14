@@ -328,12 +328,14 @@ class DomainModule {
     @Provides
     fun provideDeleteUserDataUseCase(
         billableRepository: BillableRepository,
+        deltaRepository: DeltaRepository,
         identificationEventRepository: IdentificationEventRepository,
         memberRepository: MemberRepository,
         priceScheduleRepository: PriceScheduleRepository
     ): DeleteUserDataUseCase {
         return DeleteUserDataUseCase(
             billableRepository,
+            deltaRepository,
             identificationEventRepository,
             memberRepository,
             priceScheduleRepository

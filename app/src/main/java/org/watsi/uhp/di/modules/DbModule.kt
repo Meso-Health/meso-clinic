@@ -111,8 +111,8 @@ class DbModule {
     }
 
     @Provides
-    fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
-        return DeltaRepositoryImpl(deltaDao, clock)
+    fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock, okHttpClient: OkHttpClient): DeltaRepository {
+        return DeltaRepositoryImpl(deltaDao, clock, okHttpClient)
     }
 
     @Provides
