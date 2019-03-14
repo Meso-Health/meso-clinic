@@ -331,14 +331,16 @@ class DomainModule {
         deltaRepository: DeltaRepository,
         identificationEventRepository: IdentificationEventRepository,
         memberRepository: MemberRepository,
-        priceScheduleRepository: PriceScheduleRepository
+        priceScheduleRepository: PriceScheduleRepository,
+        encounterRepository: EncounterRepository
     ): DeleteUserDataUseCase {
         return DeleteUserDataUseCase(
             billableRepository,
             deltaRepository,
             identificationEventRepository,
             memberRepository,
-            priceScheduleRepository
+            priceScheduleRepository,
+            encounterRepository
         )
     }
 }

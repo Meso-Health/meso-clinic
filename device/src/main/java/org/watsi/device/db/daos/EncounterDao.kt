@@ -97,4 +97,7 @@ interface EncounterDao {
             "deltas.synced = 0 AND\n" +
             "deltas.modelName = 'ENCOUNTER')")
     fun unsynced(): Single<List<EncounterWithMemberAndItemsAndFormsModel>>
+
+    @Query("DELETE FROM encounters")
+    fun deleteAll()
 }

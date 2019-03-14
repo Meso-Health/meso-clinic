@@ -11,18 +11,20 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 
 
 @RunWith(MockitoJUnitRunner::class)
-class DeleteDataUseCaseTest {
+class DeleteUserDataUseCaseTest {
     @Mock lateinit var mockBillableRepository: BillableRepository
     @Mock lateinit var mockDeltaRepository: DeltaRepository
     @Mock lateinit var mockIdentificationEventRepository: IdentificationEventRepository
     @Mock lateinit var mockMemberRepository: MemberRepository
     @Mock lateinit var mockPriceScheduleRepository: PriceScheduleRepository
+    @Mock lateinit var mockEncounterRepository: EncounterRepository
     @Mock lateinit var exception: IllegalStateException
 
     lateinit var useCase: DeleteUserDataUseCase
@@ -35,7 +37,8 @@ class DeleteDataUseCaseTest {
             mockDeltaRepository,
             mockIdentificationEventRepository,
             mockMemberRepository,
-            mockPriceScheduleRepository
+            mockPriceScheduleRepository,
+            mockEncounterRepository
         )
     }
 
@@ -44,6 +47,8 @@ class DeleteDataUseCaseTest {
         whenever(mockBillableRepository.deleteAll())
                 .thenReturn(Completable.complete())
         whenever(mockDeltaRepository.deleteAll())
+                .thenReturn(Completable.complete())
+        whenever(mockEncounterRepository.deleteAll())
                 .thenReturn(Completable.complete())
         whenever(mockIdentificationEventRepository.deleteAll())
                 .thenReturn(Completable.complete())

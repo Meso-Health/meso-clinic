@@ -35,7 +35,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         return sharedPreferences.getString(MEMBERS_PAGE_KEY, null)
     }
 
-    override fun updateMembersPageKey(pageKey: String) {
+    override fun updateMembersPageKey(pageKey: String?) {
         sharedPreferences.edit().putString(MEMBERS_PAGE_KEY, pageKey).apply()
     }
 
