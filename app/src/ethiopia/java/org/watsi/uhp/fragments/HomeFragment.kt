@@ -163,6 +163,7 @@ class HomeFragment : DaggerFragment() {
             R.id.menu_logout -> {
                 AlertDialog.Builder(activity)
                         .setTitle(R.string.log_out_alert)
+                        .setMessage()
                         .setNegativeButton(R.string.cancel, null)
                         .setPositiveButton(R.string.yes) { _, _ ->
                             sessionManager.logout()

@@ -6,6 +6,7 @@
     <!-- Menu -->
     <string name="menu_logout_label">ውፃእ</string>
     <string name="log_out_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
+    <!--<string name="log_out_alert_message" translatable="false">Any unsynced data will be deleted.</string>-->
     <string name="menu_status_label">ኩነታት</string>
 
     <!-- General Labels -->
