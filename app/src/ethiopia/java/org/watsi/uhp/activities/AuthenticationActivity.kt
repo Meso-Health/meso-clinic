@@ -1,15 +1,12 @@
 package org.watsi.uhp.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.internal.operators.completable.CompletableFromAction
 import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
@@ -17,23 +14,20 @@ import kotlinx.android.synthetic.main.activity_authentication.login_username
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.usecases.DeleteUserDataUseCase
-import org.watsi.uhp.BaseApplication
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.KeyboardManager
-import org.watsi.uhp.managers.LocaleManager
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.RuntimeException
 import javax.inject.Inject
 
-class AuthenticationActivity : DaggerAppCompatActivity() {
+class AuthenticationActivity : LocaleAwareActivity() {
 
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var logger: Logger
     @Inject lateinit var deleteUserDataUseCase: DeleteUserDataUseCase
-    lateinit var localeManager: LocaleManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,11 +77,6 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                         login_button.isEnabled = true
                     })
         }
-    }
-
-    override fun attachBaseContext(base: Context) {
-        localeManager = (base.applicationContext as BaseApplication).localeManager
-        super.attachBaseContext(localeManager.createLocalizedContext(base))
     }
 
     private fun navigateToClinicActivity() {

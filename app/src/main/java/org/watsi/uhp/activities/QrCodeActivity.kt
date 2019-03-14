@@ -11,7 +11,6 @@ import android.view.SurfaceHolder
 import android.view.View
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
-import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_qr_code.cancel_container
@@ -21,7 +20,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.managers.QrCodeDetectorManager
 import java.util.concurrent.TimeUnit
 
-abstract class QrCodeActivity : DaggerAppCompatActivity(), SurfaceHolder.Callback {
+abstract class QrCodeActivity : LocaleAwareActivity(), SurfaceHolder.Callback {
 
     private lateinit var qrCodeDetectorManager: QrCodeDetectorManager
 
