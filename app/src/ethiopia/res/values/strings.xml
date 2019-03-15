@@ -18,7 +18,7 @@
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">Claims</string>
-    <string name="no_claims" translatable="false">No claims available</string>
+    <string name="no_claims">No claims available</string>
     <string name="pending_claims_dialog_label">Enter security PIN</string>
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
 
@@ -158,7 +158,7 @@
     </plurals>
 
     <!-- Search Terms -->
-    <string name="search_by_member_card" translatable="false">Search member card</string>
+    <string name="search_by_member_card">Search member card</string>
     <string name="search">Search</string>
 
 </resources>
