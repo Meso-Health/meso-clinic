@@ -18,6 +18,7 @@ import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.daos.PriceScheduleDao
+import org.watsi.device.db.daos.ReferralDao
 import org.watsi.device.db.repositories.BillableRepositoryImpl
 import org.watsi.device.db.repositories.DeltaRepositoryImpl
 import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
@@ -27,6 +28,7 @@ import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
 import org.watsi.device.db.repositories.MemberRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
 import org.watsi.device.db.repositories.PriceScheduleRepositoryImpl
+import org.watsi.device.db.repositories.ReferralRepositoryImpl
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.repositories.BillableRepository
@@ -38,6 +40,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 import javax.inject.Singleton
 
 @Module
@@ -91,6 +94,10 @@ class DbModule {
     @Singleton
     @Provides
     fun providePriceScheduleDao(db: AppDatabase): PriceScheduleDao = db.priceScheduleDao()
+
+    @Singleton
+    @Provides
+    fun provideReferralDao(db: AppDatabase): ReferralDao = db.referralDao()
 
     @Provides
     fun provideBillableRepository(billableDao: BillableDao,
@@ -169,4 +176,8 @@ class DbModule {
         return PhotoRepositoryImpl(photoDao, api, sessionManager, clock, okHttpClient)
     }
 
+    @Provides
+    fun provideReferralRepository(referralDao: ReferralDao, okHttpClient: OkHttpClient): ReferralRepository {
+        return ReferralRepositoryImpl(referralDao, okHttpClient)
+    }
 }

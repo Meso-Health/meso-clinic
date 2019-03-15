@@ -11,6 +11,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -333,7 +334,8 @@ class DomainModule {
         memberRepository: MemberRepository,
         priceScheduleRepository: PriceScheduleRepository,
         encounterRepository: EncounterRepository,
-        photoRepository: PhotoRepository
+        photoRepository: PhotoRepository,
+        referralRepository: ReferralRepository
     ): DeleteUserDataUseCase {
         return DeleteUserDataUseCase(
             billableRepository,
@@ -342,7 +344,8 @@ class DomainModule {
             memberRepository,
             priceScheduleRepository,
             encounterRepository,
-            photoRepository
+            photoRepository,
+            referralRepository
         )
     }
 }

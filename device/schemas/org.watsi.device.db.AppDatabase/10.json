@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 10,
-    "identityHash": "0969a7d6b61f001ec641ed80ba160672",
+    "identityHash": "9de0f060dd8b4767b2bbc1f75707648b",
     "entities": [
       {
         "tableName": "billables",
@@ -734,7 +734,7 @@
       },
       {
         "tableName": "referrals",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `receivingFacility` TEXT NOT NULL, `reason` TEXT NOT NULL, `encounterId` TEXT NOT NULL, `number` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`encounterId`) REFERENCES `encounters`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `receivingFacility` TEXT NOT NULL, `reason` TEXT NOT NULL, `encounterId` TEXT NOT NULL, `number` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`encounterId`) REFERENCES `encounters`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -777,7 +777,7 @@
         "foreignKeys": [
           {
             "table": "encounters",
-            "onDelete": "CASCADE",
+            "onDelete": "NO ACTION",
             "onUpdate": "NO ACTION",
             "columns": [
               "encounterId"
@@ -791,7 +791,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"0969a7d6b61f001ec641ed80ba160672\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9de0f060dd8b4767b2bbc1f75707648b\")"
     ]
   }
 }

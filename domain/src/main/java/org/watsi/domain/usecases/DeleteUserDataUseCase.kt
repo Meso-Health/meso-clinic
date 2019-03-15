@@ -10,6 +10,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 
 class DeleteUserDataUseCase(
     private val billableRepository: BillableRepository,
@@ -18,11 +19,13 @@ class DeleteUserDataUseCase(
     private val memberRepository: MemberRepository,
     private val priceScheduleRepository: PriceScheduleRepository,
     private val encounterRepository: EncounterRepository,
-    private val photoRepository: PhotoRepository
+    private val photoRepository: PhotoRepository,
+    private val referralRepository: ReferralRepository
 ){
     fun execute(): Completable {
         return Completable.concatArray(
             deltaRepository.deleteAll(),
+            referralRepository.deleteAll(),
             encounterRepository.deleteAll(),
             priceScheduleRepository.deleteAll(),
             billableRepository.deleteAll(),
