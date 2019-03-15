@@ -16,6 +16,7 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 
 
 @RunWith(MockitoJUnitRunner::class)
@@ -27,6 +28,7 @@ class DeleteUserDataUseCaseTest {
     @Mock lateinit var mockPriceScheduleRepository: PriceScheduleRepository
     @Mock lateinit var mockEncounterRepository: EncounterRepository
     @Mock lateinit var mockPhotoRepository: PhotoRepository
+    @Mock lateinit var mockReferralRepository: ReferralRepository
     @Mock lateinit var exception: IllegalStateException
 
     lateinit var useCase: DeleteUserDataUseCase
@@ -41,7 +43,8 @@ class DeleteUserDataUseCaseTest {
             mockMemberRepository,
             mockPriceScheduleRepository,
             mockEncounterRepository,
-            mockPhotoRepository
+            mockPhotoRepository,
+            mockReferralRepository
         )
     }
 
@@ -60,6 +63,8 @@ class DeleteUserDataUseCaseTest {
         whenever(mockPriceScheduleRepository.deleteAll())
                 .thenReturn(Completable.complete())
         whenever(mockPhotoRepository.deleteAll())
+                .thenReturn(Completable.complete())
+        whenever(mockReferralRepository.deleteAll())
                 .thenReturn(Completable.complete())
 
         useCase.execute().test().assertComplete()
