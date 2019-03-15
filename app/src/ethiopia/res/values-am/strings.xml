@@ -6,6 +6,7 @@
     <!-- Menu -->
     <string name="menu_logout_label">ውጣ</string>
     <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
+    <!--<string name="log_out_alert_message" translatable="false">Any unsynced data will be deleted.</string>-->
     <string name="menu_status_label">ሁኔታ</string>
 
     <!-- General Labels -->

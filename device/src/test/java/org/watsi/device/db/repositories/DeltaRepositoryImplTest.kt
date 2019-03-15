@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,6 +24,7 @@ import org.watsi.domain.factories.DeltaFactory
 class DeltaRepositoryImplTest {
 
     @Mock lateinit var mockDao: DeltaDao
+    @Mock lateinit var okHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: DeltaRepositoryImpl
 
@@ -30,7 +32,7 @@ class DeltaRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = DeltaRepositoryImpl(mockDao, clock)
+        repository = DeltaRepositoryImpl(mockDao, clock, okHttpClient)
     }
 
     @Test

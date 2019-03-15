@@ -5,6 +5,7 @@
     <!-- Menu -->
     <string name="menu_logout_label">Logout</string>
     <string name="log_out_alert">Are you sure you want to log out?</string>
+    <string name="log_out_alert_message" translatable="false">Any unsynced data will be deleted.</string>
     <string name="menu_status_label">Status</string>
 
     <!-- General Labels -->

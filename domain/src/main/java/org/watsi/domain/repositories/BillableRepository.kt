@@ -19,4 +19,5 @@ interface BillableRepository {
     fun opdDefaults(): Single<List<BillableWithPriceSchedule>>
     fun uniqueCompositions(): Single<List<String>>
     fun sync(delta: Delta): Completable
+    fun deleteAll(): Completable
 }
