@@ -164,8 +164,9 @@ class DbModule {
     fun providePhotoRepository(photoDao: PhotoDao,
                                api: CoverageApi,
                                sessionManager: SessionManager,
-                               clock: Clock): PhotoRepository {
-        return PhotoRepositoryImpl(photoDao, api, sessionManager, clock)
+                               clock: Clock,
+                               okHttpClient: OkHttpClient): PhotoRepository {
+        return PhotoRepositoryImpl(photoDao, api, sessionManager, clock, okHttpClient)
     }
 
 }

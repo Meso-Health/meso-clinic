@@ -2,6 +2,7 @@ package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.ForeignKey.CASCADE
 import android.arch.persistence.room.PrimaryKey
 import org.watsi.domain.entities.Referral
 import java.util.UUID
@@ -9,6 +10,7 @@ import java.util.UUID
 @Entity(tableName = "referrals",
         foreignKeys = [
             ForeignKey(
+                onDelete = CASCADE,
                 entity = EncounterModel::class,
                 parentColumns = ["id"],
                 childColumns = ["encounterId"]

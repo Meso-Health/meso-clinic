@@ -332,7 +332,8 @@ class DomainModule {
         identificationEventRepository: IdentificationEventRepository,
         memberRepository: MemberRepository,
         priceScheduleRepository: PriceScheduleRepository,
-        encounterRepository: EncounterRepository
+        encounterRepository: EncounterRepository,
+        photoRepository: PhotoRepository
     ): DeleteUserDataUseCase {
         return DeleteUserDataUseCase(
             billableRepository,
@@ -340,7 +341,8 @@ class DomainModule {
             identificationEventRepository,
             memberRepository,
             priceScheduleRepository,
-            encounterRepository
+            encounterRepository,
+            photoRepository
         )
     }
 }

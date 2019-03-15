@@ -31,7 +31,6 @@ class SessionManagerImpl(
     override fun logout() {
         preferencesManager.setPreviousUser(token?.user)
         preferencesManager.setAuthenticationToken(null)
-        preferencesManager.updateMembersPageKey(null)
         logger.clearUser()
         token = null
     }

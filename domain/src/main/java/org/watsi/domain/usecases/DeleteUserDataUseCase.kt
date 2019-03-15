@@ -8,6 +8,7 @@ import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 
 class DeleteUserDataUseCase(
@@ -16,19 +17,17 @@ class DeleteUserDataUseCase(
     private val identificationEventRepository: IdentificationEventRepository,
     private val memberRepository: MemberRepository,
     private val priceScheduleRepository: PriceScheduleRepository,
-    private val encounterRepository: EncounterRepository
-//    private val encounterFormRepository: EncounterFormRepository,
-//    private val encounterItemRepository: EncounterRepository
+    private val encounterRepository: EncounterRepository,
+    private val photoRepository: PhotoRepository
 ){
     fun execute(): Completable {
         return Completable.concatArray(
             deltaRepository.deleteAll(),
-//            encounterItemRepository.deleteAll(),
-//            encounterFormRepository.deleteAll(),
             encounterRepository.deleteAll(),
             priceScheduleRepository.deleteAll(),
             billableRepository.deleteAll(),
             identificationEventRepository.deleteAll(),
+            photoRepository.deleteAll(),
             memberRepository.deleteAll()
         ).subscribeOn(Schedulers.io())
     }

@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
 import kotlinx.android.synthetic.main.activity_authentication.login_username
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.uhp.R
@@ -28,6 +29,7 @@ class AuthenticationActivity : LocaleAwareActivity() {
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var logger: Logger
     @Inject lateinit var deleteUserDataUseCase: DeleteUserDataUseCase
+    @Inject lateinit var preferencesManager: PreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class AuthenticationActivity : LocaleAwareActivity() {
                 Completable.fromAction {
                     if (sessionManager.shouldClearUserData()) {
                         deleteUserDataUseCase.execute().blockingAwait()
+                        preferencesManager.updateMembersPageKey(null)
                     }
                 }.onErrorComplete {
                     logger.error(it)
