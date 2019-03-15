@@ -9,4 +9,5 @@ interface PhotoRepository {
     fun find(id: UUID): Single<Photo>
     fun create(photo: Photo): Completable
     fun deleteSynced(): Completable
+    fun deleteAll(): Completable
 }

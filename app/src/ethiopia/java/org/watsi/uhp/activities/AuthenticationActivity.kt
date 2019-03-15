@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
 import kotlinx.android.synthetic.main.activity_authentication.login_username
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
+import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.KeyboardManager
@@ -25,6 +28,8 @@ class AuthenticationActivity : LocaleAwareActivity() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var logger: Logger
+    @Inject lateinit var deleteUserDataUseCase: DeleteUserDataUseCase
+    @Inject lateinit var preferencesManager: PreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +49,18 @@ class AuthenticationActivity : LocaleAwareActivity() {
 
             login_button.text = getString(R.string.logging_in)
             login_button.isEnabled = false
-            sessionManager.login(login_username.text.toString(), login_password.text.toString())
-                    .observeOn(AndroidSchedulers.mainThread())
+            Completable.concatArray(
+                sessionManager.login(login_username.text.toString(), login_password.text.toString()),
+                Completable.fromAction {
+                    if (sessionManager.shouldClearUserData()) {
+                        deleteUserDataUseCase.execute().blockingAwait()
+                        preferencesManager.updateMembersPageKey(null)
+                    }
+                }.onErrorComplete {
+                    logger.error(it)
+                    true
+                }
+            ).observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         navigateToClinicActivity()
                     }, {

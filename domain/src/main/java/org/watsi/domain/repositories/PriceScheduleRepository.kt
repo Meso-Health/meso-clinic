@@ -10,4 +10,5 @@ interface PriceScheduleRepository {
     fun find(id: UUID): Maybe<PriceSchedule>
     fun create(priceSchedule: PriceSchedule, delta: Delta?): Completable
     fun sync(delta: Delta): Completable
+    fun deleteAll(): Completable
 }

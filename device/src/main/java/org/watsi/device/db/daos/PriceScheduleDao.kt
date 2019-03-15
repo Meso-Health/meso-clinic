@@ -22,4 +22,7 @@ interface PriceScheduleDao {
 
     @Query("SELECT * FROM price_schedules WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<PriceScheduleModel>
+
+    @Query("DELETE FROM price_schedules")
+    fun deleteAll()
 }

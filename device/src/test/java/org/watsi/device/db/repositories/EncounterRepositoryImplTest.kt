@@ -7,6 +7,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -67,6 +68,7 @@ class EncounterRepositoryImplTest {
     @Mock lateinit var mockMemberDao: MemberDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
+    @Mock lateinit var mockOkHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: EncounterRepositoryImpl
 
@@ -77,7 +79,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock, mockOkHttpClient)
     }
 
     @Test

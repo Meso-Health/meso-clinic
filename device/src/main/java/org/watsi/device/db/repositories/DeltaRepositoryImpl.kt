@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.models.DeltaModel
@@ -13,7 +14,8 @@ import java.util.UUID
 
 class DeltaRepositoryImpl(
         private val deltaDao: DeltaDao,
-        private val clock: Clock
+        private val clock: Clock,
+        private val okHttpClient: OkHttpClient
 ) : DeltaRepository {
 
     override fun insert(deltas: List<Delta>): Completable {
@@ -59,6 +61,13 @@ class DeltaRepositoryImpl(
     override fun markAsSynced(deltas: List<Delta>): Completable {
         return Completable.fromAction {
             deltaDao.update(deltas.map { DeltaModel.fromDelta(it.copy(synced = true), clock) })
+        }.subscribeOn(Schedulers.io())
+    }
+
+    override fun deleteAll(): Completable {
+        return Completable.fromAction {
+            okHttpClient.cache().evictAll()
+            deltaDao.deleteAll()
         }.subscribeOn(Schedulers.io())
     }
 }
