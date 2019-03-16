@@ -113,6 +113,9 @@ interface MemberDao {
     @Query("DELETE FROM members WHERE id IN (:ids)")
     fun delete(ids: List<UUID>)
 
+    @Query("DELETE FROM members")
+    fun deleteAll()
+
     @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL AND archivedAt IS NULL")
     fun needPhotoDownloadCount(): Flowable<Int>
 }

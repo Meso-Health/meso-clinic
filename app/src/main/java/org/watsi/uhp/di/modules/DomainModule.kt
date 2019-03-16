@@ -11,10 +11,12 @@ import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
+import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
@@ -322,5 +324,28 @@ class DomainModule {
         diagnosisRepository: DiagnosisRepository
     ): ValidateDiagnosesAndBillablesExistenceUseCase {
         return ValidateDiagnosesAndBillablesExistenceUseCase(billableRepository, diagnosisRepository)
+    }
+
+    @Provides
+    fun provideDeleteUserDataUseCase(
+        billableRepository: BillableRepository,
+        deltaRepository: DeltaRepository,
+        identificationEventRepository: IdentificationEventRepository,
+        memberRepository: MemberRepository,
+        priceScheduleRepository: PriceScheduleRepository,
+        encounterRepository: EncounterRepository,
+        photoRepository: PhotoRepository,
+        referralRepository: ReferralRepository
+    ): DeleteUserDataUseCase {
+        return DeleteUserDataUseCase(
+            billableRepository,
+            deltaRepository,
+            identificationEventRepository,
+            memberRepository,
+            priceScheduleRepository,
+            encounterRepository,
+            photoRepository,
+            referralRepository
+        )
     }
 }

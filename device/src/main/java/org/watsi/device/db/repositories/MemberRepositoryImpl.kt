@@ -6,6 +6,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
@@ -33,7 +34,8 @@ class MemberRepositoryImpl(
     private val sessionManager: SessionManager,
     private val preferencesManager: PreferencesManager,
     private val photoDao: PhotoDao,
-    private val clock: Clock
+    private val clock: Clock,
+    private val okHttpClient: OkHttpClient
 ) : MemberRepository {
 
     override fun all(excludeArchived: Boolean): Flowable<List<Member>> {
@@ -156,18 +158,20 @@ class MemberRepositoryImpl(
         val hasMore = paginatedResponse.hasMore
         val updatedPageKey = paginatedResponse.pageKey
 
-        // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
-        val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
-        val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
-        val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
+        if (serverMembers.isNotEmpty()) {
+            // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
+            val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
+            val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
+            val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
 
-        memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
-            val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
-            // Pass local member to upsert logic to preserve photo
-            MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
-        })
+            memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
+                val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
+                // Pass local member to upsert logic to preserve photo
+                MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+            })
 
-        preferencesManager.updateMembersPageKey(updatedPageKey)
+            preferencesManager.updateMembersPageKey(updatedPageKey)
+        }
 
         return Single.just(hasMore)
     }
@@ -217,5 +221,12 @@ class MemberRepositoryImpl(
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
+    }
+
+    override fun deleteAll(): Completable {
+        return Completable.fromAction {
+            okHttpClient.cache().evictAll()
+            memberDao.deleteAll()
+        }.subscribeOn(Schedulers.io())
     }
 }

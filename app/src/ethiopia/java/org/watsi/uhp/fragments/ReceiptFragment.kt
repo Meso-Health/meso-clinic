@@ -200,7 +200,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         if (encounterFlowState.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
-            diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
+            diagnoses_list.text = encounterFlowState.diagnoses.joinToString(", ") { it.description }
         }
 
         if (encounterFlowState.referrals.isNotEmpty()) {

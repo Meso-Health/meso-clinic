@@ -5,6 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
@@ -21,6 +22,7 @@ import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
+import org.watsi.device.db.models.ReferralModel
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
@@ -37,7 +39,8 @@ class EncounterRepositoryImpl(
     private val memberDao: MemberDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
-    private val clock: Clock
+    private val clock: Clock,
+    private val okHttpClient: OkHttpClient
 ) : EncounterRepository {
     override fun revisedIds(): Single<List<UUID>> {
         return encounterDao.revisedIds()
@@ -79,11 +82,12 @@ class EncounterRepositoryImpl(
         val diagnoses = diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
                 .map { it.toDiagnosis() }
         return EncounterWithExtras(
-            encounterRelation.encounter,
-            encounterRelation.member,
-            encounterRelation.encounterItemRelations,
-            diagnoses,
-            encounterRelation.encounterForms
+            encounter = encounterRelation.encounter,
+            member = encounterRelation.member,
+            encounterItemRelations = encounterRelation.encounterItemRelations,
+            diagnoses = diagnoses,
+            encounterForms = encounterRelation.encounterForms,
+            referrals = encounterRelation.referrals
         )
     }
 
@@ -138,11 +142,16 @@ class EncounterRepositoryImpl(
                 EncounterFormModel.fromEncounterForm(it, clock)
             }
 
+            val referralModels = encounterWithItemsAndForms.referrals.map {
+                ReferralModel.fromReferral(it)
+            }
+
             encounterDao.insert(
                 encounterModel = encounterModel,
                 encounterItemModels = encounterItemModels,
                 billableModels = emptyList(),
                 encounterFormModels = encounterFormModels,
+                referralModels = referralModels,
                 deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
             )
         }.subscribeOn(Schedulers.io())
@@ -226,5 +235,12 @@ class EncounterRepositoryImpl(
                 api.postEncounter(token.getHeaderString(), token.user.providerId, EncounterApi(encounterModel))
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
+    }
+
+    override fun deleteAll(): Completable {
+        return Completable.fromAction {
+            okHttpClient.cache().evictAll()
+            encounterDao.deleteAll()
+        }.subscribeOn(Schedulers.io())
     }
 }

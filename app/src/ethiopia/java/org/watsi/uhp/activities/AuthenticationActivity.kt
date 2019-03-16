@@ -1,34 +1,35 @@
 package org.watsi.uhp.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import dagger.android.support.DaggerAppCompatActivity
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
 import kotlinx.android.synthetic.main.activity_authentication.login_username
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
-import org.watsi.uhp.BaseApplication
+import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.KeyboardManager
-import org.watsi.uhp.managers.LocaleManager
 import retrofit2.HttpException
 import java.io.IOException
+import java.lang.RuntimeException
 import javax.inject.Inject
 
-class AuthenticationActivity : DaggerAppCompatActivity() {
+class AuthenticationActivity : LocaleAwareActivity() {
 
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var logger: Logger
-    lateinit var localeManager: LocaleManager
+    @Inject lateinit var deleteUserDataUseCase: DeleteUserDataUseCase
+    @Inject lateinit var preferencesManager: PreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +49,18 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
 
             login_button.text = getString(R.string.logging_in)
             login_button.isEnabled = false
-            sessionManager.login(login_username.text.toString(), login_password.text.toString())
-                    .observeOn(AndroidSchedulers.mainThread())
+            Completable.concatArray(
+                sessionManager.login(login_username.text.toString(), login_password.text.toString()),
+                Completable.fromAction {
+                    if (sessionManager.shouldClearUserData()) {
+                        deleteUserDataUseCase.execute().blockingAwait()
+                        preferencesManager.updateMembersPageKey(null)
+                    }
+                }.onErrorComplete {
+                    logger.error(it)
+                    true
+                }
+            ).observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         navigateToClinicActivity()
                     }, {
@@ -57,7 +68,8 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                             error_text.error = getString(R.string.login_wrong_username_or_password_message)
                         } else if (it is SessionManager.PermissionException) {
                             error_text.error = getString(R.string.login_permission_error)
-                        } else if (it is IOException && it.message.orEmpty().contains("unexpected end of stream")) {
+                        } else if ((it is RuntimeException && it.message.orEmpty().contains("Unable to resolve host"))
+                                || (it is IOException && it.message.orEmpty().contains("unexpected end of stream"))) {
                             error_text.error = getString(R.string.login_offline_error)
                         } else {
                             error_text.error = getString(R.string.login_generic_failure_message)
@@ -68,11 +80,6 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                         login_button.isEnabled = true
                     })
         }
-    }
-
-    override fun attachBaseContext(base: Context) {
-        localeManager = (base.applicationContext as BaseApplication).localeManager
-        super.attachBaseContext(localeManager.createLocalizedContext(base))
     }
 
     private fun navigateToClinicActivity() {

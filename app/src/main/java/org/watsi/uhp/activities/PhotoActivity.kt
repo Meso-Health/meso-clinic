@@ -15,7 +15,6 @@ import android.view.TextureView
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_photo.background_overlay
 import kotlinx.android.synthetic.main.activity_photo.cancel
 import kotlinx.android.synthetic.main.activity_photo.guide
@@ -40,7 +39,7 @@ import javax.inject.Inject
  *
  * Image handling logic is delegated to the implementer via the abstract processImage
  */
-abstract class PhotoActivity : DaggerAppCompatActivity(), View.OnTouchListener, TextureView.SurfaceTextureListener {
+abstract class PhotoActivity : LocaleAwareActivity(), View.OnTouchListener, TextureView.SurfaceTextureListener {
 
     companion object {
         const val RESULT_NEEDS_PERMISSION = 1

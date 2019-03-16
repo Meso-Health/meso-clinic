@@ -3,6 +3,7 @@ package org.watsi.device.db.repositories
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.PriceScheduleApi
@@ -19,7 +20,8 @@ class PriceScheduleRepositoryImpl(
         private val priceScheduleDao: PriceScheduleDao,
         private val api: CoverageApi,
         private val sessionManager: SessionManager,
-        private val clock: Clock
+        private val clock: Clock,
+        private val okHttpClient: OkHttpClient
 ) : PriceScheduleRepository {
 
     override fun find(id: UUID): Maybe<PriceSchedule> {
@@ -47,5 +49,12 @@ class PriceScheduleRepositoryImpl(
                 api.postPriceSchedule(token.getHeaderString(), token.user.providerId, PriceScheduleApi(priceSchedule))
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
+    }
+
+    override fun deleteAll(): Completable {
+        return Completable.fromAction {
+            okHttpClient.cache().evictAll()
+            priceScheduleDao.deleteAll()
+        }.subscribeOn(Schedulers.io())
     }
 }

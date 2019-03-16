@@ -43,4 +43,7 @@ interface PhotoDao {
             "WHERE (encounter_forms.id IS NULL AND members.id IS NULL AND\n" +
                 "photos.createdAt <= (strftime('%s', 'now', '-30 Minute') * 1000))")
     fun canBeDeleted(): Single<List<PhotoModel>>
+
+    @Query("DELETE FROM photos")
+    fun deleteAll()
 }

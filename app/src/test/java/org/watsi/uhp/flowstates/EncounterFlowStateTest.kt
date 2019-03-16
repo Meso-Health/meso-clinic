@@ -3,14 +3,12 @@ package org.watsi.uhp.flowstates
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.entities.PriceSchedule
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
 import org.watsi.domain.factories.PriceScheduleFactory
-import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 
 class EncounterWithItemsAndFormsTest {
@@ -37,8 +35,12 @@ class EncounterWithItemsAndFormsTest {
 
         val encounter = EncounterFactory.build()
         val encounterWithItemsAndForms = EncounterFlowState(
-                encounter, listOf(encounterItemRelation1, encounterItemRelation2),
-                emptyList(), emptyList())
+            encounter = encounter,
+            encounterItemRelations = listOf(encounterItemRelation1, encounterItemRelation2),
+            encounterForms = emptyList(),
+            diagnoses = emptyList(),
+            referrals = emptyList()
+        )
 
         assertEquals(500, encounterWithItemsAndForms.price())
     }
@@ -55,8 +57,13 @@ class EncounterWithItemsAndFormsTest {
                 BillableFactory.build(type = Billable.Type.SERVICE)
             )
         )
-        val encounterFlowState = EncounterFlowState(EncounterFactory.build(),
-                listOf(drugEncounterItem, serviceEncounterItem), emptyList(), emptyList())
+        val encounterFlowState = EncounterFlowState(
+            encounter = EncounterFactory.build(),
+            encounterItemRelations = listOf(drugEncounterItem, serviceEncounterItem),
+            encounterForms = emptyList(),
+            diagnoses = emptyList(),
+            referrals = emptyList()
+        )
 
         assertEquals(listOf(drugEncounterItem), encounterFlowState.getEncounterItemsOfType(Billable.Type.DRUG))
     }

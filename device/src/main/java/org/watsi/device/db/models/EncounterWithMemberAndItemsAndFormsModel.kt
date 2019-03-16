@@ -11,7 +11,9 @@ data class EncounterWithMemberAndItemsAndFormsModel(
     @Relation(parentColumn = "id", entityColumn = "encounterId", entity = EncounterItemModel::class)
     var encounterItemWithBillableAndPriceModels: List<EncounterItemWithBillableAndPriceModel>? = null,
     @Relation(parentColumn = "id", entityColumn = "encounterId", entity = EncounterFormModel::class)
-    var encounterFormModels: List<EncounterFormModel>? = null
+    var encounterFormModels: List<EncounterFormModel>? = null,
+    @Relation(parentColumn = "id", entityColumn = "encounterId", entity = ReferralModel::class)
+    var referralModels: List<ReferralModel>? = null
 ) {
 
     fun toEncounterWithMemberAndItemsAndForms(): EncounterWithMemberAndItemsAndForms {
@@ -21,8 +23,15 @@ data class EncounterWithMemberAndItemsAndFormsModel(
                     encounterItemWithBillableAndPriceModels?.map { it.toEncounterItemWithBillableAndPrice() }
                         ?: emptyList()
                 val forms = encounterFormModels?.map { it.toEncounterForm() } ?: emptyList()
+                val referrals = referralModels?.map { it.toReferral() } ?: emptyList()
 
-                return EncounterWithMemberAndItemsAndForms(encounter, member, items, forms)
+                return EncounterWithMemberAndItemsAndForms(
+                    encounter = encounter,
+                    member = member,
+                    encounterItemRelations = items,
+                    referrals = referrals,
+                    encounterForms = forms
+                )
             }
             throw IllegalStateException("Member cannot be null")
         }

@@ -4,6 +4,7 @@ import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Referral
 import java.io.Serializable
 
 data class EncounterWithExtras(
@@ -11,13 +12,15 @@ data class EncounterWithExtras(
     val member: Member,
     val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     val diagnoses: List<Diagnosis>,
-    val encounterForms: List<EncounterForm>
+    val encounterForms: List<EncounterForm>,
+    val referrals: List<Referral>
 ) : Serializable {
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
         return EncounterWithItemsAndForms(
             encounter = encounter,
             encounterItemRelations = encounterItemRelations,
-            encounterForms = encounterForms
+            encounterForms = encounterForms,
+            referrals = referrals
         )
     }
 

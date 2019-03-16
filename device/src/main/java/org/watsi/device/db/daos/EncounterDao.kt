@@ -19,6 +19,7 @@ import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
+import org.watsi.device.db.models.ReferralModel
 import java.util.UUID
 
 @Dao
@@ -44,6 +45,7 @@ interface EncounterDao {
                encounterItemModels: List<EncounterItemModel>,
                billableModels: List<BillableModel>,
                encounterFormModels: List<EncounterFormModel>,
+               referralModels: List<ReferralModel>,
                deltaModels: List<DeltaModel>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -95,4 +97,7 @@ interface EncounterDao {
             "deltas.synced = 0 AND\n" +
             "deltas.modelName = 'ENCOUNTER')")
     fun unsynced(): Single<List<EncounterWithMemberAndItemsAndFormsModel>>
+
+    @Query("DELETE FROM encounters")
+    fun deleteAll()
 }

@@ -7,6 +7,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -32,6 +33,7 @@ import org.watsi.device.db.models.EncounterWithItemsModel
 import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
+import org.watsi.device.db.models.ReferralModel
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.DiagnosisModelFactory
 import org.watsi.device.factories.EncounterFormModelFactory
@@ -51,6 +53,7 @@ import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.factories.MemberFactory
+import org.watsi.domain.factories.ReferralFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
@@ -65,6 +68,7 @@ class EncounterRepositoryImplTest {
     @Mock lateinit var mockMemberDao: MemberDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
+    @Mock lateinit var mockOkHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: EncounterRepositoryImpl
 
@@ -75,7 +79,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock, mockOkHttpClient)
     }
 
     @Test
@@ -97,6 +101,9 @@ class EncounterRepositoryImplTest {
         val diagnosesIdList = listOf(diagnosisModel1.id, diagnosisModel2.id)
 
         val memberModel = MemberModelFactory.build()
+        val referral = ReferralFactory.build()
+
+        val referralModel = ReferralModel.fromReferral(referral)
         val encounterModel = EncounterModelFactory.build(
             memberId = memberModel.id,
             diagnoses = diagnosesIdList
@@ -120,10 +127,11 @@ class EncounterRepositoryImplTest {
 
         val encounterFormModel = EncounterFormModelFactory.build(encounterId = encounterModel.id)
         val encounterWithMemberAndItemsAndFormsModel = EncounterWithMemberAndItemsAndFormsModel(
-            encounterModel,
-            listOf(memberModel),
-            listOf(encounterItemRelationModel1, encounterItemRelationModel2),
-            listOf(encounterFormModel)
+            encounterModel = encounterModel,
+            memberModel = listOf(memberModel),
+            encounterItemWithBillableAndPriceModels = listOf(encounterItemRelationModel1, encounterItemRelationModel2),
+            encounterFormModels = listOf(encounterFormModel),
+            referralModels = listOf(referralModel)
         )
 
         whenever(mockDiagnosisDao.findAll(diagnosesIdList))
@@ -131,17 +139,18 @@ class EncounterRepositoryImplTest {
 
         assertEquals(repository.loadClaim(encounterWithMemberAndItemsAndFormsModel),
             EncounterWithExtras(
-                encounterModel.toEncounter(),
-                memberModel.toMember(),
-                listOf(
+                encounter = encounterModel.toEncounter(),
+                member = memberModel.toMember(),
+                encounterItemRelations = listOf(
                     encounterItemRelationModel1.toEncounterItemWithBillableAndPrice(),
                     encounterItemRelationModel2.toEncounterItemWithBillableAndPrice()
                 ),
-                listOf(
+                diagnoses = listOf(
                     diagnosisModel1.toDiagnosis(),
                     diagnosisModel2.toDiagnosis()
                 ),
-                listOf(encounterFormModel.toEncounterForm())
+                encounterForms = listOf(encounterFormModel.toEncounterForm()),
+                referrals = listOf(referral)
             )
         )
     }
@@ -154,17 +163,23 @@ class EncounterRepositoryImplTest {
         val billableWithPrice = BillableWithPriceScheduleFactory.build()
         val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
+        val referral = ReferralFactory.build()
         val encounterWithItemsAndForms = EncounterWithItemsAndForms(
-                encounter, listOf(encounterItemRelation), listOf(encounterForm))
+            encounter = encounter,
+            encounterItemRelations = listOf(encounterItemRelation),
+            encounterForms = listOf(encounterForm),
+            referrals = listOf(referral)
+        )
 
         repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
 
         verify(mockDao).insert(
-                encounterModel = EncounterModel.fromEncounter(encounter, clock),
-                encounterItemModels = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
-                billableModels = emptyList(),
-                encounterFormModels = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
-                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            encounterModel = EncounterModel.fromEncounter(encounter, clock),
+            encounterItemModels = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
+            billableModels = emptyList(),
+            encounterFormModels = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
+            referralModels = listOf(ReferralModel.fromReferral(referral)),
+            deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
         )
     }
 

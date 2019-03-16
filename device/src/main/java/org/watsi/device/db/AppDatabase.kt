@@ -13,6 +13,7 @@ import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.daos.PriceScheduleDao
+import org.watsi.device.db.daos.ReferralDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.DiagnosisModel
@@ -50,4 +51,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
     abstract fun photoDao(): PhotoDao
     abstract fun priceScheduleDao(): PriceScheduleDao
+    abstract fun referralDao(): ReferralDao
 }

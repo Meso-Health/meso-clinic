@@ -15,6 +15,7 @@ import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
@@ -61,6 +62,7 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     @Mock lateinit var mockPhotoDao: PhotoDao
+    @Mock lateinit var okHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: MemberRepositoryImpl
     
@@ -72,7 +74,7 @@ class MemberRepositoryImplTest {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         repository = MemberRepositoryImpl(
-                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock)
+                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock, okHttpClient)
     }
 
     @Test
@@ -289,6 +291,26 @@ class MemberRepositoryImplTest {
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi1.pageKey)
         verify(mockDao).upsert(listOf(member4))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi2.pageKey)
+        verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
+    }
+
+    @Test
+    fun fetch_hasToken_subsequentFetch_serverReturnsEmptyPage_doesNotUpdateMembers_doesNotUpdatePageKey_updatesLastUpdatedAt() {
+        val storedPageKey = "stored page key"
+        val emptyPage = MemberPaginationApi(
+            pageKey = storedPageKey,
+            hasMore = false,
+            members = emptyList()
+        )
+
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
+        whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
+        whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(emptyPage))
+
+        repository.fetch().test().assertComplete()
+
+        verify(mockDao, never()).upsert(anyList())
+        verify(mockPreferencesManager, never()).updateMembersPageKey(any())
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
 
