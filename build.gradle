@@ -2,7 +2,7 @@
 
 def versionMajor = 0
 def versionMinor = 6
-def versionPatch = 0
+def versionPatch = 2
 def versionCodeForLocalDevelopment = 1
 def computedVersionCode = (System.getenv("VERSION_CODE") ?: versionCodeForLocalDevelopment) as Integer
 
