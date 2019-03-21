@@ -9,5 +9,5 @@ data class EncounterWithItemsAndForms(
     val encounter: Encounter,
     val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     val encounterForms: List<EncounterForm>,
-    val referrals: List<Referral>
+    val referral: Referral?
 ) : Serializable

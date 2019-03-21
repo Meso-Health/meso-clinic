@@ -213,7 +213,7 @@ class EncounterViewModelTest : AACBaseTest() {
             encounterItemRelations = emptyList(),
             encounterForms = emptyList(),
             diagnoses = emptyList(),
-            referrals = emptyList()
+            referral = null
         )
         viewModel.updateEncounterWithLineItems(encounterFlowState)
 

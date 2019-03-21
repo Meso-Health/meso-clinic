@@ -16,7 +16,7 @@ data class EncounterFlowState(
     var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     var encounterForms: List<EncounterForm>,
     var diagnoses: List<Diagnosis>,
-    var referrals: List<Referral>,
+    var referral: Referral?,
     var member: Member? = null,
     var newProviderComment: String? = null
 ) : Serializable {
@@ -29,7 +29,7 @@ data class EncounterFlowState(
                 encounterForms = encounterWithExtras.encounterForms,
                 diagnoses = encounterWithExtras.diagnoses,
                 member = encounterWithExtras.member,
-                referrals = encounterWithExtras.referrals
+                referral = encounterWithExtras.referral
             )
         }
     }
@@ -53,7 +53,7 @@ data class EncounterFlowState(
             encounter = encounter,
             encounterItemRelations = encounterItemRelations,
             encounterForms = clearEncounterFormThumbnails(),
-            referrals = referrals
+            referral = referral
         )
     }
 
@@ -64,7 +64,7 @@ data class EncounterFlowState(
             encounterItemRelations = encounterItemRelations,
             diagnoses = diagnoses,
             encounterForms = encounterForms,
-            referrals = referrals
+            referral = referral
         )
     }
 

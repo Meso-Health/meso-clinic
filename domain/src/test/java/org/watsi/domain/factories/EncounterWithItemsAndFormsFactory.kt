@@ -10,13 +10,13 @@ object EncounterWithItemsAndFormsFactory {
     fun build(encounter: Encounter = EncounterFactory.build(),
               encounterItemRelations: List<EncounterItemWithBillableAndPrice> = emptyList(),
               forms: List<EncounterForm> = emptyList(),
-              referrals: List<Referral> = emptyList()
+              referral: Referral? = null
     ) : EncounterWithItemsAndForms {
         return EncounterWithItemsAndForms(
             encounter = encounter,
             encounterItemRelations = encounterItemRelations,
             encounterForms = forms,
-            referrals = referrals
+            referral = referral
         )
     }
 }

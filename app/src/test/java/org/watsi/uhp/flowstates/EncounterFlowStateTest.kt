@@ -39,7 +39,7 @@ class EncounterWithItemsAndFormsTest {
             encounterItemRelations = listOf(encounterItemRelation1, encounterItemRelation2),
             encounterForms = emptyList(),
             diagnoses = emptyList(),
-            referrals = emptyList()
+            referral = null
         )
 
         assertEquals(500, encounterWithItemsAndForms.price())
@@ -62,7 +62,7 @@ class EncounterWithItemsAndFormsTest {
             encounterItemRelations = listOf(drugEncounterItem, serviceEncounterItem),
             encounterForms = emptyList(),
             diagnoses = emptyList(),
-            referrals = emptyList()
+            referral = null
         )
 
         assertEquals(listOf(drugEncounterItem), encounterFlowState.getEncounterItemsOfType(Billable.Type.DRUG))

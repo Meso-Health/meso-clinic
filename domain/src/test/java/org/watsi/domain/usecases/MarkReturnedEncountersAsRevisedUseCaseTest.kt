@@ -35,7 +35,7 @@ class MarkReturnedEncountersAsRevisedUseCaseTest {
     fun execute() {
         val encounters = (0..3).map { EncounterFactory.build() }
         val encounterIds = encounters.map { it.id }
-        whenever(mockEncounterRepository.find(any<List<UUID>>())).thenReturn(Single.just(encounters))
+        whenever(mockEncounterRepository.findAll(any<List<UUID>>())).thenReturn(Single.just(encounters))
         whenever(mockEncounterRepository.update(any())).thenReturn(Completable.complete())
 
         useCase.execute(encounterIds).test().assertComplete()

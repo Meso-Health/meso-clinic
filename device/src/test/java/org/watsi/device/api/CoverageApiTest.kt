@@ -13,37 +13,42 @@ import org.watsi.device.api.models.PriceScheduleApi
 import org.watsi.device.testutils.OkReplayTest
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
+import org.watsi.domain.factories.BillableFactory
+import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
+import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
 import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PriceScheduleFactory
-import org.watsi.domain.relations.EncounterWithItems
+import org.watsi.domain.factories.ReferralFactory
+import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.util.UUID
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class CoverageApiTest : OkReplayTest() {
     private val fixedInstance = Instant.parse("2018-03-23T08:10:36.306Z")
     private val providerId = 1
-    private val clinicUser = "klinik"
+    private val clinicUser = "provider1"
     private val clinicUserPassword = "123456"
 
     // Make sure this is a valid token.
     private val tokenString = AuthenticationTokenFactory.build(
-        token = "MDSQkAYS.DfqtUXJvC75xSHuYYLkjY1YZhJ4QcQ3S"
+        token = "W5bJhMgC.EHggPdPvgqwVHi7wjqLKSbpLuutmNbqQ"
     ).getHeaderString()
 
     // Make sure these correspond to real ids in the backend.
-    private val householdId = UUID.fromString("014fd5be-e988-43a0-8848-89c14daeb50d")
-    private val billableId = UUID.fromString("00614e1c-5d4b-4b1e-87a7-f2e7436cb3cd")
-    private val billableLatestPriceScheduleId = UUID.fromString("3c4a87c8-43c8-4a69-9833-77ae0f869651")
+    private val householdId = UUID.fromString("e3c4d82a-655f-4219-a651-7fc51bbcd042")
+    private val billableId = UUID.fromString("0025609f-4b08-4b4b-9a07-080a6b36ba19")
+    private val billableLatestPriceScheduleId = UUID.fromString("c35d1116-7a25-496d-b991-bcdae7bce278")
 
     // When creating new tapes, make sure the following IDs do not exist in the backend.
-    private val memberId = UUID.fromString("914a6308-28c1-4a4a-b123-4c2233f21b11")
-    private val identificationEventId = UUID.fromString("9914e82f2-6e42-4bd4-a9df-ddf11802c9c1")
-    private val priceScheduleId = UUID.fromString("94fba924-13cd-4022-b622-7c8200f21b81")
-    private val encounterId = UUID.fromString("94fba909-24cd-8026-b253-a0ea44080d1d")
-    private val encounterItemId = UUID.fromString("95fba911-29cd-4022-b273-a9ea26180d1a")
+    private val memberId = UUID.fromString("444a6322-48c1-4a4a-b123-4c2233f21b11")
+    private val identificationEventId = UUID.fromString("9114e82f2-6e42-4bd4-a9df-ddf11802c9c1")
+    private val priceScheduleId = UUID.fromString("14fba944-13cd-4022-b622-7c8200f21b81")
+    private val encounterId = UUID.fromString("11fba409-44cd-8026-b253-a0ea44080d1d")
+    private val encounterItemId = UUID.fromString("2fba944-29cd-4022-b273-a9ea26180d1a")
+    private val referralId = UUID.fromString("22fba944-44cd-4022-b273-a9ea26180d1a")
 
     private val member = MemberFactory.build(
         id = memberId,
@@ -183,7 +188,8 @@ class CoverageApiTest : OkReplayTest() {
             id = encounterId,
             memberId = memberId,
             identificationEventId = identificationEventId,
-            occurredAt = fixedInstance
+            occurredAt = fixedInstance,
+            preparedAt = fixedInstance
         )
 
         val encounterItem = EncounterItemFactory.build(
@@ -192,9 +198,23 @@ class CoverageApiTest : OkReplayTest() {
             priceScheduleId = priceScheduleId
         )
 
-        val encounterWithItems = EncounterWithItems(
+        val encounterWithItems = EncounterWithItemsAndForms(
             encounter = encounter,
-            encounterItems = listOf(encounterItem)
+            encounterItemRelations = listOf(EncounterItemWithBillableAndPriceFactory.build(
+                billableWithPrice = BillableWithPriceScheduleFactory.build(
+                    billable = BillableFactory.build(id = billableId),
+                    priceSchedule = PriceScheduleFactory.build(
+                        id = priceScheduleId,
+                        billableId = billableId
+                    )
+                ),
+                encounterItem = encounterItem
+            )),
+            referral = ReferralFactory.build(
+                id = referralId,
+                encounterId = encounter.id
+            ),
+            encounterForms = emptyList()
         )
 
         api.postEncounter(

@@ -18,7 +18,7 @@ object EncounterWithExtrasFactory {
         ),
         diagnoses: List<Diagnosis> = emptyList(),
         encounterForms: List<EncounterForm> = emptyList(),
-        referrals: List<Referral> = emptyList()
+        referral: Referral? = null
     ) : EncounterWithExtras {
         return EncounterWithExtras(
             encounter = encounter,
@@ -26,7 +26,7 @@ object EncounterWithExtrasFactory {
             encounterItemRelations = encounterItemRelations,
             diagnoses = diagnoses,
             encounterForms = encounterForms,
-            referrals = referrals
+            referral = referral
         )
     }
 }

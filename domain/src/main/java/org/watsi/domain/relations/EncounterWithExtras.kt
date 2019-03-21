@@ -13,14 +13,14 @@ data class EncounterWithExtras(
     val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     val diagnoses: List<Diagnosis>,
     val encounterForms: List<EncounterForm>,
-    val referrals: List<Referral>
+    val referral: Referral?
 ) : Serializable {
     fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
         return EncounterWithItemsAndForms(
             encounter = encounter,
             encounterItemRelations = encounterItemRelations,
             encounterForms = encounterForms,
-            referrals = referrals
+            referral = referral
         )
     }
 

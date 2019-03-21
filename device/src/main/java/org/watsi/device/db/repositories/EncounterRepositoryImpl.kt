@@ -19,7 +19,7 @@ import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
-import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
+import org.watsi.device.db.models.EncounterWithExtrasModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
@@ -27,7 +27,6 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItems
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
@@ -52,10 +51,10 @@ class EncounterRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun find(ids: List<UUID>): Single<List<Encounter>> {
+    override fun findAll(ids: List<UUID>): Single<List<Encounter>> {
         return Single.fromCallable {
             ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
-                encounterDao.find(it).blockingGet()
+                encounterDao.findAll(it).blockingGet()
             }.flatten().map {
                 it.toEncounter()
             }
@@ -77,17 +76,17 @@ class EncounterRepositoryImpl(
         } ?: Single.error(Exception("Current token is null while calling EncounterRepositoryImpl.fetchingReturnedClaims"))
     }
 
-    fun loadClaim(encounterModel: EncounterWithMemberAndItemsAndFormsModel): EncounterWithExtras {
-        val encounterRelation = encounterModel.toEncounterWithMemberAndItemsAndForms()
-        val diagnoses = diagnosisDao.findAll(encounterRelation.encounter.diagnoses).blockingGet()
+    fun loadClaim(encounterModel: EncounterWithExtrasModel): EncounterWithExtras {
+        val diagnoses = diagnosisDao.findAll(encounterModel.encounterModel?.diagnoses.orEmpty()).blockingGet()
                 .map { it.toDiagnosis() }
+        val encounterRelation = encounterModel.toEncounterWithExtras(diagnoses)
         return EncounterWithExtras(
             encounter = encounterRelation.encounter,
             member = encounterRelation.member,
             encounterItemRelations = encounterRelation.encounterItemRelations,
             diagnoses = diagnoses,
             encounterForms = encounterRelation.encounterForms,
-            referrals = encounterRelation.referrals
+            referral = encounterRelation.referral
         )
     }
 
@@ -119,16 +118,14 @@ class EncounterRepositoryImpl(
         return encounterDao.loadOneReturnedClaim().map { loadClaim(it) }.subscribeOn(Schedulers.io())
     }
 
-    override fun findWithExtras(id: UUID): Single<EncounterWithExtras> {
-        return encounterDao.findWithMemberAndForms(id).map { loadClaim(it) }
+    override fun find(id: UUID): Single<EncounterWithExtras> {
+        return encounterDao.find(id).map {
+            loadClaim(it)
+        }
     }
 
     override fun returnedIds(): Single<List<UUID>> {
         return encounterDao.returnedIds()
-    }
-
-    override fun find(id: UUID): Single<EncounterWithItems> {
-        return encounterDao.find(id).map { it.toEncounterWithItems() }.subscribeOn(Schedulers.io())
     }
 
     override fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable {
@@ -142,8 +139,9 @@ class EncounterRepositoryImpl(
                 EncounterFormModel.fromEncounterForm(it, clock)
             }
 
-            val referralModels = encounterWithItemsAndForms.referrals.map {
-                ReferralModel.fromReferral(it)
+            val referralModels= mutableListOf<ReferralModel>()
+            encounterWithItemsAndForms.referral?.let {
+                referralModels.add(ReferralModel.fromReferral(it))
             }
 
             encounterDao.insert(
@@ -163,13 +161,18 @@ class EncounterRepositoryImpl(
             val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
                 EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
             }
+            val referralModels= mutableListOf<ReferralModel>()
+            encounterWithItemsAndForms.referral?.let {
+                referralModels.add(ReferralModel.fromReferral(it))
+            }
 
             encounterDao.upsert(
                 encounterModels = listOf(encounterModel),
                 encounterItemModels = encounterItemModels,
                 billableModels = emptyList(),
                 priceScheduleModels = emptyList(),
-                memberModels = emptyList()
+                memberModels = emptyList(),
+                referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
     }
@@ -196,14 +199,23 @@ class EncounterRepositoryImpl(
                     }
                 }.flatten()
             }.flatten()
+
             val memberModels = encounters.map { MemberModel.fromMember(it.member, clock) }
+
+            val referralModels= mutableListOf<ReferralModel>()
+            encounters.forEach {
+                it.referral?.let { referral ->
+                    referralModels.add(ReferralModel.fromReferral(referral))
+                }
+            }
 
             encounterDao.upsert(
                 encounterModels = encounterModels,
                 encounterItemModels = encounterItemModels,
                 billableModels = billableModels,
                 priceScheduleModels = priceScheduleModels,
-                memberModels = memberModels
+                memberModels = memberModels,
+                referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
     }
@@ -231,8 +243,12 @@ class EncounterRepositoryImpl(
 
     override fun sync(delta: Delta): Completable {
         return sessionManager.currentAuthenticationToken()?.let { token ->
-            find(delta.modelId).flatMapCompletable { encounterModel ->
-                api.postEncounter(token.getHeaderString(), token.user.providerId, EncounterApi(encounterModel))
+            find(delta.modelId).flatMapCompletable { encounterWithExtras ->
+                api.postEncounter(
+                    tokenAuthorization= token.getHeaderString(),
+                    providerId = token.user.providerId,
+                    encounter = EncounterApi(encounterWithExtras.toEncounterWithItemsAndForms())
+                )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
     }

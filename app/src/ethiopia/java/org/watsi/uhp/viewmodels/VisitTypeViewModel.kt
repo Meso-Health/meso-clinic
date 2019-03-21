@@ -17,7 +17,11 @@ class VisitTypeViewModel @Inject constructor(): ViewModel() {
 
     fun getObservable(encounterFlowState: EncounterFlowState): LiveData<ViewState> {
         observable.value = ViewState(
-            selectedVisitType = encounterFlowState.encounter.visitType ?: Encounter.VISIT_TYPE_CHOICES[0]
+            selectedVisitType = encounterFlowState.encounter.visitType ?: Encounter.VISIT_TYPE_CHOICES[0],
+            referralBoxChecked = encounterFlowState.referral != null,
+            receivingFacility = encounterFlowState.referral?.receivingFacility,
+            reason = encounterFlowState.referral?.reason,
+            number = encounterFlowState.referral?.number
         )
         return observable
     }
@@ -85,15 +89,15 @@ class VisitTypeViewModel @Inject constructor(): ViewModel() {
                 Completable.fromAction {
                     encounterFlowState.encounter = encounterFlowState.encounter.copy(visitType = viewState.selectedVisitType)
                     if (viewState.referralBoxChecked && viewState.receivingFacility != null && viewState.reason != null) {
-                        encounterFlowState.referrals = listOf(Referral(
+                        encounterFlowState.referral = Referral(
                             id = UUID.randomUUID(),
                             receivingFacility = viewState.receivingFacility,
                             reason = viewState.reason,
                             number = viewState.number,
                             encounterId = encounterFlowState.encounter.id
-                        ))
+                        )
                     } else {
-                        encounterFlowState.referrals = emptyList()
+                        encounterFlowState.referral = null
                     }
                 }
             }

@@ -205,7 +205,7 @@ class EditMemberFragment : DaggerFragment() {
                             encounter = encounter,
                             encounterItemRelations = emptyList(),
                             encounterForms = emptyList(),
-                            referrals = emptyList(),
+                            referral = null,
                             diagnoses = emptyList(),
                             member = member
                         )

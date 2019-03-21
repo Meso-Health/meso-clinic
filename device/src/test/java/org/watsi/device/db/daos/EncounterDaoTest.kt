@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
-import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
+import org.watsi.device.db.models.EncounterWithExtrasModel
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
@@ -116,7 +116,7 @@ class EncounterDaoTest : DaoBaseTest() {
         DeltaModelFactory.create(deltaDao,
             modelName = Delta.ModelName.ENCOUNTER, modelId = syncedEncounter.id, synced = true)
 
-        val unsyncedEncounterRelation = EncounterWithMemberAndItemsAndFormsModel(
+        val unsyncedEncounterRelation = EncounterWithExtrasModel(
             encounterModel = unsyncedEncounter,
             memberModel = listOf(unsyncedMember),
             encounterFormModels = emptyList(),
