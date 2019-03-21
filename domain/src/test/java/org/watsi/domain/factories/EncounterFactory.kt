@@ -19,7 +19,7 @@ object EncounterFactory {
         claimId: String? = null,
         adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
         adjudicatedAt: Instant? = null,
-        returnReason: String? = null,
+        adjudicationReason: String? = null,
         revisedEncounterId: UUID? = null,
         providerComment: String? = null,
         submittedAt: Instant? = null
@@ -37,7 +37,7 @@ object EncounterFactory {
             claimId = claimId ?: id.toString(),
             adjudicationState = adjudicationState,
             adjudicatedAt = adjudicatedAt,
-            returnReason = returnReason,
+            adjudicationReason = adjudicationReason,
             revisedEncounterId = revisedEncounterId,
             providerComment = providerComment,
             submittedAt = submittedAt

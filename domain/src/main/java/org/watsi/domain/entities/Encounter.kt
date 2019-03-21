@@ -17,7 +17,7 @@ data class Encounter(
     val claimId: String = id.toString(),
     val adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
     val adjudicatedAt: Instant? = null,
-    val returnReason: String? = null,
+    val adjudicationReason: String? = null,
     val revisedEncounterId: UUID? = null,
     val providerComment: String? = null,
     val submittedAt: Instant? = null
