@@ -8,7 +8,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.usecases.CreateEncounterUseCase
-import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import javax.inject.Inject
 
@@ -49,7 +48,7 @@ class ReceiptViewModel @Inject constructor(
                 copaymentPaid = copaymentPaid
             )
             Completable.fromCallable {
-                createEncounterUseCase.execute(encounterFlowState.toEncounterWithItemsAndForms(), true, clock).blockingAwait()
+                createEncounterUseCase.execute(encounterFlowState.toEncounterWithExtras(), true, clock).blockingAwait()
             }.observeOn(AndroidSchedulers.mainThread())
         } ?: Completable.never()
     }

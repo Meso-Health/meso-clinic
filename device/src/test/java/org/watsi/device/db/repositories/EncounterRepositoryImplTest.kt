@@ -57,7 +57,6 @@ import org.watsi.domain.factories.ReferralFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 @RunWith(MockitoJUnitRunner::class)
 class EncounterRepositoryImplTest {
@@ -164,15 +163,18 @@ class EncounterRepositoryImplTest {
         val billableWithPrice = BillableWithPriceScheduleFactory.build()
         val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
-        val referral = ReferralFactory.build()
-        val encounterWithItemsAndForms = EncounterWithItemsAndForms(
+        val referral = ReferralFactory.build(encounterId = encounter.id)
+        val member = MemberFactory.build(id = encounter.memberId)
+        val encounterWithExtras = EncounterWithExtras(
             encounter = encounter,
             encounterItemRelations = listOf(encounterItemRelation),
             encounterForms = listOf(encounterForm),
-            referral = referral
+            referral = referral,
+            member = member,
+            diagnoses = emptyList()
         )
 
-        repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
+        repository.insert(encounterWithExtras, deltas).test().assertComplete()
 
         verify(mockDao).insert(
             encounterModel = EncounterModel.fromEncounter(encounter, clock),
@@ -204,7 +206,7 @@ class EncounterRepositoryImplTest {
         whenever(mockApi.postEncounter(
             tokenAuthorization = token.getHeaderString(),
             providerId = user.providerId,
-            encounter = EncounterApi(encounterWithExtras.toEncounterWithItemsAndForms()))
+            encounter = EncounterApi(encounterWithExtras))
         ).thenReturn(Completable.complete())
 
         repository.sync(delta).test().assertComplete()

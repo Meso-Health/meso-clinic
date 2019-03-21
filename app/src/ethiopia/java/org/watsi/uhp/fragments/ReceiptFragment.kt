@@ -178,9 +178,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val genderAndAgeText = encounterFlowState.member?.let {
-            StringHelper.formatAgeAndGender(it, context, clock)
-        }
+        val genderAndAgeText = StringHelper.formatAgeAndGender(encounterFlowState.member, context, clock)
 
         if (encounterAction == EncounterAction.SUBMIT) {
             displayPreparedClaimInfo()
@@ -190,9 +188,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             claim_id.text = encounterFlowState.encounter.shortenedClaimId()
         }
 
-        membership_number.text = encounterFlowState.member?.membershipNumber
+        membership_number.text = encounterFlowState.member.membershipNumber
         gender_and_age.text = genderAndAgeText
-        medical_record_number.text = encounterFlowState.member?.medicalRecordNumber
+        medical_record_number.text = encounterFlowState.member.medicalRecordNumber
         visit_type.text = encounterFlowState.encounter.visitType
         diagnoses_label.text = resources.getQuantityString(
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
@@ -472,24 +470,18 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun deleteEncounter() {
-        if (encounterFlowState.member == null) {
-            logger.error("Member cannot be null")
-        }
-
-        encounterFlowState.member?.let {
-            deletePendingClaimAndMemberUseCase.execute(
-                encounterFlowState.toEncounterWithExtras(it)
-            ).subscribe({
-                navigateToNext(
-                    String.format(
-                        getString(R.string.claim_id_deleted),
-                        encounterFlowState.encounter.shortenedClaimId()
-                    )
+        deletePendingClaimAndMemberUseCase.execute(
+            encounterFlowState.toEncounterWithExtras()
+        ).subscribe({
+            navigateToNext(
+                String.format(
+                    getString(R.string.claim_id_deleted),
+                    encounterFlowState.encounter.shortenedClaimId()
                 )
-            }, {
-                logger.error(it)
-            })
-        }
+            )
+        }, {
+            logger.error(it)
+        })
     }
 
     private fun navigateToNext(message: String) {

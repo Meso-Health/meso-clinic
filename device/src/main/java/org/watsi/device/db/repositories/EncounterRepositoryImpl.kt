@@ -27,7 +27,6 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import org.watsi.domain.repositories.EncounterRepository
 import java.util.UUID
 
@@ -128,19 +127,20 @@ class EncounterRepositoryImpl(
         return encounterDao.returnedIds()
     }
 
-    override fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable {
+    override fun insert(encounterWithExtras: EncounterWithExtras, deltas: List<Delta>): Completable {
         return Completable.fromAction {
-            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
-            val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
+            val encounterModel = EncounterModel.fromEncounter(encounterWithExtras.encounter, clock)
+            val encounterItemModels = encounterWithExtras.encounterItemRelations.map {
                 EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
             }
-            // TODO: select any billables that need to be inserted
-            val encounterFormModels = encounterWithItemsAndForms.encounterForms.map {
+            // TODO: select any billables that need to be inserted.
+            // This will need to happen when we start de-activating billables on the backend.
+            val encounterFormModels = encounterWithExtras.encounterForms.map {
                 EncounterFormModel.fromEncounterForm(it, clock)
             }
 
             val referralModels= mutableListOf<ReferralModel>()
-            encounterWithItemsAndForms.referral?.let {
+            encounterWithExtras.referral?.let {
                 referralModels.add(ReferralModel.fromReferral(it))
             }
 
@@ -155,14 +155,14 @@ class EncounterRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+    override fun upsert(encounterWithExtras: EncounterWithExtras): Completable {
         return Completable.fromAction {
-            val encounterModel = EncounterModel.fromEncounter(encounterWithItemsAndForms.encounter, clock)
-            val encounterItemModels = encounterWithItemsAndForms.encounterItemRelations.map {
+            val encounterModel = EncounterModel.fromEncounter(encounterWithExtras.encounter, clock)
+            val encounterItemModels = encounterWithExtras.encounterItemRelations.map {
                 EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
             }
             val referralModels= mutableListOf<ReferralModel>()
-            encounterWithItemsAndForms.referral?.let {
+            encounterWithExtras.referral?.let {
                 referralModels.add(ReferralModel.fromReferral(it))
             }
 
@@ -247,7 +247,7 @@ class EncounterRepositoryImpl(
                 api.postEncounter(
                     tokenAuthorization= token.getHeaderString(),
                     providerId = token.user.providerId,
-                    encounter = EncounterApi(encounterWithExtras.toEncounterWithItemsAndForms())
+                    encounter = EncounterApi(encounterWithExtras)
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()

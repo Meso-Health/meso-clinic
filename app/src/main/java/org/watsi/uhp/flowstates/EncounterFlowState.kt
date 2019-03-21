@@ -8,16 +8,15 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Referral
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.io.Serializable
 
 data class EncounterFlowState(
     var encounter: Encounter,
     var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     var encounterForms: List<EncounterForm>,
-    var diagnoses: List<Diagnosis>,
     var referral: Referral?,
-    var member: Member? = null,
+    var member: Member,
+    var diagnoses: List<Diagnosis>,
     var newProviderComment: String? = null
 ) : Serializable {
 
@@ -48,16 +47,7 @@ data class EncounterFlowState(
         }
     }.sum()
 
-    fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
-        return EncounterWithItemsAndForms(
-            encounter = encounter,
-            encounterItemRelations = encounterItemRelations,
-            encounterForms = clearEncounterFormThumbnails(),
-            referral = referral
-        )
-    }
-
-    fun toEncounterWithExtras(member: Member): EncounterWithExtras {
+    fun toEncounterWithExtras(): EncounterWithExtras {
         return EncounterWithExtras(
             encounter = encounter,
             member = member,

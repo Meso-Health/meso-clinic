@@ -22,7 +22,7 @@ import org.watsi.domain.factories.DiagnosisFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
-import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
+import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.ReferralFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
@@ -119,7 +119,7 @@ class UpdateEncounterUseCaseTest {
         diagnoses = emptyList()
     )
 
-    private val updatedEncounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+    private val updatedEncounterWithExtras = EncounterWithExtrasFactory.build(
         encounter = savedEncounter.copy(
             diagnoses = listOf(diagnosis2.id),
             providerComment = "changed comment"
@@ -167,14 +167,14 @@ class UpdateEncounterUseCaseTest {
         whenever(mockEncounterRepository.find(savedEncounter.id)).thenReturn(
             Single.just(savedEncounterWithExtras)
         )
-        whenever(mockEncounterRepository.upsert(updatedEncounterWithItemsAndForms)).thenReturn(
+        whenever(mockEncounterRepository.upsert(updatedEncounterWithExtras)).thenReturn(
             Completable.complete()
         )
         whenever(mockEncounterRepository.deleteEncounterItems(removedEncounterItemIds)).thenReturn(
             Completable.complete()
         )
 
-        useCase.execute(updatedEncounterWithItemsAndForms).test().assertComplete()
+        useCase.execute(updatedEncounterWithExtras).test().assertComplete()
     }
 
     @Test
@@ -193,13 +193,13 @@ class UpdateEncounterUseCaseTest {
         whenever(mockEncounterRepository.find(savedEncounter.id)).thenReturn(
             Single.just(savedEncounterWithExtras)
         )
-        whenever(mockEncounterRepository.upsert(updatedEncounterWithItemsAndForms)).thenReturn(
+        whenever(mockEncounterRepository.upsert(updatedEncounterWithExtras)).thenReturn(
             Completable.complete()
         )
         whenever(mockEncounterRepository.deleteEncounterItems(removedEncounterItemIds)).thenReturn(
             Completable.complete()
         )
 
-        useCase.execute(updatedEncounterWithItemsAndForms).test().assertComplete()
+        useCase.execute(updatedEncounterWithExtras).test().assertComplete()
     }
 }

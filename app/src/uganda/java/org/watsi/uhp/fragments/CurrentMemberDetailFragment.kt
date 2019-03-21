@@ -93,7 +93,7 @@ class CurrentMemberDetailFragment : DaggerFragment() {
         member_action_button.text = getString(R.string.detail_create_encounter)
         member_action_button.setOnClickListener {
             navigationManager.goTo(EncounterFragment.forEncounter(
-                    viewModel.buildEncounter(identificationEvent)))
+                    viewModel.buildEncounter(identificationEvent, member)))
         }
         member_detail.setIdentificationEvent(identificationEvent)
     }

@@ -6,7 +6,7 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.entities.Referral
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 data class EncounterApi(
@@ -44,9 +44,9 @@ data class EncounterApi(
         submittedAt = encounter.submittedAt
     )
 
-    constructor(encounterWithItemsAndForms: EncounterWithItemsAndForms): this(
-        encounter = encounterWithItemsAndForms.encounter,
-        referrals = listOfNotNull(encounterWithItemsAndForms.referral),
-        encounterItems = encounterWithItemsAndForms.encounterItemRelations.map { it.encounterItem }
+    constructor(encounterWithExtras: EncounterWithExtras): this(
+        encounter = encounterWithExtras.encounter,
+        referrals = listOfNotNull(encounterWithExtras.referral),
+        encounterItems = encounterWithExtras.encounterItemRelations.map { it.encounterItem }
     )
 }

@@ -16,7 +16,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
-import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
+import org.watsi.domain.factories.EncounterWithExtrasFactory
 
 @RunWith(MockitoJUnitRunner::class)
 class ReviseClaimUseCaseTest {
@@ -37,9 +37,9 @@ class ReviseClaimUseCaseTest {
     fun execute_encounterHasEncounterForms_submitNowTrue_createsEncounterAndMemberAndMarksRevised() {
         val encounter = EncounterFactory.build()
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+        val encounterWithExtras = EncounterWithExtrasFactory.build(
             encounter = encounter,
-            forms = listOf(encounterForm)
+            encounterForms = listOf(encounterForm)
         )
 
         whenever(mockCreateEncounterUseCase.execute(any(), eq(true), any()))
@@ -48,6 +48,6 @@ class ReviseClaimUseCaseTest {
             .thenReturn(Completable.complete())
 
 
-        useCase.execute(encounterWithItemsAndForms, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, fixedClock).test().assertComplete()
     }
 }

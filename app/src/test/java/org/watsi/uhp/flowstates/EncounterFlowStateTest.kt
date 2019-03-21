@@ -8,10 +8,11 @@ import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
+import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PriceScheduleFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 
-class EncounterWithItemsAndFormsTest {
+class EncounterFlowStateTest {
 
     @Test
     fun price() {
@@ -34,15 +35,17 @@ class EncounterWithItemsAndFormsTest {
             EncounterItemWithBillableAndPrice(encounterItem2, billableWithPrice2)
 
         val encounter = EncounterFactory.build()
-        val encounterWithItemsAndForms = EncounterFlowState(
+        val member = MemberFactory.build(id = encounter.memberId)
+        val encounterFlowState = EncounterFlowState(
             encounter = encounter,
             encounterItemRelations = listOf(encounterItemRelation1, encounterItemRelation2),
             encounterForms = emptyList(),
             diagnoses = emptyList(),
+            member = member,
             referral = null
         )
 
-        assertEquals(500, encounterWithItemsAndForms.price())
+        assertEquals(500, encounterFlowState.price())
     }
 
     @Test
@@ -57,11 +60,14 @@ class EncounterWithItemsAndFormsTest {
                 BillableFactory.build(type = Billable.Type.SERVICE)
             )
         )
+        val encounter = EncounterFactory.build()
+        val member = MemberFactory.build(id = encounter.memberId)
         val encounterFlowState = EncounterFlowState(
-            encounter = EncounterFactory.build(),
+            encounter = encounter,
             encounterItemRelations = listOf(drugEncounterItem, serviceEncounterItem),
             encounterForms = emptyList(),
             diagnoses = emptyList(),
+            member = member,
             referral = null
         )
 

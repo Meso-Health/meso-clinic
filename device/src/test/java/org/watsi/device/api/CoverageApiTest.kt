@@ -22,7 +22,7 @@ import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PriceScheduleFactory
 import org.watsi.domain.factories.ReferralFactory
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -198,7 +198,7 @@ class CoverageApiTest : OkReplayTest() {
             priceScheduleId = priceScheduleId
         )
 
-        val encounterWithItems = EncounterWithItemsAndForms(
+        val encounterWithExtras = EncounterWithExtras(
             encounter = encounter,
             encounterItemRelations = listOf(EncounterItemWithBillableAndPriceFactory.build(
                 billableWithPrice = BillableWithPriceScheduleFactory.build(
@@ -214,13 +214,17 @@ class CoverageApiTest : OkReplayTest() {
                 id = referralId,
                 encounterId = encounter.id
             ),
+            member = MemberFactory.build(
+                id = encounter.memberId
+            ),
+            diagnoses = emptyList(),
             encounterForms = emptyList()
         )
 
         api.postEncounter(
             tokenAuthorization = tokenString,
             providerId = providerId,
-            encounter = EncounterApi(encounterWithItems)
+            encounter = EncounterApi(encounterWithExtras)
         ).test().assertComplete()
     }
 

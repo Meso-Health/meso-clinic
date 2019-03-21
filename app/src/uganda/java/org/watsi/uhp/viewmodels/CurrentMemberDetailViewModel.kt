@@ -52,7 +52,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
         return identificationEventRepository.dismiss(identificationEvent)
     }
 
-    fun buildEncounter(idEvent: IdentificationEvent): EncounterFlowState {
+    fun buildEncounter(idEvent: IdentificationEvent, member: Member): EncounterFlowState {
         val encounterId = UUID.randomUUID()
         val defaultEncounterItems = defaultBillables.map {
             val encounterItem = EncounterItem(
@@ -70,6 +70,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
             encounterItemRelations = defaultEncounterItems,
             encounterForms = emptyList(),
             diagnoses = emptyList(),
+            member = member,
             referral = null
         )
     }
