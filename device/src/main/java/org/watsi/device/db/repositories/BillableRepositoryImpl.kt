@@ -39,7 +39,7 @@ class BillableRepositoryImpl(
     }
 
     override fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedule>> {
-        // because we can have over 1,000 billables with type drug, if we do not chunk the find
+        // because we can have over 1,000 billables with type drug, if we do not chunk the findAll
         // we run into a too many SQL variables exception due to how the relation is queried
         return Single.fromCallable {
             val ids = billableDao.idsOfType(type).blockingGet()

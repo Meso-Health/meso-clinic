@@ -16,13 +16,14 @@ class UpdateEncounterUseCase(
     fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
         return Completable.fromAction {
             val savedEncounter = encounterRepository.find(encounterWithItemsAndForms.encounter.id).blockingGet()
-            val removedEncounterItemIds = savedEncounter.encounterItems.map { it.id }
+            val removedEncounterItemIds = savedEncounter.encounterItemRelations.map { it.encounterItem.id }
                     .minus(encounterWithItemsAndForms.encounterItemRelations.map { it.encounterItem.id })
             val newPriceSchedules = encounterWithItemsAndForms.encounterItemRelations
                     .filter { it.encounterItem.priceScheduleIssued }
                     .map { it.billableWithPriceSchedule.priceSchedule }
                     .filter { priceScheduleRepository.find(it.id).blockingGet() == null }
 
+            // TODO: Upsert so that newly added Referrals are saved, also removed referrals are removed.
             // Upsert so that newly added encounterItems are saved
             encounterRepository.upsert(encounterWithItemsAndForms).blockingAwait()
             encounterRepository.deleteEncounterItems(removedEncounterItemIds).blockingAwait()

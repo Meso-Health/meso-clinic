@@ -23,7 +23,10 @@ import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
 import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
-import org.watsi.domain.relations.EncounterWithItems
+import org.watsi.domain.factories.MemberFactory
+import org.watsi.domain.factories.ReferralFactory
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 
@@ -85,15 +88,37 @@ class UpdateEncounterUseCaseTest {
         priceScheduleId = drugBillable3.priceSchedule.id,
         quantity = 20
     )
-    private val savedEncounterWithItems = EncounterWithItems(
-        encounter = savedEncounter,
-        encounterItems = listOf(
-            service1EncounterItem,
-            lab1EncounterItem,
-            drug1EncounterItem,
-            drug2EncounterItem
-        )
+
+    private val referral = ReferralFactory.build(
+        encounterId = savedEncounter.id
     )
+
+    private val savedEncounterWithExtras = EncounterWithExtras(
+        encounter = savedEncounter,
+        member = MemberFactory.build(id = savedEncounter.memberId),
+        encounterItemRelations = listOf(
+            EncounterItemWithBillableAndPrice(
+                service1EncounterItem,
+                serviceBillable1
+            ),
+            EncounterItemWithBillableAndPrice(
+                lab1EncounterItem,
+                labBillable1
+            ),
+            EncounterItemWithBillableAndPrice(
+                drug1EncounterItem,
+                drugBillable1
+            ),
+            EncounterItemWithBillableAndPrice(
+                drug2EncounterItem,
+                drugBillable2
+            )
+        ),
+        encounterForms = emptyList(),
+        referral = referral,
+        diagnoses = emptyList()
+    )
+
     private val updatedEncounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
         encounter = savedEncounter.copy(
             diagnoses = listOf(diagnosis2.id),
@@ -140,7 +165,7 @@ class UpdateEncounterUseCaseTest {
         }
 
         whenever(mockEncounterRepository.find(savedEncounter.id)).thenReturn(
-            Single.just(savedEncounterWithItems)
+            Single.just(savedEncounterWithExtras)
         )
         whenever(mockEncounterRepository.upsert(updatedEncounterWithItemsAndForms)).thenReturn(
             Completable.complete()
@@ -166,7 +191,7 @@ class UpdateEncounterUseCaseTest {
             whenever(mockPriceScheduleRepository.create(priceSchedule, priceScheduleDelta)).thenReturn(Completable.complete())
         }
         whenever(mockEncounterRepository.find(savedEncounter.id)).thenReturn(
-            Single.just(savedEncounterWithItems)
+            Single.just(savedEncounterWithExtras)
         )
         whenever(mockEncounterRepository.upsert(updatedEncounterWithItemsAndForms)).thenReturn(
             Completable.complete()

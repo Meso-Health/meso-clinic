@@ -70,7 +70,7 @@ class CurrentMemberDetailViewModel @Inject constructor(
             encounterItemRelations = defaultEncounterItems,
             encounterForms = emptyList(),
             diagnoses = emptyList(),
-            referrals = emptyList()
+            referral = null
         )
     }
 

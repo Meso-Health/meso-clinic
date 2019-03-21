@@ -6,6 +6,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.EncounterItemApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.api.models.PriceScheduleApi
+import org.watsi.device.api.models.ReferralApi
 import org.watsi.device.api.models.ReturnedEncounterApi
 import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
@@ -42,6 +43,13 @@ object ReturnedEncounterApiFactory {
             },
             encounterItems = encounterWithExtras.encounterItemRelations.map {
                 EncounterItemApi(it.encounterItem)
+            },
+            referrals = listOf(encounterWithExtras.referral).mapNotNull {
+                if (it != null) {
+                    ReferralApi(it)
+                } else {
+                    null
+                }
             }
         )
     }

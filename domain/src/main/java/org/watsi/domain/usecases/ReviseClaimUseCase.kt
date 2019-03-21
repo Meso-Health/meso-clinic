@@ -5,7 +5,6 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
-import org.watsi.domain.entities.Referral
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.util.UUID
@@ -45,20 +44,17 @@ class ReviseClaimUseCase(
                 ))
             }
 
-            val newReferrals = mutableListOf<Referral>()
-            encounterWithItemsAndForms.referrals.forEach {
-                newReferrals.add(it.copy(
-                    id = UUID.randomUUID(),
-                    encounterId = newEncounter.id
-                ))
-            }
+            val newReferral = encounterWithItemsAndForms.referral?.copy(
+                id = UUID.randomUUID(),
+                encounterId = newEncounter.id
+            )
 
             createEncounterUseCase.execute(
                 EncounterWithItemsAndForms(
                     encounter = newEncounter,
                     encounterItemRelations = newEncounterItems,
                     encounterForms = newEncounterForms,
-                    referrals = newReferrals
+                    referral = newReferral
                 ), true, clock
             ).blockingAwait()
 

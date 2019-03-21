@@ -31,7 +31,8 @@ data class ReturnedEncounterApi(
         val member: MemberApi,
         val billables: List<BillableApi>,
         val priceSchedules: List<PriceScheduleApi>,
-        val encounterItems: List<EncounterItemApi>
+        val encounterItems: List<EncounterItemApi>,
+        val referrals: List<ReferralApi>
 ) {
 
     fun toEncounterWithExtras(persistedMember: Member? = null): EncounterWithExtras {
@@ -62,7 +63,7 @@ data class ReturnedEncounterApi(
             member = member.toMember(persistedMember),
             encounterForms = emptyList(),
             diagnoses = emptyList(), // We don't actually use this field for fetching / persisting.
-            referrals = emptyList() // TODO for later when we implement actual syncing and fetching
+            referral = referrals.firstOrNull()?.toReferral()
         )
     }
 

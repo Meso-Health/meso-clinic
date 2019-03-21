@@ -15,8 +15,7 @@ import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
-import org.watsi.device.db.models.EncounterWithItemsModel
-import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
+import org.watsi.device.db.models.EncounterWithExtrasModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
@@ -24,18 +23,13 @@ import java.util.UUID
 
 @Dao
 interface EncounterDao {
-
     @Transaction
     @Query("SELECT * FROM encounters WHERE id = :id LIMIT 1")
-    fun find(id: UUID): Single<EncounterWithItemsModel>
-
-    @Transaction
-    @Query("SELECT * FROM encounters WHERE id = :id LIMIT 1")
-    fun findWithMemberAndForms(id: UUID): Single<EncounterWithMemberAndItemsAndFormsModel>
+    fun find(id: UUID): Single<EncounterWithExtrasModel>
 
     @Transaction
     @Query("SELECT * FROM encounters WHERE id IN (:ids)")
-    fun find(ids: List<UUID>): Single<List<EncounterModel>>
+    fun findAll(ids: List<UUID>): Single<List<EncounterModel>>
 
     @Update
     fun update(encounters: List<EncounterModel>): Int
@@ -49,11 +43,14 @@ interface EncounterDao {
                deltaModels: List<DeltaModel>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun upsert(encounterModels: List<EncounterModel>,
-               encounterItemModels: List<EncounterItemModel>,
-               billableModels: List<BillableModel>,
-               priceScheduleModels: List<PriceScheduleModel>,
-               memberModels: List<MemberModel>)
+    fun upsert(
+        encounterModels: List<EncounterModel>,
+        encounterItemModels: List<EncounterItemModel>,
+        billableModels: List<BillableModel>,
+        priceScheduleModels: List<PriceScheduleModel>,
+        memberModels: List<MemberModel>,
+        referralModels: List<ReferralModel>
+    )
 
     @Delete
     fun delete(encounterModel: EncounterModel,
@@ -61,11 +58,11 @@ interface EncounterDao {
 
     @Transaction
     @Query("SELECT * from encounters WHERE submittedAt IS NULL ORDER BY occurredAt")
-    fun pending(): Flowable<List<EncounterWithMemberAndItemsAndFormsModel>>
+    fun pending(): Flowable<List<EncounterWithExtrasModel>>
 
     @Transaction
     @Query("SELECT * from encounters WHERE submittedAt IS NULL ORDER BY occurredAt LIMIT 1")
-    fun loadOnePendingClaim(): Maybe<EncounterWithMemberAndItemsAndFormsModel>
+    fun loadOnePendingClaim(): Maybe<EncounterWithExtrasModel>
 
     @Transaction
     @Query("SELECT COUNT(*) from encounters WHERE submittedAt IS NULL")
@@ -73,11 +70,11 @@ interface EncounterDao {
 
     @Transaction
     @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED' ORDER BY occurredAt")
-    fun returned(): Flowable<List<EncounterWithMemberAndItemsAndFormsModel>>
+    fun returned(): Flowable<List<EncounterWithExtrasModel>>
 
     @Transaction
     @Query("SELECT * from encounters WHERE adjudicationState = 'RETURNED' ORDER BY occurredAt LIMIT 1")
-    fun loadOneReturnedClaim(): Maybe<EncounterWithMemberAndItemsAndFormsModel>
+    fun loadOneReturnedClaim(): Maybe<EncounterWithExtrasModel>
 
     @Transaction
     @Query("SELECT COUNT(*) from encounters WHERE adjudicationState = 'RETURNED'")
@@ -96,7 +93,7 @@ interface EncounterDao {
             "(encounters.id = deltas.modelId AND\n" +
             "deltas.synced = 0 AND\n" +
             "deltas.modelName = 'ENCOUNTER')")
-    fun unsynced(): Single<List<EncounterWithMemberAndItemsAndFormsModel>>
+    fun unsynced(): Single<List<EncounterWithExtrasModel>>
 
     @Query("DELETE FROM encounters")
     fun deleteAll()

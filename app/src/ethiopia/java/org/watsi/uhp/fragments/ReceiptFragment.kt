@@ -203,9 +203,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             diagnoses_list.text = encounterFlowState.diagnoses.joinToString(", ") { it.description }
         }
 
-        if (encounterFlowState.referrals.isNotEmpty()) {
+        encounterFlowState.referral?.let { referral ->
             referrals_container.visibility = View.VISIBLE
-            val referral = encounterFlowState.referrals.first()
             referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number
             referral_reason.text = referral.reason

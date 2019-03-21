@@ -8,6 +8,6 @@ import java.util.UUID
 
 class LoadEncounterWithExtrasUseCase(private val encounterRepository: EncounterRepository) {
     fun execute(id: UUID): Single<EncounterWithExtras> {
-        return encounterRepository.findWithExtras(id).subscribeOn(Schedulers.io())
+        return encounterRepository.find(id).subscribeOn(Schedulers.io())
     }
 }

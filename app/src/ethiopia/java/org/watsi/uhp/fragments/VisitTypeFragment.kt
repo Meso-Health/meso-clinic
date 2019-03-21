@@ -131,6 +131,10 @@ class VisitTypeFragment : DaggerFragment() {
                 }
             })
         }
+
+        receiving_facility.setText(encounterFlowState.referral?.receivingFacility)
+        referral_reason.setText(encounterFlowState.referral?.reason)
+        referral_serial_number.setText(encounterFlowState.referral?.number)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
