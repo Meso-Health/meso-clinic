@@ -28,7 +28,7 @@ object ReturnedEncounterApiFactory {
             claimId = encounterWithExtras.encounter.claimId,
             adjudicationState = encounterWithExtras.encounter.adjudicationState.toString(),
             adjudicatedAt = encounterWithExtras.encounter.adjudicatedAt ?: now,
-            returnReason = encounterWithExtras.encounter.returnReason ?: "return reason",
+            adjudicationReason = encounterWithExtras.encounter.adjudicationReason ?: "return reason",
             revisedEncounterId = encounterWithExtras.encounter.revisedEncounterId ?: UUID.randomUUID(),
             providerComment = encounterWithExtras.encounter.providerComment,
             preparedAt = encounterWithExtras.encounter.preparedAt ?: now,

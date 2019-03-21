@@ -313,8 +313,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         } else {
             getString(none)
         }
-        branch_comment_text.text = if (encounterFlowState.encounter.returnReason != null) {
-            encounterFlowState.encounter.returnReason
+        branch_comment_text.text = if (encounterFlowState.encounter.adjudicationReason != null) {
+            encounterFlowState.encounter.adjudicationReason
         } else {
             getString(none)
         }

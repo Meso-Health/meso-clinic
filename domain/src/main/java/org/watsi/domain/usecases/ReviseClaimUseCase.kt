@@ -22,7 +22,7 @@ class ReviseClaimUseCase(
                 revisedEncounterId = encounterWithItemsAndForms.encounter.id,
                 adjudicationState = Encounter.AdjudicationState.PENDING,
                 adjudicatedAt = null,
-                returnReason = null
+                adjudicationReason = null
             )
 
             val newEncounterItems = mutableListOf<EncounterItemWithBillableAndPrice>()
