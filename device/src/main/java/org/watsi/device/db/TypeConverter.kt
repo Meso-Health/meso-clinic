@@ -10,6 +10,7 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Member.ArchivedReason
+import org.watsi.domain.entities.Referral
 import java.util.UUID
 
 class TypeConverter {
@@ -124,4 +125,9 @@ class TypeConverter {
     @TypeConverter
     fun fromRelationshipToHead(type: Member.RelationshipToHead?): String? = type?.let { type.toString() }
 
+    @TypeConverter
+    fun toReason(value: String?): Referral.Reason? = value?.let { Referral.Reason.valueOf(value) }
+
+    @TypeConverter
+    fun fromReason(reason: Referral.Reason?): String? = reason?.let { reason.toString() }
 }

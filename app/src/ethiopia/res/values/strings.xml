@@ -89,6 +89,14 @@
     <string name="serial_number" translatable="false">Number (optional)"</string>
     <string name="referral_reason" translatable="false">Reason</string>
     <string name="referred_to_facility" translatable="false">Referred To Facility</string>
+    <string name="referral_reason_prompt">Select referral reason...</string>
+    <string name="further_consultation">Further consultation</string>
+    <string name="drug_stockout">Drug stockout</string>
+    <string name="investigative_tests">Investigative Tests</string>
+    <string name="inpatient_care">Inpatient care</string>
+    <string name="bed_shortage">Bed shortage</string>
+    <string name="follow_up">Follow up</string>
+    <string name="other">Other</string>
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>

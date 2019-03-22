@@ -16,8 +16,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_container
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
 import org.threeten.bp.Clock
@@ -28,9 +27,12 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.LayoutHelper
+import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.VisitTypeViewModel
+import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
 class VisitTypeFragment : DaggerFragment() {
@@ -75,19 +77,11 @@ class VisitTypeFragment : DaggerFragment() {
 
     private fun setErrors(errors: Map<String, Int>) {
         errors[VisitTypeViewModel.REASON_ERROR].let { errorResourceId ->
-            if (errorResourceId == null) {
-                referral_reason_container.error = null
-            } else {
-                referral_reason_container.error = getString(errorResourceId)
-            }
+            referral_reason_spinner.setError(errorResourceId?.let { getString(it) })
         }
 
         errors[VisitTypeViewModel.RECEIVING_FACILITY_ERROR].let { errorResourceId ->
-            if (errorResourceId == null) {
-                receiving_facility_container.error = null
-            } else {
-                receiving_facility_container.error = getString(errorResourceId)
-            }
+            receiving_facility_container.error = errorResourceId?.let { getString(it) }
         }
     }
 
@@ -101,17 +95,25 @@ class VisitTypeFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val visitTypes = Encounter.VISIT_TYPE_CHOICES
 
-        visit_type_spinner.setUpSpinner(
-            visitTypes,
-            encounterFlowState.encounter.visitType ?: visitTypes[0],
-            { selectedVisitType ->
+        visit_type_spinner.setUpWithoutPrompt(
+            adapter = SpinnerField.createAdapter(context, visitTypes),
+            initialChoiceIndex = visitTypes.indexOf(encounterFlowState.encounter.visitType ?: visitTypes[0]),
+            onItemSelected = { selectedVisitType : String ->
                 viewModel.onSelectVisitType(selectedVisitType)
             }
         )
 
-        referral_reason.addTextChangedListener(LayoutHelper.OnChangedListener {
-            reason -> viewModel.onReasonChange(reason)
-        })
+        val reasonChoicesMappings = EnumHelper.getReasonChoicesMappings()
+        val reasonEnums = reasonChoicesMappings.map { it.first }
+        val reasonStringsWithTranslations = reasonChoicesMappings.map { getString(it.second) }
+
+        referral_reason_spinner.setUpWithPrompt(
+            choices = reasonStringsWithTranslations,
+            initialChoiceIndex = encounterFlowState.referral?.reason.let { reasonEnums.indexOf(it) },
+            onItemSelected = { index -> viewModel.onReasonChange(reasonEnums[index]) },
+            promptString = getString(R.string.referral_reason_prompt),
+            onPromptSelected = { viewModel.onReasonChange(null) }
+        )
 
         referral_serial_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             number -> viewModel.onNumberChange(number)
@@ -148,7 +150,6 @@ class VisitTypeFragment : DaggerFragment() {
         )
 
         receiving_facility.setText(encounterFlowState.referral?.receivingFacility)
-        referral_reason.setText(encounterFlowState.referral?.reason)
         referral_serial_number.setText(encounterFlowState.referral?.number)
     }
 

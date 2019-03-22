@@ -68,6 +68,7 @@ import org.watsi.uhp.R.string.today
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.EthiopianDateHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -194,7 +195,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             )
             referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number
-            referral_reason.text = referral.reason
+            referral_reason.text = EnumHelper.referralReasonToDisplayedString(referral.reason, context, logger)
         }
 
         if (serviceReceiptItemAdapter.itemCount == 0) {

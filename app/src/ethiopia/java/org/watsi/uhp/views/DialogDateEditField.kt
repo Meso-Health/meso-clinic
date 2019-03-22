@@ -62,15 +62,15 @@ class DialogDateEditField @JvmOverloads constructor(
         val yearAdapter = SpinnerField.createAdapter(
             context, (ReceiptFragment.DATE_PICKER_START_YEAR..todayDate.year).map { it.toString() })
 
-        daySpinner.setUpSpinner(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
-        monthSpinner.setUpSpinner(monthAdapter, occurredAtDate.month - 1, { monthString ->
+        daySpinner.setUpWithoutPrompt(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
+        monthSpinner.setUpWithoutPrompt(monthAdapter, occurredAtDate.month - 1, { monthString ->
             val daysToShow = EthiopianDateHelper.daysInMonthNotInFuture(
                 yearSpinner.getSelectedItem().toInt(), monthString.toInt(), todayDate)
 
             dayAdapter.clear()
             dayAdapter.addAll((1..daysToShow).map { it.toString() })
         })
-        yearSpinner.setUpSpinner(yearAdapter, occurredAtDate.year - ReceiptFragment.DATE_PICKER_START_YEAR, { yearString ->
+        yearSpinner.setUpWithoutPrompt(yearAdapter, occurredAtDate.year - ReceiptFragment.DATE_PICKER_START_YEAR, { yearString ->
             // Save the currently selected month in case the list shrinks
             var selectedMonth = monthSpinner.getSelectedItem().toInt()
 

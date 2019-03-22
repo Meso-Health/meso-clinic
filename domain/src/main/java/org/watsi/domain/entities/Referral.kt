@@ -7,8 +7,18 @@ import java.util.UUID
 data class Referral(
     val id: UUID,
     val receivingFacility: String,
-    val reason: String,
+    val reason: Reason,
     val encounterId: UUID,
     val number: String?,
     val date: LocalDate
-): Serializable
+): Serializable {
+    enum class Reason {
+        FURTHER_CONSULTATION,
+        DRUG_STOCKOUT,
+        INVESTIGATIVE_TESTS,
+        INPATIENT_CARE,
+        BED_SHORTAGE,
+        FOLLOW_UP,
+        OTHER
+    }
+}

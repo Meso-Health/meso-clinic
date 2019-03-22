@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.composition_container
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.composition_spinner
@@ -37,7 +36,7 @@ class AddNewBillableFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: AddNewBillableViewModel
-    lateinit var compositionAdapter: ArrayAdapter<String>
+    lateinit var compositionChoices: List<String>
     lateinit var encounterFlowState: EncounterFlowState
 
 
@@ -57,14 +56,13 @@ class AddNewBillableFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
-        compositionAdapter = SpinnerField.createAdapter(context, mutableListOf())
+        compositionChoices = mutableListOf()
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
-                compositionAdapter.clear()
-                compositionAdapter.add(getString(R.string.add_new_billable_composition_prompt))
-                compositionAdapter.addAll(viewState.compositions.map { it.capitalize() }.sorted())
+                compositionChoices = mutableListOf()
+                compositionChoices = viewState.compositions.map { it.capitalize() }.sorted()
 
                 when (viewState.type) {
                     Billable.Type.DRUG -> {
@@ -94,11 +92,11 @@ class AddNewBillableFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val billableTypes = Billable.Type.values()
 
-        type_spinner.setUpSpinner(
-            billableTypes.map { it.toString().titleize() },
-            billableTypes.indexOf(Billable.Type.DRUG).toString().titleize(),
-            { selectedString ->
-                Billable.Type.valueOf(selectedString.toUpperCase())?.let {
+        type_spinner.setUpWithoutPrompt(
+            adapter = SpinnerField.createAdapter(context, billableTypes.map { it.toString().titleize() }),
+            initialChoiceIndex = 0,
+            onItemSelected = { selectedString: String ->
+                Billable.Type.valueOf(selectedString.toUpperCase()).let {
                         type -> viewModel.updateType(type)
                 }
             }
@@ -108,8 +106,15 @@ class AddNewBillableFragment : DaggerFragment() {
         unit_field.addTextChangedListener(TextChangedListener { viewModel.updateUnit(it) })
         price_field.addTextChangedListener(TextChangedListener { viewModel.updatePrice(it.toIntOrNull()) })
 
-        composition_spinner.setUpSpinner(compositionAdapter, null, { viewModel.updateComposition(it) },
-            getString(R.string.add_new_billable_composition_prompt), { viewModel.updateComposition(null) })
+        composition_spinner.setUpWithPrompt(
+            choices = compositionChoices,
+            initialChoiceIndex = null,
+            onItemSelected = { index -> viewModel.updateComposition(compositionChoices[index]) },
+            promptString = getString(R.string.add_new_billable_composition_prompt),
+            onPromptSelected = {
+                viewModel.updateComposition(null)
+            }
+        )
 
         save_button.setOnClickListener {
             viewModel.getBillable()?.let { billableWithPrice ->

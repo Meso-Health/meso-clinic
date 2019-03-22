@@ -34,6 +34,7 @@ import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchViewModel
+import org.watsi.uhp.views.SpinnerField
 import java.util.UUID
 import javax.inject.Inject
 
@@ -93,10 +94,10 @@ class SearchFragment : DaggerFragment() {
             }
         })
 
-        member_status.setUpSpinner(
-            SearchViewModel.memberStatusList,
-            SearchViewModel.memberStatusList.first(),
-            { selectedString ->
+        member_status.setUpWithoutPrompt(
+            adapter = SpinnerField.createAdapter(context, SearchViewModel.memberStatusList),
+            initialChoiceIndex = 0,
+            onItemSelected = { selectedString ->
                 viewModel.onMemberStatusChange(selectedString)
             }
         )

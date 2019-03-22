@@ -9,10 +9,10 @@ object ReferralFactory {
         id: UUID = UUID.randomUUID(),
         encounterId: UUID = UUID.randomUUID(),
         receivingFacility: String = "Wukro General",
-        reason: String = "Random reason",
+        reason: Referral.Reason = Referral.Reason.DRUG_STOCKOUT,
         number: String? = "Number",
         date: LocalDate = LocalDate.of(1993, 5, 11)
-        ) : Referral {
+    ) : Referral {
         return Referral(
             id = id,
             receivingFacility = receivingFacility,

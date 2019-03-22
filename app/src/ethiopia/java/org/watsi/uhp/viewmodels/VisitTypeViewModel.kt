@@ -47,7 +47,7 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
         }
     }
 
-    fun onReasonChange(reason: String?) {
+    fun onReasonChange(reason: Referral.Reason?) {
         observable.value?.let { viewState ->
             val validationErrors = viewState.validationErrors.filterNot { it.key == REASON_ERROR }
             observable.value = viewState.copy(reason = reason, validationErrors = validationErrors)
@@ -71,7 +71,7 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
         fun validateViewState(viewState: ViewState): Map<String, Int> {
             val errors = HashMap<String, Int>()
             if (viewState.referralBoxChecked) {
-                if (viewState.reason.isNullOrBlank()) {
+                if (viewState.reason == null) {
                     errors[REASON_ERROR] = R.string.referral_reason_validation_error
                 }
 
@@ -121,7 +121,7 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
         val referralBoxChecked: Boolean = false,
         val referralDate: LocalDate,
         val receivingFacility: String? = null,
-        val reason: String? = null,
+        val reason: Referral.Reason? = null,
         val number: String? = null,
         val validationErrors: Map<String, Int> = emptyMap()
     )

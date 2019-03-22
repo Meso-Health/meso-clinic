@@ -190,6 +190,15 @@
     <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <!--<string name="referral_label">Referral</string>-->
     <!--<string name="referral_date_label" translatable="false">Date of referral</string>-->
+    <!--<string name="referred_to_facility" translatable="false">Referred To Facility</string>-->
+    <string name="referral_reason_prompt">ምኽንያት ሪፈር...</string>
+    <string name="further_consultation">ንዝለዓለ ምርመራ</string>
+    <string name="drug_stockout">ዝተኣዘዘ መድሓኒት ኣብ ትካልና ዘይምህላው</string>
+    <string name="investigative_tests">ዝተኣዘዘ ላቦራቶሪ ወይከዓ ራጂ ኣብ ትካልና ዘይምህላው</string>
+    <string name="inpatient_care">ኣብ ዝለዓለ ትካል ኣደቂስካ ክሕከም ስለዘለዎ</string>
+    <string name="bed_shortage">ሕፅረት ዓራት</string>
+    <string name="follow_up">ብቀረባ ክትትል ንክረኽቡ</string>
+    <string name="other">ንካልኦት  (ዘይተጠቐሱ) ግልጋሎታት</string>
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>
