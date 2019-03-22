@@ -6,6 +6,7 @@ import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
@@ -212,7 +213,8 @@ class CoverageApiTest : OkReplayTest() {
             )),
             referral = ReferralFactory.build(
                 id = referralId,
-                encounterId = encounter.id
+                encounterId = encounter.id,
+                date = LocalDate.of(1993, 5, 11)
             ),
             member = MemberFactory.build(
                 id = encounter.memberId
@@ -237,11 +239,18 @@ class CoverageApiTest : OkReplayTest() {
 
         result.assertComplete()
 
-        // Assert that the providerComment is not null for at least one of the returned claims
+        // Assert that the claims in the backend when recording have:
+        // - at least one returned claim with a provider comment
+        // - at least one returned claim with a referral
         result.values().first().let { returnedClaims ->
             assertTrue(
                 returnedClaims.any { returnedClaim ->
                     returnedClaim.providerComment != null
+                }
+            )
+            assertTrue(
+                returnedClaims.any { returnedClaim ->
+                    returnedClaim.referrals.isNotEmpty()
                 }
             )
             assertTrue(

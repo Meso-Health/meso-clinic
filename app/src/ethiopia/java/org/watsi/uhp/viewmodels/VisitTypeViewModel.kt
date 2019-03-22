@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
+import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Referral
 import org.watsi.uhp.R
@@ -94,7 +95,8 @@ class VisitTypeViewModel @Inject constructor(): ViewModel() {
                             receivingFacility = viewState.receivingFacility,
                             reason = viewState.reason,
                             number = viewState.number,
-                            encounterId = encounterFlowState.encounter.id
+                            encounterId = encounterFlowState.encounter.id,
+                            date = LocalDate.now() // TODO: Set this properly when we build the UI
                         )
                     } else {
                         encounterFlowState.referral = null
