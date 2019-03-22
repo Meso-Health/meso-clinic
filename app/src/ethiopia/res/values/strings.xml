@@ -82,6 +82,7 @@
     <string name="visit_type_label">Visit Type</string>
     <string name="referral_label" translatable="false">Referral</string>
     <!--TODO: translate the following strings-->
+    <string name="referral_date_label" translatable="false">Date of referral</string>
     <string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>
     <string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>
     <string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>
@@ -110,7 +111,7 @@
         <item quantity="one">%d day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
-    <string name="date_header">Date of Service</string>
+    <string name="date_of_service_label">Date of Service</string>
     <string name="comment_label">Comment</string>
     <string name="add_clickable"><u>Add</u></string>
     <string name="comment_prompt">Add a comment&#8230;</string>

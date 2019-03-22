@@ -189,6 +189,7 @@
     <string name="visit_type_fragment_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <!--<string name="referral_label">Referral</string>-->
+    <!--<string name="referral_date_label" translatable="false">Date of referral</string>-->
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>
@@ -208,7 +209,7 @@
         <item quantity="one">%d ቅድሚ ሓደ መዓልቲ</item>
         <item quantity="other">%d ቅድሚ መዓልቲታት</item>
     </plurals>
-    <string name="date_header">አገልግሎት ዝተውሃበሉ ዕለት</string>
+    <string name="date_of_service_label">አገልግሎት ዝተውሃበሉ ዕለት</string>
     <string name="comment_label">ሪኢቶ</string>
     <string name="add_clickable"><u>ሪኢቶታት)</u></string>
     <string name="comment_prompt">ሪኢቶ ወስኽ</string>

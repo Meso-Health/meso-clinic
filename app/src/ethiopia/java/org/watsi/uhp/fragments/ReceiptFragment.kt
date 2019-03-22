@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_spacer_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_label
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_list
@@ -39,6 +38,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_reason
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referrals_container
@@ -58,7 +58,6 @@ import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
 import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
-import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.comment_age
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -66,7 +65,6 @@ import org.watsi.uhp.R.string.add_clickable
 import org.watsi.uhp.R.string.edit_clickable
 import org.watsi.uhp.R.string.none
 import org.watsi.uhp.R.string.today
-import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -78,7 +76,6 @@ import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
-import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
 class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -95,13 +92,9 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var serviceReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var labReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var drugAndSupplyReceiptItemAdapter: ReceiptListItemAdapter
-    lateinit var backdateAlertDialog: AlertDialog
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var encounterAction: EncounterAction
 
-    lateinit var daySpinner: SpinnerField
-    lateinit var monthSpinner: SpinnerField
-    lateinit var yearSpinner: SpinnerField
 
     private var snackbarMessageToShow: String? = null
 
@@ -154,13 +147,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             encounterFlowState.encounter.backdatedOccurredAt,
             editableComment
         ).observe(this, Observer { it?.let { viewState ->
-            val dateString = EthiopianDateHelper.formatEthiopianDate(viewState.occurredAt, clock)
-            date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
-                resources.getString(today_wrapper, dateString)
-            } else {
-                dateString
-            }
-
             if (viewState.comment == null) {
                 comment_text.setText(none)
                 comment_edit.setText(add_clickable)
@@ -203,15 +189,12 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState.referral?.let { referral ->
             referrals_container.visibility = View.VISIBLE
+            referral_date.text = EthiopianDateHelper.formatEthiopianDate(
+                referral.date.atStartOfDay(clock.zone).toInstant(), clock
+            )
             referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number
             referral_reason.text = referral.reason
-        }
-
-        setUpDateDialog()
-
-        date_container.setOnClickListener {
-            launchBackdateDialog()
         }
 
         if (serviceReceiptItemAdapter.itemCount == 0) {
@@ -241,6 +224,14 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         comment_container.setOnClickListener {
             launchAddCommentDialog()
         }
+
+        date_container.setUp(
+            initialValue = encounterFlowState.encounter.occurredAt,
+            clock = clock,
+            onDateSelected = { dateOfService ->
+                viewModel.updateBackdatedOccurredAt(dateOfService)
+            }
+        )
 
         when (encounterAction) {
             EncounterAction.PREPARE -> {
@@ -358,84 +349,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             .setPositiveButton(R.string.dialog_save) { _, _ ->
                 viewModel.updateComment(editText.text.toString())
             }.create().show()
-    }
-
-    private fun launchBackdateDialog() {
-        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(
-            viewModel.occurredAt() ?: Instant.now(),
-            clock
-        )
-        daySpinner.setSelectedItem(occurredAtDate.day - 1)
-        monthSpinner.setSelectedItem(occurredAtDate.month - 1)
-        yearSpinner.setSelectedItem(occurredAtDate.year - DATE_PICKER_START_YEAR)
-
-        backdateAlertDialog.show()
-    }
-
-    private fun setUpDateDialog() {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ethiopian_date_picker, null)
-        daySpinner = dialogView.findViewById<View>(R.id.day_spinner) as SpinnerField
-        monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
-        yearSpinner = dialogView.findViewById<View>(R.id.year_spinner) as SpinnerField
-
-        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(
-            viewModel.occurredAt() ?: Instant.now(),
-            clock
-        )
-        val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now(), clock)
-
-        val dayAdapter = SpinnerField.createAdapter(
-            context, (1..occurredAtDate.day).map { it.toString() })
-        val monthAdapter = SpinnerField.createAdapter(
-            context, (1..occurredAtDate.month).map { it.toString() })
-        val yearAdapter = SpinnerField.createAdapter(
-            context, (DATE_PICKER_START_YEAR..todayDate.year).map { it.toString() })
-
-        daySpinner.setUpSpinner(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
-        monthSpinner.setUpSpinner(monthAdapter, occurredAtDate.month - 1, { monthString ->
-            val daysToShow = EthiopianDateHelper.daysInMonthNotInFuture(
-                yearSpinner.getSelectedItem().toInt(), monthString.toInt(), todayDate)
-
-            dayAdapter.clear()
-            dayAdapter.addAll((1..daysToShow).map { it.toString() })
-        })
-        yearSpinner.setUpSpinner(yearAdapter, occurredAtDate.year - DATE_PICKER_START_YEAR, { yearString ->
-            // Save the currently selected month in case the list shrinks
-            var selectedMonth = monthSpinner.getSelectedItem().toInt()
-
-            val monthsToShow = EthiopianDateHelper.monthsInYearNotInFuture(yearString.toInt(), todayDate)
-            monthAdapter.clear()
-            monthAdapter.addAll((1..monthsToShow).map { it.toString() })
-
-            // The following code makes sure our selectedMonth is not larger than the list of months.
-            // The Android spinner will do this automatically for us: if we reduce the adapter
-            // to a smaller list than the selected index, it will automatically select the highest index
-            // in the list. However, this has not happened yet, so we need to calculate this ourselves
-            // to calculate the appropriate daysToShow value.
-            if (selectedMonth > monthsToShow) selectedMonth = monthsToShow
-
-            val daysToShow = EthiopianDateHelper.daysInMonthNotInFuture(
-                yearString.toInt(), selectedMonth, todayDate)
-            dayAdapter.clear()
-            dayAdapter.addAll((1..daysToShow).map { it.toString() })
-        })
-
-        val builder = AlertDialog.Builder(context)
-        builder.setView(dialogView)
-        builder.setPositiveButton(R.string.dialog_save) { dialog, _ ->
-            val backdatedDateTime = EthiopianDateHelper.toInstant(
-                yearSpinner.getSelectedItem().toInt(),
-                monthSpinner.getSelectedItem().toInt(),
-                daySpinner.getSelectedItem().toInt(),
-                0, 0, 0, 0, // Arbitrarily choose midnight, since time isn't specified
-                clock
-            )
-
-            viewModel.updateBackdatedOccurredAt(backdatedDateTime)
-        }
-        builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> /* No-Op */ }
-
-        backdateAlertDialog = builder.create()
     }
 
     private fun finishEncounter() {

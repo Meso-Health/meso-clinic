@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_container
@@ -19,6 +20,9 @@ import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
 import org.watsi.uhp.R
@@ -33,6 +37,7 @@ class VisitTypeFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var viewModel: VisitTypeViewModel
     lateinit var observable: LiveData<VisitTypeViewModel.ViewState>
@@ -131,6 +136,16 @@ class VisitTypeFragment : DaggerFragment() {
                 }
             })
         }
+
+        date_container.setUp(
+            initialValue = Instant.now(),
+            clock = clock,
+            onDateSelected = { dateOfReferral ->
+                viewModel.onUpdateReferralDate(
+                    LocalDateTime.ofInstant(dateOfReferral, clock.zone).toLocalDate()
+                )
+            }
+        )
 
         receiving_facility.setText(encounterFlowState.referral?.receivingFacility)
         referral_reason.setText(encounterFlowState.referral?.reason)

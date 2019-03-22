@@ -188,6 +188,7 @@
     <string name="visit_type_fragment_label">የጉብኝት አይነት</string>
     <string name="visit_type_label">የጉብኝት አይነት</string>
     <!--<string name="referral_label">Referral</string>-->
+    <!--<string name="referral_date_label" translatable="false">Date of referral</string>-->
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>
@@ -207,7 +208,7 @@
         <item quantity="one">%d ከአንድ ቀን በፊት</item>
         <item quantity="other">%d ከቀናት በፊት</item>
     </plurals>
-    <string name="date_header">አገልግሎት የተሰጠበት ቀን</string>
+    <string name="date_of_service_label">አገልግሎት የተሰጠበት ቀን</string>
     <string name="comment_label">ኣስተያየት</string>
     <string name="add_clickable"><u>ኣስተያየቶች)</u></string>
     <string name="comment_prompt">ኣስተያየት ጨምር</string>
