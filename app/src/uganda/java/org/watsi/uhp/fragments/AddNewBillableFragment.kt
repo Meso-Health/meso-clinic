@@ -108,7 +108,7 @@ class AddNewBillableFragment : DaggerFragment() {
 
         composition_spinner.setUpWithPrompt(
             choices = compositionChoices,
-            initialChoiceIndex = null,
+            initialChoice = null,
             onItemSelected = { index -> viewModel.updateComposition(compositionChoices[index]) },
             promptString = getString(R.string.add_new_billable_composition_prompt),
             onPromptSelected = {

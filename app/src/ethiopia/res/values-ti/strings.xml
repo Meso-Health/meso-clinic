@@ -191,7 +191,8 @@
     <!--<string name="referral_label">Referral</string>-->
     <!--<string name="referral_date_label" translatable="false">Date of referral</string>-->
     <!--<string name="referred_to_facility" translatable="false">Referred To Facility</string>-->
-    <string name="referral_reason_prompt">ምኽንያት ሪፈር...</string>
+    <!--<string name="other_referral_facility" translatable="false">Other facility</string>-->
+    <string name="referral_reason_prompt">ምኽንያት ሪፈር…</string>
     <string name="further_consultation">ንዝለዓለ ምርመራ</string>
     <string name="drug_stockout">ዝተኣዘዘ መድሓኒት ኣብ ትካልና ዘይምህላው</string>
     <string name="investigative_tests">ዝተኣዘዘ ላቦራቶሪ ወይከዓ ራጂ ኣብ ትካልና ዘይምህላው</string>

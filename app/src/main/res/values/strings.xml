@@ -28,6 +28,7 @@
     <string name="middle_dot" translatable="false">\u00B7</string>
     <string name="photo_description">Photo</string>
     <string name="blank" translatable="false"></string>
+    <string name="other">Other</string>
 
     <!-- Form -->
     <string name="age_field_label">Age</string>

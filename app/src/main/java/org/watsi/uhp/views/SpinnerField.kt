@@ -11,9 +11,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import kotlinx.android.synthetic.main.view_spinner_field.view.field_label
+import kotlinx.android.synthetic.main.view_spinner_field.view.other_field
+import kotlinx.android.synthetic.main.view_spinner_field.view.other_field_container
 import kotlinx.android.synthetic.main.view_spinner_field.view.spinner
 import kotlinx.android.synthetic.main.view_spinner_field.view.spinner_error_message
 import org.watsi.uhp.R
+import org.watsi.uhp.helpers.LayoutHelper
 
 
 class SpinnerField @JvmOverloads constructor(
@@ -57,9 +60,10 @@ class SpinnerField @JvmOverloads constructor(
      */
     fun setUpWithoutPrompt(adapter: ArrayAdapter<String>,
                            initialChoiceIndex: Int?,
-                           onItemSelected: (choice: String) -> Unit) {
+                           onItemSelected: (choice: String) -> Unit
+    ) {
         spinner.adapter = adapter
-        initialChoiceIndex?.let { spinner.setSelection(it) }
+        initialChoiceIndex?.let { setSelectedItem(it) }
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) { /* no-op */ }
 
@@ -76,25 +80,45 @@ class SpinnerField @JvmOverloads constructor(
      * Sets up the spinner with a prompt.
      *
      * @param choices The mutable adapter of choices to populate the spinner
-     * @param initialChoiceIndex The initial choice to be selected by default when the spinner loads
+     * @param initialChoice The initial choice to be selected by default when the spinner loads
      * @param onItemSelected The code to execute when an item is selected
      * @param promptString The prompt that appears at the top of the dropdown
      * @param onPromptSelected The code to execute when the prompt string is selected
+     * @param otherChoicesHint The hint of the text edit box for if the user is allowed to enter custom text.
+     * @param onOtherChoicesTextChange The code to execute when the user wants to type in custom text that is
+     *                      not in the list. onOtherChoicesTextChange is set to null when we do not want to allow
+     *                      the user to enter a custom string.
      */
     fun setUpWithPrompt(
         choices: List<String>,
-        initialChoiceIndex: Int?,
+        initialChoice: String?,
         onItemSelected: (index: Int) -> Unit,
         promptString: String,
-        onPromptSelected: (() -> Unit)
+        onPromptSelected: (() -> Unit),
+        otherChoicesHint: String? = null,
+        onOtherChoicesTextChange: ((otherString: String?) -> Unit)? = null
     ) {
-        val choicesForAdapter = listOfNotNull(promptString) + choices
+        var choicesForAdapter = listOfNotNull(promptString) + choices
+        val otherChoiceString = context.getString(R.string.other)
+        if (onOtherChoicesTextChange != null) {
+            choicesForAdapter += listOf(otherChoiceString)
+            other_field_container.hint = otherChoicesHint
+        }
         val adapter = SpinnerWithPromptAdapter(context, android.R.layout.simple_spinner_item, choicesForAdapter)
         spinner.adapter = adapter
 
-        initialChoiceIndex?.let {
-            spinner.setSelection(it + 1) // Add one because the 0th choice is the prompt.
+        initialChoice?.let {
+            val index = choices.indexOf(initialChoice)
+
+            // index is >= 0 when it is one of the choices. Otherwise, it is a custom choice.
+            if (index >= 0) {
+                spinner.setSelection(index + 1) // Add one because the 0th choice is the prompt.
+            } else {
+                spinner.setSelection(choicesForAdapter.indexOf(otherChoiceString))
+                other_field.setText(initialChoice)
+            }
         }
+
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) { /* no-op */ }
 
@@ -104,12 +128,23 @@ class SpinnerField @JvmOverloads constructor(
                     // Not sure why but this line below is needed to set the prompt to the spinner field to grey if it's the prompt.
                     (view as TextView?)?.setTextColor(context.getColor(R.color.gray6))
                     onPromptSelected()
+                    other_field_container.visibility = View.GONE
+                } else if (onOtherChoicesTextChange != null && selectedString == otherChoiceString) {
+                    other_field_container.visibility = View.VISIBLE
                 } else {
                     // We need to offset by 1 because promptString is the 0th choice.
                     onItemSelected(position - 1)
+                    other_field_container.visibility = View.GONE
                 }
             }
         }
+
+        if (onOtherChoicesTextChange != null) {
+            other_field.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+                onOtherChoicesTextChange(text)
+            })
+        }
+
         setUpSpinnerOnTouchListener()
     }
 
@@ -132,6 +167,10 @@ class SpinnerField @JvmOverloads constructor(
     }
 
     fun setError(errorMessage: String?) {
-        spinner_error_message.error = errorMessage
+        if (other_field_container.visibility == View.VISIBLE) {
+            other_field_container.error = errorMessage
+        } else {
+            spinner_error_message.error = errorMessage
+        }
     }
 }
