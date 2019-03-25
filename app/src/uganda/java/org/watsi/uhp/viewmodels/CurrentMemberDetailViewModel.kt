@@ -64,7 +64,14 @@ class CurrentMemberDetailViewModel @Inject constructor(
             )
             EncounterItemWithBillableAndPrice(encounterItem, it)
         }
-        val encounter = Encounter(encounterId, idEvent.memberId, idEvent.id, Instant.now(clock), Instant.now(clock))
+        val encounter = Encounter(
+            id = encounterId,
+            memberId = idEvent.memberId,
+            identificationEventId = idEvent.id,
+            patientOutcome = null,
+            occurredAt = Instant.now(clock),
+            preparedAt = Instant.now(clock)
+        )
         return EncounterFlowState(
             encounter = encounter,
             encounterItemRelations = defaultEncounterItems,

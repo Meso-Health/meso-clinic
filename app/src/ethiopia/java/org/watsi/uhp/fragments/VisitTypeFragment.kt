@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.patient_outcome_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
@@ -139,6 +140,20 @@ class VisitTypeFragment : DaggerFragment() {
             }
         )
 
+        val patientOutcomeChoicesMappings = EnumHelper.getPatientOutcomeChoicesMappings()
+        val patientOutcomeEnums = patientOutcomeChoicesMappings.map { it.first }
+        val patientOutcomeWithTranslations = patientOutcomeChoicesMappings.map { getString(it.second) }
+        val initialPatientOutcome = patientOutcomeChoicesMappings.find {
+            it.first == encounterFlowState.encounter.patientOutcome
+        }?.let { context.getString(it.second) }
+
+        patient_outcome_spinner.setUpWithPrompt(
+            choices = patientOutcomeWithTranslations,
+            initialChoice = initialPatientOutcome,
+            onItemSelected = { index: Int -> viewModel.onUpdatePatientOutcome(patientOutcomeEnums[index]) },
+            promptString = getString(R.string.patient_outcome_prompt),
+            onPromptSelected = { viewModel.onUpdatePatientOutcome(null) }
+        )
 
         receiving_facility_spinner.setUpWithPrompt(
             choices = Referral.RECEIVING_FACILITY_CHOICES,

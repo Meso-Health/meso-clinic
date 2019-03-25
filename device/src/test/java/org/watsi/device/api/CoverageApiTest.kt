@@ -35,21 +35,21 @@ class CoverageApiTest : OkReplayTest() {
 
     // Make sure this is a valid token.
     private val tokenString = AuthenticationTokenFactory.build(
-        token = "W5bJhMgC.EHggPdPvgqwVHi7wjqLKSbpLuutmNbqQ"
+        token = "NBGErbd3.ntsRRN3S4GuswZuVsRSMBxBsodYNbK22"
     ).getHeaderString()
 
     // Make sure these correspond to real ids in the backend.
-    private val householdId = UUID.fromString("e3c4d82a-655f-4219-a651-7fc51bbcd042")
-    private val billableId = UUID.fromString("0025609f-4b08-4b4b-9a07-080a6b36ba19")
-    private val billableLatestPriceScheduleId = UUID.fromString("c35d1116-7a25-496d-b991-bcdae7bce278")
+    private val householdId = UUID.fromString("08166d63-2bfb-4293-8e7f-2c4d369834a2")
+    private val billableId = UUID.fromString("000a5c14-af1b-4685-8f39-ac7982377ee9")
+    private val billableLatestPriceScheduleId = UUID.fromString("adaec28b-8e7d-4d49-8af9-458bccfb87b7")
 
     // When creating new tapes, make sure the following IDs do not exist in the backend.
-    private val memberId = UUID.fromString("444a6322-48c1-4a4a-b123-4c2233f21b11")
-    private val identificationEventId = UUID.fromString("9114e82f2-6e42-4bd4-a9df-ddf11802c9c1")
-    private val priceScheduleId = UUID.fromString("14fba944-13cd-4022-b622-7c8200f21b81")
-    private val encounterId = UUID.fromString("11fba409-44cd-8026-b253-a0ea44080d1d")
-    private val encounterItemId = UUID.fromString("2fba944-29cd-4022-b273-a9ea26180d1a")
-    private val referralId = UUID.fromString("22fba944-44cd-4022-b273-a9ea26180d1a")
+    private val memberId = UUID.fromString("224a2322-48c1-4a4a-b123-4c2233f21b11")
+    private val identificationEventId = UUID.fromString("2214e82f2-6e42-4bd4-a9df-ddf11802c2c1")
+    private val priceScheduleId = UUID.fromString("12fba944-13cd-4022-b622-7c8200f21b81")
+    private val encounterId = UUID.fromString("11fba129-44cd-8026-b253-a0ea44080d1d")
+    private val encounterItemId = UUID.fromString("21ba944-29cd-4022-b273-a9ea26180d1a")
+    private val referralId = UUID.fromString("21fba934-44cd-4022-b273-a9ea26180d1a")
 
     private val member = MemberFactory.build(
         id = memberId,
@@ -251,6 +251,11 @@ class CoverageApiTest : OkReplayTest() {
             assertTrue(
                 returnedClaims.any { returnedClaim ->
                     returnedClaim.referrals.isNotEmpty()
+                }
+            )
+            assertTrue(
+                returnedClaims.any { returnedClaim ->
+                    returnedClaim.patientOutcome != null
                 }
             )
             assertTrue(

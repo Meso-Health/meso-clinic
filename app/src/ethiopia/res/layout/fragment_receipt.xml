@@ -292,6 +292,32 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/patient_outcome_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_vertical_margin"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/diagnoses_container">
+
+            <TextView
+                android:id="@+id/patient_outcome_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/patient_outcome"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/patient_outcome_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize16"
+                android:layout_marginTop="@dimen/space12"
+                app:layout_constraintTop_toBottomOf="@id/patient_outcome_label" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/referrals_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -299,7 +325,7 @@
             android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/diagnoses_container">
+            app:layout_constraintTop_toBottomOf="@+id/patient_outcome_container">
 
             <TextView
                 android:id="@+id/referral_date_label"

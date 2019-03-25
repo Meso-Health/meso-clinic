@@ -130,4 +130,10 @@ class TypeConverter {
 
     @TypeConverter
     fun fromReason(reason: Referral.Reason?): String? = reason?.let { reason.toString() }
+
+    @TypeConverter
+    fun toPatientOutcome(value: String?): Encounter.PatientOutcome? = value?.let { Encounter.PatientOutcome.valueOf(value) }
+
+    @TypeConverter
+    fun fromPatientOutcome(patientOutcome: Encounter.PatientOutcome?): String? = patientOutcome?.let { patientOutcome.toString() }
 }

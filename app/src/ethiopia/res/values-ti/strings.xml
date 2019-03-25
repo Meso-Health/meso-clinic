@@ -200,6 +200,14 @@
     <string name="bed_shortage">ሕፅረት ዓራት</string>
     <string name="follow_up">ብቀረባ ክትትል ንክረኽቡ</string>
     <string name="other">ንካልኦት  (ዘይተጠቐሱ) ግልጋሎታት</string>
+    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
+    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="outcome_cured_or_discharged">ተሓኪሙ/ተሰዲዱ</string>
+    <string name="outcome_referred">ሪፈር ተባሂሉ/ላ</string>
+    <string name="outcome_follow_up">ክትትል የድልዮ</string>
+    <string name="outcome_refused_service">ግልጋሎት ንምርካብ ፍቃደኛ ኣይኮነን</string>
+    <string name="outcome_expired">ሞት</string>
+    <string name="outcome_other">ካልእ</string>
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">ሕቶ ክፍሊት እንተናኣሰ ሓደ መስመር ኣገልግሎት ክህልዎ ኣለዎ</string>

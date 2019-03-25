@@ -98,6 +98,15 @@
     <string name="inpatient_care">Inpatient care</string>
     <string name="bed_shortage">Bed shortage</string>
     <string name="follow_up">Follow up</string>
+    <string name="patient_outcome" translatable="false">Patient outcome</string>
+    <string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>
+    <string name="outcome_cured_or_discharged">Cured/Discharged</string>
+    <string name="outcome_referred">Referred</string>
+    <string name="outcome_follow_up">Follow up</string>
+    <string name="outcome_refused_service">Refused service</string>
+    <string name="outcome_expired">Expired</string>
+    <string name="outcome_other">Other</string>
+
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>

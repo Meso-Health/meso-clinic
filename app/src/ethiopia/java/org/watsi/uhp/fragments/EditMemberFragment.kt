@@ -198,7 +198,8 @@ class EditMemberFragment : DaggerFragment() {
                         id = UUID.randomUUID(),
                         memberId = member.id,
                         identificationEventId = idEvent.id,
-                        occurredAt = Instant.now(clock)
+                        occurredAt = Instant.now(clock),
+                        patientOutcome = null
                     )
                     navigationManager.goTo(VisitTypeFragment.forEncounter(
                         EncounterFlowState(

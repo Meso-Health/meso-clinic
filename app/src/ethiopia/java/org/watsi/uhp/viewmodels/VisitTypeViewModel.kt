@@ -20,11 +20,13 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
     fun getObservable(encounterFlowState: EncounterFlowState): LiveData<ViewState> {
         observable.value = ViewState(
             selectedVisitType = encounterFlowState.encounter.visitType ?: Encounter.VISIT_TYPE_CHOICES[0],
+            patientOutcome = encounterFlowState.encounter.patientOutcome,
             referralBoxChecked = encounterFlowState.referral != null,
             receivingFacility = encounterFlowState.referral?.receivingFacility,
             reason = encounterFlowState.referral?.reason,
             number = encounterFlowState.referral?.number,
-            referralDate = encounterFlowState.referral?.date ?: LocalDate.now(clock)
+            referralDate = encounterFlowState.referral?.date ?: LocalDate.now(clock),
+            validationErrors = emptyMap()
         )
         return observable
     }
@@ -67,6 +69,12 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
         }
     }
 
+    fun onUpdatePatientOutcome(patientOutcome: Encounter.PatientOutcome?) {
+        observable.value?.let { viewState ->
+            observable.value = viewState.copy(patientOutcome = patientOutcome)
+        }
+    }
+
     object FormValidator {
         fun validateViewState(viewState: ViewState): Map<String, Int> {
             val errors = HashMap<String, Int>()
@@ -96,7 +104,10 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
                 Completable.error(ValidationException("Some required referral fields are missing", validationErrors))
             } else {
                 Completable.fromAction {
-                    encounterFlowState.encounter = encounterFlowState.encounter.copy(visitType = viewState.selectedVisitType)
+                    encounterFlowState.encounter = encounterFlowState.encounter.copy(
+                        visitType = viewState.selectedVisitType,
+                        patientOutcome = viewState.patientOutcome
+                    )
                     if (viewState.referralBoxChecked && viewState.receivingFacility != null && viewState.reason != null) {
                         encounterFlowState.referral = Referral(
                             id = UUID.randomUUID(),
@@ -118,11 +129,12 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
 
     data class ViewState(
         val selectedVisitType: String,
-        val referralBoxChecked: Boolean = false,
+        val patientOutcome: Encounter.PatientOutcome?,
+        val referralBoxChecked: Boolean,
         val referralDate: LocalDate,
-        val receivingFacility: String? = null,
-        val reason: Referral.Reason? = null,
-        val number: String? = null,
-        val validationErrors: Map<String, Int> = emptyMap()
+        val receivingFacility: String?,
+        val reason: Referral.Reason?,
+        val number: String?,
+        val validationErrors: Map<String, Int>
     )
 }

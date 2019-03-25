@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.patient_outcome_value
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_date
@@ -196,6 +197,10 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number
             referral_reason.text = EnumHelper.referralReasonToDisplayedString(referral.reason, context, logger)
+        }
+
+        encounterFlowState.encounter.patientOutcome?.let { patientOutcome ->
+            patient_outcome_value.text = EnumHelper.patientOutcomeToDisplayedString(patientOutcome, context, logger)
         }
 
         if (serviceReceiptItemAdapter.itemCount == 0) {

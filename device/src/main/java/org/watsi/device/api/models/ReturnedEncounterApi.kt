@@ -12,27 +12,28 @@ import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 data class ReturnedEncounterApi(
-        val id: UUID,
-        val memberId: UUID,
-        val identificationEventId: UUID?,
-        val occurredAt: Instant,
-        val backdatedOccurredAt: Boolean,
-        val diagnosisIds: List<Int>,
-        val visitType: String?,
-        val claimId: String,
-        val adjudicationState: String,
-        val adjudicatedAt: Instant,
-        val adjudicationReason: String,
-        val revisedEncounterId: UUID,
-        val providerComment: String?,
-        val preparedAt: Instant,
-        val submittedAt: Instant,
-        // Below are inflated fields.
-        val member: MemberApi,
-        val billables: List<BillableApi>,
-        val priceSchedules: List<PriceScheduleApi>,
-        val encounterItems: List<EncounterItemApi>,
-        val referrals: List<ReferralApi>
+    val id: UUID,
+    val memberId: UUID,
+    val identificationEventId: UUID?,
+    val occurredAt: Instant,
+    val backdatedOccurredAt: Boolean,
+    val diagnosisIds: List<Int>,
+    val visitType: String?,
+    val claimId: String,
+    val patientOutcome: String?,
+    val adjudicationState: String,
+    val adjudicatedAt: Instant,
+    val adjudicationReason: String,
+    val revisedEncounterId: UUID,
+    val providerComment: String?,
+    val preparedAt: Instant,
+    val submittedAt: Instant,
+    // Below are inflated fields.
+    val member: MemberApi,
+    val billables: List<BillableApi>,
+    val priceSchedules: List<PriceScheduleApi>,
+    val encounterItems: List<EncounterItemApi>,
+    val referrals: List<ReferralApi>
 ) {
 
     fun toEncounterWithExtras(persistedMember: Member? = null): EncounterWithExtras {
@@ -47,6 +48,7 @@ data class ReturnedEncounterApi(
                 diagnoses = diagnosisIds,
                 visitType = visitType,
                 claimId = claimId,
+                patientOutcome = patientOutcome?.let { Encounter.PatientOutcome.valueOf(it.toUpperCase()) },
                 adjudicationState = Encounter.AdjudicationState.valueOf(adjudicationState.toUpperCase()),
                 adjudicatedAt = adjudicatedAt,
                 adjudicationReason = adjudicationReason,

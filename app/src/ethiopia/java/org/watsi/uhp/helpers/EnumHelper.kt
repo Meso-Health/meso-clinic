@@ -2,6 +2,7 @@ package org.watsi.uhp.helpers
 
 import android.content.Context
 import org.watsi.device.managers.Logger
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Referral
 import org.watsi.uhp.R
 
@@ -25,6 +26,28 @@ object EnumHelper {
             context.getString(reasonPair.second)
         } else {
             logger.error("Unable to find string that corresponds to $reason in $reasonChoicesMappings")
+            context.getString(R.string.other) // Just to be safe and not crash the app.
+        }
+    }
+
+    fun getPatientOutcomeChoicesMappings(): List<Pair<Encounter.PatientOutcome, Int>> {
+        return listOf(
+            Pair(Encounter.PatientOutcome.CURED_OR_DISCHARGED, R.string.outcome_cured_or_discharged),
+            Pair(Encounter.PatientOutcome.REFERRED, R.string.outcome_referred),
+            Pair(Encounter.PatientOutcome.FOLLOW_UP, R.string.outcome_follow_up),
+            Pair(Encounter.PatientOutcome.REFUSED_SERVICE, R.string.outcome_refused_service),
+            Pair(Encounter.PatientOutcome.EXPIRED, R.string.outcome_expired),
+            Pair(Encounter.PatientOutcome.OTHER, R.string.outcome_other)
+        )
+    }
+
+    fun patientOutcomeToDisplayedString(outcome: Encounter.PatientOutcome, context: Context, logger: Logger): String {
+        val patientOutcomeChoicesMappings = getPatientOutcomeChoicesMappings()
+        val patientOutcomePair = patientOutcomeChoicesMappings.find { pair -> pair.first == outcome }
+        return if (patientOutcomePair != null) {
+            context.getString(patientOutcomePair.second)
+        } else {
+            logger.error("Unable to find string that corresponds to $outcome in $patientOutcomeChoicesMappings")
             context.getString(R.string.other) // Just to be safe and not crash the app.
         }
     }

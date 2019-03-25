@@ -21,6 +21,22 @@
             app:label="@string/visit_type_label"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/patient_outcome_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/visit_type_spinner">
+
+            <org.watsi.uhp.views.SpinnerField
+                android:id="@+id/patient_outcome_spinner"
+                app:label="@string/patient_outcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.constraint.ConstraintLayout>
+
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/referral_check_box"
             android:layout_marginTop="@dimen/space16"
@@ -29,7 +45,7 @@
             android:text="@string/referral_label"
             android:layout_marginStart="-16px"
             android:layout_marginEnd="-16px"
-            app:layout_constraintTop_toBottomOf="@+id/visit_type_spinner" />
+            app:layout_constraintTop_toBottomOf="@+id/patient_outcome_container" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/referral_form"

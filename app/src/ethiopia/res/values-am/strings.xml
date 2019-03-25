@@ -199,6 +199,14 @@
     <string name="bed_shortage">የአልጋ እጥረት</string>
     <string name="follow_up">በአቅራብያው ክትትል እንዲያገኙ</string>
     <string name="other">ለሌሎች (ያልተጠቀሱ) አገልግሎቶች</string>
+    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
+    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="outcome_cured_or_discharged">ታክመዋል/ወጥተዋል</string>
+    <string name="outcome_referred">ሪፈር ተብሏል</string>
+    <string name="outcome_follow_up">ክትትል ያስፈልገዋል</string>
+    <string name="outcome_refused_service">አገልግሎት ለማግኘት ፍቃደኛ አይደለም/ችም</string>
+    <string name="outcome_expired">ሞት</string>
+    <string name="outcome_other">ሌላ</string>
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>

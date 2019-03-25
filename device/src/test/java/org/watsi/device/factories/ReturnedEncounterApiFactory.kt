@@ -27,6 +27,7 @@ object ReturnedEncounterApiFactory {
             diagnosisIds = encounterWithExtras.encounter.diagnoses,
             visitType = encounterWithExtras.encounter.visitType,
             claimId = encounterWithExtras.encounter.claimId,
+            patientOutcome = encounterWithExtras.encounter.patientOutcome?.toString(),
             adjudicationState = encounterWithExtras.encounter.adjudicationState.toString(),
             adjudicatedAt = encounterWithExtras.encounter.adjudicatedAt ?: now,
             adjudicationReason = encounterWithExtras.encounter.adjudicationReason ?: "return reason",

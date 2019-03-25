@@ -7,7 +7,7 @@ import java.util.UUID
 data class ReferralApi(
     val id: UUID,
     val receivingFacility: String,
-    val reason: Referral.Reason,
+    val reason: String,
     val encounterId: UUID,
     val number: String?,
     val date: LocalDate
@@ -15,7 +15,7 @@ data class ReferralApi(
     constructor (referral: Referral) : this(
         id = referral.id,
         receivingFacility = referral.receivingFacility,
-        reason = referral.reason,
+        reason = referral.reason.toString().toLowerCase(),
         encounterId = referral.encounterId,
         number = referral.number,
         date = referral.date
@@ -25,7 +25,7 @@ data class ReferralApi(
         return Referral(
             id = id,
             receivingFacility = receivingFacility,
-            reason = reason,
+            reason = Referral.Reason.valueOf(reason.toUpperCase()),
             encounterId = encounterId,
             number = number,
             date = date

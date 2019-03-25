@@ -9,6 +9,7 @@ data class Encounter(
     val memberId: UUID,
     val identificationEventId: UUID?,
     val occurredAt: Instant,
+    val patientOutcome: PatientOutcome?,
     val preparedAt: Instant? = null,
     val backdatedOccurredAt: Boolean = false,
     val copaymentPaid: Boolean? = true,
@@ -30,6 +31,8 @@ data class Encounter(
     enum class AdjudicationState { PENDING, RETURNED, REVISED, APPROVED }
 
     enum class EncounterAction { PREPARE, SUBMIT, RESUBMIT }
+
+    enum class PatientOutcome { CURED_OR_DISCHARGED, REFERRED, FOLLOW_UP, REFUSED_SERVICE, EXPIRED, OTHER }
 
     companion object {
         val VISIT_TYPE_CHOICES = listOf(
