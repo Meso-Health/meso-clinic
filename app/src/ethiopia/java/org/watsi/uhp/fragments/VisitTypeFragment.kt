@@ -163,7 +163,7 @@ class VisitTypeFragment : DaggerFragment() {
             },
             promptString = getString(R.string.referred_to_facility_prompt),
             onPromptSelected = { viewModel.onReceivingFacilityChange(null) },
-            otherChoicesHint = context.getString(R.string.other_referral_facility),
+            otherChoicesHint = context.getString(R.string.referral_other_option),
             onOtherChoicesTextChange = { customFacility ->
                 viewModel.onReceivingFacilityChange(customFacility)
             }
