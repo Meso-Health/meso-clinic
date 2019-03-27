@@ -22,47 +22,4 @@ data class Referral(
         FOLLOW_UP,
         OTHER
     }
-
-    companion object {
-        val RECEIVING_FACILITY_CHOICES = listOf(
-            "Mehoni Hospital",
-            "Adi Shihu Hospital",
-            "Adi Gudem Hospital",
-            "Samre Hospital",
-            "Hagere Selam Hospital",
-            "Mulu Asfeha (Atsibi) Hospital",
-            "Fire Semaetat (Hawzen) Hospital",
-            "Frewoini Hospital",
-            "Fatsi Hospital",
-            "Dewhan Hospital",
-            "Enticho Hospital",
-            "Rama Hospital",
-            "Edaga Arbi Hospital",
-            "Yechila Hospital",
-            "Semema Hospital",
-            "Wukro Marai Hospital",
-            "Selekleka Hospital",
-            "Endabaguna Hospital",
-            "Mai Tsebri Hospital",
-            "Adi Daero",
-            "Adi Remets",
-            "Ketema Nigus (Tsegede)",
-            "Alamata Hospital",
-            "Korem Hospital",
-            "Lemlem Karl (Maichew) Hospital",
-            "Quiha Hospital",
-            "Mekelle Hospital",
-            "Wukro Hospital",
-            "Abi Adi Hospital",
-            "Adigrat Hospital",
-            "Adwa Hospital",
-            "Kidist Mariam (Aksum) Hospital",
-            "Suhul (Shire) Hospital",
-            "Mayani (Sheraro) Hospital",
-            "Mearig (Dansha) Hospital",
-            "Kahsay Abera (Humera) Hospital",
-            "Ayder Hospital",
-            "Aksum Hospital"
-        ).sorted()
-    }
 }

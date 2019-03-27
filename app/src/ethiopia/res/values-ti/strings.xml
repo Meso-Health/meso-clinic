@@ -201,6 +201,46 @@
     <!--<string name="referred_to_facility_prompt">Select referred to facility…</string>-->
     <string name="referral_other_option">ካልኦት ሪፈር ክለኣኹሉ ዝኽእሉ ትካላት ጥዕና</string>
     <string name="referral_reason_prompt">ምኽንያት ሪፈር…</string>
+    <string-array name="receiving_facilities_translated">
+        <item>መኾኒ ሆስፒታል </item>
+        <item>ዓዲ ሽሁ ሆስፒታል</item>
+        <item>ዓዲ ጉደም ሆስፒታል</item>
+        <item>ሳምረ ሆስፒታል</item>
+        <item>ሃገረ ሰላም ሆስፒታል</item>
+        <item>ሙሉ አስፍሃ (አፅቢ) ሆስፒታል</item>
+        <item>ፍረ ሰማእታት (ሐውዜን) ሆስፒታል</item>
+        <item>ፍረ ወይኒ ሆስፒታል</item>
+        <item>ፋፂ ሆስፒታል</item>
+        <item>ዶውሃን ሆስፒታል</item>
+        <item>እንትጮ ሆስፒታል</item>
+        <item>ራማ ሆስፒታል</item>
+        <item>ዕዳጋ ዓርቢ ሆስፒታል</item>
+        <item>የጭላ ሆስፒታል</item>
+        <item>ሰመማ ሆስፒታል</item>
+        <item>ውቕሮ ማራይ ሆስፒታል</item>
+        <item>ሰለኽለኻ ሆስፒታል</item>
+        <item>እንዳባጉና ሆስፒታል</item>
+        <item>ማይ ፀብሪ ሆስፒታል</item>
+        <item>ዓዲ ዳዕሮ ሆስፒታል</item>
+        <item>ዓዲ ረመፅ ሆስፒታል</item>
+        <item>ከተማ ንጉስ (ፀገዴ) ሆስፒታል</item>
+        <item>አላማጣ ሆስፒታል</item>
+        <item>ኮረም ሆስፒታል</item>
+        <item>ለምለም ካርል (ማይጨው) ሆስፒታል</item>
+        <item>ኵሓ ሆስፒታል</item>
+        <item>መቐለ ሆስፒታል</item>
+        <item>ውቕሮ ሆስፒታል</item>
+        <item>ዓብይ ዓዲ ሆስፒታል</item>
+        <item>ዓዲ ግራት ሆስፒታል</item>
+        <item>ዓድዋ ሆስፒታል</item>
+        <item>ቅድስት ማርያም (አኽሱም) ሆስፒታል</item>
+        <item>ስሑል (ሽረ) ሆስፒታል</item>
+        <item>ማይ ዓይኒ (ሸራሮ) ሆስፒታል</item>
+        <item>መዓረግ (ዳንሻ) ሆስፒታል</item>
+        <item>ካሕሳይ ኣበራ (ሑመራ) ሆስፒታል</item>
+        <item>ዓይደር ሆስፒታል</item>
+        <item>አኽሱም ሆስፒታል</item>
+    </string-array>
     <string name="further_consultation">ንዝለዓለ ምርመራ</string>
     <string name="drug_stockout">ዝተኣዘዘ መድሓኒት ኣብ ትካልና ዘይምህላው</string>
     <string name="investigative_tests">ዝተኣዘዘ ላቦራቶሪ ወይከዓ ራጂ ኣብ ትካልና ዘይምህላው</string>

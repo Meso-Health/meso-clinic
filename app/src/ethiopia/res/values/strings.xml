@@ -91,6 +91,86 @@
     <string name="referral_reason_prompt">Select referral reason…</string>
     <string name="referred_to_facility_prompt" translatable="false">Select referred to facility…</string>
     <string name="referral_other_option">Other Referral Facility</string>
+    <string-array name="receiving_facilities_stored_in_db">
+        <item>Mehoni Hospital</item>
+        <item>Adi Shihu Hospital</item>
+        <item>Adi Gudem Hospital</item>
+        <item>Samre Hospital</item>
+        <item>Hagere Selam Hospital</item>
+        <item>Mulu Asfeha (Atsibi) Hospital</item>
+        <item>Fire Semaetat (Hawzen) Hospital</item>
+        <item>Frewoini Hospital</item>
+        <item>Fatsi (Dr Tsegay) Hospital</item>
+        <item>Dewhan Hospital</item>
+        <item>Enticho Hospital</item>
+        <item>Rama Hospital</item>
+        <item>Edaga Arbi Hospital</item>
+        <item>Yechila Hospital</item>
+        <item>Semema Hospital</item>
+        <item>Wukro Marai Hospital</item>
+        <item>Selekleka Hospital</item>
+        <item>Endabaguna Hospital</item>
+        <item>Mai Tsebri Hospital</item>
+        <item>Adi Daero Hospital</item>
+        <item>Adi Remets Hospital</item>
+        <item>Ketema Nigus (Tsegede) Hospital</item>
+        <item>Alamata Hospital</item>
+        <item>Korem Hospital</item>
+        <item>Lemlem Karl (Maichew) Hospital</item>
+        <item>Quiha Hospital</item>
+        <item>Mekelle Hospital</item>
+        <item>Wukro Hospital</item>
+        <item>Abi Adi Hospital</item>
+        <item>Adigrat Hospital</item>
+        <item>Adwa Hospital</item>
+        <item>Kidist Mariam (Aksum) Hospital</item>
+        <item>Suhul (Shire) Hospital</item>
+        <item>Mayani (Sheraro) Hospital</item>
+        <item>Mearig (Dansha) Hospital</item>
+        <item>Kahsay Abera (Humera) Hospital</item>
+        <item>Ayder Hospital</item>
+        <item>Aksum Hospital</item>
+    </string-array>
+    <string-array name="receiving_facilities_translated">
+        <item>Mehoni Hospital</item>
+        <item>Adi Shihu Hospital</item>
+        <item>Adi Gudem Hospital</item>
+        <item>Samre Hospital</item>
+        <item>Hagere Selam Hospital</item>
+        <item>Mulu Asfeha (Atsibi) Hospital</item>
+        <item>Fire Semaetat (Hawzen) Hospital</item>
+        <item>Frewoini Hospital</item>
+        <item>Fatsi (Dr Tsegay) Hospital</item>
+        <item>Dewhan Hospital</item>
+        <item>Enticho Hospital</item>
+        <item>Rama Hospital</item>
+        <item>Edaga Arbi Hospital</item>
+        <item>Yechila Hospital</item>
+        <item>Semema Hospital</item>
+        <item>Wukro Marai Hospital</item>
+        <item>Selekleka Hospital</item>
+        <item>Endabaguna Hospital</item>
+        <item>Mai Tsebri Hospital</item>
+        <item>Adi Daero Hospital</item>
+        <item>Adi Remets Hospital</item>
+        <item>Ketema Nigus (Tsegede) Hospital</item>
+        <item>Alamata Hospital</item>
+        <item>Korem Hospital</item>
+        <item>Lemlem Karl (Maichew) Hospital</item>
+        <item>Quiha Hospital</item>
+        <item>Mekelle Hospital</item>
+        <item>Wukro Hospital</item>
+        <item>Abi Adi Hospital</item>
+        <item>Adigrat Hospital</item>
+        <item>Adwa Hospital</item>
+        <item>Kidist Mariam (Aksum) Hospital</item>
+        <item>Suhul (Shire) Hospital</item>
+        <item>Mayani (Sheraro) Hospital</item>
+        <item>Mearig (Dansha) Hospital</item>
+        <item>Kahsay Abera (Humera) Hospital</item>
+        <item>Ayder Hospital</item>
+        <item>Aksum Hospital</item>
+    </string-array>
     <string name="further_consultation">Further consultation</string>
     <string name="drug_stockout">Drug stockout</string>
     <string name="investigative_tests">Investigative Tests</string>

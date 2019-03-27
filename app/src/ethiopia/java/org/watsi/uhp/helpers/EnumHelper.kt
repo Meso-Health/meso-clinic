@@ -51,4 +51,21 @@ object EnumHelper {
             context.getString(R.string.other) // Just to be safe and not crash the app.
         }
     }
+
+    fun getReceivingFacilityMappings(context: Context): List<Pair<String, String>> {
+        val arrayEnglish = context.resources.getStringArray(R.array.receiving_facilities_stored_in_db)
+        val arrayLocal = context.resources.getStringArray(R.array.receiving_facilities_translated)
+        return (arrayEnglish zip arrayLocal).sortedBy { it.first }
+    }
+
+    fun receivingFacilityToDisplayedString(facilityName: String, context: Context): String {
+        val mappings = getReceivingFacilityMappings(context)
+        val facilityPair = mappings.find { pair -> pair.first == facilityName}
+        return if (facilityPair != null) {
+            facilityPair.second
+        } else {
+            // This is a custom name.
+            facilityName
+        }
+    }
 }
