@@ -15,5 +15,18 @@ data class EncounterWithExtras(
     val member: Member,
     val diagnoses: List<Diagnosis>
 ) : Serializable {
-    fun price(): Int = encounterItemRelations.sumBy { it.price() }
+
+    companion object {
+        fun price(encounterItemRelations: List<EncounterItemWithBillableAndPrice>): Int {
+            return encounterItemRelations.map {
+                if (it.encounterItem.stockout) {
+                    0
+                } else {
+                    it.price()
+                }
+            }.sum()
+        }
+    }
+
+    fun price(): Int = EncounterWithExtras.price(encounterItemRelations)
 }

@@ -39,13 +39,7 @@ data class EncounterFlowState(
         }
     }
 
-    fun price(): Int = encounterItemRelations.map {
-        if (it.encounterItem.stockout) {
-            0
-        } else {
-            it.price()
-        }
-    }.sum()
+    fun price(): Int = EncounterWithExtras.price(encounterItemRelations)
 
     fun toEncounterWithExtras(): EncounterWithExtras {
         return EncounterWithExtras(
