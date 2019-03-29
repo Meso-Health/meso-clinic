@@ -194,7 +194,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             referral_date.text = EthiopianDateHelper.formatEthiopianDate(
                 referral.date.atStartOfDay(clock.zone).toInstant(), clock
             )
-            referring_to.text = EnumHelper.receivingFacilityToDisplayedString(referral.receivingFacility, context)
+            referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number
             referral_reason.text = EnumHelper.referralReasonToDisplayedString(referral.reason, context, logger)
         }

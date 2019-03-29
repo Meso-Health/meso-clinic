@@ -24,6 +24,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.Referral
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -154,15 +155,11 @@ class VisitTypeFragment : DaggerFragment() {
             onPromptSelected = { viewModel.onUpdatePatientOutcome(null) }
         )
 
-        val receivingFacilityMappings = EnumHelper.getReceivingFacilityMappings(context)
-        val receivingFacilitiesStringsToStore = receivingFacilityMappings.map { it.first }
-        val receivingFacilitiesWithTranslations = receivingFacilityMappings.map { it.second }
-
         receiving_facility_spinner.setUpWithPrompt(
-            choices = receivingFacilitiesWithTranslations,
-            initialChoice = encounterFlowState.referral?.receivingFacility?.let { EnumHelper.receivingFacilityToDisplayedString(it, context) },
+            choices = Referral.RECEIVING_FACILITY_CHOICES,
+            initialChoice = encounterFlowState.referral?.receivingFacility,
             onItemSelected = { index ->
-                viewModel.onReceivingFacilityChange(receivingFacilitiesStringsToStore[index])
+                viewModel.onReceivingFacilityChange(Referral.RECEIVING_FACILITY_CHOICES[index])
             },
             promptString = getString(R.string.referred_to_facility_prompt),
             onPromptSelected = { viewModel.onReceivingFacilityChange(null) },
