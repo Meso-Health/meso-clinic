@@ -15,7 +15,7 @@ import org.threeten.bp.ZoneId
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
-import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
+import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterRepository
 
@@ -36,13 +36,13 @@ class SubmitClaimUseCaseTest {
 
     @Test
     fun execute_encounterDoesNotHaveEncounterItems_createsEncounterWithDeltaAndSetsSubmittedAt() {
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build()
+        val encounterWithExtras = EncounterWithExtrasFactory.build()
         val encounterDelta = Delta(
             action = Delta.Action.ADD,
             modelName = Delta.ModelName.ENCOUNTER,
-            modelId = encounterWithItemsAndForms.encounter.id
+            modelId = encounterWithExtras.encounter.id
         )
-        val encounterWithTimestamp = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithTimestamp = encounterWithExtras.encounter.copy(
             submittedAt = Instant.now(fixedClock)
         )
 
@@ -51,16 +51,16 @@ class SubmitClaimUseCaseTest {
         whenever(mockDeltaRepository.insert(listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, fixedClock).test().assertComplete()
     }
 
     @Test
     fun execute_encounterHasEncounterForms_createsEncounterWithDeltaAndEncounterFormDeltasAndSetsSubmittedAt() {
         val encounter = EncounterFactory.build()
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+        val encounterWithExtras = EncounterWithExtrasFactory.build(
             encounter = encounter,
-            forms = listOf(encounterForm)
+            encounterForms = listOf(encounterForm)
         )
         val encounterDelta = Delta(
             action = Delta.Action.ADD,
@@ -73,7 +73,7 @@ class SubmitClaimUseCaseTest {
             modelId = encounterForm.id
         )
 
-        val encounterWithTimestamp = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithTimestamp = encounterWithExtras.encounter.copy(
             submittedAt = Instant.now(fixedClock)
         )
 
@@ -82,6 +82,6 @@ class SubmitClaimUseCaseTest {
         whenever(mockDeltaRepository.insert(listOf(encounterDelta, encounterFormDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, fixedClock).test().assertComplete()
     }
 }

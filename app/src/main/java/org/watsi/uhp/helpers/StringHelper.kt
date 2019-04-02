@@ -3,11 +3,11 @@ package org.watsi.uhp.helpers
 import android.content.Context
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
-import org.watsi.uhp.R
-import org.watsi.domain.entities.Member.DateAccuracy
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.DateAccuracy
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.domain.utils.DateUtils
+import org.watsi.uhp.R
 
 object StringHelper {
     fun truncateWithEllipses(qrCode: String, maxCharlength: Int = 25): String {

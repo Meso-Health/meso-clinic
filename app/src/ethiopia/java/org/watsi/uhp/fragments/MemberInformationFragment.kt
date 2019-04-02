@@ -36,6 +36,7 @@ import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_ERROR
+import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
 class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBack {
@@ -70,17 +71,6 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 setErrors(viewState.errors)
-
-                gender_field.setGender(viewState.gender)
-
-                member_name.setText(viewState.name)
-                member_name.setSelection(member_name.text.length)
-
-                age_input.setText(if (viewState.age == null) "" else viewState.age.toString())
-                age_input.setSelection(age_input.text.length)
-
-                medical_record_number.setText(viewState.medicalRecordNumber)
-                medical_record_number.setSelection(medical_record_number.text.length)
             }
         })
     }
@@ -137,12 +127,12 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             viewModel.onAgeChange(text.toIntOrNull())
         })
 
-        age_unit_spinner.setUpSpinner(
-            listOf(AgeUnit.years, AgeUnit.months, AgeUnit.days).map {
+        age_unit_spinner.setUpWithoutPrompt(
+            adapter = SpinnerField.createAdapter(context, listOf(AgeUnit.years, AgeUnit.months, AgeUnit.days).map {
                 AgeUnitPresenter.toDisplayedString(it, context)
-            },
-            AgeUnitPresenter.toDisplayedString(AgeUnit.years, context),
-            { selectedString: String? ->
+            }),
+            initialChoiceIndex = 0,
+            onItemSelected = { selectedString: String? ->
                 if (selectedString == null) {
                     logger.error("selectedString is null when onItemSelected is called in MemberInformationFragment")
                 } else {

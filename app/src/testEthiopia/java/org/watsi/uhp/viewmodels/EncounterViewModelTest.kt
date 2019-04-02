@@ -18,6 +18,7 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
+import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -207,13 +208,22 @@ class EncounterViewModelTest : AACBaseTest() {
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
 
-        val encounter = Encounter(encounterId, memberId, null, Instant.now(clock), Instant.now(clock))
+        val encounter = Encounter(
+            id = encounterId,
+            memberId = memberId,
+            identificationEventId = null,
+            occurredAt = Instant.now(clock),
+            patientOutcome = null,
+            preparedAt = Instant.now(clock)
+        )
+        val member = MemberFactory.build(id = encounter.memberId)
         val encounterFlowState = EncounterFlowState(
             encounter = encounter,
             encounterItemRelations = emptyList(),
             encounterForms = emptyList(),
             diagnoses = emptyList(),
-            referrals = emptyList()
+            member = member,
+            referral = null
         )
         viewModel.updateEncounterWithLineItems(encounterFlowState)
 

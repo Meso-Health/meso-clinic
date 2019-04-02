@@ -9,20 +9,24 @@ import java.io.Serializable
 
 data class EncounterWithExtras(
     val encounter: Encounter,
-    val member: Member,
     val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
-    val diagnoses: List<Diagnosis>,
     val encounterForms: List<EncounterForm>,
-    val referrals: List<Referral>
+    val referral: Referral?,
+    val member: Member,
+    val diagnoses: List<Diagnosis>
 ) : Serializable {
-    fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
-        return EncounterWithItemsAndForms(
-            encounter = encounter,
-            encounterItemRelations = encounterItemRelations,
-            encounterForms = encounterForms,
-            referrals = referrals
-        )
+
+    companion object {
+        fun price(encounterItemRelations: List<EncounterItemWithBillableAndPrice>): Int {
+            return encounterItemRelations.map {
+                if (it.encounterItem.stockout) {
+                    0
+                } else {
+                    it.price()
+                }
+            }.sum()
+        }
     }
 
-    fun price(): Int = encounterItemRelations.sumBy { it.price() }
+    fun price(): Int = EncounterWithExtras.price(encounterItemRelations)
 }

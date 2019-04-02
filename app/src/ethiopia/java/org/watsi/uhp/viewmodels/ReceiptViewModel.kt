@@ -62,29 +62,26 @@ class ReceiptViewModel @Inject constructor(
                 copaymentPaid = null    // no copayment in ethiopia system
             )
             Completable.fromCallable {
-                if (encounterFlowState.member == null) {
-                    logger.error("Member cannot be null")
-                }
 
                 when (encounterAction) {
                     EncounterAction.PREPARE -> {
                         createEncounterUseCase.execute(
-                            encounterFlowState.toEncounterWithItemsAndForms(), false, clock
+                            encounterFlowState.toEncounterWithExtras(), false, clock
                         ).blockingAwait()
                     }
                     EncounterAction.SUBMIT -> {
                         Completable.concatArray(
                             updateEncounterUseCase.execute(
-                                encounterFlowState.toEncounterWithItemsAndForms()
+                                encounterFlowState.toEncounterWithExtras()
                             ),
                             submitClaimUseCase.execute(
-                                encounterFlowState.toEncounterWithItemsAndForms(), clock
+                                encounterFlowState.toEncounterWithExtras(), clock
                             )
                         ).blockingAwait()
                     }
                     EncounterAction.RESUBMIT -> {
                         reviseClaimUseCase.execute(
-                            encounterFlowState.toEncounterWithItemsAndForms(), clock
+                            encounterFlowState.toEncounterWithExtras(), clock
                         ).blockingAwait()
                     }
                 }

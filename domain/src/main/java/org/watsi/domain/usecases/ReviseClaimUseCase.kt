@@ -5,9 +5,8 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterForm
-import org.watsi.domain.entities.Referral
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 class ReviseClaimUseCase(
@@ -15,18 +14,18 @@ class ReviseClaimUseCase(
     private val markReturnedEncounterAsRevisedUseCase: MarkReturnedEncountersAsRevisedUseCase
 ) {
 
-    fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms, clock: Clock): Completable {
+    fun execute(originalEncounterWithExtras: EncounterWithExtras, clock: Clock): Completable {
         return Completable.fromAction {
-            val newEncounter = encounterWithItemsAndForms.encounter.copy(
+            val newEncounter = originalEncounterWithExtras.encounter.copy(
                 id = UUID.randomUUID(),
-                revisedEncounterId = encounterWithItemsAndForms.encounter.id,
+                revisedEncounterId = originalEncounterWithExtras.encounter.id,
                 adjudicationState = Encounter.AdjudicationState.PENDING,
                 adjudicatedAt = null,
-                returnReason = null
+                adjudicationReason = null
             )
 
             val newEncounterItems = mutableListOf<EncounterItemWithBillableAndPrice>()
-            encounterWithItemsAndForms.encounterItemRelations.forEach {
+            originalEncounterWithExtras.encounterItemRelations.forEach {
                 newEncounterItems.add(
                     it.copy(
                         encounterItem = it.encounterItem.copy(
@@ -38,32 +37,32 @@ class ReviseClaimUseCase(
             }
 
             val newEncounterForms = mutableListOf<EncounterForm>()
-            encounterWithItemsAndForms.encounterForms.forEach {
+            originalEncounterWithExtras.encounterForms.forEach {
                 newEncounterForms.add(it.copy(
                     id = UUID.randomUUID(),
                     encounterId = newEncounter.id
                 ))
             }
 
-            val newReferrals = mutableListOf<Referral>()
-            encounterWithItemsAndForms.referrals.forEach {
-                newReferrals.add(it.copy(
-                    id = UUID.randomUUID(),
-                    encounterId = newEncounter.id
-                ))
-            }
+            val newReferral = originalEncounterWithExtras.referral?.copy(
+                id = UUID.randomUUID(),
+                encounterId = newEncounter.id
+            )
 
             createEncounterUseCase.execute(
-                EncounterWithItemsAndForms(
+                encounterWithExtras = EncounterWithExtras(
                     encounter = newEncounter,
                     encounterItemRelations = newEncounterItems,
                     encounterForms = newEncounterForms,
-                    referrals = newReferrals
-                ), true, clock
+                    referral = newReferral,
+                    member = originalEncounterWithExtras.member,
+                    diagnoses = originalEncounterWithExtras.diagnoses
+                ),
+                submitNow = true,
+                clock = clock
             ).blockingAwait()
 
-            markReturnedEncounterAsRevisedUseCase.execute(listOf(encounterWithItemsAndForms.encounter.id))
-                .blockingAwait()
+            markReturnedEncounterAsRevisedUseCase.execute(listOf(originalEncounterWithExtras.encounter.id)).blockingAwait()
         }.subscribeOn(Schedulers.io())
     }
 }

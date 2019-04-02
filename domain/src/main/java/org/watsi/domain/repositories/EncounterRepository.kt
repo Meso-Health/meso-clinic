@@ -7,17 +7,14 @@ import io.reactivex.Single
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItems
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.util.UUID
 
 interface EncounterRepository {
-    fun find(id: UUID): Single<EncounterWithItems>
-    fun findWithExtras(id: UUID): Single<EncounterWithExtras>
-    fun find(ids: List<UUID>): Single<List<Encounter>>
+    fun find(id: UUID): Single<EncounterWithExtras>
+    fun findAll(ids: List<UUID>): Single<List<Encounter>>
     fun update(encounters: List<Encounter>): Completable
-    fun insert(encounterWithItemsAndForms: EncounterWithItemsAndForms, deltas: List<Delta>): Completable
-    fun upsert(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable
+    fun insert(encounterWithExtras: EncounterWithExtras, deltas: List<Delta>): Completable
+    fun upsert(encounterWithExtras: EncounterWithExtras): Completable
     fun upsert(encounters: List<EncounterWithExtras>): Completable
     fun delete(encounterRelation: EncounterWithExtras): Completable
     fun deleteEncounterItems(ids: List<UUID>): Completable

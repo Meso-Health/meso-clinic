@@ -3,7 +3,10 @@ package org.watsi.device.api.models
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import org.threeten.bp.Instant
-import org.watsi.domain.relations.EncounterWithItems
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.entities.Referral
+import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 data class EncounterApi(
@@ -16,27 +19,36 @@ data class EncounterApi(
     val copaymentPaid: Boolean? = false,
     val diagnosisIds: JsonArray,
     val encounterItems: List<EncounterItemApi>,
+    val referrals: List<ReferralApi>,
     val visitType: String?,
     val revisedEncounterId: UUID?,
     val providerComment: String?,
     val claimId: String,
-    val submittedAt: Instant?
+    val submittedAt: Instant?,
+    val patientOutcome: String?
 ) {
+    constructor(encounter: Encounter, referrals: List<Referral>, encounterItems: List<EncounterItem>): this(
+        id = encounter.id,
+        memberId = encounter.memberId,
+        identificationEventId = encounter.identificationEventId,
+        occurredAt = encounter.occurredAt,
+        preparedAt = encounter.preparedAt,
+        backdatedOccurredAt = encounter.backdatedOccurredAt,
+        copaymentPaid = encounter.copaymentPaid,
+        diagnosisIds = Gson().fromJson(encounter.diagnoses.toString(), JsonArray::class.java),
+        encounterItems = encounterItems.map { EncounterItemApi(it) },
+        referrals = referrals.map { ReferralApi(it) },
+        visitType = encounter.visitType,
+        revisedEncounterId = encounter.revisedEncounterId,
+        providerComment = encounter.providerComment,
+        claimId = encounter.claimId,
+        submittedAt = encounter.submittedAt,
+        patientOutcome = encounter.patientOutcome?.toString()?.toLowerCase()
+    )
 
-    constructor (encounterWithItems: EncounterWithItems) : this(
-        id = encounterWithItems.encounter.id,
-        memberId = encounterWithItems.encounter.memberId,
-        identificationEventId = encounterWithItems.encounter.identificationEventId,
-        occurredAt = encounterWithItems.encounter.occurredAt,
-        preparedAt = encounterWithItems.encounter.preparedAt,
-        backdatedOccurredAt = encounterWithItems.encounter.backdatedOccurredAt,
-        copaymentPaid = encounterWithItems.encounter.copaymentPaid,
-        diagnosisIds = Gson().fromJson(encounterWithItems.encounter.diagnoses.toString(), JsonArray::class.java),
-        encounterItems = encounterWithItems.encounterItems.map { EncounterItemApi(it) },
-        visitType = encounterWithItems.encounter.visitType,
-        revisedEncounterId = encounterWithItems.encounter.revisedEncounterId,
-        providerComment = encounterWithItems.encounter.providerComment,
-        claimId = encounterWithItems.encounter.claimId,
-        submittedAt = encounterWithItems.encounter.submittedAt
+    constructor(encounterWithExtras: EncounterWithExtras): this(
+        encounter = encounterWithExtras.encounter,
+        referrals = listOfNotNull(encounterWithExtras.referral),
+        encounterItems = encounterWithExtras.encounterItemRelations.map { it.encounterItem }
     )
 }

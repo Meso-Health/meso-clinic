@@ -10,14 +10,16 @@ object EncounterItemFactory {
         encounterId: UUID = UUID.randomUUID(),
         quantity: Int = 1,
         priceScheduleId: UUID = UUID.randomUUID(),
-        priceScheduleIssued: Boolean = false
+        priceScheduleIssued: Boolean = false,
+        stockout: Boolean = false
     ): EncounterItem {
         return EncounterItem(
             id = id,
             encounterId = encounterId,
             quantity = quantity,
             priceScheduleId = priceScheduleId,
-            priceScheduleIssued = priceScheduleIssued
+            priceScheduleIssued = priceScheduleIssued,
+            stockout = stockout
         )
     }
 }

@@ -12,13 +12,10 @@ object EncounterWithExtrasFactory {
     fun build(
         member: Member = MemberFactory.build(),
         encounter: Encounter = EncounterFactory.build(memberId = member.id),
-        encounterItemRelations: List<EncounterItemWithBillableAndPrice> = listOf(
-            EncounterItemWithBillableAndPriceFactory.buildWithEncounter(encounterId = encounter.id),
-            EncounterItemWithBillableAndPriceFactory.buildWithEncounter(encounterId = encounter.id)
-        ),
+        encounterItemRelations: List<EncounterItemWithBillableAndPrice> = emptyList(),
         diagnoses: List<Diagnosis> = emptyList(),
         encounterForms: List<EncounterForm> = emptyList(),
-        referrals: List<Referral> = emptyList()
+        referral: Referral? = null
     ) : EncounterWithExtras {
         return EncounterWithExtras(
             encounter = encounter,
@@ -26,7 +23,7 @@ object EncounterWithExtrasFactory {
             encounterItemRelations = encounterItemRelations,
             diagnoses = diagnoses,
             encounterForms = encounterForms,
-            referrals = referrals
+            referral = referral
         )
     }
 }

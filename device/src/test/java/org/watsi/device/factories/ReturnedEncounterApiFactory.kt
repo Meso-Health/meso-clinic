@@ -6,6 +6,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.EncounterItemApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.api.models.PriceScheduleApi
+import org.watsi.device.api.models.ReferralApi
 import org.watsi.device.api.models.ReturnedEncounterApi
 import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
@@ -26,9 +27,10 @@ object ReturnedEncounterApiFactory {
             diagnosisIds = encounterWithExtras.encounter.diagnoses,
             visitType = encounterWithExtras.encounter.visitType,
             claimId = encounterWithExtras.encounter.claimId,
+            patientOutcome = encounterWithExtras.encounter.patientOutcome?.toString(),
             adjudicationState = encounterWithExtras.encounter.adjudicationState.toString(),
             adjudicatedAt = encounterWithExtras.encounter.adjudicatedAt ?: now,
-            returnReason = encounterWithExtras.encounter.returnReason ?: "return reason",
+            adjudicationReason = encounterWithExtras.encounter.adjudicationReason ?: "return reason",
             revisedEncounterId = encounterWithExtras.encounter.revisedEncounterId ?: UUID.randomUUID(),
             providerComment = encounterWithExtras.encounter.providerComment,
             preparedAt = encounterWithExtras.encounter.preparedAt ?: now,
@@ -42,6 +44,13 @@ object ReturnedEncounterApiFactory {
             },
             encounterItems = encounterWithExtras.encounterItemRelations.map {
                 EncounterItemApi(it.encounterItem)
+            },
+            referrals = listOf(encounterWithExtras.referral).mapNotNull {
+                if (it != null) {
+                    ReferralApi(it)
+                } else {
+                    null
+                }
             }
         )
     }

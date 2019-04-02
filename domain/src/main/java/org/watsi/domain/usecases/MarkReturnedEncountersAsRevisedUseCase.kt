@@ -9,7 +9,7 @@ import java.util.UUID
 class MarkReturnedEncountersAsRevisedUseCase(private val encounterRepository: EncounterRepository) {
     fun execute(encounterIds: List<UUID>): Completable {
         return Completable.fromCallable {
-            val encounters = encounterRepository.find(encounterIds).blockingGet()
+            val encounters = encounterRepository.findAll(encounterIds).blockingGet()
             encounterRepository.update(encounters.map { encounter ->
                 encounter.copy(adjudicationState = Encounter.AdjudicationState.REVISED)
             }).blockingAwait()

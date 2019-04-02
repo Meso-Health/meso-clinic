@@ -4,7 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.PriceSchedule
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 
@@ -13,18 +13,19 @@ class UpdateEncounterUseCase(
     private val priceScheduleRepository: PriceScheduleRepository
 ) {
 
-    fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms): Completable {
+    fun execute(encounterWithExtras: EncounterWithExtras): Completable {
         return Completable.fromAction {
-            val savedEncounter = encounterRepository.find(encounterWithItemsAndForms.encounter.id).blockingGet()
-            val removedEncounterItemIds = savedEncounter.encounterItems.map { it.id }
-                    .minus(encounterWithItemsAndForms.encounterItemRelations.map { it.encounterItem.id })
-            val newPriceSchedules = encounterWithItemsAndForms.encounterItemRelations
+            val savedEncounter = encounterRepository.find(encounterWithExtras.encounter.id).blockingGet()
+            val removedEncounterItemIds = savedEncounter.encounterItemRelations.map { it.encounterItem.id }
+                    .minus(encounterWithExtras.encounterItemRelations.map { it.encounterItem.id })
+            val newPriceSchedules = encounterWithExtras.encounterItemRelations
                     .filter { it.encounterItem.priceScheduleIssued }
                     .map { it.billableWithPriceSchedule.priceSchedule }
                     .filter { priceScheduleRepository.find(it.id).blockingGet() == null }
 
+            // TODO: Upsert so that newly added Referrals are saved, also removed referrals are removed.
             // Upsert so that newly added encounterItems are saved
-            encounterRepository.upsert(encounterWithItemsAndForms).blockingAwait()
+            encounterRepository.upsert(encounterWithExtras).blockingAwait()
             encounterRepository.deleteEncounterItems(removedEncounterItemIds).blockingAwait()
             createPriceSchedules(newPriceSchedules)
         }.subscribeOn(Schedulers.io())

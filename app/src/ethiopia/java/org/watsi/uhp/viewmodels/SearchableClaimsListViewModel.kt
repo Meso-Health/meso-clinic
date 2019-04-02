@@ -58,7 +58,7 @@ class SearchableClaimsListViewModel @Inject constructor(
             Completable.fromCallable {
                 viewState.claims.map { encounterWithExtras ->
                     submitClaimUseCase.execute(
-                        encounterWithExtras.toEncounterWithItemsAndForms(),
+                        encounterWithExtras,
                         clock
                     ).blockingAwait()
                 }

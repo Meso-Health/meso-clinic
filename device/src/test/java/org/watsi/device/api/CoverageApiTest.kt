@@ -6,6 +6,7 @@ import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
@@ -13,37 +14,42 @@ import org.watsi.device.api.models.PriceScheduleApi
 import org.watsi.device.testutils.OkReplayTest
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.AuthenticationTokenFactory
+import org.watsi.domain.factories.BillableFactory
+import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterItemFactory
+import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
 import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.factories.PriceScheduleFactory
-import org.watsi.domain.relations.EncounterWithItems
+import org.watsi.domain.factories.ReferralFactory
+import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class CoverageApiTest : OkReplayTest() {
     private val fixedInstance = Instant.parse("2018-03-23T08:10:36.306Z")
     private val providerId = 1
-    private val clinicUser = "klinik"
+    private val clinicUser = "provider1"
     private val clinicUserPassword = "123456"
 
     // Make sure this is a valid token.
     private val tokenString = AuthenticationTokenFactory.build(
-        token = "MDSQkAYS.DfqtUXJvC75xSHuYYLkjY1YZhJ4QcQ3S"
+        token = "NBGErbd3.ntsRRN3S4GuswZuVsRSMBxBsodYNbK22"
     ).getHeaderString()
 
     // Make sure these correspond to real ids in the backend.
-    private val householdId = UUID.fromString("014fd5be-e988-43a0-8848-89c14daeb50d")
-    private val billableId = UUID.fromString("00614e1c-5d4b-4b1e-87a7-f2e7436cb3cd")
-    private val billableLatestPriceScheduleId = UUID.fromString("3c4a87c8-43c8-4a69-9833-77ae0f869651")
+    private val householdId = UUID.fromString("08166d63-2bfb-4293-8e7f-2c4d369834a2")
+    private val billableId = UUID.fromString("000a5c14-af1b-4685-8f39-ac7982377ee9")
+    private val billableLatestPriceScheduleId = UUID.fromString("adaec28b-8e7d-4d49-8af9-458bccfb87b7")
 
     // When creating new tapes, make sure the following IDs do not exist in the backend.
-    private val memberId = UUID.fromString("914a6308-28c1-4a4a-b123-4c2233f21b11")
-    private val identificationEventId = UUID.fromString("9914e82f2-6e42-4bd4-a9df-ddf11802c9c1")
-    private val priceScheduleId = UUID.fromString("94fba924-13cd-4022-b622-7c8200f21b81")
-    private val encounterId = UUID.fromString("94fba909-24cd-8026-b253-a0ea44080d1d")
-    private val encounterItemId = UUID.fromString("95fba911-29cd-4022-b273-a9ea26180d1a")
+    private val memberId = UUID.fromString("224a2322-48c1-4a4a-b123-4c2233f21b11")
+    private val identificationEventId = UUID.fromString("2214e82f2-6e42-4bd4-a9df-ddf11802c2c1")
+    private val priceScheduleId = UUID.fromString("12fba944-13cd-4022-b622-7c8200f21b81")
+    private val encounterId = UUID.fromString("11fba129-44cd-8026-b253-a0ea44080d1d")
+    private val encounterItemId = UUID.fromString("21ba944-29cd-4022-b273-a9ea26180d1a")
+    private val referralId = UUID.fromString("21fba934-44cd-4022-b273-a9ea26180d1a")
 
     private val member = MemberFactory.build(
         id = memberId,
@@ -183,7 +189,8 @@ class CoverageApiTest : OkReplayTest() {
             id = encounterId,
             memberId = memberId,
             identificationEventId = identificationEventId,
-            occurredAt = fixedInstance
+            occurredAt = fixedInstance,
+            preparedAt = fixedInstance
         )
 
         val encounterItem = EncounterItemFactory.build(
@@ -192,15 +199,34 @@ class CoverageApiTest : OkReplayTest() {
             priceScheduleId = priceScheduleId
         )
 
-        val encounterWithItems = EncounterWithItems(
+        val encounterWithExtras = EncounterWithExtras(
             encounter = encounter,
-            encounterItems = listOf(encounterItem)
+            encounterItemRelations = listOf(EncounterItemWithBillableAndPriceFactory.build(
+                billableWithPrice = BillableWithPriceScheduleFactory.build(
+                    billable = BillableFactory.build(id = billableId),
+                    priceSchedule = PriceScheduleFactory.build(
+                        id = priceScheduleId,
+                        billableId = billableId
+                    )
+                ),
+                encounterItem = encounterItem
+            )),
+            referral = ReferralFactory.build(
+                id = referralId,
+                encounterId = encounter.id,
+                date = LocalDate.of(1993, 5, 11)
+            ),
+            member = MemberFactory.build(
+                id = encounter.memberId
+            ),
+            diagnoses = emptyList(),
+            encounterForms = emptyList()
         )
 
         api.postEncounter(
             tokenAuthorization = tokenString,
             providerId = providerId,
-            encounter = EncounterApi(encounterWithItems)
+            encounter = EncounterApi(encounterWithExtras)
         ).test().assertComplete()
     }
 
@@ -213,11 +239,23 @@ class CoverageApiTest : OkReplayTest() {
 
         result.assertComplete()
 
-        // Assert that the providerComment is not null for at least one of the returned claims
+        // Assert that the claims in the backend when recording have:
+        // - at least one returned claim with a provider comment
+        // - at least one returned claim with a referral
         result.values().first().let { returnedClaims ->
             assertTrue(
                 returnedClaims.any { returnedClaim ->
                     returnedClaim.providerComment != null
+                }
+            )
+            assertTrue(
+                returnedClaims.any { returnedClaim ->
+                    returnedClaim.referrals.isNotEmpty()
+                }
+            )
+            assertTrue(
+                returnedClaims.any { returnedClaim ->
+                    returnedClaim.patientOutcome != null
                 }
             )
             assertTrue(

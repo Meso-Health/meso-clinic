@@ -8,16 +8,15 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Referral
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 import java.io.Serializable
 
 data class EncounterFlowState(
     var encounter: Encounter,
     var encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
     var encounterForms: List<EncounterForm>,
+    var referral: Referral?,
+    var member: Member,
     var diagnoses: List<Diagnosis>,
-    var referrals: List<Referral>,
-    var member: Member? = null,
     var newProviderComment: String? = null
 ) : Serializable {
 
@@ -29,7 +28,7 @@ data class EncounterFlowState(
                 encounterForms = encounterWithExtras.encounterForms,
                 diagnoses = encounterWithExtras.diagnoses,
                 member = encounterWithExtras.member,
-                referrals = encounterWithExtras.referrals
+                referral = encounterWithExtras.referral
             )
         }
     }
@@ -40,31 +39,16 @@ data class EncounterFlowState(
         }
     }
 
-    fun price(): Int = encounterItemRelations.map {
-        if (it.encounterItem.stockout) {
-            0
-        } else {
-            it.price()
-        }
-    }.sum()
+    fun price(): Int = EncounterWithExtras.price(encounterItemRelations)
 
-    fun toEncounterWithItemsAndForms(): EncounterWithItemsAndForms {
-        return EncounterWithItemsAndForms(
-            encounter = encounter,
-            encounterItemRelations = encounterItemRelations,
-            encounterForms = clearEncounterFormThumbnails(),
-            referrals = referrals
-        )
-    }
-
-    fun toEncounterWithExtras(member: Member): EncounterWithExtras {
+    fun toEncounterWithExtras(): EncounterWithExtras {
         return EncounterWithExtras(
             encounter = encounter,
             member = member,
             encounterItemRelations = encounterItemRelations,
             diagnoses = diagnoses,
             encounterForms = encounterForms,
-            referrals = referrals
+            referral = referral
         )
     }
 

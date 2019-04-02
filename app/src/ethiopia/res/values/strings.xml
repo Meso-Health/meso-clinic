@@ -80,14 +80,32 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">Visit Type</string>
     <string name="visit_type_label">Visit Type</string>
-    <string name="referral_label" translatable="false">Referral</string>
-    <!--TODO: translate the following strings-->
+    <string name="referral_label">Referral</string>
+    <string name="referral_date_label">Referral Date</string>
     <string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>
     <string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>
     <string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>
-    <string name="serial_number" translatable="false">Number (optional)"</string>
-    <string name="referral_reason" translatable="false">Reason</string>
-    <string name="referred_to_facility" translatable="false">Referred To Facility</string>
+    <string name="referral_serial_number">Referral Number (optional)</string>
+    <string name="referral_reason">Referral reason</string>
+    <string name="referred_to_facility">Referred to facility</string>
+    <string name="referral_reason_prompt">Select referral reason…</string>
+    <string name="referred_to_facility_prompt" translatable="false">Select referred to facility…</string>
+    <string name="referral_other_option">Other Referral Facility</string>
+    <string name="further_consultation">Further consultation</string>
+    <string name="drug_stockout">Drug stockout</string>
+    <string name="investigative_tests">Investigative Tests</string>
+    <string name="inpatient_care">Inpatient care</string>
+    <string name="bed_shortage">Bed shortage</string>
+    <string name="follow_up">Follow up</string>
+    <string name="patient_outcome" translatable="false">Patient outcome</string>
+    <string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>
+    <string name="outcome_cured_or_discharged">Cured/Discharged</string>
+    <string name="outcome_referred">Referred</string>
+    <string name="outcome_follow_up">Follow up</string>
+    <string name="outcome_refused_service">Refused service</string>
+    <string name="outcome_expired">Expired</string>
+    <string name="outcome_other">Other</string>
+
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>
@@ -110,7 +128,7 @@
         <item quantity="one">%d day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
-    <string name="date_header">Date of Service</string>
+    <string name="date_of_service_label">Date of Service</string>
     <string name="comment_label">Comment</string>
     <string name="add_clickable"><u>Add</u></string>
     <string name="comment_prompt">Add a comment&#8230;</string>

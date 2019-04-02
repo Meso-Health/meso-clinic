@@ -20,7 +20,7 @@ import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterItemFactory
 import org.watsi.domain.factories.EncounterItemWithBillableAndPriceFactory
-import org.watsi.domain.factories.EncounterWithItemsAndFormsFactory
+import org.watsi.domain.factories.EncounterWithExtrasFactory
 import org.watsi.domain.factories.PriceScheduleFactory
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.EncounterRepository
@@ -44,40 +44,40 @@ class CreateEncounterUseCaseTest {
 
     @Test
     fun execute_encounterDoesNotHaveNewBillablesOrEncounterForms_submitNowTrue_createsEncounterWithDeltaAndSetsSubmittedAt() {
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build()
+        val encounterWithExtras = EncounterWithExtrasFactory.build()
         val encounterDelta = Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.ENCOUNTER,
-                modelId = encounterWithItemsAndForms.encounter.id
+                modelId = encounterWithExtras.encounter.id
         )
 
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithExtrasWithTimestamps = encounterWithExtras.copy(
+            encounter = encounterWithExtras.encounter.copy(
                 preparedAt = Instant.now(fixedClock),
                 submittedAt = Instant.now(fixedClock)
             )
         )
 
-        whenever(mockEncounterRepository.insert(encounterWithItemsAndFormsAndTimestamps, listOf(encounterDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta)))
                 .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
     }
 
     @Test
     fun execute_encounterDoesNotHaveNewBillablesOrEncounterForms_submitNowFalse_createsEncounterWithoutDeltaAndWithoutSubmittedAt() {
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build()
+        val encounterWithExtras = EncounterWithExtrasFactory.build()
 
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithExtrasWithTimestamps = encounterWithExtras.copy(
+            encounter = encounterWithExtras.encounter.copy(
                 preparedAt = Instant.now(fixedClock)
             )
         )
 
-        whenever(mockEncounterRepository.insert(encounterWithItemsAndFormsAndTimestamps, emptyList()))
+        whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, emptyList()))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, false, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, false, fixedClock).test().assertComplete()
     }
 
     @Test
@@ -89,7 +89,7 @@ class CreateEncounterUseCaseTest {
         val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
             BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
         )
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+        val encounterWithExtras = EncounterWithExtrasFactory.build(
             encounter = encounter,
             encounterItemRelations = listOf(encounterItemRelation)
         )
@@ -109,8 +109,8 @@ class CreateEncounterUseCaseTest {
             modelId = priceSchedule.id
         )
 
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithExtrasWithTimestamps = encounterWithExtras.copy(
+            encounter = encounterWithExtras.encounter.copy(
                 preparedAt = Instant.now(fixedClock),
                 submittedAt = Instant.now(fixedClock)
             )
@@ -121,10 +121,10 @@ class CreateEncounterUseCaseTest {
             .thenReturn(Completable.complete())
         whenever(mockPriceScheduleRepository.create(priceSchedule, priceScheduleDelta))
             .thenReturn(Completable.complete())
-        whenever(mockEncounterRepository.insert(encounterWithItemsAndFormsAndTimestamps, listOf(encounterDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
     }
 
     @Test
@@ -140,7 +140,7 @@ class CreateEncounterUseCaseTest {
         val encounterItemRelation = EncounterItemWithBillableAndPriceFactory.build(
             BillableWithPriceScheduleFactory.build(billable, priceSchedule), encounterItem
         )
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+        val encounterWithExtras = EncounterWithExtrasFactory.build(
             encounter = encounter,
             encounterItemRelations = listOf(encounterItemRelation)
         )
@@ -155,8 +155,8 @@ class CreateEncounterUseCaseTest {
             modelId = priceSchedule.id
         )
 
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithExtrasWithTimestamps = encounterWithExtras.copy(
+            encounter = encounterWithExtras.encounter.copy(
                 preparedAt = Instant.now(fixedClock),
                 submittedAt = Instant.now(fixedClock)
             )
@@ -166,19 +166,19 @@ class CreateEncounterUseCaseTest {
         whenever(mockPriceScheduleRepository.find(priceSchedule.id)).thenReturn(Maybe.empty())
         whenever(mockPriceScheduleRepository.create(priceSchedule, priceScheduleDelta))
             .thenReturn(Completable.complete())
-        whenever(mockEncounterRepository.insert(encounterWithItemsAndFormsAndTimestamps, listOf(encounterDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
     }
 
     @Test
     fun execute_encounterHasEncounterForms_submitNowTrue_createsEncounterWithDeltaAndEncounterFormDeltasAndSetsSubmittedAt() {
         val encounter = EncounterFactory.build()
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
-        val encounterWithItemsAndForms = EncounterWithItemsAndFormsFactory.build(
+        val encounterWithExtras = EncounterWithExtrasFactory.build(
                 encounter = encounter,
-                forms = listOf(encounterForm)
+                encounterForms = listOf(encounterForm)
         )
         val encounterDelta = Delta(
                 action = Delta.Action.ADD,
@@ -191,16 +191,16 @@ class CreateEncounterUseCaseTest {
                 modelId = encounterForm.id
         )
 
-        val encounterWithItemsAndFormsAndTimestamps = encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
+        val encounterWithExtrasWithTimestamps = encounterWithExtras.copy(
+            encounter = encounterWithExtras.encounter.copy(
                 preparedAt = Instant.now(fixedClock),
                 submittedAt = Instant.now(fixedClock)
             )
         )
 
-        whenever(mockEncounterRepository.insert(encounterWithItemsAndFormsAndTimestamps, listOf(encounterDelta, encounterFormDelta)))
+        whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta, encounterFormDelta)))
                 .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithItemsAndForms, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
     }
 }

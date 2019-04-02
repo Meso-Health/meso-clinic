@@ -1,5 +1,6 @@
 package org.watsi.device.db.repositories
 
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -29,8 +30,7 @@ import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterItemWithBillableAndPriceModel
 import org.watsi.device.db.models.EncounterModel
-import org.watsi.device.db.models.EncounterWithItemsModel
-import org.watsi.device.db.models.EncounterWithMemberAndItemsAndFormsModel
+import org.watsi.device.db.models.EncounterWithExtrasModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
@@ -57,7 +57,6 @@ import org.watsi.domain.factories.ReferralFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
-import org.watsi.domain.relations.EncounterWithItemsAndForms
 
 @RunWith(MockitoJUnitRunner::class)
 class EncounterRepositoryImplTest {
@@ -72,9 +71,6 @@ class EncounterRepositoryImplTest {
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: EncounterRepositoryImpl
 
-    val encounterModel = EncounterModelFactory.build()
-    val encounterWithItemsModel = EncounterWithItemsModel(encounterModel, emptyList())
-
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
@@ -83,10 +79,14 @@ class EncounterRepositoryImplTest {
     }
 
     @Test
-    fun find() {
-        whenever(mockDao.find(encounterModel.id)).thenReturn(Single.just(encounterWithItemsModel))
+    fun findWithExtras() {
+        val encounterWithExtras = EncounterWithExtrasFactory.build()
+        val encounterWithExtrasModel = EncounterWithExtrasModel.fromEncounterWithExtras(encounterWithExtras, clock)
 
-        repository.find(encounterModel.id).test().assertValue(encounterWithItemsModel.toEncounterWithItems())
+        whenever(mockDiagnosisDao.findAll(any())).thenReturn(Single.just(emptyList()))
+        whenever(mockDao.find(encounterWithExtras.encounter.id)).thenReturn(Single.just(encounterWithExtrasModel))
+
+        repository.find(encounterWithExtras.encounter.id).test().assertValue(encounterWithExtras)
     }
 
     @Test
@@ -126,7 +126,7 @@ class EncounterRepositoryImplTest {
         )
 
         val encounterFormModel = EncounterFormModelFactory.build(encounterId = encounterModel.id)
-        val encounterWithMemberAndItemsAndFormsModel = EncounterWithMemberAndItemsAndFormsModel(
+        val encounterWithExtrasModel = EncounterWithExtrasModel(
             encounterModel = encounterModel,
             memberModel = listOf(memberModel),
             encounterItemWithBillableAndPriceModels = listOf(encounterItemRelationModel1, encounterItemRelationModel2),
@@ -137,7 +137,7 @@ class EncounterRepositoryImplTest {
         whenever(mockDiagnosisDao.findAll(diagnosesIdList))
                 .thenReturn(Single.just(listOf(diagnosisModel1, diagnosisModel2)))
 
-        assertEquals(repository.loadClaim(encounterWithMemberAndItemsAndFormsModel),
+        assertEquals(repository.loadClaim(encounterWithExtrasModel),
             EncounterWithExtras(
                 encounter = encounterModel.toEncounter(),
                 member = memberModel.toMember(),
@@ -150,7 +150,7 @@ class EncounterRepositoryImplTest {
                     diagnosisModel2.toDiagnosis()
                 ),
                 encounterForms = listOf(encounterFormModel.toEncounterForm()),
-                referrals = listOf(referral)
+                referral = referral
             )
         )
     }
@@ -163,15 +163,18 @@ class EncounterRepositoryImplTest {
         val billableWithPrice = BillableWithPriceScheduleFactory.build()
         val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
-        val referral = ReferralFactory.build()
-        val encounterWithItemsAndForms = EncounterWithItemsAndForms(
+        val referral = ReferralFactory.build(encounterId = encounter.id)
+        val member = MemberFactory.build(id = encounter.memberId)
+        val encounterWithExtras = EncounterWithExtras(
             encounter = encounter,
             encounterItemRelations = listOf(encounterItemRelation),
             encounterForms = listOf(encounterForm),
-            referrals = listOf(referral)
+            referral = referral,
+            member = member,
+            diagnoses = emptyList()
         )
 
-        repository.insert(encounterWithItemsAndForms, deltas).test().assertComplete()
+        repository.insert(encounterWithExtras, deltas).test().assertComplete()
 
         verify(mockDao).insert(
             encounterModel = EncounterModel.fromEncounter(encounter, clock),
@@ -187,18 +190,24 @@ class EncounterRepositoryImplTest {
     fun sync() {
         val user = UserFactory.build()
         val token = AuthenticationToken("token", clock.instant(), user)
+        val encounterWithExtras = EncounterWithExtrasFactory.build()
         val delta = DeltaFactory.build(
-                action = Delta.Action.ADD,
-                modelName = Delta.ModelName.ENCOUNTER,
-                modelId = encounterModel.id,
-                synced = false
+            action = Delta.Action.ADD,
+            modelName = Delta.ModelName.ENCOUNTER,
+            modelId = encounterWithExtras.encounter.id,
+            synced = false
         )
 
+        val encounterWithExtrasModel = EncounterWithExtrasModel.fromEncounterWithExtras(encounterWithExtras, clock)
+
+        whenever(mockDiagnosisDao.findAll(any())).thenReturn(Single.just(emptyList()))
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
-        whenever(mockDao.find(encounterModel.id)).thenReturn(Single.just(encounterWithItemsModel))
-        whenever(mockApi.postEncounter(token.getHeaderString(), user.providerId,
-                EncounterApi(encounterWithItemsModel.toEncounterWithItems())))
-                .thenReturn(Completable.complete())
+        whenever(mockDao.find(encounterWithExtras.encounter.id)).thenReturn(Single.just(encounterWithExtrasModel))
+        whenever(mockApi.postEncounter(
+            tokenAuthorization = token.getHeaderString(),
+            providerId = user.providerId,
+            encounter = EncounterApi(encounterWithExtras))
+        ).thenReturn(Completable.complete())
 
         repository.sync(delta).test().assertComplete()
     }
@@ -263,6 +272,9 @@ class EncounterRepositoryImplTest {
             }.flatten(),
             memberModels = encounters.map {
                 MemberModel.fromMember(it.member, clock)
+            },
+            referralModels = encounters.mapNotNull {
+                it.referral?.let { referral -> ReferralModel.fromReferral(referral) }
             }
         )
     }

@@ -3,6 +3,7 @@ package org.watsi.device.db.models
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.PrimaryKey
+import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Referral
 import java.util.UUID
 
@@ -18,9 +19,10 @@ import java.util.UUID
 data class ReferralModel(
     @PrimaryKey val id: UUID,
     val receivingFacility: String,
-    val reason: String,
+    val reason: Referral.Reason,
     val encounterId: UUID,
-    val number: String?
+    val number: String?,
+    val date: LocalDate
 ) {
     fun toReferral(): Referral {
         return Referral(
@@ -28,7 +30,8 @@ data class ReferralModel(
             receivingFacility = receivingFacility,
             reason = reason,
             encounterId = encounterId,
-            number = number
+            number = number,
+            date = date
         )
     }
 
@@ -39,7 +42,8 @@ data class ReferralModel(
                 receivingFacility = referral.receivingFacility,
                 reason = referral.reason,
                 encounterId = referral.encounterId,
-                number = referral.number
+                number = referral.number,
+                date = referral.date
             )
         }
     }

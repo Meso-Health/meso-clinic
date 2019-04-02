@@ -5,7 +5,7 @@ import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterRepository
 
@@ -14,31 +14,31 @@ class SubmitClaimUseCase(
     private val encounterRepository: EncounterRepository
 ) {
 
-    fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms, clock: Clock): Completable {
+    fun execute(encounterWithExtras: EncounterWithExtras, clock: Clock): Completable {
         return Completable.fromAction {
-            setSubmittedAt(encounterWithItemsAndForms, clock)
-            createDeltas(encounterWithItemsAndForms)
+            setSubmittedAt(encounterWithExtras, clock)
+            createDeltas(encounterWithExtras)
         }.subscribeOn(Schedulers.io())
     }
 
     private fun setSubmittedAt(
-        encounterWithItemsAndForms: EncounterWithItemsAndForms,
+        encounterWithExtras: EncounterWithExtras,
         clock: Clock
     ) {
         encounterRepository.update(
-            listOf(encounterWithItemsAndForms.encounter.copy(submittedAt = Instant.now(clock)))
+            listOf(encounterWithExtras.encounter.copy(submittedAt = Instant.now(clock)))
         ).blockingAwait()
     }
 
-    private fun createDeltas(encounterWithItemsAndForms: EncounterWithItemsAndForms) {
+    private fun createDeltas(encounterWithExtras: EncounterWithExtras) {
         val deltas = mutableListOf<Delta>()
 
         deltas.add(Delta(
             action = Delta.Action.ADD,
             modelName = Delta.ModelName.ENCOUNTER,
-            modelId = encounterWithItemsAndForms.encounter.id))
+            modelId = encounterWithExtras.encounter.id))
 
-        encounterWithItemsAndForms.encounterForms.forEach { encounterForm ->
+        encounterWithExtras.encounterForms.forEach { encounterForm ->
             deltas.add(Delta(
                 action = Delta.Action.ADD,
                 modelName = Delta.ModelName.ENCOUNTER_FORM,

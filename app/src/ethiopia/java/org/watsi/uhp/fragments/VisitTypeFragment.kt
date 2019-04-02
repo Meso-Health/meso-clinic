@@ -10,29 +10,36 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_container
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.patient_outcome_spinner
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_container
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.Referral
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.VisitTypeViewModel
+import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
 class VisitTypeFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var viewModel: VisitTypeViewModel
     lateinit var observable: LiveData<VisitTypeViewModel.ViewState>
@@ -70,19 +77,11 @@ class VisitTypeFragment : DaggerFragment() {
 
     private fun setErrors(errors: Map<String, Int>) {
         errors[VisitTypeViewModel.REASON_ERROR].let { errorResourceId ->
-            if (errorResourceId == null) {
-                referral_reason_container.error = null
-            } else {
-                referral_reason_container.error = getString(errorResourceId)
-            }
+            referral_reason_spinner.setError(errorResourceId?.let { getString(it) })
         }
 
         errors[VisitTypeViewModel.RECEIVING_FACILITY_ERROR].let { errorResourceId ->
-            if (errorResourceId == null) {
-                receiving_facility_container.error = null
-            } else {
-                receiving_facility_container.error = getString(errorResourceId)
-            }
+            receiving_facility_spinner.setError(errorResourceId?.let { getString(it) })
         }
     }
 
@@ -94,27 +93,12 @@ class VisitTypeFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val visitTypes = Encounter.VISIT_TYPE_CHOICES
-
-        visit_type_spinner.setUpSpinner(
-            visitTypes,
-            encounterFlowState.encounter.visitType ?: visitTypes[0],
-            { selectedVisitType ->
-                viewModel.onSelectVisitType(selectedVisitType)
-            }
-        )
-
-        referral_reason.addTextChangedListener(LayoutHelper.OnChangedListener {
-            reason -> viewModel.onReasonChange(reason)
-        })
+        setUpSpinners()
 
         referral_serial_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             number -> viewModel.onNumberChange(number)
         })
 
-        receiving_facility.addTextChangedListener(LayoutHelper.OnChangedListener {
-            receivingFacility -> viewModel.onReceivingFacilityChange(receivingFacility)
-        })
 
         referral_check_box.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onToggleReferralCheckBox(isChecked)
@@ -131,6 +115,75 @@ class VisitTypeFragment : DaggerFragment() {
                 }
             })
         }
+
+        date_container.setUp(
+            initialValue = Instant.now(),
+            clock = clock,
+            onDateSelected = { dateOfReferral ->
+                viewModel.onUpdateReferralDate(
+                    LocalDateTime.ofInstant(dateOfReferral, clock.zone).toLocalDate()
+                )
+            }
+        )
+
+        referral_serial_number.setText(encounterFlowState.referral?.number)
+    }
+
+    fun setUpSpinners() {
+        val visitTypes = Encounter.VISIT_TYPE_CHOICES
+
+        visit_type_spinner.setUpWithoutPrompt(
+            adapter = SpinnerField.createAdapter(context, visitTypes),
+            initialChoiceIndex = visitTypes.indexOf(encounterFlowState.encounter.visitType ?: visitTypes[0]),
+            onItemSelected = { selectedVisitType : String ->
+                viewModel.onSelectVisitType(selectedVisitType)
+            }
+        )
+
+        val patientOutcomeChoicesMappings = EnumHelper.getPatientOutcomeChoicesMappings()
+        val patientOutcomeEnums = patientOutcomeChoicesMappings.map { it.first }
+        val patientOutcomeWithTranslations = patientOutcomeChoicesMappings.map { getString(it.second) }
+        val initialPatientOutcome = patientOutcomeChoicesMappings.find {
+            it.first == encounterFlowState.encounter.patientOutcome
+        }?.let { context.getString(it.second) }
+
+        patient_outcome_spinner.setUpWithPrompt(
+            choices = patientOutcomeWithTranslations,
+            initialChoice = initialPatientOutcome,
+            onItemSelected = { index: Int -> viewModel.onUpdatePatientOutcome(patientOutcomeEnums[index]) },
+            promptString = getString(R.string.patient_outcome_prompt),
+            onPromptSelected = { viewModel.onUpdatePatientOutcome(null) }
+        )
+
+        receiving_facility_spinner.setUpWithPrompt(
+            choices = Referral.RECEIVING_FACILITY_CHOICES,
+            initialChoice = encounterFlowState.referral?.receivingFacility,
+            onItemSelected = { index ->
+                viewModel.onReceivingFacilityChange(Referral.RECEIVING_FACILITY_CHOICES[index])
+            },
+            promptString = getString(R.string.referred_to_facility_prompt),
+            onPromptSelected = { viewModel.onReceivingFacilityChange(null) },
+            otherChoicesHint = context.getString(R.string.referral_other_option),
+            onOtherChoicesTextChange = { customFacility ->
+                viewModel.onReceivingFacilityChange(customFacility)
+            }
+        )
+
+        val reasonChoicesMappings = EnumHelper.getReasonChoicesMappings()
+        val reasonEnums = reasonChoicesMappings.map { it.first }
+        val reasonStringsWithTranslations = reasonChoicesMappings.map { getString(it.second) }
+
+        val initialReferralReason = reasonChoicesMappings.find {
+            it.first == encounterFlowState.referral?.reason
+        }?.let { context.getString(it.second) }
+
+        referral_reason_spinner.setUpWithPrompt(
+            choices = reasonStringsWithTranslations,
+            initialChoice = initialReferralReason,
+            onItemSelected = { index -> viewModel.onReasonChange(reasonEnums[index]) },
+            promptString = getString(R.string.referral_reason_prompt),
+            onPromptSelected = { viewModel.onReasonChange(null) }
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -146,5 +199,13 @@ class VisitTypeFragment : DaggerFragment() {
     override fun onPause() {
         super.onPause()
         (activity as ClinicActivity).setSoftInputModeToPan()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // This is needed in order to fix a weird bug where navigating back to this screen
+        // would set the wrong pre-selected options for each dropdown (visit type, referral facility, referral reason)
+        setUpSpinners()
     }
 }

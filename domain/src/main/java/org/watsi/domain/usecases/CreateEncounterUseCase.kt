@@ -7,7 +7,7 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.PriceSchedule
-import org.watsi.domain.relations.EncounterWithItemsAndForms
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
@@ -18,16 +18,16 @@ class CreateEncounterUseCase(
     private val priceScheduleRepository: PriceScheduleRepository
 ) {
 
-    fun execute(encounterWithItemsAndForms: EncounterWithItemsAndForms, submitNow: Boolean, clock: Clock): Completable {
+    fun execute(encounterWithExtras: EncounterWithExtras, submitNow: Boolean, clock: Clock): Completable {
         return Completable.fromAction {
 
             val newBillables = mutableListOf<Billable>()
             val newPriceSchedules = mutableListOf<PriceSchedule>()
 
-            val encounterWithItemsAndFormsAndTimestamps =
-                addEncounterTimeStamps(encounterWithItemsAndForms, submitNow, clock)
+            val encounterWithExtrasWithUpdatedTimestamps =
+                addEncounterTimeStamps(encounterWithExtras, submitNow, clock)
 
-            encounterWithItemsAndFormsAndTimestamps.encounterItemRelations.forEach { encounterItemRelation ->
+            encounterWithExtrasWithUpdatedTimestamps.encounterItemRelations.forEach { encounterItemRelation ->
                 val billableWithPrice = encounterItemRelation.billableWithPriceSchedule
                 if (billableRepository.find(billableWithPrice.billable.id).blockingGet() == null) {
                     newBillables.add(billableWithPrice.billable)
@@ -44,19 +44,19 @@ class CreateEncounterUseCase(
 
             createBillables(newBillables)
             createPriceSchedules(newPriceSchedules)
-            createEncounter(encounterWithItemsAndFormsAndTimestamps, submitNow)
+            createEncounter(encounterWithExtrasWithUpdatedTimestamps, submitNow)
         }.subscribeOn(Schedulers.io())
     }
 
     private fun addEncounterTimeStamps(
-        encounterWithItemsAndForms: EncounterWithItemsAndForms,
+        encounterWithExtras: EncounterWithExtras,
         submitNow: Boolean,
         clock: Clock
-    ): EncounterWithItemsAndForms {
+    ): EncounterWithExtras {
         val preparedAt = Instant.now(clock)
         val submittedAt =  if (submitNow) preparedAt else null
-        return encounterWithItemsAndForms.copy(
-            encounter = encounterWithItemsAndForms.encounter.copy(
+        return encounterWithExtras.copy(
+            encounter = encounterWithExtras.encounter.copy(
                 preparedAt = preparedAt,
                 submittedAt = submittedAt
             )
@@ -88,7 +88,7 @@ class CreateEncounterUseCase(
     }
 
     private fun createEncounter(
-        encounterWithItemsAndForms: EncounterWithItemsAndForms,
+        encounterWithExtras: EncounterWithExtras,
         submitNow: Boolean
     ) {
         val deltas = mutableListOf<Delta>()
@@ -98,11 +98,11 @@ class CreateEncounterUseCase(
                 Delta(
                     action = Delta.Action.ADD,
                     modelName = Delta.ModelName.ENCOUNTER,
-                    modelId = encounterWithItemsAndForms.encounter.id
+                    modelId = encounterWithExtras.encounter.id
                 )
             )
 
-            encounterWithItemsAndForms.encounterForms.forEach { encounterForm ->
+            encounterWithExtras.encounterForms.forEach { encounterForm ->
                 deltas.add(
                     Delta(
                         action = Delta.Action.ADD,
@@ -113,6 +113,6 @@ class CreateEncounterUseCase(
             }
         }
 
-        encounterRepository.insert(encounterWithItemsAndForms, deltas).blockingAwait()
+        encounterRepository.insert(encounterWithExtras, deltas).blockingAwait()
     }
 }

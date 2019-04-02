@@ -6,7 +6,7 @@
     <!-- Menu -->
     <string name="menu_logout_label">ውጣ</string>
     <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
-    <!--<string name="log_out_alert_message" translatable="false">Any unsynced data will be deleted.</string>-->
+    <string name="log_out_alert_message">ማንኛውም ያልተዋሃደ መረጃ ሊጠፋ ነው</string>
     <string name="menu_status_label">ሁኔታ</string>
 
     <!-- General Labels -->
@@ -43,8 +43,8 @@
 
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">አስገባ</string>
-    <!--<string name="checked_in">Already Checked In</string>-->
-    <!--<string name="checked_out_snackbar_message">%1$s was checked out.</string>-->
+    <string name="checked_in">ገብቷል</string>
+    <string name="checked_out_snackbar_message">%1$s አልገባም</string>
     <string name="checked_in_snackbar_message">%1$s ገብቷል.</string>
 
     <!-- EncounterFragment -->
@@ -78,19 +78,19 @@
     <string name="version_and_sync_label">ሁኔታ</string>
     <string name="status_title">ኣውታረ መርበብ</string>
     <string name="current_user_label">ፈፃሚ</string>
-    <!--<string name="fetch_members_label">Members last updated</string>-->
+    <string name="fetch_members_label">መጨረሻ ጊዜ የአባላት መረጃ የተስተካከለበት</string>
     <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
     <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
     <string name="fetch_member_pictures_label">የአባል ፎቶ</string>
     <string name="sync_claims_label">የክፍያ ጥያቄዎች</string>
     <string name="all_synced">ሁሉንም አሳምር</string>
-    <!--<string name="all_fetched">All fetched</string>-->
+    <string name="all_fetched">ሁሉም መጥቷል</string>
     <string name="never_updated">በፍፁም</string>
-    <!--<string name="waiting_to_sync">unsynced</string>-->
-    <!--<string name="waiting_to_fetch">unfetched</string>-->
+    <string name="waiting_to_sync">ያልተዋሃደ</string>
+    <string name="waiting_to_fetch">ገና ያልመጣ</string>
     <string name="sync_new_members_label">አዲስ አባላት</string>
-    <!--<string name="sync_photos_label">New photos</string>-->
-    <!--<string name="sync_id_events_label">Identifications</string>-->
+    <string name="sync_photos_label">አዲስ ፎቶዎች</string>
+    <string name="sync_id_events_label">መለያዎች</string>
     <string name="app_version">የክፍያ ጥያቄ መላክ</string>
     <string name="android_version">አንድሮይድ %1$S</string>
 
@@ -187,7 +187,32 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">የጉብኝት አይነት</string>
     <string name="visit_type_label">የጉብኝት አይነት</string>
-    <!--<string name="referral_label">Referral</string>-->
+    <string name="referral_label">ሪፈር</string>
+    <string name="referral_date_label">ሪፈር የተባለበት ቀን</string>
+    <!--<string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>-->
+    <!--<string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>-->
+    <!--<string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>-->
+    <string name="referral_serial_number">የሪፈር ቁጥር (ካለ)</string>
+    <string name="referral_reason">ሪፈር የተባለበት ምክንያት</string>
+    <string name="referred_to_facility">ሪፈር የተላከበት ጤና ተቋም</string>
+    <!--<string name="referred_to_facility_prompt">Select referred to facility…</string>-->
+    <string name="referral_other_option">ሌሎች ሪፈር የሚላክላቸው ጤና ተቋሞች</string>
+    <string name="referral_reason_prompt">ሪፈር የተባለበት ምክንያት…</string>
+    <string name="further_consultation">ለተጨማሪ ከፍተኛ ምርመራ</string>
+    <string name="drug_stockout">የታዘዘው መድሃኒት በተቋማችን አለመኖር</string>
+    <string name="investigative_tests">የታዘዘ ላቦራቶሪ ወይም ራጂ  በተቋማችን አለመኖር</string>
+    <string name="inpatient_care">በከፍተኛ ተቋም ተኝቶ መታከም ስላለበት</string>
+    <string name="bed_shortage">የአልጋ እጥረት</string>
+    <string name="follow_up">በአቅራብያው ክትትል እንዲያገኙ</string>
+    <string name="other">ለሌሎች (ያልተጠቀሱ) አገልግሎቶች</string>
+    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
+    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="outcome_cured_or_discharged">ታክመዋል/ወጥተዋል</string>
+    <string name="outcome_referred">ሪፈር ተብሏል</string>
+    <string name="outcome_follow_up">ክትትል ያስፈልገዋል</string>
+    <string name="outcome_refused_service">አገልግሎት ለማግኘት ፍቃደኛ አይደለም/ችም</string>
+    <string name="outcome_expired">ሞት</string>
+    <string name="outcome_other">ሌላ</string>
 
     <!-- EncounterFragment -->
     <string name="no_line_items_snackbar_message">የክፍያ ጥያቄ ቢያንስ ኣንድ መስመር አገልግሎት ሊኖሮው ይገባል</string>
@@ -207,9 +232,9 @@
         <item quantity="one">%d ከአንድ ቀን በፊት</item>
         <item quantity="other">%d ከቀናት በፊት</item>
     </plurals>
-    <string name="date_header">አገልግሎት የተሰጠበት ቀን</string>
+    <string name="date_of_service_label">አገልግሎት የተሰጠበት ቀን</string>
     <string name="comment_label">ኣስተያየት</string>
-    <string name="add_clickable"><u>ኣስተያየቶች)</u></string>
+    <string name="add_clickable"><u>ጨምር</u></string>
     <string name="comment_prompt">ኣስተያየት ጨምር</string>
     <string name="resubmit">የክፍያ ጥያቄ ደግመህ ላክ</string>
     <string name="claim_id_deleted">የክፍያ ጥያቄ መ/ቁ %1$s ተሰርዘዋል</string>
