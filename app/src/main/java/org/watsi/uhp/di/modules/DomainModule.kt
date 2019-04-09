@@ -117,9 +117,10 @@ class DomainModule {
     @Provides
     fun provideUpdateEncounterUseCase(
         encounterRepository: EncounterRepository,
+        referralRepository: ReferralRepository,
         priceScheduleRepository: PriceScheduleRepository
     ): UpdateEncounterUseCase {
-        return UpdateEncounterUseCase(encounterRepository, priceScheduleRepository)
+        return UpdateEncounterUseCase(encounterRepository, referralRepository, priceScheduleRepository)
     }
 
     @Provides
