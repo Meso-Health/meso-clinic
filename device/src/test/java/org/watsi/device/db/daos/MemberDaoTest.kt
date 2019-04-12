@@ -38,7 +38,7 @@ class MemberDaoTest : DaoBaseTest() {
         val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
             memberId = memberWithEncounter.id,
             dismissed = false)
-        EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
+        EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithEncounter.id)
 
         val memberWithOpenCheckInRelation = MemberWithIdEventAndThumbnailPhotoModel(
             memberWithOpenCheckIn,
@@ -70,7 +70,7 @@ class MemberDaoTest : DaoBaseTest() {
         val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
                 memberId = memberWithEncounter.id,
                 dismissed = false)
-        EncounterModelFactory.create(encounterDao, identificationEventId = idEventWithEncounter.id)
+        EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithEncounter.id)
 
         memberDao.isMemberCheckedIn(memberWithOpenCheckIn.id).test().assertValue(true)
         memberDao.isMemberCheckedIn(memberWithDismissedCheckIn.id).test().assertValue(false)
@@ -231,7 +231,8 @@ class MemberDaoTest : DaoBaseTest() {
     fun needPhotoDownload() {
         val needsPhoto = MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
         // photo downloaded
-        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
+        val photoModel = PhotoModelFactory.create(photoDao)
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = photoModel.id)
         // does not have photo
         MemberModelFactory.create(memberDao, photoUrl = null)
         // is archived
@@ -268,8 +269,9 @@ class MemberDaoTest : DaoBaseTest() {
     fun needPhotoDownloadCount() {
         // awaiting photo download
         MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = null)
+        val photoModel = PhotoModelFactory.create(photoDao)
         // photo downloaded
-        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = UUID.randomUUID())
+        MemberModelFactory.create(memberDao, photoUrl = "foo", thumbnailPhotoId = photoModel.id)
         // does not have photo
         MemberModelFactory.create(memberDao, photoUrl = null)
         // is archived

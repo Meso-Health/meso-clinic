@@ -1,13 +1,29 @@
 package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Encounter
 import java.util.UUID
 
-@Entity(tableName = "encounters")
+@Entity(
+    tableName = "encounters",
+    indices = [
+        Index("memberId")
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = MemberModel::class,
+            parentColumns = ["id"],
+            childColumns = ["memberId"]
+        )
+        // We don't have a foreign key for revisedEncounterId & identificationEventId because when fetching returned encounters,
+        // we won't necessarily have access to the previous encounter.
+    ]
+)
 data class EncounterModel(
     @PrimaryKey val id: UUID,
     val createdAt: Instant,

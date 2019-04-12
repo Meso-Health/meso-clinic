@@ -26,9 +26,9 @@ object EncounterFormModelFactory {
 
     fun create(encounterFormDao: EncounterFormDao,
                id: UUID = UUID.randomUUID(),
-               encounterId: UUID = UUID.randomUUID(),
-               photoId: UUID = UUID.randomUUID(),
-               thumbnailId: UUID = UUID.randomUUID(),
+               encounterId: UUID,
+               photoId: UUID,
+               thumbnailId: UUID,
                createdAt: Instant? = null,
                updatedAt: Instant? = null,
                clock: Clock = Clock.systemUTC()) : EncounterFormModel {

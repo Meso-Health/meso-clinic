@@ -31,7 +31,4 @@ interface IdentificationEventDao {
             "AND identification_events.memberId = :memberId\n" +
             "AND identification_events.dismissed = 0")
     fun openCheckIn(memberId: UUID): Single<IdentificationEventModel>
-
-    @Query("DELETE FROM identification_events")
-    fun deleteAll()
 }

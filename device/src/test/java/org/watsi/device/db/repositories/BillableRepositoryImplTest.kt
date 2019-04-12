@@ -9,7 +9,6 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,7 +41,6 @@ class BillableRepositoryImplTest {
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
-    @Mock lateinit var okHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: BillableRepositoryImpl
 
@@ -58,8 +56,7 @@ class BillableRepositoryImplTest {
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        repository = BillableRepositoryImpl(
-                mockDao, mockApi, mockSessionManager, mockPreferencesManager, clock, okHttpClient)
+        repository = BillableRepositoryImpl(mockDao, mockApi, mockSessionManager, mockPreferencesManager, clock)
     }
 
     @Test

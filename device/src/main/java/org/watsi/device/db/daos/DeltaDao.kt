@@ -33,7 +33,4 @@ interface DeltaDao {
 
     @Query("SELECT COUNT(DISTINCT(modelId)) from deltas WHERE synced = 0 AND modelName = :modelName")
     fun unsyncedCount(modelName: Delta.ModelName): Flowable<Int>
-
-    @Query("DELETE FROM deltas")
-    fun deleteAll()
 }

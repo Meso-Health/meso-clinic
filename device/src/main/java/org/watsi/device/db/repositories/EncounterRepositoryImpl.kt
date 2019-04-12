@@ -5,7 +5,6 @@ import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
@@ -37,8 +36,7 @@ class EncounterRepositoryImpl(
     private val memberDao: MemberDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
-    private val clock: Clock,
-    private val okHttpClient: OkHttpClient
+    private val clock: Clock
 ) : EncounterRepository {
     override fun revisedIds(): Single<List<UUID>> {
         return encounterDao.revisedIds()
@@ -167,11 +165,11 @@ class EncounterRepositoryImpl(
             }
 
             encounterDao.upsert(
+                memberModels = emptyList(),
                 encounterModels = listOf(encounterModel),
                 encounterItemModels = encounterItemModels,
                 billableModels = emptyList(),
                 priceScheduleModels = emptyList(),
-                memberModels = emptyList(),
                 referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
@@ -210,11 +208,11 @@ class EncounterRepositoryImpl(
             }
 
             encounterDao.upsert(
+                memberModels = memberModels,
                 encounterModels = encounterModels,
                 encounterItemModels = encounterItemModels,
                 billableModels = billableModels,
                 priceScheduleModels = priceScheduleModels,
-                memberModels = memberModels,
                 referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
@@ -251,12 +249,5 @@ class EncounterRepositoryImpl(
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
-    }
-
-    override fun deleteAll(): Completable {
-        return Completable.fromAction {
-            okHttpClient.cache().evictAll()
-            encounterDao.deleteAll()
-        }.subscribeOn(Schedulers.io())
     }
 }

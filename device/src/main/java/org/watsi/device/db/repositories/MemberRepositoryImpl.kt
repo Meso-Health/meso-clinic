@@ -6,7 +6,6 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
@@ -34,8 +33,7 @@ class MemberRepositoryImpl(
     private val sessionManager: SessionManager,
     private val preferencesManager: PreferencesManager,
     private val photoDao: PhotoDao,
-    private val clock: Clock,
-    private val okHttpClient: OkHttpClient
+    private val clock: Clock
 ) : MemberRepository {
 
     override fun all(excludeArchived: Boolean): Flowable<List<Member>> {
@@ -221,12 +219,5 @@ class MemberRepositoryImpl(
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
-    }
-
-    override fun deleteAll(): Completable {
-        return Completable.fromAction {
-            okHttpClient.cache().evictAll()
-            memberDao.deleteAll()
-        }.subscribeOn(Schedulers.io())
     }
 }

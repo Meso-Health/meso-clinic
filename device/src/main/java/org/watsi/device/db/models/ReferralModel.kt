@@ -2,19 +2,24 @@ package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Referral
 import java.util.UUID
 
-@Entity(tableName = "referrals",
-        foreignKeys = [
-            ForeignKey(
-                entity = EncounterModel::class,
-                parentColumns = ["id"],
-                childColumns = ["encounterId"]
-            )
-        ]
+@Entity(
+    tableName = "referrals",
+    indices = [
+        Index("encounterId")
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = EncounterModel::class,
+            parentColumns = ["id"],
+            childColumns = ["encounterId"]
+        )
+    ]
 )
 data class ReferralModel(
     @PrimaryKey val id: UUID,

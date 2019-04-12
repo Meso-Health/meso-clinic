@@ -44,11 +44,11 @@ interface EncounterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(
+        memberModels: List<MemberModel>,
         encounterModels: List<EncounterModel>,
         encounterItemModels: List<EncounterItemModel>,
         billableModels: List<BillableModel>,
         priceScheduleModels: List<PriceScheduleModel>,
-        memberModels: List<MemberModel>,
         referralModels: List<ReferralModel>
     )
 
@@ -81,11 +81,11 @@ interface EncounterDao {
     fun returnedCount(): Flowable<Int>
 
     @Transaction
-    @Query("SELECT id from encounters WHERE adjudicationState = 'RETURNED'")
+    @Query("SELECT id from encounters WHERE adjudicationState = 'RETURNED' ORDER BY occurredAt")
     fun returnedIds(): Single<List<UUID>>
 
     @Transaction
-    @Query("SELECT DISTINCT(revisedEncounterId) from encounters WHERE revisedEncounterId IS NOT NULL")
+    @Query("SELECT DISTINCT(revisedEncounterId) from encounters WHERE revisedEncounterId IS NOT NULL ORDER BY occurredAt")
     fun revisedIds(): Single<List<UUID>>
 
     @Query("SELECT encounters.* FROM encounters\n" +
@@ -94,7 +94,4 @@ interface EncounterDao {
             "deltas.synced = 0 AND\n" +
             "deltas.modelName = 'ENCOUNTER')")
     fun unsynced(): Single<List<EncounterWithExtrasModel>>
-
-    @Query("DELETE FROM encounters")
-    fun deleteAll()
 }

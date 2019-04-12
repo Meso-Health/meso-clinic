@@ -6,7 +6,6 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +19,6 @@ import org.watsi.device.api.models.PriceScheduleApi
 import org.watsi.device.db.daos.PriceScheduleDao
 import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
-import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
@@ -32,8 +30,6 @@ class PriceScheduleRepositoryImplTest {
     @Mock lateinit var mockDao: PriceScheduleDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
-    @Mock lateinit var mockPreferencesManager: PreferencesManager
-    @Mock lateinit var okHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     val user = UserFactory.build()
     val token = AuthenticationToken("token", clock.instant(), user)
@@ -51,7 +47,7 @@ class PriceScheduleRepositoryImplTest {
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        repository = PriceScheduleRepositoryImpl(mockDao, mockApi, mockSessionManager, clock, okHttpClient)
+        repository = PriceScheduleRepositoryImpl(mockDao, mockApi, mockSessionManager, clock)
     }
 
     @Test

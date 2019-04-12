@@ -3,6 +3,7 @@ ext {
     androidSupportLibraryVersion = '26.1.0'
     constraintLayoutVersion = '1.0.2'
     androidArchitectureComponentsVersion = '1.0.0'
+    androidRoomVersion = '1.1.1'
     daggerVersion = '2.14.1'
     retrofitVersion = '2.3.0'
     rxJavaVersion = '2.1.9'
@@ -39,9 +40,9 @@ ext {
             reactiveStreams:        "android.arch.lifecycle:reactivestreams:$androidArchitectureComponentsVersion",
             rxJava:                 "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
             rxAndroid:              "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion",
-            roomRuntime:            "android.arch.persistence.room:runtime:$androidArchitectureComponentsVersion",
-            roomRxJava:             "android.arch.persistence.room:rxjava2:$androidArchitectureComponentsVersion",
-            roomCompiler:           "android.arch.persistence.room:compiler:$androidArchitectureComponentsVersion",
+            roomRuntime:            "android.arch.persistence.room:runtime:$androidRoomVersion",
+            roomRxJava:             "android.arch.persistence.room:rxjava2:$androidRoomVersion",
+            roomCompiler:           "android.arch.persistence.room:compiler:$androidRoomVersion",
             dagger:                 "com.google.dagger:dagger:$daggerVersion",
             daggerCompiler:         "com.google.dagger:dagger-compiler:$daggerVersion",
             daggerAndroidSupport:   "com.google.dagger:dagger-android-support:$daggerVersion",

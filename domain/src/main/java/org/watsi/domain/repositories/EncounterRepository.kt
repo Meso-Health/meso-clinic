@@ -28,5 +28,4 @@ interface EncounterRepository {
     fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>>
     fun returnedIds(): Single<List<UUID>>
     fun revisedIds(): Single<List<UUID>>
-    fun deleteAll(): Completable
 }

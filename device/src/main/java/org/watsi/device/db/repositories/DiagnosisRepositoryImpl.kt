@@ -13,11 +13,13 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.repositories.DiagnosisRepository
 
-class DiagnosisRepositoryImpl(private val diagnosisDao: DiagnosisDao,
-                              private val api: CoverageApi,
-                              private val sessionManager: SessionManager,
-                              private val preferencesManager: PreferencesManager,
-                              private val clock: Clock) : DiagnosisRepository {
+class DiagnosisRepositoryImpl(
+    private val diagnosisDao: DiagnosisDao,
+    private val api: CoverageApi,
+    private val sessionManager: SessionManager,
+    private val preferencesManager: PreferencesManager,
+    private val clock: Clock
+) : DiagnosisRepository {
 
     override fun all(): Single<List<Diagnosis>> {
         return diagnosisDao.all().map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())

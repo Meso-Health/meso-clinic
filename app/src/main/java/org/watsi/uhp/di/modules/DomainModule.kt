@@ -8,6 +8,7 @@ import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.MainRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
@@ -329,24 +330,8 @@ class DomainModule {
 
     @Provides
     fun provideDeleteUserDataUseCase(
-        billableRepository: BillableRepository,
-        deltaRepository: DeltaRepository,
-        identificationEventRepository: IdentificationEventRepository,
-        memberRepository: MemberRepository,
-        priceScheduleRepository: PriceScheduleRepository,
-        encounterRepository: EncounterRepository,
-        photoRepository: PhotoRepository,
-        referralRepository: ReferralRepository
+        mainRepository: MainRepository
     ): DeleteUserDataUseCase {
-        return DeleteUserDataUseCase(
-            billableRepository,
-            deltaRepository,
-            identificationEventRepository,
-            memberRepository,
-            priceScheduleRepository,
-            encounterRepository,
-            photoRepository,
-            referralRepository
-        )
+        return DeleteUserDataUseCase(mainRepository)
     }
 }

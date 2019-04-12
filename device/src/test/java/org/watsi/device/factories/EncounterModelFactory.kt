@@ -3,6 +3,7 @@ package org.watsi.device.factories
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.db.daos.EncounterDao
+import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.domain.entities.Encounter
 import java.util.UUID
@@ -11,8 +12,8 @@ object EncounterModelFactory {
 
     fun build(
         id: UUID = UUID.randomUUID(),
-        memberId: UUID = UUID.randomUUID(),
-        identificationEventId: UUID? = UUID.randomUUID(),
+        memberId: UUID,
+        identificationEventId: UUID? = null,
         occurredAt: Instant = Instant.now(),
         preparedAt: Instant = Instant.now(),
         backdatedOccurredAt: Boolean = false,
@@ -57,9 +58,10 @@ object EncounterModelFactory {
 
     fun create(
         encounterDao: EncounterDao,
+        memberDao: MemberDao,
         id: UUID = UUID.randomUUID(),
-        memberId: UUID = UUID.randomUUID(),
-        identificationEventId: UUID? = UUID.randomUUID(),
+        memberId: UUID? = null,
+        identificationEventId: UUID? = null,
         occurredAt: Instant = Instant.now(),
         preparedAt: Instant = Instant.now(),
         backdatedOccurredAt: Boolean = false,
@@ -80,7 +82,7 @@ object EncounterModelFactory {
     ) : EncounterModel {
         val model = build(
             id = id,
-            memberId = memberId,
+            memberId = memberId ?: MemberModelFactory.create(memberDao).id,
             identificationEventId = identificationEventId,
             occurredAt = occurredAt,
             preparedAt = preparedAt,

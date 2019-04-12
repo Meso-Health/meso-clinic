@@ -15,7 +15,6 @@ import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
@@ -62,7 +61,6 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     @Mock lateinit var mockPhotoDao: PhotoDao
-    @Mock lateinit var okHttpClient: OkHttpClient
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: MemberRepositoryImpl
     
@@ -74,7 +72,7 @@ class MemberRepositoryImplTest {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         repository = MemberRepositoryImpl(
-                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock, okHttpClient)
+                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock)
     }
 
     @Test
