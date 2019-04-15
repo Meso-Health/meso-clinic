@@ -8,9 +8,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -22,6 +19,9 @@ import kotlinx.android.synthetic.ethiopia.fragment_search.membership_number_layo
 import kotlinx.android.synthetic.ethiopia.fragment_search.region_number
 import kotlinx.android.synthetic.ethiopia.fragment_search.search_button
 import kotlinx.android.synthetic.ethiopia.fragment_search.woreda_number
+import kotlinx.android.synthetic.ethiopia.fragment_search.cbhi_button
+import kotlinx.android.synthetic.ethiopia.fragment_search.scan_card_button
+import kotlinx.android.synthetic.ethiopia.fragment_search.search_by_name_button
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
@@ -50,7 +50,7 @@ class SearchFragment : DaggerFragment() {
     lateinit var formStateObservable: LiveData<SearchViewModel.FormState>
 
     companion object {
-        const val SCAN_CARD_INTENT = 1
+        const val SEARCH_MEMBER_BY_CARD_INTENT = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +68,6 @@ class SearchFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.search_fragment_label), null)
         (activity as ClinicActivity).setSoftInputModeToResize()
-        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_search, container, false)
     }
 
@@ -133,6 +132,18 @@ class SearchFragment : DaggerFragment() {
             }
         }
 
+        cbhi_button.setTextColor(context.getColor(R.color.blue4))
+        cbhi_button.compoundDrawableTintList = context.getColorStateList(R.color.blue4)
+
+        scan_card_button.setOnClickListener {
+            startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java),
+                SEARCH_MEMBER_BY_CARD_INTENT)
+        }
+
+        search_by_name_button.setOnClickListener {
+            navigationManager.goTo(MemberSearchFragment())
+        }
+
         /* Hide keyboard if no text inputs have focus */
         val textFields = listOf(region_number, woreda_number, kebele_number, household_number, household_member_number)
         textFields.forEach {
@@ -142,24 +153,6 @@ class SearchFragment : DaggerFragment() {
                 }
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
-        menu.clear()
-        menuInflater.inflate(R.menu.search, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.menu_search_card -> {
-                startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
-            }
-            R.id.menu_search_by_name -> {
-                navigationManager.goTo(MemberSearchFragment())
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

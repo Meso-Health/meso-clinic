@@ -138,7 +138,10 @@
     <string name="start_claim_button">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
     <string name="encounter_submitted">የክፍያ ጥያቄ በሚገባ ተላልፏል</string>
     <string name="invalid_membership_error">የኣባልነት መለያ ቁጥር ስሕተት ኣለዉ</string>
-    <string name="scan_member_card_menu_item_title">ካርድ ስካን አድርግ</string>
+    <string name="scan_card">ካርድ ስካን አድርግ</string>
+    <string name="search_name">በስም ይፈልጉ</string>
+    <string name="search_title">ፈልግ</string>
+    <string name="cbhi_id_search_label">በማአጤም መለያ ቁጥር ፈልግ</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
