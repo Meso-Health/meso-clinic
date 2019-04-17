@@ -19,7 +19,7 @@ class EthiopianDateHelperTest {
     @Test
     fun formatEthiopianDate() {
         val testDate = Instant.parse("2018-09-10T10:15:30.000Z")
-        val expectedString = "05 / 13 / 2010"
+        val expectedString = "05-13-2010"
 
         assertEquals(expectedString, EthiopianDateHelper.formatEthiopianDate(testDate, clock))
     }

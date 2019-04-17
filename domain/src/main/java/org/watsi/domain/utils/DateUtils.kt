@@ -11,8 +11,7 @@ import org.watsi.domain.entities.Member
 
 object DateUtils {
     const val TIME_FORMAT = "h:mma"
-    const val DAY_OF_WEEK_FORMAT = "EEEE"
-    const val DATE_FORMAT = "MMM dd, yyyy"
+    const val DATE_FORMAT = "dd-MM-yyyy"
 
     fun formatLocalDate(localDate: LocalDate): String {
         val formatter = DateTimeFormatter.ofPattern(DATE_FORMAT)
@@ -71,10 +70,6 @@ object DateUtils {
 
     fun getDaysAgo(date: LocalDate, clock: Clock = Clock.systemDefaultZone()): Int {
         return ChronoUnit.DAYS.between(date, LocalDate.now(clock)).toInt()
-    }
-
-    fun getSecondsAgo(time: Long, clock: Clock = Clock.systemDefaultZone()): Double {
-        return (Instant.now(clock).toEpochMilli() - time) / 1000.0
     }
 }
 
