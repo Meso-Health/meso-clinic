@@ -32,9 +32,8 @@
     <string name="invalid_membership_error">Invalid membership number</string>
     <string name="scan_card">Scan card</string>
     <string name="search_name">Search name</string>
-    <string name="menu_search_by_name">Search by name</string>
     <string name="cbhi_id_label">Search CBHI ID</string>
-    <string name="search_cbhi_id_label">CBHI ID</string>
+    <string name="cbhi_id_search_label">CBHI ID</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>

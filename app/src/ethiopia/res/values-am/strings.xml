@@ -91,8 +91,8 @@
     <string name="sync_new_members_label">አዲስ አባላት</string>
     <string name="sync_photos_label">አዲስ ፎቶዎች</string>
     <string name="sync_id_events_label">መለያዎች</string>
-    <string name="app_version">የክፍያ ጥያቄ መላክ</string>
-    <string name="android_version">አንድሮይድ %1$S</string>
+    <string name="app_version">የክፍያ ጥያቄ መላክ %1$s</string>
+    <string name="android_version">አንድሮይድ %1$s</string>
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
@@ -140,8 +140,8 @@
     <string name="invalid_membership_error">የኣባልነት መለያ ቁጥር ስሕተት ኣለዉ</string>
     <string name="scan_card">ካርድ ስካን አድርግ</string>
     <string name="search_name">በስም ይፈልጉ</string>
-    <string name="search_title">ፈልግ</string>
     <string name="cbhi_id_search_label">በማአጤም መለያ ቁጥር ፈልግ</string>
+    <string name="cbhi_id_label">የማአጤም መለያ ቁጥር</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>

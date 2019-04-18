@@ -163,7 +163,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:drawableTop="@drawable/ic_perm_contact_calendar_grey_24dp"
-            android:text="@string/search_cbhi_id_label"
+            android:text="@string/cbhi_id_search_label"
             android:textColor="@color/gray6"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread"

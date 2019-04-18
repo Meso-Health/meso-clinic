@@ -26,8 +26,14 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
       - run:
-          name: Run Tests
-          command: ./gradlew lintDebug runUnitTests
+          name: Run Ethiopia linting
+          command: ./gradlew lintEthiopiaRelease
+      - run:
+          name: Run Uganda linting
+          command: ./gradlew lintUgandaRelease
+      - run:
+          name: Run unit tests for all flavours
+          command: ./gradlew runUnitTests
       - store_artifacts:
           path: app/build/reports
           destination: reports/app
