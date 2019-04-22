@@ -1,20 +1,26 @@
 package org.watsi.uhp.services
 
 import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
+import org.threeten.bp.Clock
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DiagnosisRepository
-import org.watsi.domain.repositories.MemberRepository
+import org.watsi.domain.usecases.FetchBillablesUseCase
+import org.watsi.domain.usecases.FetchDiagnosesUseCase
+import org.watsi.domain.usecases.FetchMembersUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import javax.inject.Inject
 
-class FetchService : BaseService() {
+class FetchDataService : BaseService() {
 
-    @Inject lateinit var memberRepository: MemberRepository
+    @Inject lateinit var fetchBillablesUseCase: FetchBillablesUseCase
+    @Inject lateinit var fetchDiagnosesUseCase: FetchDiagnosesUseCase
+    @Inject lateinit var fetchMembersUseCase: FetchMembersUseCase
     @Inject lateinit var billableRepository: BillableRepository
     @Inject lateinit var diagnosisRepository: DiagnosisRepository
-    @Inject lateinit var fetchReturnedClaimsUseCase: FetchReturnedClaimsUseCase
+    @Inject lateinit var preferencesManager: PreferencesManager
+    @Inject lateinit var clock: Clock
     @Inject lateinit var okHttpClient: OkHttpClient
 
     override fun executeTasks(): Completable {
@@ -31,12 +37,18 @@ class FetchService : BaseService() {
             }
 
             Completable.concatArray(
-                billableRepository.fetch().onErrorComplete { setErrored(it) },
-                diagnosisRepository.fetch().onErrorComplete { setErrored(it) },
-                fetchReturnedClaimsUseCase.execute().onErrorComplete { setErrored(it) },
-                memberRepository.fetch().onErrorComplete { setErrored(it) },
-                Completable.fromAction { if (getErrored()) { throw Exception() } }
+                fetchBillablesUseCase.execute().onErrorComplete { setError(it, "Download Billables") },
+                fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, "Download Diagnoses") },
+                fetchMembersUseCase.execute().onErrorComplete { setError(it, "Download Members") },
+                Completable.fromAction {
+                    val errors = getErrorMessages()
+                    if (!errors.isEmpty()) {
+                        throw ExecuteTasksFailureException()
+                    } else {
+                        preferencesManager.updateDataLastFetched(clock.instant())
+                    }
+                }
             ).blockingAwait()
-        }.subscribeOn(Schedulers.io())
+        }
     }
 }

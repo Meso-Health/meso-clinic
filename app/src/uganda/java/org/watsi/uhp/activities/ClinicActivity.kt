@@ -16,8 +16,8 @@ import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.DeleteSyncedPhotosService
-import org.watsi.uhp.services.FetchMemberPhotosService
-import org.watsi.uhp.services.FetchService
+import org.watsi.uhp.services.FetchPhotosService
+import org.watsi.uhp.services.FetchDataService
 import org.watsi.uhp.services.SyncDataService
 import org.watsi.uhp.services.SyncPhotosService
 import javax.inject.Inject
@@ -64,9 +64,9 @@ class ClinicActivity : DaggerAppCompatActivity() {
     }
 
     private fun startServices() {
-        BaseService.schedule(FETCH_DATA_SERVICE_JOB_ID, this, FetchService::class.java)
+        BaseService.schedule(FETCH_DATA_SERVICE_JOB_ID, this, FetchDataService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
-        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchMemberPhotosService::class.java)
+        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchPhotosService::class.java)
         BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
         BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
     }

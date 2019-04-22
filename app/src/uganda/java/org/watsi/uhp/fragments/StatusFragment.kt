@@ -91,7 +91,7 @@ class StatusFragment : DaggerFragment() {
 
     private fun formattedUpdatedAt(updatedAt: Long): String {
         return if (updatedAt == 0L) {
-            getString(R.string.never_updated)
+            getString(R.string.never)
         } else {
             DateUtils.getRelativeTimeSpanString(updatedAt).toString()
         }

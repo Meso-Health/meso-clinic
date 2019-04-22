@@ -137,8 +137,9 @@ class DbModule {
                                    memberDao: MemberDao,
                                    api: CoverageApi,
                                    sessionManager: SessionManager,
+                                   preferencesManager: PreferencesManager,
                                    clock: Clock): EncounterRepository =
-            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, memberDao, api, sessionManager, clock)
+            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, memberDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,

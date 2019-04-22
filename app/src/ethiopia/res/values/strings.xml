@@ -22,6 +22,10 @@
     <string name="pending_claims_dialog_label">Enter security PIN</string>
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
 
+    <!-- StatusFragment -->
+    <string name="last_fetched_returned_encounters_label" translatable="false">Returned Claims</string>
+    <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
+
     <!-- SearchFragment -->
     <string name="search_fragment_label">@string/search</string>
     <string name="slash" translatable="false">/</string>

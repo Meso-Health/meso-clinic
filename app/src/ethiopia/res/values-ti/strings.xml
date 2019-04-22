@@ -78,24 +78,34 @@
     <string name="encounter_saved">ሕቶ ክፍሊት ተቐሚጡ</string>
 
     <!-- StatusFragment -->
-    <string name="version_and_sync_label">ኩነታት</string>
-    <string name="status_title">መርበብ</string>
+    <string name="status_fragment_label">ኩነታት</string>
     <string name="current_user_label">ፈፃሚ</string>
-    <string name="fetch_members_label">መወዳእታ እዋን መረዳእታ ኣባላት ዝተመሓየሸሉ</string>
-    <string name="fetch_billables_label">ዋጋ ተመን ዝተሓደሰሉ እዋን</string>
-    <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
-    <string name="fetch_member_pictures_label">ናይ ኣባል ፎቶ</string>
-    <string name="sync_claims_label">ሕቶታት  ክፍሊት</string>
-    <string name="all_synced">ኩሉ ኣዋድድ</string>
-    <string name="all_fetched">ኩሉ መፂኡ</string>
-    <string name="never_updated">ብፍፁም</string>
-    <string name="waiting_to_sync">ዘይተዋደደ</string>
-    <string name="waiting_to_fetch">ገና ዘይመፀ</string>
-    <string name="sync_new_members_label">ሓዱሽ ኣባላት</string>
-    <string name="sync_photos_label">ሓዱሽ ፎቶታት</string>
-    <string name="sync_id_events_label">መፍለይ/መለለይታት</string>
+
+    <string name="fetch_data_title">ዝወረዱ (መረዳእታ)</string>
+    <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <string name="last_fetched_diagnoses_label">ነፀርታታት ሕማም</string>
+    <string name="last_fetched_members_label">ኣባላት</string>
+
+    <string name="fetch_photos_title">ዝወረዱ (ስእልታት)</string>
+    <string name="last_fetched_member_photos_label">ናይ ኣባል ስእልታት</string>
+
+    <string name="sync_data_title">ዝተፅዓኑ (መረዳእታ)</string>
+    <string name="unsynced_members_label">አባላት</string>
+    <string name="unsynced_id_events_label">መፍለይ/መለለይታት</string>
+    <string name="unsynced_encounters_label">ሕቶታት ክፍሊት</string>
+
+    <string name="sync_photos_title">ዝተፅዓኑ (ስእልታት)</string>
+    <string name="unsynced_member_photos_label">ናይ ኣባል ስእልታት</string>
+
     <string name="app_version">ሕቶ ክፍሊት ምልኣኽ %1$s</string>
     <string name="android_version">ኣንድሮይድ %1$s</string>
+
+    <string name="last_successful_run_label">ንመወዳእታ እዋን ዝኸደሉ</string>
+    <string name="all_fetched">ኹሉ ወሪዱ</string>
+    <string name="all_synced">ኹሉ ተፃዒኑ</string>
+    <string name="waiting_to_fetch">ንምውራድ</string>
+    <string name="waiting_to_sync">ንምፅዓን</string>
+    <string name="never">ብፍፁም</string>
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
@@ -123,6 +133,10 @@
     <string name="no_claims">ዝተረኸበ ሕቶ ክፍሊት የለን</string>
     <string name="pending_claims_dialog_label">ናይ ይሕለፍ ቁፅሪ ኣእትው</string>
     <string name="pending_claims_dialog_error_message">ዝተሳሓሓተ ናይ ይሕለፍ ቁፅሪ</string>
+
+    <!-- StatusFragment -->
+    <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
+    <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
