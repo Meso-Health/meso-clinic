@@ -22,6 +22,7 @@ import org.watsi.device.db.models.EncounterWithExtrasModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
@@ -36,6 +37,7 @@ class EncounterRepositoryImpl(
     private val memberDao: MemberDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
+    private val preferencesManager: PreferencesManager,
     private val clock: Clock
 ) : EncounterRepository {
     override fun revisedIds(): Single<List<UUID>> {
@@ -64,6 +66,8 @@ class EncounterRepositoryImpl(
                 val returnedClaims = api.getReturnedClaims(token.getHeaderString(), token.user.providerId).blockingGet()
                 val returnedClaimsMemberIds = returnedClaims.map { it.memberId }
                 val alreadyPersistedMembers = memberDao.findMembersByIds(returnedClaimsMemberIds).blockingGet().map { it.toMember() }
+
+                preferencesManager.updateReturnedClaimsLastFetched(clock.instant())
 
                 returnedClaims.map { returnedClaim ->
                     val persistedMember = alreadyPersistedMembers.find { it.id == returnedClaim.memberId }

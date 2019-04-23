@@ -22,11 +22,11 @@
         tools:node="merge">
 
         <service
-            android:name=".services.FetchService"
+            android:name=".services.FetchDataService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
         <service
-            android:name=".services.FetchMemberPhotosService"
+            android:name=".services.FetchPhotosService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
         <service

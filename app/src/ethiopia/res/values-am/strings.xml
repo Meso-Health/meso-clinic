@@ -8,6 +8,7 @@
     <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
     <string name="log_out_alert_message">ማንኛውም ያልተዋሃደ መረጃ ሊጠፋ ነው</string>
     <string name="menu_status_label">ሁኔታ</string>
+    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- General Labels -->
     <string name="male">ወንድ</string>
@@ -75,24 +76,34 @@
     <string name="encounter_saved">የክፍያ ጥያቄው ተቀምጠዋል</string>
 
     <!-- StatusFragment -->
-    <string name="version_and_sync_label">ሁኔታ</string>
-    <string name="status_title">ኣውታረ መርበብ</string>
+    <string name="status_fragment_label">ሁኔታ</string>
     <string name="current_user_label">ፈፃሚ</string>
-    <string name="fetch_members_label">መጨረሻ ጊዜ የአባላት መረጃ የተስተካከለበት</string>
-    <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
-    <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
-    <string name="fetch_member_pictures_label">የአባል ፎቶ</string>
-    <string name="sync_claims_label">የክፍያ ጥያቄዎች</string>
-    <string name="all_synced">ሁሉንም አሳምር</string>
-    <string name="all_fetched">ሁሉም መጥቷል</string>
-    <string name="never_updated">በፍፁም</string>
-    <string name="waiting_to_sync">ያልተዋሃደ</string>
-    <string name="waiting_to_fetch">ገና ያልመጣ</string>
-    <string name="sync_new_members_label">አዲስ አባላት</string>
-    <string name="sync_photos_label">አዲስ ፎቶዎች</string>
-    <string name="sync_id_events_label">መለያዎች</string>
+
+    <string name="fetch_data_title">የወረዱ (መረጃ)</string>
+    <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <string name="last_fetched_diagnoses_label">በሽታዎች ዝርዝር</string>
+    <string name="last_fetched_members_label">ኣባላት</string>
+
+    <string name="fetch_photos_title">የወረዱ (ፎቶዎች)</string>
+    <string name="last_fetched_member_photos_label">የአባል ፎቶዎች</string>
+
+    <string name="sync_data_title">የተጫኑት (መረጃ)</string>
+    <string name="unsynced_members_label">ኣባላት</string>
+    <string name="unsynced_id_events_label">መለያዎች</string>
+    <string name="unsynced_encounters_label">የክፍያ ጥያቄዎች</string>
+
+    <string name="sync_photos_title">የተጫኑት (ፎቶዎች)</string>
+    <string name="unsynced_member_photos_label">የአባል ፎቶዎች</string>
+
     <string name="app_version">የክፍያ ጥያቄ መላክ %1$s</string>
     <string name="android_version">አንድሮይድ %1$s</string>
+
+    <string name="last_successful_run_label">ለመጨረሻ ጊዜ የሄደው</string>
+    <string name="all_fetched">ሁሉም ወርደዋል</string>
+    <string name="all_synced">"ሁሉም ተጭነዋል "</string>
+    <string name="waiting_to_fetch">ለማውረድ</string>
+    <string name="waiting_to_sync">ለመጫን</string>
+    <string name="never">በፍፁም</string>
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
@@ -113,13 +124,16 @@
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
-    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">የክፍያ ጥያቄዎች</string>
     <string name="no_claims">የተገኘ የክፍያ ጥያቄ የለም</string>
     <string name="pending_claims_dialog_label">የይለፍ ቁጥር አስገባ</string>
     <string name="pending_claims_dialog_error_message">የተሳሳተ የይለፍ ቁጥር</string>
+
+    <!-- StatusFragment -->
+    <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
+    <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>

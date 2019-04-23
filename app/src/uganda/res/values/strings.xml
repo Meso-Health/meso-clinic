@@ -80,8 +80,8 @@
     <string name="edit_input_edit">Edit</string>
 
     <!-- StatusFragment -->
-    <string name="sync_encounter_forms_label">Treatment Forms</string>
-    <string name="sync_edited_members_label">Edited members</string>
+    <string name="unsynced_billables_label">Billables</string>
+    <string name="unsynced_encounter_forms_label">Treatment Forms</string>
 
     <!-- EncounterFormFragment -->
     <string name="encounter_form_fragment_label">Treatment form photos</string>

@@ -1,5 +1,5 @@
 !tape
-name: FetchServiceIntegrationTest
+name: FetchDataServiceIntegrationTest
 interactions:
 - recorded: 2017-10-20T18:29:43.997Z
   request:

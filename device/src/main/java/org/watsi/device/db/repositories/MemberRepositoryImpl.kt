@@ -175,17 +175,20 @@ class MemberRepositoryImpl(
     }
 
     override fun downloadPhotos(): Completable {
-        return memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
-            Completable.concat(memberModels.map { memberModel ->
-                val member = memberModel.toMember()
-                api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
-                    Completable.fromAction {
-                        val photo = Photo(UUID.randomUUID(), it.bytes())
-                        photoDao.insert(PhotoModel.fromPhoto(photo, clock))
-                        memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
+        return Completable.fromCallable {
+            memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
+                Completable.concat(memberModels.map { memberModel ->
+                    val member = memberModel.toMember()
+                    api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
+                        Completable.fromAction {
+                            val photo = Photo(UUID.randomUUID(), it.bytes())
+                            photoDao.insert(PhotoModel.fromPhoto(photo, clock))
+                            memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
+                        }
                     }
-                }
-            })
+                })
+            }.blockingAwait()
+            preferencesManager.updateMemberPhotosLastFetched(clock.instant())
         }.subscribeOn(Schedulers.io())
     }
 
