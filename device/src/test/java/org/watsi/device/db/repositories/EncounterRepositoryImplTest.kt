@@ -42,6 +42,7 @@ import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.device.factories.ReturnedEncounterApiFactory
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
@@ -66,6 +67,7 @@ class EncounterRepositoryImplTest {
     @Mock lateinit var mockMemberDao: MemberDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
+    @Mock lateinit var mockPreferencesManager: PreferencesManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: EncounterRepositoryImpl
 
@@ -73,7 +75,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, mockPreferencesManager, clock)
     }
 
     @Test
