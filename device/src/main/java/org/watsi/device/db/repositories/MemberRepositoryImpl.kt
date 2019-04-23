@@ -187,7 +187,7 @@ class MemberRepositoryImpl(
                         }
                     }
                 })
-            }
+            }.blockingAwait()
             preferencesManager.updateMemberPhotosLastFetched(clock.instant())
         }.subscribeOn(Schedulers.io())
     }
