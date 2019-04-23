@@ -47,6 +47,11 @@
     <string name="login_offline_error">Cannot login because phone is offline</string>
     <string name="login_permission_error" translatable="false">This user is not allowed to submit claims</string>
 
+    <!-- BaseService -->
+    <string name="credentials_expired_error_message" translatable="false">Credentials expired</string>
+    <string name="server_offline_error_message" translatable="false">Server is offline</string>
+    <string name="poor_connectivity_error_message" translatable="false">Poor connectivity</string>
+
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">Check In</string>
     <string name="checked_in">Already checked in</string>

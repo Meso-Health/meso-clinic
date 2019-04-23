@@ -14,6 +14,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.watsi.device.managers.Logger
 import org.watsi.uhp.BuildConfig
+import org.watsi.uhp.R
 import org.watsi.uhp.helpers.NetworkErrorHelper
 import javax.inject.Inject
 
@@ -72,15 +73,15 @@ abstract class BaseService : JobService() {
     fun setError(e: Throwable, label: String): Boolean {
         when {
             NetworkErrorHelper.isHttpUnauthorized(e) -> {
-                errorMessages.add("$label: ${e.message}. Credentials expired.")
+                errorMessages.add("$label: ${e.message}. ${getString(R.string.credentials_expired_error_message)}.")
                 logger.warning(e)
             }
             NetworkErrorHelper.isServerOfflineError(e) -> {
-                errorMessages.add("$label: ${e.message}. Server is offline.")
+                errorMessages.add("$label: ${e.message}. ${getString(R.string.server_offline_error_message)}.")
                 logger.warning(e)
             }
             NetworkErrorHelper.isPoorConnectivityError(e) -> {
-                errorMessages.add("$label: ${e.message}. Poor connectivity.")
+                errorMessages.add("$label: ${e.message}. ${getString(R.string.poor_connectivity_error_message)}.")
                 logger.warning(e)
             }
             else -> {
