@@ -30,6 +30,7 @@ class DeltaRepositoryImpl(
             deltaDao.unsyncedCount(Delta.ModelName.IDENTIFICATION_EVENT),
             deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER),
             deltaDao.unsyncedCount(Delta.ModelName.ENCOUNTER_FORM),
+            deltaDao.unsyncedCount(Delta.ModelName.BILLABLE),
             deltaDao.unsyncedCount(Delta.ModelName.PRICE_SCHEDULE),
             deltaDao.unsyncedCount(Delta.ModelName.PHOTO)
         )
@@ -40,8 +41,9 @@ class DeltaRepositoryImpl(
                 unsyncedIdEventsCount = results[1] as Int,
                 unsyncedEncountersCount = results[2] as Int,
                 unsyncedEncounterFormsCount = results[3] as Int,
-                unsyncedPriceSchedulesCount = results[4] as Int,
-                unsyncedPhotosCount = results[5] as Int
+                unsyncedBillablesCount = results[4] as Int,
+                unsyncedPriceSchedulesCount = results[5] as Int,
+                unsyncedPhotosCount = results[6] as Int
             )
         }
     }

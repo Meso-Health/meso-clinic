@@ -9,7 +9,7 @@ import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchMembersUseCase
-import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
+import org.watsi.uhp.R
 import javax.inject.Inject
 
 class FetchDataService : BaseService() {
@@ -37,9 +37,9 @@ class FetchDataService : BaseService() {
             }
 
             Completable.concatArray(
-                fetchBillablesUseCase.execute().onErrorComplete { setError(it, "Download Billables") },
-                fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, "Download Diagnoses") },
-                fetchMembersUseCase.execute().onErrorComplete { setError(it, "Download Members") },
+                fetchBillablesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_billables_error_label)) },
+                fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_diagnoses_error_label)) },
+                fetchMembersUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_members_error_label)) },
                 Completable.fromAction {
                     val errors = getErrorMessages()
                     if (!errors.isEmpty()) {

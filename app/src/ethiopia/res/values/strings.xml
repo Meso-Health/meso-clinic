@@ -11,7 +11,6 @@
     <string name="menu_pending_claims_without_number">Pending Approval</string>
     <string name="menu_returned_claims_with_number">Returned (%1$s)</string>
     <string name="menu_returned_claims_without_number">Returned</string>
-    <string name="menu_sync_now">Sync now</string>
     <string name="delete">Delete</string>
     <string name="remove">Remove</string>
     <string name="delete_claim_confirmation">Delete this claim?</string>

@@ -39,8 +39,14 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_submit_without_copayment"
+        android:id="@+id/menu_sync_now"
         android:orderInCategory="108"
+        android:title="@string/menu_sync_now"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_submit_without_copayment"
+        android:orderInCategory="109"
         android:title="@string/menu_submit_without_copayment"
         app:showAsAction="never"
         android:visible="false" />

@@ -8,6 +8,7 @@
     <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
     <string name="log_out_alert_message">ማንኛውም ያልተዋሃደ መረጃ ሊጠፋ ነው</string>
     <string name="menu_status_label">ሁኔታ</string>
+    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- General Labels -->
     <string name="male">ወንድ</string>
@@ -123,7 +124,6 @@
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
-    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">የክፍያ ጥያቄዎች</string>

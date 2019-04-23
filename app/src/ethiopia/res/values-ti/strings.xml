@@ -8,6 +8,7 @@
     <string name="log_out_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
     <string name="log_out_alert_message">ዝኾነ ይኹን ዘይተዋደደ መረዳእታ ክጠፍእ እዩ</string>
     <string name="menu_status_label">ኩነታት</string>
+    <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
 
     <!-- General Labels -->
     <string name="male">ተባዕታይ</string>
@@ -126,7 +127,6 @@
     <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
-    <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">ሕቶታት ክፍሊት</string>
