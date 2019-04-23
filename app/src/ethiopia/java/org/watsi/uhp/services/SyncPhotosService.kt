@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import org.threeten.bp.Clock
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.domain.usecases.SyncMemberPhotoUseCase
+import org.watsi.uhp.R
 import javax.inject.Inject
 
 class SyncPhotosService : BaseService() {
@@ -14,7 +15,7 @@ class SyncPhotosService : BaseService() {
 
     override fun executeTasks(): Completable {
         return Completable.concatArray(
-            syncMemberPhotoUseCase.execute { setError(it, "Upload Member Photos") },
+            syncMemberPhotoUseCase.execute { setError(it, getString(R.string.sync_member_photos_error_label)) },
             Completable.fromAction {
                 val errors = getErrorMessages()
                 if (!errors.isEmpty()) {

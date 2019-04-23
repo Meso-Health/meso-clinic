@@ -118,6 +118,17 @@
     <string name="waiting_to_fetch">to download</string>
     <string name="never">never</string>
 
+    <string name="fetch_billables_error_label" translatable="false">Download Billables</string>
+    <string name="fetch_diagnoses_error_label" translatable="false">Download Diagnoses</string>
+    <string name="fetch_returned_claims_error_label" translatable="false">Download Returned Claims</string>
+    <string name="fetch_members_error_label" translatable="false">Download Members</string>
+    <string name="fetch_member_photos_error_label" translatable="false">Download Member Photos</string>
+    <string name="sync_members_error_label" translatable="false">Upload Members</string>
+    <string name="sync_id_events_error_label" translatable="false">Upload Identifications</string>
+    <string name="sync_price_schedules_error_label" translatable="false">Upload Price Schedules</string>
+    <string name="sync_encounters_error_label" translatable="false">Upload Encounters</string>
+    <string name="sync_member_photos_error_label" translatable="false">Upload Member Photos</string>
+
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
     <string name="scan_member_card">Scan member card</string>
