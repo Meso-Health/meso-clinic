@@ -222,17 +222,19 @@ class EncounterRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun delete(encounterRelation: EncounterWithExtras): Completable {
+    override fun delete(encounterId: UUID): Completable {
         return Completable.fromAction {
-            val encounterModel = EncounterModel.fromEncounter(encounterRelation.encounter, clock)
-
-            val encounterItemModels = encounterRelation.encounterItemRelations.map {
-                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
-            }
-
-            encounterDao.delete(
-                encounterModel = encounterModel,
-                encounterItemModels = encounterItemModels
+            val encounterWithExtrasModel = encounterDao.find(encounterId).blockingGet()
+            encounterWithExtrasModel.encounterModel?.let { encounterModel ->
+                encounterDao.delete(
+                    referralModels = encounterWithExtrasModel.referralModels.orEmpty(),
+                    encounterItemModels = encounterWithExtrasModel.encounterItemWithBillableAndPriceModels.orEmpty().mapNotNull {
+                        it.encounterItemModel
+                    },
+                    encounterModel = encounterModel
+                )
+            } ?: Completable.error(
+                IllegalStateException("encounter loaded from DB needs to have an non-null encounter. $encounterWithExtrasModel")
             )
         }.subscribeOn(Schedulers.io())
     }

@@ -390,7 +390,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     private fun deleteEncounter() {
         deletePendingClaimAndMemberUseCase.execute(
-            encounterFlowState.toEncounterWithExtras()
+            encounterId = encounterFlowState.encounter.id
         ).subscribe({
             navigateToNext(
                 String.format(
