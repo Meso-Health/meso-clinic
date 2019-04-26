@@ -77,7 +77,7 @@ class EncounterItemListItem @JvmOverloads constructor(
 
         if (encounterItem.stockout) {
             stockout_indicator.visibility = View.VISIBLE
-            stockout_negative_price.text = "-${CurrencyUtil.formatMoney(encounterItemRelation.price())}"
+            stockout_negative_price.text = "-${CurrencyUtil.formatMoneyWithCurrency(context, encounterItemRelation.price())}"
         } else {
             stockout_indicator.visibility = View.GONE
             stockout_negative_price.text = null

@@ -87,7 +87,7 @@ class ReturnedClaimsFragment : DaggerFragment() {
             )
         }
 
-        total_price_label.text = CurrencyUtil.formatMoney(returnedClaims.sumBy { it.price() })
+        total_price_label.text = CurrencyUtil.formatMoneyWithCurrency(context, returnedClaims.sumBy { it.price() })
 
         claimsAdapter.setClaims(returnedClaims)
     }

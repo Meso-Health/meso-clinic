@@ -119,6 +119,10 @@
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
+    <!-- General -->
+    <string name="currency">ብር</string>
+    <string name="price_with_currency">ብር %1$s</string>
+
     <!-- Menu -->
     <string name="menu_returned_claims_with_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት (%1$s)</string>
     <string name="menu_returned_claims_without_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>

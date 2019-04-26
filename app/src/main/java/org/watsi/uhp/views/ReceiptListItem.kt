@@ -28,7 +28,7 @@ class ReceiptListItem @JvmOverloads constructor(
         }
         if (encounterItemRelations.encounterItem.stockout) {
             stockout_indicator.visibility = View.VISIBLE
-            stockout_negative_price.text = "-${CurrencyUtil.formatMoney(encounterItemRelations.price())}"
+            stockout_negative_price.text = "-${CurrencyUtil.formatMoneyWithCurrency(context, encounterItemRelations.price())}"
         }
     }
 }

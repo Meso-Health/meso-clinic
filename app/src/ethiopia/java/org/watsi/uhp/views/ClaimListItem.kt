@@ -23,7 +23,7 @@ class ClaimListItem @JvmOverloads constructor(
         member_name.text = encounterRelation.member.name
         claim_cbhi.text = encounterRelation.member.membershipNumber
         claim_id.text = encounterRelation.encounter.shortenedClaimId()
-        claim_price.text = CurrencyUtil.formatMoney(encounterRelation.price())
+        claim_price.text = CurrencyUtil.formatMoneyWithCurrency(context, encounterRelation.price())
 
         setOnClickListener {
             onClaimSelected(encounterRelation)
