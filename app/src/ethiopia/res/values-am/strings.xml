@@ -13,6 +13,7 @@
     <!-- General Labels -->
     <string name="male">ወንድ</string>
     <string name="female">ሴት</string>
+    <string name="ok">አዎ</string>
     <string name="cancel">ሰርዝ</string>
     <string name="total">ድምር</string>
     <string name="save">አስቀምጥ</string>
@@ -104,6 +105,9 @@
     <string name="waiting_to_fetch">ለማውረድ</string>
     <string name="waiting_to_sync">ለመጫን</string>
     <string name="never">በፍፁም</string>
+
+    <!--<string name="no_internet_title" translatable="false">No internet connection</string>-->
+    <!--<string name="no_internet_prompt" translatable="false">Please connect the device to the internet and try again.</string>-->
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>

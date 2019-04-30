@@ -10,6 +10,8 @@ import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.NetworkManager
+import org.watsi.device.managers.NetworkManagerImpl
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.PreferencesManagerImpl
 import org.watsi.device.managers.SessionManager
@@ -35,6 +37,12 @@ class DeviceModule {
     @Provides
     fun providePreferencesManager(context: Context): PreferencesManager {
         return PreferencesManagerImpl(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNetworkManager(context: Context): NetworkManager {
+        return NetworkManagerImpl(context)
     }
 
     @Singleton

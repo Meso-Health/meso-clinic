@@ -13,6 +13,7 @@
     <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="total">Total</string>
     <string name="save">Save</string>
@@ -136,6 +137,9 @@
     <string name="sync_encounters_error_label" translatable="false">Upload Encounters</string>
     <string name="sync_member_photos_error_label" translatable="false">Upload Member Photos</string>
     <string name="sync_encounter_forms_error_label" translatable="false">Upload Encounter Forms</string>
+
+    <string name="no_internet_title" translatable="false">No internet connection</string>
+    <string name="no_internet_prompt" translatable="false">Please connect the device to the internet and try again.</string>
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
