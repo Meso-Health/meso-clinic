@@ -43,6 +43,7 @@ import kotlinx.android.synthetic.uganda.fragment_status.unsynced_encounters
 import kotlinx.android.synthetic.uganda.fragment_status.unsynced_identification_events
 import kotlinx.android.synthetic.uganda.fragment_status.unsynced_member_photos
 import kotlinx.android.synthetic.uganda.fragment_status.unsynced_members
+import org.watsi.device.managers.NetworkManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
@@ -58,6 +59,7 @@ import javax.inject.Inject
 class StatusFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var networkManager: NetworkManager
     lateinit var viewModel: StatusViewModel
     private lateinit var broadcastReceiver: BroadcastReceiver
 
@@ -122,9 +124,27 @@ class StatusFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.menu_sync_now -> {
-                val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-                jobScheduler.cancelAll()
-                (activity as ClinicActivity).startServices()
+                val requireNetwork = BuildConfig.BUILD_TYPE != "debug"
+
+                if (requireNetwork && !networkManager.isNetworkAvailable()) {
+                    AlertDialog.Builder(activity)
+                            .setTitle(getString(R.string.no_internet_title))
+                            .setMessage(getString(R.string.no_internet_prompt))
+                            .setPositiveButton(R.string.ok) { _, _ ->
+                                // no-op
+                            }
+                            .create().show()
+                } else {
+                    // explicitly toggle spinners when user presses "sync now" button to avoid
+                    // visual delay before spinners are toggled from job services actually being kicked off
+                    viewModel.updateFetchDataStatus(true)
+                    viewModel.updateFetchPhotosStatus(true)
+                    viewModel.updateSyncDataStatus(true)
+                    viewModel.updateSyncPhotosStatus(true)
+                    val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                    jobScheduler.cancelAll()
+                    (activity as ClinicActivity).startServices()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
