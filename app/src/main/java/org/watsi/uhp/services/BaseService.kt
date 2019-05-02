@@ -112,9 +112,9 @@ abstract class BaseService : JobService() {
         }
 
         override fun onError(e: Throwable) {
-            // If the error is a ExecuteTasksFailureException, then the original exception
+            // If the error or cause of the error is a ExecuteTasksFailureException, then the original exception
             // should've already been logged in `setError`, so there is no need to log it again
-            if (e !is ExecuteTasksFailureException) {
+            if (!(e is ExecuteTasksFailureException || e.cause is ExecuteTasksFailureException)) {
                 logger.error(e)
             }
             broadcastJobEnded()
