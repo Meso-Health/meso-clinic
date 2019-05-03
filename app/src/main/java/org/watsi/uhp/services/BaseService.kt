@@ -71,22 +71,24 @@ abstract class BaseService : JobService() {
      * automatically re-run.
      */
     fun setError(e: Throwable, label: String): Boolean {
+        // Unwrap exception (some exceptions are wrapped / chained / rethrown as RuntimeExceptions)
+        val error = e.cause ?: e
         when {
-            NetworkErrorHelper.isHttpUnauthorized(e) -> {
-                errorMessages.add("$label: ${e.message}. ${getString(R.string.credentials_expired_error_message)}.")
-                logger.warning(e)
+            NetworkErrorHelper.isHttpUnauthorized(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.credentials_expired_error_message)}.")
+                logger.info(error)
             }
-            NetworkErrorHelper.isServerOfflineError(e) -> {
-                errorMessages.add("$label: ${e.message}. ${getString(R.string.server_offline_error_message)}.")
-                logger.warning(e)
+            NetworkErrorHelper.isServerOfflineError(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.server_offline_error_message)}.")
+                logger.info(error)
             }
-            NetworkErrorHelper.isPoorConnectivityError(e) -> {
-                errorMessages.add("$label: ${e.message}. ${getString(R.string.poor_connectivity_error_message)}.")
-                logger.warning(e)
+            NetworkErrorHelper.isPoorConnectivityError(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.poor_connectivity_error_message)}.")
+                logger.info(error)
             }
             else -> {
-                errorMessages.add("$label: ${e.message}")
-                logger.error(e)
+                errorMessages.add("$label: ${error.message}")
+                logger.error(error)
             }
         }
         return true

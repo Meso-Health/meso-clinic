@@ -32,6 +32,10 @@ class RollbarLogger : Logger {
         reportMessage(message, MESSAGE_LEVEL_INFO, params)
     }
 
+    override fun info(throwable: Throwable, params: Map<String, String>) {
+        Rollbar.reportException(throwable, MESSAGE_LEVEL_INFO, throwable.message, params)
+    }
+
     override fun warning(message: String, params: Map<String, String>) {
         reportMessage(message, MESSAGE_LEVEL_WARNING, params)
     }
