@@ -17,7 +17,7 @@ object NetworkErrorHelper {
     }
 
     /**
-     * Intended errors caught:
+     * Intended errors matched:
      * - java.net.UnknownHostException: Unable to resolve host <hostname>: No address associated with hostname
      */
     fun isPhoneOfflineError(e: Throwable): Boolean {
@@ -26,7 +26,7 @@ object NetworkErrorHelper {
     }
 
     /**
-     * Intended errors caught:
+     * Intended errors matched:
      * - java.net.ConnectException: Failed to connect to <server name>
      * - java.net.NoRouteToHostException: No route to host
      * - java.io.IOException: unexpected end of stream on Connection <connection>
@@ -39,7 +39,7 @@ object NetworkErrorHelper {
     }
 
     /**
-     * Intended errors caught:
+     * Intended errors matched:
      * - java.net.SocketException: Network is unreachable
      * - java.net.SocketException: Connection timed out
      * - java.net.SocketException: Software caused connection abort
