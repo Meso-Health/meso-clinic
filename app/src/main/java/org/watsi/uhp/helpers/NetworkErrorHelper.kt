@@ -1,28 +1,41 @@
 package org.watsi.uhp.helpers
 
 import retrofit2.HttpException
+import java.io.IOException
+import java.net.ConnectException
+import java.net.NoRouteToHostException
+import java.net.SocketException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import javax.net.ssl.SSLException
+import javax.net.ssl.SSLHandshakeException
 
 object NetworkErrorHelper {
+
     fun isHttpUnauthorized(e: Throwable): Boolean {
         return e is HttpException && e.code() == 401
     }
 
+    /**
+     * Intended errors caught:
+     * - java.net.UnknownHostException: Unable to resolve host <hostname>: No address associated with hostname
+     */
     fun isPhoneOfflineError(e: Throwable): Boolean {
-        return e is RuntimeException && e.message.orEmpty().contains("Unable to resolve host")
+        val message = e.message.orEmpty()
+        return (e is UnknownHostException && message.contains("Unable to resolve host"))
     }
 
     /**
      * Intended errors caught:
-     * - java.io.IOException: unexpected end of stream on Connection <connection>
      * - java.net.ConnectException: Failed to connect to <server name>
      * - java.net.NoRouteToHostException: No route to host
-     * - all of the above chained / rethrown as RuntimeExceptions
+     * - java.io.IOException: unexpected end of stream on Connection <connection>
      */
     fun isServerOfflineError(e: Throwable): Boolean {
         val message = e.message.orEmpty()
-        return message.contains("unexpected end of stream") ||
-                message.contains("Failed to connect to") ||
-                message.contains("No route to host")
+        return (e is ConnectException ||
+                e is NoRouteToHostException ||
+                (e is IOException && message.contains("unexpected end of stream")))
     }
 
     /**
@@ -36,13 +49,12 @@ object NetworkErrorHelper {
      * - javax.net.ssl.SSLException: Write error: ssl=<hex>: I/O error during system call, Software caused connection abort
      * - javax.net.ssl.SSLException: Read error: ssl=<hex>: I/O error during system call, Software caused connection abort
      * - javax.net.ssl.SSLHandshakeException: SSL handshake aborted: ssl=<hex>: I/O error during system call, Connection timed out
-     * - all of the above chained / rethrown as RuntimeExceptions
      */
     fun isPoorConnectivityError(e: Throwable): Boolean {
         val message = e.message.orEmpty()
-        return message.contains("Network is unreachable") ||
-                message.contains("timeout") ||
-                message.contains("timed out") ||
-                message.contains("connection abort")
+        return ((e is SocketException && message.findAnyOf(listOf("unreachable", "timed out", "connection abort")) != null) ||
+                e is SocketTimeoutException ||
+                (e is SSLException && message.contains("connection abort")) ||
+                (e is SSLHandshakeException && message.contains("timed out")))
     }
 }
