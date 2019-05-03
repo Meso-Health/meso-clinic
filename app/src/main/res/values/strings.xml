@@ -51,6 +51,7 @@
 
     <!-- BaseService -->
     <string name="credentials_expired_error_message" translatable="false">Credentials expired</string>
+    <string name="phone_offline_error_message" translatable="false">Phone is offline</string>
     <string name="server_offline_error_message" translatable="false">Server is offline</string>
     <string name="poor_connectivity_error_message" translatable="false">Poor connectivity</string>
 

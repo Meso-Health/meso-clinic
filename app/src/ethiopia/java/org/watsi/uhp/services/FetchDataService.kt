@@ -44,10 +44,7 @@ class FetchDataService : BaseService() {
                 fetchReturnedClaimsUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_returned_claims_error_label)) },
                 fetchMembersUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_members_error_label)) },
                 Completable.fromAction {
-                    val errors = getErrorMessages()
-                    if (!errors.isEmpty()) {
-                        throw ExecuteTasksFailureException()
-                    } else {
+                    if (getErrorMessages().isEmpty()) {
                         preferencesManager.updateDataLastFetched(clock.instant())
                     }
                 }

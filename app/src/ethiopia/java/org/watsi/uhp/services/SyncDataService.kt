@@ -26,10 +26,7 @@ class SyncDataService : BaseService() {
             syncPriceScheduleUseCase.execute { setError(it, getString(R.string.sync_price_schedules_error_label)) },
             syncEncounterUseCase.execute { setError(it, getString(R.string.sync_encounters_error_label)) },
             Completable.fromAction {
-                val errors = getErrorMessages()
-                if (!errors.isEmpty()) {
-                    throw ExecuteTasksFailureException()
-                } else {
+                if (getErrorMessages().isEmpty()) {
                     preferencesManager.updateDataLastSynced(clock.instant())
                 }
             }
