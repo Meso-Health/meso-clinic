@@ -76,7 +76,7 @@ abstract class BaseService : JobService() {
         when {
             NetworkErrorHelper.isHttpUnauthorized(error) -> {
                 errorMessages.add("$label: ${error.message}. ${getString(R.string.credentials_expired_error_message)}.")
-                logger.info(error)
+                logger.warning(error)
             }
             // Service can still be run if phone is offline for debug variant
             NetworkErrorHelper.isPhoneOfflineError(error) -> {
@@ -85,7 +85,7 @@ abstract class BaseService : JobService() {
             }
             NetworkErrorHelper.isServerOfflineError(error) -> {
                 errorMessages.add("$label: ${error.message}. ${getString(R.string.server_offline_error_message)}.")
-                logger.info(error)
+                logger.warning(error)
             }
             NetworkErrorHelper.isPoorConnectivityError(error) -> {
                 errorMessages.add("$label: ${error.message}. ${getString(R.string.poor_connectivity_error_message)}.")
