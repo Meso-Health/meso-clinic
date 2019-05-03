@@ -106,7 +106,11 @@ abstract class BaseService : JobService() {
     inner class SyncObserver(private val params: JobParameters) : CompletableObserver {
         override fun onComplete() {
             broadcastJobEnded()
-            jobFinished(params, false)
+            if (!getErrorMessages().isEmpty()) {
+                jobFinished(params, true)
+            } else {
+                jobFinished(params, false)
+            }
         }
 
         override fun onSubscribe(d: Disposable) {
@@ -114,11 +118,7 @@ abstract class BaseService : JobService() {
         }
 
         override fun onError(e: Throwable) {
-            // If the error or cause of the error is a ExecuteTasksFailureException, then the original exception
-            // should've already been logged in `setError`, so there is no need to log it again
-            if (!(e is ExecuteTasksFailureException || e.cause is ExecuteTasksFailureException)) {
-                logger.error(e)
-            }
+            logger.error(e)
             broadcastJobEnded()
             jobFinished(params, true)
         }
@@ -144,7 +144,4 @@ abstract class BaseService : JobService() {
             jobScheduler.schedule(jobInfo)
         }
     }
-
-    // Generic exception class that should be manually thrown to reschedule the service
-    class ExecuteTasksFailureException : Exception()
 }

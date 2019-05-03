@@ -17,10 +17,7 @@ class FetchPhotosService : BaseService() {
         return Completable.concatArray(
             fetchMembersPhotosUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_member_photos_error_label)) },
             Completable.fromAction {
-                val errors = getErrorMessages()
-                if (!errors.isEmpty()) {
-                    throw ExecuteTasksFailureException()
-                } else {
+                if (getErrorMessages().isEmpty()) {
                     preferencesManager.updatePhotoLastFetched(clock.instant())
                 }
             }
