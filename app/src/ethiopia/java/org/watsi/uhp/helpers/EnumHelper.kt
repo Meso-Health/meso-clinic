@@ -36,7 +36,7 @@ object EnumHelper {
             Pair(Encounter.PatientOutcome.REFERRED, R.string.outcome_referred),
             Pair(Encounter.PatientOutcome.FOLLOW_UP, R.string.outcome_follow_up),
             Pair(Encounter.PatientOutcome.REFUSED_SERVICE, R.string.outcome_refused_service),
-            Pair(Encounter.PatientOutcome.EXPIRED, R.string.outcome_expired),
+            Pair(Encounter.PatientOutcome.DECEASED, R.string.outcome_expired),
             Pair(Encounter.PatientOutcome.OTHER, R.string.outcome_other)
         )
     }

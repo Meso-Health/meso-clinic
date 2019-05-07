@@ -113,7 +113,7 @@
     <string name="outcome_referred">Referred</string>
     <string name="outcome_follow_up">Follow up</string>
     <string name="outcome_refused_service">Refused service</string>
-    <string name="outcome_expired">Expired</string>
+    <string name="outcome_expired">Deceased</string>
     <string name="outcome_other">Other</string>
 
 
