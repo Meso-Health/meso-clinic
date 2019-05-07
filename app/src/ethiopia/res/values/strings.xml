@@ -151,7 +151,7 @@
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supplies</string>
     <string name="service">Services and Procedures</string>
-    <string name="lab">Laboratory tests</string>
+    <string name="lab">Laboratory Tests</string>
     <string name="select_prompt">Select…</string>
 
     <!-- EditPriceFragment -->
