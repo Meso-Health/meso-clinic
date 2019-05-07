@@ -47,7 +47,7 @@
     <string name="login_wrong_username_or_password_message">The provided username/password combination is incorrect</string>
     <string name="login_progress_message">Logging in…</string>
     <string name="login_offline_error">Cannot login because phone is offline</string>
-    <string name="login_permission_error" translatable="false">This user is not allowed to submit claims</string>
+    <string name="login_permission_error">This user is not allowed to submit claims</string>
 
     <!-- BaseService -->
     <string name="credentials_expired_error_message" translatable="false">Credentials expired</string>
@@ -85,7 +85,7 @@
     <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">Review</string>
+    <string name="receipt_fragment_label">Review Claim</string>
     <string name="submit_encounter_button">@string/submit</string>
     <string name="receipt_total">Total</string>
     <string name="encounter_submitted">Claim submitted</string>

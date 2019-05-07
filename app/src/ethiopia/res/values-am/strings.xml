@@ -41,7 +41,7 @@
     <string name="login_wrong_username_or_password_message">የተሰጠው የተጠቃሚ ስም / ይለፍ ቃል ጥምረት የተሳሳተ ነው</string>
     <string name="login_progress_message">እየገባ ነው</string>
     <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
-    <!--<string name="login_permission_error">This user cannot be used for enrollment</string>-->
+    <string name="login_permission_error">ይህ ተጠቃሚ የክፍያ ጥያቄ መላክ አልተፈቐደለትም</string>
 
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">አስገባ</string>
@@ -51,7 +51,7 @@
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">መድሃኒቶች እና ኣቅረቦቶች</string>
+    <string name="drug_and_supply">መድሃኒቶች እና አቅርቦቶች</string>
     <string name="service">አገልግሎት</string>
     <string name="lab">ላብራቶሪ</string>
     <string name="select_prompt">ምረጥ</string>
@@ -70,7 +70,7 @@
     <string name="search_diagnosis_hint">በሽታ ፈልግ</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ከልስ</string>
+    <string name="receipt_fragment_label">የክፍያ ጥያቄ ከልስ</string>
     <string name="submit_encounter_button">@string/submit</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
     <string name="today">ዛሬ</string>
@@ -134,7 +134,7 @@
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">የክፍያ ጥያቄዎች</string>
+    <string name="home_fragment_label">የገቡ ታካሚዎች</string>
     <string name="no_claims">የተገኘ የክፍያ ጥያቄ የለም</string>
     <string name="pending_claims_dialog_label">የይለፍ ቁጥር አስገባ</string>
     <string name="pending_claims_dialog_error_message">የተሳሳተ የይለፍ ቁጥር</string>
@@ -192,6 +192,7 @@
     <string name="missing_medical_record_number">የህክምና ካርድ ቁጥር መግባት ኣለበት </string>
     <string name="check_out_alert_dialog_title">ከገቡት ዝርዝር ውስጥ ይወገድ?</string>
     <string name="check_out_alert_dialog_message">%1$s  ከገቡት ዝርዝር ውስጥ ይወገዳል፡፡ ከተወገደ ደግሞ በስሙ የክፍያ ጥያቄ ማቅረብ አይችሉም፡፡</string>
+    <string name="diagnoses_and_billable_missing_dialog">የበሽታዎች ዝርዝርና አገልግሎቶች አልወረዱም፣ እባክዎ ደግመው ከመላክዎ በፊት ያዋህዱት</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>
@@ -214,13 +215,13 @@
     <string name="visit_type_label">የጉብኝት አይነት</string>
     <string name="referral_label">ሪፈር</string>
     <string name="referral_date_label">ሪፈር የተባለበት ቀን</string>
-    <!--<string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>-->
-    <!--<string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>-->
-    <!--<string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>-->
+    <string name="receiving_facility_validation_error">የሪፈር ተቀባይ ጤና ተቋም ስም መሞላት አለበት</string>
+    <string name="referral_reason_validation_error">ሪፈር የተባለበት ምክንያት መሞላት አለበት</string>
+    <string name="mark_as_stockout">%s በተቋማችን ውስጥ የለም</string>
     <string name="referral_serial_number">የሪፈር ቁጥር (ካለ)</string>
     <string name="referral_reason">ሪፈር የተባለበት ምክንያት</string>
     <string name="referred_to_facility">ሪፈር የተላከበት ጤና ተቋም</string>
-    <!--<string name="referred_to_facility_prompt">Select referred to facility…</string>-->
+    <string name="referred_to_facility_prompt">ሪፈር የተላከበት ጤና ተቋም ምረጥ</string>
     <string name="referral_other_option">ሌሎች ሪፈር የሚላክላቸው ጤና ተቋሞች</string>
     <string name="referral_reason_prompt">ሪፈር የተባለበት ምክንያት…</string>
     <string name="further_consultation">ለተጨማሪ ከፍተኛ ምርመራ</string>
@@ -230,8 +231,8 @@
     <string name="bed_shortage">የአልጋ እጥረት</string>
     <string name="follow_up">በአቅራብያው ክትትል እንዲያገኙ</string>
     <string name="other">ለሌሎች (ያልተጠቀሱ) አገልግሎቶች</string>
-    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
-    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="patient_outcome">የህክምና ውጤት</string>
+    <string name="patient_outcome_prompt">የህክምና ውጤት ምረጥ</string>
     <string name="outcome_cured_or_discharged">ታክመዋል/ወጥተዋል</string>
     <string name="outcome_referred">ሪፈር ተብሏል</string>
     <string name="outcome_follow_up">ክትትል ያስፈልገዋል</string>
