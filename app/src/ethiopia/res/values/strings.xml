@@ -146,7 +146,7 @@
     <string name="today">Today</string>
     <string name="claim_id_deleted">Claim ID %1$s was deleted</string>
     <string name="claim_id_submitted">Claim ID %1$s was submitted</string>
-    <string name="empty_line_items_warning">Claim must contain line items</string>
+    <string name="empty_line_items_warning" translatable="false">Claim must contain line items</string>
 
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supplies</string>
