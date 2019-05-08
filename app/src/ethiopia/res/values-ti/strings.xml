@@ -8,10 +8,12 @@
     <string name="log_out_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
     <string name="log_out_alert_message">ዝኾነ ይኹን ዘይተዋደደ መረዳእታ ክጠፍእ እዩ</string>
     <string name="menu_status_label">ኩነታት</string>
+    <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
 
     <!-- General Labels -->
     <string name="male">ተባዕታይ</string>
     <string name="female">ኣነስተይቲ</string>
+    <string name="ok">እወ</string>
     <string name="cancel">ግደፍ</string>
     <string name="total">ድምር</string>
     <string name="save">ኣቐምጥ</string>
@@ -39,7 +41,7 @@
     <string name="login_wrong_username_or_password_message">ዝተዋህበ ናይ ተጠቃሚ ስም / ይሕለፍ ቃል ጥምረት ግጉይ እዩ</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
     <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
-    <!--<string name="login_permission_error">This user cannot be used for enrollment</string>-->
+    <string name="login_permission_error">እዚ ተግባሪ ሕቶ ክፍሊት ክሰድድ ኣይተፈቐደሉን</string>-
 
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">ኣእትው</string>
@@ -49,8 +51,8 @@
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">ቸ ቀረባትን</string>
-    <string name="service">ኣገልግሎት</string>
+    <string name="drug_and_supply">ኣፋውስን ቀረባትን</string>
+    <string name="service">ግልጋሎት</string>
     <string name="lab">ላብራቶሪ</string>
     <string name="select_prompt">ምረፅ</string>
     <string name="done_encounter_button">ተወዲኡ</string>
@@ -67,7 +69,7 @@
     </plurals>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ከልስ</string>
+    <string name="receipt_fragment_label">ሕቶ ክፍሊት ከልስ</string>
     <string name="submit_encounter_button">@string/submit</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d አገልግሎት/አቅርቦት ዝርዝር</item>
@@ -78,24 +80,37 @@
     <string name="encounter_saved">ሕቶ ክፍሊት ተቐሚጡ</string>
 
     <!-- StatusFragment -->
-    <string name="version_and_sync_label">ኩነታት</string>
-    <string name="status_title">መርበብ</string>
+    <string name="status_fragment_label">ኩነታት</string>
     <string name="current_user_label">ፈፃሚ</string>
-    <string name="fetch_members_label">መወዳእታ እዋን መረዳእታ ኣባላት ዝተመሓየሸሉ</string>
-    <string name="fetch_billables_label">ዋጋ ተመን ዝተሓደሰሉ እዋን</string>
-    <string name="fetch_diagnoses_label">ነፀርታታት ሕማም ዝትሓደስሉ ጊዜ</string>
-    <string name="fetch_member_pictures_label">ናይ ኣባል ፎቶ</string>
-    <string name="sync_claims_label">ሕቶታት  ክፍሊት</string>
-    <string name="all_synced">ኩሉ ኣዋድድ</string>
-    <string name="all_fetched">ኩሉ መፂኡ</string>
-    <string name="never_updated">ብፍፁም</string>
-    <string name="waiting_to_sync">ዘይተዋደደ</string>
-    <string name="waiting_to_fetch">ገና ዘይመፀ</string>
-    <string name="sync_new_members_label">ሓዱሽ ኣባላት</string>
-    <string name="sync_photos_label">ሓዱሽ ፎቶታት</string>
-    <string name="sync_id_events_label">መፍለይ/መለለይታት</string>
-    <string name="app_version">ሕቶ ክፍሊት ምልኣኽ</string>
-    <string name="android_version">ኣንድሮይድ %1$S</string>
+
+    <string name="fetch_data_title">ዝወረዱ (መረዳእታ)</string>
+    <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <string name="last_fetched_diagnoses_label">ነፀርታታት ሕማም</string>
+    <string name="last_fetched_members_label">ኣባላት</string>
+
+    <string name="fetch_photos_title">ዝወረዱ (ስእልታት)</string>
+    <string name="last_fetched_member_photos_label">ናይ ኣባል ስእልታት</string>
+
+    <string name="sync_data_title">ዝተፅዓኑ (መረዳእታ)</string>
+    <string name="unsynced_members_label">አባላት</string>
+    <string name="unsynced_id_events_label">መፍለይ/መለለይታት</string>
+    <string name="unsynced_encounters_label">ሕቶታት ክፍሊት</string>
+
+    <string name="sync_photos_title">ዝተፅዓኑ (ስእልታት)</string>
+    <string name="unsynced_member_photos_label">ናይ ኣባል ስእልታት</string>
+
+    <string name="app_version">ሕቶ ክፍሊት ምልኣኽ %1$s</string>
+    <string name="android_version">ኣንድሮይድ %1$s</string>
+
+    <string name="last_successful_run_label">ንመወዳእታ እዋን ዝኸደሉ</string>
+    <string name="all_fetched">ኹሉ ወሪዱ</string>
+    <string name="all_synced">ኹሉ ተፃዒኑ</string>
+    <string name="waiting_to_fetch">ንምውራድ</string>
+    <string name="waiting_to_sync">ንምፅዓን</string>
+    <string name="never">ብፍፁም</string>
+
+    <!--<string name="no_internet_title" translatable="false">No internet connection</string>-->
+    <!--<string name="no_internet_prompt" translatable="false">Please connect the device to the internet and try again.</string>-->
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
@@ -108,6 +123,10 @@
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
+    <!-- General -->
+    <string name="currency">ብር</string>
+    <string name="price_with_currency">ብር %1$s</string>
+
     <!-- Menu -->
     <string name="menu_returned_claims_with_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት (%1$s)</string>
     <string name="menu_returned_claims_without_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
@@ -116,13 +135,16 @@
     <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
-    <string name="menu_sync_now">ሀዚ ኣዋድድ</string>
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">ሕቶታት ክፍሊት</string>
+    <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
     <string name="no_claims">ዝተረኸበ ሕቶ ክፍሊት የለን</string>
     <string name="pending_claims_dialog_label">ናይ ይሕለፍ ቁፅሪ ኣእትው</string>
     <string name="pending_claims_dialog_error_message">ዝተሳሓሓተ ናይ ይሕለፍ ቁፅሪ</string>
+
+    <!-- StatusFragment -->
+    <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
+    <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
@@ -141,7 +163,10 @@
     <string name="start_claim_button">ሕቶ ክፍሊት ምዝገባ ጀምር</string>
     <string name="encounter_submitted">ሕቶ ክፍሊት ብዝግባእ ተመሓላሊፉ</string>
     <string name="invalid_membership_error">ናይ ኣባልነት መፍለይ ቁፅሪ ስሕተት ኣለዎ</string>
-    <string name="scan_member_card_menu_item_title">ካርዲ ስካን ግበር</string>
+    <string name="scan_card">ካርዲ ስካን ግበር</string>
+    <string name="search_name">ብሽም ኣልሽ</string>
+    <string name="cbhi_id_search_label">ብመታወቅያ ቁፅሪ ማመመጥ ኣልሽ</string>
+    <string name="cbhi_id_label">መታወቅያ ቁፅሪ ማመመጥ</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
@@ -170,6 +195,7 @@
     <string name="missing_medical_record_number">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ </string>
     <string name="check_out_alert_dialog_title">ካብ ዝኣተወ ዝርዝር ይወገድ?</string>
     <string name="check_out_alert_dialog_message">%1$s ካብ ዝኣተው ዝርዝር ክውገድ እዩ፡፡ እንተተወጊዱ ድማ ብሽሙ ሕቶ ኽፍሊት ከቅርቡ ኣይኽእሉን</string>
+    <string name="diagnoses_and_billable_missing_dialog">ዝርዝር ነፀርታታት ሕማም ን ግልጋሎትን ገና ኣይወረደን፣ በይዘኦም ቅድሚ ደጊሞም ምሙኳሮም የዋድድዎ</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
@@ -192,13 +218,13 @@
     <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <string name="referral_label">ሪፈር</string>
     <string name="referral_date_label">ሪፈር ዝተብሃለሉ ዕለት</string>
-    <!--<string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>-->
-    <!--<string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>-->
-    <!--<string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>-->
+    <string name="receiving_facility_validation_error">ሽም ሪፈር ተቐባሊ ጥዕና ትካል ክምላእ አለዎ</string>
+    <string name="referral_reason_validation_error">ሪፈር ዝተብሃለሉ ምኽንያት ክምላእ ኣለዎ</string>
+    <string name="mark_as_stockout">%s ኣብ ትካልና የለን (ወዲእና)</string>
     <string name="referral_serial_number">ናይ ሪፈር ቁፅሪ (እንተሃልዩ)</string>
     <string name="referral_reason">ሪፈር ዝተብሃለሉ ምኽንያት</string>
     <string name="referred_to_facility">ሪፈር ዝተብሃለሉ ትካል ጥዕና</string>
-    <!--<string name="referred_to_facility_prompt">Select referred to facility…</string>-->
+    <string name="referred_to_facility_prompt">ሪፈር ዝበሃለሉ ጥዕና ትካል ምረፅ</string>
     <string name="referral_other_option">ካልኦት ሪፈር ክለኣኹሉ ዝኽእሉ ትካላት ጥዕና</string>
     <string name="referral_reason_prompt">ምኽንያት ሪፈር…</string>
     <string name="further_consultation">ንዝለዓለ ምርመራ</string>
@@ -208,8 +234,8 @@
     <string name="bed_shortage">ሕፅረት ዓራት</string>
     <string name="follow_up">ብቀረባ ክትትል ንክረኽቡ</string>
     <string name="other">ንካልኦት  (ዘይተጠቐሱ) ግልጋሎታት</string>
-    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
-    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="patient_outcome">ውፅኢት ሕክምና</string>
+    <string name="patient_outcome_prompt">ውፅኢት ሕክምና</string>
     <string name="outcome_cured_or_discharged">ተሓኪሙ/ተሰዲዱ</string>
     <string name="outcome_referred">ሪፈር ተባሂሉ/ላ</string>
     <string name="outcome_follow_up">ክትትል የድልዮ</string>

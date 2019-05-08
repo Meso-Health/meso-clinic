@@ -4,6 +4,7 @@ import org.junit.Test
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.device.factories.EncounterFormModelFactory
+import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PhotoModelFactory
 
@@ -18,7 +19,14 @@ class PhotoDaoTest : DaoBaseTest() {
         val thumbnailPhoto = PhotoModelFactory.create(photoDao, createdAt = hourAgo)
         MemberModelFactory.create(memberDao, thumbnailPhotoId = thumbnailPhoto.id)
         val encounterFormPhoto = PhotoModelFactory.create(photoDao, createdAt = hourAgo)
-        EncounterFormModelFactory.create(encounterFormDao, photoId = encounterFormPhoto.id)
+        val encounterFormThumbnail = PhotoModelFactory.create(photoDao, createdAt = hourAgo)
+        val encounterModel = EncounterModelFactory.create(encounterDao, memberDao)
+
+        EncounterFormModelFactory.create(encounterFormDao,
+            encounterId = encounterModel.id,
+            photoId = encounterFormPhoto.id,
+            thumbnailId = encounterFormThumbnail.id
+        )
         PhotoModelFactory.create(photoDao) // recently created photo
         val shouldBeDeleted = PhotoModelFactory.create(photoDao, createdAt = hourAgo)
 

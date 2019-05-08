@@ -1,5 +1,6 @@
 package org.watsi.domain.usecases
 
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -29,12 +30,14 @@ import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 
 @RunWith(MockitoJUnitRunner::class)
 class UpdateEncounterUseCaseTest {
 
     @Mock lateinit var mockEncounterRepository: EncounterRepository
     @Mock lateinit var mockPriceScheduleRepository: PriceScheduleRepository
+    @Mock lateinit var mockReferralRepository: ReferralRepository
     lateinit var useCase: UpdateEncounterUseCase
     lateinit var fixedClock: Clock
 
@@ -153,8 +156,9 @@ class UpdateEncounterUseCaseTest {
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        useCase = UpdateEncounterUseCase(mockEncounterRepository, mockPriceScheduleRepository)
+        useCase = UpdateEncounterUseCase(mockEncounterRepository, mockReferralRepository, mockPriceScheduleRepository)
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        whenever(mockReferralRepository.delete(any())).thenReturn(Completable.complete())
     }
 
     @Test

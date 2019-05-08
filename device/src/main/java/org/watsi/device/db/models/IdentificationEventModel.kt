@@ -1,13 +1,33 @@
 package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.IdentificationEvent
 import java.util.UUID
 
-@Entity(tableName = "identification_events")
+@Entity(
+    tableName = "identification_events",
+    indices = [
+        Index("memberId"),
+        Index("throughMemberId")
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = MemberModel::class,
+            parentColumns = ["id"],
+            childColumns = ["memberId"]
+        ),
+        ForeignKey(
+            entity = MemberModel::class,
+            parentColumns = ["id"],
+            childColumns = ["throughMemberId"]
+        )
+    ]
+)
 data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                     val createdAt: Instant,
                                     val updatedAt: Instant,

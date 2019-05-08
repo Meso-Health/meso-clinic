@@ -1,13 +1,19 @@
 package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Delta
 import java.util.UUID
 
-@Entity(tableName = "deltas")
+@Entity(
+    tableName = "deltas",
+    indices = [
+        Index("modelId")
+    ]
+)
 data class DeltaModel(@PrimaryKey(autoGenerate = true) val id: Int = 0,
                       val action: Delta.Action,
                       val modelName: Delta.ModelName,

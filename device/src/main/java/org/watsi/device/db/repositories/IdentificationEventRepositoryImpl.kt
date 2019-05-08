@@ -3,7 +3,6 @@ package org.watsi.device.db.repositories
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.IdentificationEventApi
@@ -20,8 +19,7 @@ class IdentificationEventRepositoryImpl(
         private val identificationEventDao: IdentificationEventDao,
         private val api: CoverageApi,
         private val sessionManager: SessionManager,
-        private val clock: Clock,
-        private val okHttpClient: OkHttpClient
+        private val clock: Clock
 ) : IdentificationEventRepository {
 
     override fun create(identificationEvent: IdentificationEvent, delta: Delta): Completable {
@@ -71,12 +69,5 @@ class IdentificationEventRepositoryImpl(
                 }
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
-    }
-
-    override fun deleteAll(): Completable {
-        return Completable.fromAction {
-            okHttpClient.cache().evictAll()
-            identificationEventDao.deleteAll()
-        }.subscribeOn(Schedulers.io())
     }
 }

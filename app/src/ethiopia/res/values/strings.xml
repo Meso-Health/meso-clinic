@@ -2,6 +2,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" tools:ignore="MissingTranslation">Claims Submission</string>
 
+    <!-- General -->
+    <string name="currency">Birr</string>
+    <string name="price_with_currency">Birr %1$s</string>
+
     <!-- Confirmation Messages -->
     <string name="exit_form_alert">Are you sure you want to exit?</string>
 
@@ -11,16 +15,19 @@
     <string name="menu_pending_claims_without_number">Pending Approval</string>
     <string name="menu_returned_claims_with_number">Returned (%1$s)</string>
     <string name="menu_returned_claims_without_number">Returned</string>
-    <string name="menu_sync_now">Sync now</string>
     <string name="delete">Delete</string>
     <string name="remove">Remove</string>
     <string name="delete_claim_confirmation">Delete this claim?</string>
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">Claims</string>
+    <string name="home_fragment_label">Checked in patients</string>
     <string name="no_claims">No claims available</string>
     <string name="pending_claims_dialog_label">Enter security PIN</string>
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
+
+    <!-- StatusFragment -->
+    <string name="last_fetched_returned_encounters_label" translatable="false">Returned Claims</string>
+    <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
 
     <!-- SearchFragment -->
     <string name="search_fragment_label">@string/search</string>
@@ -30,7 +37,10 @@
     <string name="six_zeroes_placeholder" translatable="false">000000</string>
     <string name="start_claim_button">Start Claim</string>
     <string name="invalid_membership_error">Invalid membership number</string>
-    <string name="scan_member_card_menu_item_title">Scan card</string>
+    <string name="scan_card">Scan card</string>
+    <string name="search_name">Search name</string>
+    <string name="cbhi_id_label">Search CBHI ID</string>
+    <string name="cbhi_id_search_label">CBHI ID</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
@@ -60,7 +70,7 @@
     <string name="missing_medical_record_number">Medical record number is required</string>
     <string name="check_out_alert_dialog_title">Remove from checked in list?</string>
     <string name="check_out_alert_dialog_message">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>
-    <string name="diagnoses_and_billable_missing_dialog" translatable="false">Diagnoses and billables have not been downloaded yet, please sync before trying again.</string>
+    <string name="diagnoses_and_billable_missing_dialog">Diagnoses and billables have not been downloaded yet, please sync before trying again.</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
@@ -80,16 +90,16 @@
     <!-- VisitTypeFragment -->
     <string name="visit_type_fragment_label">Visit Type</string>
     <string name="visit_type_label">Visit Type</string>
-    <string name="referral_label">Referral</string>
+    <string name="referral_label">Referred</string>
     <string name="referral_date_label">Referral Date</string>
-    <string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>
-    <string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>
-    <string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>
+    <string name="receiving_facility_validation_error">Receiving facility is required</string>
+    <string name="referral_reason_validation_error">Referral reason is required</string>
+    <string name="mark_as_stockout">Mark %s as stockout</string>
     <string name="referral_serial_number">Referral Number (optional)</string>
     <string name="referral_reason">Referral reason</string>
     <string name="referred_to_facility">Referred to facility</string>
     <string name="referral_reason_prompt">Select referral reason…</string>
-    <string name="referred_to_facility_prompt" translatable="false">Select referred to facility…</string>
+    <string name="referred_to_facility_prompt">Select referred to facility…</string>
     <string name="referral_other_option">Other Referral Facility</string>
     <string name="further_consultation">Further consultation</string>
     <string name="drug_stockout">Drug stockout</string>
@@ -97,13 +107,13 @@
     <string name="inpatient_care">Inpatient care</string>
     <string name="bed_shortage">Bed shortage</string>
     <string name="follow_up">Follow up</string>
-    <string name="patient_outcome" translatable="false">Patient outcome</string>
-    <string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>
+    <string name="patient_outcome">Patient outcome</string>
+    <string name="patient_outcome_prompt">Select patient outcome...</string>
     <string name="outcome_cured_or_discharged">Cured/Discharged</string>
     <string name="outcome_referred">Referred</string>
     <string name="outcome_follow_up">Follow up</string>
     <string name="outcome_refused_service">Refused service</string>
-    <string name="outcome_expired">Expired</string>
+    <string name="outcome_expired">Deceased</string>
     <string name="outcome_other">Other</string>
 
 
@@ -139,9 +149,9 @@
     <string name="empty_line_items_warning">Claim must contain line items</string>
 
     <!-- EncounterFragment -->
-    <string name="drug_and_supply">Drug and Supply</string>
-    <string name="service">Service</string>
-    <string name="lab">Lab</string>
+    <string name="drug_and_supply">Drug and Supplies</string>
+    <string name="service">Services and Procedures</string>
+    <string name="lab">Laboratory Tests</string>
     <string name="select_prompt">Select…</string>
 
     <!-- EditPriceFragment -->

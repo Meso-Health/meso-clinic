@@ -16,7 +16,7 @@ interface EncounterRepository {
     fun insert(encounterWithExtras: EncounterWithExtras, deltas: List<Delta>): Completable
     fun upsert(encounterWithExtras: EncounterWithExtras): Completable
     fun upsert(encounters: List<EncounterWithExtras>): Completable
-    fun delete(encounterRelation: EncounterWithExtras): Completable
+    fun delete(encounterId: UUID): Completable
     fun deleteEncounterItems(ids: List<UUID>): Completable
     fun sync(delta: Delta): Completable
     fun fetchReturnedClaims(): Single<List<EncounterWithExtras>>
@@ -28,5 +28,4 @@ interface EncounterRepository {
     fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>>
     fun returnedIds(): Single<List<UUID>>
     fun revisedIds(): Single<List<UUID>>
-    fun deleteAll(): Completable
 }

@@ -8,7 +8,6 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -43,6 +42,7 @@ import org.watsi.device.factories.MemberModelFactory
 import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.device.factories.PriceScheduleWithBillableModelFactory
 import org.watsi.device.factories.ReturnedEncounterApiFactory
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
@@ -67,7 +67,7 @@ class EncounterRepositoryImplTest {
     @Mock lateinit var mockMemberDao: MemberDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
-    @Mock lateinit var mockOkHttpClient: OkHttpClient
+    @Mock lateinit var mockPreferencesManager: PreferencesManager
     val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     lateinit var repository: EncounterRepositoryImpl
 
@@ -75,7 +75,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, clock, mockOkHttpClient)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, mockPreferencesManager, clock)
     }
 
     @Test
@@ -282,14 +282,17 @@ class EncounterRepositoryImplTest {
     @Test
     fun delete() {
         val encounterRelation = EncounterWithExtrasFactory.build()
-
-        repository.delete(encounterRelation).test().assertComplete()
+        val encounterId = encounterRelation.encounter.id
+        val encounterWithExtrasModel = EncounterWithExtrasModel.fromEncounterWithExtras(encounterRelation, clock)
+        whenever(mockDao.find(encounterId)).thenReturn(Single.just(encounterWithExtrasModel))
+        repository.delete(encounterId).test().assertComplete()
 
         verify(mockDao).delete(
-            encounterModel = EncounterModel.fromEncounter(encounterRelation.encounter, clock),
-            encounterItemModels = encounterRelation.encounterItemRelations.map {
-                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
-            }
+            referralModels = encounterWithExtrasModel.referralModels!!,
+            encounterItemModels = encounterWithExtrasModel.encounterItemWithBillableAndPriceModels!!.mapNotNull {
+                it.encounterItemModel
+            },
+            encounterModel = encounterWithExtrasModel.encounterModel!!
         )
     }
 }

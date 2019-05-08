@@ -11,7 +11,7 @@ object IdentificationEventModelFactory {
 
     fun build(id: UUID = UUID.randomUUID(),
               memberId: UUID = UUID.randomUUID(),
-              throughMemberId: UUID = UUID.randomUUID(),
+              throughMemberId: UUID? = null,
               occurredAt: Instant = Instant.now(),
               searchMethod: IdentificationEvent.SearchMethod =
                       IdentificationEvent.SearchMethod.SCAN_BARCODE,
@@ -46,7 +46,7 @@ object IdentificationEventModelFactory {
     fun create(identificationEventDao: IdentificationEventDao,
                id: UUID = UUID.randomUUID(),
                memberId: UUID = UUID.randomUUID(),
-               throughMemberId: UUID = UUID.randomUUID(),
+               throughMemberId: UUID? = null,
                occurredAt: Instant = Instant.now(),
                searchMethod: IdentificationEvent.SearchMethod =
                        IdentificationEvent.SearchMethod.SCAN_BARCODE,

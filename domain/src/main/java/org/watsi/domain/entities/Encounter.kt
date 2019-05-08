@@ -32,7 +32,7 @@ data class Encounter(
 
     enum class EncounterAction { PREPARE, SUBMIT, RESUBMIT }
 
-    enum class PatientOutcome { CURED_OR_DISCHARGED, REFERRED, FOLLOW_UP, REFUSED_SERVICE, EXPIRED, OTHER }
+    enum class PatientOutcome { CURED_OR_DISCHARGED, REFERRED, FOLLOW_UP, REFUSED_SERVICE, DECEASED, OTHER }
 
     companion object {
         val VISIT_TYPE_CHOICES = listOf(

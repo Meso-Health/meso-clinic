@@ -15,10 +15,11 @@ import org.watsi.domain.relations.EncounterFormWithPhoto
 import org.watsi.domain.repositories.EncounterFormRepository
 import java.util.UUID
 
-class EncounterFormRepositoryImpl(private val encounterFormDao: EncounterFormDao,
-                                  private val api: CoverageApi,
-                                  private val sessionManager: SessionManager,
-                                  private val clock: Clock
+class EncounterFormRepositoryImpl(
+    private val encounterFormDao: EncounterFormDao,
+    private val api: CoverageApi,
+    private val sessionManager: SessionManager,
+    private val clock: Clock
 ) : EncounterFormRepository {
 
     override fun find(id: UUID): Single<EncounterFormWithPhoto> {

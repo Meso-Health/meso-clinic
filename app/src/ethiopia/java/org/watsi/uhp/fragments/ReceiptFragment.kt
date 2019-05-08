@@ -182,7 +182,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         visit_type.text = encounterFlowState.encounter.visitType
         diagnoses_label.text = resources.getQuantityString(
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
-        total_price.text = getString(R.string.price, CurrencyUtil.formatMoney(encounterFlowState.price()))
+        total_price.text = getString(R.string.price, CurrencyUtil.formatMoneyWithCurrency(context, encounterFlowState.price()))
 
         if (encounterFlowState.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
@@ -390,7 +390,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     private fun deleteEncounter() {
         deletePendingClaimAndMemberUseCase.execute(
-            encounterFlowState.toEncounterWithExtras()
+            encounterId = encounterFlowState.encounter.id
         ).subscribe({
             navigateToNext(
                 String.format(

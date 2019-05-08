@@ -267,7 +267,7 @@ class EditMemberFragment : DaggerFragment() {
                         .setTitle(R.string.check_out_alert_dialog_title)
                         .setMessage(getString(R.string.check_out_alert_dialog_message, paramMember.name))
                         .setNegativeButton(R.string.cancel, null)
-                        .setPositiveButton(R.string.remove) { _, _ ->
+                        .setPositiveButton(R.string.delete) { _, _ ->
                             viewModel.dismissIdentificationEvent().subscribe {
                                 navigationManager.popTo(
                                     HomeFragment.withSnackbarMessage(

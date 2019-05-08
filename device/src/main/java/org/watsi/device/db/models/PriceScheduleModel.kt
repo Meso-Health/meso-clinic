@@ -1,13 +1,26 @@
 package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.PriceSchedule
 import java.util.UUID
 
-@Entity(tableName = "price_schedules")
+@Entity(tableName = "price_schedules",
+    indices = [
+        Index("billableId")
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = BillableModel::class,
+            parentColumns = ["id"],
+            childColumns = ["billableId"]
+        )
+    ]
+)
 data class PriceScheduleModel(
         @PrimaryKey val id: UUID,
         val createdAt: Instant,

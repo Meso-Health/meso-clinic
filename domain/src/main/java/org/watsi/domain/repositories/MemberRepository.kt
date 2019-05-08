@@ -28,5 +28,4 @@ interface MemberRepository {
     fun withPhotosToFetchCount(): Flowable<Int>
     fun sync(deltas: List<Delta>): Completable
     fun syncPhotos(deltas: List<Delta>): Completable
-    fun deleteAll(): Completable
 }

@@ -8,7 +8,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 
 object EthiopianDateHelper {
-    const val DATE_FORMAT = "dd / MM / yyyy"
+    const val DATE_FORMAT = "dd-MM-yyyy"
     const val MONTHS_IN_YEAR = 13
 
     fun formatEthiopianDate(instant: Instant, clock: Clock): String {

@@ -1,10 +1,16 @@
 package org.watsi.uhp.utils
 
+import android.content.Context
 import org.watsi.uhp.BuildConfig
+import org.watsi.uhp.R
 import java.math.BigDecimal
 
 object CurrencyUtil {
     const val BIRR_MULT = 100
+
+    fun formatMoneyWithCurrency(context: Context, amount: Int, flavor: String = BuildConfig.FLAVOR): String {
+        return context.getString(R.string.price_with_currency, formatMoney(amount, flavor))
+    }
 
     fun formatMoney(amount: Int, flavor: String = BuildConfig.FLAVOR): String {
         return when (flavor) {

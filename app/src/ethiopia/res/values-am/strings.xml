@@ -8,10 +8,12 @@
     <string name="log_out_alert">እርግጠኛ ነዎት መልቀቅ ይፈልጋሉን</string>
     <string name="log_out_alert_message">ማንኛውም ያልተዋሃደ መረጃ ሊጠፋ ነው</string>
     <string name="menu_status_label">ሁኔታ</string>
+    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- General Labels -->
     <string name="male">ወንድ</string>
     <string name="female">ሴት</string>
+    <string name="ok">አዎ</string>
     <string name="cancel">ሰርዝ</string>
     <string name="total">ድምር</string>
     <string name="save">አስቀምጥ</string>
@@ -39,7 +41,7 @@
     <string name="login_wrong_username_or_password_message">የተሰጠው የተጠቃሚ ስም / ይለፍ ቃል ጥምረት የተሳሳተ ነው</string>
     <string name="login_progress_message">እየገባ ነው</string>
     <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
-    <!--<string name="login_permission_error">This user cannot be used for enrollment</string>-->
+    <string name="login_permission_error">ይህ ተጠቃሚ የክፍያ ጥያቄ መላክ አልተፈቐደለትም</string>
 
     <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">አስገባ</string>
@@ -49,7 +51,7 @@
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">መድሃኒቶች እና ኣቅረቦቶች</string>
+    <string name="drug_and_supply">መድሃኒቶች እና አቅርቦቶች</string>
     <string name="service">አገልግሎት</string>
     <string name="lab">ላብራቶሪ</string>
     <string name="select_prompt">ምረጥ</string>
@@ -68,31 +70,44 @@
     <string name="search_diagnosis_hint">በሽታ ፈልግ</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ከልስ</string>
+    <string name="receipt_fragment_label">የክፍያ ጥያቄ ከልስ</string>
     <string name="submit_encounter_button">@string/submit</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
     <string name="today">ዛሬ</string>
     <string name="encounter_saved">የክፍያ ጥያቄው ተቀምጠዋል</string>
 
     <!-- StatusFragment -->
-    <string name="version_and_sync_label">ሁኔታ</string>
-    <string name="status_title">ኣውታረ መርበብ</string>
+    <string name="status_fragment_label">ሁኔታ</string>
     <string name="current_user_label">ፈፃሚ</string>
-    <string name="fetch_members_label">መጨረሻ ጊዜ የአባላት መረጃ የተስተካከለበት</string>
-    <string name="fetch_billables_label">ዋጋ ተመን የታደሰበት ጊዜ</string>
-    <string name="fetch_diagnoses_label">በሽታዎች ዝርዝር የተሻሻለበት ጊዜ</string>
-    <string name="fetch_member_pictures_label">የአባል ፎቶ</string>
-    <string name="sync_claims_label">የክፍያ ጥያቄዎች</string>
-    <string name="all_synced">ሁሉንም አሳምር</string>
-    <string name="all_fetched">ሁሉም መጥቷል</string>
-    <string name="never_updated">በፍፁም</string>
-    <string name="waiting_to_sync">ያልተዋሃደ</string>
-    <string name="waiting_to_fetch">ገና ያልመጣ</string>
-    <string name="sync_new_members_label">አዲስ አባላት</string>
-    <string name="sync_photos_label">አዲስ ፎቶዎች</string>
-    <string name="sync_id_events_label">መለያዎች</string>
-    <string name="app_version">የክፍያ ጥያቄ መላክ</string>
-    <string name="android_version">አንድሮይድ %1$S</string>
+
+    <string name="fetch_data_title">የወረዱ (መረጃ)</string>
+    <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <string name="last_fetched_diagnoses_label">በሽታዎች ዝርዝር</string>
+    <string name="last_fetched_members_label">ኣባላት</string>
+
+    <string name="fetch_photos_title">የወረዱ (ፎቶዎች)</string>
+    <string name="last_fetched_member_photos_label">የአባል ፎቶዎች</string>
+
+    <string name="sync_data_title">የተጫኑት (መረጃ)</string>
+    <string name="unsynced_members_label">ኣባላት</string>
+    <string name="unsynced_id_events_label">መለያዎች</string>
+    <string name="unsynced_encounters_label">የክፍያ ጥያቄዎች</string>
+
+    <string name="sync_photos_title">የተጫኑት (ፎቶዎች)</string>
+    <string name="unsynced_member_photos_label">የአባል ፎቶዎች</string>
+
+    <string name="app_version">የክፍያ ጥያቄ መላክ %1$s</string>
+    <string name="android_version">አንድሮይድ %1$s</string>
+
+    <string name="last_successful_run_label">ለመጨረሻ ጊዜ የሄደው</string>
+    <string name="all_fetched">ሁሉም ወርደዋል</string>
+    <string name="all_synced">"ሁሉም ተጭነዋል "</string>
+    <string name="waiting_to_fetch">ለማውረድ</string>
+    <string name="waiting_to_sync">ለመጫን</string>
+    <string name="never">በፍፁም</string>
+
+    <!--<string name="no_internet_title" translatable="false">No internet connection</string>-->
+    <!--<string name="no_internet_prompt" translatable="false">Please connect the device to the internet and try again.</string>-->
 
     <!-- ScanMemberCard -->
     <string name="scan_member_card_button_text">@string/scan_member_card</string>
@@ -105,6 +120,10 @@
 
     <!-- ~~~~~~~~~~~~~~~~~~~~ FLAVOR TRANSLATIONS ~~~~~~~~~~~~~~~~~~~~ -->
 
+    <!-- General -->
+    <string name="currency">ብር</string>
+    <string name="price_with_currency">ብር %1$s</string>
+
     <!-- Menu -->
     <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
     <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
@@ -113,13 +132,16 @@
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
-    <string name="menu_sync_now">አሁን አዋድድ</string>
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">የክፍያ ጥያቄዎች</string>
+    <string name="home_fragment_label">የገቡ ታካሚዎች</string>
     <string name="no_claims">የተገኘ የክፍያ ጥያቄ የለም</string>
     <string name="pending_claims_dialog_label">የይለፍ ቁጥር አስገባ</string>
     <string name="pending_claims_dialog_error_message">የተሳሳተ የይለፍ ቁጥር</string>
+
+    <!-- StatusFragment -->
+    <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
+    <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -138,7 +160,10 @@
     <string name="start_claim_button">የክፍያ ጥያቄ ምዝገባ ጀምር</string>
     <string name="encounter_submitted">የክፍያ ጥያቄ በሚገባ ተላልፏል</string>
     <string name="invalid_membership_error">የኣባልነት መለያ ቁጥር ስሕተት ኣለዉ</string>
-    <string name="scan_member_card_menu_item_title">ካርድ ስካን አድርግ</string>
+    <string name="scan_card">ካርድ ስካን አድርግ</string>
+    <string name="search_name">በስም ይፈልጉ</string>
+    <string name="cbhi_id_search_label">በማአጤም መለያ ቁጥር ፈልግ</string>
+    <string name="cbhi_id_label">የማአጤም መለያ ቁጥር</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
@@ -167,6 +192,7 @@
     <string name="missing_medical_record_number">የህክምና ካርድ ቁጥር መግባት ኣለበት </string>
     <string name="check_out_alert_dialog_title">ከገቡት ዝርዝር ውስጥ ይወገድ?</string>
     <string name="check_out_alert_dialog_message">%1$s  ከገቡት ዝርዝር ውስጥ ይወገዳል፡፡ ከተወገደ ደግሞ በስሙ የክፍያ ጥያቄ ማቅረብ አይችሉም፡፡</string>
+    <string name="diagnoses_and_billable_missing_dialog">የበሽታዎች ዝርዝርና አገልግሎቶች አልወረዱም፣ እባክዎ ደግመው ከመላክዎ በፊት ያዋህዱት</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>
@@ -189,13 +215,13 @@
     <string name="visit_type_label">የጉብኝት አይነት</string>
     <string name="referral_label">ሪፈር</string>
     <string name="referral_date_label">ሪፈር የተባለበት ቀን</string>
-    <!--<string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>-->
-    <!--<string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>-->
-    <!--<string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>-->
+    <string name="receiving_facility_validation_error">የሪፈር ተቀባይ ጤና ተቋም ስም መሞላት አለበት</string>
+    <string name="referral_reason_validation_error">ሪፈር የተባለበት ምክንያት መሞላት አለበት</string>
+    <string name="mark_as_stockout">%s በተቋማችን ውስጥ የለም</string>
     <string name="referral_serial_number">የሪፈር ቁጥር (ካለ)</string>
     <string name="referral_reason">ሪፈር የተባለበት ምክንያት</string>
     <string name="referred_to_facility">ሪፈር የተላከበት ጤና ተቋም</string>
-    <!--<string name="referred_to_facility_prompt">Select referred to facility…</string>-->
+    <string name="referred_to_facility_prompt">ሪፈር የተላከበት ጤና ተቋም ምረጥ</string>
     <string name="referral_other_option">ሌሎች ሪፈር የሚላክላቸው ጤና ተቋሞች</string>
     <string name="referral_reason_prompt">ሪፈር የተባለበት ምክንያት…</string>
     <string name="further_consultation">ለተጨማሪ ከፍተኛ ምርመራ</string>
@@ -205,8 +231,8 @@
     <string name="bed_shortage">የአልጋ እጥረት</string>
     <string name="follow_up">በአቅራብያው ክትትል እንዲያገኙ</string>
     <string name="other">ለሌሎች (ያልተጠቀሱ) አገልግሎቶች</string>
-    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
-    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="patient_outcome">የህክምና ውጤት</string>
+    <string name="patient_outcome_prompt">የህክምና ውጤት ምረጥ</string>
     <string name="outcome_cured_or_discharged">ታክመዋል/ወጥተዋል</string>
     <string name="outcome_referred">ሪፈር ተብሏል</string>
     <string name="outcome_follow_up">ክትትል ያስፈልገዋል</string>

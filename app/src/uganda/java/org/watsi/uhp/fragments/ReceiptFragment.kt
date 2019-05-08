@@ -96,7 +96,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
         encounter_items_label.text = resources.getQuantityString(
             receipt_line_item_count, encounterFlowState.encounterItemRelations.size, encounterFlowState.encounterItemRelations.size)
-        total_price.text = getString(R.string.price_with_currency, CurrencyUtil.formatMoney(encounterFlowState.price()))
+        total_price.text = CurrencyUtil.formatMoneyWithCurrency(context, encounterFlowState.price())
         forms_label.text = resources.getQuantityString(
             forms_attached_label, encounterFlowState.encounterForms.size, encounterFlowState.encounterForms.size)
 

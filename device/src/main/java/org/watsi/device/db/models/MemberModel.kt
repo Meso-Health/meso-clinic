@@ -1,6 +1,8 @@
 package org.watsi.device.db.models
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
@@ -10,7 +12,28 @@ import org.watsi.domain.entities.Member.ArchivedReason
 import org.watsi.domain.entities.Member.RelationshipToHead
 import java.util.UUID
 
-@Entity(tableName = "members")
+@Entity(
+    tableName = "members",
+    indices = [
+        Index("cardId"),
+        Index("householdId"),
+        Index("membershipNumber"),
+        Index("thumbnailPhotoId"),
+        Index("photoId")
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = PhotoModel::class,
+            parentColumns = ["id"],
+            childColumns = ["thumbnailPhotoId"]
+        ),
+        ForeignKey(
+            entity = PhotoModel::class,
+            parentColumns = ["id"],
+            childColumns = ["photoId"]
+        )
+    ]
+)
 data class MemberModel(
     @PrimaryKey val id: UUID,
     val enrolledAt: Instant,

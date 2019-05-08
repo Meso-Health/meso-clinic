@@ -25,6 +25,7 @@ import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
 import org.watsi.device.db.repositories.EncounterFormRepositoryImpl
 import org.watsi.device.db.repositories.EncounterRepositoryImpl
 import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
+import org.watsi.device.db.repositories.MainRepositoryImpl
 import org.watsi.device.db.repositories.MemberRepositoryImpl
 import org.watsi.device.db.repositories.PhotoRepositoryImpl
 import org.watsi.device.db.repositories.PriceScheduleRepositoryImpl
@@ -37,6 +38,7 @@ import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.MainRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
@@ -104,22 +106,20 @@ class DbModule {
                                   api: CoverageApi,
                                   sessionManager: SessionManager,
                                   preferencesManager: PreferencesManager,
-                                  clock: Clock,
-                                  okHttpClient: OkHttpClient): BillableRepository =
-            BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock, okHttpClient)
+                                  clock: Clock): BillableRepository =
+            BillableRepositoryImpl(billableDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun providePriceScheduleRepository(priceScheduleDao: PriceScheduleDao,
                                        api: CoverageApi,
                                        sessionManager: SessionManager,
-                                       clock: Clock,
-                                       okHttpClient: OkHttpClient): PriceScheduleRepository {
-        return PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager, clock, okHttpClient)
+                                       clock: Clock): PriceScheduleRepository {
+        return PriceScheduleRepositoryImpl(priceScheduleDao, api, sessionManager, clock)
     }
 
     @Provides
-    fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock, okHttpClient: OkHttpClient): DeltaRepository {
-        return DeltaRepositoryImpl(deltaDao, clock, okHttpClient)
+    fun provideDeltaRepository(deltaDao: DeltaDao, clock: Clock): DeltaRepository {
+        return DeltaRepositoryImpl(deltaDao, clock)
     }
 
     @Provides
@@ -137,9 +137,9 @@ class DbModule {
                                    memberDao: MemberDao,
                                    api: CoverageApi,
                                    sessionManager: SessionManager,
-                                   clock: Clock,
-                                   okHttpClient: OkHttpClient): EncounterRepository =
-            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, memberDao, api, sessionManager, clock, okHttpClient)
+                                   preferencesManager: PreferencesManager,
+                                   clock: Clock): EncounterRepository =
+            EncounterRepositoryImpl(encounterDao, encounterItemDao, diagnosisDao, memberDao, api, sessionManager, preferencesManager, clock)
 
     @Provides
     fun provideEncounterFormRepository(encounterFormDao: EncounterFormDao,
@@ -152,9 +152,8 @@ class DbModule {
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
                                              api: CoverageApi,
                                              sessionManager: SessionManager,
-                                             clock: Clock,
-                                             okHttpClient: OkHttpClient): IdentificationEventRepository {
-        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock, okHttpClient)
+                                             clock: Clock): IdentificationEventRepository {
+        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
     }
 
     @Provides
@@ -163,21 +162,21 @@ class DbModule {
                                 sessionManager: SessionManager,
                                 preferencesManager: PreferencesManager,
                                 photoDao: PhotoDao,
-                                clock: Clock,
-                                okHttpClient: OkHttpClient): MemberRepository =
-            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock, okHttpClient)
+                                clock: Clock): MemberRepository =
+            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
 
     @Provides
-    fun providePhotoRepository(photoDao: PhotoDao,
-                               api: CoverageApi,
-                               sessionManager: SessionManager,
-                               clock: Clock,
-                               okHttpClient: OkHttpClient): PhotoRepository {
-        return PhotoRepositoryImpl(photoDao, api, sessionManager, clock, okHttpClient)
+    fun providePhotoRepository(photoDao: PhotoDao, clock: Clock): PhotoRepository {
+        return PhotoRepositoryImpl(photoDao, clock)
     }
 
     @Provides
-    fun provideReferralRepository(referralDao: ReferralDao, okHttpClient: OkHttpClient): ReferralRepository {
-        return ReferralRepositoryImpl(referralDao, okHttpClient)
+    fun provideReferralRepository(referralDao: ReferralDao): ReferralRepository {
+        return ReferralRepositoryImpl(referralDao)
+    }
+
+    @Provides
+    fun provideMainRepository(appDatabase: AppDatabase, okHttpClient: OkHttpClient): MainRepository {
+        return MainRepositoryImpl(appDatabase, okHttpClient)
     }
 }

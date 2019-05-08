@@ -5,7 +5,6 @@ import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
@@ -23,6 +22,7 @@ import org.watsi.device.db.models.EncounterWithExtrasModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
@@ -37,8 +37,8 @@ class EncounterRepositoryImpl(
     private val memberDao: MemberDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
-    private val clock: Clock,
-    private val okHttpClient: OkHttpClient
+    private val preferencesManager: PreferencesManager,
+    private val clock: Clock
 ) : EncounterRepository {
     override fun revisedIds(): Single<List<UUID>> {
         return encounterDao.revisedIds()
@@ -66,6 +66,8 @@ class EncounterRepositoryImpl(
                 val returnedClaims = api.getReturnedClaims(token.getHeaderString(), token.user.providerId).blockingGet()
                 val returnedClaimsMemberIds = returnedClaims.map { it.memberId }
                 val alreadyPersistedMembers = memberDao.findMembersByIds(returnedClaimsMemberIds).blockingGet().map { it.toMember() }
+
+                preferencesManager.updateReturnedClaimsLastFetched(clock.instant())
 
                 returnedClaims.map { returnedClaim ->
                     val persistedMember = alreadyPersistedMembers.find { it.id == returnedClaim.memberId }
@@ -167,11 +169,11 @@ class EncounterRepositoryImpl(
             }
 
             encounterDao.upsert(
+                memberModels = emptyList(),
                 encounterModels = listOf(encounterModel),
                 encounterItemModels = encounterItemModels,
                 billableModels = emptyList(),
                 priceScheduleModels = emptyList(),
-                memberModels = emptyList(),
                 referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
@@ -210,27 +212,29 @@ class EncounterRepositoryImpl(
             }
 
             encounterDao.upsert(
+                memberModels = memberModels,
                 encounterModels = encounterModels,
                 encounterItemModels = encounterItemModels,
                 billableModels = billableModels,
                 priceScheduleModels = priceScheduleModels,
-                memberModels = memberModels,
                 referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun delete(encounterRelation: EncounterWithExtras): Completable {
+    override fun delete(encounterId: UUID): Completable {
         return Completable.fromAction {
-            val encounterModel = EncounterModel.fromEncounter(encounterRelation.encounter, clock)
-
-            val encounterItemModels = encounterRelation.encounterItemRelations.map {
-                EncounterItemModel.fromEncounterItem(it.encounterItem, clock)
-            }
-
-            encounterDao.delete(
-                encounterModel = encounterModel,
-                encounterItemModels = encounterItemModels
+            val encounterWithExtrasModel = encounterDao.find(encounterId).blockingGet()
+            encounterWithExtrasModel.encounterModel?.let { encounterModel ->
+                encounterDao.delete(
+                    referralModels = encounterWithExtrasModel.referralModels.orEmpty(),
+                    encounterItemModels = encounterWithExtrasModel.encounterItemWithBillableAndPriceModels.orEmpty().mapNotNull {
+                        it.encounterItemModel
+                    },
+                    encounterModel = encounterModel
+                )
+            } ?: Completable.error(
+                IllegalStateException("encounter loaded from DB needs to have an non-null encounter. $encounterWithExtrasModel")
             )
         }.subscribeOn(Schedulers.io())
     }
@@ -251,12 +255,5 @@ class EncounterRepositoryImpl(
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()
-    }
-
-    override fun deleteAll(): Completable {
-        return Completable.fromAction {
-            okHttpClient.cache().evictAll()
-            encounterDao.deleteAll()
-        }.subscribeOn(Schedulers.io())
     }
 }

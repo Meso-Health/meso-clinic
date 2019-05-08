@@ -8,6 +8,7 @@ import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
+import org.watsi.domain.repositories.MainRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
@@ -18,6 +19,10 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
+import org.watsi.domain.usecases.FetchBillablesUseCase
+import org.watsi.domain.usecases.FetchDiagnosesUseCase
+import org.watsi.domain.usecases.FetchMembersPhotosUseCase
+import org.watsi.domain.usecases.FetchMembersUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.FindHouseholdIdByCardIdUseCase
@@ -117,9 +122,10 @@ class DomainModule {
     @Provides
     fun provideUpdateEncounterUseCase(
         encounterRepository: EncounterRepository,
+        referralRepository: ReferralRepository,
         priceScheduleRepository: PriceScheduleRepository
     ): UpdateEncounterUseCase {
-        return UpdateEncounterUseCase(encounterRepository, priceScheduleRepository)
+        return UpdateEncounterUseCase(encounterRepository, referralRepository, priceScheduleRepository)
     }
 
     @Provides
@@ -154,6 +160,26 @@ class DomainModule {
     @Provides
     fun provideFetchStatusUseCase(memberRepository: MemberRepository): FetchStatusUseCase {
         return FetchStatusUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideFetchMembersUseCase(memberRepository: MemberRepository): FetchMembersUseCase {
+        return FetchMembersUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideFetchBillablesUseCase(billableRepository: BillableRepository): FetchBillablesUseCase {
+        return FetchBillablesUseCase(billableRepository)
+    }
+
+    @Provides
+    fun provideFetchDiagnosesUseCase(diagnosisRepository: DiagnosisRepository): FetchDiagnosesUseCase {
+        return FetchDiagnosesUseCase(diagnosisRepository)
+    }
+
+    @Provides
+    fun provideFetchMemberPhotosUseCase(memberRepository: MemberRepository): FetchMembersPhotosUseCase {
+        return FetchMembersPhotosUseCase(memberRepository)
     }
 
     @Provides
@@ -328,24 +354,8 @@ class DomainModule {
 
     @Provides
     fun provideDeleteUserDataUseCase(
-        billableRepository: BillableRepository,
-        deltaRepository: DeltaRepository,
-        identificationEventRepository: IdentificationEventRepository,
-        memberRepository: MemberRepository,
-        priceScheduleRepository: PriceScheduleRepository,
-        encounterRepository: EncounterRepository,
-        photoRepository: PhotoRepository,
-        referralRepository: ReferralRepository
+        mainRepository: MainRepository
     ): DeleteUserDataUseCase {
-        return DeleteUserDataUseCase(
-            billableRepository,
-            deltaRepository,
-            identificationEventRepository,
-            memberRepository,
-            priceScheduleRepository,
-            encounterRepository,
-            photoRepository,
-            referralRepository
-        )
+        return DeleteUserDataUseCase(mainRepository)
     }
 }

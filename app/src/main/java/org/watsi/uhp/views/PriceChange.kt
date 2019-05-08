@@ -20,11 +20,11 @@ class PriceChange @JvmOverloads constructor(
     }
 
     fun setPrice(currentPrice: Int, prevPrice: Int? = null) {
-        price.text = CurrencyUtil.formatMoney(currentPrice)
+        price.text = CurrencyUtil.formatMoneyWithCurrency(context, currentPrice)
 
         if (prevPrice != null && prevPrice != currentPrice) {
             prev_price.text = context.getString(
-                    R.string.prev_price, CurrencyUtil.formatMoney(prevPrice))
+                    R.string.prev_price, CurrencyUtil.formatMoneyWithCurrency(context, prevPrice))
             prev_price.visibility = View.VISIBLE
         } else {
             prev_price.visibility = View.GONE

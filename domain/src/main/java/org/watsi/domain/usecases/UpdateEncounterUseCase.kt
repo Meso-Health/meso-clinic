@@ -7,9 +7,11 @@ import org.watsi.domain.entities.PriceSchedule
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
+import org.watsi.domain.repositories.ReferralRepository
 
 class UpdateEncounterUseCase(
     private val encounterRepository: EncounterRepository,
+    private val referralRepository: ReferralRepository,
     private val priceScheduleRepository: PriceScheduleRepository
 ) {
 
@@ -23,7 +25,12 @@ class UpdateEncounterUseCase(
                     .map { it.billableWithPriceSchedule.priceSchedule }
                     .filter { priceScheduleRepository.find(it.id).blockingGet() == null }
 
-            // TODO: Upsert so that newly added Referrals are saved, also removed referrals are removed.
+            // Makes sure if facility head deletes a referral, it is deleted from the database.
+            savedEncounter.referral?.let { oldReferral ->
+                if (oldReferral.id != encounterWithExtras.referral?.id) {
+                    referralRepository.delete(oldReferral.id).blockingAwait()
+                }
+            }
             // Upsert so that newly added encounterItems are saved
             encounterRepository.upsert(encounterWithExtras).blockingAwait()
             encounterRepository.deleteEncounterItems(removedEncounterItemIds).blockingAwait()

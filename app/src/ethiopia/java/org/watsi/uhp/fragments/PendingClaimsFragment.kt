@@ -95,7 +95,7 @@ class PendingClaimsFragment : DaggerFragment() {
             )
         }
 
-        total_price_label.text = CurrencyUtil.formatMoney(pendingClaims.sumBy { it.price() })
+        total_price_label.text = CurrencyUtil.formatMoneyWithCurrency(context, pendingClaims.sumBy { it.price() })
 
         claimsAdapter.setClaims(pendingClaims)
     }

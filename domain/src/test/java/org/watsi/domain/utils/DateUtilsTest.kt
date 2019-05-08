@@ -32,7 +32,7 @@ class DateUtilsTest {
 
     @Test
     fun dateAndTimeStrings() {
-        val dateString = "May 21, 2018"
+        val dateString = "21-05-2018"
         val timeString = "10:15am"
         val matchingLocalDateTime = LocalDateTime.parse("2018-05-21T10:15:30.000")
 
