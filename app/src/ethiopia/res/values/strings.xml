@@ -20,8 +20,8 @@
     <string name="delete_claim_confirmation">Delete this claim?</string>
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">Checked in patients</string>
-    <string name="no_claims">No claims available</string>
+    <string name="home_fragment_label">Checked-in patients</string>
+    <string name="no_members" translatable="false">No members available</string>
     <string name="pending_claims_dialog_label">Enter security PIN</string>
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
 

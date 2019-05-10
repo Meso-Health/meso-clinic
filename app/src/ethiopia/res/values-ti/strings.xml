@@ -138,7 +138,7 @@
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
-    <string name="no_claims">ዝተረኸበ ሕቶ ክፍሊት የለን</string>
+    <!--<string name="no_members">No members available</string>-->
     <string name="pending_claims_dialog_label">ናይ ይሕለፍ ቁፅሪ ኣእትው</string>
     <string name="pending_claims_dialog_error_message">ዝተሳሓሓተ ናይ ይሕለፍ ቁፅሪ</string>
 
