@@ -46,9 +46,9 @@ interface EncounterDao {
     fun upsert(
         memberModels: List<MemberModel>,
         encounterModels: List<EncounterModel>,
-        encounterItemModels: List<EncounterItemModel>,
         billableModels: List<BillableModel>,
         priceScheduleModels: List<PriceScheduleModel>,
+        encounterItemModels: List<EncounterItemModel>,
         referralModels: List<ReferralModel>
     )
 
