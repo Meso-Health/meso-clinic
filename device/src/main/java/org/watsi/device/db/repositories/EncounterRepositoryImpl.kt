@@ -149,7 +149,6 @@ class EncounterRepositoryImpl(
             encounterDao.insert(
                 encounterModel = encounterModel,
                 encounterItemModels = encounterItemModels,
-                billableModels = emptyList(),
                 encounterFormModels = encounterFormModels,
                 referralModels = referralModels,
                 deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }

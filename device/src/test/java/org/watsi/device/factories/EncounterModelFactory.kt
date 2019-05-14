@@ -102,7 +102,7 @@ object EncounterModelFactory {
             submittedAt = submittedAt,
             clock = clock
         )
-        encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
+        encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList())
         return model
     }
 }

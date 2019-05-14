@@ -37,7 +37,6 @@ interface EncounterDao {
     @Insert
     fun insert(encounterModel: EncounterModel,
                encounterItemModels: List<EncounterItemModel>,
-               billableModels: List<BillableModel>,
                encounterFormModels: List<EncounterFormModel>,
                referralModels: List<ReferralModel>,
                deltaModels: List<DeltaModel>)
