@@ -149,7 +149,6 @@ class EncounterRepositoryImpl(
             encounterDao.insert(
                 encounterModel = encounterModel,
                 encounterItemModels = encounterItemModels,
-                billableModels = emptyList(),
                 encounterFormModels = encounterFormModels,
                 referralModels = referralModels,
                 deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
@@ -171,9 +170,9 @@ class EncounterRepositoryImpl(
             encounterDao.upsert(
                 memberModels = emptyList(),
                 encounterModels = listOf(encounterModel),
-                encounterItemModels = encounterItemModels,
                 billableModels = emptyList(),
-                priceScheduleModels = emptyList(),
+                priceScheduleModels = emptyList(), // Price schedules are already created during the claim flow.
+                encounterItemModels = encounterItemModels,
                 referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())
@@ -214,9 +213,9 @@ class EncounterRepositoryImpl(
             encounterDao.upsert(
                 memberModels = memberModels,
                 encounterModels = encounterModels,
-                encounterItemModels = encounterItemModels,
                 billableModels = billableModels,
                 priceScheduleModels = priceScheduleModels,
+                encounterItemModels = encounterItemModels,
                 referralModels = referralModels
             )
         }.subscribeOn(Schedulers.io())

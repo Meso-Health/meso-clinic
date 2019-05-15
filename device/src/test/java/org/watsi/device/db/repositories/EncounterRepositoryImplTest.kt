@@ -179,7 +179,6 @@ class EncounterRepositoryImplTest {
         verify(mockDao).insert(
             encounterModel = EncounterModel.fromEncounter(encounter, clock),
             encounterItemModels = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
-            billableModels = emptyList(),
             encounterFormModels = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
             referralModels = listOf(ReferralModel.fromReferral(referral)),
             deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }

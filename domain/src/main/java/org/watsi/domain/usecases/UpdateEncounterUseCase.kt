@@ -32,9 +32,9 @@ class UpdateEncounterUseCase(
                 }
             }
             // Upsert so that newly added encounterItems are saved
+            createPriceSchedules(newPriceSchedules)
             encounterRepository.upsert(encounterWithExtras).blockingAwait()
             encounterRepository.deleteEncounterItems(removedEncounterItemIds).blockingAwait()
-            createPriceSchedules(newPriceSchedules)
         }.subscribeOn(Schedulers.io())
     }
 

@@ -135,7 +135,7 @@
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">የገቡ ታካሚዎች</string>
-    <string name="no_claims">የተገኘ የክፍያ ጥያቄ የለም</string>
+    <!--<string name="no_members">No members available</string>-->
     <string name="pending_claims_dialog_label">የይለፍ ቁጥር አስገባ</string>
     <string name="pending_claims_dialog_error_message">የተሳሳተ የይለፍ ቁጥር</string>
 

@@ -42,8 +42,8 @@ class CreateEncounterUseCase(
                 }
             }
 
-            createBillables(newBillables)
             createPriceSchedules(newPriceSchedules)
+            createBillables(newBillables)
             createEncounter(encounterWithExtrasWithUpdatedTimestamps, submitNow)
         }.subscribeOn(Schedulers.io())
     }
