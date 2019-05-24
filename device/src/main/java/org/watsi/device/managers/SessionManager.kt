@@ -18,7 +18,7 @@ interface SessionManager {
         WORKFLOW_HOSPITAL_IDENTIFICATION,
         WORKFLOW_CLINIC_IDENTIFICATION,
         WORKFLOW_CLAIMS_PREPARATION,
-        FETCH_PHOTOS,
+        FETCH_PHOTOS, // TODO: Photo fetching probably won't stay as a permission like this. It'll probably be divided by catchment
         FETCH_BILLABLES,
         FETCH_DIAGNOSES,
         FETCH_RETURNED_CLAIMS,
@@ -48,7 +48,7 @@ interface SessionManager {
             User.ProviderType.PRIMARY_HOSPITAL to HOSPITAL_PERMISSIONS,
             User.ProviderType.GENERAL_HOSPITAL to HOSPITAL_PERMISSIONS,
             User.ProviderType.TERTIARY_HOSPITAL to HOSPITAL_PERMISSIONS,
-            User.ProviderType.UNCLASSIFIED to HEALTH_CENTER_PERMISSIONS // TODO: What are the permissions for unclassified?
+            User.ProviderType.UNCLASSIFIED to HEALTH_CENTER_PERMISSIONS
         )
     }
 }

@@ -70,7 +70,7 @@ class ClinicActivity : LocaleAwareActivity() {
         if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_PHOTOS)) {
             BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchPhotosService::class.java)
         }
-        BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java) // TODO: Do we allow users to capture and sync photos even if we are never fetching them?
+        BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
         BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
     }
 
