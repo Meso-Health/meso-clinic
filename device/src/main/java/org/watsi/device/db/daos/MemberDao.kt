@@ -26,6 +26,9 @@ interface MemberDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(models: List<MemberModel>)
 
+    @Query("SELECT count(*) from members")
+    fun count(): Single<Int>
+
     @Transaction
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
