@@ -52,6 +52,7 @@ import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.EnumHelper
+import org.watsi.uhp.helpers.PermissionsHelper
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.FetchDataService
 import org.watsi.uhp.services.FetchPhotosService
@@ -116,11 +117,11 @@ class StatusFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        fetch_photos_container.visibility = getVisibilityFromPermission(SessionManager.Permissions.FETCH_PHOTOS)
-        last_fetched_billables.visibility = getVisibilityFromPermission(SessionManager.Permissions.FETCH_BILLABLES)
-        last_fetched_diagnoses.visibility = getVisibilityFromPermission(SessionManager.Permissions.FETCH_DIAGNOSES)
-        last_fetched_returned_claims.visibility = getVisibilityFromPermission(SessionManager.Permissions.FETCH_RETURNED_CLAIMS)
-        unsynced_price_schedules.visibility = getVisibilityFromPermission(SessionManager.Permissions.SYNC_PRICE_SCHEDULES)
+        fetch_photos_container.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_PHOTOS, sessionManager)
+        last_fetched_billables.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_BILLABLES, sessionManager)
+        last_fetched_diagnoses.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_DIAGNOSES, sessionManager)
+        last_fetched_returned_claims.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_RETURNED_CLAIMS, sessionManager)
+        unsynced_price_schedules.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.SYNC_PRICE_SCHEDULES, sessionManager)
 
         val username = sessionManager.currentAuthenticationToken()?.user?.username
         val providerType = sessionManager.currentAuthenticationToken()?.user?.providerType
@@ -162,10 +163,6 @@ class StatusFragment : DaggerFragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun getVisibilityFromPermission(permission: SessionManager.Permissions): Int {
-        return if (sessionManager.userHasPermission(permission)) { View.VISIBLE } else { View.GONE }
     }
 
     private fun registerReceiver() {

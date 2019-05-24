@@ -139,7 +139,8 @@ class EditMemberFragment : DaggerFragment() {
             viewState?.isCheckedIn?.let { isCheckedIn ->
                 if (isCheckedIn && sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
                     start_claim_button.visibility = View.VISIBLE
-                } else if (!isCheckedIn) {
+                } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
+                            || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
                     check_in_button.visibility = View.VISIBLE
                 }
             }
