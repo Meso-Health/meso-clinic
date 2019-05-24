@@ -145,6 +145,12 @@
     <!-- StatusFragment -->
     <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
     <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
+    <!--<string name="provider_type_label" translatable="false">Provider Type</string>-->
+    <!--<string name="provider_type_unclassified" translatable="false">Unclassified</string>-->
+    <!--<string name="provider_type_clinic" translatable="false">Health Center</string>-->
+    <!--<string name="provider_type_primary_hospital" translatable="false">Primary Hospital</string>-->
+    <!--<string name="provider_type_general_hospital" translatable="false">General Hospital</string>-->
+    <!--<string name="provider_type_tertiary_hospital" translatable="false">Tertiary Hospital</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>

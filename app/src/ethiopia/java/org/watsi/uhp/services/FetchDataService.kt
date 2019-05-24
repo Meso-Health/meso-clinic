@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.managers.PreferencesManager
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.usecases.FetchBillablesUseCase
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 class FetchDataService : BaseService() {
 
+    @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var fetchBillablesUseCase: FetchBillablesUseCase
     @Inject lateinit var fetchDiagnosesUseCase: FetchDiagnosesUseCase
     @Inject lateinit var fetchReturnedClaimsUseCase: FetchReturnedClaimsUseCase
@@ -32,16 +34,35 @@ class FetchDataService : BaseService() {
             // to avoid a 304 from backend.
             // This scenario would happen when we migrate schema from version 1 to version 2, and as a result
             // all the models on the phone are deleted, but the e-tag is still stored in the OKHttpCache.
+            // TODO: Is this still a valid test in the hospital flow if we aren't ever fetching billables and diagnoses?
             val billableCount = billableRepository.count().blockingGet()
             val diagnosisCount = diagnosisRepository.count().blockingGet()
             if (billableCount == 0 || diagnosisCount == 0) {
                 okHttpClient.cache().evictAll()
             }
 
+            val billablesCompletable = if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_BILLABLES)) {
+                fetchBillablesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_billables_error_label)) }
+            } else {
+                Completable.complete()
+            }
+
+            val diagnosesCompletable = if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_DIAGNOSES)) {
+                fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_diagnoses_error_label)) }
+            } else {
+                Completable.complete()
+            }
+
+            val returnedClaimsCompletable = if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_RETURNED_CLAIMS)) {
+                fetchReturnedClaimsUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_returned_claims_error_label)) }
+            } else {
+                Completable.complete()
+            }
+
             Completable.concatArray(
-                fetchBillablesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_billables_error_label)) },
-                fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_diagnoses_error_label)) },
-                fetchReturnedClaimsUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_returned_claims_error_label)) },
+                billablesCompletable,
+                diagnosesCompletable,
+                returnedClaimsCompletable,
                 fetchMembersUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_members_error_label)) },
                 Completable.fromAction {
                     if (getErrorMessages().isEmpty()) {

@@ -137,10 +137,13 @@ class HomeFragment : DaggerFragment() {
         }
 
         menu?.let {
-            it.findItem(R.id.menu_returned_claims).isVisible = true
-            it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
-            it.findItem(R.id.menu_pending_claims).isVisible = true
-            it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+                it.findItem(R.id.menu_returned_claims).isVisible = true
+                it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
+                it.findItem(R.id.menu_pending_claims).isVisible = true
+                it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
+            }
+
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_status).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true

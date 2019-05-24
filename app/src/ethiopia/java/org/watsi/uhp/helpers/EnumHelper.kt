@@ -4,6 +4,7 @@ import android.content.Context
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Referral
+import org.watsi.domain.entities.User
 import org.watsi.uhp.R
 
 object EnumHelper {
@@ -48,6 +49,27 @@ object EnumHelper {
             context.getString(patientOutcomePair.second)
         } else {
             logger.error("Unable to find string that corresponds to $outcome in $patientOutcomeChoicesMappings")
+            context.getString(R.string.other) // Just to be safe and not crash the app.
+        }
+    }
+
+    fun getProviderTypeMappings(): List<Pair<User.ProviderType, Int>> {
+        return listOf(
+            Pair(User.ProviderType.UNCLASSIFIED, R.string.provider_type_unclassified),
+            Pair(User.ProviderType.HEALTH_CENTER, R.string.provider_type_clinic),
+            Pair(User.ProviderType.PRIMARY_HOSPITAL, R.string.provider_type_primary_hospital),
+            Pair(User.ProviderType.GENERAL_HOSPITAL, R.string.provider_type_general_hospital),
+            Pair(User.ProviderType.TERTIARY_HOSPITAL, R.string.provider_type_tertiary_hospital)
+        )
+    }
+
+    fun providerTypeToDisplayedString(type: User.ProviderType, context: Context, logger: Logger): String {
+        val providerTypeMappings = getProviderTypeMappings()
+        val providerTypePair = providerTypeMappings.find { pair -> pair.first == type }
+        return if (providerTypePair != null) {
+            context.getString(providerTypePair.second)
+        } else {
+            logger.error("Unable to find string that corresponds to $type in $providerTypeMappings")
             context.getString(R.string.other) // Just to be safe and not crash the app.
         }
     }
