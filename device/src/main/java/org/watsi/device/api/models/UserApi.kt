@@ -28,7 +28,7 @@ data class UserApi(
             username = username,
             name = name,
             providerId = providerId,
-            providerType = providerType?.let {ProviderType.valueOf(it.toUpperCase())},
+            providerType = providerType?.let { ProviderType.valueOf(it.toUpperCase()) },
             role = role,
             securityPin = securityPin
         )

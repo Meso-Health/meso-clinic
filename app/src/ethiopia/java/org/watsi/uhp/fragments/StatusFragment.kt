@@ -126,7 +126,7 @@ class StatusFragment : DaggerFragment() {
         val username = sessionManager.currentAuthenticationToken()?.user?.username
         val providerType = sessionManager.currentAuthenticationToken()?.user?.providerType
         current_user.setValue(username)
-        provider_type.setValue(providerType?.let {EnumHelper.providerTypeToDisplayedString(it, context, logger)})
+        provider_type.setValue(providerType?.let { EnumHelper.providerTypeToDisplayedString(it, context, logger) })
         app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
     }
