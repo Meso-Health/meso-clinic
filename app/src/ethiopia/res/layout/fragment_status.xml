@@ -19,6 +19,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <org.watsi.uhp.views.StatusField
+            android:id="@+id/provider_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/provider_type_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/current_user" />
+
         <TextView
             android:id="@+id/fetch_data_header"
             android:layout_width="match_parent"
@@ -30,7 +38,7 @@
             android:text="@string/fetch_data_title"
             style="@style/PanelHeader"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current_user" />
+            app:layout_constraintTop_toBottomOf="@id/provider_type" />
 
         <ImageView
             android:id="@+id/fetch_data_error"
@@ -41,7 +49,7 @@
             android:background="@drawable/ic_baseline_error_red_24dp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current_user" />
+            app:layout_constraintTop_toBottomOf="@id/provider_type" />
 
         <ProgressBar
             android:id="@+id/fetch_data_progress_bar"
@@ -51,7 +59,7 @@
             android:layout_marginEnd="@dimen/space16"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current_user" />
+            app:layout_constraintTop_toBottomOf="@id/provider_type" />
 
         <org.watsi.uhp.views.StatusField
             android:id="@+id/data_last_fetched_at"
@@ -98,57 +106,67 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/last_fetched_returned_claims" />
 
-        <TextView
-            android:id="@+id/fetch_photos_header"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/fetch_photos_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/space16"
-            android:paddingEnd="@dimen/space16"
-            android:paddingTop="32dp"
-            android:paddingBottom="@dimen/space8"
-            android:text="@string/fetch_photos_title"
-            style="@style/PanelHeader"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_members" />
+            app:layout_constraintTop_toBottomOf="@id/last_fetched_members">
 
-        <ImageView
-            android:id="@+id/fetch_photos_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:layout_marginEnd="@dimen/space16"
-            android:background="@drawable/ic_baseline_error_red_24dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_members" />
+            <TextView
+                android:id="@+id/fetch_photos_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space16"
+                android:paddingEnd="@dimen/space16"
+                android:paddingTop="32dp"
+                android:paddingBottom="@dimen/space8"
+                android:text="@string/fetch_photos_title"
+                style="@style/PanelHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/fetch_photos_progress_bar"
-            android:layout_width="@dimen/space24"
-            android:layout_height="@dimen/space24"
-            android:layout_marginTop="28dp"
-            android:layout_marginEnd="@dimen/space16"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_members" />
+            <ImageView
+                android:id="@+id/fetch_photos_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="@dimen/space16"
+                android:background="@drawable/ic_baseline_error_red_24dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <org.watsi.uhp.views.StatusField
-            android:id="@+id/photos_last_fetched_at"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="@string/last_successful_run_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fetch_photos_header" />
+            <ProgressBar
+                android:id="@+id/fetch_photos_progress_bar"
+                android:layout_width="@dimen/space24"
+                android:layout_height="@dimen/space24"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="@dimen/space16"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        <org.watsi.uhp.views.StatusField
-            android:id="@+id/last_fetched_member_photos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space16"
-            android:text="@string/last_fetched_member_photos_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/photos_last_fetched_at" />
+            <org.watsi.uhp.views.StatusField
+                android:id="@+id/photos_last_fetched_at"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/last_successful_run_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fetch_photos_header" />
+
+            <org.watsi.uhp.views.StatusField
+                android:id="@+id/last_fetched_member_photos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                android:text="@string/last_fetched_member_photos_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photos_last_fetched_at" />
+
+        </android.support.constraint.ConstraintLayout>
+
 
         <TextView
             android:id="@+id/sync_data_header"
@@ -161,7 +179,7 @@
             android:text="@string/sync_data_title"
             style="@style/PanelHeader"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_member_photos" />
+            app:layout_constraintTop_toBottomOf="@id/fetch_photos_container" />
 
         <ProgressBar
             android:id="@+id/sync_data_progress_bar"
@@ -171,7 +189,7 @@
             android:layout_marginEnd="@dimen/space16"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_member_photos" />
+            app:layout_constraintTop_toBottomOf="@id/fetch_photos_container" />
 
         <ImageView
             android:id="@+id/sync_data_error"
@@ -182,7 +200,7 @@
             android:background="@drawable/ic_baseline_error_red_24dp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_member_photos" />
+            app:layout_constraintTop_toBottomOf="@id/fetch_photos_container" />
 
         <org.watsi.uhp.views.StatusField
             android:id="@+id/data_last_synced_at"

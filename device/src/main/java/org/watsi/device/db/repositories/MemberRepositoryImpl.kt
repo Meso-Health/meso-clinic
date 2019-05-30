@@ -44,6 +44,10 @@ class MemberRepositoryImpl(
         }
     }
 
+    override fun count(): Single<Int> {
+        return memberDao.count()
+    }
+
     override fun find(id: UUID): Maybe<Member> {
         return memberDao.find(id).map { it.toMember() }.subscribeOn(Schedulers.io())
     }

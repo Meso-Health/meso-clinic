@@ -35,6 +35,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_photo
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
@@ -58,6 +59,7 @@ class EditMemberFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
+    @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var clock: Clock
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
@@ -135,9 +137,10 @@ class EditMemberFragment : DaggerFragment() {
             }
 
             viewState?.isCheckedIn?.let { isCheckedIn ->
-                if (isCheckedIn) {
+                if (isCheckedIn && sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
                     start_claim_button.visibility = View.VISIBLE
-                } else {
+                } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
+                            || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
                     check_in_button.visibility = View.VISIBLE
                 }
             }
@@ -188,6 +191,8 @@ class EditMemberFragment : DaggerFragment() {
             }
         }
 
+        // This button is gated on needing claims preparation permission. It is never set to visible
+        // if the permission is not available
         start_claim_button.setOnClickListener {
             getMember()?.let { member ->
                 Single.fromCallable {
