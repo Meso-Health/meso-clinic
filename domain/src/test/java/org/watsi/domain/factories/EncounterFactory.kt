@@ -18,7 +18,7 @@ object EncounterFactory {
         visitType: String? = null,
         claimId: String? = null,
         patientOutcome: Encounter.PatientOutcome? = null,
-        adjudicationState: Encounter.AdjudicationState? = null,
+        adjudicationState: Encounter.AdjudicationState? = Encounter.AdjudicationState.PENDING,
         adjudicatedAt: Instant? = null,
         adjudicationReason: String? = null,
         revisedEncounterId: UUID? = null,
