@@ -11,19 +11,21 @@ object EncounterFactory {
         memberId: UUID = UUID.randomUUID(),
         identificationEventId: UUID? = UUID.randomUUID(),
         occurredAt: Instant = Instant.now(),
-        preparedAt: Instant = Instant.now(),
+        preparedAt: Instant? = Instant.now(),
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
         visitType: String? = null,
         claimId: String? = null,
         patientOutcome: Encounter.PatientOutcome? = null,
-        adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+        adjudicationState: Encounter.AdjudicationState? = Encounter.AdjudicationState.PENDING,
         adjudicatedAt: Instant? = null,
         adjudicationReason: String? = null,
         revisedEncounterId: UUID? = null,
         providerComment: String? = null,
-        submittedAt: Instant? = null
+        submittedAt: Instant? = null,
+        visitReason: Encounter.VisitReason? = null,
+        inboundReferralDate: Instant? = null
     ) : Encounter {
         return Encounter(
             id = id,
@@ -42,7 +44,9 @@ object EncounterFactory {
             adjudicationReason = adjudicationReason,
             revisedEncounterId = revisedEncounterId,
             providerComment = providerComment,
-            submittedAt = submittedAt
+            submittedAt = submittedAt,
+            visitReason = visitReason,
+            inboundReferralDate = inboundReferralDate
         )
     }
 }

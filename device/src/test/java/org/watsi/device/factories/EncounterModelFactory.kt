@@ -15,7 +15,7 @@ object EncounterModelFactory {
         memberId: UUID,
         identificationEventId: UUID? = null,
         occurredAt: Instant = Instant.now(),
-        preparedAt: Instant = Instant.now(),
+        preparedAt: Instant? = Instant.now(),
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
@@ -30,6 +30,8 @@ object EncounterModelFactory {
         revisedEncounterId: UUID? = null,
         providerComment: String? = null,
         submittedAt: Instant? = null,
+        visitReason: Encounter.VisitReason? = null,
+        inboundReferralDate: Instant? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val now = Instant.now(clock)
@@ -52,7 +54,9 @@ object EncounterModelFactory {
             adjudicationReason = adjudicationReason,
             revisedEncounterId = revisedEncounterId,
             providerComment = providerComment,
-            submittedAt = submittedAt
+            submittedAt = submittedAt,
+            visitReason = visitReason,
+            inboundReferralDate = inboundReferralDate
         )
     }
 
@@ -63,7 +67,7 @@ object EncounterModelFactory {
         memberId: UUID? = null,
         identificationEventId: UUID? = null,
         occurredAt: Instant = Instant.now(),
-        preparedAt: Instant = Instant.now(),
+        preparedAt: Instant? = Instant.now(),
         backdatedOccurredAt: Boolean = false,
         copaymentPaid: Boolean? = true,
         diagnoses: List<Int> = emptyList(),
@@ -78,6 +82,8 @@ object EncounterModelFactory {
         revisedEncounterId: UUID? = null,
         providerComment: String? = null,
         submittedAt: Instant? = null,
+        visitReason: Encounter.VisitReason? = null,
+        inboundReferralDate: Instant? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val model = build(
@@ -100,6 +106,8 @@ object EncounterModelFactory {
             revisedEncounterId = revisedEncounterId,
             providerComment = providerComment,
             submittedAt = submittedAt,
+            visitReason = visitReason,
+            inboundReferralDate = inboundReferralDate,
             clock = clock
         )
         encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList())

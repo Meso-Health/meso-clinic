@@ -25,7 +25,9 @@ data class EncounterApi(
     val providerComment: String?,
     val claimId: String,
     val submittedAt: Instant?,
-    val patientOutcome: String?
+    val patientOutcome: String?,
+    val visitReason: String?,
+    val inboundReferralDate: Instant?
 ) {
     constructor(encounter: Encounter, referrals: List<Referral>, encounterItems: List<EncounterItem>): this(
         id = encounter.id,
@@ -43,7 +45,9 @@ data class EncounterApi(
         providerComment = encounter.providerComment,
         claimId = encounter.claimId,
         submittedAt = encounter.submittedAt,
-        patientOutcome = encounter.patientOutcome?.toString()?.toLowerCase()
+        patientOutcome = encounter.patientOutcome?.toString()?.toLowerCase(),
+        visitReason = encounter.visitReason?.toString()?.toLowerCase(),
+        inboundReferralDate = encounter.inboundReferralDate
     )
 
     constructor(encounterWithExtras: EncounterWithExtras): this(
