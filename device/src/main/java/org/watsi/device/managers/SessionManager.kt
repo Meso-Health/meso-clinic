@@ -27,7 +27,7 @@ interface SessionManager {
     }
 
     companion object {
-        val ALLOWED_ROLES = listOf("provider")
+        val ALLOWED_ROLES = listOf("provider", "card_room_worker")
 
         val HEALTH_CENTER_PERMISSIONS = setOf(
             Permissions.WORKFLOW_CLINIC_IDENTIFICATION,
