@@ -196,7 +196,7 @@ class EditMemberFragment : DaggerFragment() {
             startActivityForResult(Intent(activity, SavePhotoActivity::class.java), CAPTURE_PHOTO_INTENT)
         }
 
-        val visitReasonMappings = EnumHelper.getVisitReasonMappings()
+        val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
         val visitReasonEnums = visitReasonMappings.map { it.first }
         val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
 

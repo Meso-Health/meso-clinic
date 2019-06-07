@@ -53,14 +53,26 @@ object EnumHelper {
         }
     }
     
-    fun getVisitReasonMappings(): List<Pair<Encounter.VisitReason, Int>> {
-        return listOf(
-            Pair(Encounter.VisitReason.REFERRAL, R.string.visit_reason_referral),
-            Pair(Encounter.VisitReason.NO_REFERRAL, R.string.visit_reason_no_referral),
-            Pair(Encounter.VisitReason.SELF_REFERRAL, R.string.visit_reason_self_referral),
-            Pair(Encounter.VisitReason.FOLLOW_UP, R.string.visit_reason_follow_up),
-            Pair(Encounter.VisitReason.EMERGENCY, R.string.visit_reason_emergency)
-        )
+    fun getVisitReasonMappings(providerType: User.ProviderType?, logger: Logger): List<Pair<Encounter.VisitReason, Int>> {
+        if (providerType == User.ProviderType.PRIMARY_HOSPITAL) {
+            return listOf(
+                Pair(Encounter.VisitReason.REFERRAL, R.string.visit_reason_referral),
+                Pair(Encounter.VisitReason.NO_REFERRAL, R.string.visit_reason_no_referral),
+                Pair(Encounter.VisitReason.SELF_REFERRAL, R.string.visit_reason_self_referral),
+                Pair(Encounter.VisitReason.FOLLOW_UP, R.string.visit_reason_follow_up),
+                Pair(Encounter.VisitReason.EMERGENCY, R.string.visit_reason_emergency)
+            )
+        } else if (providerType == User.ProviderType.GENERAL_HOSPITAL || providerType == User.ProviderType.TERTIARY_HOSPITAL) {
+            return listOf(
+                Pair(Encounter.VisitReason.REFERRAL, R.string.visit_reason_referral),
+                Pair(Encounter.VisitReason.NO_REFERRAL, R.string.visit_reason_no_referral),
+                Pair(Encounter.VisitReason.FOLLOW_UP, R.string.visit_reason_follow_up),
+                Pair(Encounter.VisitReason.EMERGENCY, R.string.visit_reason_emergency)
+            )
+        } else {
+            logger.error("getVisitReasonMappings() called for a provider type that is not a hospital: $providerType")
+            return emptyList()
+        }
     }
 
     fun getProviderTypeMappings(): List<Pair<User.ProviderType, Int>> {
