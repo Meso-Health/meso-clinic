@@ -138,10 +138,8 @@ class EditMemberViewModel @Inject constructor(
                 observable.value = viewState.copy(validationErrors = validationErrors)
                 Completable.error(ValidationException("Some required check-in fields are missing", validationErrors))
             } else {
-                Completable.fromAction {
-                    createIdentificationEvent(searchMethod)
-                    // TODO: create partial encounter
-                }
+                createIdentificationEvent(searchMethod)
+                // TODO: create partial encounter
             }
         } ?: Completable.never()
     }
