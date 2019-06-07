@@ -136,6 +136,47 @@
                     app:label="@string/medical_record_number_field_label"
                     app:layout_constraintTop_toBottomOf="@id/birthdate_field_layout" />
 
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/hospital_check_in_details_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space16"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/medical_record_number_field">
+
+                    <org.watsi.uhp.views.SpinnerField
+                        android:id="@+id/visit_reason_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:label="@string/visit_reason_label"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <org.watsi.uhp.views.DialogDateEditField
+                        android:id="@+id/inbound_referral_date_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginTop="@dimen/space16"
+                        android:visibility="gone"
+                        app:label="@string/inbound_referral_date_label"
+                        app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
+
+                    <org.watsi.uhp.views.DialogDateEditField
+                        android:id="@+id/follow_up_date_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginTop="@dimen/space16"
+                        android:visibility="gone"
+                        app:label="@string/follow_up_date_label"
+                        app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
+
+                </android.support.constraint.ConstraintLayout>
+
             </android.support.constraint.ConstraintLayout>
 
             <TextView
@@ -143,7 +184,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/space16"
-                android:paddingTop="@dimen/space48"
+                android:paddingTop="@dimen/space24"
                 android:text="@string/photo_panel_header_text"
                 style="@style/PanelHeader"
                 app:layout_constraintTop_toBottomOf="@id/demographic_container" />
@@ -154,49 +195,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space16"
                 app:layout_constraintTop_toBottomOf="@id/photo_panel_header" />
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/hospital_check_in_details_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space16"
-                android:background="@drawable/panel_background"
-                android:padding="@dimen/space16"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/photo_container">
-
-                <org.watsi.uhp.views.SpinnerField
-                    android:id="@+id/visit_reason_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:label="@string/visit_reason_label"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <org.watsi.uhp.views.DialogDateEditField
-                    android:id="@+id/inbound_referral_date_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginTop="@dimen/space16"
-                    android:visibility="gone"
-                    app:label="@string/inbound_referral_date_label"
-                    app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
-
-                <org.watsi.uhp.views.DialogDateEditField
-                    android:id="@+id/follow_up_date_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginTop="@dimen/space16"
-                    android:visibility="gone"
-                    app:label="@string/follow_up_date_label"
-                    app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
-
-            </android.support.constraint.ConstraintLayout>
 
             <Button
                 android:id="@+id/check_in_button"
@@ -209,7 +207,7 @@
                 android:text="@string/check_in"
                 android:visibility="gone"
                 style="@style/PrimaryButton"
-                app:layout_constraintTop_toBottomOf="@id/hospital_check_in_details_container" />
+                app:layout_constraintTop_toBottomOf="@id/photo_container" />
 
             <Button
                 android:id="@+id/start_claim_button"
