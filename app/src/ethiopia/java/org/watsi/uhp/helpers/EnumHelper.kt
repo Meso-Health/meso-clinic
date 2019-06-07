@@ -65,7 +65,7 @@ object EnumHelper {
         } else if (providerType == User.ProviderType.GENERAL_HOSPITAL || providerType == User.ProviderType.TERTIARY_HOSPITAL) {
             return listOf(
                 Pair(Encounter.VisitReason.REFERRAL, R.string.visit_reason_referral),
-                Pair(Encounter.VisitReason.NO_REFERRAL, R.string.visit_reason_no_referral),
+                Pair(Encounter.VisitReason.SELF_REFERRAL, R.string.visit_reason_self_referral),
                 Pair(Encounter.VisitReason.FOLLOW_UP, R.string.visit_reason_follow_up),
                 Pair(Encounter.VisitReason.EMERGENCY, R.string.visit_reason_emergency)
             )
