@@ -85,7 +85,7 @@
     <string name="missing_follow_up_date" translatable="false">Follow-up issue date is required</string>
     <string name="visit_reason_prompt" translatable="false">Select a reason for visit…</string>
     <string name="visit_reason_referral" translatable="false">Referral</string>
-    <string name="visit_reason_no_referral" translatable="false">No referral</string>
+    <string name="visit_reason_no_referral" translatable="false">No referral (catchment)</string>
     <string name="visit_reason_self_referral" translatable="false">Self-referral (bypass fee)</string>
     <string name="visit_reason_follow_up" translatable="false">Follow-up</string>
     <string name="visit_reason_emergency" translatable="false">Emergency</string>
