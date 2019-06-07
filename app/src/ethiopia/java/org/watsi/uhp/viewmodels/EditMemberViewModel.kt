@@ -66,20 +66,20 @@ class EditMemberViewModel @Inject constructor(
             Member.isValidMedicalRecordNumber(medicalRecordNumberString)) { null } else { errorString }
     }
 
-    fun updateVisitReason(visitReason: Encounter.VisitReason?) {
+    fun onVisitReasonChange(visitReason: Encounter.VisitReason?) {
         observable.value?.let { viewState ->
             val validationErrors = viewState.validationErrors.filterNot { it.key == VISIT_REASON_ERROR }
             observable.value = viewState.copy(visitReason = visitReason, validationErrors = validationErrors)
         }
     }
 
-    fun updateInboundReferralDate(inboundReferralDate: LocalDate) {
+    fun onInboundReferralDateChange(inboundReferralDate: LocalDate) {
         observable.value?.let { viewState ->
             observable.value = viewState.copy(inboundReferralDate = inboundReferralDate)
         }
     }
 
-    fun updateFollowUpDate(followUpDate: LocalDate) {
+    fun onFollowUpDateChange(followUpDate: LocalDate) {
         observable.value?.let { viewState ->
             observable.value = viewState.copy(followUpDate = followUpDate)
         }

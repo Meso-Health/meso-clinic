@@ -214,16 +214,16 @@ class EditMemberFragment : DaggerFragment() {
         visit_reason_spinner.setUpWithPrompt(
             choices = visitReasonStrings,
             initialChoice = null,
-            onItemSelected = { index: Int -> viewModel.updateVisitReason(visitReasonEnums[index]) },
+            onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
             promptString = getString(R.string.visit_reason_prompt),
-            onPromptSelected = { viewModel.updateVisitReason(null) }
+            onPromptSelected = { viewModel.onVisitReasonChange(null) }
         )
 
         inbound_referral_date_container.setUp(
             initialValue = Instant.now(),
             clock = clock,
             onDateSelected = { date ->
-                viewModel.updateInboundReferralDate(
+                viewModel.onInboundReferralDateChange(
                     LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
                 )
             }
@@ -233,7 +233,7 @@ class EditMemberFragment : DaggerFragment() {
             initialValue = Instant.now(),
             clock = clock,
             onDateSelected = { date ->
-                viewModel.updateFollowUpDate(
+                viewModel.onFollowUpDateChange(
                     LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
                 )
             }
