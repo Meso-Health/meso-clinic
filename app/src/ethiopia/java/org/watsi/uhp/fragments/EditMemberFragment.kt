@@ -147,8 +147,9 @@ class EditMemberFragment : DaggerFragment() {
                     start_claim_button.visibility = View.VISIBLE
                 } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
                             || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
-                    // TODO: only show for hospital users
-                    hospital_check_in_details_container.visibility = View.VISIBLE
+                    if (sessionManager.currentUser()?.isHospital() == true) {
+                        hospital_check_in_details_container.visibility = View.VISIBLE
+                    }
                     check_in_button.visibility = View.VISIBLE
                 }
             }
