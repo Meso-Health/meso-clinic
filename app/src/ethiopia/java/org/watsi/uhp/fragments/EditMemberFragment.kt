@@ -23,6 +23,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.birthdate_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.check_in_button
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.follow_up_date_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.hospital_check_in_details_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.inbound_referral_date_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
@@ -32,8 +35,10 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.start_claim_butto
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_photo
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.visit_reason_spinner
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
@@ -46,6 +51,7 @@ import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.StringHelper
@@ -141,7 +147,26 @@ class EditMemberFragment : DaggerFragment() {
                     start_claim_button.visibility = View.VISIBLE
                 } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
                             || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
+                    // TODO: only show for hospital users
+                    hospital_check_in_details_container.visibility = View.VISIBLE
                     check_in_button.visibility = View.VISIBLE
+                }
+            }
+
+            viewState?.visitReason?.let { visitReason ->
+                when (visitReason) {
+                    Encounter.VisitReason.REFERRAL -> {
+                        inbound_referral_date_container.visibility = View.VISIBLE
+                        follow_up_date_container.visibility = View.GONE
+                    }
+                    Encounter.VisitReason.FOLLOW_UP -> {
+                        inbound_referral_date_container.visibility = View.GONE
+                        follow_up_date_container.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        inbound_referral_date_container.visibility = View.GONE
+                        follow_up_date_container.visibility = View.GONE
+                    }
                 }
             }
         })
@@ -171,6 +196,38 @@ class EditMemberFragment : DaggerFragment() {
             startActivityForResult(Intent(activity, SavePhotoActivity::class.java), CAPTURE_PHOTO_INTENT)
         }
 
+        val visitReasonMappings = EnumHelper.getVisitReasonMappings()
+        val visitReasonEnums = visitReasonMappings.map { it.first }
+        val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
+
+        visit_reason_spinner.setUpWithPrompt(
+            choices = visitReasonStrings,
+            initialChoice = null,
+            onItemSelected = { index: Int -> viewModel.updateVisitReason(visitReasonEnums[index]) },
+            promptString = getString(R.string.visit_reason_prompt),
+            onPromptSelected = { viewModel.updateVisitReason(null) }
+        )
+
+        inbound_referral_date_container.setUp(
+            initialValue = Instant.now(),
+            clock = clock,
+            onDateSelected = { date ->
+                viewModel.updateInboundReferralDate(
+                    LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                )
+            }
+        )
+
+        follow_up_date_container.setUp(
+            initialValue = Instant.now(),
+            clock = clock,
+            onDateSelected = { date ->
+                viewModel.updateFollowUpDate(
+                    LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                )
+            }
+        )
+
         check_in_button.setOnClickListener {
             getMember()?.let { member ->
                 if (member.medicalRecordNumber != null) {
@@ -183,6 +240,7 @@ class EditMemberFragment : DaggerFragment() {
                     })
                 } else {
                     view?.let {
+                        // TODO: show individual form errors instead of snackbar for hospital users
                         SnackbarHelper.showError(it, activity, getString(R.string.missing_medical_record_number))
                     }
                 }
@@ -246,7 +304,7 @@ class EditMemberFragment : DaggerFragment() {
     }
 
     private fun getMember(): Member? {
-        return viewModel.liveData.value?.memberWithThumbnail?.member
+        return observable.value?.memberWithThumbnail?.member
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

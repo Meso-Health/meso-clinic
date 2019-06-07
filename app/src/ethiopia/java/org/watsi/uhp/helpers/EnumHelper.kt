@@ -8,7 +8,7 @@ import org.watsi.domain.entities.User
 import org.watsi.uhp.R
 
 object EnumHelper {
-    fun getReasonChoicesMappings(): List<Pair<Referral.Reason, Int>> {
+    fun getReferralReasonMappings(): List<Pair<Referral.Reason, Int>> {
         return listOf(
             Pair(Referral.Reason.FURTHER_CONSULTATION, R.string.further_consultation),
             Pair(Referral.Reason.DRUG_STOCKOUT, R.string.drug_stockout),
@@ -21,17 +21,17 @@ object EnumHelper {
     }
 
     fun referralReasonToDisplayedString(reason: Referral.Reason, context: Context, logger: Logger): String {
-        val reasonChoicesMappings = getReasonChoicesMappings()
-        val reasonPair = reasonChoicesMappings.find { pair -> pair.first == reason }
-        return if (reasonPair != null) {
-            context.getString(reasonPair.second)
+        val referralReasonMappings = getReferralReasonMappings()
+        val referralReasonPair = referralReasonMappings.find { pair -> pair.first == reason }
+        return if (referralReasonPair != null) {
+            context.getString(referralReasonPair.second)
         } else {
-            logger.error("Unable to find string that corresponds to $reason in $reasonChoicesMappings")
+            logger.error("Unable to find string that corresponds to $reason in $referralReasonMappings")
             context.getString(R.string.other) // Just to be safe and not crash the app.
         }
     }
 
-    fun getPatientOutcomeChoicesMappings(): List<Pair<Encounter.PatientOutcome, Int>> {
+    fun getPatientOutcomeMappings(): List<Pair<Encounter.PatientOutcome, Int>> {
         return listOf(
             Pair(Encounter.PatientOutcome.CURED_OR_DISCHARGED, R.string.outcome_cured_or_discharged),
             Pair(Encounter.PatientOutcome.REFERRED, R.string.outcome_referred),
@@ -43,14 +43,24 @@ object EnumHelper {
     }
 
     fun patientOutcomeToDisplayedString(outcome: Encounter.PatientOutcome, context: Context, logger: Logger): String {
-        val patientOutcomeChoicesMappings = getPatientOutcomeChoicesMappings()
-        val patientOutcomePair = patientOutcomeChoicesMappings.find { pair -> pair.first == outcome }
+        val patientOutcomeMappings = getPatientOutcomeMappings()
+        val patientOutcomePair = patientOutcomeMappings.find { pair -> pair.first == outcome }
         return if (patientOutcomePair != null) {
             context.getString(patientOutcomePair.second)
         } else {
-            logger.error("Unable to find string that corresponds to $outcome in $patientOutcomeChoicesMappings")
+            logger.error("Unable to find string that corresponds to $outcome in $patientOutcomeMappings")
             context.getString(R.string.other) // Just to be safe and not crash the app.
         }
+    }
+    
+    fun getVisitReasonMappings(): List<Pair<Encounter.VisitReason, Int>> {
+        return listOf(
+            Pair(Encounter.VisitReason.REFERRAL, R.string.visit_reason_referral),
+            Pair(Encounter.VisitReason.NO_REFERRAL, R.string.visit_reason_no_referral),
+            Pair(Encounter.VisitReason.SELF_REFERRAL, R.string.visit_reason_self_referral),
+            Pair(Encounter.VisitReason.FOLLOW_UP, R.string.visit_reason_follow_up),
+            Pair(Encounter.VisitReason.EMERGENCY, R.string.visit_reason_emergency)
+        )
     }
 
     fun getProviderTypeMappings(): List<Pair<User.ProviderType, Int>> {

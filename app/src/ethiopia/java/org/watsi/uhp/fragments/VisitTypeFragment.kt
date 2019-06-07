@@ -99,7 +99,6 @@ class VisitTypeFragment : DaggerFragment() {
             number -> viewModel.onNumberChange(number)
         })
 
-
         referral_check_box.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onToggleReferralCheckBox(isChecked)
         }
@@ -140,15 +139,15 @@ class VisitTypeFragment : DaggerFragment() {
             }
         )
 
-        val patientOutcomeChoicesMappings = EnumHelper.getPatientOutcomeChoicesMappings()
-        val patientOutcomeEnums = patientOutcomeChoicesMappings.map { it.first }
-        val patientOutcomeWithTranslations = patientOutcomeChoicesMappings.map { getString(it.second) }
-        val initialPatientOutcome = patientOutcomeChoicesMappings.find {
+        val patientOutcomeMappings = EnumHelper.getPatientOutcomeMappings()
+        val patientOutcomeEnums = patientOutcomeMappings.map { it.first }
+        val patientOutcomeStrings = patientOutcomeMappings.map { getString(it.second) }
+        val initialPatientOutcome = patientOutcomeMappings.find {
             it.first == encounterFlowState.encounter.patientOutcome
         }?.let { context.getString(it.second) }
 
         patient_outcome_spinner.setUpWithPrompt(
-            choices = patientOutcomeWithTranslations,
+            choices = patientOutcomeStrings,
             initialChoice = initialPatientOutcome,
             onItemSelected = { index: Int -> viewModel.onUpdatePatientOutcome(patientOutcomeEnums[index]) },
             promptString = getString(R.string.patient_outcome_prompt),
@@ -169,18 +168,17 @@ class VisitTypeFragment : DaggerFragment() {
             }
         )
 
-        val reasonChoicesMappings = EnumHelper.getReasonChoicesMappings()
-        val reasonEnums = reasonChoicesMappings.map { it.first }
-        val reasonStringsWithTranslations = reasonChoicesMappings.map { getString(it.second) }
-
-        val initialReferralReason = reasonChoicesMappings.find {
+        val referralReasonMappings = EnumHelper.getReferralReasonMappings()
+        val referralReasonEnums = referralReasonMappings.map { it.first }
+        val referralReasonStrings = referralReasonMappings.map { getString(it.second) }
+        val initialReferralReason = referralReasonMappings.find {
             it.first == encounterFlowState.referral?.reason
         }?.let { context.getString(it.second) }
 
         referral_reason_spinner.setUpWithPrompt(
-            choices = reasonStringsWithTranslations,
+            choices = referralReasonStrings,
             initialChoice = initialReferralReason,
-            onItemSelected = { index -> viewModel.onReasonChange(reasonEnums[index]) },
+            onItemSelected = { index -> viewModel.onReasonChange(referralReasonEnums[index]) },
             promptString = getString(R.string.referral_reason_prompt),
             onPromptSelected = { viewModel.onReasonChange(null) }
         )

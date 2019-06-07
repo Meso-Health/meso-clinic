@@ -6,6 +6,8 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import org.threeten.bp.LocalDate
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.usecases.DismissMemberUseCase
@@ -22,21 +24,21 @@ class EditMemberViewModel @Inject constructor(
     private val dismissMemberUseCase: DismissMemberUseCase
 ) : ViewModel() {
 
-    val liveData = MediatorLiveData<ViewState>()
+    val observable = MediatorLiveData<ViewState>()
 
     fun getObservable(member: Member): LiveData<ViewState> {
-        liveData.value = ViewState()
-        liveData.addSource(LiveDataReactiveStreams.fromPublisher(loadMemberUseCase.execute(member.id)), {
-            liveData.value = liveData.value?.copy(memberWithThumbnail = it)
-        })
-        liveData.addSource(LiveDataReactiveStreams.fromPublisher(isMemberCheckedInUseCase.execute(member.id)), {
-            liveData.value = liveData.value?.copy(isCheckedIn = it)
-        })
-        return liveData
+        observable.value = ViewState()
+        observable.addSource(LiveDataReactiveStreams.fromPublisher(loadMemberUseCase.execute(member.id))) {
+            observable.value = observable.value?.copy(memberWithThumbnail = it)
+        }
+        observable.addSource(LiveDataReactiveStreams.fromPublisher(isMemberCheckedInUseCase.execute(member.id))) {
+            observable.value = observable.value?.copy(isCheckedIn = it)
+        }
+        return observable
     }
 
     fun updateMedicalRecordNumber(medicalRecordNumberString: String): Completable {
-        return liveData.value?.memberWithThumbnail?.member?.let {
+        return observable.value?.memberWithThumbnail?.member?.let {
             val medicalRecordNumber = if (medicalRecordNumberString.isBlank()) null else medicalRecordNumberString
             updateMemberUseCase.execute(it.copy(medicalRecordNumber = medicalRecordNumber))
                     .observeOn(AndroidSchedulers.mainThread())
@@ -48,8 +50,26 @@ class EditMemberViewModel @Inject constructor(
             Member.isValidMedicalRecordNumber(medicalRecordNumberString)) { null } else { errorString }
     }
 
+    fun updateVisitReason(visitReason: Encounter.VisitReason?) {
+        observable.value?.let { viewState ->
+            observable.value = viewState.copy(visitReason = visitReason)
+        }
+    }
+
+    fun updateInboundReferralDate(inboundReferralDate: LocalDate) {
+        observable.value?.let { viewState ->
+            observable.value = viewState.copy(inboundReferralDate = inboundReferralDate)
+        }
+    }
+
+    fun updateFollowUpDate(followUpDate: LocalDate) {
+        observable.value?.let { viewState ->
+            observable.value = viewState.copy(followUpDate = followUpDate)
+        }
+    }
+
     fun updatePhoto(rawPhotoId: UUID, thumbnailPhotoId: UUID): Completable {
-        return liveData.value?.memberWithThumbnail?.member?.let {
+        return observable.value?.memberWithThumbnail?.member?.let {
             updateMemberUseCase.execute(it.copy(
                 photoId = rawPhotoId,
                 thumbnailPhotoId = thumbnailPhotoId)
@@ -58,13 +78,16 @@ class EditMemberViewModel @Inject constructor(
     }
 
     fun dismissIdentificationEvent(): Completable {
-        return liveData.value?.memberWithThumbnail?.member?.let { member ->
+        return observable.value?.memberWithThumbnail?.member?.let { member ->
             dismissMemberUseCase.execute(member.id)
         } ?: Completable.error(IllegalStateException("Tried to dismiss an identificationEvent but member has not loaded yet"))
     }
 
     data class ViewState(
         val memberWithThumbnail: MemberWithThumbnail? = null,
+        val visitReason: Encounter.VisitReason? = null,
+        val inboundReferralDate: LocalDate? = null,
+        val followUpDate: LocalDate? = null,
         val isCheckedIn: Boolean? = null
     )
 }

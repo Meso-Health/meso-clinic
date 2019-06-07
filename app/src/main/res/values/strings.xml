@@ -55,7 +55,7 @@
     <string name="server_offline_error_message" translatable="false">Server is offline</string>
     <string name="poor_connectivity_error_message" translatable="false">Poor connectivity</string>
 
-    <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
+    <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">Check In</string>
     <string name="checked_in">Already checked in</string>
     <string name="checked_in_snackbar_message">%1$s was checked in.</string>
