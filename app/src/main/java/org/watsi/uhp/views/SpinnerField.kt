@@ -166,6 +166,7 @@ class SpinnerField @JvmOverloads constructor(
         spinner.setSelection(position)
     }
 
+    // pass null to clear error
     fun setError(errorMessage: String?) {
         if (other_field_container.visibility == View.VISIBLE) {
             other_field_container.error = errorMessage

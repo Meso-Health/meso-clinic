@@ -1,6 +1,5 @@
 package org.watsi.uhp.fragments
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -42,7 +41,6 @@ class VisitTypeFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var viewModel: VisitTypeViewModel
-    lateinit var observable: LiveData<VisitTypeViewModel.ViewState>
 
     companion object {
         const val PARAM_ENCOUNTER = "encounter"

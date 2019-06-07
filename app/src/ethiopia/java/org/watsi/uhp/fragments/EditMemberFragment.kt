@@ -15,7 +15,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -45,7 +44,6 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
-import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -69,7 +67,6 @@ class EditMemberFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
-    @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var validateDiagnosesAndBillablesExistenceUseCase: ValidateDiagnosesAndBillablesExistenceUseCase
 
@@ -109,68 +106,84 @@ class EditMemberFragment : DaggerFragment() {
         paramMember = arguments.getSerializable(PARAM_MEMBER) as Member
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditMemberViewModel::class.java)
         observable = viewModel.getObservable(paramMember)
-        observable.observe(this, Observer { viewState ->
-            viewState?.memberWithThumbnail?.let { memberWithThumbnail ->
-                val member = memberWithThumbnail.member
-                val photo = memberWithThumbnail.photo
+        observable.observe(this, Observer {
+            it?.let { viewState ->
+                setErrors(viewState.validationErrors)
 
-                if (member.needsRenewal == true) {
-                    needs_renewal_notification.visibility = View.VISIBLE
+                viewState.memberWithThumbnail?.let { memberWithThumbnail ->
+                    val member = memberWithThumbnail.member
+                    val photo = memberWithThumbnail.photo
+
+                    if (member.needsRenewal == true) {
+                        needs_renewal_notification.visibility = View.VISIBLE
+                    }
+
+                    PhotoLoader.loadMemberPhoto(
+                        photo?.bytes,
+                        top_photo,
+                        activity,
+                        member.gender,
+                        placeholderPhotoIconPadding
+                    )
+                    top_name.text = member.name
+                    top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
+
+                    membership_number_field.setText(member.membershipNumber)
+                    name_field.setText(member.name)
+                    birthdate_field.setText(StringHelper.getDisplayAge(member, activity, clock))
+                    medical_record_number_field.setValue(member.medicalRecordNumber)
+
+                    photo?.let {
+                        val thumbnailBitmap = BitmapFactory.decodeByteArray(
+                            photo.bytes, 0, photo.bytes.size)
+                        photo_container.setPhotoPreview(thumbnailBitmap)
+                    }
+
+                    activity.invalidateOptionsMenu()
                 }
 
-                PhotoLoader.loadMemberPhoto(
-                    photo?.bytes,
-                    top_photo,
-                    activity,
-                    member.gender,
-                    placeholderPhotoIconPadding
-                )
-                top_name.text = member.name
-                top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
-
-                membership_number_field.setText(member.membershipNumber)
-                name_field.setText(member.name)
-                birthdate_field.setText(StringHelper.getDisplayAge(member, activity, clock))
-                medical_record_number_field.setValue(member.medicalRecordNumber)
-
-                photo?.let {
-                    val thumbnailBitmap = BitmapFactory.decodeByteArray(
-                        photo.bytes, 0, photo.bytes.size)
-                    photo_container.setPhotoPreview(thumbnailBitmap)
+                viewState.isCheckedIn?.let { isCheckedIn ->
+                    if (isCheckedIn && sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+                        start_claim_button.visibility = View.VISIBLE
+                    } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
+                                    || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
+                        if (sessionManager.currentUser()?.isHospital() == true) {
+                            hospital_check_in_details_container.visibility = View.VISIBLE
+                        }
+                        check_in_button.visibility = View.VISIBLE
+                    }
                 }
 
-                activity.invalidateOptionsMenu()
-            }
-
-            viewState?.isCheckedIn?.let { isCheckedIn ->
-                if (isCheckedIn && sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
-                    start_claim_button.visibility = View.VISIBLE
-                } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
-                            || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
-                    if (sessionManager.currentUser()?.isHospital() == true) {
-                        hospital_check_in_details_container.visibility = View.VISIBLE
-                    }
-                    check_in_button.visibility = View.VISIBLE
-                }
-            }
-
-            viewState?.visitReason?.let { visitReason ->
-                when (visitReason) {
-                    Encounter.VisitReason.REFERRAL -> {
-                        inbound_referral_date_container.visibility = View.VISIBLE
-                        follow_up_date_container.visibility = View.GONE
-                    }
-                    Encounter.VisitReason.FOLLOW_UP -> {
-                        inbound_referral_date_container.visibility = View.GONE
-                        follow_up_date_container.visibility = View.VISIBLE
-                    }
-                    else -> {
-                        inbound_referral_date_container.visibility = View.GONE
-                        follow_up_date_container.visibility = View.GONE
+                viewState.visitReason?.let { visitReason ->
+                    when (visitReason) {
+                        Encounter.VisitReason.REFERRAL -> {
+                            inbound_referral_date_container.visibility = View.VISIBLE
+                            follow_up_date_container.visibility = View.GONE
+                        }
+                        Encounter.VisitReason.FOLLOW_UP -> {
+                            inbound_referral_date_container.visibility = View.GONE
+                            follow_up_date_container.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            inbound_referral_date_container.visibility = View.GONE
+                            follow_up_date_container.visibility = View.GONE
+                        }
                     }
                 }
             }
         })
+    }
+
+    private fun setErrors(errors: Map<String, Int>) {
+        errors[EditMemberViewModel.MEDICAL_RECORD_NUMBER_ERROR]?.let { errorResourceId ->
+            // The mrn field is a DialogEditField which doesn't support displaying the standard
+            // red error message below, so we use a toast instead.
+            SnackbarHelper.showError(medical_record_number_field, activity, getString(errorResourceId))
+        }
+
+        errors[EditMemberViewModel.VISIT_REASON_ERROR].let { errorResourceId ->
+            visit_reason_spinner.setError(errorResourceId?.let { getString(errorResourceId) })
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -230,30 +243,27 @@ class EditMemberFragment : DaggerFragment() {
         )
 
         check_in_button.setOnClickListener {
-            getMember()?.let { member ->
-                if (member.medicalRecordNumber != null) {
-                    createIdentificationEvent().subscribe({
+            viewModel.getMember()?.let { member ->
+                sessionManager.currentUser()?.let { user ->
+                    viewModel.validateAndCheckInMember(searchMethod, user).subscribe({
                         navigationManager.popTo(HomeFragment.withSnackbarMessage(
                             getString(R.string.checked_in_snackbar_message, member.name)
                         ))
-                    }, {
-                        logger.error(it)
+                    }, { throwable ->
+                        if (throwable is EditMemberViewModel.ValidationException) {
+                            // do nothing for now. No need to say "some fields are invalid"
+                        } else {
+                            logger.error(throwable)
+                        }
                     })
-                } else {
-                    view?.let {
-                        // TODO: show individual form errors instead of snackbar for hospital users
-                        SnackbarHelper.showError(it, activity, getString(R.string.missing_medical_record_number))
-                    }
                 }
-            } ?: run {
-                // TODO: handle member not no viewState
             }
         }
 
         // This button is gated on needing claims preparation permission. It is never set to visible
         // if the permission is not available
         start_claim_button.setOnClickListener {
-            getMember()?.let { member ->
+            viewModel.getMember()?.let { member ->
                 Single.fromCallable {
                     validateDiagnosesAndBillablesExistenceUseCase.execute().blockingAwait()
                     identificationEventRepository.openCheckIn(member.id).blockingGet()
@@ -284,28 +294,6 @@ class EditMemberFragment : DaggerFragment() {
                 })
             }
         }
-    }
-
-    private fun createIdentificationEvent(): Completable {
-        return getMember()?.let {
-            val idEvent = IdentificationEvent(
-                id = UUID.randomUUID(),
-                memberId = it.id,
-                occurredAt = clock.instant(),
-                searchMethod = searchMethod,
-                throughMemberId = null,
-                clinicNumber = null,
-                clinicNumberType = null,
-                fingerprintsVerificationTier = null,
-                fingerprintsVerificationConfidence = null,
-                fingerprintsVerificationResultCode = null
-            )
-            return createIdentificationEventUseCase.execute(idEvent)
-        } ?: Completable.complete()
-    }
-
-    private fun getMember(): Member? {
-        return observable.value?.memberWithThumbnail?.member
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
