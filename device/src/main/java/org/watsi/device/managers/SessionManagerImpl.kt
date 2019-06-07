@@ -6,6 +6,7 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.managers.SessionManager.Companion.ALLOWED_ROLES
 import org.watsi.device.managers.SessionManager.Companion.PROVIDER_PERMISSIONS_MAP
 import org.watsi.domain.entities.AuthenticationToken
+import org.watsi.domain.entities.User
 
 class SessionManagerImpl(
         private val preferencesManager: PreferencesManager,
@@ -44,8 +45,10 @@ class SessionManagerImpl(
 
     override fun currentAuthenticationToken(): AuthenticationToken? = token
 
+    override fun currentUser(): User? = currentAuthenticationToken()?.user
+
     override fun userHasPermission(neededPermission: SessionManager.Permissions): Boolean {
-        val userPermissions = PROVIDER_PERMISSIONS_MAP[currentAuthenticationToken()?.user?.providerType]
+        val userPermissions = PROVIDER_PERMISSIONS_MAP[currentUser()?.providerType]
 
         return if (userPermissions != null) {
             userPermissions.contains(neededPermission)
