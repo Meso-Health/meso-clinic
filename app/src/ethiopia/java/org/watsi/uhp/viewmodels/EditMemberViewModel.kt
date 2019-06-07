@@ -49,10 +49,15 @@ class EditMemberViewModel @Inject constructor(
     }
 
     fun updateMedicalRecordNumber(medicalRecordNumberString: String): Completable {
-        return observable.value?.memberWithThumbnail?.member?.let {
-            val medicalRecordNumber = if (medicalRecordNumberString.isBlank()) null else medicalRecordNumberString
-            updateMemberUseCase.execute(it.copy(medicalRecordNumber = medicalRecordNumber))
-                    .observeOn(AndroidSchedulers.mainThread())
+        return observable.value?.let { viewState ->
+            val validationErrors = viewState.validationErrors.filterNot { it.key == MEDICAL_RECORD_NUMBER_ERROR }
+            observable.value = viewState.copy(validationErrors = validationErrors)
+
+            viewState.memberWithThumbnail?.member?.let {
+                val medicalRecordNumber = if (medicalRecordNumberString.isBlank()) null else medicalRecordNumberString
+                updateMemberUseCase.execute(it.copy(medicalRecordNumber = medicalRecordNumber))
+                        .observeOn(AndroidSchedulers.mainThread())
+            } ?: Completable.complete()
         } ?: Completable.complete()
     }
 

@@ -51,7 +51,6 @@ import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.PhotoLoader
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -175,10 +174,8 @@ class EditMemberFragment : DaggerFragment() {
     }
 
     private fun setErrors(errors: Map<String, Int>) {
-        errors[EditMemberViewModel.MEDICAL_RECORD_NUMBER_ERROR]?.let { errorResourceId ->
-            // The mrn field is a DialogEditField which doesn't support displaying the standard
-            // red error message below, so we use a toast instead.
-            SnackbarHelper.showError(medical_record_number_field, activity, getString(errorResourceId))
+        errors[EditMemberViewModel.MEDICAL_RECORD_NUMBER_ERROR].let { errorResourceId ->
+            medical_record_number_field.setErrorOnField(errorResourceId?.let { getString(errorResourceId) })
         }
 
         errors[EditMemberViewModel.VISIT_REASON_ERROR].let { errorResourceId ->
