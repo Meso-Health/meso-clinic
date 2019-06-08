@@ -204,8 +204,6 @@
     <!--<string name="inbound_referral_date_label">Inbound referral date</string>-->
     <!--<string name="follow_up_date_label">Follow-up issue date</string>-->
     <!--<string name="missing_visit_reason">Reason for visit is required</string>-->
-    <!--<string name="missing_inbound_referral_date">Inbound referral date is required</string>-->
-    <!--<string name="missing_follow_up_date">Follow-up issue date is required</string>-->
     <!--<string name="visit_reason_prompt">Select a reason for visit…</string>-->
     <!--<string name="visit_reason_referral">Referral</string>-->
     <!--<string name="visit_reason_no_referral">No referral</string>-->

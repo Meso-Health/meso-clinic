@@ -81,8 +81,6 @@
     <string name="inbound_referral_date_label" translatable="false">Inbound referral date</string>
     <string name="follow_up_date_label" translatable="false">Follow-up issue date</string>
     <string name="missing_visit_reason" translatable="false">Reason for visit is required</string>
-    <string name="missing_inbound_referral_date" translatable="false">Inbound referral date is required</string>
-    <string name="missing_follow_up_date" translatable="false">Follow-up issue date is required</string>
     <string name="visit_reason_prompt" translatable="false">Select a reason for visit…</string>
     <string name="visit_reason_referral" translatable="false">Referral</string>
     <string name="visit_reason_no_referral" translatable="false">No referral (catchment)</string>
