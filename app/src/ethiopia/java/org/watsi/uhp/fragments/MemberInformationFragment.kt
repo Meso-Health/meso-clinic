@@ -40,12 +40,12 @@ import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.viewmodels.EditMemberViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_ERROR
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.VISIT_REASON_ERROR
 import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
 
@@ -140,7 +140,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             }
         }
 
-        errorMap[EditMemberViewModel.VISIT_REASON_ERROR].let { errorResourceId ->
+        errorMap[VISIT_REASON_ERROR].let { errorResourceId ->
             visit_reason_spinner.setError(errorResourceId?.let { getString(errorResourceId) })
         }
     }

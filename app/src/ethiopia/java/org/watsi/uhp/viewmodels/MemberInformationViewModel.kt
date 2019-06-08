@@ -80,7 +80,7 @@ class MemberInformationViewModel @Inject constructor(
 
     fun onVisitReasonChange(visitReason: Encounter.VisitReason?) {
         observable.value?.let { it ->
-            val errors = it.errors.filterNot { it.key == EditMemberViewModel.VISIT_REASON_ERROR }
+            val errors = it.errors.filterNot { it.key == VISIT_REASON_ERROR }
             observable.value = it.copy(visitReason = visitReason, errors = errors)
         }
     }
