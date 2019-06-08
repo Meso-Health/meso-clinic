@@ -7,8 +7,11 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.User
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.Age
@@ -75,16 +78,35 @@ class MemberInformationViewModel @Inject constructor(
         }
     }
 
-    fun createAndCheckInMember(membershipNumber: String): Completable {
+    fun onVisitReasonChange(visitReason: Encounter.VisitReason?) {
+        observable.value?.let { it ->
+            val errors = it.errors.filterNot { it.key == EditMemberViewModel.VISIT_REASON_ERROR }
+            observable.value = it.copy(visitReason = visitReason, errors = errors)
+        }
+    }
+
+    fun onInboundReferralDateChange(inboundReferralDate: LocalDate) {
+        observable.value?.let { viewState ->
+            observable.value = viewState.copy(inboundReferralDate = inboundReferralDate)
+        }
+    }
+
+    fun onFollowUpDateChange(followUpDate: LocalDate) {
+        observable.value?.let { viewState ->
+            observable.value = viewState.copy(followUpDate = followUpDate)
+        }
+    }
+
+    fun createAndCheckInMember(membershipNumber: String, user: User): Completable {
         val viewState = observable.value ?: return Completable.never()
 
-        val validationErrors = FormValidator.formValidationErrors(viewState)
+        val validationErrors = FormValidator.formValidationErrors(viewState, user)
         if (validationErrors.isNotEmpty()) {
             observable.value = viewState.copy(errors = validationErrors)
             return Completable.error(ValidationException("Some fields are missing", validationErrors))
         }
 
-        val member = toMember(viewState, membershipNumber, clock)
+        val member = toMember(viewState, membershipNumber, clock, user)
         val idEvent = IdentificationEvent(
             id = UUID.randomUUID(),
             memberId = member.id,
@@ -111,9 +133,10 @@ class MemberInformationViewModel @Inject constructor(
         const val MEMBER_NAME_ERROR = "member_age_name"
         const val MEMBER_AGE_ERROR = "member_age_error"
         const val MEMBER_MEDICAL_RECORD_NUMBER_ERROR = "member_medical_record_number_error"
+        const val VISIT_REASON_ERROR = "visit_reason_error"
 
-        fun toMember(viewState: ViewState, membershipNumber: String, clock: Clock): Member {
-            if (FormValidator.formValidationErrors(viewState).isEmpty() && viewState.gender != null
+        fun toMember(viewState: ViewState, membershipNumber: String, clock: Clock, user: User): Member {
+            if (FormValidator.formValidationErrors(viewState, user).isEmpty() && viewState.gender != null
                     && viewState.name != null && viewState.age != null &&
                     viewState.medicalRecordNumber != null) {
                 val birthdateWithAccuracy = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy()
@@ -146,7 +169,7 @@ class MemberInformationViewModel @Inject constructor(
     }
 
     object FormValidator {
-        fun formValidationErrors(viewState: ViewState): Map<String, Int> {
+        fun formValidationErrors(viewState: ViewState, user: User): Map<String, Int> {
             val errors = HashMap<String, Int>()
 
             if (viewState.gender == null) {
@@ -171,6 +194,10 @@ class MemberInformationViewModel @Inject constructor(
                 errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_length_validation_error
             }
 
+            if (user.isHospital() && viewState.visitReason == null) {
+                errors[VISIT_REASON_ERROR] = R.string.missing_visit_reason
+            }
+
             return errors
         }
     }
@@ -181,6 +208,9 @@ class MemberInformationViewModel @Inject constructor(
         val age: Int? = null,
         val ageUnit: AgeUnit = AgeUnit.years,
         val medicalRecordNumber: String? = null,
+        val visitReason: Encounter.VisitReason? = null,
+        val inboundReferralDate: LocalDate? = null,
+        val followUpDate: LocalDate? = null,
         val errors: Map<String, Int> = emptyMap()
     )
 }

@@ -12,6 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.follow_up_date_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.hospital_check_in_details_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.inbound_referral_date_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.visit_reason_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_input_layout
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.age_unit_spinner
@@ -23,14 +27,20 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.member_nam
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.name_layout
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.SessionManager
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
+import org.watsi.uhp.viewmodels.EditMemberViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
@@ -44,6 +54,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
+    @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
 
@@ -71,6 +82,27 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 setErrors(viewState.errors)
+
+                if (sessionManager.currentUser()?.isHospital() == true) {
+                    hospital_check_in_details_container.visibility = View.VISIBLE
+
+                    viewState.visitReason?.let { visitReason ->
+                        when (visitReason) {
+                            Encounter.VisitReason.REFERRAL -> {
+                                inbound_referral_date_container.visibility = View.VISIBLE
+                                follow_up_date_container.visibility = View.GONE
+                            }
+                            Encounter.VisitReason.FOLLOW_UP -> {
+                                inbound_referral_date_container.visibility = View.GONE
+                                follow_up_date_container.visibility = View.VISIBLE
+                            }
+                            else -> {
+                                inbound_referral_date_container.visibility = View.GONE
+                                follow_up_date_container.visibility = View.GONE
+                            }
+                        }
+                    }
+                }
             }
         })
     }
@@ -106,6 +138,10 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             } else {
                 medical_record_number_layout.error = getString(errorResourceId)
             }
+        }
+
+        errorMap[EditMemberViewModel.VISIT_REASON_ERROR].let { errorResourceId ->
+            visit_reason_spinner.setError(errorResourceId?.let { getString(errorResourceId) })
         }
     }
 
@@ -145,14 +181,48 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 text -> viewModel.onMedicalRecordNumberChange(text)
         })
 
+        val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
+        val visitReasonEnums = visitReasonMappings.map { it.first }
+        val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
+
+        visit_reason_spinner.setUpWithPrompt(
+            choices = visitReasonStrings,
+            initialChoice = null,
+            onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
+            promptString = getString(R.string.visit_reason_prompt),
+            onPromptSelected = { viewModel.onVisitReasonChange(null) }
+        )
+
+        inbound_referral_date_container.setUp(
+            initialValue = Instant.now(),
+            clock = clock,
+            onDateSelected = { date ->
+                viewModel.onInboundReferralDateChange(
+                    LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                )
+            }
+        )
+
+        follow_up_date_container.setUp(
+            initialValue = Instant.now(),
+            clock = clock,
+            onDateSelected = { date ->
+                viewModel.onFollowUpDateChange(
+                    LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                )
+            }
+        )
+
         check_in_button.setOnClickListener {
-            viewModel.createAndCheckInMember(membershipNumber).subscribe({
-                navigationManager.popTo(HomeFragment.withSnackbarMessage(
-                    getString(R.string.checked_in_snackbar_message, viewModel.getName())
-                ))
-            }, { throwable ->
-                handleOnSaveError(throwable)
-            })
+            sessionManager.currentUser()?.let { user ->
+                viewModel.createAndCheckInMember(membershipNumber, user).subscribe({
+                    navigationManager.popTo(HomeFragment.withSnackbarMessage(
+                        getString(R.string.checked_in_snackbar_message, viewModel.getName())
+                    ))
+                }, { throwable ->
+                    handleOnSaveError(throwable)
+                })
+            }
         }
 
         /* Hide keyboard if no text inputs have focus */
