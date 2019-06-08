@@ -111,7 +111,7 @@ class StatusFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val username = sessionManager.currentAuthenticationToken()?.user?.username
+        val username = sessionManager.currentUser()?.username
         current_user.setValue(username)
         app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)

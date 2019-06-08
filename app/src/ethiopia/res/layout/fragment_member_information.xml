@@ -97,7 +97,6 @@
 
         </android.support.constraint.ConstraintLayout>
 
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/medical_record_number_layout"
             android:layout_width="match_parent"
@@ -116,6 +115,47 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/hospital_check_in_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space16"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/medical_record_number_layout">
+
+            <org.watsi.uhp.views.SpinnerField
+                android:id="@+id/visit_reason_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:label="@string/visit_reason_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <org.watsi.uhp.views.DialogDateEditField
+                android:id="@+id/inbound_referral_date_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="@dimen/space16"
+                android:visibility="gone"
+                app:label="@string/inbound_referral_date_label"
+                app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
+
+            <org.watsi.uhp.views.DialogDateEditField
+                android:id="@+id/follow_up_date_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="@dimen/space16"
+                android:visibility="gone"
+                app:label="@string/follow_up_date_label"
+                app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
+
+        </android.support.constraint.ConstraintLayout>
+
         <Button
             android:id="@+id/check_in_button"
             android:layout_width="match_parent"
@@ -123,7 +163,7 @@
             android:layout_marginTop="@dimen/space24"
             style="@style/PrimaryButton"
             android:text="@string/check_in"
-            app:layout_constraintTop_toBottomOf="@id/medical_record_number_layout"
+            app:layout_constraintTop_toBottomOf="@id/hospital_check_in_details_container"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

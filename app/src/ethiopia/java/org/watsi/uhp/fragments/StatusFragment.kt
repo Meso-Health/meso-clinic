@@ -21,7 +21,6 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_status.android_version
 import kotlinx.android.synthetic.ethiopia.fragment_status.app_version
 import kotlinx.android.synthetic.ethiopia.fragment_status.current_user
-import kotlinx.android.synthetic.ethiopia.fragment_status.provider_type
 import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_fetched_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_synced_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_data_error
@@ -36,6 +35,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_returned_claims
 import kotlinx.android.synthetic.ethiopia.fragment_status.photos_last_fetched_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.photos_last_synced_at
+import kotlinx.android.synthetic.ethiopia.fragment_status.provider_type
 import kotlinx.android.synthetic.ethiopia.fragment_status.sync_data_error
 import kotlinx.android.synthetic.ethiopia.fragment_status.sync_data_progress_bar
 import kotlinx.android.synthetic.ethiopia.fragment_status.sync_photos_error
@@ -123,8 +123,8 @@ class StatusFragment : DaggerFragment() {
         last_fetched_returned_claims.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_RETURNED_CLAIMS, sessionManager)
         unsynced_price_schedules.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.SYNC_PRICE_SCHEDULES, sessionManager)
 
-        val username = sessionManager.currentAuthenticationToken()?.user?.username
-        val providerType = sessionManager.currentAuthenticationToken()?.user?.providerType
+        val username = sessionManager.currentUser()?.username
+        val providerType = sessionManager.currentUser()?.providerType
         current_user.setValue(username)
         provider_type.setValue(providerType?.let { EnumHelper.providerTypeToDisplayedString(it, context, logger) })
         app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)

@@ -77,6 +77,17 @@
     <string name="check_out_alert_dialog_message">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>
     <string name="diagnoses_and_billable_missing_dialog">Diagnoses and billables have not been downloaded yet, please sync before trying again.</string>
 
+    <string name="visit_reason_label" translatable="false">Reason for visit</string>
+    <string name="inbound_referral_date_label" translatable="false">Inbound referral date</string>
+    <string name="follow_up_date_label" translatable="false">Follow-up issue date</string>
+    <string name="missing_visit_reason" translatable="false">Reason for visit is required</string>
+    <string name="visit_reason_prompt" translatable="false">Select a reason for visit…</string>
+    <string name="visit_reason_referral" translatable="false">Referral</string>
+    <string name="visit_reason_no_referral" translatable="false">No referral (catchment)</string>
+    <string name="visit_reason_self_referral" translatable="false">Self-referral (bypass fee)</string>
+    <string name="visit_reason_follow_up" translatable="false">Follow-up</string>
+    <string name="visit_reason_emergency" translatable="false">Emergency</string>
+
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
     <string name="member_name_label">Name</string>
@@ -111,16 +122,15 @@
     <string name="investigative_tests">Investigative Tests</string>
     <string name="inpatient_care">Inpatient care</string>
     <string name="bed_shortage">Bed shortage</string>
-    <string name="follow_up">Follow up</string>
+    <string name="follow_up">Follow-up</string>
     <string name="patient_outcome">Patient outcome</string>
-    <string name="patient_outcome_prompt">Select patient outcome...</string>
+    <string name="patient_outcome_prompt">Select patient outcome…</string>
     <string name="outcome_cured_or_discharged">Cured/Discharged</string>
     <string name="outcome_referred">Referred</string>
-    <string name="outcome_follow_up">Follow up</string>
+    <string name="outcome_follow_up">Follow-up</string>
     <string name="outcome_refused_service">Refused service</string>
     <string name="outcome_expired">Deceased</string>
     <string name="outcome_other">Other</string>
-
 
     <!-- EthiopianDatePicker -->
     <string name="eth_datepicker_title">Date</string>

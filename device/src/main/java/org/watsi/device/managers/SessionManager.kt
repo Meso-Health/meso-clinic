@@ -8,6 +8,7 @@ interface SessionManager {
     fun login(username: String, password: String): Completable
     fun logout()
     fun currentAuthenticationToken(): AuthenticationToken?
+    fun currentUser(): User?
     fun shouldClearUserData(): Boolean
     fun userHasPermission(neededPermission: Permissions): Boolean
 

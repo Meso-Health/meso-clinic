@@ -23,7 +23,7 @@ class SimprintsManager (private val simHelper: SimHelper, private val sessionMan
      */
     override fun captureFingerprint(memberId: String, fragment: Fragment, requestCode: Int): Boolean {
         val metadata: Metadata = createMetadataWithMemberId(memberId)
-        val providerId = sessionManager.currentAuthenticationToken()?.user?.providerId.toString()
+        val providerId = sessionManager.currentUser()?.providerId.toString()
         val captureFingerprintIntent: Intent = simHelper.register(providerId, metadata)
         return if (captureFingerprintIntent.resolveActivity(fragment.activity.packageManager) != null) {
             fragment.startActivityForResult(captureFingerprintIntent, requestCode)
@@ -39,7 +39,7 @@ class SimprintsManager (private val simHelper: SimHelper, private val sessionMan
      * @return true if the intent is sent and there is an activity to handle it, false otherwise
      */
     override fun verifyFingerprint(guid: String, fragment: Fragment, requestCode: Int): Boolean {
-        val providerId = sessionManager.currentAuthenticationToken()?.user?.providerId.toString()
+        val providerId = sessionManager.currentUser()?.providerId.toString()
         val verifyFingerprintIntent: Intent = simHelper.verify(providerId, guid)
         return if (verifyFingerprintIntent.resolveActivity(fragment.activity.packageManager) != null) {
             fragment.startActivityForResult(verifyFingerprintIntent, requestCode)

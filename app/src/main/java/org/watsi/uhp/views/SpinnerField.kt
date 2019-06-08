@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import kotlinx.android.synthetic.main.view_spinner_field.view.border
 import kotlinx.android.synthetic.main.view_spinner_field.view.field_label
 import kotlinx.android.synthetic.main.view_spinner_field.view.other_field
 import kotlinx.android.synthetic.main.view_spinner_field.view.other_field_container
@@ -170,7 +171,13 @@ class SpinnerField @JvmOverloads constructor(
         if (other_field_container.visibility == View.VISIBLE) {
             other_field_container.error = errorMessage
         } else {
-            spinner_error_message.error = errorMessage
+            if (errorMessage != null) {
+                spinner_error_message.error = errorMessage
+                border.setBackgroundColor(context.getColor(R.color.red6))
+            } else {
+                spinner_error_message.error = null
+                border.setBackgroundColor(context.getColor(R.color.gray4))
+            }
         }
     }
 }

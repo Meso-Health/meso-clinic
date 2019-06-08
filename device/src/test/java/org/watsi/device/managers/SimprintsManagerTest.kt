@@ -23,7 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import org.watsi.domain.factories.AuthenticationTokenFactory
+import org.watsi.domain.factories.UserFactory
 import java.util.UUID
 
 
@@ -54,13 +54,13 @@ class SimprintsManagerTest {
         val spySimprintsManager = spy(simprintsManager)
         val memberId = "1234"
         val requestCode = 0
-        val authToken = AuthenticationTokenFactory.build()
+        val user = UserFactory.build()
 
         doReturn(mockMetadata).whenever(spySimprintsManager).createMetadataWithMemberId(any())
         whenever(mockSimHelper.register(any(), eq(mockMetadata))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(mockComponentName)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentUser()).thenReturn(user)
 
         assertEquals(spySimprintsManager.captureFingerprint(memberId, mockFragment, requestCode), true)
         verify(mockFragment).startActivityForResult(mockIntent, requestCode)
@@ -70,13 +70,13 @@ class SimprintsManagerTest {
     fun captureFingerprint_intentIsInvalid_returnsFalse() {
         val spySimprintsManager = spy(simprintsManager)
         val memberId = "1234"
-        val authToken = AuthenticationTokenFactory.build()
+        val user = UserFactory.build()
 
         doReturn(mockMetadata).whenever(spySimprintsManager).createMetadataWithMemberId(any())
         whenever(mockSimHelper.register(any(), eq(mockMetadata))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(null)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentUser()).thenReturn(user)
 
         assertEquals(spySimprintsManager.captureFingerprint(memberId, mockFragment, 0), false)
     }
@@ -85,13 +85,13 @@ class SimprintsManagerTest {
     fun verifyFingerprint_intentIsValid_sendsIntentToSimprintsAndReturnsTrue() {
         val spySimprintsManager = spy(simprintsManager)
         val memberId = "1234"
-        val authToken = AuthenticationTokenFactory.build()
+        val user = UserFactory.build()
         val requestCode = 0
 
         whenever(mockSimHelper.verify(any(), eq(memberId))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(mockComponentName)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentUser()).thenReturn(user)
 
         assertEquals(spySimprintsManager.verifyFingerprint(memberId, mockFragment, requestCode), true)
         verify(mockFragment).startActivityForResult(mockIntent, requestCode)
@@ -101,12 +101,12 @@ class SimprintsManagerTest {
     fun verifyFingerprint_intentIsInvalid_returnsFalse() {
         val spySimprintsManager = spy(simprintsManager)
         val memberId = "1234"
-        val authToken = AuthenticationTokenFactory.build()
+        val user = UserFactory.build()
 
         whenever(mockSimHelper.verify(any(), eq(memberId))).thenReturn(mockIntent)
         whenever(mockIntent.resolveActivity(mockPackageManager)).thenReturn(null)
         whenever(mockActivity.packageManager).thenReturn(mockPackageManager)
-        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(authToken)
+        whenever(mockSessionManager.currentUser()).thenReturn(user)
 
         assertEquals(spySimprintsManager.verifyFingerprint(memberId, mockFragment, 0), false)
     }
