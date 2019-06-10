@@ -18,14 +18,17 @@ class CreateEncounterUseCase(
     private val priceScheduleRepository: PriceScheduleRepository
 ) {
 
-    fun execute(encounterWithExtras: EncounterWithExtras, submitNow: Boolean, clock: Clock): Completable {
+    fun execute(encounterWithExtras: EncounterWithExtras, submitNow: Boolean, isPartial: Boolean = false, clock: Clock): Completable {
         return Completable.fromAction {
 
             val newBillables = mutableListOf<Billable>()
             val newPriceSchedules = mutableListOf<PriceSchedule>()
 
-            val encounterWithExtrasWithUpdatedTimestamps =
+            val encounterWithExtrasWithUpdatedTimestamps = if (!isPartial) {
                 addEncounterTimeStamps(encounterWithExtras, submitNow, clock)
+            } else {
+                encounterWithExtras
+            }
 
             encounterWithExtrasWithUpdatedTimestamps.encounterItemRelations.forEach { encounterItemRelation ->
                 val billableWithPrice = encounterItemRelation.billableWithPriceSchedule

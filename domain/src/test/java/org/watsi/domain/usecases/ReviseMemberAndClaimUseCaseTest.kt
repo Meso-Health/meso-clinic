@@ -42,7 +42,7 @@ class ReviseClaimUseCaseTest {
             encounterForms = listOf(encounterForm)
         )
 
-        whenever(mockCreateEncounterUseCase.execute(any(), eq(true), any()))
+        whenever(mockCreateEncounterUseCase.execute(any(), eq(true), eq(false), any()))
             .thenReturn(Completable.complete())
         whenever(mockMarkReturnedEncountersAsRevisedUseCase.execute(listOf(encounter.id)))
             .thenReturn(Completable.complete())

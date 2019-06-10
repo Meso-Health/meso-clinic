@@ -140,7 +140,7 @@ class MemberInformationViewModel @Inject constructor(
             diagnoses = emptyList()
         )
 
-        return createEncounterUseCase.execute(encounterWithExtras, true, clock)
+        return createEncounterUseCase.execute(encounterWithExtras, true, true, clock)
     }
 
     fun createAndCheckInMember(membershipNumber: String, user: User): Completable {

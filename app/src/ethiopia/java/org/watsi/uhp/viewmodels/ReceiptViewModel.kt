@@ -66,7 +66,7 @@ class ReceiptViewModel @Inject constructor(
                 when (encounterAction) {
                     EncounterAction.PREPARE -> {
                         createEncounterUseCase.execute(
-                            encounterFlowState.toEncounterWithExtras(), false, clock
+                            encounterFlowState.toEncounterWithExtras(), false, false, clock
                         ).blockingAwait()
                     }
                     EncounterAction.SUBMIT -> {

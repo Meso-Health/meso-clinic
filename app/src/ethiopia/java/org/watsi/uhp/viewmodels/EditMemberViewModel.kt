@@ -155,7 +155,7 @@ class EditMemberViewModel @Inject constructor(
             diagnoses = emptyList()
         )
 
-        return createEncounterUseCase.execute(encounterWithExtras, true, clock)
+        return createEncounterUseCase.execute(encounterWithExtras, true, true, clock)
     }
 
     fun validateAndCheckInMember(searchMethod: IdentificationEvent.SearchMethod, user: User): Completable {

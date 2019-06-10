@@ -2,6 +2,7 @@ package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -243,7 +244,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel(hospitalUser = true)
         whenever(mockCreateMemberUseCase.execute(any(), any())).thenReturn(Completable.complete())
         whenever(mockCreateIdentificationEventUseCase.execute(any())).thenReturn(Completable.complete())
-        whenever(mockCreateEncounterUseCase.execute(any(), any(), any())).thenReturn(Completable.complete())
+        whenever(mockCreateEncounterUseCase.execute(any(), eq(true), eq(true), eq(clock))).thenReturn(Completable.complete())
 
         viewModel.createAndCheckInMember(membershipNumber, hospitalUser).test().assertComplete()
     }
