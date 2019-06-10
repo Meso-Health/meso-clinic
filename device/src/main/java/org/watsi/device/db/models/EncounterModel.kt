@@ -93,7 +93,7 @@ data class EncounterModel(
                 adjudicationReason = encounter.adjudicationReason,
                 revisedEncounterId = encounter.revisedEncounterId,
                 providerComment = encounter.providerComment,
-                preparedAt = encounter.preparedAt ?: now,
+                preparedAt = encounter.preparedAt,
                 submittedAt = encounter.submittedAt,
                 visitReason = encounter.visitReason,
                 inboundReferralDate = encounter.inboundReferralDate
