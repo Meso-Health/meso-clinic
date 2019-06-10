@@ -17,6 +17,7 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.User
 import org.watsi.domain.factories.UserFactory
+import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.AgeUnit
@@ -28,6 +29,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     private lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
     @Mock lateinit var mockCreateMemberUseCase: CreateMemberUseCase
     @Mock lateinit var mockCreateIdentificationEventUseCase: CreateIdentificationEventUseCase
+    @Mock lateinit var mockCreateEncounterUseCase: CreateEncounterUseCase
 
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     private val membershipNumber = "01/01/06/P-692/3"
@@ -48,6 +50,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         viewModel = MemberInformationViewModel(
             mockCreateMemberUseCase,
             mockCreateIdentificationEventUseCase,
+            mockCreateEncounterUseCase,
             clock
         )
         observable = viewModel.getObservable()
@@ -240,6 +243,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel(hospitalUser = true)
         whenever(mockCreateMemberUseCase.execute(any(), any())).thenReturn(Completable.complete())
         whenever(mockCreateIdentificationEventUseCase.execute(any())).thenReturn(Completable.complete())
+        whenever(mockCreateEncounterUseCase.execute(any(), any(), any())).thenReturn(Completable.complete())
 
         viewModel.createAndCheckInMember(membershipNumber, hospitalUser).test().assertComplete()
     }
