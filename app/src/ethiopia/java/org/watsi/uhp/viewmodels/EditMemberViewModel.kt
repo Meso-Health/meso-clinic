@@ -7,12 +7,15 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.User
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.MemberWithThumbnail
+import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
@@ -28,6 +31,7 @@ class EditMemberViewModel @Inject constructor(
     private val isMemberCheckedInUseCase: IsMemberCheckedInUseCase,
     private val dismissMemberUseCase: DismissMemberUseCase,
     private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
+    private val createEncounterUseCase: CreateEncounterUseCase,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -113,10 +117,10 @@ class EditMemberViewModel @Inject constructor(
         }
     }
 
-    private fun createIdentificationEvent(searchMethod: IdentificationEvent.SearchMethod): Completable {
+    private fun createIdentificationEvent(idEventId: UUID, searchMethod: IdentificationEvent.SearchMethod): Completable {
         return getMember()?.let {
             val idEvent = IdentificationEvent(
-                id = UUID.randomUUID(),
+                id = idEventId,
                 memberId = it.id,
                 occurredAt = clock.instant(),
                 searchMethod = searchMethod,
@@ -131,6 +135,29 @@ class EditMemberViewModel @Inject constructor(
         } ?: Completable.complete()
     }
 
+    private fun createPartialEncounter(idEventId: UUID, visitReason: Encounter.VisitReason, inboundReferralDate: Instant?): Completable {
+        return getMember()?.let { member ->
+            val encounter = Encounter(
+                id = UUID.randomUUID(),
+                memberId = member.id,
+                identificationEventId = idEventId,
+                occurredAt = clock.instant(),
+                patientOutcome = null,
+                visitReason = visitReason,
+                inboundReferralDate = inboundReferralDate
+            )
+
+            val encounterWithExtras = EncounterWithExtras(
+                encounter = encounter,
+                encounterItemRelations = emptyList(),
+                encounterForms = emptyList(),
+                referral = null,
+                member = member,
+                diagnoses = emptyList()
+            )
+            return createEncounterUseCase.execute(encounterWithExtras, true, clock)
+        } ?: Completable.complete()    }
+
     fun validateAndCheckInMember(searchMethod: IdentificationEvent.SearchMethod, user: User): Completable {
         return observable.value?.let { viewState ->
             val validationErrors = FormValidator.validateViewState(viewState, user)
@@ -138,8 +165,19 @@ class EditMemberViewModel @Inject constructor(
                 observable.value = viewState.copy(validationErrors = validationErrors)
                 Completable.error(ValidationException("Some required check-in fields are missing", validationErrors))
             } else {
-                createIdentificationEvent(searchMethod)
-                // TODO: create partial encounter
+                val idEventId = UUID.randomUUID()
+                Completable.fromAction {
+                    createIdentificationEvent(idEventId, searchMethod).blockingAwait()
+                    if (user.isHospital()) {
+                        val inboundReferralDate = when (viewState.visitReason) {
+                            Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
+                            Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
+                            else -> null
+                        }
+                        // TODO: change inboundReferralDate field from Instant to LocalDate
+                        createPartialEncounter(idEventId, viewState.visitReason!!, inboundReferralDate?.atStartOfDay(clock.zone)?.toInstant()).blockingAwait()
+                    }
+                }
             }
         } ?: Completable.never()
     }
