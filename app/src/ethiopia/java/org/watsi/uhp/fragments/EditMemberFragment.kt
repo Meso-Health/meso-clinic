@@ -118,12 +118,14 @@ class EditMemberFragment : DaggerFragment() {
                     }
 
                     PhotoLoader.loadMemberPhoto(
-                        photo?.bytes,
-                        top_photo,
-                        activity,
-                        member.gender,
-                        placeholderPhotoIconPadding
+                        bytes = photo?.bytes,
+                        view = top_photo,
+                        context = activity,
+                        gender = member.gender,
+                        photoExists = member.photoExists(),
+                        placeholderPadding = placeholderPhotoIconPadding
                     )
+
                     top_name.text = member.name
                     top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
 

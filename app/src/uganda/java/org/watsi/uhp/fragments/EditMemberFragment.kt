@@ -96,11 +96,12 @@ class EditMemberFragment : DaggerFragment() {
                 top_name.text = member.name
 
                 PhotoLoader.loadMemberPhoto(
-                    memberWithThumbnail.photo?.bytes,
-                    top_photo,
-                    context,
-                    member.gender,
-                    placeholderPhotoIconPadding
+                    bytes = memberWithThumbnail.photo?.bytes,
+                    view = top_photo,
+                    context = context,
+                    gender = member.gender,
+                    photoExists = member.photoExists(),
+                    placeholderPadding = placeholderPhotoIconPadding
                 )
 
                 val genderString = genderOptions.find { it.first == member.gender }?.second

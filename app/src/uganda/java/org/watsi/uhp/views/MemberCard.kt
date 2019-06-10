@@ -31,7 +31,12 @@ class MemberCard @JvmOverloads constructor(
         member_age_and_gender.text = StringHelper.formatAgeAndGender(member, context, clock)
         member.cardId?.let { member_card_id.text = formatCardId(it) }
         PhotoLoader.loadMemberPhoto(
-                thumbnail?.bytes, member_photo, context, member.gender)
+            bytes = thumbnail?.bytes,
+            view = member_photo,
+            context = context,
+            gender = member.gender,
+            photoExists = member.photoExists()
+        )
     }
 
     fun setIdentificationEvent(identificationEvent: IdentificationEvent) {
