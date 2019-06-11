@@ -11,6 +11,7 @@ import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchMembersUseCase
+import org.watsi.domain.usecases.FetchOpenIdentificationEventsUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.uhp.R
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class FetchDataService : BaseService() {
     @Inject lateinit var fetchBillablesUseCase: FetchBillablesUseCase
     @Inject lateinit var fetchDiagnosesUseCase: FetchDiagnosesUseCase
     @Inject lateinit var fetchReturnedClaimsUseCase: FetchReturnedClaimsUseCase
+    @Inject lateinit var fetchIdentificationEventsUseCase: FetchOpenIdentificationEventsUseCase
     @Inject lateinit var fetchMembersUseCase: FetchMembersUseCase
     @Inject lateinit var billableRepository: BillableRepository
     @Inject lateinit var diagnosisRepository: DiagnosisRepository
@@ -71,10 +73,17 @@ class FetchDataService : BaseService() {
                 Completable.complete()
             }
 
+            val identificationEventsCompletable = if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_IDENTIFICATION_EVENTS)) {
+                fetchIdentificationEventsUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_identification_events_error_label)) }
+            } else {
+                Completable.complete()
+            }
+
             Completable.concatArray(
                 billablesCompletable,
                 diagnosesCompletable,
                 returnedClaimsCompletable,
+                identificationEventsCompletable,
                 fetchMembersUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_members_error_label)) },
                 Completable.fromAction {
                     if (getErrorMessages().isEmpty()) {

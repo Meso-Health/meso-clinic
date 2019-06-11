@@ -30,29 +30,35 @@ import java.util.UUID
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class CoverageApiTest : OkReplayTest() {
     private val fixedInstance = Instant.parse("2018-03-23T08:10:36.306Z")
-    private val providerId = 1
+    private val clinicProviderId = 1
+    private val hospitalProviderId = 3
     private val clinicUser = "provider1"
     private val clinicUserPassword = "123456"
+    private val hospitalUser = "card_room"
+    private val hosptialUserPassword = "123456"
 
     // Make sure this is a valid token.
-    private val tokenString = AuthenticationTokenFactory.build(
-        token = "RCZzfeoe.XR74SK4cVyAc36TuuuXw1zFUjMiCSJsa"
+    private val clinicTokenString = AuthenticationTokenFactory.build(
+        token = "CYJDrtpZ.FqoqsnkzRZ2tjVVU9M7XWYTe1qJ1eZeS"
+    ).getHeaderString()
+    private val hospitalTokenString = AuthenticationTokenFactory.build(
+        token = "ZdS43jYk.BUsdcfwh1jKkVV3Fhpfk9nhFpmdkgzrY"
     ).getHeaderString()
 
     // Make sure these correspond to real ids in the backend.
-    private val householdId = UUID.fromString("f408ffdd-2937-4915-abca-51bef447e058")
-    private val billableId = UUID.fromString("fff70242-09ce-4fbc-ad23-cff0cbd3219a")
-    private val billableLatestPriceScheduleId = UUID.fromString("69c78097-782f-4f84-b77b-ead4770644bc")
+    private val householdId = UUID.fromString("31f572a0-2d69-42d3-9118-0f26ba6a52f7")
+    private val billableId = UUID.fromString("ffe804c7-8bec-49b4-a67b-78746d37f3b0")
+    private val billableLatestPriceScheduleId = UUID.fromString("522f5997-6879-454e-a07b-f3ec95064a76")
 
     // When creating new tapes, make sure the following IDs do not exist in the backend.
-    private val memberId = UUID.fromString("224a2322-48c1-4a4a-b123-4c2233f21b11")
-    private val identificationEventId = UUID.fromString("2214e82f2-6e42-4bd4-a9df-ddf11802c2c1")
-    private val priceScheduleId = UUID.fromString("12fba944-13cd-4022-b622-7c8200f21b81")
-    private val encounterId = UUID.fromString("11fba129-44cd-8026-b253-a0ea44080d1d")
-    private val encounterItemId = UUID.fromString("21ba944-29cd-4022-b273-a9ea26180d1a")
-    private val referralId = UUID.fromString("21fba934-44cd-4022-b273-a9ea26180d1a")
-    private val identificationEventId2 = UUID.fromString("1df3522c-83e3-11e9-bc42-526af7764f64")
-    private val encounterId2 = UUID.fromString("eaa011bc-83e2-11e9-bc42-526af7764f64")
+    private val memberId = UUID.fromString("324a2322-48c1-4a4a-b123-4c2233f21b11")
+    private val identificationEventId = UUID.fromString("3214e82f2-6e42-4bd4-a9df-ddf11802c2c1")
+    private val priceScheduleId = UUID.fromString("22fba944-13cd-4022-b622-7c8200f21b81")
+    private val encounterId = UUID.fromString("31fba129-44cd-8026-b253-a0ea44080d1d")
+    private val encounterItemId = UUID.fromString("31ba944-29cd-4022-b273-a9ea26180d1a")
+    private val referralId = UUID.fromString("31fba934-44cd-4022-b273-a9ea26180d1a")
+    private val identificationEventId2 = UUID.fromString("3df3522c-83e3-11e9-bc42-526af7764f64")
+    private val encounterId2 = UUID.fromString("faa011bc-83e2-11e9-bc42-526af7764f64")
 
     private val member = MemberFactory.build(
         id = memberId,
@@ -91,8 +97,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test001_getMembers() {
         val result = api.getMembers(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             pageKey = null
         ).test()
         result.assertComplete()
@@ -102,8 +108,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test002_getBillables() {
         val result = api.getBillables(
-            tokenAuthorization = tokenString,
-            providerId = providerId
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId
         ).test()
 
         result.assertComplete()
@@ -120,7 +126,7 @@ class CoverageApiTest : OkReplayTest() {
 
     @Test
     fun test003_getDiagnoses() {
-        val result = api.getDiagnoses(tokenAuthorization = tokenString).test()
+        val result = api.getDiagnoses(tokenAuthorization = clinicTokenString).test()
         result.assertComplete()
         assertTrue(result.values().first().map { it.toDiagnosis() }.isNotEmpty())
     }
@@ -128,7 +134,7 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test004_postMember() {
         api.postMember(
-            tokenAuthorization = tokenString,
+            tokenAuthorization = clinicTokenString,
             member = MemberApi(member)
         ).test().assertComplete()
     }
@@ -136,7 +142,7 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test005_patchMember() {
         api.patchMember(
-            tokenAuthorization = tokenString,
+            tokenAuthorization = clinicTokenString,
             memberId = memberId,
             patchParams = MemberApi.patch(
                 member,
@@ -153,8 +159,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test006_postIdentificationEvent() {
         api.postIdentificationEvent(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             identificationEvent = IdentificationEventApi(identificationEvent)
         ).test().assertComplete()
     }
@@ -162,7 +168,7 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test007_patchIdentificationEvent() {
         api.patchIdentificationEvent(
-            tokenAuthorization = tokenString,
+            tokenAuthorization = clinicTokenString,
             identificationEventId = identificationEvent.id,
             patchParams = IdentificationEventApi.patch(
                 identificationEvent,
@@ -188,8 +194,8 @@ class CoverageApiTest : OkReplayTest() {
         )
 
         api.postPriceSchedule(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             priceSchedule = PriceScheduleApi(priceSchedule)
         ).test().assertComplete()
     }
@@ -236,8 +242,8 @@ class CoverageApiTest : OkReplayTest() {
         )
 
         api.postEncounter(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             encounter = EncounterApi(encounterWithExtras)
         ).test().assertComplete()
     }
@@ -266,14 +272,14 @@ class CoverageApiTest : OkReplayTest() {
 
         // Create idEvent first
         api.postIdentificationEvent(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             identificationEvent = IdentificationEventApi(identificationEvent2)
         ).test().assertComplete()
 
         api.postEncounter(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             encounter = EncounterApi(encounterWithExtras)
         ).test().assertComplete()
     }
@@ -281,8 +287,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test011_getReturnedClaims() {
         val result = api.getReturnedClaims(
-            tokenAuthorization = tokenString,
-            providerId = providerId
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId
         ).test()
 
         result.assertComplete()
@@ -310,5 +316,13 @@ class CoverageApiTest : OkReplayTest() {
                 returnedClaims.map { it.toEncounterWithExtras(null) }.isNotEmpty()
             )
         }
+    }
+
+    @Test
+    fun test012_getOpenIdentificationEvent() {
+        api.getOpenIdentificationEvents(
+            tokenAuthorization = hospitalTokenString,
+            providerId = hospitalProviderId
+        ).test().assertComplete()
     }
 }

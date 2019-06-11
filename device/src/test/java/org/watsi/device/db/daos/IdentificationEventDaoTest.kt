@@ -1,9 +1,11 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
+import org.watsi.device.factories.DeltaModelFactory
 import org.watsi.device.factories.EncounterModelFactory
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
+import org.watsi.domain.entities.Delta
 
 class IdentificationEventDaoTest : DaoBaseTest() {
 
@@ -37,5 +39,22 @@ class IdentificationEventDaoTest : DaoBaseTest() {
         identificationEventDao.openCheckIn(memberWithDismissedCheckIn.id).test().assertNoValues()
         identificationEventDao.openCheckIn(memberWithEncounter.id).test().assertNoValues()
         identificationEventDao.openCheckIn(memberWithNoCheckIn.id).test().assertNoValues()
+    }
+
+    @Test
+    fun unsynced() {
+        val member1 = MemberModelFactory.create(memberDao)
+        val member2 = MemberModelFactory.create(memberDao)
+        val member3 = MemberModelFactory.create(memberDao)
+        val unsyncedIdentificationEvent = IdentificationEventModelFactory.create(identificationEventDao, memberId = member1.id)
+        val syncedIdentificationEvent = IdentificationEventModelFactory.create(identificationEventDao, memberId = member2.id)
+        IdentificationEventModelFactory.create(identificationEventDao, memberId = member3.id)
+
+        DeltaModelFactory.create(deltaDao,
+            modelName = Delta.ModelName.IDENTIFICATION_EVENT, modelId = unsyncedIdentificationEvent.id, synced = false)
+        DeltaModelFactory.create(deltaDao,
+            modelName = Delta.ModelName.IDENTIFICATION_EVENT, modelId = syncedIdentificationEvent.id, synced = true)
+
+        identificationEventDao.unsynced().test().assertValue(listOf(unsyncedIdentificationEvent))
     }
 }

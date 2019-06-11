@@ -23,6 +23,7 @@ interface SessionManager {
         FETCH_BILLABLES,
         FETCH_DIAGNOSES,
         FETCH_RETURNED_CLAIMS,
+        FETCH_IDENTIFICATION_EVENTS, // TODO: This is not yet safe for clinics while the backend requires partial encounters
         SYNC_PRICE_SCHEDULES
         // TODO: Should facility head approval flows be gated through here?
     }
@@ -41,7 +42,8 @@ interface SessionManager {
         )
 
         val HOSPITAL_PERMISSIONS = setOf(
-            Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION
+            Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION,
+            Permissions.FETCH_IDENTIFICATION_EVENTS
         )
 
         val PROVIDER_PERMISSIONS_MAP = mapOf(

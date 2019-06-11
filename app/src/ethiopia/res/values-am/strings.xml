@@ -82,6 +82,7 @@
 
     <string name="fetch_data_title">የወረዱ (መረጃ)</string>
     <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <!--<string name="last_fetched_identification_events_label">Identification Events</string>-->
     <string name="last_fetched_diagnoses_label">በሽታዎች ዝርዝር</string>
     <string name="last_fetched_members_label">ኣባላት</string>
 
@@ -148,6 +149,7 @@
     <!--<string name="provider_type_primary_hospital" translatable="false">Primary Hospital</string>-->
     <!--<string name="provider_type_general_hospital" translatable="false">General Hospital</string>-->
     <!--<string name="provider_type_tertiary_hospital" translatable="false">Tertiary Hospital</string>-->
+    <!--<string name="fetch_identification_events_error_label">Download Identification Events</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>

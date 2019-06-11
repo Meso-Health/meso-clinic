@@ -98,13 +98,22 @@
             app:layout_constraintTop_toBottomOf="@id/last_fetched_diagnoses" />
 
         <org.watsi.uhp.views.StatusField
+            android:id="@+id/last_fetched_identification_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/last_fetched_identification_events_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/last_fetched_returned_claims" />
+
+        <org.watsi.uhp.views.StatusField
             android:id="@+id/last_fetched_members"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="@string/last_fetched_members_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_returned_claims" />
+            app:layout_constraintTop_toBottomOf="@id/last_fetched_identification_events" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/fetch_photos_container"

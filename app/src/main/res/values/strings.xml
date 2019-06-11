@@ -130,6 +130,7 @@
     <string name="fetch_billables_error_label" translatable="false">Download Billables</string>
     <string name="fetch_diagnoses_error_label" translatable="false">Download Diagnoses</string>
     <string name="fetch_returned_claims_error_label" translatable="false">Download Returned Claims</string>
+    <string name="fetch_identification_events_error_label" translatable="false">Download Identification Events</string>
     <string name="fetch_members_error_label" translatable="false">Download Members</string>
     <string name="fetch_member_photos_error_label" translatable="false">Download Member Photos</string>
     <string name="sync_members_error_label" translatable="false">Upload Members</string>

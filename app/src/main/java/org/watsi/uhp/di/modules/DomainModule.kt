@@ -23,6 +23,7 @@ import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchMembersPhotosUseCase
 import org.watsi.domain.usecases.FetchMembersUseCase
+import org.watsi.domain.usecases.FetchOpenIdentificationEventsUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.FindHouseholdIdByCardIdUseCase
@@ -165,6 +166,11 @@ class DomainModule {
     @Provides
     fun provideFetchMembersUseCase(memberRepository: MemberRepository): FetchMembersUseCase {
         return FetchMembersUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideFetchOpenIdentificationEventsUseCase(identificationEventRepository: IdentificationEventRepository): FetchOpenIdentificationEventsUseCase {
+        return FetchOpenIdentificationEventsUseCase(identificationEventRepository)
     }
 
     @Provides

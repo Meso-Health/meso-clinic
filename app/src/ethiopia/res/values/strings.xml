@@ -27,6 +27,7 @@
 
     <!-- StatusFragment -->
     <string name="last_fetched_returned_encounters_label" translatable="false">Returned Claims</string>
+    <string name="last_fetched_identification_events_label" translatable="false">Identification Events</string>
     <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
     <string name="provider_type_unclassified" translatable="false">Unclassified</string>
     <string name="provider_type_clinic" translatable="false">Health Center</string>

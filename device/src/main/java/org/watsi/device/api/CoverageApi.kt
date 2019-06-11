@@ -75,6 +75,12 @@ interface CoverageApi {
             @Part("photo") photo: RequestBody
     ): Completable
 
+    @GET("providers/{providerId}/identification_events/open")
+    fun getOpenIdentificationEvents(
+        @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+        @Path("providerId") providerId: Int
+    ): Single<List<IdentificationEventApi>>
+
     @POST("providers/{providerId}/identification_events")
     fun postIdentificationEvent(
             @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,

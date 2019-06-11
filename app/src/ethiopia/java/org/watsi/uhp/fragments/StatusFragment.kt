@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_error
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_progress_bar
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_billables
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_diagnoses
+import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_identification_events
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_member_photos
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_returned_claims
@@ -95,6 +96,7 @@ class StatusFragment : DaggerFragment() {
                 last_fetched_billables.setValue(formattedUpdatedAt(viewState.billablesFetchedAt.toEpochMilli()))
                 last_fetched_diagnoses.setValue(formattedUpdatedAt(viewState.diagnosesFetchedAt.toEpochMilli()))
                 last_fetched_returned_claims.setValue(formattedUpdatedAt(viewState.returnedClaimsFetchedAt.toEpochMilli()))
+                last_fetched_identification_events.setValue(formattedUpdatedAt(viewState.identificationEventsFetchedAt.toEpochMilli()))
                 if (viewState.photosToFetchCount == 0) {
                     last_fetched_member_photos.setValue(formattedUpdatedAt(viewState.memberPhotosFetchedAt.toEpochMilli()))
                 } else {
@@ -121,6 +123,7 @@ class StatusFragment : DaggerFragment() {
         last_fetched_billables.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_BILLABLES, sessionManager)
         last_fetched_diagnoses.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_DIAGNOSES, sessionManager)
         last_fetched_returned_claims.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_RETURNED_CLAIMS, sessionManager)
+        last_fetched_identification_events.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_IDENTIFICATION_EVENTS, sessionManager)
         unsynced_price_schedules.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.SYNC_PRICE_SCHEDULES, sessionManager)
 
         val username = sessionManager.currentUser()?.username
