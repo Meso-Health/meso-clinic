@@ -7,7 +7,6 @@ import org.junit.Test
 import org.junit.runners.MethodSorters
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
-import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
@@ -253,7 +252,7 @@ class CoverageApiTest : OkReplayTest() {
             preparedAt = null,
             submittedAt = null,
             visitReason = Encounter.VisitReason.REFERRAL,
-            inboundReferralDate = fixedInstance.minus(1, ChronoUnit.DAYS)
+            inboundReferralDate = LocalDate.of(2018, 3, 15)
         )
 
         val encounterWithExtras = EncounterWithExtras(

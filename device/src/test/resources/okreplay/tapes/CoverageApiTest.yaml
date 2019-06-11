@@ -3631,24 +3631,24 @@ interactions:
       X-Request-Id: 4f33d3f0-661a-4247-9115-37dba3a8ee19
       X-Runtime: '0.041766'
     body: '{"id":"1df3522c-83e3-11e9-bc42-526af7764f64","occurred_at":"2018-03-23T11:10:36.306+03:00","provider_id":1,"member_id":"224a2322-48c1-4a4a-b123-4c2233f21b11","user_id":7,"search_method":"scan_barcode","through_member_id":"224a2322-48c1-4a4a-b123-4c2233f21b11","clinic_number":1,"clinic_number_type":"opd","dismissed":false}'
-- recorded: 2019-06-01T00:00:19.702Z
+- recorded: 2019-06-11T01:07:04.987Z
   request:
     method: POST
     uri: http://localhost:5000/providers/1/encounters
     headers:
       Authorization: Token RCZzfeoe.XR74SK4cVyAc36TuuuXw1zFUjMiCSJsa
-    body: '{"id":"eaa011bc-83e2-11e9-bc42-526af7764f64","member_id":"224a2322-48c1-4a4a-b123-4c2233f21b11","identification_event_id":"1df3522c-83e3-11e9-bc42-526af7764f64","occurred_at":"2018-03-23T08:10:36.306Z","prepared_at":null,"backdated_occurred_at":false,"copayment_paid":true,"diagnosis_ids":[],"encounter_items":[],"referrals":[],"visit_type":null,"revised_encounter_id":null,"provider_comment":null,"claim_id":"eaa011bc-83e2-11e9-bc42-526af7764f64","submitted_at":null,"patient_outcome":null,"visit_reason":"referral","inbound_referral_date":"2018-03-22T08:10:36.306Z"}'
+    body: '{"id":"eaa011bc-83e2-11e9-bc42-526af7764f64","member_id":"224a2322-48c1-4a4a-b123-4c2233f21b11","identification_event_id":"1df3522c-83e3-11e9-bc42-526af7764f64","occurred_at":"2018-03-23T08:10:36.306Z","prepared_at":null,"backdated_occurred_at":false,"copayment_paid":true,"diagnosis_ids":[],"encounter_items":[],"referrals":[],"visit_type":null,"revised_encounter_id":null,"provider_comment":null,"claim_id":"eaa011bc-83e2-11e9-bc42-526af7764f64","submitted_at":null,"patient_outcome":null,"visit_reason":"referral","inbound_referral_date":"2018-03-15"}'
   response:
     status: 201
     headers:
       Cache-Control: max-age=0, private, must-revalidate
       Content-Type: application/json; charset=utf-8
-      ETag: W/"d90b08a21ba955f686144140ccbe415d"
+      ETag: W/"4a238feffedc5cbb448889ebe20562cd"
       Transfer-Encoding: chunked
       Vary: Accept-Encoding, Origin
-      X-Request-Id: 940d5b8b-6edd-4c23-a2bf-c01ca25e9df5
-      X-Runtime: '0.077829'
-    body: '{"id":"eaa011bc-83e2-11e9-bc42-526af7764f64","provider_id":1,"member_id":"224a2322-48c1-4a4a-b123-4c2233f21b11","identification_event_id":"1df3522c-83e3-11e9-bc42-526af7764f64","claim_id":"eaa011bc-83e2-11e9-bc42-526af7764f64","user_id":7,"created_at":"2019-06-01T03:00:19.683+03:00","occurred_at":"2018-03-23T11:10:36.306+03:00","backdated_occurred_at":false,"prepared_at":"2019-06-01T03:00:19.683+03:00","submitted_at":"2019-06-01T03:00:19.683+03:00","submission_state":"started","resubmitted":false,"submitter_name":"provider1","adjudicator_name":null,"visit_type":null,"visit_reason":"referral","inbound_referral_date":"2018-03-22","patient_outcome":null,"provider_comment":null,"price":0,"billables":[],"price_schedules":[],"encounter_items":[],"referrals":[],"diagnosis_ids":[],"reimbursement_id":null,"reimbursement_created_at":null,"reimbursement_completed_at":null,"reimbursal_amount":0,"clinic_number":1,"clinic_number_type":"opd","has_fever":null,"copayment_paid":true}'
+      X-Request-Id: e3f94dab-59b1-419f-a6fc-083cdab5f2a4
+      X-Runtime: '0.072939'
+    body: '{"id":"eaa011bc-83e2-11e9-bc42-526af7764f64","provider_id":1,"member_id":"224a2322-48c1-4a4a-b123-4c2233f21b11","identification_event_id":"1df3522c-83e3-11e9-bc42-526af7764f64","claim_id":"eaa011bc-83e2-11e9-bc42-526af7764f64","user_id":7,"created_at":"2019-06-01T03:00:19.683+03:00","occurred_at":"2018-03-23T11:10:36.306+03:00","backdated_occurred_at":false,"prepared_at":"2019-06-01T03:00:19.683+03:00","submitted_at":"2019-06-01T03:00:19.683+03:00","submission_state":"started","adjudication_state":null,"resubmitted":false,"submitter_name":"provider1","adjudicator_name":null,"visit_type":null,"discharge_date":null,"visit_reason":"referral","inbound_referral_date":"2018-03-22","patient_outcome":null,"provider_comment":null,"price":0,"billables":[],"price_schedules":[],"encounter_items":[],"referrals":[],"diagnosis_ids":[],"reimbursement_id":null,"reimbursement_created_at":null,"reimbursement_completed_at":null,"reimbursal_amount":0,"clinic_number":1,"clinic_number_type":"opd","has_fever":null,"copayment_paid":true}'
 - recorded: 2019-06-01T00:00:20.045Z
   request:
     method: GET
