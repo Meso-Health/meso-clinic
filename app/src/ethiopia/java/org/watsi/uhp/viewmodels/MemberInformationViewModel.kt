@@ -12,6 +12,8 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.User
+import org.watsi.domain.relations.EncounterWithExtras
+import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.Age
@@ -23,6 +25,7 @@ import javax.inject.Inject
 class MemberInformationViewModel @Inject constructor(
     private val createMemberUseCase: CreateMemberUseCase,
     private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
+    private val createEncounterUseCase: CreateEncounterUseCase,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -97,18 +100,13 @@ class MemberInformationViewModel @Inject constructor(
         }
     }
 
-    fun createAndCheckInMember(membershipNumber: String, user: User): Completable {
-        val viewState = observable.value ?: return Completable.never()
+    private fun createMember(member: Member): Completable {
+        return createMemberUseCase.execute(member, submitNow = true)
+    }
 
-        val validationErrors = FormValidator.formValidationErrors(viewState, user)
-        if (validationErrors.isNotEmpty()) {
-            observable.value = viewState.copy(errors = validationErrors)
-            return Completable.error(ValidationException("Some fields are missing", validationErrors))
-        }
-
-        val member = toMember(viewState, membershipNumber, clock, user)
+    private fun createIdentificationEvent(idEventId: UUID, member: Member): Completable {
         val idEvent = IdentificationEvent(
-            id = UUID.randomUUID(),
+            id = idEventId,
             memberId = member.id,
             occurredAt = clock.instant(),
             searchMethod = IdentificationEvent.SearchMethod.MANUAL_ENTRY,
@@ -120,10 +118,54 @@ class MemberInformationViewModel @Inject constructor(
             fingerprintsVerificationResultCode = null
         )
 
-        return Completable.concatArray(
-            createMemberUseCase.execute(member, submitNow = true),
-            createIdentificationEventUseCase.execute(idEvent)
-        ).observeOn(AndroidSchedulers.mainThread())
+        return createIdentificationEventUseCase.execute(idEvent)
+    }
+
+    private fun createPartialEncounter(idEventId: UUID, member: Member, visitReason: Encounter.VisitReason, inboundReferralDate: LocalDate?): Completable {
+        val encounter = Encounter(
+            id = UUID.randomUUID(),
+            memberId = member.id,
+            identificationEventId = idEventId,
+            occurredAt = clock.instant(),
+            patientOutcome = null,
+            visitReason = visitReason,
+            inboundReferralDate = inboundReferralDate
+        )
+        val encounterWithExtras = EncounterWithExtras(
+            encounter = encounter,
+            encounterItemRelations = emptyList(),
+            encounterForms = emptyList(),
+            referral = null,
+            member = member,
+            diagnoses = emptyList()
+        )
+
+        return createEncounterUseCase.execute(encounterWithExtras, true, true, clock)
+    }
+
+    fun createAndCheckInMember(membershipNumber: String, user: User): Completable {
+        val viewState = observable.value ?: return Completable.never()
+
+        val validationErrors = FormValidator.formValidationErrors(viewState, user)
+        if (validationErrors.isNotEmpty()) {
+            observable.value = viewState.copy(errors = validationErrors)
+            return Completable.error(ValidationException("Some fields are missing", validationErrors))
+        }
+
+        val member = toMember(viewState, membershipNumber, clock, user)
+        val idEventId = UUID.randomUUID()
+        return Completable.fromAction {
+            createMember(member).blockingAwait()
+            createIdentificationEvent(idEventId, member).blockingAwait()
+            if (user.isHospital()) {
+                val inboundReferralDate = when (viewState.visitReason) {
+                    Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
+                    Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
+                    else -> null
+                }
+                createPartialEncounter(idEventId, member, viewState.visitReason!!, inboundReferralDate).blockingAwait()
+            }
+        }.observeOn(AndroidSchedulers.mainThread())
     }
 
     data class ValidationException(val msg: String, val errors: Map<String, Int>): Exception(msg)

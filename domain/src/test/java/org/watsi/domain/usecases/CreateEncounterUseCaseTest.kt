@@ -61,7 +61,7 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta)))
                 .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, false, fixedClock).test().assertComplete()
     }
 
     @Test
@@ -77,7 +77,7 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, emptyList()))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithExtras, false, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, false, false, fixedClock).test().assertComplete()
     }
 
     @Test
@@ -124,7 +124,7 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, false, fixedClock).test().assertComplete()
     }
 
     @Test
@@ -169,7 +169,7 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta)))
             .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, false, fixedClock).test().assertComplete()
     }
 
     @Test
@@ -201,6 +201,21 @@ class CreateEncounterUseCaseTest {
         whenever(mockEncounterRepository.insert(encounterWithExtrasWithTimestamps, listOf(encounterDelta, encounterFormDelta)))
                 .thenReturn(Completable.complete())
 
-        useCase.execute(encounterWithExtras, true, fixedClock).test().assertComplete()
+        useCase.execute(encounterWithExtras, true, false, fixedClock).test().assertComplete()
+    }
+
+    @Test
+    fun execute_encounterDoesNotHaveNewBillablesOrEncounterForms_submitNowTrue_isPartialTrue_createsEncounterWithDeltaAndDoesNotSetSubmittedAtOrPreparedAt() {
+        val encounterWithExtras = EncounterWithExtrasFactory.build()
+        val encounterDelta = Delta(
+            action = Delta.Action.ADD,
+            modelName = Delta.ModelName.ENCOUNTER,
+            modelId = encounterWithExtras.encounter.id
+        )
+
+        whenever(mockEncounterRepository.insert(encounterWithExtras, listOf(encounterDelta)))
+                .thenReturn(Completable.complete())
+
+        useCase.execute(encounterWithExtras, true, true, fixedClock).test().assertComplete()
     }
 }

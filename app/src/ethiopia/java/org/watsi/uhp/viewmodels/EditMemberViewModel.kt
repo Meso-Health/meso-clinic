@@ -12,7 +12,9 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.User
+import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.MemberWithThumbnail
+import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
@@ -28,6 +30,7 @@ class EditMemberViewModel @Inject constructor(
     private val isMemberCheckedInUseCase: IsMemberCheckedInUseCase,
     private val dismissMemberUseCase: DismissMemberUseCase,
     private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
+    private val createEncounterUseCase: CreateEncounterUseCase,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -113,35 +116,68 @@ class EditMemberViewModel @Inject constructor(
         }
     }
 
-    private fun createIdentificationEvent(searchMethod: IdentificationEvent.SearchMethod): Completable {
-        return getMember()?.let {
-            val idEvent = IdentificationEvent(
-                id = UUID.randomUUID(),
-                memberId = it.id,
-                occurredAt = clock.instant(),
-                searchMethod = searchMethod,
-                throughMemberId = null,
-                clinicNumber = null,
-                clinicNumberType = null,
-                fingerprintsVerificationTier = null,
-                fingerprintsVerificationConfidence = null,
-                fingerprintsVerificationResultCode = null
-            )
-            return createIdentificationEventUseCase.execute(idEvent)
-        } ?: Completable.complete()
+    private fun createIdentificationEvent(idEventId: UUID, searchMethod: IdentificationEvent.SearchMethod): Completable {
+        val member = getMember() ?: return Completable.never()
+        val idEvent = IdentificationEvent(
+            id = idEventId,
+            memberId = member.id,
+            occurredAt = clock.instant(),
+            searchMethod = searchMethod,
+            throughMemberId = null,
+            clinicNumber = null,
+            clinicNumberType = null,
+            fingerprintsVerificationTier = null,
+            fingerprintsVerificationConfidence = null,
+            fingerprintsVerificationResultCode = null
+        )
+
+        return createIdentificationEventUseCase.execute(idEvent)
+    }
+
+    private fun createPartialEncounter(idEventId: UUID, visitReason: Encounter.VisitReason, inboundReferralDate: LocalDate?): Completable {
+        val member = getMember() ?: return Completable.never()
+        val encounter = Encounter(
+            id = UUID.randomUUID(),
+            memberId = member.id,
+            identificationEventId = idEventId,
+            occurredAt = clock.instant(),
+            patientOutcome = null,
+            visitReason = visitReason,
+            inboundReferralDate = inboundReferralDate
+        )
+        val encounterWithExtras = EncounterWithExtras(
+            encounter = encounter,
+            encounterItemRelations = emptyList(),
+            encounterForms = emptyList(),
+            referral = null,
+            member = member,
+            diagnoses = emptyList()
+        )
+
+        return createEncounterUseCase.execute(encounterWithExtras, true, true, clock)
     }
 
     fun validateAndCheckInMember(searchMethod: IdentificationEvent.SearchMethod, user: User): Completable {
-        return observable.value?.let { viewState ->
-            val validationErrors = FormValidator.validateViewState(viewState, user)
-            if (validationErrors.isNotEmpty()) {
-                observable.value = viewState.copy(validationErrors = validationErrors)
-                Completable.error(ValidationException("Some required check-in fields are missing", validationErrors))
-            } else {
-                createIdentificationEvent(searchMethod)
-                // TODO: create partial encounter
+        val viewState = observable.value ?: return Completable.never()
+
+        val validationErrors = FormValidator.validateViewState(viewState, user)
+        if (validationErrors.isNotEmpty()) {
+            observable.value = viewState.copy(validationErrors = validationErrors)
+            return Completable.error(ValidationException("Some required check-in fields are missing", validationErrors))
+        }
+
+        val idEventId = UUID.randomUUID()
+        return Completable.fromAction {
+            createIdentificationEvent(idEventId, searchMethod).blockingAwait()
+            if (user.isHospital()) {
+                val inboundReferralDate = when (viewState.visitReason) {
+                    Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
+                    Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
+                    else -> null
+                }
+                createPartialEncounter(idEventId, viewState.visitReason!!, inboundReferralDate).blockingAwait()
             }
-        } ?: Completable.never()
+        }.observeOn(AndroidSchedulers.mainThread())
     }
 
     companion object {

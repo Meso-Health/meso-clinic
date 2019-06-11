@@ -6,6 +6,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import java.util.UUID
 
@@ -45,7 +46,7 @@ data class EncounterModel(
     val providerComment: String? = null,
     val submittedAt: Instant? = null,
     val visitReason: Encounter.VisitReason? = null,
-    val inboundReferralDate: Instant? = null
+    val inboundReferralDate: LocalDate? = null
 ) {
 
     fun toEncounter(): Encounter {
@@ -93,7 +94,7 @@ data class EncounterModel(
                 adjudicationReason = encounter.adjudicationReason,
                 revisedEncounterId = encounter.revisedEncounterId,
                 providerComment = encounter.providerComment,
-                preparedAt = encounter.preparedAt ?: now,
+                preparedAt = encounter.preparedAt,
                 submittedAt = encounter.submittedAt,
                 visitReason = encounter.visitReason,
                 inboundReferralDate = encounter.inboundReferralDate

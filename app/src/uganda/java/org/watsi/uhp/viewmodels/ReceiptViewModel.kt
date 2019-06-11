@@ -48,7 +48,7 @@ class ReceiptViewModel @Inject constructor(
                 copaymentPaid = copaymentPaid
             )
             Completable.fromCallable {
-                createEncounterUseCase.execute(encounterFlowState.toEncounterWithExtras(), true, clock).blockingAwait()
+                createEncounterUseCase.execute(encounterFlowState.toEncounterWithExtras(), true, false, clock).blockingAwait()
             }.observeOn(AndroidSchedulers.mainThread())
         } ?: Completable.never()
     }

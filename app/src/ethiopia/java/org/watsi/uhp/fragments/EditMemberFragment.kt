@@ -37,6 +37,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_photo
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.visit_reason_spinner
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
@@ -160,10 +161,18 @@ class EditMemberFragment : DaggerFragment() {
                         Encounter.VisitReason.REFERRAL -> {
                             inbound_referral_date_container.visibility = View.VISIBLE
                             follow_up_date_container.visibility = View.GONE
+                            // manually set to today when datepicker first appears since onChange won't be called
+                            if (viewState.inboundReferralDate == null) {
+                                viewModel.onInboundReferralDateChange(LocalDate.now(clock))
+                            }
                         }
                         Encounter.VisitReason.FOLLOW_UP -> {
                             inbound_referral_date_container.visibility = View.GONE
                             follow_up_date_container.visibility = View.VISIBLE
+                            // manually set to today when datepicker first appears since onChange won't be called
+                            if (viewState.followUpDate == null) {
+                                viewModel.onFollowUpDateChange(LocalDate.now(clock))
+                            }
                         }
                         else -> {
                             inbound_referral_date_container.visibility = View.GONE

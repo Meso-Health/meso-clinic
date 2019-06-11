@@ -2,6 +2,7 @@ package org.watsi.device.factories
 
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.EncounterModel
@@ -31,7 +32,7 @@ object EncounterModelFactory {
         providerComment: String? = null,
         submittedAt: Instant? = null,
         visitReason: Encounter.VisitReason? = null,
-        inboundReferralDate: Instant? = null,
+        inboundReferralDate: LocalDate? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val now = Instant.now(clock)
@@ -83,7 +84,7 @@ object EncounterModelFactory {
         providerComment: String? = null,
         submittedAt: Instant? = null,
         visitReason: Encounter.VisitReason? = null,
-        inboundReferralDate: Instant? = null,
+        inboundReferralDate: LocalDate? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val model = build(
