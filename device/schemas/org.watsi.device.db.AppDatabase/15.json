@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "0ef72b7859e3406c8e8de4fed1734284",
+    "identityHash": "757469e8d88b32a118f22c878746c03e",
     "entities": [
       {
         "tableName": "billables",
@@ -177,7 +177,7 @@
       },
       {
         "tableName": "encounters",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `preparedAt` INTEGER, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, `visitType` TEXT, `claimId` TEXT NOT NULL, `patientOutcome` TEXT, `adjudicationState` TEXT, `adjudicatedAt` INTEGER, `adjudicationReason` TEXT, `revisedEncounterId` TEXT, `providerComment` TEXT, `submittedAt` INTEGER, `visitReason` TEXT, `inboundReferralDate` INTEGER, PRIMARY KEY(`id`), FOREIGN KEY(`memberId`) REFERENCES `members`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `memberId` TEXT NOT NULL, `identificationEventId` TEXT, `occurredAt` INTEGER NOT NULL, `preparedAt` INTEGER, `backdatedOccurredAt` INTEGER NOT NULL, `copaymentPaid` INTEGER, `diagnoses` TEXT NOT NULL, `visitType` TEXT, `claimId` TEXT NOT NULL, `patientOutcome` TEXT, `adjudicationState` TEXT, `adjudicatedAt` INTEGER, `adjudicationReason` TEXT, `revisedEncounterId` TEXT, `providerComment` TEXT, `submittedAt` INTEGER, `visitReason` TEXT, `inboundReferralDate` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`memberId`) REFERENCES `members`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -302,7 +302,7 @@
           {
             "fieldPath": "inboundReferralDate",
             "columnName": "inboundReferralDate",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -1078,7 +1078,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"0ef72b7859e3406c8e8de4fed1734284\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"757469e8d88b32a118f22c878746c03e\")"
     ]
   }
 }

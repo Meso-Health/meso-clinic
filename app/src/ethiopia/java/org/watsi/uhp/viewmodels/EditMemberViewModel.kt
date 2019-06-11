@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
@@ -135,7 +134,7 @@ class EditMemberViewModel @Inject constructor(
         return createIdentificationEventUseCase.execute(idEvent)
     }
 
-    private fun createPartialEncounter(idEventId: UUID, visitReason: Encounter.VisitReason, inboundReferralDate: Instant?): Completable {
+    private fun createPartialEncounter(idEventId: UUID, visitReason: Encounter.VisitReason, inboundReferralDate: LocalDate?): Completable {
         val member = getMember() ?: return Completable.never()
         val encounter = Encounter(
             id = UUID.randomUUID(),
@@ -176,8 +175,7 @@ class EditMemberViewModel @Inject constructor(
                     Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
                     else -> null
                 }
-                // TODO: change inboundReferralDate field from Instant to LocalDate
-                createPartialEncounter(idEventId, viewState.visitReason!!, inboundReferralDate?.atStartOfDay(clock.zone)?.toInstant()).blockingAwait()
+                createPartialEncounter(idEventId, viewState.visitReason!!, inboundReferralDate).blockingAwait()
             }
         }.observeOn(AndroidSchedulers.mainThread())
     }

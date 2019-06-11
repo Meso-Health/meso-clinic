@@ -1,6 +1,7 @@
 package org.watsi.domain.factories
 
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import java.util.UUID
 
@@ -25,7 +26,7 @@ object EncounterFactory {
         providerComment: String? = null,
         submittedAt: Instant? = null,
         visitReason: Encounter.VisitReason? = null,
-        inboundReferralDate: Instant? = null
+        inboundReferralDate: LocalDate? = null
     ) : Encounter {
         return Encounter(
             id = id,

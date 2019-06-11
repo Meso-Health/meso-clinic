@@ -3,6 +3,7 @@ package org.watsi.device.api.models
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.entities.Referral
@@ -27,7 +28,7 @@ data class EncounterApi(
     val submittedAt: Instant?,
     val patientOutcome: String?,
     val visitReason: String?,
-    val inboundReferralDate: Instant?
+    val inboundReferralDate: LocalDate?
 ) {
     constructor(encounter: Encounter, referrals: List<Referral>, encounterItems: List<EncounterItem>): this(
         id = encounter.id,

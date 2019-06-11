@@ -121,7 +121,7 @@ class MemberInformationViewModel @Inject constructor(
         return createIdentificationEventUseCase.execute(idEvent)
     }
 
-    private fun createPartialEncounter(idEventId: UUID, member: Member, visitReason: Encounter.VisitReason, inboundReferralDate: Instant?): Completable {
+    private fun createPartialEncounter(idEventId: UUID, member: Member, visitReason: Encounter.VisitReason, inboundReferralDate: LocalDate?): Completable {
         val encounter = Encounter(
             id = UUID.randomUUID(),
             memberId = member.id,
@@ -163,8 +163,7 @@ class MemberInformationViewModel @Inject constructor(
                     Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
                     else -> null
                 }
-                // TODO: change inboundReferralDate field from Instant to LocalDate
-                createPartialEncounter(idEventId, member, viewState.visitReason!!, inboundReferralDate?.atStartOfDay(clock.zone)?.toInstant()).blockingAwait()
+                createPartialEncounter(idEventId, member, viewState.visitReason!!, inboundReferralDate).blockingAwait()
             }
         }.observeOn(AndroidSchedulers.mainThread())
     }

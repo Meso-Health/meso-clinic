@@ -1,6 +1,7 @@
 package org.watsi.domain.entities
 
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import java.io.Serializable
 import java.util.UUID
 
@@ -23,7 +24,7 @@ data class Encounter(
     val providerComment: String? = null,
     val submittedAt: Instant? = null,
     val visitReason: VisitReason? = null,
-    val inboundReferralDate: Instant? = null
+    val inboundReferralDate: LocalDate? = null
 ) : Serializable {
 
     fun shortenedClaimId(): String {
