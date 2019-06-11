@@ -10,35 +10,83 @@ import org.watsi.domain.entities.Delta
 class IdentificationEventDaoTest : DaoBaseTest() {
 
     @Test
-    fun openCheckIn() {
-        val memberWithOpenCheckIn = MemberModelFactory.create(memberDao)
-        val memberWithDismissedCheckIn = MemberModelFactory.create(memberDao)
-        val memberWithEncounter = MemberModelFactory.create(memberDao)
-        val memberWithNoCheckIn = MemberModelFactory.create(memberDao)
+    fun openCheckIn_memberWithNoIdEvent() {
+        val member = MemberModelFactory.create(memberDao)
 
-        // open identification event
-        val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithOpenCheckIn.id,
-                dismissed = false)
+        identificationEventDao.openCheckIn(member.id).test().assertNoValues()
+    }
+    
+    @Test
+    fun openCheckIn_memberWithIdEventAndNoEncounter() {
+        val member = MemberModelFactory.create(memberDao)
+        val idEventWithNoEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = member.id,
+            dismissed = false
+        )
 
-        // dismissed identification event
+        identificationEventDao.openCheckIn(member.id).test().assertValue(idEventWithNoEncounter)
+    }
+
+    @Test
+    fun openCheckIn_memberWithDismissedIdEventAndNoEncounter() {
+        val member = MemberModelFactory.create(memberDao)
         IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithDismissedCheckIn.id,
-                dismissed = true)
+            memberId = member.id,
+            dismissed = true
+        )
 
-        // open identification event but with corresponding encounter
-        val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
-            memberId = memberWithEncounter.id,
+        identificationEventDao.openCheckIn(member.id).test().assertNoValues()
+    }
+
+    @Test
+    fun openCheckIn_memberWithIdEventAndPartialEncounter() {
+        val member = MemberModelFactory.create(memberDao)
+        val idEventWithPartialEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = member.id,
             dismissed = false
         )
         EncounterModelFactory.create(encounterDao, memberDao,
-            identificationEventId = idEventWithEncounter.id
+            identificationEventId = idEventWithPartialEncounter.id,
+            memberId = member.id,
+            preparedAt = null
         )
 
-        identificationEventDao.openCheckIn(memberWithOpenCheckIn.id).test().assertValue(openCheckIn)
-        identificationEventDao.openCheckIn(memberWithDismissedCheckIn.id).test().assertNoValues()
-        identificationEventDao.openCheckIn(memberWithEncounter.id).test().assertNoValues()
-        identificationEventDao.openCheckIn(memberWithNoCheckIn.id).test().assertNoValues()
+        identificationEventDao.openCheckIn(member.id).test().assertValue(idEventWithPartialEncounter)
+    }
+
+    @Test
+    fun openCheckIn_memberWithDismissedIdEventAndPartialEncounter() {
+        val member = MemberModelFactory.create(memberDao)
+        val dismissedIdEventWithPartialEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = member.id,
+            dismissed = true
+        )
+        EncounterModelFactory.create(encounterDao, memberDao,
+            identificationEventId = dismissedIdEventWithPartialEncounter.id,
+            memberId = member.id,
+            preparedAt = null
+        )
+
+        identificationEventDao.openCheckIn(member.id).test().assertNoValues()
+    }
+
+    @Test
+    fun openCheckIn_memberWithIdEventAndEncounter() {
+        val member = MemberModelFactory.create(memberDao)
+        val idEventWithEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = member.id,
+            dismissed = false
+        )
+        EncounterModelFactory.create(encounterDao, memberDao,
+            identificationEventId = idEventWithEncounter.id,
+            memberId = member.id
+        )
+
+        identificationEventDao.openCheckIn(member.id).test().assertNoValues()
     }
 
     @Test

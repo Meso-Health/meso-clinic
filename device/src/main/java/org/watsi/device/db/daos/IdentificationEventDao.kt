@@ -41,10 +41,11 @@ interface IdentificationEventDao {
             "deltas.modelName = 'IDENTIFICATION_EVENT')")
     fun unsynced(): Single<List<IdentificationEventModel>>
 
+    //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +
-            "WHERE encounters.identificationEventId IS NULL\n" +
+            "WHERE (encounters.identificationEventId IS NULL OR encounters.preparedAt IS NULL)\n" +
             "AND identification_events.memberId = :memberId\n" +
             "AND identification_events.dismissed = 0")
     fun openCheckIn(memberId: UUID): Single<IdentificationEventModel>
