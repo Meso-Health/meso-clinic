@@ -181,37 +181,39 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 text -> viewModel.onMedicalRecordNumberChange(text)
         })
 
-        val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
-        val visitReasonEnums = visitReasonMappings.map { it.first }
-        val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
+        if (sessionManager.currentUser()?.isHospital() == true) {
+            val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
+            val visitReasonEnums = visitReasonMappings.map { it.first }
+            val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
 
-        visit_reason_spinner.setUpWithPrompt(
-            choices = visitReasonStrings,
-            initialChoice = null,
-            onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
-            promptString = getString(R.string.visit_reason_prompt),
-            onPromptSelected = { viewModel.onVisitReasonChange(null) }
-        )
+            visit_reason_spinner.setUpWithPrompt(
+                choices = visitReasonStrings,
+                initialChoice = null,
+                onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
+                promptString = getString(R.string.visit_reason_prompt),
+                onPromptSelected = { viewModel.onVisitReasonChange(null) }
+            )
 
-        inbound_referral_date_container.setUp(
-            initialValue = Instant.now(),
-            clock = clock,
-            onDateSelected = { date ->
-                viewModel.onInboundReferralDateChange(
-                    LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
-                )
-            }
-        )
+            inbound_referral_date_container.setUp(
+                initialValue = Instant.now(),
+                clock = clock,
+                onDateSelected = { date ->
+                    viewModel.onInboundReferralDateChange(
+                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                    )
+                }
+            )
 
-        follow_up_date_container.setUp(
-            initialValue = Instant.now(),
-            clock = clock,
-            onDateSelected = { date ->
-                viewModel.onFollowUpDateChange(
-                    LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
-                )
-            }
-        )
+            follow_up_date_container.setUp(
+                initialValue = Instant.now(),
+                clock = clock,
+                onDateSelected = { date ->
+                    viewModel.onFollowUpDateChange(
+                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                    )
+                }
+            )
+        }
 
         check_in_button.setOnClickListener {
             sessionManager.currentUser()?.let { user ->
