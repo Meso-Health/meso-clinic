@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.action
+import kotlinx.android.synthetic.main.view_dialog_edit_field.view.border
+import kotlinx.android.synthetic.main.view_dialog_edit_field.view.field_error_message
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.field_label
 import kotlinx.android.synthetic.main.view_dialog_edit_field.view.input_value
 import org.watsi.uhp.R
@@ -167,6 +169,23 @@ class DialogEditField @JvmOverloads constructor(
                         (dialogInterface as AlertDialog).dismiss()
                     })
                     .show()
+        }
+    }
+
+    /**
+     *  This method does two things:
+     *  - Sets the error message
+     *  - Underlines the field red
+     *
+     *  This does NOT modify the dialog itself.
+     */
+    fun setErrorOnField(errorMessage: String?) {
+        if (errorMessage != null) {
+            field_error_message.error = errorMessage
+            border.setBackgroundColor(context.getColor(R.color.red6))
+        } else {
+            field_error_message.error = null
+            border.setBackgroundColor(context.getColor(R.color.gray4))
         }
     }
 }

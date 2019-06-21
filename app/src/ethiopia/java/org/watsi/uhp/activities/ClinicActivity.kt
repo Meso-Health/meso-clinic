@@ -67,7 +67,9 @@ class ClinicActivity : LocaleAwareActivity() {
     fun startServices() {
         BaseService.schedule(FETCH_DATA_SERVICE_JOB_ID, this, FetchDataService::class.java)
         BaseService.schedule(SYNC_DATA_SERVICE_JOB_ID, this, SyncDataService::class.java)
-        BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchPhotosService::class.java)
+        if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_PHOTOS)) {
+            BaseService.schedule(FETCH_MEMBER_PHOTOS_SERVICE_JOB_ID, this, FetchPhotosService::class.java)
+        }
         BaseService.schedule(SYNC_PHOTOS_SERVICE_JOB_ID, this, SyncPhotosService::class.java)
         BaseService.schedule(DELETE_SYNCED_PHOTOS_SERVICE_JOB_ID, this, DeleteSyncedPhotosService::class.java)
     }

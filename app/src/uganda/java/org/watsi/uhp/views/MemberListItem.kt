@@ -26,7 +26,12 @@ class MemberListItem @JvmOverloads constructor(
         val padding = if (memberRelation.thumbnailPhoto == null) placeholderPadding else 0
         member_photo.setPadding(padding, padding, padding, padding)
         PhotoLoader.loadMemberPhoto(
-                memberRelation.thumbnailPhoto?.bytes, member_photo, context, member.gender)
+            bytes = memberRelation.thumbnailPhoto?.bytes,
+            view = member_photo,
+            context = context,
+            gender = member.gender,
+            photoExists = member.photoExists()
+        )
 
         name.text = member.name
 

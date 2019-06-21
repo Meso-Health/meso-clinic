@@ -12,6 +12,7 @@ import java.util.UUID
 
 interface MemberRepository {
     fun all(excludeArchived: Boolean = true): Flowable<List<Member>>
+    fun count(): Single<Int>
     fun find(id: UUID): Maybe<Member>
     fun findAll(ids: List<UUID>): Single<List<Member>>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>

@@ -6,6 +6,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
 import java.util.UUID
 
@@ -31,19 +32,21 @@ data class EncounterModel(
     val memberId: UUID,
     val identificationEventId: UUID?,
     val occurredAt: Instant,
-    val preparedAt: Instant,
+    val preparedAt: Instant?,
     val backdatedOccurredAt: Boolean,
     val copaymentPaid: Boolean?,
     val diagnoses: List<Int>,
     val visitType: String?,
     val claimId: String,
     val patientOutcome: Encounter.PatientOutcome?,
-    val adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+    val adjudicationState: Encounter.AdjudicationState? = null,
     val adjudicatedAt: Instant? = null,
     val adjudicationReason: String? = null,
     val revisedEncounterId: UUID? = null,
     val providerComment: String? = null,
-    val submittedAt: Instant? = null
+    val submittedAt: Instant? = null,
+    val visitReason: Encounter.VisitReason? = null,
+    val inboundReferralDate: LocalDate? = null
 ) {
 
     fun toEncounter(): Encounter {
@@ -64,7 +67,9 @@ data class EncounterModel(
             revisedEncounterId = revisedEncounterId,
             providerComment = providerComment,
             preparedAt = preparedAt,
-            submittedAt = submittedAt
+            submittedAt = submittedAt,
+            visitReason = visitReason,
+            inboundReferralDate = inboundReferralDate
         )
     }
 
@@ -89,8 +94,10 @@ data class EncounterModel(
                 adjudicationReason = encounter.adjudicationReason,
                 revisedEncounterId = encounter.revisedEncounterId,
                 providerComment = encounter.providerComment,
-                preparedAt = encounter.preparedAt ?: now,
-                submittedAt = encounter.submittedAt
+                preparedAt = encounter.preparedAt,
+                submittedAt = encounter.submittedAt,
+                visitReason = encounter.visitReason,
+                inboundReferralDate = encounter.inboundReferralDate
             )
         }
     }

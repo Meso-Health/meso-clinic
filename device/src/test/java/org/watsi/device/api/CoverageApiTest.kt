@@ -13,6 +13,7 @@ import org.watsi.device.api.models.MemberApi
 import org.watsi.device.api.models.PriceScheduleApi
 import org.watsi.device.testutils.OkReplayTest
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
@@ -29,27 +30,35 @@ import java.util.UUID
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class CoverageApiTest : OkReplayTest() {
     private val fixedInstance = Instant.parse("2018-03-23T08:10:36.306Z")
-    private val providerId = 1
+    private val clinicProviderId = 1
+    private val hospitalProviderId = 3
     private val clinicUser = "provider1"
     private val clinicUserPassword = "123456"
+    private val hospitalUser = "card_room"
+    private val hosptialUserPassword = "123456"
 
     // Make sure this is a valid token.
-    private val tokenString = AuthenticationTokenFactory.build(
-        token = "NBGErbd3.ntsRRN3S4GuswZuVsRSMBxBsodYNbK22"
+    private val clinicTokenString = AuthenticationTokenFactory.build(
+        token = "CYJDrtpZ.FqoqsnkzRZ2tjVVU9M7XWYTe1qJ1eZeS"
+    ).getHeaderString()
+    private val hospitalTokenString = AuthenticationTokenFactory.build(
+        token = "ZdS43jYk.BUsdcfwh1jKkVV3Fhpfk9nhFpmdkgzrY"
     ).getHeaderString()
 
     // Make sure these correspond to real ids in the backend.
-    private val householdId = UUID.fromString("08166d63-2bfb-4293-8e7f-2c4d369834a2")
-    private val billableId = UUID.fromString("000a5c14-af1b-4685-8f39-ac7982377ee9")
-    private val billableLatestPriceScheduleId = UUID.fromString("adaec28b-8e7d-4d49-8af9-458bccfb87b7")
+    private val householdId = UUID.fromString("31f572a0-2d69-42d3-9118-0f26ba6a52f7")
+    private val billableId = UUID.fromString("ffe804c7-8bec-49b4-a67b-78746d37f3b0")
+    private val billableLatestPriceScheduleId = UUID.fromString("522f5997-6879-454e-a07b-f3ec95064a76")
 
     // When creating new tapes, make sure the following IDs do not exist in the backend.
-    private val memberId = UUID.fromString("224a2322-48c1-4a4a-b123-4c2233f21b11")
-    private val identificationEventId = UUID.fromString("2214e82f2-6e42-4bd4-a9df-ddf11802c2c1")
-    private val priceScheduleId = UUID.fromString("12fba944-13cd-4022-b622-7c8200f21b81")
-    private val encounterId = UUID.fromString("11fba129-44cd-8026-b253-a0ea44080d1d")
-    private val encounterItemId = UUID.fromString("21ba944-29cd-4022-b273-a9ea26180d1a")
-    private val referralId = UUID.fromString("21fba934-44cd-4022-b273-a9ea26180d1a")
+    private val memberId = UUID.fromString("324a2322-48c1-4a4a-b123-4c2233f21b11")
+    private val identificationEventId = UUID.fromString("3214e82f2-6e42-4bd4-a9df-ddf11802c2c1")
+    private val priceScheduleId = UUID.fromString("22fba944-13cd-4022-b622-7c8200f21b81")
+    private val encounterId = UUID.fromString("31fba129-44cd-8026-b253-a0ea44080d1d")
+    private val encounterItemId = UUID.fromString("31ba944-29cd-4022-b273-a9ea26180d1a")
+    private val referralId = UUID.fromString("31fba934-44cd-4022-b273-a9ea26180d1a")
+    private val identificationEventId2 = UUID.fromString("3df3522c-83e3-11e9-bc42-526af7764f64")
+    private val encounterId2 = UUID.fromString("faa011bc-83e2-11e9-bc42-526af7764f64")
 
     private val member = MemberFactory.build(
         id = memberId,
@@ -63,6 +72,14 @@ class CoverageApiTest : OkReplayTest() {
         throughMemberId = memberId,
         occurredAt = fixedInstance
     )
+
+    private val identificationEvent2 = IdentificationEventFactory.build(
+        id = identificationEventId2,
+        memberId = memberId,
+        throughMemberId = memberId,
+        occurredAt = fixedInstance
+    )
+
 
     override fun afterSetup() {
         // no-op
@@ -80,8 +97,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test001_getMembers() {
         val result = api.getMembers(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             pageKey = null
         ).test()
         result.assertComplete()
@@ -91,8 +108,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test002_getBillables() {
         val result = api.getBillables(
-            tokenAuthorization = tokenString,
-            providerId = providerId
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId
         ).test()
 
         result.assertComplete()
@@ -109,7 +126,7 @@ class CoverageApiTest : OkReplayTest() {
 
     @Test
     fun test003_getDiagnoses() {
-        val result = api.getDiagnoses(tokenAuthorization = tokenString).test()
+        val result = api.getDiagnoses(tokenAuthorization = clinicTokenString).test()
         result.assertComplete()
         assertTrue(result.values().first().map { it.toDiagnosis() }.isNotEmpty())
     }
@@ -117,7 +134,7 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test004_postMember() {
         api.postMember(
-            tokenAuthorization = tokenString,
+            tokenAuthorization = clinicTokenString,
             member = MemberApi(member)
         ).test().assertComplete()
     }
@@ -125,7 +142,7 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test005_patchMember() {
         api.patchMember(
-            tokenAuthorization = tokenString,
+            tokenAuthorization = clinicTokenString,
             memberId = memberId,
             patchParams = MemberApi.patch(
                 member,
@@ -142,8 +159,8 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test006_postIdentificationEvent() {
         api.postIdentificationEvent(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             identificationEvent = IdentificationEventApi(identificationEvent)
         ).test().assertComplete()
     }
@@ -151,7 +168,7 @@ class CoverageApiTest : OkReplayTest() {
     @Test
     fun test007_patchIdentificationEvent() {
         api.patchIdentificationEvent(
-            tokenAuthorization = tokenString,
+            tokenAuthorization = clinicTokenString,
             identificationEventId = identificationEvent.id,
             patchParams = IdentificationEventApi.patch(
                 identificationEvent,
@@ -177,8 +194,8 @@ class CoverageApiTest : OkReplayTest() {
         )
 
         api.postPriceSchedule(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             priceSchedule = PriceScheduleApi(priceSchedule)
         ).test().assertComplete()
     }
@@ -190,7 +207,8 @@ class CoverageApiTest : OkReplayTest() {
             memberId = memberId,
             identificationEventId = identificationEventId,
             occurredAt = fixedInstance,
-            preparedAt = fixedInstance
+            preparedAt = fixedInstance,
+            submittedAt = fixedInstance
         )
 
         val encounterItem = EncounterItemFactory.build(
@@ -224,17 +242,53 @@ class CoverageApiTest : OkReplayTest() {
         )
 
         api.postEncounter(
-            tokenAuthorization = tokenString,
-            providerId = providerId,
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
             encounter = EncounterApi(encounterWithExtras)
         ).test().assertComplete()
     }
 
     @Test
-    fun test010_getReturnedClaims() {
+    fun test010_postPartialEncounter() {
+        val encounter = EncounterFactory.build(
+            id = encounterId2,
+            memberId = memberId,
+            identificationEventId = identificationEventId2,
+            occurredAt = fixedInstance,
+            preparedAt = null,
+            submittedAt = null,
+            visitReason = Encounter.VisitReason.REFERRAL,
+            inboundReferralDate = LocalDate.of(2018, 3, 15)
+        )
+
+        val encounterWithExtras = EncounterWithExtras(
+            encounter = encounter,
+            encounterItemRelations = emptyList(),
+            encounterForms = emptyList(),
+            referral = null,
+            member = MemberFactory.build(id = encounter.memberId),
+            diagnoses = emptyList()
+        )
+
+        // Create idEvent first
+        api.postIdentificationEvent(
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
+            identificationEvent = IdentificationEventApi(identificationEvent2)
+        ).test().assertComplete()
+
+        api.postEncounter(
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId,
+            encounter = EncounterApi(encounterWithExtras)
+        ).test().assertComplete()
+    }
+
+    @Test
+    fun test011_getReturnedClaims() {
         val result = api.getReturnedClaims(
-            tokenAuthorization = tokenString,
-            providerId = providerId
+            tokenAuthorization = clinicTokenString,
+            providerId = clinicProviderId
         ).test()
 
         result.assertComplete()
@@ -262,5 +316,13 @@ class CoverageApiTest : OkReplayTest() {
                 returnedClaims.map { it.toEncounterWithExtras(null) }.isNotEmpty()
             )
         }
+    }
+
+    @Test
+    fun test012_getOpenIdentificationEvent() {
+        api.getOpenIdentificationEvents(
+            tokenAuthorization = hospitalTokenString,
+            providerId = hospitalProviderId
+        ).test().assertComplete()
     }
 }

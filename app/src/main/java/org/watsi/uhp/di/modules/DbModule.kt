@@ -150,10 +150,12 @@ class DbModule {
 
     @Provides
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
+                                             encounterDao: EncounterDao,
                                              api: CoverageApi,
                                              sessionManager: SessionManager,
+                                             preferencesManager: PreferencesManager,
                                              clock: Clock): IdentificationEventRepository {
-        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
+        return IdentificationEventRepositoryImpl(identificationEventDao, encounterDao, api, sessionManager, preferencesManager, clock)
     }
 
     @Provides

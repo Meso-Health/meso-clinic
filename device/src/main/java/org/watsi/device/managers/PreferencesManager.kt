@@ -32,4 +32,6 @@ interface PreferencesManager {
     fun updateDiagnosesLastFetched(instant: Instant)
     fun getReturnedClaimsLastFetched(): Instant
     fun updateReturnedClaimsLastFetched(instant: Instant)
+    fun getIdentificationEventsLastFetched(): Instant
+    fun updateIdentificationEventsLastFetched(instant: Instant)
 }

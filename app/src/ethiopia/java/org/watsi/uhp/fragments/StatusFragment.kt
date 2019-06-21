@@ -25,15 +25,18 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_fetched_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_synced_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_data_error
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_data_progress_bar
+import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_container
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_error
 import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_progress_bar
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_billables
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_diagnoses
+import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_identification_events
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_member_photos
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_returned_claims
 import kotlinx.android.synthetic.ethiopia.fragment_status.photos_last_fetched_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.photos_last_synced_at
+import kotlinx.android.synthetic.ethiopia.fragment_status.provider_type
 import kotlinx.android.synthetic.ethiopia.fragment_status.sync_data_error
 import kotlinx.android.synthetic.ethiopia.fragment_status.sync_data_progress_bar
 import kotlinx.android.synthetic.ethiopia.fragment_status.sync_photos_error
@@ -43,11 +46,14 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_identificatio
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_member_photos
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_price_schedules
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.NetworkManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
+import org.watsi.uhp.helpers.EnumHelper
+import org.watsi.uhp.helpers.PermissionsHelper
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.FetchDataService
 import org.watsi.uhp.services.FetchPhotosService
@@ -60,6 +66,7 @@ class StatusFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var networkManager: NetworkManager
+    @Inject lateinit var logger: Logger
     lateinit var viewModel: StatusViewModel
     private lateinit var broadcastReceiver: BroadcastReceiver
 
@@ -89,6 +96,7 @@ class StatusFragment : DaggerFragment() {
                 last_fetched_billables.setValue(formattedUpdatedAt(viewState.billablesFetchedAt.toEpochMilli()))
                 last_fetched_diagnoses.setValue(formattedUpdatedAt(viewState.diagnosesFetchedAt.toEpochMilli()))
                 last_fetched_returned_claims.setValue(formattedUpdatedAt(viewState.returnedClaimsFetchedAt.toEpochMilli()))
+                last_fetched_identification_events.setValue(formattedUpdatedAt(viewState.identificationEventsFetchedAt.toEpochMilli()))
                 if (viewState.photosToFetchCount == 0) {
                     last_fetched_member_photos.setValue(formattedUpdatedAt(viewState.memberPhotosFetchedAt.toEpochMilli()))
                 } else {
@@ -111,8 +119,17 @@ class StatusFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val username = sessionManager.currentAuthenticationToken()?.user?.username
+        fetch_photos_container.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_PHOTOS, sessionManager)
+        last_fetched_billables.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_BILLABLES, sessionManager)
+        last_fetched_diagnoses.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_DIAGNOSES, sessionManager)
+        last_fetched_returned_claims.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_RETURNED_CLAIMS, sessionManager)
+        last_fetched_identification_events.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.FETCH_IDENTIFICATION_EVENTS, sessionManager)
+        unsynced_price_schedules.visibility = PermissionsHelper.getVisibilityFromPermission(SessionManager.Permissions.SYNC_PRICE_SCHEDULES, sessionManager)
+
+        val username = sessionManager.currentUser()?.username
+        val providerType = sessionManager.currentUser()?.providerType
         current_user.setValue(username)
+        provider_type.setValue(providerType?.let { EnumHelper.providerTypeToDisplayedString(it, context, logger) })
         app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
     }

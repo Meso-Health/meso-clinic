@@ -59,6 +59,7 @@ class ReviseClaimUseCase(
                     diagnoses = originalEncounterWithExtras.diagnoses
                 ),
                 submitNow = true,
+                isPartial = false,
                 clock = clock
             ).blockingAwait()
 

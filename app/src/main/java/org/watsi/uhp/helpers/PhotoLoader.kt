@@ -24,18 +24,22 @@ object PhotoLoader {
                 .into(view)
     }
 
-    fun loadMemberPhoto(bytes: ByteArray?, view: ImageView, context: Context, gender: Member.Gender, placeholderPadding: Int = 0) {
+    fun loadMemberPhoto(bytes: ByteArray?, view: ImageView, context: Context, gender: Member.Gender, photoExists: Boolean, placeholderPadding: Int = 0) {
         val placeholder = if (gender == Member.Gender.F) {
-            R.drawable.ic_member_placeholder_female
+            if (photoExists) {
+                R.drawable.ic_member_unsynced_placeholder_female
+            } else {
+                R.drawable.ic_member_placeholder_female
+            }
         } else {
-            R.drawable.ic_member_placeholder_male
+            if (photoExists) {
+                R.drawable.ic_member_unsynced_placeholder_male
+            } else {
+                R.drawable.ic_member_placeholder_male
+            }
+
         }
 
-        if (bytes == null) {
-            view.setPadding(placeholderPadding, placeholderPadding, placeholderPadding, placeholderPadding)
-        } else {
-            view.setPadding(0, 0, 0, 0)
-        }
         requestOptions.fallback(placeholder)
 
         Glide.with(context)

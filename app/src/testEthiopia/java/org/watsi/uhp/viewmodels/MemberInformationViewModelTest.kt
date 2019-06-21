@@ -2,6 +2,7 @@ package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -13,7 +14,11 @@ import org.mockito.Mock
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
+import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.User
+import org.watsi.domain.factories.UserFactory
+import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.AgeUnit
@@ -25,6 +30,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     private lateinit var observable: LiveData<MemberInformationViewModel.ViewState>
     @Mock lateinit var mockCreateMemberUseCase: CreateMemberUseCase
     @Mock lateinit var mockCreateIdentificationEventUseCase: CreateIdentificationEventUseCase
+    @Mock lateinit var mockCreateEncounterUseCase: CreateEncounterUseCase
 
     private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
     private val membershipNumber = "01/01/06/P-692/3"
@@ -34,14 +40,18 @@ class MemberInformationViewModelTest : AACBaseTest() {
         name = "Three Name Here",
         age = 10,
         ageUnit = AgeUnit.years,
-        medicalRecordNumber = "123456"
+        medicalRecordNumber = "123456",
+        visitReason = Encounter.VisitReason.EMERGENCY
     )
+    private val user = UserFactory.build()
+    private val hospitalUser = UserFactory.build(providerType = User.ProviderType.GENERAL_HOSPITAL)
 
     @Before
     fun setup() {
         viewModel = MemberInformationViewModel(
             mockCreateMemberUseCase,
             mockCreateIdentificationEventUseCase,
+            mockCreateEncounterUseCase,
             clock
         )
         observable = viewModel.getObservable()
@@ -81,7 +91,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
     @Test
     fun createAndCheckInMember_allFieldsMissing_returnsError() {
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(
@@ -100,7 +110,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel()
         viewModel.onNameChange(null)
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -109,7 +119,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
         viewModel.onNameChange("")
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -122,7 +132,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel()
         viewModel.onNameChange("Two Names")
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -135,7 +145,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel()
         viewModel.onAgeChange(null)
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -149,7 +159,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         viewModel.onAgeChange(Member.MAX_AGE + 1)
         viewModel.onAgeUnitChange(AgeUnit.years)
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -158,7 +168,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
 
         viewModel.onAgeUnitChange(AgeUnit.months)
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -173,7 +183,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         viewModel.onAgeUnitChange(validViewState.ageUnit)
         viewModel.onMedicalRecordNumberChange(validViewState.medicalRecordNumber)
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -186,7 +196,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel()
         viewModel.onMedicalRecordNumberChange(null)
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -199,7 +209,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
         setValidViewStateOnViewModel()
         viewModel.onMedicalRecordNumberChange("1234")
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertError(
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
@@ -213,14 +223,40 @@ class MemberInformationViewModelTest : AACBaseTest() {
         whenever(mockCreateMemberUseCase.execute(any(), any())).thenReturn(Completable.complete())
         whenever(mockCreateIdentificationEventUseCase.execute(any())).thenReturn(Completable.complete())
 
-        viewModel.createAndCheckInMember(membershipNumber).test().assertComplete()
+        viewModel.createAndCheckInMember(membershipNumber, user).test().assertComplete()
     }
 
-    private fun setValidViewStateOnViewModel() {
+    @Test
+    fun createAndCheckInMember_isHospitalUser_missingVisitReason_returnsError() {
+        setValidViewStateOnViewModel(hospitalUser = true)
+        viewModel.onVisitReasonChange(null)
+
+        viewModel.createAndCheckInMember(membershipNumber, hospitalUser).test().assertError(
+            MemberInformationViewModel.ValidationException::class.java
+        )
+        assertEquals(observable.value?.errors, hashMapOf(
+            MemberInformationViewModel.VISIT_REASON_ERROR to R.string.missing_visit_reason
+        ))
+    }
+
+    @Test
+    fun createAndCheckInMember_isHospitalUser_validViewState_completes() {
+        setValidViewStateOnViewModel(hospitalUser = true)
+        whenever(mockCreateMemberUseCase.execute(any(), any())).thenReturn(Completable.complete())
+        whenever(mockCreateIdentificationEventUseCase.execute(any())).thenReturn(Completable.complete())
+        whenever(mockCreateEncounterUseCase.execute(any(), eq(true), eq(true), eq(clock))).thenReturn(Completable.complete())
+
+        viewModel.createAndCheckInMember(membershipNumber, hospitalUser).test().assertComplete()
+    }
+
+    private fun setValidViewStateOnViewModel(hospitalUser: Boolean = false) {
         viewModel.onAgeChange(validViewState.age)
         viewModel.onNameChange(validViewState.name)
         viewModel.onGenderChange(validViewState.gender!!)
         viewModel.onAgeUnitChange(validViewState.ageUnit)
         viewModel.onMedicalRecordNumberChange(validViewState.medicalRecordNumber)
+        if (hospitalUser) {
+            viewModel.onVisitReasonChange(validViewState.visitReason)
+        }
     }
 }

@@ -137,10 +137,13 @@ class HomeFragment : DaggerFragment() {
         }
 
         menu?.let {
-            it.findItem(R.id.menu_returned_claims).isVisible = true
-            it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
-            it.findItem(R.id.menu_pending_claims).isVisible = true
-            it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+                it.findItem(R.id.menu_returned_claims).isVisible = true
+                it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
+                it.findItem(R.id.menu_pending_claims).isVisible = true
+                it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
+            }
+
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_status).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
@@ -191,7 +194,7 @@ class HomeFragment : DaggerFragment() {
             val submitBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             submitBtn.setOnClickListener {
                 errorText.error = ""
-                sessionManager.currentAuthenticationToken()?.user?.securityPin?.let { pin ->
+                sessionManager.currentUser()?.securityPin?.let { pin ->
                     if (pin == pinView.text.toString()) {
                         dialog.dismiss()
                         navigationManager.goTo(fragment)

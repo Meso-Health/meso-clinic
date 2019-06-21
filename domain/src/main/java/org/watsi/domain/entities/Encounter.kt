@@ -1,6 +1,7 @@
 package org.watsi.domain.entities
 
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import java.io.Serializable
 import java.util.UUID
 
@@ -16,12 +17,14 @@ data class Encounter(
     val diagnoses: List<Int> = emptyList(),
     val visitType: String? = null,
     val claimId: String = id.toString(),
-    val adjudicationState: Encounter.AdjudicationState = Encounter.AdjudicationState.PENDING,
+    val adjudicationState: Encounter.AdjudicationState? = null,
     val adjudicatedAt: Instant? = null,
     val adjudicationReason: String? = null,
     val revisedEncounterId: UUID? = null,
     val providerComment: String? = null,
-    val submittedAt: Instant? = null
+    val submittedAt: Instant? = null,
+    val visitReason: VisitReason? = null,
+    val inboundReferralDate: LocalDate? = null
 ) : Serializable {
 
     fun shortenedClaimId(): String {
@@ -33,6 +36,8 @@ data class Encounter(
     enum class EncounterAction { PREPARE, SUBMIT, RESUBMIT }
 
     enum class PatientOutcome { CURED_OR_DISCHARGED, REFERRED, FOLLOW_UP, REFUSED_SERVICE, DECEASED, OTHER }
+
+    enum class VisitReason { REFERRAL, NO_REFERRAL, SELF_REFERRAL, FOLLOW_UP, EMERGENCY }
 
     companion object {
         val VISIT_TYPE_CHOICES = listOf(

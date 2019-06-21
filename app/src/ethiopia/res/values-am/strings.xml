@@ -43,7 +43,7 @@
     <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
     <string name="login_permission_error">ይህ ተጠቃሚ የክፍያ ጥያቄ መላክ አልተፈቐደለትም</string>
 
-    <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
+    <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">አስገባ</string>
     <string name="checked_in">ገብቷል</string>
     <string name="checked_out_snackbar_message">%1$s አልገባም</string>
@@ -82,6 +82,7 @@
 
     <string name="fetch_data_title">የወረዱ (መረጃ)</string>
     <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <!--<string name="last_fetched_identification_events_label">Identification Events</string>-->
     <string name="last_fetched_diagnoses_label">በሽታዎች ዝርዝር</string>
     <string name="last_fetched_members_label">ኣባላት</string>
 
@@ -142,6 +143,13 @@
     <!-- StatusFragment -->
     <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
     <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
+    <!--<string name="provider_type_label" translatable="false">Provider Type</string>-->
+    <!--<string name="provider_type_unclassified" translatable="false">Unclassified</string>-->
+    <!--<string name="provider_type_clinic" translatable="false">Health Center</string>-->
+    <!--<string name="provider_type_primary_hospital" translatable="false">Primary Hospital</string>-->
+    <!--<string name="provider_type_general_hospital" translatable="false">General Hospital</string>-->
+    <!--<string name="provider_type_tertiary_hospital" translatable="false">Tertiary Hospital</string>-->
+    <!--<string name="fetch_identification_events_error_label">Download Identification Events</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀጥል</string>
@@ -193,6 +201,17 @@
     <string name="check_out_alert_dialog_title">ከገቡት ዝርዝር ውስጥ ይወገድ?</string>
     <string name="check_out_alert_dialog_message">%1$s  ከገቡት ዝርዝር ውስጥ ይወገዳል፡፡ ከተወገደ ደግሞ በስሙ የክፍያ ጥያቄ ማቅረብ አይችሉም፡፡</string>
     <string name="diagnoses_and_billable_missing_dialog">የበሽታዎች ዝርዝርና አገልግሎቶች አልወረዱም፣ እባክዎ ደግመው ከመላክዎ በፊት ያዋህዱት</string>
+
+    <!--<string name="visit_reason_label">Reason for visit</string>-->
+    <!--<string name="inbound_referral_date_label">Inbound referral date</string>-->
+    <!--<string name="follow_up_date_label">Follow-up issue date</string>-->
+    <!--<string name="missing_visit_reason">Reason for visit is required</string>-->
+    <!--<string name="visit_reason_prompt">Select a reason for visit…</string>-->
+    <!--<string name="visit_reason_referral">Referral</string>-->
+    <!--<string name="visit_reason_no_referral">No referral</string>-->
+    <!--<string name="visit_reason_self_referral">Self-referral (bypass fee)</string>-->
+    <!--<string name="visit_reason_follow_up">Follow-up</string>-->
+    <!--<string name="visit_reason_emergency">Emergency</string>-->
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>
