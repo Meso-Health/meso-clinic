@@ -136,6 +136,7 @@
     <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
+    <!--<string name="menu_export_db" translatable="false">Export database</string>-->
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
