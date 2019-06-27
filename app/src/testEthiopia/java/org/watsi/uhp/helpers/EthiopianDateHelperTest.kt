@@ -67,7 +67,7 @@ class EthiopianDateHelperTest {
         val ethDate = EthiopianDate(2010, 9, 13) // May 21st 2018 in Addis
         val expectedInstant = Instant.parse("2018-05-20T21:00:00.000Z") // 9pm May 20th GMT
         val returnedInstant = EthiopianDateHelper.toInstant(
-            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0, clock
+            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0
         )
 
         assertEquals(expectedInstant, returnedInstant)
