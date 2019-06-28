@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.view_dialog_date_edit_field.view.date_valu
 import kotlinx.android.synthetic.main.view_dialog_date_edit_field.view.field_label
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.ReceiptFragment
@@ -98,7 +99,8 @@ class DialogDateEditField @JvmOverloads constructor(
                 yearSpinner.getSelectedItem().toInt(),
                 monthSpinner.getSelectedItem().toInt(),
                 daySpinner.getSelectedItem().toInt(),
-                0, 0, 0, 0 // Arbitrarily choose midnight, since time isn't specified
+                0, 0, 0, 0, // Arbitrarily choose midnight, since time isn't specified
+                Clock.fixed(Instant.now(), ZoneId.of("UTC"))
             )
 
             setDate(selectedDate, clock)

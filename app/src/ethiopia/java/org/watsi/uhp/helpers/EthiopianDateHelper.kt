@@ -48,10 +48,11 @@ object EthiopianDateHelper {
         hour: Int,
         minute: Int,
         second: Int,
-        milli: Int
+        milli: Int,
+        clock: Clock
     ): Instant {
         val ethDateTime = DateTime(EthiopicChronology.getInstance())
-            .withZone(DateTimeZone.UTC)
+            .withZone(DateTimeZone.forID(clock.zone.id))
             .withDate(year, month, day)
             .withTime(hour, minute, second, milli)
 
