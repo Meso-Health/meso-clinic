@@ -39,7 +39,7 @@ class CreateEncounterUseCaseTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         useCase = CreateEncounterUseCase(mockEncounterRepository, mockBillableRepository, mockPriceScheduleRepository)
-        fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        fixedClock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
     }
 
     @Test

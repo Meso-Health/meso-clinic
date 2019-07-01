@@ -41,7 +41,7 @@ class BillableRepositoryImplTest {
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: BillableRepositoryImpl
 
     val billableModel = BillableModelFactory.build(clock = clock)

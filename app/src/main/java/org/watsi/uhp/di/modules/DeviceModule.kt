@@ -7,6 +7,7 @@ import com.simprints.libsimprints.SimHelper
 import dagger.Module
 import dagger.Provides
 import org.threeten.bp.Clock
+import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
@@ -30,7 +31,7 @@ class DeviceModule {
     @Provides
     fun provideClock(context: Context): Clock {
         AndroidThreeTen.init(context)
-        return Clock.systemUTC()
+        return Clock.system(ZoneId.of("UTC"))
     }
 
     @Singleton

@@ -13,7 +13,7 @@ class EthiopianDateHelperTest {
 
     @Before
     fun setup() {
-        clock = Clock.fixed(Instant.now(), ZoneId.of("Africa/Addis_Ababa"))
+        clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     }
 
     @Test
@@ -68,7 +68,7 @@ class EthiopianDateHelperTest {
         val expectedInstant = Instant.parse("2018-05-21T00:00:00.000Z") // 12pm May 21th UTC
         val returnedInstant = EthiopianDateHelper.toInstant(
             ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
-            Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+            clock
         )
 
         assertEquals(expectedInstant, returnedInstant)
@@ -88,7 +88,7 @@ class EthiopianDateHelperTest {
         val ethDate = EthiopianDateHelper.toEthiopianDate(instant, clock)
         val returnedInstant = EthiopianDateHelper.toInstant(
             ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
-            Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+            clock
         )
         assertEquals(instant, returnedInstant)
     }
@@ -100,7 +100,7 @@ class EthiopianDateHelperTest {
         val ethDate = EthiopianDateHelper.toEthiopianDate(instant, clock)
         val returnedInstant = EthiopianDateHelper.toInstant(
             ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
-            Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+            clock
         )
         assertEquals(expectedInstant, returnedInstant)
     }

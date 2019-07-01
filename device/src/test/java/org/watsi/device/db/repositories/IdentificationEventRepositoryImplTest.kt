@@ -33,7 +33,7 @@ class IdentificationEventRepositoryImplTest {
     @Mock lateinit var mockIdentificationEventDao: IdentificationEventDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
     lateinit var repository: IdentificationEventRepositoryImpl
 
     val identificationEvent = IdentificationEventFactory.build()

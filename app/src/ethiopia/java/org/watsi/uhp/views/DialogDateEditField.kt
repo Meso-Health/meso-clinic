@@ -100,7 +100,7 @@ class DialogDateEditField @JvmOverloads constructor(
                 monthSpinner.getSelectedItem().toInt(),
                 daySpinner.getSelectedItem().toInt(),
                 0, 0, 0, 0, // Arbitrarily choose midnight, since time isn't specified
-                Clock.fixed(Instant.now(), ZoneId.systemDefault())
+                Clock.fixed(Instant.now(), ZoneId.of("UTC"))
             )
 
             setDate(selectedDate, clock)

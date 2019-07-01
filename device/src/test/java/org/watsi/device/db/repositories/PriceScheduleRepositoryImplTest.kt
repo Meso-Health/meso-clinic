@@ -30,7 +30,7 @@ class PriceScheduleRepositoryImplTest {
     @Mock lateinit var mockDao: PriceScheduleDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
     val user = UserFactory.build()
     val token = AuthenticationToken("token", clock.instant(), user)
     lateinit var repository: PriceScheduleRepositoryImpl

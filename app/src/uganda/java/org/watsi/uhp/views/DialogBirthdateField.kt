@@ -269,7 +269,7 @@ class DialogBirthdateField @JvmOverloads constructor(
         }
     }
 
-    private fun formatCalculatedAge(localDate: LocalDate, clock: Clock = Clock.systemDefaultZone()): String {
+    private fun formatCalculatedAge(localDate: LocalDate, clock: Clock = Clock.systemUTC()): String {
         val ageYears = DateUtils.getYearsAgo(localDate, clock)
         return if (ageYears >= 2) "$ageYears years old" else "${DateUtils.getMonthsAgo(localDate, clock)} months old"
     }

@@ -66,7 +66,7 @@ object EthiopianDateHelper {
 
     private fun toEthDateTime(instant: Instant, clock: Clock): DateTime {
         return DateTime(EthiopicChronology.getInstance())
-            .withZone(DateTimeZone.forID(clock.zone.id))
+            .withZone(DateTimeZone.forID("Africa/Addis_Ababa"))
             .withMillis(instant.toEpochMilli())
     }
 
