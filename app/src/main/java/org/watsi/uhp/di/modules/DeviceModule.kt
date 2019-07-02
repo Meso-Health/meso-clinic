@@ -7,7 +7,6 @@ import com.simprints.libsimprints.SimHelper
 import dagger.Module
 import dagger.Provides
 import org.threeten.bp.Clock
-import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
