@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.view_dialog_date_edit_field.view.date_valu
 import kotlinx.android.synthetic.main.view_dialog_date_edit_field.view.field_label
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.ReceiptFragment
