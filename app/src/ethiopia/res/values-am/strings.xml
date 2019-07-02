@@ -40,7 +40,9 @@
     <string name="login_generic_failure_message">መግባት አልቻለም</string>
     <string name="login_wrong_username_or_password_message">የተሰጠው የተጠቃሚ ስም / ይለፍ ቃል ጥምረት የተሳሳተ ነው</string>
     <string name="login_progress_message">እየገባ ነው</string>
-    <string name="login_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
+    <string name="login_phone_offline_error">ስልክዎ ከመስመር ውጭ ስለሆነ መግባት አልቻለም</string>
+    <string name="login_connectivity_error">ደካማ ኢንተርኔት በመኖሩ መግባት አልቻለም</string>
+    <string name="login_server_offline_error">የመረጃ ቋቱ ከመስመር ውጪ ስለሆነ መግባት አልቻሉም</string>
     <string name="login_permission_error">ይህ ተጠቃሚ የክፍያ ጥያቄ መላክ አልተፈቐደለትም</string>
 
     <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->

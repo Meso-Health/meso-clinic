@@ -40,7 +40,9 @@
     <string name="login_generic_failure_message">ክኣትው አይካኣለን</string>
     <string name="login_wrong_username_or_password_message">ዝተዋህበ ናይ ተጠቃሚ ስም / ይሕለፍ ቃል ጥምረት ግጉይ እዩ</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
-    <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+    <string name="login_phone_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+    <string name="login_connectivity_error">ብሰንኪ ድኹም ኢንተርኔት ክኣቱ ኣይከኣለን</string>
+    <string name="login_server_offline_error">እቲ ናይ መረዳእታ ቦኽራ ካብ መስመር ወፃኢ ስለዘሎ ክኣትው አይክኣሉን</string>
     <string name="login_permission_error">እዚ ተግባሪ ሕቶ ክፍሊት ክሰድድ ኣይተፈቐደሉን</string>-
 
     <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->

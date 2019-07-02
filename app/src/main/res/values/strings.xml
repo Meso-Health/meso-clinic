@@ -46,7 +46,9 @@
     <string name="login_generic_failure_message">Failed to login</string>
     <string name="login_wrong_username_or_password_message">The provided username/password combination is incorrect</string>
     <string name="login_progress_message">Logging in…</string>
-    <string name="login_offline_error">Cannot login because phone is offline</string>
+    <string name="login_connectivity_error">Cannot login due to poor connectivity</string>
+    <string name="login_phone_offline_error">Cannot login because phone is offline</string>
+    <string name="login_server_offline_error">Cannot login because server is offline</string>
     <string name="login_permission_error">This user is not allowed to submit claims</string>
 
     <!-- BaseService -->
