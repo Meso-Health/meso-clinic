@@ -23,7 +23,7 @@ import org.watsi.domain.factories.DeltaFactory
 class DeltaRepositoryImplTest {
 
     @Mock lateinit var mockDao: DeltaDao
-    val clock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: DeltaRepositoryImpl
 
     @Before
