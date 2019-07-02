@@ -40,10 +40,12 @@
     <string name="login_generic_failure_message">ክኣትው አይካኣለን</string>
     <string name="login_wrong_username_or_password_message">ዝተዋህበ ናይ ተጠቃሚ ስም / ይሕለፍ ቃል ጥምረት ግጉይ እዩ</string>
     <string name="login_progress_message">ይኣትው ኣሎ</string>
-    <string name="login_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
-    <!--<string name="login_permission_error">This user cannot be used for enrollment</string>-->
+    <string name="login_phone_offline_error">ስልኪ ካብ መስመር ወፃኢ ስለዝኮነ ክአትው አይክእሉን</string>
+    <string name="login_connectivity_error">ብሰንኪ ድኹም ኢንተርኔት ክኣቱ ኣይከኣለን</string>
+    <string name="login_server_offline_error">እቲ ናይ መረዳእታ ቦኽራ ካብ መስመር ወፃኢ ስለዘሎ ክኣትው አይክኣሉን</string>
+    <string name="login_permission_error">እዚ ተግባሪ ሕቶ ክፍሊት ክሰድድ ኣይተፈቐደሉን</string>-
 
-    <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
+    <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">ኣእትው</string>
     <string name="checked_in">ኣትዩ ኣሎ</string>
     <string name="checked_out_snackbar_message">%1$s ኣይኣተወን</string>
@@ -51,8 +53,8 @@
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">አገልግሎት/አቅርቦት ዝርዝር</string>
-    <string name="drug_and_supply">ቸ ቀረባትን</string>
-    <string name="service">ኣገልግሎት</string>
+    <string name="drug_and_supply">ኣፋውስን ቀረባትን</string>
+    <string name="service">ግልጋሎት</string>
     <string name="lab">ላብራቶሪ</string>
     <string name="select_prompt">ምረፅ</string>
     <string name="done_encounter_button">ተወዲኡ</string>
@@ -69,7 +71,7 @@
     </plurals>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">ከልስ</string>
+    <string name="receipt_fragment_label">ሕቶ ክፍሊት ከልስ</string>
     <string name="submit_encounter_button">@string/submit</string>
     <plurals name="receipt_line_item_count" >
         <item quantity="one">%d አገልግሎት/አቅርቦት ዝርዝር</item>
@@ -85,6 +87,7 @@
 
     <string name="fetch_data_title">ዝወረዱ (መረዳእታ)</string>
     <!--<string name="last_fetched_billables_label">Billables</string>-->
+    <!--<string name="last_fetched_identification_events_label">Identification Events</string>-->
     <string name="last_fetched_diagnoses_label">ነፀርታታት ሕማም</string>
     <string name="last_fetched_members_label">ኣባላት</string>
 
@@ -135,16 +138,24 @@
     <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ?</string>
     <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
+    <!--<string name="menu_export_db" translatable="false">Export database</string>-->
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">ሕቶታት ክፍሊት</string>
-    <string name="no_claims">ዝተረኸበ ሕቶ ክፍሊት የለን</string>
+    <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
+    <!--<string name="no_members">No members available</string>-->
     <string name="pending_claims_dialog_label">ናይ ይሕለፍ ቁፅሪ ኣእትው</string>
     <string name="pending_claims_dialog_error_message">ዝተሳሓሓተ ናይ ይሕለፍ ቁፅሪ</string>
 
     <!-- StatusFragment -->
     <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
     <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
+    <!--<string name="provider_type_label" translatable="false">Provider Type</string>-->
+    <!--<string name="provider_type_unclassified" translatable="false">Unclassified</string>-->
+    <!--<string name="provider_type_clinic" translatable="false">Health Center</string>-->
+    <!--<string name="provider_type_primary_hospital" translatable="false">Primary Hospital</string>-->
+    <!--<string name="provider_type_general_hospital" translatable="false">General Hospital</string>-->
+    <!--<string name="provider_type_tertiary_hospital" translatable="false">Tertiary Hospital</string>-->
+    <!--<string name="fetch_identification_events_error_label">Download Identification Events</string>-->
 
     <!-- Encounter Flow -->
     <string name="continue_encounter_button">ቀፅል</string>
@@ -195,6 +206,18 @@
     <string name="missing_medical_record_number">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ </string>
     <string name="check_out_alert_dialog_title">ካብ ዝኣተወ ዝርዝር ይወገድ?</string>
     <string name="check_out_alert_dialog_message">%1$s ካብ ዝኣተው ዝርዝር ክውገድ እዩ፡፡ እንተተወጊዱ ድማ ብሽሙ ሕቶ ኽፍሊት ከቅርቡ ኣይኽእሉን</string>
+    <string name="diagnoses_and_billable_missing_dialog">ዝርዝር ነፀርታታት ሕማም ን ግልጋሎትን ገና ኣይወረደን፣ በይዘኦም ቅድሚ ደጊሞም ምሙኳሮም የዋድድዎ</string>
+
+    <!--<string name="visit_reason_label">Reason for visit</string>-->
+    <!--<string name="inbound_referral_date_label">Inbound referral date</string>-->
+    <!--<string name="follow_up_date_label">Follow-up issue date</string>-->
+    <!--<string name="missing_visit_reason">Reason for visit is required</string>-->
+    <!--<string name="visit_reason_prompt">Select a reason for visit…</string>-->
+    <!--<string name="visit_reason_referral">Referral</string>-->
+    <!--<string name="visit_reason_no_referral">No referral</string>-->
+    <!--<string name="visit_reason_self_referral">Self-referral (bypass fee)</string>-->
+    <!--<string name="visit_reason_follow_up">Follow-up</string>-->
+    <!--<string name="visit_reason_emergency">Emergency</string>-->
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">ናይ ኣባል መረዳእታ</string>
@@ -217,13 +240,13 @@
     <string name="visit_type_label">ዓይነት ቪዚት/ አገልግሎት</string>
     <string name="referral_label">ሪፈር</string>
     <string name="referral_date_label">ሪፈር ዝተብሃለሉ ዕለት</string>
-    <!--<string name="receiving_facility_validation_error" translatable="false">Receiving facility is required</string>-->
-    <!--<string name="referral_reason_validation_error" translatable="false">Referral reason is required</string>-->
-    <!--<string name="mark_as_stockout" translatable="false">Mark %s as stockout</string>-->
+    <string name="receiving_facility_validation_error">ሽም ሪፈር ተቐባሊ ጥዕና ትካል ክምላእ አለዎ</string>
+    <string name="referral_reason_validation_error">ሪፈር ዝተብሃለሉ ምኽንያት ክምላእ ኣለዎ</string>
+    <string name="mark_as_stockout">%s ኣብ ትካልና የለን (ወዲእና)</string>
     <string name="referral_serial_number">ናይ ሪፈር ቁፅሪ (እንተሃልዩ)</string>
     <string name="referral_reason">ሪፈር ዝተብሃለሉ ምኽንያት</string>
     <string name="referred_to_facility">ሪፈር ዝተብሃለሉ ትካል ጥዕና</string>
-    <!--<string name="referred_to_facility_prompt">Select referred to facility…</string>-->
+    <string name="referred_to_facility_prompt">ሪፈር ዝበሃለሉ ጥዕና ትካል ምረፅ</string>
     <string name="referral_other_option">ካልኦት ሪፈር ክለኣኹሉ ዝኽእሉ ትካላት ጥዕና</string>
     <string name="referral_reason_prompt">ምኽንያት ሪፈር…</string>
     <string name="further_consultation">ንዝለዓለ ምርመራ</string>
@@ -233,8 +256,8 @@
     <string name="bed_shortage">ሕፅረት ዓራት</string>
     <string name="follow_up">ብቀረባ ክትትል ንክረኽቡ</string>
     <string name="other">ንካልኦት  (ዘይተጠቐሱ) ግልጋሎታት</string>
-    <!--<string name="patient_outcome" translatable="false">Patient outcome</string>-->
-    <!--<string name="patient_outcome_prompt" translatable="false">Select patient outcome...</string>-->
+    <string name="patient_outcome">ውፅኢት ሕክምና</string>
+    <string name="patient_outcome_prompt">ውፅኢት ሕክምና</string>
     <string name="outcome_cured_or_discharged">ተሓኪሙ/ተሰዲዱ</string>
     <string name="outcome_referred">ሪፈር ተባሂሉ/ላ</string>
     <string name="outcome_follow_up">ክትትል የድልዮ</string>

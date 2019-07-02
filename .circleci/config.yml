@@ -94,8 +94,8 @@ jobs:
           command: |
             export VERSION_CODE=${CIRCLE_BUILD_NUM}
             ./deploy_scripts/downloadSecrets.sh
-            ./gradlew assembleEthiopiaSandbox
-            ./gradlew publishEthiopiaSandbox -Dorg.gradle.project.track=production
+            ./gradlew assembleEthiopiaRelease
+            ./gradlew publishEthiopiaRelease -Dorg.gradle.project.track=production
 
 workflows:
   version: 2
@@ -125,4 +125,4 @@ workflows:
             - build_and_test
           filters:
             branches:
-              only: production
+              only: production-ethiopia

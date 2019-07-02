@@ -6,45 +6,35 @@ import org.watsi.domain.entities.User
 
 class RollbarLogger : Logger {
 
-    companion object {
-        private val MESSAGE_LEVEL_WARNING = "warning"
-        private val MESSAGE_LEVEL_INFO = "info"
-        private val MESSAGE_LEVEL_ERROR = "error"
-    }
-
     override fun setUser(user: User) {
-        Rollbar.setPersonData(user.id.toString(), user.username, null)
+        Rollbar.instance().setPersonData(user.id.toString(), user.username, null)
     }
 
     override fun clearUser() {
-        Rollbar.setPersonData(null)
-    }
-
-    private fun reportMessage(message: String, messageLevel: String, params: Map<String, String>) {
-        if (params.isEmpty()) {
-            Rollbar.reportMessage(message, messageLevel)
-        } else {
-            Rollbar.reportMessage(message, messageLevel, params)
-        }
+        Rollbar.instance().clearPersonData()
     }
 
     override fun info(message: String, params: Map<String, String>) {
-        reportMessage(message, MESSAGE_LEVEL_INFO, params)
+        Rollbar.instance().info(message, params)
+    }
+
+    override fun info(throwable: Throwable, params: Map<String, String>) {
+        Rollbar.instance().info(throwable, params, throwable.message)
     }
 
     override fun warning(message: String, params: Map<String, String>) {
-        reportMessage(message, MESSAGE_LEVEL_WARNING, params)
+        Rollbar.instance().warning(message, params)
     }
 
     override fun warning(throwable: Throwable, params: Map<String, String>) {
-        Rollbar.reportException(throwable, MESSAGE_LEVEL_WARNING, throwable.message, params)
+        Rollbar.instance().warning(throwable, params, throwable.message)
     }
 
     override fun error(message: String, params: Map<String, String>) {
-        reportMessage(message, MESSAGE_LEVEL_ERROR, params)
+        Rollbar.instance().error(message, params)
     }
 
     override fun error(throwable: Throwable, params: Map<String, String>) {
-        Rollbar.reportException(throwable, MESSAGE_LEVEL_ERROR, throwable.message, params)
+        Rollbar.instance().error(throwable, params, throwable.message)
     }
 }

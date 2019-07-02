@@ -26,6 +26,9 @@ interface MemberDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(models: List<MemberModel>)
 
+    @Query("SELECT count(*) from members")
+    fun count(): Single<Int>
+
     @Transaction
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     fun findFlowableMemberWithThumbnail(id: UUID): Flowable<MemberWithThumbnailModel>
@@ -67,6 +70,7 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE members.id IN (:ids)")
     fun findMemberRelationsByIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
+    //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Transaction
     @Query("SELECT members.*\n" +
             "FROM members\n" +
@@ -77,17 +81,18 @@ interface MemberDao {
             "   GROUP BY memberId\n" +
             ") last_identifications on last_identifications.memberId = members.id\n" +
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
-            "WHERE encounters.identificationEventId IS NULL\n" +
+            "WHERE (encounters.identificationEventId IS NULL OR encounters.preparedAt IS NULL)\n" +
             "ORDER BY last_identifications.occurredAt")
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
+    //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Query("SELECT (\n" +
             "   SELECT max(identification_events.occurredAt)\n" +
             "   FROM identification_events\n" +
             "   LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +
-            "   WHERE identification_events.dismissed = 0\n" +
+            "   WHERE (encounters.identificationEventId IS NULL OR encounters.preparedAt IS NULL)\n" +
             "   AND identification_events.memberId = :memberId\n" +
-            "   AND encounters.identificationEventId IS NULL)" +
+            "   AND identification_events.dismissed = 0)" +
             "IS NOT NULL\n"
     )
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>

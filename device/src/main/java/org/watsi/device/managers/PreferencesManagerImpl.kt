@@ -23,6 +23,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         private const val BILLABLES_LAST_FETCHED_KEY = "billables_last_fetched"
         private const val DIAGNOSES_LAST_FETCHED_KEY = "diagnoses_last_fetched"
         private const val RETURNED_CLAIMS_LAST_FETCHED_KEY = "returned_claims_last_fetched"
+        private const val IDENTIFICATION_EVENTS_LAST_FETCHED_KEY = "identification_events_last_fetched"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -140,5 +141,13 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
 
     override fun updateReturnedClaimsLastFetched(instant: Instant) {
         sharedPreferences.edit().putLong(RETURNED_CLAIMS_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
+    }
+
+    override fun getIdentificationEventsLastFetched(): Instant {
+        return Instant.ofEpochMilli(sharedPreferences.getLong(IDENTIFICATION_EVENTS_LAST_FETCHED_KEY, 0))
+    }
+
+    override fun updateIdentificationEventsLastFetched(instant: Instant) {
+        sharedPreferences.edit().putLong(IDENTIFICATION_EVENTS_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
     }
 }

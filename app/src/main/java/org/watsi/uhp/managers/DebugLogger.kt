@@ -22,12 +22,16 @@ class DebugLogger : Logger {
         Log.i(TAG, logMessage(message, params))
     }
 
+    override fun info(throwable: Throwable, params: Map<String, String>) {
+        Log.i(TAG, logMessage(throwable.localizedMessage, params))
+    }
+
     override fun warning(message: String, params: Map<String, String>) {
         Log.w(TAG, logMessage(message, params))
     }
 
     override fun warning(throwable: Throwable, params: Map<String, String>) {
-        Log.e(TAG, logMessage(throwable.localizedMessage, params))
+        Log.w(TAG, logMessage(throwable.localizedMessage, params))
     }
 
     override fun error(message: String, params: Map<String, String>) {

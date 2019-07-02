@@ -20,10 +20,7 @@ class SyncPhotosService : BaseService() {
             syncMemberPhotoUseCase.execute { setError(it, getString(R.string.sync_member_photos_error_label)) },
             syncEncounterFormUseCase.execute { setError(it, getString(R.string.sync_encounter_forms_error_label)) },
             Completable.fromAction {
-                val errors = getErrorMessages()
-                if (!errors.isEmpty()) {
-                    throw ExecuteTasksFailureException()
-                } else {
+                if (getErrorMessages().isEmpty()) {
                     preferencesManager.updatePhotoLastSynced(clock.instant())
                 }
             }

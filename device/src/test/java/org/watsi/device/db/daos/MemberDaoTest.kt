@@ -18,62 +18,101 @@ class MemberDaoTest : DaoBaseTest() {
     @Test
     fun checkedInMembers() {
         val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
-        val memberWithOpenCheckIn = MemberModelFactory.create(
+        val memberWithIdEvent = MemberModelFactory.create(
             memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
-        val memberWithDismissedCheckIn = MemberModelFactory.create(memberDao)
+        val memberWithDismissedIdEvent = MemberModelFactory.create(memberDao)
+        val memberWithPartialEncounter = MemberModelFactory.create(memberDao)
         val memberWithEncounter = MemberModelFactory.create(memberDao)
-        MemberModelFactory.create(memberDao)
+        val first = Instant.parse("2018-05-21T10:15:30.000Z")
+        val second = Instant.parse("2018-05-30T12:30:00.000Z")
 
-        // open identification event
-        val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
-            memberId = memberWithOpenCheckIn.id,
-            dismissed = false)
+        // id event with no encounter
+        val idEventWithNoEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = memberWithIdEvent.id,
+            dismissed = false,
+            occurredAt = first
+        )
 
-        // dismissed identification event
+        // dismissed id event with no encounter
         IdentificationEventModelFactory.create(identificationEventDao,
-            memberId = memberWithDismissedCheckIn.id,
-            dismissed = true)
+            memberId = memberWithDismissedIdEvent.id,
+            dismissed = true
+        )
 
-        // open identification event but with corresponding encounter
-        val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
+        // id event with partial encounter
+        val idEventWithPartialEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = memberWithPartialEncounter.id,
+            dismissed = false,
+            occurredAt = second
+        )
+        EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithPartialEncounter.id, preparedAt = null)
+
+        // id event with encounter
+        val idEventWithEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
             memberId = memberWithEncounter.id,
-            dismissed = false)
+            dismissed = false
+        )
         EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithEncounter.id)
 
-        val memberWithOpenCheckInRelation = MemberWithIdEventAndThumbnailPhotoModel(
-            memberWithOpenCheckIn,
-            listOf(openCheckIn),
-            listOf(memberThumbnailPhoto))
-        memberDao.checkedInMembers().test().assertValue(listOf(memberWithOpenCheckInRelation))
+        val memberWithIdEventRelation = MemberWithIdEventAndThumbnailPhotoModel(
+            memberWithIdEvent,
+            listOf(idEventWithNoEncounter),
+            listOf(memberThumbnailPhoto)
+        )
+        val memberWithPartialEncounterRelation = MemberWithIdEventAndThumbnailPhotoModel(
+            memberWithPartialEncounter,
+            listOf(idEventWithPartialEncounter),
+            null
+        )
+        memberDao.checkedInMembers().test().assertValue(listOf(memberWithIdEventRelation, memberWithPartialEncounterRelation))
     }
 
     @Test
     fun isMemberCheckedIn() {
         val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
-        val memberWithOpenCheckIn = MemberModelFactory.create(
+        val memberWithIdEvent = MemberModelFactory.create(
                 memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
-        val memberWithDismissedCheckIn = MemberModelFactory.create(memberDao)
+        val memberWithDismissedIdEvent = MemberModelFactory.create(memberDao)
+        val memberWithPartialEncounter = MemberModelFactory.create(memberDao)
         val memberWithEncounter = MemberModelFactory.create(memberDao)
         MemberModelFactory.create(memberDao)
 
-        // open identification event
-        val openCheckIn = IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithOpenCheckIn.id,
-                dismissed = false)
+        // id event with no encounter
+        val openCheckIn = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = memberWithIdEvent.id,
+            dismissed = false
+        )
 
-        // dismissed identification event
-        IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithDismissedCheckIn.id,
-                dismissed = true)
+        // dismissed id event
+        IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = memberWithDismissedIdEvent.id,
+            dismissed = true
+        )
 
-        // open identification event but with corresponding encounter
-        val idEventWithEncounter = IdentificationEventModelFactory.create(identificationEventDao,
-                memberId = memberWithEncounter.id,
-                dismissed = false)
+        // id event with partial encounter
+        val idEventWithPartialEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = memberWithPartialEncounter.id,
+            dismissed = false
+        )
+        EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithPartialEncounter.id, preparedAt = null)
+
+        // id event with encounter
+        val idEventWithEncounter = IdentificationEventModelFactory.create(
+            identificationEventDao,
+            memberId = memberWithEncounter.id,
+            dismissed = false
+        )
         EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithEncounter.id)
 
-        memberDao.isMemberCheckedIn(memberWithOpenCheckIn.id).test().assertValue(true)
-        memberDao.isMemberCheckedIn(memberWithDismissedCheckIn.id).test().assertValue(false)
+        memberDao.isMemberCheckedIn(memberWithIdEvent.id).test().assertValue(true)
+        memberDao.isMemberCheckedIn(memberWithDismissedIdEvent.id).test().assertValue(false)
+        memberDao.isMemberCheckedIn(memberWithPartialEncounter.id).test().assertValue(true)
         memberDao.isMemberCheckedIn(memberWithEncounter.id).test().assertValue(false)
     }
 

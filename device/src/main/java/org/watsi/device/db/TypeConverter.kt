@@ -136,4 +136,10 @@ class TypeConverter {
 
     @TypeConverter
     fun fromPatientOutcome(patientOutcome: Encounter.PatientOutcome?): String? = patientOutcome?.let { patientOutcome.toString() }
+
+    @TypeConverter
+    fun toVisitReason(value: String?): Encounter.VisitReason? = value?.let { Encounter.VisitReason.valueOf(value) }
+
+    @TypeConverter
+    fun fromVisitReason(visitReason: Encounter.VisitReason?): String? = visitReason?.let { visitReason.toString() }
 }

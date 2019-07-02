@@ -39,11 +39,12 @@ class MemberListItem @JvmOverloads constructor(
         }
 
         PhotoLoader.loadMemberPhoto(
-            memberWithThumbnail.thumbnailPhoto?.bytes,
-            photo_container,
-            context,
-            member.gender,
-            placeholderPhotoIconPadding
+            bytes = memberWithThumbnail.thumbnailPhoto?.bytes,
+            view = photo_container,
+            context = context,
+            gender = member.gender,
+            photoExists = member.photoExists(),
+            placeholderPadding = placeholderPhotoIconPadding
         )
     }
 }

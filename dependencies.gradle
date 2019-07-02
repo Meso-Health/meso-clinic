@@ -11,7 +11,7 @@ ext {
     gsonVersion = '2.8.2'
     googleMobileServicesVersion = '11.8.0'
     simprintsVersion = '1.0.12'
-    rollbarVersion = '0.2.1'
+    rollbarVersion = '1.5.2'
     threeTenBackportVersion = "1.3.3"
     threeTenAndroidBackportVersion = "1.0.5"
     jodaVersion = "2.10"

@@ -71,22 +71,26 @@ abstract class BaseService : JobService() {
      * automatically re-run.
      */
     fun setError(e: Throwable, label: String): Boolean {
+        // Unwrap exception (some exceptions are wrapped / chained / rethrown as RuntimeExceptions)
+        val error = e.cause ?: e
         when {
-            NetworkErrorHelper.isHttpUnauthorized(e) -> {
-                errorMessages.add("$label: ${e.message}. ${getString(R.string.credentials_expired_error_message)}.")
-                logger.warning(e)
+            NetworkErrorHelper.isHttpUnauthorized(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.credentials_expired_error_message)}.")
+                logger.warning(error)
             }
-            NetworkErrorHelper.isServerOfflineError(e) -> {
-                errorMessages.add("$label: ${e.message}. ${getString(R.string.server_offline_error_message)}.")
-                logger.warning(e)
+            // Service can still be run if phone is offline for debug variant
+            NetworkErrorHelper.isPhoneOfflineError(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.phone_offline_error_message)}.")
             }
-            NetworkErrorHelper.isPoorConnectivityError(e) -> {
-                errorMessages.add("$label: ${e.message}. ${getString(R.string.poor_connectivity_error_message)}.")
-                logger.warning(e)
+            NetworkErrorHelper.isServerOfflineError(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.server_offline_error_message)}.")
+            }
+            NetworkErrorHelper.isPoorConnectivityError(error) -> {
+                errorMessages.add("$label: ${error.message}. ${getString(R.string.poor_connectivity_error_message)}.")
             }
             else -> {
-                errorMessages.add("$label: ${e.message}")
-                logger.error(e)
+                errorMessages.add("$label: ${error.message}")
+                logger.error(error)
             }
         }
         return true
@@ -104,7 +108,11 @@ abstract class BaseService : JobService() {
     inner class SyncObserver(private val params: JobParameters) : CompletableObserver {
         override fun onComplete() {
             broadcastJobEnded()
-            jobFinished(params, false)
+            if (!getErrorMessages().isEmpty()) {
+                jobFinished(params, true)
+            } else {
+                jobFinished(params, false)
+            }
         }
 
         override fun onSubscribe(d: Disposable) {
@@ -112,11 +120,7 @@ abstract class BaseService : JobService() {
         }
 
         override fun onError(e: Throwable) {
-            // If the error is a ExecuteTasksFailureException, then the original exception
-            // should've already been logged in `setError`, so there is no need to log it again
-            if (e !is ExecuteTasksFailureException) {
-                logger.error(e)
-            }
+            logger.error(e)
             broadcastJobEnded()
             jobFinished(params, true)
         }
@@ -142,7 +146,4 @@ abstract class BaseService : JobService() {
             jobScheduler.schedule(jobInfo)
         }
     }
-
-    // Generic exception class that should be manually thrown to reschedule the service
-    class ExecuteTasksFailureException : Exception()
 }

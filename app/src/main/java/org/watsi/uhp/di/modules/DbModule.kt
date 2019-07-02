@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.AppDatabase
+import org.watsi.device.db.DbHelper
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
@@ -51,7 +52,7 @@ class DbModule {
     @Singleton
     @Provides
     fun provideDatabase(context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "submission")
+        return Room.databaseBuilder(context, AppDatabase::class.java, DbHelper.DB_NAME)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -150,10 +151,12 @@ class DbModule {
 
     @Provides
     fun provideIdentificationEventRepository(identificationEventDao: IdentificationEventDao,
+                                             encounterDao: EncounterDao,
                                              api: CoverageApi,
                                              sessionManager: SessionManager,
+                                             preferencesManager: PreferencesManager,
                                              clock: Clock): IdentificationEventRepository {
-        return IdentificationEventRepositoryImpl(identificationEventDao, api, sessionManager, clock)
+        return IdentificationEventRepositoryImpl(identificationEventDao, encounterDao, api, sessionManager, preferencesManager, clock)
     }
 
     @Provides

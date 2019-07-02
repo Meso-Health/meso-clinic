@@ -2,9 +2,11 @@ package org.watsi.device.db.repositories
 
 import com.google.gson.JsonObject
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
@@ -18,12 +20,17 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.IdentificationEventApi
+import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.IdentificationEventModel
+import org.watsi.device.factories.IdentificationEventModelFactory
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
+import org.watsi.domain.entities.Encounter
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.UserFactory
@@ -31,8 +38,10 @@ import org.watsi.domain.factories.UserFactory
 @RunWith(MockitoJUnitRunner::class)
 class IdentificationEventRepositoryImplTest {
     @Mock lateinit var mockIdentificationEventDao: IdentificationEventDao
+    @Mock lateinit var mockEncounterDao: EncounterDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
+    @Mock lateinit var mockPreferencesManager: PreferencesManager
     val clock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
     lateinit var repository: IdentificationEventRepositoryImpl
 
@@ -52,17 +61,88 @@ class IdentificationEventRepositoryImplTest {
         synced = false
     )
 
+    val user = UserFactory.build()
+    val token = AuthenticationToken("token", clock.instant(), user)
+
     @Before
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = IdentificationEventRepositoryImpl(mockIdentificationEventDao, mockApi, mockSessionManager, clock)
+        repository = IdentificationEventRepositoryImpl(mockIdentificationEventDao, mockEncounterDao, mockApi, mockSessionManager, mockPreferencesManager, clock)
     }
 
     @Test
     fun create() {
         repository.create(identificationEvent, addDelta).test().assertComplete()
         verify(mockIdentificationEventDao).insertWithDelta(identificationEventModel, DeltaModel.fromDelta(addDelta, clock))
+    }
+
+    @Test
+    fun fetch_noCurrentToken_completes() {
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
+
+        repository.fetch().test().assertComplete()
+    }
+
+    @Test
+    fun fetch_hasToken_succeeds_updatesIdentificationEvents() {
+        val noChange = IdentificationEventModelFactory.build(clock = clock)
+        val noChangeApi = IdentificationEventApi(noChange.toIdentificationEvent())
+        val serverEdited = IdentificationEventModelFactory.build(clock = clock, dismissed = false)
+        val serverEditedApi = IdentificationEventApi(serverEdited.copy(dismissed = true).toIdentificationEvent())
+        val serverAdded = IdentificationEventModelFactory.build(clock = clock)
+        val serverAddedApi = IdentificationEventApi(serverAdded.toIdentificationEvent())
+        val serverRemoved = IdentificationEventModelFactory.build(clock = clock)
+        val clientEdited = IdentificationEventModelFactory.build(clock = clock, dismissed = false)
+        val clientEditedApi = IdentificationEventApi(clientEdited.copy(dismissed = true).toIdentificationEvent())
+        val clientAdded = IdentificationEventModelFactory.build(clock = clock)
+        val clientEditedServerEdited = IdentificationEventModelFactory.build(clock = clock, dismissed = false)
+        val clientEditedServerEditedApi = IdentificationEventApi(clientEditedServerEdited.copy(dismissed = true).toIdentificationEvent())
+        val clientEditedServerRemoved = IdentificationEventModelFactory.build(clock = clock)
+
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
+        whenever(mockApi.getOpenIdentificationEvents(any(), any())).thenReturn(Single.just(listOf(
+            noChangeApi,
+            serverEditedApi,
+            serverAddedApi,
+            clientEditedApi,
+            clientEditedServerEditedApi
+        )))
+        whenever(mockIdentificationEventDao.unsynced()).thenReturn(Single.just(listOf(
+            clientEdited,
+            clientAdded,
+            clientEditedServerEdited,
+            clientEditedServerRemoved
+        )))
+        whenever(mockIdentificationEventDao.all()).thenReturn(
+            Flowable.just(listOf(
+            noChange,
+            serverEdited,
+            serverRemoved,
+            clientEdited,
+            clientAdded,
+            clientEditedServerEdited,
+            clientEditedServerRemoved
+        )))
+        whenever(mockEncounterDao.unsynced()).thenReturn(Single.just(emptyList()))
+
+        repository.fetch().test().assertComplete()
+
+        verify(mockApi).getOpenIdentificationEvents(token.getHeaderString(), token.user.providerId)
+        verify(mockIdentificationEventDao).delete(listOf(serverRemoved.id))
+        verify(mockPreferencesManager).updateIdentificationEventsLastFetched(clock.instant())
+    }
+
+    @Test
+    fun fetch_hasToken_fails_returnsError() {
+        val exception = Exception()
+        whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
+        whenever(mockApi.getOpenIdentificationEvents(any(), any())).then { throw exception }
+
+        repository.fetch().test().assertError(exception)
+
+        verify(mockApi).getOpenIdentificationEvents(token.getHeaderString(), token.user.providerId)
+        verify(mockIdentificationEventDao, never()).unsynced()
     }
 
     @Test

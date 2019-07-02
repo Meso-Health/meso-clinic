@@ -15,7 +15,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,6 +22,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.birthdate_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.check_in_button
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.follow_up_date_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.hospital_check_in_details_container
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.inbound_referral_date_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
@@ -32,21 +34,24 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.start_claim_butto
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_photo
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.visit_reason_spinner
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.repositories.IdentificationEventRepository
-import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.PhotoLoader
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
@@ -58,10 +63,10 @@ class EditMemberFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
+    @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var clock: Clock
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
-    @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var validateDiagnosesAndBillablesExistenceUseCase: ValidateDiagnosesAndBillablesExistenceUseCase
 
@@ -101,47 +106,92 @@ class EditMemberFragment : DaggerFragment() {
         paramMember = arguments.getSerializable(PARAM_MEMBER) as Member
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditMemberViewModel::class.java)
         observable = viewModel.getObservable(paramMember)
-        observable.observe(this, Observer { viewState ->
-            viewState?.memberWithThumbnail?.let { memberWithThumbnail ->
-                val member = memberWithThumbnail.member
-                val photo = memberWithThumbnail.photo
+        observable.observe(this, Observer {
+            it?.let { viewState ->
+                setErrors(viewState.validationErrors)
 
-                if (member.needsRenewal == true) {
-                    needs_renewal_notification.visibility = View.VISIBLE
+                viewState.memberWithThumbnail?.let { memberWithThumbnail ->
+                    val member = memberWithThumbnail.member
+                    val photo = memberWithThumbnail.photo
+
+                    if (member.needsRenewal == true) {
+                        needs_renewal_notification.visibility = View.VISIBLE
+                    }
+
+                    PhotoLoader.loadMemberPhoto(
+                        bytes = photo?.bytes,
+                        view = top_photo,
+                        context = activity,
+                        gender = member.gender,
+                        photoExists = member.photoExists(),
+                        placeholderPadding = placeholderPhotoIconPadding
+                    )
+
+                    top_name.text = member.name
+                    top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
+
+                    membership_number_field.setText(member.membershipNumber)
+                    name_field.setText(member.name)
+                    birthdate_field.setText(StringHelper.getDisplayAge(member, activity, clock))
+                    medical_record_number_field.setValue(member.medicalRecordNumber)
+
+                    photo?.let {
+                        val thumbnailBitmap = BitmapFactory.decodeByteArray(
+                            photo.bytes, 0, photo.bytes.size)
+                        photo_container.setPhotoPreview(thumbnailBitmap)
+                    }
+
+                    activity.invalidateOptionsMenu()
                 }
 
-                PhotoLoader.loadMemberPhoto(
-                    photo?.bytes,
-                    top_photo,
-                    activity,
-                    member.gender,
-                    placeholderPhotoIconPadding
-                )
-                top_name.text = member.name
-                top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
-
-                membership_number_field.setText(member.membershipNumber)
-                name_field.setText(member.name)
-                birthdate_field.setText(StringHelper.getDisplayAge(member, activity, clock))
-                medical_record_number_field.setValue(member.medicalRecordNumber)
-
-                photo?.let {
-                    val thumbnailBitmap = BitmapFactory.decodeByteArray(
-                        photo.bytes, 0, photo.bytes.size)
-                    photo_container.setPhotoPreview(thumbnailBitmap)
+                viewState.isCheckedIn?.let { isCheckedIn ->
+                    if (isCheckedIn && sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+                        start_claim_button.visibility = View.VISIBLE
+                    } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
+                                    || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
+                        if (sessionManager.currentUser()?.isHospital() == true) {
+                            hospital_check_in_details_container.visibility = View.VISIBLE
+                        }
+                        check_in_button.visibility = View.VISIBLE
+                    }
                 }
 
-                activity.invalidateOptionsMenu()
-            }
-
-            viewState?.isCheckedIn?.let { isCheckedIn ->
-                if (isCheckedIn) {
-                    start_claim_button.visibility = View.VISIBLE
-                } else {
-                    check_in_button.visibility = View.VISIBLE
+                viewState.visitReason?.let { visitReason ->
+                    when (visitReason) {
+                        Encounter.VisitReason.REFERRAL -> {
+                            inbound_referral_date_container.visibility = View.VISIBLE
+                            follow_up_date_container.visibility = View.GONE
+                            // manually set to today when datepicker first appears since onChange won't be called
+                            if (viewState.inboundReferralDate == null) {
+                                viewModel.onInboundReferralDateChange(LocalDate.now(clock))
+                            }
+                        }
+                        Encounter.VisitReason.FOLLOW_UP -> {
+                            inbound_referral_date_container.visibility = View.GONE
+                            follow_up_date_container.visibility = View.VISIBLE
+                            // manually set to today when datepicker first appears since onChange won't be called
+                            if (viewState.followUpDate == null) {
+                                viewModel.onFollowUpDateChange(LocalDate.now(clock))
+                            }
+                        }
+                        else -> {
+                            inbound_referral_date_container.visibility = View.GONE
+                            follow_up_date_container.visibility = View.GONE
+                        }
+                    }
                 }
             }
         })
+    }
+
+    private fun setErrors(errors: Map<String, Int>) {
+        errors[EditMemberViewModel.MEDICAL_RECORD_NUMBER_ERROR].let { errorResourceId ->
+            medical_record_number_field.setErrorOnField(errorResourceId?.let { getString(errorResourceId) })
+        }
+
+        errors[EditMemberViewModel.VISIT_REASON_ERROR].let { errorResourceId ->
+            visit_reason_spinner.setError(errorResourceId?.let { getString(errorResourceId) })
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -168,28 +218,62 @@ class EditMemberFragment : DaggerFragment() {
             startActivityForResult(Intent(activity, SavePhotoActivity::class.java), CAPTURE_PHOTO_INTENT)
         }
 
+        if (sessionManager.currentUser()?.isHospital() == true) {
+            val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
+            val visitReasonEnums = visitReasonMappings.map { it.first }
+            val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
+
+            visit_reason_spinner.setUpWithPrompt(
+                choices = visitReasonStrings,
+                initialChoice = null,
+                onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
+                promptString = getString(R.string.visit_reason_prompt),
+                onPromptSelected = { viewModel.onVisitReasonChange(null) }
+            )
+
+            inbound_referral_date_container.setUp(
+                initialValue = Instant.now(),
+                clock = clock,
+                onDateSelected = { date ->
+                    viewModel.onInboundReferralDateChange(
+                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                    )
+                }
+            )
+
+            follow_up_date_container.setUp(
+                initialValue = Instant.now(),
+                clock = clock,
+                onDateSelected = { date ->
+                    viewModel.onFollowUpDateChange(
+                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
+                    )
+                }
+            )
+        }
+
         check_in_button.setOnClickListener {
-            getMember()?.let { member ->
-                if (member.medicalRecordNumber != null) {
-                    createIdentificationEvent().subscribe({
+            viewModel.getMember()?.let { member ->
+                sessionManager.currentUser()?.let { user ->
+                    viewModel.validateAndCheckInMember(searchMethod, user).subscribe({
                         navigationManager.popTo(HomeFragment.withSnackbarMessage(
                             getString(R.string.checked_in_snackbar_message, member.name)
                         ))
-                    }, {
-                        logger.error(it)
+                    }, { throwable ->
+                        if (throwable is EditMemberViewModel.ValidationException) {
+                            // do nothing for now. No need to say "some fields are invalid"
+                        } else {
+                            logger.error(throwable)
+                        }
                     })
-                } else {
-                    view?.let {
-                        SnackbarHelper.showError(it, activity, getString(R.string.missing_medical_record_number))
-                    }
                 }
-            } ?: run {
-                // TODO: handle member not no viewState
             }
         }
 
+        // This button is gated on needing claims preparation permission. It is never set to visible
+        // if the permission is not available
         start_claim_button.setOnClickListener {
-            getMember()?.let { member ->
+            viewModel.getMember()?.let { member ->
                 Single.fromCallable {
                     validateDiagnosesAndBillablesExistenceUseCase.execute().blockingAwait()
                     identificationEventRepository.openCheckIn(member.id).blockingGet()
@@ -222,28 +306,6 @@ class EditMemberFragment : DaggerFragment() {
         }
     }
 
-    private fun createIdentificationEvent(): Completable {
-        return getMember()?.let {
-            val idEvent = IdentificationEvent(
-                id = UUID.randomUUID(),
-                memberId = it.id,
-                occurredAt = clock.instant(),
-                searchMethod = searchMethod,
-                throughMemberId = null,
-                clinicNumber = null,
-                clinicNumberType = null,
-                fingerprintsVerificationTier = null,
-                fingerprintsVerificationConfidence = null,
-                fingerprintsVerificationResultCode = null
-            )
-            return createIdentificationEventUseCase.execute(idEvent)
-        } ?: Completable.complete()
-    }
-
-    private fun getMember(): Member? {
-        return viewModel.liveData.value?.memberWithThumbnail?.member
-    }
-
     override fun onPrepareOptionsMenu(menu: Menu?) {
         observable.value?.let { viewState ->
             if (viewState.isCheckedIn != null && viewState.isCheckedIn) {
@@ -267,7 +329,7 @@ class EditMemberFragment : DaggerFragment() {
                         .setTitle(R.string.check_out_alert_dialog_title)
                         .setMessage(getString(R.string.check_out_alert_dialog_message, paramMember.name))
                         .setNegativeButton(R.string.cancel, null)
-                        .setPositiveButton(R.string.remove) { _, _ ->
+                        .setPositiveButton(R.string.delete) { _, _ ->
                             viewModel.dismissIdentificationEvent().subscribe {
                                 navigationManager.popTo(
                                     HomeFragment.withSnackbarMessage(

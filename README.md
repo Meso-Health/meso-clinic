@@ -30,14 +30,20 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 
 ### Summary
 
-| Variant  | Purpose             | Color  | Api Endpoint                            | Simprints API           | Error Reporting | Deployment and Updates  | Deployed after green run on… |
-|----------|---------------------|--------|-----------------------------------------|-------------------------|-----------------|-------------------------|------------------------------|
-| Debug    | development         | gray   | http://localhost:5000                   | sandbox                 | none            | manual                  | -                            |
-| Staging  | Internal QA         | black  | https://api-staging.uhp.org             | sandbox                 | Rollbar         | automatic (Google Play) | master                       |
-| Sandbox  | External QA         | yellow | https://coverage-ethiopia.herokuapp.com | sandbox                 | Rollbar         | automatic (Google Play) | sandbox                      |
-| Training | training            | blue   | https://uhp-demo.watsi.org              | sandbox                 | Rollbar         | manual                  | -                            |
-| Demo     | demo’ing to funders | blue   | https://uhp-demo.watsi.org              | sandbox                 | Rollbar         | manual                  | -                            |
-| Release  | production          | blue   | https://uhp.watsi.org                   | production-{deployment} | Rollbar         | automatic (Google Play) | production                   |
+| Variant          | Purpose             | Color  | Api Endpoint                                                                                                | Simprints API                              | Error Reporting | Deployment and Updates  | Deployed after green run on… |
+|------------------|---------------------|--------|-------------------------------------------------------------------------------------------------------------|--------------------------------------------|-----------------|-------------------------|------------------------------|
+| EthiopiaDebug    | development         | gray   | http://localhost:5000                                                                                       | sandbox (UNUSED)                           | console         | manual                  | -                            |
+| EthiopiaStaging  | Internal QA         | black  | https://api-staging.uhp.org                                                                                 | sandbox (UNUSED)                           | Rollbar         | automatic (Google Play) | master                       |
+| EthiopiaSandbox  | External QA         | yellow | https://coverage-ethiopia.herokuapp.com                                                                     | sandbox (UNUSED)                           | Rollbar         | automatic (Google Play) | sandbox                      |
+| EthiopiaTraining | UNUSED              | blue   | http://localhost:5000                                                                                       | sandbox (UNUSED)                           | Rollbar         | manual                  | -                            |
+| EthiopiaDemo     | demo’ing to funders | blue   | https://uhp-demo.watsi.org                                                                                  | sandbox (UNUSED)                           | Rollbar         | automatic (Google Play) | demo                         |
+| EthiopiaRelease  | production          | blue   | https://api.etnhis.org/                                                                                     | sandbox (UNUSED)                           | Rollbar         | automatic (Google Play) | production-ethiopia          |
+| UgandaDebug      | development         | gray   | http://localhost:5000                                                                                       | sandbox                                    | console         | manual                  | -                            |
+| UgandaStaging    | QA                  | black  | currently set to: https://api-staging.uhp.org want: https://uhp-staging.watsi.org (deactivated)             | sandbox                                    | Rollbar         | manual                  | -                            |
+| UgandaSandbox    | QA                  | yellow | currently set to: https://coverage-ethiopia.herokuapp.com want: https://uhp-sandbox.watsi.org (deactivated) | sandbox                                    | Rollbar         | manual                  | -                            |
+| UgandaTraining   | training users      | blue   | currently set to: http://localhost:5000 want: ?                                                             | sandbox                                    | Rollbar         | manual                  | -                            |
+| UgandaDemo       | UNUSED              | blue   | https://uhp-demo.watsi.org                                                                                  | sandbox                                    | Rollbar         | manual                  | -                            |
+| UgandaRelease    | production          | blue   | currently set to: https://api.etnhis.org want: https://uhp.watsi.org/                                       | currently set to: sandbox want: production | Rollbar         | manual                  | -                            |
 
 See `build.gradle` for full details on configuration differences between the different variants.
 
@@ -152,9 +158,7 @@ buildConfigField "String", "API_HOST", "\"http://10.0.2.2:8000\""
 
 ## Continuous Deployment
 
-Whenever code is merged into `master`, `sandbox`, or `production` branches, circle CI automatically runs tests.
-
-If tests pass, then the following is done automatically:
+Whenever code is merged into a branch with continuous deployment setup (see summary table above), circle CI automatically runs the following if tests complete:
 
 1. Keystore, gradle variables, and google play key are downloaded from S3.
     - This requires the following [env variables](https://circleci.com/gh/Watsi/uhp-android-app/edit#env-vars) to be set in Circle:

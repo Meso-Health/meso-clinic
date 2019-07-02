@@ -1,10 +1,12 @@
 package org.watsi.uhp.fragments
 
 import android.app.AlertDialog
+import android.app.job.JobScheduler
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
@@ -137,10 +139,13 @@ class HomeFragment : DaggerFragment() {
         }
 
         menu?.let {
-            it.findItem(R.id.menu_returned_claims).isVisible = true
-            it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
-            it.findItem(R.id.menu_pending_claims).isVisible = true
-            it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+                it.findItem(R.id.menu_returned_claims).isVisible = true
+                it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
+                it.findItem(R.id.menu_pending_claims).isVisible = true
+                it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
+            }
+
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_status).isVisible = true
             it.findItem(R.id.menu_switch_language).isVisible = true
@@ -166,6 +171,8 @@ class HomeFragment : DaggerFragment() {
                         .setMessage(R.string.log_out_alert_message)
                         .setNegativeButton(R.string.cancel, null)
                         .setPositiveButton(R.string.yes) { _, _ ->
+                            val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                            jobScheduler.cancelAll()
                             sessionManager.logout()
                             (activity as ClinicActivity).navigateToAuthenticationActivity()
                         }.create().show()
@@ -191,7 +198,7 @@ class HomeFragment : DaggerFragment() {
             val submitBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             submitBtn.setOnClickListener {
                 errorText.error = ""
-                sessionManager.currentAuthenticationToken()?.user?.securityPin?.let { pin ->
+                sessionManager.currentUser()?.securityPin?.let { pin ->
                     if (pin == pinView.text.toString()) {
                         dialog.dismiss()
                         navigationManager.goTo(fragment)

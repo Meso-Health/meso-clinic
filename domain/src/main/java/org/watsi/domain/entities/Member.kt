@@ -89,6 +89,10 @@ data class Member(
         return DateUtils.getDaysAgo(birthdate, clock)
     }
 
+    fun photoExists(): Boolean {
+        return photoUrl != null
+    }
+
     companion object {
         const val LANGUAGE_CHOICE_OTHER = "Other"
         const val LANGUAGE_RUKIGA = "Rukiga"

@@ -46,15 +46,18 @@
     <string name="login_generic_failure_message">Failed to login</string>
     <string name="login_wrong_username_or_password_message">The provided username/password combination is incorrect</string>
     <string name="login_progress_message">Logging in…</string>
-    <string name="login_offline_error">Cannot login because phone is offline</string>
-    <string name="login_permission_error" translatable="false">This user is not allowed to submit claims</string>
+    <string name="login_connectivity_error">Cannot login due to poor connectivity</string>
+    <string name="login_phone_offline_error">Cannot login because phone is offline</string>
+    <string name="login_server_offline_error">Cannot login because server is offline</string>
+    <string name="login_permission_error">This user is not allowed to submit claims</string>
 
     <!-- BaseService -->
     <string name="credentials_expired_error_message" translatable="false">Credentials expired</string>
+    <string name="phone_offline_error_message" translatable="false">Phone is offline</string>
     <string name="server_offline_error_message" translatable="false">Server is offline</string>
     <string name="poor_connectivity_error_message" translatable="false">Poor connectivity</string>
 
-    <!-- MemberDetailFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
+    <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">Check In</string>
     <string name="checked_in">Already checked in</string>
     <string name="checked_in_snackbar_message">%1$s was checked in.</string>
@@ -84,7 +87,7 @@
     <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
 
     <!-- ReceiptFragment -->
-    <string name="receipt_fragment_label">Review</string>
+    <string name="receipt_fragment_label">Review Claim</string>
     <string name="submit_encounter_button">@string/submit</string>
     <string name="receipt_total">Total</string>
     <string name="encounter_submitted">Claim submitted</string>
@@ -98,6 +101,7 @@
     <!-- StatusFragment -->
     <string name="status_fragment_label">Status</string>
     <string name="current_user_label">Current User</string>
+    <string name="provider_type_label" translatable="false">Provider Type</string>
 
     <string name="fetch_data_title">Downloads (Data)</string>
     <string name="last_fetched_billables_label" translatable="false">Billables</string>
@@ -128,6 +132,7 @@
     <string name="fetch_billables_error_label" translatable="false">Download Billables</string>
     <string name="fetch_diagnoses_error_label" translatable="false">Download Diagnoses</string>
     <string name="fetch_returned_claims_error_label" translatable="false">Download Returned Claims</string>
+    <string name="fetch_identification_events_error_label" translatable="false">Download Identification Events</string>
     <string name="fetch_members_error_label" translatable="false">Download Members</string>
     <string name="fetch_member_photos_error_label" translatable="false">Download Member Photos</string>
     <string name="sync_members_error_label" translatable="false">Upload Members</string>
