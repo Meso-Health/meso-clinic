@@ -54,7 +54,7 @@ object StringHelper {
         }
     }
 
-    fun formatAgeAndGender(member: Member, context: Context, clock: Clock = Clock.systemUTC()): String {
+    fun formatAgeAndGender(member: Member, context: Context, clock: Clock = Clock.systemDefaultZone()): String {
         val genderString = if (member.gender == Member.Gender.F) {
             context.getString(R.string.female)
         } else {
@@ -72,7 +72,7 @@ object StringHelper {
      * Returns quantity in days if under 1 month old, quantity in months if under 2 years old,
      * or in years otherwise, regardless of birthdate accuracy.
      */
-    fun getDisplayAge(member: Member, context: Context, clock: Clock = Clock.systemUTC()): String {
+    fun getDisplayAge(member: Member, context: Context, clock: Clock = Clock.systemDefaultZone()): String {
         val ageYears = member.getAgeYears(clock)
         val ageMonths = member.getAgeMonths(clock)
         val ageDays = member.getAgeDays(clock)
