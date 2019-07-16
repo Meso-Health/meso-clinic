@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.job.JobScheduler
 import android.arch.lifecycle.Observer
@@ -8,6 +9,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.EXTRA_TITLE
 import android.content.IntentFilter
 import android.os.Bundle
 import android.text.format.DateUtils
@@ -46,6 +48,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_identificatio
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_member_photos
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_members
 import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_price_schedules
+import org.watsi.device.db.DbHelper
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.NetworkManager
 import org.watsi.device.managers.SessionManager
@@ -69,6 +72,10 @@ class StatusFragment : DaggerFragment() {
     @Inject lateinit var logger: Logger
     lateinit var viewModel: StatusViewModel
     private lateinit var broadcastReceiver: BroadcastReceiver
+
+    companion object {
+        const val EXPORT_DB_INTENT = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,6 +143,7 @@ class StatusFragment : DaggerFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         menu.findItem(R.id.menu_sync_now).isVisible = true
+        menu.findItem(R.id.menu_export_db).isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -162,6 +170,14 @@ class StatusFragment : DaggerFragment() {
                     jobScheduler.cancelAll()
                     (activity as ClinicActivity).startServices()
                 }
+                true
+            }
+            R.id.menu_export_db -> {
+                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                intent.type = "*/*" // this line is a must when using ACTION_CREATE_DOCUMENT
+                intent.putExtra(EXTRA_TITLE, DbHelper.DB_NAME + "_" + BuildConfig.VERSION_NAME)
+                startActivityForResult(intent, EXPORT_DB_INTENT)
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -225,6 +241,33 @@ class StatusFragment : DaggerFragment() {
             getString(R.string.all_fetched)
         } else {
             "$count ${getString(R.string.waiting_to_fetch)}"
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            EXPORT_DB_INTENT -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        val userChosenUri = data?.data
+                        val inStream = context.getDatabasePath(DbHelper.DB_NAME).inputStream()
+                        val outStream = context.contentResolver.openOutputStream(userChosenUri)
+
+                        inStream.use { input ->
+                            outStream.use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                    }
+                    Activity.RESULT_CANCELED -> {}
+                    else -> {
+                        logger.error("Unknown resultCode returned to StatusFragment: $resultCode")
+                    }
+                }
+            }
+            else -> {
+                logger.error("Unknown requestCode called from StatusFragment: $requestCode")
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ package org.watsi.uhp.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_authentication.error_text
@@ -13,9 +12,8 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
+import org.watsi.uhp.helpers.NetworkErrorHelper
 import org.watsi.uhp.managers.KeyboardManager
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class AuthenticationActivity : DaggerAppCompatActivity() {
@@ -46,21 +44,47 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         navigateToClinicActivity()
-                    }, {
-                        if (it is HttpException && it.code() == 401) {
-                            error_text.error = getString(R.string.login_wrong_username_or_password_message)
-                        } else if (it is IOException && it.message.orEmpty().contains("unexpected end of stream")) {
-                            error_text.error = getString(R.string.login_offline_error)
-                        } else {
-                            error_text.error = getString(R.string.login_generic_failure_message)
-                            logger.warning(it)
-                        }
-                        error_text.visibility = View.VISIBLE
-                        login_button.text = getString(R.string.login_button_text)
-                        login_button.isEnabled = true
-                    })
+                    }, this::handleLoginFailure)
         }
     }
+
+    private fun handleLoginFailure(throwable: Throwable) {
+        val throwable = throwable.cause ?: throwable
+
+        when {
+            throwable is SessionManager.PermissionException -> {
+                error_text.error = getString(R.string.login_permission_error)
+                logger.warning(throwable)
+            }
+            NetworkErrorHelper.isHttpUnauthorized(throwable) -> {
+                error_text.error = getString(R.string.login_wrong_username_or_password_message)
+                logger.warning(throwable)
+            }
+            NetworkErrorHelper.isPhoneOfflineError(throwable) -> {
+                error_text.error = getString(R.string.login_phone_offline_error)
+                logger.warning(throwable)
+            }
+            NetworkErrorHelper.isServerOfflineError(throwable) -> {
+                error_text.error = getString(R.string.login_server_offline_error)
+                logger.warning(throwable)
+            }
+            NetworkErrorHelper.isPoorConnectivityError(throwable) -> {
+                error_text.error = getString(R.string.login_connectivity_error)
+                logger.warning(throwable)
+            }
+            else -> {
+                // login failed due to server error
+                //  this path should only be used for server 500s, if we are seeing
+                //  exceptions for other reasons being caught here, we should add
+                //  them to the appropriate cases above
+                error_text.error = getString(R.string.login_generic_failure_message)
+                logger.error(throwable)
+            }
+        }
+        login_button.text = getString(R.string.login_button_text)
+        login_button.isEnabled = true
+    }
+
 
     private fun navigateToClinicActivity() {
         // specifying CLEAR_TOP clears the AuthenticationActivity from the back-stack to prevent

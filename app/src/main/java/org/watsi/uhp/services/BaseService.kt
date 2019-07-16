@@ -81,15 +81,12 @@ abstract class BaseService : JobService() {
             // Service can still be run if phone is offline for debug variant
             NetworkErrorHelper.isPhoneOfflineError(error) -> {
                 errorMessages.add("$label: ${error.message}. ${getString(R.string.phone_offline_error_message)}.")
-                logger.info(error)
             }
             NetworkErrorHelper.isServerOfflineError(error) -> {
                 errorMessages.add("$label: ${error.message}. ${getString(R.string.server_offline_error_message)}.")
-                logger.warning(error)
             }
             NetworkErrorHelper.isPoorConnectivityError(error) -> {
                 errorMessages.add("$label: ${error.message}. ${getString(R.string.poor_connectivity_error_message)}.")
-                logger.info(error)
             }
             else -> {
                 errorMessages.add("$label: ${error.message}")

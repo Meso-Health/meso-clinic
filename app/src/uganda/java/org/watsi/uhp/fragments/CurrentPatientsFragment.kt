@@ -2,9 +2,11 @@ package org.watsi.uhp.fragments
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.job.JobScheduler
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -120,6 +122,8 @@ class CurrentPatientsFragment : DaggerFragment() {
                         .setTitle(R.string.log_out_alert)
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes) { _, _ ->
+                            val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                            jobScheduler.cancelAll()
                             sessionManager.logout()
                             (activity as ClinicActivity).navigateToAuthenticationActivity()
                         }.create().show()
