@@ -33,7 +33,7 @@ data class DeltaModel(@PrimaryKey(autoGenerate = true) val id: Int = 0,
     }
 
     companion object {
-        fun fromDelta(delta: Delta, clock: Clock = Clock.systemDefaultZone()): DeltaModel {
+        fun fromDelta(delta: Delta, clock: Clock = Clock.systemUTC()): DeltaModel {
             val now = clock.instant()
             return DeltaModel(id = delta.id,
                     action = delta.action,

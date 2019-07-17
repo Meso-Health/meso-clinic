@@ -23,11 +23,11 @@ object DateUtils {
         return localDateTime.format(formatter).toLowerCase()
     }
 
-    fun isDateInFuture(localDate: LocalDate, clock: Clock = Clock.systemDefaultZone()): Boolean {
+    fun isDateInFuture(localDate: LocalDate, clock: Clock = Clock.systemUTC()): Boolean {
         return localDate.isAfter(LocalDate.now(clock))
     }
 
-    fun isToday(instant: Instant, clock: Clock = Clock.systemDefaultZone()): Boolean {
+    fun isToday(instant: Instant, clock: Clock = Clock.systemUTC()): Boolean {
         val todayDate: LocalDateTime = LocalDateTime.now(clock)
         val occurredAtDate = LocalDateTime.ofInstant(instant, clock.zone)
 
@@ -36,7 +36,7 @@ object DateUtils {
 
     fun dateWithAccuracyToAge(date: LocalDate,
                               accuracy: Member.DateAccuracy,
-                              clock: Clock = Clock.systemDefaultZone()
+                              clock: Clock = Clock.systemUTC()
     ): Age? {
         return when (accuracy) {
             Member.DateAccuracy.M -> {
@@ -49,7 +49,7 @@ object DateUtils {
         }
     }
 
-    fun isValidBirthdate(day: Int, month: Int, year: Int, clock: Clock = Clock.systemDefaultZone()): Boolean {
+    fun isValidBirthdate(day: Int, month: Int, year: Int, clock: Clock = Clock.systemUTC()): Boolean {
         if (!(day in 1..31 && month in 1..12 && year >= 1900)) return false
         try {
             val birthdate = LocalDate.of(year, month, day)
@@ -60,22 +60,22 @@ object DateUtils {
         return true
     }
 
-    fun getMonthsAgo(date: LocalDate, clock: Clock = Clock.systemDefaultZone()): Int {
+    fun getMonthsAgo(date: LocalDate, clock: Clock = Clock.systemUTC()): Int {
         return ChronoUnit.MONTHS.between(date, LocalDate.now(clock)).toInt()
     }
 
-    fun getYearsAgo(date: LocalDate, clock: Clock = Clock.systemDefaultZone()): Int {
+    fun getYearsAgo(date: LocalDate, clock: Clock = Clock.systemUTC()): Int {
         return ChronoUnit.YEARS.between(date, LocalDate.now(clock)).toInt()
     }
 
-    fun getDaysAgo(date: LocalDate, clock: Clock = Clock.systemDefaultZone()): Int {
+    fun getDaysAgo(date: LocalDate, clock: Clock = Clock.systemUTC()): Int {
         return ChronoUnit.DAYS.between(date, LocalDate.now(clock)).toInt()
     }
 }
 
 data class Age (val quantity: Int, val unit: AgeUnit) {
 
-    fun toBirthdateWithAccuracy(clock: Clock = Clock.systemDefaultZone()): Pair<LocalDate, Member.DateAccuracy> {
+    fun toBirthdateWithAccuracy(clock: Clock = Clock.systemUTC()): Pair<LocalDate, Member.DateAccuracy> {
         return when (unit) {
             AgeUnit.days -> Pair(LocalDate.now(clock).minusDays(quantity.toLong()), Member.DateAccuracy.D)
             AgeUnit.months -> Pair(LocalDate.now(clock).minusMonths(quantity.toLong()), Member.DateAccuracy.M)

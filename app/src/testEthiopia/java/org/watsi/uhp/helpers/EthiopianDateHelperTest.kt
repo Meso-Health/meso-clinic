@@ -13,7 +13,7 @@ class EthiopianDateHelperTest {
 
     @Before
     fun setup() {
-        clock = Clock.fixed(Instant.now(), ZoneId.of("Africa/Addis_Ababa"))
+        clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     }
 
     @Test
@@ -65,9 +65,10 @@ class EthiopianDateHelperTest {
     @Test
     fun toInstant() {
         val ethDate = EthiopianDate(2010, 9, 13) // May 21st 2018 in Addis
-        val expectedInstant = Instant.parse("2018-05-20T21:00:00.000Z") // 9pm May 20th GMT
+        val expectedInstant = Instant.parse("2018-05-21T00:00:00.000Z") // 12pm May 21th UTC
         val returnedInstant = EthiopianDateHelper.toInstant(
-            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0, clock
+            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
+            clock
         )
 
         assertEquals(expectedInstant, returnedInstant)
@@ -79,5 +80,28 @@ class EthiopianDateHelperTest {
         val expectedEthDate = EthiopianDate(2010, 9, 14) // 2:15am May 22nd Addis
 
         assertEquals(expectedEthDate, EthiopianDateHelper.toEthiopianDate(instant, clock))
+    }
+
+    @Test
+    fun toEthToInstant_Midnight() {
+        val instant = Instant.parse("2018-05-21T00:00:00.000Z") // 12:00am May 21st GMT
+        val ethDate = EthiopianDateHelper.toEthiopianDate(instant, clock)
+        val returnedInstant = EthiopianDateHelper.toInstant(
+            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
+            clock
+        )
+        assertEquals(instant, returnedInstant)
+    }
+
+    @Test
+    fun toEthToInstant_notMidnight() {
+        val instant = Instant.parse("2018-05-21T00:23:00.000Z") // 11:00pm May 21st GMT
+        val expectedInstant = Instant.parse("2018-05-21T00:00:00.000Z") // 12:00am May 21st GMT
+        val ethDate = EthiopianDateHelper.toEthiopianDate(instant, clock)
+        val returnedInstant = EthiopianDateHelper.toInstant(
+            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
+            clock
+        )
+        assertEquals(expectedInstant, returnedInstant)
     }
 }

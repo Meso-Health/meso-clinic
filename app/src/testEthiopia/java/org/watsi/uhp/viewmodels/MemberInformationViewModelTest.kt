@@ -32,7 +32,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     @Mock lateinit var mockCreateIdentificationEventUseCase: CreateIdentificationEventUseCase
     @Mock lateinit var mockCreateEncounterUseCase: CreateEncounterUseCase
 
-    private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     private val membershipNumber = "01/01/06/P-692/3"
     private val initialViewState = MemberInformationViewModel.ViewState()
     private val validViewState = MemberInformationViewModel.ViewState(
