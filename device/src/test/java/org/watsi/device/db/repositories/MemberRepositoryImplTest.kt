@@ -61,7 +61,7 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     @Mock lateinit var mockPhotoDao: PhotoDao
-    val clock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: MemberRepositoryImpl
     
     val user = UserFactory.build()

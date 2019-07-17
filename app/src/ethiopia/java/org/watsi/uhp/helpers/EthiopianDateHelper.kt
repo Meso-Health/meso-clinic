@@ -59,12 +59,12 @@ object EthiopianDateHelper {
         return Instant.ofEpochMilli(ethDateTime.millis)
     }
 
-    fun toEthiopianDate(instant: Instant, clock: Clock): EthiopianDate {
-        val ethDate = toEthDateTime(instant, clock)
+    fun toEthiopianDate(instant: Instant): EthiopianDate {
+        val ethDate = toEthDateTime(instant)
         return EthiopianDate(ethDate.year, ethDate.monthOfYear, ethDate.dayOfMonth)
     }
 
-    private fun toEthDateTime(instant: Instant, clock: Clock): DateTime {
+    private fun toEthDateTime(instant: Instant): DateTime {
         return DateTime(EthiopicChronology.getInstance())
             .withZone(DateTimeZone.forID("Africa/Addis_Ababa"))
             .withMillis(instant.toEpochMilli())

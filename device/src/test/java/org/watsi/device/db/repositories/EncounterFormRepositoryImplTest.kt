@@ -39,7 +39,7 @@ class EncounterFormRepositoryImplTest {
     @Mock lateinit var mockDao: EncounterFormDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
-    val clock = Clock.fixed(Instant.now(),  ZoneId.of("UTC"))
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: EncounterFormRepositoryImpl
 
     val photoModel = PhotoModelFactory.build()
