@@ -21,7 +21,7 @@ class EthiopianDateHelperTest {
         val testDate = Instant.parse("2018-09-10T10:15:30.000Z")
         val expectedString = "05-13-2010"
 
-        assertEquals(expectedString, EthiopianDateHelper.formatEthiopianDate(testDate, clock))
+        assertEquals(expectedString, EthiopianDateHelper.formatEthiopianDate(testDate))
     }
 
     @Test
@@ -79,13 +79,13 @@ class EthiopianDateHelperTest {
         val instant = Instant.parse("2018-05-21T23:15:30.000Z") // 11:15pm May 21st GMT
         val expectedEthDate = EthiopianDate(2010, 9, 14) // 2:15am May 22nd Addis
 
-        assertEquals(expectedEthDate, EthiopianDateHelper.toEthiopianDate(instant, clock))
+        assertEquals(expectedEthDate, EthiopianDateHelper.toEthiopianDate(instant))
     }
 
     @Test
     fun toEthToInstant_Midnight() {
         val instant = Instant.parse("2018-05-21T00:00:00.000Z") // 12:00am May 21st GMT
-        val ethDate = EthiopianDateHelper.toEthiopianDate(instant, clock)
+        val ethDate = EthiopianDateHelper.toEthiopianDate(instant)
         val returnedInstant = EthiopianDateHelper.toInstant(
             ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
             clock
@@ -97,7 +97,7 @@ class EthiopianDateHelperTest {
     fun toEthToInstant_notMidnight() {
         val instant = Instant.parse("2018-05-21T00:23:00.000Z") // 11:00pm May 21st GMT
         val expectedInstant = Instant.parse("2018-05-21T00:00:00.000Z") // 12:00am May 21st GMT
-        val ethDate = EthiopianDateHelper.toEthiopianDate(instant, clock)
+        val ethDate = EthiopianDateHelper.toEthiopianDate(instant)
         val returnedInstant = EthiopianDateHelper.toInstant(
             ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0,
             clock

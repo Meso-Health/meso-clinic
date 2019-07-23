@@ -192,7 +192,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         encounterFlowState.referral?.let { referral ->
             referrals_container.visibility = View.VISIBLE
             referral_date.text = EthiopianDateHelper.formatEthiopianDate(
-                referral.date.atStartOfDay(clock.zone).toInstant(), clock
+                referral.date.atStartOfDay(clock.zone).toInstant()
             )
             referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number

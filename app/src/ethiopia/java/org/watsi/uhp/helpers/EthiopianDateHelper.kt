@@ -11,8 +11,8 @@ object EthiopianDateHelper {
     const val DATE_FORMAT = "dd-MM-yyyy"
     const val MONTHS_IN_YEAR = 13
 
-    fun formatEthiopianDate(instant: Instant, clock: Clock): String {
-        return DateTimeFormat.forPattern(DATE_FORMAT).print(toEthDateTime(instant, clock))
+    fun formatEthiopianDate(instant: Instant): String {
+        return DateTimeFormat.forPattern(DATE_FORMAT).print(toEthDateTime(instant))
     }
 
     /**
