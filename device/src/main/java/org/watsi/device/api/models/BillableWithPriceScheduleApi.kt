@@ -11,6 +11,7 @@ data class BillableWithPriceScheduleApi(
     val composition: String?,
     val unit: String?,
     val name: String,
+    val active: Boolean,
     val activePriceSchedule: PriceScheduleApi
 ) {
     constructor (billable: Billable, activePriceSchedule: PriceSchedule) : this(
@@ -19,6 +20,7 @@ data class BillableWithPriceScheduleApi(
         composition = billable.composition?.toLowerCase(),
         unit = billable.unit,
         name = billable.name,
+        active = billable.active,
         activePriceSchedule = PriceScheduleApi(
             id = activePriceSchedule.id,
             issuedAt = activePriceSchedule.issuedAt,
@@ -35,7 +37,8 @@ data class BillableWithPriceScheduleApi(
                 type = Billable.Type.valueOf(type.toUpperCase()),
                 composition = composition,
                 unit = unit,
-                name = name
+                name = name,
+                active = active
             ),
             priceSchedule = activePriceSchedule.toPriceSchedule()
         )

@@ -28,19 +28,19 @@ class BillableRepositoryImpl(
     private val preferencesManager: PreferencesManager,
     private val clock: Clock
 ) : BillableRepository {
-    override fun count(): Single<Int> {
-        return billableDao.count()
+    override fun countActive(): Single<Int> {
+        return billableDao.countActive()
     }
 
     override fun all(): Single<List<BillableWithPriceSchedule>> {
-        return matchBillablesToCurrentPrice(billableDao.allWithPrice()).subscribeOn(Schedulers.io())
+        return matchBillablesToCurrentPrice(billableDao.allActiveWithPrice()).subscribeOn(Schedulers.io())
     }
 
     override fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedule>> {
         // because we can have over 1,000 billables with type drug, if we do not chunk the findAll
         // we run into a too many SQL variables exception due to how the relation is queried
         return Single.fromCallable {
-            val ids = billableDao.idsOfType(type).blockingGet()
+            val ids = billableDao.allActiveIdsOfType(type).blockingGet()
             ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
                 billableDao.findWithPrice(it).blockingGet()
             }.flatten().map { it.toBillableWithCurrentPriceSchedule() }
@@ -65,12 +65,6 @@ class BillableRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun delete(ids: List<UUID>): Completable {
-        return Completable.fromAction {
-            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map { billableDao.delete(it) }
-        }.subscribeOn(Schedulers.io())
-    }
-
     /**
      * Removes any synced persisted billables that are not returned in the API results and
      * overwrites any persisted data if the API response contains updated data. Do not
@@ -82,7 +76,7 @@ class BillableRepositoryImpl(
                 val serverBillablesWithPrice = api.getBillables(token.getHeaderString(), token.user.providerId).blockingGet()
                         .map { it.toBillableWithPriceSchedule() }
                 val serverBillableIds = serverBillablesWithPrice.map { it.billable.id }
-                val clientBillableIds = billableDao.all().blockingGet().map { it.id }
+                val clientBillableIds = billableDao.allActive().blockingGet().map { it.id }
                 val unsyncedClientBillableIds = billableDao.unsynced().blockingGet().map { it.id }
                 val syncedClientBillableIds = clientBillableIds.minus(unsyncedClientBillableIds)
                 val serverRemovedBillableIds = syncedClientBillableIds.minus(serverBillableIds)
@@ -92,7 +86,15 @@ class BillableRepositoryImpl(
                     serverBillablesWithPrice.map { PriceScheduleModel.fromPriceSchedule(it.priceSchedule, clock) }
                 )
 
-                delete(serverRemovedBillableIds).blockingAwait()
+                // Mark server removed billables as inactive on the client side.
+                val billablesToMarkAsInactive = billableDao.find(serverRemovedBillableIds).blockingGet()
+                billableDao.upsert(
+                    billableModels = billablesToMarkAsInactive.map { billableModel ->
+                        billableModel.copy(active = false)
+                    },
+                    priceScheduleModels = emptyList()
+                )
+
                 preferencesManager.updateBillablesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.complete()

@@ -14,14 +14,16 @@ data class BillableModel(@PrimaryKey val id: UUID,
                          val type: Billable.Type,
                          val composition: String?,
                          val unit: String?,
-                         val name: String) {
+                         val name: String,
+                         val active: Boolean) {
 
     fun toBillable(): Billable {
         return Billable(id = id,
                         type = type,
                         composition = composition,
                         unit = unit,
-                        name = name)
+                        name = name,
+                        active = active)
     }
 
     companion object {
@@ -33,7 +35,8 @@ data class BillableModel(@PrimaryKey val id: UUID,
                                  type = billable.type,
                                  composition = billable.composition,
                                  unit = billable.unit,
-                                 name = billable.name)
+                                 name = billable.name,
+                                 active = billable.active)
         }
     }
 }

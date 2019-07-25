@@ -30,26 +30,25 @@ interface BillableDao {
     @Delete
     fun delete(model: BillableModel)
 
-    @Query("SELECT count(*) from billables")
-    fun count(): Single<Int>
+    @Query("SELECT count(*) from billables WHERE active = 1")
+    fun countActive(): Single<Int>
 
-    @Query("SELECT * FROM billables")
-    fun all(): Single<List<BillableModel>>
-
-    @Transaction
-    @Query("SELECT * FROM billables")
-    fun allWithPrice(): Single<List<BillableWithPriceSchedulesModel>>
+    @Query("SELECT * FROM billables WHERE active = 1")
+    fun allActive(): Single<List<BillableModel>>
 
     @Transaction
-    @Query("SELECT * FROM billables WHERE type = :type")
-    fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedulesModel>>
+    @Query("SELECT * FROM billables WHERE active = 1")
+    fun allActiveWithPrice(): Single<List<BillableWithPriceSchedulesModel>>
 
     @Transaction
-    @Query("SELECT id FROM billables WHERE type = :type")
-    fun idsOfType(type: Billable.Type): Single<List<UUID>>
+    @Query("SELECT id FROM billables WHERE type = :type AND active = 1")
+    fun allActiveIdsOfType(type: Billable.Type): Single<List<UUID>>
 
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<BillableModel>
+
+    @Query("SELECT * FROM billables WHERE id IN (:ids)")
+    fun find(ids: List<UUID>): Single<List<BillableModel>>
 
     @Transaction
     @Query("SELECT * FROM billables WHERE id IN (:ids)")
@@ -57,9 +56,6 @@ interface BillableDao {
 
     @Query("SELECT DISTINCT(composition) FROM billables WHERE composition IS NOT NULL")
     fun distinctCompositions(): Single<List<String>>
-
-    @Query("DELETE FROM billables WHERE id IN (:ids)")
-    fun delete(ids: List<UUID>)
 
     @Query("SELECT billables.* FROM billables\n" +
             "INNER JOIN deltas ON\n" +
