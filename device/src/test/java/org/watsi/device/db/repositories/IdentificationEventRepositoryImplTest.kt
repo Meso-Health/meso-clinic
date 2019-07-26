@@ -29,8 +29,6 @@ import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
-import org.watsi.domain.entities.Encounter
-import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.factories.DeltaFactory
 import org.watsi.domain.factories.IdentificationEventFactory
 import org.watsi.domain.factories.UserFactory
@@ -78,10 +76,10 @@ class IdentificationEventRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentToken_completes() {
+    fun fetch_noCurrentToken_errors() {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
-        repository.fetch().test().assertComplete()
+        repository.fetch().test().assertError(Exception::class.java)
     }
 
     @Test

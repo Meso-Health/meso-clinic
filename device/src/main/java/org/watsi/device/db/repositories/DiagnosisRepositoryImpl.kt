@@ -57,6 +57,6 @@ class DiagnosisRepositoryImpl(
                 })
                 preferencesManager.updateDiagnosesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling DiagnosisRepositoryImpl.fetch"))
     }
 }

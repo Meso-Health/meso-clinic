@@ -186,10 +186,10 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentAuthenticationToken_completes() {
+    fun fetch_noCurrentAuthenticationToken_errors() {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
-        repository.fetch().test().assertComplete()
+        repository.fetch().test().assertError(Exception::class.java)
     }
 
     @Test

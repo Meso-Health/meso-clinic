@@ -97,7 +97,7 @@ class BillableRepositoryImpl(
 
                 preferencesManager.updateBillablesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling BillableRepositoryImpl.fetch"))
     }
 
     override fun uniqueCompositions(): Single<List<String>> {
@@ -114,7 +114,7 @@ class BillableRepositoryImpl(
                 val billable = billableModel.toBillable()
                 api.postBillable(token.getHeaderString(), token.user.providerId, BillableApi(billable))
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling BillableRepositoryImpl.sync"))
     }
 
     private fun matchBillablesToCurrentPrice(
