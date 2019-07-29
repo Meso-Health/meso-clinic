@@ -69,23 +69,18 @@ class AuthenticationActivity : LocaleAwareActivity() {
         when {
             throwable is SessionManager.PermissionException -> {
                 error_text.error = getString(R.string.login_permission_error)
-                logger.warning(throwable)
             }
             NetworkErrorHelper.isHttpUnauthorized(throwable) -> {
                 error_text.error = getString(R.string.login_wrong_username_or_password_message)
-                logger.warning(throwable)
             }
             NetworkErrorHelper.isPhoneOfflineError(throwable) -> {
                 error_text.error = getString(R.string.login_phone_offline_error)
-                logger.warning(throwable)
             }
             NetworkErrorHelper.isServerOfflineError(throwable) -> {
                 error_text.error = getString(R.string.login_server_offline_error)
-                logger.warning(throwable)
             }
             NetworkErrorHelper.isPoorConnectivityError(throwable) -> {
                 error_text.error = getString(R.string.login_connectivity_error)
-                logger.warning(throwable)
             }
             else -> {
                 // login failed due to server error
