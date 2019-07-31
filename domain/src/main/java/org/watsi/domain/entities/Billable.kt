@@ -7,7 +7,8 @@ data class Billable(val id: UUID,
                     val type: Type,
                     val composition: String?,
                     val unit: String?,
-                    val name: String) : Serializable {
+                    val name: String,
+                    val active: Boolean) : Serializable {
 
     fun details(): String? {
         return if (unit != null && composition != null) {

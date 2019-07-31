@@ -34,7 +34,7 @@ class EncounterViewModelTest : AACBaseTest() {
 
     private val encounterId = UUID.randomUUID()
     private val memberId = UUID.randomUUID()
-    private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     private val initialViewState = EncounterViewModel.ViewState(encounterId = encounterId, encounterItemRelations = emptyList())
     private val serviceBillable1 = BillableWithPriceScheduleFactory.build(BillableFactory.build(name = "Service A", type = Billable.Type.SERVICE))
     private val serviceBillable2 = BillableWithPriceScheduleFactory.build(BillableFactory.build(name = "Service B", type = Billable.Type.SERVICE))

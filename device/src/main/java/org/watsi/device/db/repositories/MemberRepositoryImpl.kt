@@ -147,7 +147,7 @@ class MemberRepositoryImpl(
                 }
                 preferencesManager.updateMemberLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling MemberRepositoryImpl.fetch"))
     }
 
     private fun paginatedFetch(token: AuthenticationToken): Single<Boolean> {
@@ -209,7 +209,7 @@ class MemberRepositoryImpl(
                     api.patchMember(token.getHeaderString(), member.id, MemberApi.patch(member, deltas))
                 }
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling MemberRepositoryImpl.sync"))
     }
 
     override fun syncPhotos(deltas: List<Delta>): Completable {
@@ -225,6 +225,6 @@ class MemberRepositoryImpl(
                     upsert(memberWithRawPhoto.member.copy(photoId = null), emptyList())
                 )
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling MemberRepositoryImpl.syncPhotos"))
     }
 }

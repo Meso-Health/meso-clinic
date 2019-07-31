@@ -17,6 +17,7 @@ object BillableModelFactory {
             name: String = "Delivery",
             createdAt: Instant? = null,
             updatedAt: Instant? = null,
+            active: Boolean = true,
             clock: Clock = Clock.systemUTC()) : BillableModel {
         val now = Instant.now(clock)
         return BillableModel(id = id,
@@ -24,6 +25,7 @@ object BillableModelFactory {
                              composition = composition,
                              unit = unit,
                              name = name,
+                             active = active,
                              createdAt = createdAt ?: now,
                              updatedAt = updatedAt ?: now)
     }
@@ -34,6 +36,7 @@ object BillableModelFactory {
                composition: String? = null,
                unit: String? = null,
                name: String = "Delivery",
+               active: Boolean = true,
                createdAt: Instant? = null,
                updatedAt: Instant? = null,
                clock: Clock = Clock.systemUTC()) : BillableModel {
@@ -42,6 +45,7 @@ object BillableModelFactory {
                           composition = composition,
                           unit = unit,
                           name = name,
+                          active = active,
                           createdAt = createdAt,
                           updatedAt = updatedAt,
                           clock = clock)

@@ -9,6 +9,7 @@ import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.AppDatabase
 import org.watsi.device.db.DbHelper
+import org.watsi.device.db.Migrations.Companion.MIGRATION_15_16
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
@@ -54,6 +55,7 @@ class DbModule {
     fun provideDatabase(context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, DbHelper.DB_NAME)
                 .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_15_16)
                 .build()
     }
 

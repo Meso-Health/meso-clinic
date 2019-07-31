@@ -253,6 +253,6 @@ class EncounterRepositoryImpl(
                     encounter = EncounterApi(encounterWithExtras)
                 )
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling EncounterRepositoryImpl.sync"))
     }
 }

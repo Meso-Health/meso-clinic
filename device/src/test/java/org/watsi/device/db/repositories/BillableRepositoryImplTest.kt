@@ -41,7 +41,7 @@ class BillableRepositoryImplTest {
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: BillableRepositoryImpl
 
     val billableModel = BillableModelFactory.build(clock = clock)
@@ -65,7 +65,7 @@ class BillableRepositoryImplTest {
             BillableWithPriceSchedulesModelFactory.build(),
             BillableWithPriceSchedulesModelFactory.build()
         )
-        whenever(mockDao.allWithPrice()).thenReturn(Single.just(models))
+        whenever(mockDao.allActiveWithPrice()).thenReturn(Single.just(models))
 
         repository.all().test().assertValue(models.map { billableWithPriceSchedulesModel ->
             billableWithPriceSchedulesModel.toBillableWithCurrentPriceSchedule()
@@ -80,7 +80,7 @@ class BillableRepositoryImplTest {
             BillableWithPriceSchedulesModelFactory.build()
         )
         val modelIds = models.map { it.billableModel!!.id }
-        whenever(mockDao.idsOfType(type)).thenReturn(Single.just(modelIds))
+        whenever(mockDao.allActiveIdsOfType(type)).thenReturn(Single.just(modelIds))
         whenever(mockDao.findWithPrice(modelIds)).thenReturn(Single.just(models))
 
         repository.ofType(type).test().assertValue(models.map { billableWithPriceSchedulesModel ->
@@ -92,7 +92,7 @@ class BillableRepositoryImplTest {
     fun ofType_moreThan1000_findsByChunk() {
         val type = Billable.Type.DRUG
         val modelIds = (1..1001).map { UUID.randomUUID() }
-        whenever(mockDao.idsOfType(type)).thenReturn(Single.just(modelIds))
+        whenever(mockDao.allActiveIdsOfType(type)).thenReturn(Single.just(modelIds))
         whenever(mockDao.findWithPrice(any())).thenReturn(Single.just(emptyList()))
 
         repository.ofType(type).test().assertComplete()
@@ -108,16 +108,6 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun delete() {
-        val ids = List(1001) { UUID.randomUUID() }
-
-        repository.delete(ids).test().assertComplete()
-
-        verify(mockDao).delete(ids.take(999))
-        verify(mockDao).delete(ids.takeLast(2))
-    }
-
-    @Test
     fun uniqueCompositions() {
         val compositions = listOf("tablet", "vial")
         whenever(mockDao.distinctCompositions()).thenReturn(Single.just(compositions))
@@ -126,10 +116,10 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentAuthenticationToken_completes() {
+    fun fetch_noCurrentAuthenticationToken_errors() {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
-        repository.fetch().test().assertComplete()
+        repository.fetch().test().assertError(Exception::class.java)
     }
 
     @Test
@@ -166,11 +156,14 @@ class BillableRepositoryImplTest {
                 serverAddedApi
         )))
 
-        whenever(mockDao.all()).thenReturn(Single.just(listOf(
+        whenever(mockDao.allActive()).thenReturn(Single.just(listOf(
                 noChange,
                 serverEdited,
                 serverRemoved,
                 clientAdded
+        )))
+        whenever(mockDao.find(listOf(serverRemoved.id))).thenReturn(Single.just(listOf(
+                serverRemoved
         )))
         whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(
                 clientAdded
@@ -179,7 +172,7 @@ class BillableRepositoryImplTest {
         repository.fetch().test().assertComplete()
 
         verify(mockApi).getBillables(authToken.getHeaderString(), authToken.user.providerId)
-        verify(mockDao).delete(listOf(serverRemoved.id))
+        verify(mockDao).upsert(listOf(serverRemoved.copy(active = false)), emptyList())
         verify(mockDao).upsert(
             billableModels = listOf(
                 noChange,

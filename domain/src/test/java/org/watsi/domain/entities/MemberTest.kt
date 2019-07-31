@@ -15,7 +15,7 @@ class MemberTest {
 
     val today = LocalDate.now()
     val now = Instant.now()
-    val fixedClock = Clock.fixed(now, ZoneId.systemDefault())
+    val fixedClock = Clock.fixed(now, ZoneId.of("UTC"))
     val fiveYearsAgo = today.minusYears(5)
     val tenYearsAgo = today.minusYears(10)
 

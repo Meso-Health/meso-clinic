@@ -45,6 +45,6 @@ class EncounterFormRepositoryImpl(
                 )
 
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling EncounterFormRepositoryImpl.sync"))
     }
 }

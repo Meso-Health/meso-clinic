@@ -41,7 +41,7 @@ class FetchDataService : BaseService() {
                 // We want to clear the cache when there are no billables or diagnoses on the device.
                 // This scenario would happen when we migrate schema from version 1 to version 2, and as a result
                 // all the models on the phone are deleted, but the e-tag is still stored in the OKHttpCache.
-                val billableCount = billableRepository.count().blockingGet()
+                val billableCount = billableRepository.countActive().blockingGet()
                 val diagnosisCount = diagnosisRepository.count().blockingGet()
                 if (billableCount == 0 || diagnosisCount == 0) {
                     okHttpClient.cache().evictAll()

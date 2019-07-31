@@ -24,7 +24,7 @@ class SearchableClaimsListViewModelTest : AACBaseTest() {
     @Mock lateinit var mockSubmitClaimUseCase: SubmitClaimUseCase
     @Mock lateinit var mockLoadClaimUseCase: LoadClaimsUseCase
 
-    private val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     private val member1 = MemberFactory.build(membershipNumber = "01/11/11/P-11111/22", medicalRecordNumber = "89463")
     private val claim1 = EncounterWithExtrasFactory.build(member = member1)
     private val member2 = MemberFactory.build(membershipNumber = "01/11/11/P-110234/26", medicalRecordNumber = "89400")

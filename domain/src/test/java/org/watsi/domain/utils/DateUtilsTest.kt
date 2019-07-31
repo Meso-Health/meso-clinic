@@ -20,7 +20,7 @@ class DateUtilsTest {
 
     @Before
     fun setup() {
-        clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     }
 
     @Test

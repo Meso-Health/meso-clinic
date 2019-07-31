@@ -22,7 +22,7 @@ import org.watsi.domain.factories.PhotoFactory
 class PhotoRepositoryImplTest {
 
     @Mock lateinit var mockDao: PhotoDao
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: PhotoRepositoryImpl
 
     @Before

@@ -91,7 +91,7 @@ class IdentificationEventRepositoryImpl(
 
                 preferencesManager.updateIdentificationEventsLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling IdentificationEventRepositoryImpl.fetch"))
     }
 
     override fun sync(deltas: List<Delta>): Completable {
@@ -111,6 +111,6 @@ class IdentificationEventRepositoryImpl(
                     )
                 }
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling IdentificationEventRepositoryImpl.sync"))
     }
 }

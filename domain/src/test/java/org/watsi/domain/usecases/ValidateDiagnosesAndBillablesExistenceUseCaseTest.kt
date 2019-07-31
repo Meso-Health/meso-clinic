@@ -28,7 +28,7 @@ class ValidateDiagnosesAndBillablesExistenceUseCaseTest {
 
     @Test
     fun execute_noBillablesAndNoDiagnoses_false() {
-        whenever(billablesRepository.count()).thenReturn(Single.just(0))
+        whenever(billablesRepository.countActive()).thenReturn(Single.just(0))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(0))
 
         useCase.execute().test().assertError(ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException::class.java)
@@ -36,7 +36,7 @@ class ValidateDiagnosesAndBillablesExistenceUseCaseTest {
 
     @Test
     fun execute_noBillablesAndSomeDiagnoses_false() {
-        whenever(billablesRepository.count()).thenReturn(Single.just(5))
+        whenever(billablesRepository.countActive()).thenReturn(Single.just(5))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(0))
 
         useCase.execute().test().assertError(ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException::class.java)
@@ -44,7 +44,7 @@ class ValidateDiagnosesAndBillablesExistenceUseCaseTest {
 
     @Test
     fun execute_someBillablesAndNoDiagnoses_false() {
-        whenever(billablesRepository.count()).thenReturn(Single.just(1))
+        whenever(billablesRepository.countActive()).thenReturn(Single.just(1))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(0))
 
         useCase.execute().test().assertError(ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException::class.java)
@@ -52,7 +52,7 @@ class ValidateDiagnosesAndBillablesExistenceUseCaseTest {
 
     @Test
     fun execute_someBillablesAndSomeDiagnoses_true() {
-        whenever(billablesRepository.count()).thenReturn(Single.just(1))
+        whenever(billablesRepository.countActive()).thenReturn(Single.just(1))
         whenever(diagnosisRepository.count()).thenReturn(Single.just(1))
 
         useCase.execute().test().assertComplete()

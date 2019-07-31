@@ -61,7 +61,7 @@ class MemberRepositoryImplTest {
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     @Mock lateinit var mockPhotoDao: PhotoDao
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: MemberRepositoryImpl
     
     val user = UserFactory.build()
@@ -186,10 +186,10 @@ class MemberRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentAuthenticationToken_completes() {
+    fun fetch_noCurrentAuthenticationToken_errors() {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
-        repository.fetch().test().assertComplete()
+        repository.fetch().test().assertError(Exception::class.java)
     }
 
     @Test

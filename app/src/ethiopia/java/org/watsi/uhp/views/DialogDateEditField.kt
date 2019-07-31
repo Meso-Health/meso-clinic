@@ -28,7 +28,7 @@ class DialogDateEditField @JvmOverloads constructor(
     }
 
     private fun setDate(datetime: Instant, clock: Clock) {
-        val dateString = EthiopianDateHelper.formatEthiopianDate(datetime, clock)
+        val dateString = EthiopianDateHelper.formatEthiopianDate(datetime)
         date_value.setText(if (DateUtils.isToday(datetime, clock)) {
             resources.getString(R.string.today_wrapper, dateString)
         } else {
@@ -49,11 +49,8 @@ class DialogDateEditField @JvmOverloads constructor(
         val monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
         val yearSpinner = dialogView.findViewById<View>(R.id.year_spinner) as SpinnerField
 
-        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(
-            initialValue,
-            clock
-        )
-        val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now(), clock)
+        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(initialValue)
+        val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now())
 
         val dayAdapter = SpinnerField.createAdapter(
             context, (1..occurredAtDate.day).map { it.toString() })

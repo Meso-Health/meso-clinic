@@ -46,6 +46,6 @@ class PriceScheduleRepositoryImpl(
                 val priceSchedule = priceScheduleModel.toPriceSchedule()
                 api.postPriceSchedule(token.getHeaderString(), token.user.providerId, PriceScheduleApi(priceSchedule))
             }.subscribeOn(Schedulers.io())
-        } ?: Completable.complete()
+        } ?: Completable.error(Exception("Current token is null while calling PriceScheduleRepositoryImpl.sync"))
     }
 }

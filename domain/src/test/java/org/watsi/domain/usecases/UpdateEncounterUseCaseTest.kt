@@ -157,7 +157,7 @@ class UpdateEncounterUseCaseTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         useCase = UpdateEncounterUseCase(mockEncounterRepository, mockReferralRepository, mockPriceScheduleRepository)
-        fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+        fixedClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
         whenever(mockReferralRepository.delete(any())).thenReturn(Completable.complete())
     }
 

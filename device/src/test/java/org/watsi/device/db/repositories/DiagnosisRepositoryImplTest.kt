@@ -29,7 +29,7 @@ class DiagnosisRepositoryImplTest {
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
-    val clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+    val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: DiagnosisRepositoryImpl
 
     @Before
@@ -59,10 +59,10 @@ class DiagnosisRepositoryImplTest {
     }
 
     @Test
-    fun fetch_noCurrentAuthenticationToken_completes() {
+    fun fetch_noCurrentAuthenticationToken_errors() {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 
-        repository.fetch().test().assertComplete()
+        repository.fetch().test().assertError(Exception::class.java)
     }
 
     @Test
