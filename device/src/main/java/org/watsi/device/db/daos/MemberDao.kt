@@ -27,7 +27,7 @@ interface MemberDao {
     fun upsert(models: List<MemberModel>)
 
     @Query("SELECT count(*) from members")
-    fun count(): Single<Int>
+    fun count(): Flowable<Int>
 
     @Transaction
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
@@ -54,6 +54,9 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE householdId IS NOT NULL")
     fun all(): Flowable<List<MemberModel>>
 
+    @Query("SELECT DISTINCT(name) FROM members")
+    fun allDistinctNames(): Single<List<String>>
+
     @Query("SELECT * FROM members WHERE householdId IS NOT NULL AND archivedAt IS NULL")
     fun allUnarchived(): Flowable<List<MemberModel>>
 
@@ -69,6 +72,10 @@ interface MemberDao {
     @Transaction
     @Query("SELECT * FROM members WHERE members.id IN (:ids)")
     fun findMemberRelationsByIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+
+    @Transaction
+    @Query("SELECT * FROM members WHERE members.name IN (:names)")
+    fun findMemberRelationsByNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Transaction

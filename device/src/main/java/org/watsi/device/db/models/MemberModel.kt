@@ -19,7 +19,8 @@ import java.util.UUID
         Index("householdId"),
         Index("membershipNumber"),
         Index("thumbnailPhotoId"),
-        Index("photoId")
+        Index("photoId"),
+        Index("name")
     ],
     foreignKeys = [
         ForeignKey(

@@ -12,7 +12,7 @@ import java.util.UUID
 
 interface MemberRepository {
     fun all(excludeArchived: Boolean = true): Flowable<List<Member>>
-    fun count(): Single<Int>
+    fun count(): Flowable<Int>
     fun find(id: UUID): Maybe<Member>
     fun findAll(ids: List<UUID>): Single<List<Member>>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
@@ -20,8 +20,10 @@ interface MemberRepository {
     fun findHouseholdIdByMembershipNumber(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun findHouseholdIdByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
+    fun byNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
+    fun allDistinctNames(): Single<List<String>>
     fun findHouseholdMembers(householdId: UUID, excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable

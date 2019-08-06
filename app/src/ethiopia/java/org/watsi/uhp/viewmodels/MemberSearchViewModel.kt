@@ -3,9 +3,10 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
@@ -15,35 +16,43 @@ class MemberSearchViewModel @Inject constructor (
     private val logger: Logger
 ) : ViewModel() {
 
-    private val observable = MutableLiveData<List<MemberWithIdEventAndThumbnailPhoto>>()
-    private var members: List<Member> = emptyList()
-    private var memberNames: List<String> = emptyList()
+    private val observable = MutableLiveData<ViewState>()
 
-    init {
-        observable.value = emptyList()
-        // TODO: monitor performance consequence of storing all members
-        // TODO: make sure we only return Members with households
-        memberRepository.all().subscribe({
-            members = it
-            memberNames = it.map { it.name }.distinct()
+    fun getObservable(): LiveData<ViewState> {
+        observable.value = MemberSearchViewModel.ViewState()
+        preloadUniqueMemberNames()
+        return observable
+    }
+
+    private fun preloadUniqueMemberNames() {
+        memberRepository.allDistinctNames().subscribe({ memberNames ->
+            observable.postValue(observable.value?.copy(
+                uniqueMemberNames = memberNames,
+                loading = false
+            ))
         }, {
             logger.error(it)
         })
     }
 
-    fun getObservable(): LiveData<List<MemberWithIdEventAndThumbnailPhoto>> = observable
-
     fun updateQuery(query: String) {
-        val topMatchingNames = FuzzySearch.extractTop(query, memberNames, 20, 60).map { it.string }
-
-        // TODO: it is overkill to keep all the members in memory, we should just use the names
-        // as the input into the second query
-        members.filter { topMatchingNames.contains(it.name) }.sortedBy { it.name }.let {
-            memberRepository.byIds(it.map { it.id }).subscribe({
-                observable.postValue(it)
-            }, {
-                logger.error(it)
-            })
-        }
+        Completable.fromAction {
+            observable.postValue(observable.value?.copy(loading = true))
+            val namesStartingWithSameCharacter = observable.value?.uniqueMemberNames
+            val topMatchingNames = FuzzySearch.extractTop(query, namesStartingWithSameCharacter, 20, 60).map { it.string }
+            val matchingMembers = memberRepository.byNames(topMatchingNames).blockingGet()
+            observable.postValue(observable.value?.copy(
+                matchingMembers = matchingMembers,
+                loading = false
+            ))
+        }.doOnError {
+            logger.error(it)
+        }.subscribeOn(Schedulers.computation()).subscribe {}
     }
+
+    data class ViewState(
+        val matchingMembers: List<MemberWithIdEventAndThumbnailPhoto> = emptyList(),
+        val uniqueMemberNames: List<String> = emptyList(),
+        val loading: Boolean = true
+    )
 }

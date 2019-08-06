@@ -48,7 +48,7 @@ class FetchDataService : BaseService() {
                 }
             }
 
-            if (memberRepository.count().blockingGet() == 0) {
+            if (memberRepository.count().blockingFirst() == 0) {
                 // Similar to above, if the members get cleared because of a destructive migration (or any reason)
                 // we want to make sure the fetch them all. Using the old page key would restrict us to only
                 // fetching members that had been updated since the timestamp, but we want the full set.

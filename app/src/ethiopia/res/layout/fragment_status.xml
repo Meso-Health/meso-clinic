@@ -115,12 +115,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/last_fetched_identification_events" />
 
+        <org.watsi.uhp.views.StatusField
+            android:id="@+id/beneficiary_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/beneficiary_count_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/last_fetched_members" />
+
         <android.support.constraint.ConstraintLayout
             android:id="@+id/fetch_photos_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/last_fetched_members">
+            app:layout_constraintTop_toBottomOf="@id/beneficiary_count">
 
             <TextView
                 android:id="@+id/fetch_photos_header"

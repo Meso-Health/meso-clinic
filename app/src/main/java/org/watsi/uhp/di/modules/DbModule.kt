@@ -10,6 +10,8 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.db.AppDatabase
 import org.watsi.device.db.DbHelper
 import org.watsi.device.db.Migrations.Companion.MIGRATION_15_16
+import org.watsi.device.db.Migrations.Companion.MIGRATION_16_17
+import org.watsi.device.db.Migrations.Companion.MIGRATION_17_18
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
@@ -56,6 +58,8 @@ class DbModule {
         return Room.databaseBuilder(context, AppDatabase::class.java, DbHelper.DB_NAME)
                 .fallbackToDestructiveMigration()
                 .addMigrations(MIGRATION_15_16)
+                .addMigrations(MIGRATION_16_17)
+                .addMigrations(MIGRATION_17_18)
                 .build()
     }
 
