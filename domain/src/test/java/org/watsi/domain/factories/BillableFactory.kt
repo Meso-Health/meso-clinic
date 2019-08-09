@@ -13,11 +13,13 @@ object BillableFactory {
             name: String = "Delivery",
             active: Boolean = true
     ) : Billable {
-        return Billable(id = id,
-                        type = type,
-                        composition = composition,
-                        unit = unit,
-                        name = name,
-                        active = active)
+        return Billable(
+            id = id,
+            type = type,
+            composition = composition,
+            unit = unit,
+            name = name,
+            active = active
+        )
     }
 }

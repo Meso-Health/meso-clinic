@@ -12,6 +12,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
+import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
@@ -48,7 +49,8 @@ interface EncounterDao {
         billableModels: List<BillableModel>,
         priceScheduleModels: List<PriceScheduleModel>,
         encounterItemModels: List<EncounterItemModel>,
-        referralModels: List<ReferralModel>
+        referralModels: List<ReferralModel>,
+        diagnosisModels: List<DiagnosisModel>
     )
 
     @Delete

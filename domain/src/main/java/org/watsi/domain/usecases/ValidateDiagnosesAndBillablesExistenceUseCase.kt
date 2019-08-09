@@ -12,7 +12,7 @@ class ValidateDiagnosesAndBillablesExistenceUseCase(
     fun execute(): Completable {
         return Completable.fromCallable {
             val billableCount = billableRepository.countActive().blockingGet()
-            val diagnosisCount = diagnosisRepository.count().blockingGet()
+            val diagnosisCount = diagnosisRepository.countActive().blockingGet()
             if (billableCount == 0 || diagnosisCount == 0) {
                 throw BillableAndDiagnosesMissingException("Either billables or diagnoses have not been downloaded yet.")
             }

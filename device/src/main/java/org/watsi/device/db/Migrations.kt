@@ -35,5 +35,13 @@ class Migrations {
                 database.execSQL("CREATE INDEX `index_members_name` ON `members` (`name`)")
             }
         }
+
+        @JvmField
+        val MIGRATION_18_19: Migration = object : Migration(18, 19) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Android room uses integers to store booleans. 1 means true.
+                database.execSQL("ALTER TABLE diagnoses " + " ADD COLUMN active INTEGER NOT NULL DEFAULT 1 ")
+            }
+        }
     }
 }

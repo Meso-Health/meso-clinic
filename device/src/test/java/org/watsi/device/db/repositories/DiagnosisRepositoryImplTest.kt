@@ -43,9 +43,9 @@ class DiagnosisRepositoryImplTest {
     @Test
     fun all() {
         val diagnosesModels = listOf(DiagnosisModelFactory.build(), DiagnosisModelFactory.build())
-        whenever(mockDao.all()).thenReturn(Single.just(diagnosesModels))
+        whenever(mockDao.allActive()).thenReturn(Single.just(diagnosesModels))
 
-        repository.all().test().assertValue(diagnosesModels.map { it.toDiagnosis() })
+        repository.allActive().test().assertValue(diagnosesModels.map { it.toDiagnosis() })
     }
 
     @Test
@@ -82,16 +82,19 @@ class DiagnosisRepositoryImplTest {
                 serverEditedApi,
                 serverAddedApi
         )))
-        whenever(mockDao.all()).thenReturn(Single.just(listOf(
+        whenever(mockDao.allActive()).thenReturn(Single.just(listOf(
                 noChange,
                 serverEdited,
                 serverRemoved
+        )))
+        whenever(mockDao.findAll(listOf(serverRemoved.id))).thenReturn(Single.just(listOf(
+            serverRemoved
         )))
 
         repository.fetch().test().assertComplete()
 
         verify(mockApi).getDiagnoses(authToken.getHeaderString())
-        verify(mockDao).delete(listOf(serverRemoved.id))
+        verify(mockDao).upsert(listOf(serverRemoved.copy(active = false)))
         verify(mockDao).upsert(listOf(
                 noChange,
                 serverEdited.copy(description = "malaria"),

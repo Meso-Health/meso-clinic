@@ -15,6 +15,7 @@ import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
+import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
@@ -166,6 +167,9 @@ class EncounterRepositoryImpl(
             encounterWithExtras.referral?.let {
                 referralModels.add(ReferralModel.fromReferral(it))
             }
+            val diagnosisModels = encounterWithExtras.diagnoses.map {
+                DiagnosisModel.fromDiagnosis(it, clock)
+            }
 
             encounterDao.upsert(
                 memberModels = emptyList(),
@@ -173,7 +177,8 @@ class EncounterRepositoryImpl(
                 billableModels = emptyList(),
                 priceScheduleModels = emptyList(), // Price schedules are already created during the claim flow.
                 encounterItemModels = encounterItemModels,
-                referralModels = referralModels
+                referralModels = referralModels,
+                diagnosisModels = diagnosisModels
             )
         }.subscribeOn(Schedulers.io())
     }
@@ -200,6 +205,11 @@ class EncounterRepositoryImpl(
                     }
                 }.flatten()
             }.flatten()
+            val diagnosisModels = encounters.map {
+                it.diagnoses.map {
+                    DiagnosisModel.fromDiagnosis(it, clock)
+                }
+            }.flatten()
 
             val memberModels = encounters.map { MemberModel.fromMember(it.member, clock) }
 
@@ -216,7 +226,8 @@ class EncounterRepositoryImpl(
                 billableModels = billableModels,
                 priceScheduleModels = priceScheduleModels,
                 encounterItemModels = encounterItemModels,
-                referralModels = referralModels
+                referralModels = referralModels,
+                diagnosisModels = diagnosisModels
             )
         }.subscribeOn(Schedulers.io())
     }

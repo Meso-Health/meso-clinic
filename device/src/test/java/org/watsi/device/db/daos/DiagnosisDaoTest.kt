@@ -14,7 +14,7 @@ class DiagnosisDaoTest : DaoBaseTest() {
 
         diagnosisDao.upsert(listOf(updatedDiagnosis, newDiagnosis))
 
-        diagnosisDao.all().test().assertValue(listOf(updatedDiagnosis, newDiagnosis))
+        diagnosisDao.allActive().test().assertValue(listOf(updatedDiagnosis, newDiagnosis))
     }
 
     @Test
@@ -24,7 +24,7 @@ class DiagnosisDaoTest : DaoBaseTest() {
 
         diagnosisDao.delete(listOf(1))
 
-        diagnosisDao.all().test().assertValue(listOf(model))
+        diagnosisDao.allActive().test().assertValue(listOf(model))
     }
 
     @Test
@@ -42,11 +42,26 @@ class DiagnosisDaoTest : DaoBaseTest() {
     }
 
     @Test
-    fun count() {
+    fun countActive() {
         val diagnosisModel1 = DiagnosisModelFactory.create(diagnosisDao, id = 1)
         val diagnosisModel2 = DiagnosisModelFactory.create(diagnosisDao, id = 2)
         val diagnosisModel3 = DiagnosisModelFactory.create(diagnosisDao, id = 3)
+        val diagnosisModel4 = DiagnosisModelFactory.create(diagnosisDao, id = 4, active = false)
 
-        diagnosisDao.count().test().assertValue(3)
+        diagnosisDao.countActive().test().assertValue(3)
+    }
+
+    @Test
+    fun allActive() {
+        val diagnosisModel1 = DiagnosisModelFactory.create(diagnosisDao, id = 1)
+        val diagnosisModel2 = DiagnosisModelFactory.create(diagnosisDao, id = 2)
+        val diagnosisModel3 = DiagnosisModelFactory.create(diagnosisDao, id = 3)
+        val diagnosisModel4 = DiagnosisModelFactory.create(diagnosisDao, id = 4, active = false)
+
+        diagnosisDao.allActive().test().assertValue(listOf(
+            diagnosisModel1,
+            diagnosisModel2,
+            diagnosisModel3
+        ))
     }
 }

@@ -25,6 +25,7 @@ import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
+import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterItemWithBillableAndPriceModel
@@ -48,6 +49,7 @@ import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.DeltaFactory
+import org.watsi.domain.factories.DiagnosisFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.EncounterFormFactory
 import org.watsi.domain.factories.EncounterItemFactory
@@ -79,11 +81,15 @@ class EncounterRepositoryImplTest {
     }
 
     @Test
-    fun findWithExtras() {
-        val encounterWithExtras = EncounterWithExtrasFactory.build()
+    fun find() {
+        val diagnoses = listOf(DiagnosisFactory.build())
+        val encounterWithExtras = EncounterWithExtrasFactory.build(
+            diagnoses = diagnoses
+        )
+        val diagnosisModels = diagnoses.map { DiagnosisModel.fromDiagnosis(it, clock) }
         val encounterWithExtrasModel = EncounterWithExtrasModel.fromEncounterWithExtras(encounterWithExtras, clock)
 
-        whenever(mockDiagnosisDao.findAll(any())).thenReturn(Single.just(emptyList()))
+        whenever(mockDiagnosisDao.findAll(any())).thenReturn(Single.just(diagnosisModels))
         whenever(mockDao.find(encounterWithExtras.encounter.id)).thenReturn(Single.just(encounterWithExtrasModel))
 
         repository.find(encounterWithExtras.encounter.id).test().assertValue(encounterWithExtras)
@@ -274,7 +280,12 @@ class EncounterRepositoryImplTest {
             },
             referralModels = encounters.mapNotNull {
                 it.referral?.let { referral -> ReferralModel.fromReferral(referral) }
-            }
+            },
+            diagnosisModels = encounters.map {
+                it.diagnoses.map {
+                    DiagnosisModel.fromDiagnosis(it, clock)
+                }
+            }.flatten()
         )
     }
 
