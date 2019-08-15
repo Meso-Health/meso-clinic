@@ -4,7 +4,6 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.chrono.EthiopicChronology
 import org.joda.time.format.DateTimeFormat
-import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 
 object EthiopianDateHelper {
@@ -48,11 +47,9 @@ object EthiopianDateHelper {
         hour: Int,
         minute: Int,
         second: Int,
-        milli: Int,
-        clock: Clock
+        milli: Int
     ): Instant {
         val ethDateTime = DateTime(EthiopicChronology.getInstance())
-            .withZone(DateTimeZone.forID(clock.zone.id))
             .withDate(year, month, day)
             .withTime(hour, minute, second, milli)
 
