@@ -415,9 +415,15 @@ class MemberDaoTest : DaoBaseTest() {
     @Test
     fun allUnarchived_returnsAllUnarchivedMembersWithHouseholdIds() {
         val memberWithHousehold = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID())
-        val archivedMember = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID(), archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
+        val unpaidMember = MemberModelFactory.create(
+            memberDao,
+            householdId = UUID.randomUUID(),
+            archivedReason = ArchivedReason.UNPAID,
+            archivedAt = Instant.now()
+        )
+        MemberModelFactory.create(memberDao, householdId = UUID.randomUUID(), archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
         MemberModelFactory.create(memberDao, householdId = null)
 
-        memberDao.allUnarchived().test().assertValue(listOf(memberWithHousehold))
+        memberDao.allUnarchived().test().assertValue(listOf(memberWithHousehold, unpaidMember))
     }
 }
