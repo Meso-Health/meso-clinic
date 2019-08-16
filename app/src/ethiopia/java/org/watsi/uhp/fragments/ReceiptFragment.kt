@@ -363,6 +363,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             return
         }
 
+        if (encounterAction == EncounterAction.RESUBMIT && encounterFlowState.newProviderComment.isNullOrBlank()) {
+            SnackbarHelper.showError(finish_button, context, getString(R.string.empty_comment_warning))
+            return
+        }
+
         val message = when (encounterAction) {
             EncounterAction.PREPARE -> {
                 getString(R.string.encounter_saved)
