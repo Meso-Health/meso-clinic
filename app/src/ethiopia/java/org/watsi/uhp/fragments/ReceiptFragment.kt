@@ -56,6 +56,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
+import org.watsi.domain.entities.Referral
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
 import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
@@ -358,7 +359,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun finishEncounter() {
-        if (encounterFlowState.referral == null && encounterFlowState.encounterItemRelations.isEmpty()) {
+        if ((encounterFlowState.referral == null || encounterFlowState.referral?.reason == Referral.Reason.FOLLOW_UP)
+                && encounterFlowState.encounterItemRelations.isEmpty()) {
             SnackbarHelper.showError(finish_button, context, getString(R.string.empty_line_items_warning))
             return
         }
