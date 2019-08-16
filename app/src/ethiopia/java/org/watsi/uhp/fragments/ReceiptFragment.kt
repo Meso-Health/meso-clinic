@@ -358,7 +358,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun finishEncounter() {
-        if (encounterFlowState.encounterItemRelations.isEmpty()) {
+        if (encounterFlowState.referral == null && encounterFlowState.encounterItemRelations.isEmpty()) {
             SnackbarHelper.showError(finish_button, context, getString(R.string.empty_line_items_warning))
             return
         }
