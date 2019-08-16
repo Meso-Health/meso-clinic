@@ -291,6 +291,7 @@
     <string name="claim_id_deleted">ሕቶ ክፍሊት መ/ቁ %1$s ተሰሪዙ</string>
     <string name="claim_id_submitted">ሕቶ ክፍሊት መ/ቁ %1$s ተሰዲዱ</string>
     <string name="empty_line_items_warning">ሕቶ ክፍሊት ዝርዝር ክህልዎ ኣለዎ</string>
+    <!--<string name="empty_comment_warning" translatable="false">Claim resubmission must have a comment</string>-->
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካኽል</string>
