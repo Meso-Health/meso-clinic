@@ -27,8 +27,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_member_information.member_nam
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_member_information.name_layout
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalDate
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
@@ -195,23 +194,15 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             )
 
             inbound_referral_date_container.setUp(
-                initialValue = Instant.now(),
+                initialGregorianValue = LocalDate.now(clock),
                 clock = clock,
-                onDateSelected = { date ->
-                    viewModel.onInboundReferralDateChange(
-                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
-                    )
-                }
+                onDateSelected = { date -> viewModel.onInboundReferralDateChange(date) }
             )
 
             follow_up_date_container.setUp(
-                initialValue = Instant.now(),
+                initialGregorianValue = LocalDate.now(clock),
                 clock = clock,
-                onDateSelected = { date ->
-                    viewModel.onFollowUpDateChange(
-                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
-                    )
-                }
+                onDateSelected = { date -> viewModel.onFollowUpDateChange(date) }
             )
         }
 

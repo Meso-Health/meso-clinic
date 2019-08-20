@@ -19,8 +19,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_sp
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalDate
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Referral
@@ -114,13 +113,9 @@ class VisitTypeFragment : DaggerFragment() {
         }
 
         date_container.setUp(
-            initialValue = Instant.now(),
+            initialGregorianValue = LocalDate.now(clock),
             clock = clock,
-            onDateSelected = { dateOfReferral ->
-                viewModel.onUpdateReferralDate(
-                    LocalDateTime.ofInstant(dateOfReferral, clock.zone).toLocalDate()
-                )
-            }
+            onDateSelected = { dateOfReferral -> viewModel.onUpdateReferralDate(dateOfReferral) }
         )
 
         referral_serial_number.setText(encounterFlowState.referral?.number)

@@ -1,27 +1,18 @@
 package org.watsi.uhp.helpers
 
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
-import org.threeten.bp.Clock
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
+import org.threeten.bp.LocalDate
 import org.watsi.uhp.helpers.EthiopianDateHelper.EthiopianDate
 
 class EthiopianDateHelperTest {
-    lateinit var clock: Clock
-
-    @Before
-    fun setup() {
-        clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
-    }
 
     @Test
-    fun formatEthiopianDate() {
-        val testDate = Instant.parse("2018-09-10T10:15:30.000Z")
-        val expectedString = "05-13-2010"
+    fun formatAsEthiopianDate() {
+        val gregorianDate = LocalDate.of(2018, 9, 6)
+        val expectedString = "01-13-2010"
 
-        assertEquals(expectedString, EthiopianDateHelper.formatEthiopianDate(testDate))
+        assertEquals(expectedString, EthiopianDateHelper.formatAsEthiopianDate(gregorianDate))
     }
 
     @Test
@@ -63,42 +54,18 @@ class EthiopianDateHelperTest {
     }
 
     @Test
-    fun toInstant() {
-        val ethDate = EthiopianDate(2010, 9, 13) // May 21st 2018 in Addis
-        val expectedInstant = Instant.parse("2018-05-21T00:00:00.000Z") // 12pm May 21th UTC
-        val returnedInstant = EthiopianDateHelper.toInstant(
-            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0
-        )
-
-        assertEquals(expectedInstant, returnedInstant)
-    }
-
-    @Test
     fun toEthiopianDate() {
-        val instant = Instant.parse("2018-05-21T23:15:30.000Z") // 11:15pm May 21st GMT
-        val expectedEthDate = EthiopianDate(2010, 9, 14) // 2:15am May 22nd Addis
+        val gregorianDate = LocalDate.of(2018, 9, 6)
+        val ethiopianDate = EthiopianDate(2010, 13, 1)
 
-        assertEquals(expectedEthDate, EthiopianDateHelper.toEthiopianDate(instant))
+        assertEquals(ethiopianDate, EthiopianDateHelper.toEthiopianDate(gregorianDate))
     }
 
     @Test
-    fun toEthToInstant_Midnight() {
-        val instant = Instant.parse("2018-05-21T00:00:00.000Z") // 12:00am May 21st GMT
-        val ethDate = EthiopianDateHelper.toEthiopianDate(instant)
-        val returnedInstant = EthiopianDateHelper.toInstant(
-            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0
-        )
-        assertEquals(instant, returnedInstant)
-    }
+    fun fromEthiopianDate() {
+        val gregorianDate = LocalDate.of(2018, 9, 6)
+        val ethiopianDate = EthiopianDate(2010, 13, 1)
 
-    @Test
-    fun toEthToInstant_notMidnight() {
-        val instant = Instant.parse("2018-05-21T00:23:00.000Z") // 11:00pm May 21st GMT
-        val expectedInstant = Instant.parse("2018-05-21T00:00:00.000Z") // 12:00am May 21st GMT
-        val ethDate = EthiopianDateHelper.toEthiopianDate(instant)
-        val returnedInstant = EthiopianDateHelper.toInstant(
-            ethDate.year, ethDate.month, ethDate.day, 0, 0, 0, 0
-        )
-        assertEquals(expectedInstant, returnedInstant)
+        assertEquals(gregorianDate, EthiopianDateHelper.fromEthiopianDate(ethiopianDate))
     }
 }
