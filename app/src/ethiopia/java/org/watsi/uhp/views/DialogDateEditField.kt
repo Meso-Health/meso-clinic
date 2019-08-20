@@ -34,6 +34,10 @@ class DialogDateEditField @JvmOverloads constructor(
         })
     }
 
+    fun setLabel(label: String) {
+        field_label.text = label
+    }
+
     fun setUp(
         initialGregorianValue: LocalDate,
         clock: Clock,

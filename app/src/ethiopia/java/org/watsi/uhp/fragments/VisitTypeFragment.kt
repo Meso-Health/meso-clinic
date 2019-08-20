@@ -12,11 +12,13 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.date_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.patient_outcome_spinner
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_spinner
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_check_box
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_form
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_reason_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.referral_serial_number_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.visit_type_spinner
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
@@ -61,11 +63,20 @@ class VisitTypeFragment : DaggerFragment() {
             it?.let { viewState ->
                 setErrors(viewState.validationErrors)
 
-                if (viewState.referralBoxChecked) {
-                    referral_check_box.isChecked = true
+                if (viewState.isReferralOrFollowUp) {
                     referral_form.visibility = View.VISIBLE
+                    if (viewState.patientOutcome == Encounter.PatientOutcome.REFERRED) {
+                        date_container.setLabel(getString(R.string.referral_date_label))
+                        receiving_facility_container.visibility = View.VISIBLE
+                        referral_reason_container.visibility = View.VISIBLE
+                        referral_serial_number_container.visibility = View.VISIBLE
+                    } else {
+                        date_container.setLabel(getString(R.string.follow_up_date_label))
+                        receiving_facility_container.visibility = View.GONE
+                        referral_reason_container.visibility = View.GONE
+                        referral_serial_number_container.visibility = View.GONE
+                    }
                 } else {
-                    referral_check_box.isChecked = false
                     referral_form.visibility = View.GONE
                 }
             }
@@ -95,10 +106,6 @@ class VisitTypeFragment : DaggerFragment() {
         referral_serial_number.addTextChangedListener(LayoutHelper.OnChangedListener {
             number -> viewModel.onNumberChange(number)
         })
-
-        referral_check_box.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.onToggleReferralCheckBox(isChecked)
-        }
 
         next_button.setOnClickListener {
             viewModel.validateAndUpdateEncounterFlowState(encounterFlowState).subscribe({
