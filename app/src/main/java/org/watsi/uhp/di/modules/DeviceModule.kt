@@ -30,7 +30,7 @@ class DeviceModule {
     @Provides
     fun provideClock(context: Context): Clock {
         AndroidThreeTen.init(context)
-        return Clock.systemUTC()
+        return Clock.systemDefaultZone()
     }
 
     @Singleton

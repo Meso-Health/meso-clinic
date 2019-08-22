@@ -22,6 +22,7 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_status.android_version
 import kotlinx.android.synthetic.ethiopia.fragment_status.app_version
+import kotlinx.android.synthetic.ethiopia.fragment_status.beneficiary_count
 import kotlinx.android.synthetic.ethiopia.fragment_status.current_user
 import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_fetched_at
 import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_synced_at
@@ -80,7 +81,6 @@ class StatusFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver()
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(StatusViewModel::class.java)
 
         viewModel.getNetworkObservable().observe(this, Observer {
@@ -100,6 +100,7 @@ class StatusFragment : DaggerFragment() {
                 photos_last_synced_at.setValue(formattedUpdatedAt(viewState.photoSyncedAt.toEpochMilli()))
 
                 last_fetched_members.setValue(formattedUpdatedAt(viewState.membersFetchedAt.toEpochMilli()))
+                beneficiary_count.setValue(viewState.beneficiaryCount.toString())
                 last_fetched_billables.setValue(formattedUpdatedAt(viewState.billablesFetchedAt.toEpochMilli()))
                 last_fetched_diagnoses.setValue(formattedUpdatedAt(viewState.diagnosesFetchedAt.toEpochMilli()))
                 last_fetched_returned_claims.setValue(formattedUpdatedAt(viewState.returnedClaimsFetchedAt.toEpochMilli()))

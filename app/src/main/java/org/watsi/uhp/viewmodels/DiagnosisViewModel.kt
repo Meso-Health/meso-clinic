@@ -22,7 +22,7 @@ class DiagnosisViewModel @Inject constructor(
     private var uniqueDescriptions: List<String> = emptyList()
 
     init {
-        diagnosisRepository.all().subscribe({
+        diagnosisRepository.allActive().subscribe({
             diagnoses = it
             uniqueDescriptions = diagnoses.map { it.description }.distinct()
         }, {

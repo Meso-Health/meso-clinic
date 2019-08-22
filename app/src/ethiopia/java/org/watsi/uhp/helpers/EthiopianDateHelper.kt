@@ -1,18 +1,16 @@
 package org.watsi.uhp.helpers
 
 import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import org.joda.time.chrono.EthiopicChronology
-import org.joda.time.format.DateTimeFormat
-import org.threeten.bp.Clock
-import org.threeten.bp.Instant
+import org.joda.time.chrono.GregorianChronology
+import org.threeten.bp.LocalDate
 
 object EthiopianDateHelper {
-    const val DATE_FORMAT = "dd-MM-yyyy"
     const val MONTHS_IN_YEAR = 13
 
-    fun formatEthiopianDate(instant: Instant): String {
-        return DateTimeFormat.forPattern(DATE_FORMAT).print(toEthDateTime(instant))
+    fun formatAsEthiopianDate(gregorianDate: LocalDate): String {
+        val ethiopianDate = toEthiopianDate(gregorianDate)
+        return "${"%02d".format(ethiopianDate.day)}-${"%02d".format(ethiopianDate.month)}-${ethiopianDate.year}"
     }
 
     /**
@@ -41,33 +39,24 @@ object EthiopianDateHelper {
         }
     }
 
-    fun toInstant(
-        year: Int,
-        month: Int,
-        day: Int,
-        hour: Int,
-        minute: Int,
-        second: Int,
-        milli: Int,
-        clock: Clock
-    ): Instant {
-        val ethDateTime = DateTime(EthiopicChronology.getInstance())
-            .withZone(DateTimeZone.forID(clock.zone.id))
-            .withDate(year, month, day)
-            .withTime(hour, minute, second, milli)
+    fun toEthiopianDate(gregorianDate: LocalDate): EthiopianDate {
+        val ethiopianDate = DateTime(GregorianChronology.getInstanceUTC())
+                .withDate(gregorianDate.year, gregorianDate.monthValue, gregorianDate.dayOfMonth)
+                .withChronology(EthiopicChronology.getInstanceUTC())
 
-        return Instant.ofEpochMilli(ethDateTime.millis)
+        return EthiopianDate(ethiopianDate.year, ethiopianDate.monthOfYear, ethiopianDate.dayOfMonth)
     }
 
-    fun toEthiopianDate(instant: Instant): EthiopianDate {
-        val ethDate = toEthDateTime(instant)
-        return EthiopianDate(ethDate.year, ethDate.monthOfYear, ethDate.dayOfMonth)
-    }
+    fun fromEthiopianDate(ethiopianDate: EthiopianDate): LocalDate {
+        val gregorianDate = DateTime(EthiopicChronology.getInstanceUTC())
+                .withDate(ethiopianDate.year, ethiopianDate.month, ethiopianDate.day)
+                .withChronology(GregorianChronology.getInstanceUTC())
 
-    private fun toEthDateTime(instant: Instant): DateTime {
-        return DateTime(EthiopicChronology.getInstance())
-            .withZone(DateTimeZone.forID("Africa/Addis_Ababa"))
-            .withMillis(instant.toEpochMilli())
+        return LocalDate.of(
+            gregorianDate.year,
+            gregorianDate.monthOfYear,
+            gregorianDate.dayOfMonth
+        )
     }
 
     data class EthiopianDate(val year: Int, val month: Int, val day: Int)

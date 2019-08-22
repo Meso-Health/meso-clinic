@@ -21,7 +21,7 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
         observable.value = ViewState(
             selectedVisitType = encounterFlowState.encounter.visitType ?: Encounter.VISIT_TYPE_CHOICES[0],
             patientOutcome = encounterFlowState.encounter.patientOutcome,
-            referralBoxChecked = encounterFlowState.referral != null,
+            isReferralOrFollowUp = encounterFlowState.referral != null,
             receivingFacility = encounterFlowState.referral?.receivingFacility,
             reason = encounterFlowState.referral?.reason,
             number = encounterFlowState.referral?.number,
@@ -34,12 +34,6 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
     fun onSelectVisitType(visitType: String) {
         observable.value?.let { viewState ->
             observable.value = viewState.copy(selectedVisitType = visitType)
-        }
-    }
-
-    fun onToggleReferralCheckBox(isChecked: Boolean) {
-        observable.value?.let { viewState ->
-            observable.value = viewState.copy(referralBoxChecked = isChecked)
         }
     }
 
@@ -71,14 +65,19 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
 
     fun onUpdatePatientOutcome(patientOutcome: Encounter.PatientOutcome?) {
         observable.value?.let { viewState ->
-            observable.value = viewState.copy(patientOutcome = patientOutcome)
+            val isReferralOrFollowUp = (patientOutcome == Encounter.PatientOutcome.REFERRED) ||
+                    (patientOutcome == Encounter.PatientOutcome.FOLLOW_UP)
+            observable.value = viewState.copy(
+                patientOutcome = patientOutcome,
+                isReferralOrFollowUp = isReferralOrFollowUp
+            )
         }
     }
 
     object FormValidator {
         fun validateViewState(viewState: ViewState): Map<String, Int> {
             val errors = HashMap<String, Int>()
-            if (viewState.referralBoxChecked) {
+            if (viewState.patientOutcome == Encounter.PatientOutcome.REFERRED) {
                 if (viewState.reason == null) {
                     errors[REASON_ERROR] = R.string.referral_reason_validation_error
                 }
@@ -108,12 +107,17 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
                         visitType = viewState.selectedVisitType,
                         patientOutcome = viewState.patientOutcome
                     )
-                    if (viewState.referralBoxChecked && viewState.receivingFacility != null && viewState.reason != null) {
+                    if (viewState.isReferralOrFollowUp) {
+                        val isFollowUp = viewState.patientOutcome == Encounter.PatientOutcome.FOLLOW_UP
+                        val receivingFacility = if (isFollowUp) "SELF" else viewState.receivingFacility!!
+                        val referralReason = if (isFollowUp) Referral.Reason.FOLLOW_UP else viewState.reason!!
+                        val number = if (isFollowUp) null else viewState.number
+
                         encounterFlowState.referral = Referral(
                             id = UUID.randomUUID(),
-                            receivingFacility = viewState.receivingFacility,
-                            reason = viewState.reason,
-                            number = viewState.number,
+                            receivingFacility = receivingFacility,
+                            reason = referralReason,
+                            number = number,
                             encounterId = encounterFlowState.encounter.id,
                             date = viewState.referralDate
                         )
@@ -130,7 +134,7 @@ class VisitTypeViewModel @Inject constructor(val clock: Clock): ViewModel() {
     data class ViewState(
         val selectedVisitType: String,
         val patientOutcome: Encounter.PatientOutcome?,
-        val referralBoxChecked: Boolean,
+        val isReferralOrFollowUp: Boolean,
         val referralDate: LocalDate,
         val receivingFacility: String?,
         val reason: Referral.Reason?,

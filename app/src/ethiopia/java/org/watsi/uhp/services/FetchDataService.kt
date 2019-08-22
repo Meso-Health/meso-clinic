@@ -42,13 +42,13 @@ class FetchDataService : BaseService() {
                 // This scenario would happen when we migrate schema from version 1 to version 2, and as a result
                 // all the models on the phone are deleted, but the e-tag is still stored in the OKHttpCache.
                 val billableCount = billableRepository.countActive().blockingGet()
-                val diagnosisCount = diagnosisRepository.count().blockingGet()
+                val diagnosisCount = diagnosisRepository.countActive().blockingGet()
                 if (billableCount == 0 || diagnosisCount == 0) {
                     okHttpClient.cache().evictAll()
                 }
             }
 
-            if (memberRepository.count().blockingGet() == 0) {
+            if (memberRepository.count().blockingFirst() == 0) {
                 // Similar to above, if the members get cleared because of a destructive migration (or any reason)
                 // we want to make sure the fetch them all. Using the old page key would restrict us to only
                 // fetching members that had been updated since the timestamp, but we want the full set.

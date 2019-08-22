@@ -3,6 +3,7 @@ package org.watsi.device.factories
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.api.models.BillableApi
+import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterItemApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.api.models.PriceScheduleApi
@@ -45,12 +46,9 @@ object ReturnedEncounterApiFactory {
             encounterItems = encounterWithExtras.encounterItemRelations.map {
                 EncounterItemApi(it.encounterItem)
             },
-            referrals = listOf(encounterWithExtras.referral).mapNotNull {
-                if (it != null) {
-                    ReferralApi(it)
-                } else {
-                    null
-                }
+            referrals = encounterWithExtras.referral?.let { listOf(ReferralApi(it)) }.orEmpty(),
+            diagnoses = encounterWithExtras.diagnoses.map {
+                DiagnosisApi(it)
             }
         )
     }

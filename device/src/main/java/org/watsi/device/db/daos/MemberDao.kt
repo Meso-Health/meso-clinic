@@ -27,7 +27,7 @@ interface MemberDao {
     fun upsert(models: List<MemberModel>)
 
     @Query("SELECT count(*) from members")
-    fun count(): Single<Int>
+    fun count(): Flowable<Int>
 
     @Transaction
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
@@ -42,25 +42,28 @@ interface MemberDao {
     @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
 
-    @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL AND archivedAt IS NULL ORDER BY enrolledAt DESC LIMIT 1")
+    @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL AND (archivedReason IS NULL OR archivedReason = 'UNPAID') ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumberUnarchived(membershipNumber: String): Maybe<UUID>
 
     @Query("SELECT householdId FROM members WHERE cardId = :cardId AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByCardId(cardId: String): Maybe<UUID>
 
-    @Query("SELECT householdId FROM members WHERE cardId = :cardId AND householdId IS NOT NULL AND archivedAt IS NULL ORDER BY enrolledAt DESC LIMIT 1")
+    @Query("SELECT householdId FROM members WHERE cardId = :cardId AND householdId IS NOT NULL AND (archivedReason IS NULL OR archivedReason = 'UNPAID') ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByCardIdUnarchived(cardId: String): Maybe<UUID>
 
     @Query("SELECT * FROM members WHERE householdId IS NOT NULL")
     fun all(): Flowable<List<MemberModel>>
 
-    @Query("SELECT * FROM members WHERE householdId IS NOT NULL AND archivedAt IS NULL")
+    @Query("SELECT DISTINCT(name) FROM members")
+    fun allDistinctNames(): Single<List<String>>
+
+    @Query("SELECT * FROM members WHERE householdId IS NOT NULL AND (archivedReason IS NULL OR archivedReason = 'UNPAID')")
     fun allUnarchived(): Flowable<List<MemberModel>>
 
     @Query("SELECT * FROM members WHERE cardId = :cardId LIMIT 1")
     fun findByCardId(cardId: String): Maybe<MemberModel>
 
-    @Query("SELECT * FROM members WHERE cardId = :cardId AND archivedAt IS NULL LIMIT 1")
+    @Query("SELECT * FROM members WHERE cardId = :cardId AND (archivedReason IS NULL OR archivedReason = 'UNPAID') LIMIT 1")
     fun findByCardIdUnarchived(cardId: String): Maybe<MemberModel>
 
     @Query("SELECT * FROM members WHERE id IN (:ids)")
@@ -69,6 +72,10 @@ interface MemberDao {
     @Transaction
     @Query("SELECT * FROM members WHERE members.id IN (:ids)")
     fun findMemberRelationsByIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+
+    @Transaction
+    @Query("SELECT * FROM members WHERE members.name IN (:names)")
+    fun findMemberRelationsByNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Transaction
@@ -102,10 +109,10 @@ interface MemberDao {
     fun findHouseholdMembers(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     @Transaction
-    @Query("SELECT * FROM members WHERE householdId = :householdId AND archivedAt IS NULL")
+    @Query("SELECT * FROM members WHERE householdId = :householdId AND (archivedReason IS NULL OR archivedReason = 'UNPAID')")
     fun findHouseholdMembersUnarchived(householdId: UUID): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
-    @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL AND archivedAt IS NULL")
+    @Query("SELECT * FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL AND (archivedReason IS NULL OR archivedReason = 'UNPAID')")
     fun needPhotoDownload(): Single<List<MemberModel>>
 
     @Query("SELECT members.* FROM members\n" +
@@ -118,6 +125,6 @@ interface MemberDao {
     @Query("DELETE FROM members WHERE id IN (:ids)")
     fun delete(ids: List<UUID>)
 
-    @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL AND archivedAt IS NULL")
+    @Query("SELECT count(*) FROM members WHERE photoUrl IS NOT NULL AND thumbnailPhotoId IS NULL AND (archivedReason IS NULL OR archivedReason = 'UNPAID')")
     fun needPhotoDownloadCount(): Flowable<Int>
 }

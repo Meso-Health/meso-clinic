@@ -13,7 +13,8 @@ import java.util.UUID
     tableName = "identification_events",
     indices = [
         Index("memberId"),
-        Index("throughMemberId")
+        Index("throughMemberId"),
+        Index("occurredAt")
     ],
     foreignKeys = [
         ForeignKey(

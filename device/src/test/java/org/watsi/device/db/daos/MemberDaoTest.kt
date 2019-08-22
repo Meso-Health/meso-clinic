@@ -1,5 +1,6 @@
 package org.watsi.device.db.daos
 
+import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.Instant
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
@@ -320,6 +321,51 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun count() {
+        MemberModelFactory.create(memberDao)
+        MemberModelFactory.create(memberDao)
+        MemberModelFactory.create(memberDao)
+        memberDao.count().test().assertValue(3)
+    }
+
+    @Test
+    fun allDistinctNames() {
+        MemberModelFactory.create(memberDao, name = "Buster H Posey")
+        MemberModelFactory.create(memberDao, name = "Stephen Tikka Masala")
+        MemberModelFactory.create(memberDao, name = "Klay Thompson Jackson")
+        MemberModelFactory.create(memberDao, name = "Klay Thompson Jackson")
+
+        val distinctNames = memberDao.allDistinctNames().test().values().first()
+        assertEquals(
+            distinctNames.sorted(),
+            listOf(
+                "Buster H Posey",
+                "Stephen Tikka Masala",
+                "Klay Thompson Jackson"
+            ).sorted()
+        )
+    }
+
+    @Test
+    fun findMemberRelationsByNames() {
+        val memberModel1 = MemberModelFactory.create(memberDao, name = "Buster H Posey")
+        val memberModel2 = MemberModelFactory.create(memberDao, name = "Stephen Tikka Masala")
+        val memberModel3 = MemberModelFactory.create(memberDao, name = "Klay Thompson Jackson")
+        val memberModel4 = MemberModelFactory.create(memberDao, name = "Klay Thompson Jackson")
+
+        val matchingMembers = memberDao.findMemberRelationsByNames(
+            names = listOf(
+                "Buster H Posey",
+                "Klay Thompson Jackson"
+            )
+        ).test().values().first()
+        assertEquals(
+            matchingMembers.map { it.memberModel?.id },
+            listOf(memberModel1.id, memberModel3.id, memberModel4.id)
+        )
+    }
+
+    @Test
     fun findFlowableMemberWithThumbnail() {
         val memberId = UUID.randomUUID()
         val memberModel = MemberModelFactory.build(id = memberId)
@@ -369,9 +415,15 @@ class MemberDaoTest : DaoBaseTest() {
     @Test
     fun allUnarchived_returnsAllUnarchivedMembersWithHouseholdIds() {
         val memberWithHousehold = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID())
-        val archivedMember = MemberModelFactory.create(memberDao, householdId = UUID.randomUUID(), archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
+        val unpaidMember = MemberModelFactory.create(
+            memberDao,
+            householdId = UUID.randomUUID(),
+            archivedReason = ArchivedReason.UNPAID,
+            archivedAt = Instant.now()
+        )
+        MemberModelFactory.create(memberDao, householdId = UUID.randomUUID(), archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
         MemberModelFactory.create(memberDao, householdId = null)
 
-        memberDao.allUnarchived().test().assertValue(listOf(memberWithHousehold))
+        memberDao.allUnarchived().test().assertValue(listOf(memberWithHousehold, unpaidMember))
     }
 }

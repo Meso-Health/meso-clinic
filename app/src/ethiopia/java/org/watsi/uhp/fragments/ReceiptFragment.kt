@@ -51,11 +51,14 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
+import org.watsi.domain.entities.Referral
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
 import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
@@ -191,9 +194,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState.referral?.let { referral ->
             referrals_container.visibility = View.VISIBLE
-            referral_date.text = EthiopianDateHelper.formatEthiopianDate(
-                referral.date.atStartOfDay(clock.zone).toInstant()
-            )
+            referral_date.text = EthiopianDateHelper.formatAsEthiopianDate(LocalDate.now(clock))
             referring_to.text = referral.receivingFacility
             referral_serial_number.text = referral.number
             referral_reason.text = EnumHelper.referralReasonToDisplayedString(referral.reason, context, logger)
@@ -231,11 +232,16 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             launchAddCommentDialog()
         }
 
+        val occurredAtGregorianDate = LocalDateTime.ofInstant(
+            encounterFlowState.encounter.occurredAt,
+            clock.zone
+        ).toLocalDate()
+
         date_container.setUp(
-            initialValue = encounterFlowState.encounter.occurredAt,
+            initialGregorianValue = occurredAtGregorianDate,
             clock = clock,
             onDateSelected = { dateOfService ->
-                viewModel.updateBackdatedOccurredAt(dateOfService)
+                viewModel.updateBackdatedOccurredAt(dateOfService.atStartOfDay(clock.zone).toInstant())
             }
         )
 
@@ -358,8 +364,14 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun finishEncounter() {
-        if (encounterFlowState.encounterItemRelations.isEmpty()) {
+        if ((encounterFlowState.referral == null || encounterFlowState.referral?.reason == Referral.Reason.FOLLOW_UP)
+                && encounterFlowState.encounterItemRelations.isEmpty()) {
             SnackbarHelper.showError(finish_button, context, getString(R.string.empty_line_items_warning))
+            return
+        }
+
+        if (encounterAction == EncounterAction.RESUBMIT && encounterFlowState.newProviderComment.isNullOrBlank()) {
+            SnackbarHelper.showError(finish_button, context, getString(R.string.empty_comment_warning))
             return
         }
 

@@ -13,7 +13,9 @@ import java.util.UUID
 @Entity(
     tableName = "encounters",
     indices = [
-        Index("memberId")
+        Index("memberId"),
+        Index("identificationEventId"),
+        Index("occurredAt")
     ],
     foreignKeys = [
         ForeignKey(

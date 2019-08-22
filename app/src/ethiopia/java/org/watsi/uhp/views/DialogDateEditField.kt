@@ -9,12 +9,10 @@ import android.view.View
 import kotlinx.android.synthetic.main.view_dialog_date_edit_field.view.date_value
 import kotlinx.android.synthetic.main.view_dialog_date_edit_field.view.field_label
 import org.threeten.bp.Clock
-import org.threeten.bp.Instant
-import org.watsi.domain.utils.DateUtils
+import org.threeten.bp.LocalDate
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.ReceiptFragment
 import org.watsi.uhp.helpers.EthiopianDateHelper
-
 
 class DialogDateEditField @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -27,21 +25,25 @@ class DialogDateEditField @JvmOverloads constructor(
         customAttributes.recycle()
     }
 
-    private fun setDate(datetime: Instant, clock: Clock) {
-        val dateString = EthiopianDateHelper.formatEthiopianDate(datetime)
-        date_value.setText(if (DateUtils.isToday(datetime, clock)) {
+    private fun setDate(gregorianDate: LocalDate, clock: Clock) {
+        val dateString = EthiopianDateHelper.formatAsEthiopianDate(gregorianDate)
+        date_value.setText(if (gregorianDate.isEqual(LocalDate.now(clock.zone))) {
             resources.getString(R.string.today_wrapper, dateString)
         } else {
             dateString
         })
     }
 
+    fun setLabel(label: String) {
+        field_label.text = label
+    }
+
     fun setUp(
-        initialValue: Instant,
+        initialGregorianValue: LocalDate,
         clock: Clock,
-        onDateSelected: ((date: Instant) -> Unit)
+        onDateSelected: ((gregorianDate: LocalDate) -> Unit)
     ) {
-        setDate(initialValue, clock)
+        setDate(initialGregorianValue, clock)
 
         // Set up the dialog
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ethiopian_date_picker, null)
@@ -49,25 +51,25 @@ class DialogDateEditField @JvmOverloads constructor(
         val monthSpinner = dialogView.findViewById<View>(R.id.month_spinner) as SpinnerField
         val yearSpinner = dialogView.findViewById<View>(R.id.year_spinner) as SpinnerField
 
-        val occurredAtDate = EthiopianDateHelper.toEthiopianDate(initialValue)
-        val todayDate = EthiopianDateHelper.toEthiopianDate(Instant.now())
+        val initialEthiopianValue = EthiopianDateHelper.toEthiopianDate(initialGregorianValue)
+        val todayDate = EthiopianDateHelper.toEthiopianDate(LocalDate.now(clock.zone))
 
         val dayAdapter = SpinnerField.createAdapter(
-            context, (1..occurredAtDate.day).map { it.toString() })
+            context, (1..initialEthiopianValue.day).map { it.toString() })
         val monthAdapter = SpinnerField.createAdapter(
-            context, (1..occurredAtDate.month).map { it.toString() })
+            context, (1..initialEthiopianValue.month).map { it.toString() })
         val yearAdapter = SpinnerField.createAdapter(
             context, (ReceiptFragment.DATE_PICKER_START_YEAR..todayDate.year).map { it.toString() })
 
-        daySpinner.setUpWithoutPrompt(dayAdapter, occurredAtDate.day - 1, { /* No-op */ } )
-        monthSpinner.setUpWithoutPrompt(monthAdapter, occurredAtDate.month - 1, { monthString ->
+        daySpinner.setUpWithoutPrompt(dayAdapter, initialEthiopianValue.day - 1, { /* No-op */ } )
+        monthSpinner.setUpWithoutPrompt(monthAdapter, initialEthiopianValue.month - 1, { monthString ->
             val daysToShow = EthiopianDateHelper.daysInMonthNotInFuture(
                 yearSpinner.getSelectedItem().toInt(), monthString.toInt(), todayDate)
 
             dayAdapter.clear()
             dayAdapter.addAll((1..daysToShow).map { it.toString() })
         })
-        yearSpinner.setUpWithoutPrompt(yearAdapter, occurredAtDate.year - ReceiptFragment.DATE_PICKER_START_YEAR, { yearString ->
+        yearSpinner.setUpWithoutPrompt(yearAdapter, initialEthiopianValue.year - ReceiptFragment.DATE_PICKER_START_YEAR, { yearString ->
             // Save the currently selected month in case the list shrinks
             var selectedMonth = monthSpinner.getSelectedItem().toInt()
 
@@ -90,19 +92,18 @@ class DialogDateEditField @JvmOverloads constructor(
 
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)
-        builder.setPositiveButton(R.string.dialog_save) { dialog, _ ->
-            val selectedDate = EthiopianDateHelper.toInstant(
+        builder.setPositiveButton(R.string.dialog_save) { _, _ ->
+            val ethiopianDate = EthiopianDateHelper.EthiopianDate(
                 yearSpinner.getSelectedItem().toInt(),
                 monthSpinner.getSelectedItem().toInt(),
-                daySpinner.getSelectedItem().toInt(),
-                0, 0, 0, 0, // Arbitrarily choose midnight, since time isn't specified
-                clock
+                daySpinner.getSelectedItem().toInt()
             )
+            val gregorianDate = EthiopianDateHelper.fromEthiopianDate(ethiopianDate)
 
-            setDate(selectedDate, clock)
-            onDateSelected(selectedDate)
+            setDate(gregorianDate, clock)
+            onDateSelected(gregorianDate)
         }
-        builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> /* No-Op */ }
+        builder.setNegativeButton(R.string.dialog_cancel) { _, _ -> /* No-Op */ }
 
         val dateDialog = builder.create()
 
@@ -110,9 +111,9 @@ class DialogDateEditField @JvmOverloads constructor(
         date_value.inputType = 0
         // Set up the onclick listener
         date_value.setOnClickListener {
-            daySpinner.setSelectedItem(occurredAtDate.day - 1)
-            monthSpinner.setSelectedItem(occurredAtDate.month - 1)
-            yearSpinner.setSelectedItem(occurredAtDate.year - ReceiptFragment.DATE_PICKER_START_YEAR)
+            daySpinner.setSelectedItem(initialEthiopianValue.day - 1)
+            monthSpinner.setSelectedItem(initialEthiopianValue.month - 1)
+            yearSpinner.setSelectedItem(initialEthiopianValue.year - ReceiptFragment.DATE_PICKER_START_YEAR)
 
             dateDialog.show()
         }

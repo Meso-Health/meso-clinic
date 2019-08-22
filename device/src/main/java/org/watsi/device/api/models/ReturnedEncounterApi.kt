@@ -17,7 +17,6 @@ data class ReturnedEncounterApi(
     val identificationEventId: UUID?,
     val occurredAt: Instant,
     val backdatedOccurredAt: Boolean,
-    val diagnosisIds: List<Int>,
     val visitType: String?,
     val claimId: String,
     val patientOutcome: String?,
@@ -33,6 +32,8 @@ data class ReturnedEncounterApi(
     val billables: List<BillableApi>,
     val priceSchedules: List<PriceScheduleApi>,
     val encounterItems: List<EncounterItemApi>,
+    val diagnosisIds: List<Int>,
+    val diagnoses: List<DiagnosisApi>?,
     val referrals: List<ReferralApi>
 ) {
 
@@ -64,7 +65,8 @@ data class ReturnedEncounterApi(
             ),
             member = member.toMember(persistedMember),
             encounterForms = emptyList(),
-            diagnoses = emptyList(), // We don't actually use this field for fetching / persisting.
+            diagnoses = diagnoses.orEmpty().map { it.toDiagnosis() },
+            // diagnoses defaults to empty list so that we don't need to wait for the corresponding backend changes.
             referral = referrals.firstOrNull()?.toReferral()
         )
     }

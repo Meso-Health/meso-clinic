@@ -44,7 +44,7 @@ class MemberRepositoryImpl(
         }
     }
 
-    override fun count(): Single<Int> {
+    override fun count(): Flowable<Int> {
         return memberDao.count()
     }
 
@@ -98,6 +98,14 @@ class MemberRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun byNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return Single.fromCallable {
+            names.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                memberDao.findMemberRelationsByNames(it).blockingGet()
+            }.flatten().map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return memberDao.checkedInMembers().map {
             it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
@@ -106,6 +114,10 @@ class MemberRepositoryImpl(
 
     override fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean> {
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
+    }
+
+    override fun allDistinctNames(): Single<List<String>> {
+        return memberDao.allDistinctNames().subscribeOn(Schedulers.io())
     }
 
     override fun findHouseholdMembers(

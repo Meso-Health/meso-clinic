@@ -107,7 +107,7 @@
     <string name="last_fetched_billables_label" translatable="false">Billables</string>
     <string name="last_fetched_diagnoses_label">Diagnoses</string>
     <string name="last_fetched_members_label">Members</string>
-
+    <string name="beneficiary_count_label" translatable="false">Beneficiary count</string>
     <string name="fetch_photos_title">Downloads (Photos)</string>
     <string name="last_fetched_member_photos_label">Member photos</string>
 

@@ -12,13 +12,17 @@ object DiagnosisModelFactory {
               searchAliases: List<String> = listOf("Mal"),
               createdAt: Instant? = null,
               updatedAt: Instant? = null,
+              active: Boolean = true,
               clock: Clock = Clock.systemUTC()) : DiagnosisModel {
         val now = Instant.now(clock)
-        return DiagnosisModel(id = id,
-                              description = description,
-                              searchAliases = searchAliases,
-                              createdAt = createdAt ?: now,
-                              updatedAt = updatedAt ?: now)
+        return DiagnosisModel(
+            id = id,
+            description = description,
+            searchAliases = searchAliases,
+            createdAt = createdAt ?: now,
+            updatedAt = updatedAt ?: now,
+            active = active
+        )
     }
 
     fun create(diagnosisDao: DiagnosisDao,
@@ -27,13 +31,17 @@ object DiagnosisModelFactory {
                searchAliases: List<String> = listOf("Mal"),
                createdAt: Instant? = null,
                updatedAt: Instant? = null,
+               active: Boolean = true,
                clock: Clock = Clock.systemUTC()) : DiagnosisModel {
-        val model = build(id = id,
-                          description = description,
-                          searchAliases = searchAliases,
-                          createdAt = createdAt,
-                          updatedAt = updatedAt,
-                          clock = clock)
+        val model = build(
+            id = id,
+            description = description,
+            searchAliases = searchAliases,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            clock = clock,
+            active = active
+        )
         diagnosisDao.insert(model)
         return model
     }

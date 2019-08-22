@@ -8,6 +8,7 @@ import io.reactivex.Flowable
 import org.threeten.bp.Instant
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.domain.repositories.DeltaRepository
+import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.SyncStatusUseCase
 import java.util.concurrent.TimeUnit
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class StatusViewModel @Inject constructor (
     private val syncStatusUseCase: SyncStatusUseCase,
     private val fetchStatusUseCase: FetchStatusUseCase,
+    private val memberRepository: MemberRepository,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
@@ -25,6 +27,7 @@ class StatusViewModel @Inject constructor (
         val flowables = listOf(
             fetchStatusUseCase.execute(),
             syncStatusUseCase.execute(),
+            memberRepository.count(),
             Flowable.interval(0, 1, TimeUnit.MINUTES) // allows status screen timestamps to keep updating
         )
 
@@ -34,6 +37,7 @@ class StatusViewModel @Inject constructor (
                     dataFetchedAt = preferencesManager.getDataLastFetched(),
                     photoFetchedAt = preferencesManager.getPhotoLastFetched(),
                     membersFetchedAt = preferencesManager.getMemberLastFetched(),
+                    beneficiaryCount = results[2] as Int,
                     billablesFetchedAt = preferencesManager.getBillablesLastFetched(),
                     diagnosesFetchedAt = preferencesManager.getDiagnosesLastFetched(),
                     returnedClaimsFetchedAt = preferencesManager.getReturnedClaimsLastFetched(),
@@ -84,6 +88,7 @@ class StatusViewModel @Inject constructor (
         val dataFetchedAt: Instant,
         val photoFetchedAt: Instant,
         val membersFetchedAt: Instant,
+        val beneficiaryCount: Int,
         val billablesFetchedAt: Instant,
         val diagnosesFetchedAt: Instant,
         val returnedClaimsFetchedAt: Instant,

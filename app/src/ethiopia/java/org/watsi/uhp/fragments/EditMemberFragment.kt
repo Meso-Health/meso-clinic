@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.visit_reason_spin
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
@@ -232,23 +231,15 @@ class EditMemberFragment : DaggerFragment() {
             )
 
             inbound_referral_date_container.setUp(
-                initialValue = Instant.now(),
+                initialGregorianValue = LocalDate.now(clock),
                 clock = clock,
-                onDateSelected = { date ->
-                    viewModel.onInboundReferralDateChange(
-                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
-                    )
-                }
+                onDateSelected = { date -> viewModel.onInboundReferralDateChange(date) }
             )
 
             follow_up_date_container.setUp(
-                initialValue = Instant.now(),
+                initialGregorianValue = LocalDate.now(clock),
                 clock = clock,
-                onDateSelected = { date ->
-                    viewModel.onFollowUpDateChange(
-                        LocalDateTime.ofInstant(date, clock.zone).toLocalDate()
-                    )
-                }
+                onDateSelected = { date -> viewModel.onFollowUpDateChange(date) }
             )
         }
 

@@ -21,8 +21,8 @@ class DiagnosisRepositoryImpl(
     private val clock: Clock
 ) : DiagnosisRepository {
 
-    override fun all(): Single<List<Diagnosis>> {
-        return diagnosisDao.all().map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
+    override fun allActive(): Single<List<Diagnosis>> {
+        return diagnosisDao.allActive().map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
     }
 
     override fun delete(ids: List<Int>): Completable {
@@ -31,12 +31,8 @@ class DiagnosisRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun count(): Single<Int> {
-        return diagnosisDao.count()
-    }
-
-    override fun findAll(ids: List<Int>): Single<List<Diagnosis>> {
-        return diagnosisDao.findAll(ids).map { it.map { it.toDiagnosis() } }.subscribeOn(Schedulers.io())
+    override fun countActive(): Single<Int> {
+        return diagnosisDao.countActive()
     }
 
     /**
@@ -48,13 +44,21 @@ class DiagnosisRepositoryImpl(
             Completable.fromAction {
                 val serverDiagnoses = api.getDiagnoses(token.getHeaderString()).blockingGet()
                 val serverDiagnosesIds = serverDiagnoses.map { it.id }
-                val clientDiagnosesIds = diagnosisDao.all().blockingGet().map { it.id }
+                val clientDiagnosesIds = diagnosisDao.allActive().blockingGet().map { it.id }
                 val serverRemovedDiagnosesIds = clientDiagnosesIds.minus(serverDiagnosesIds)
 
-                delete(serverRemovedDiagnosesIds).blockingGet()
                 diagnosisDao.upsert(serverDiagnoses.map { diagnosisApi ->
                     DiagnosisModel.fromDiagnosis(diagnosisApi.toDiagnosis(), clock)
                 })
+
+                // Mark server removed diagnoses as inactive on the client side.
+                val diagnosesToMarkAsInactive = diagnosisDao.findAll(serverRemovedDiagnosesIds).blockingGet()
+                diagnosisDao.upsert(
+                    diagnosisModels = diagnosesToMarkAsInactive.map { diagnosisModel ->
+                        diagnosisModel.copy(active = false)
+                    }
+                )
+
                 preferencesManager.updateDiagnosesLastFetched(clock.instant())
             }.subscribeOn(Schedulers.io())
         } ?: Completable.error(Exception("Current token is null while calling DiagnosisRepositoryImpl.fetch"))

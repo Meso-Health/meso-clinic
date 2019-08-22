@@ -11,20 +11,29 @@ data class DiagnosisModel(@PrimaryKey val id: Int = 0,
                           val createdAt: Instant,
                           val updatedAt: Instant,
                           val description: String,
-                          val searchAliases: List<String>) {
+                          val searchAliases: List<String>,
+                          val active: Boolean) {
 
     fun toDiagnosis(): Diagnosis {
-        return Diagnosis(id = id, description = description, searchAliases = searchAliases)
+        return Diagnosis(
+            id = id,
+            description = description,
+            searchAliases = searchAliases,
+            active = active
+        )
     }
 
     companion object {
         fun fromDiagnosis(diagnosis: Diagnosis, clock: Clock): DiagnosisModel {
             val now = clock.instant()
-            return DiagnosisModel(id = diagnosis.id,
-                                  createdAt = now,
-                                  updatedAt = now,
-                                  description = diagnosis.description,
-                                  searchAliases = diagnosis.searchAliases)
+            return DiagnosisModel(
+                id = diagnosis.id,
+                createdAt = now,
+                updatedAt = now,
+                description = diagnosis.description,
+                searchAliases = diagnosis.searchAliases,
+                active = diagnosis.active
+            )
         }
     }
 }

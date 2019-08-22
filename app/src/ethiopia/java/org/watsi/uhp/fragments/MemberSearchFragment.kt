@@ -11,6 +11,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.ethiopia.fragment_member_search.loading_indicator
 import kotlinx.android.synthetic.ethiopia.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
@@ -49,14 +50,22 @@ class MemberSearchFragment : DaggerFragment() {
         )
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberSearchViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
-            it?.let { matchingMembers ->
+            it?.let { viewState ->
                 val sortedMembers =
                     MemberWithIdEventAndThumbnailPhoto.asSortedListWithHeadOfHouseholdsFirst(
-                        matchingMembers
+                        viewState.matchingMembers
                     )
                 searchResults.clear()
                 searchResults.addAll(sortedMembers)
                 member_search_results.adapter.notifyDataSetChanged()
+
+                if (viewState.loading) {
+                    member_search_results.visibility = View.GONE
+                    loading_indicator.visibility = View.VISIBLE
+                } else {
+                    member_search_results.visibility = View.VISIBLE
+                    loading_indicator.visibility = View.GONE
+                }
             }
         })
     }
@@ -68,7 +77,12 @@ class MemberSearchFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        RecyclerViewHelper.setRecyclerView(member_search_results, memberAdapter, activity)
+        RecyclerViewHelper.setRecyclerView(
+            recyclerView = member_search_results,
+            adapter = memberAdapter,
+            context = activity,
+            nestedScrollingEnabled = false
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -88,7 +102,7 @@ class MemberSearchFragment : DaggerFragment() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 // need to include clearFocus() or else back button will only unfocus SearchView
                 searchView.clearFocus()
-                viewModel.updateQuery(query)
+                viewModel.updateQuery(query.toLowerCase())
                 return false
             }
         })
