@@ -31,5 +31,5 @@ data class Billable(val id: UUID,
         const val SUPPLY_COMPOSITION = "unit"
     }
 
-    enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE }
+    enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE, IMAGING, PROCEDURE, BED_DAY, UNSPECIFIED }
 }
