@@ -38,12 +38,6 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_edit_claim"
-        android:orderInCategory="107"
-        android:title="@string/edit"
-        app:showAsAction="never"
-        android:visible="false" />
-    <item
         android:id="@+id/menu_delete_claim"
         android:orderInCategory="108"
         android:title="@string/delete"

@@ -72,6 +72,7 @@
     <string name="search_diagnosis_hint">በሽታ ፈልግ</string>
 
     <!-- ReceiptFragment -->
+    <!--<string name="diagnoses" translatable="false">Diagnoses</string>-->
     <string name="receipt_fragment_label">የክፍያ ጥያቄ ከልስ</string>
     <string name="submit_encounter_button">@string/submit</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
@@ -289,6 +290,7 @@
     <string name="claim_id_submitted">የክፍያ ጥያቄ መ/ቁ %1$s ተልከዋል</string>
     <string name="empty_line_items_warning">የክፍያ ጥያቄ ዝርዝር ሊኖረው ይገባል</string>
     <!--<string name="empty_comment_warning" translatable="false">Claim resubmission must have a comment</string>-->
+    <!--<string name="empty_visit_type" translatable="false">Claim must have a visit type</string>-->
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካክል</string>

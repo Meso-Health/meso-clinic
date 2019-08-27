@@ -58,12 +58,12 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/save_button_wrapper"
+        android:id="@+id/done_button_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/done_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space16"

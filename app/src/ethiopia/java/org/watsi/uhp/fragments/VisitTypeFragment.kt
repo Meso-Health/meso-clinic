@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.date_container
-import kotlinx.android.synthetic.ethiopia.fragment_visit_type.next_button
+import kotlinx.android.synthetic.ethiopia.fragment_visit_type.done_button
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.patient_outcome_spinner
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_container
 import kotlinx.android.synthetic.ethiopia.fragment_visit_type.receiving_facility_spinner
@@ -107,9 +107,9 @@ class VisitTypeFragment : DaggerFragment() {
             number -> viewModel.onNumberChange(number)
         })
 
-        next_button.setOnClickListener {
+        done_button.setOnClickListener {
             viewModel.validateAndUpdateEncounterFlowState(encounterFlowState).subscribe({
-                navigationManager.goTo(DiagnosisFragment.forEncounter(encounterFlowState))
+                navigationManager.popTo(ReceiptFragment.forEncounter(encounterFlowState))
             }, { throwable ->
                 if (throwable is VisitTypeViewModel.ValidationException) {
                     // do nothing for now. No need to say "some fields are invalid"
@@ -125,7 +125,9 @@ class VisitTypeFragment : DaggerFragment() {
             onDateSelected = { dateOfReferral -> viewModel.onUpdateReferralDate(dateOfReferral) }
         )
 
-        referral_serial_number.setText(encounterFlowState.referral?.number)
+        encounterFlowState.referral?.number?.let { number ->
+            referral_serial_number.setText(number)
+        }
     }
 
     fun setUpSpinners() {

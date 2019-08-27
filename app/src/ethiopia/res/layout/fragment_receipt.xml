@@ -137,44 +137,6 @@
             
         </android.support.constraint.ConstraintLayout>
 
-        <org.watsi.uhp.views.ImageTextButton
-            android:id="@+id/edit_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/PrimaryButton"
-            android:drawableStart="@drawable/ic_edit_white_24dp"
-            android:text="@string/edit_claim_button"
-            android:layout_marginRight="@dimen/fragment_padding"
-            android:layout_marginLeft="@dimen/fragment_padding"
-            android:layout_marginTop="@dimen/space24"
-            android:layout_marginBottom="@dimen/space24"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/adjudication_comments_container" />
-
-        <!-- This is necessary because we must conditionally include a margin above the date container
-             if the above containers are visible. Android ignores marginBottom, so we must hide or show
-             this view that exists only to provide a margin
-             -->
-        <View
-            android:id="@+id/date_spacer_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fragment_padding"
-            android:padding="@dimen/fragment_padding"
-            app:layout_constraintTop_toBottomOf="@id/edit_button"
-            android:visibility="gone" />
-
-        <org.watsi.uhp.views.DialogDateEditField
-            android:id="@+id/date_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginTop="@dimen/space16"
-            app:label="@string/date_of_service_label"
-            android:padding="@dimen/fragment_padding"
-            android:background="@drawable/panel_background"
-            app:layout_constraintTop_toBottomOf="@id/date_spacer_container" />
-
         <android.support.constraint.ConstraintLayout
             android:id="@+id/member_info_container"
             android:layout_width="match_parent"
@@ -182,7 +144,7 @@
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
-            app:layout_constraintTop_toBottomOf="@id/date_container">
+            app:layout_constraintTop_toBottomOf="@id/adjudication_comments_container">
 
             <TextView
                 android:id="@+id/member_info_label"
@@ -237,14 +199,25 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <org.watsi.uhp.views.DialogDateEditField
+            android:id="@+id/date_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginTop="@dimen/space16"
+            app:label="@string/date_of_service_label"
+            android:padding="@dimen/fragment_padding"
+            android:background="@drawable/panel_background"
+            app:layout_constraintTop_toBottomOf="@id/member_info_container" />
+
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/visit_type_container"
+            android:id="@+id/visit_information_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
-            app:layout_constraintTop_toBottomOf="@id/member_info_container">
+            app:layout_constraintTop_toBottomOf="@id/date_container">
 
             <TextView
                 android:id="@+id/visit_type_label"
@@ -255,13 +228,153 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/visit_type_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
                 android:id="@+id/visit_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/fontSize16"
                 android:layout_marginTop="@dimen/space12"
-                app:layout_constraintTop_toBottomOf="@id/visit_type_label" />
+                app:layout_constraintTop_toBottomOf="@id/visit_type_edit" />
 
+            <View
+                android:id="@+id/visit_type_line"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/visit_type"/>
+
+            <TextView
+                android:id="@+id/patient_outcome_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray6"
+                android:text="@string/patient_outcome"
+                android:layout_marginTop="@dimen/space12"
+                app:layout_constraintTop_toBottomOf="@id/visit_type_line" />
+
+            <TextView
+                android:id="@+id/patient_outcome_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize16"
+                android:layout_marginTop="@dimen/space12"
+                app:layout_constraintTop_toBottomOf="@id/patient_outcome_label" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/referrals_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space12"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/patient_outcome_value">
+
+                <TextView
+                    android:id="@+id/referral_date_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/referral_date_label"
+                    android:textColor="@color/gray6"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/referral_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_view_vertical_margin"
+                    android:textSize="@dimen/fontSize16"
+                    app:layout_constraintTop_toBottomOf="@+id/referral_date_label" />
+
+                <View
+                    android:id="@+id/referrals_line0"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/referral_date"/>
+
+                <TextView
+                    android:id="@+id/referring_to_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/referred_to_facility"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    android:textColor="@color/gray6"
+                    app:layout_constraintTop_toTopOf="@+id/referrals_line0" />
+
+                <TextView
+                    android:id="@+id/referring_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontSize16"
+                    app:layout_constraintTop_toBottomOf="@+id/referring_to_label" />
+
+                <View
+                    android:id="@+id/referrals_line1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/referring_to"/>
+
+                <TextView
+                    android:id="@+id/referral_reason_label"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Reason for referral"
+                    android:textColor="@color/gray6"
+                    app:layout_constraintTop_toBottomOf="@+id/referrals_line1" />
+
+                <TextView
+                    android:id="@+id/referral_reason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_view_vertical_margin"
+                    android:textSize="@dimen/fontSize16"
+                    app:layout_constraintTop_toBottomOf="@id/referral_reason_label" />
+
+                <View
+                    android:id="@+id/referrals_line2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/referral_reason"/>
+
+                <TextView
+                    android:id="@+id/referral_serial_number_label"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Referral Number"
+                    android:textColor="@color/gray6"
+                    app:layout_constraintTop_toBottomOf="@+id/referrals_line2" />
+
+                <TextView
+                    android:id="@+id/referral_serial_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_view_vertical_margin"
+                    android:textSize="@dimen/fontSize16"
+                    app:layout_constraintTop_toBottomOf="@id/referral_serial_number_label" />
+
+                <View
+                    android:id="@+id/referrals_line3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3"
+                    android:layout_marginTop="@dimen/label_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/referral_serial_number"/>
+            </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
@@ -271,14 +384,32 @@
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:padding="@dimen/fragment_padding"
             android:background="@drawable/panel_background"
-            app:layout_constraintTop_toBottomOf="@id/visit_type_container">
+            app:layout_constraintTop_toBottomOf="@id/visit_information_container">
 
             <TextView
                 android:id="@+id/diagnoses_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/diagnoses"
                 android:textColor="@color/gray6"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/diagnoses_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/diagnoses_none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/none"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@+id/diagnoses_label" />
 
             <TextView
                 android:id="@+id/diagnoses_list"
@@ -292,148 +423,13 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/patient_outcome_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/label_vertical_margin"
-            android:padding="@dimen/fragment_padding"
-            android:background="@drawable/panel_background"
-            app:layout_constraintTop_toBottomOf="@id/diagnoses_container">
-
-            <TextView
-                android:id="@+id/patient_outcome_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/gray6"
-                android:text="@string/patient_outcome"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/patient_outcome_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/fontSize16"
-                android:layout_marginTop="@dimen/space12"
-                app:layout_constraintTop_toBottomOf="@id/patient_outcome_label" />
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/referrals_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/label_vertical_margin"
-            android:padding="@dimen/fragment_padding"
-            android:background="@drawable/panel_background"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/patient_outcome_container">
-
-            <TextView
-                android:id="@+id/referral_date_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/referral_date_label"
-                android:textColor="@color/gray6"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/referral_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:textSize="@dimen/fontSize16"
-                app:layout_constraintTop_toBottomOf="@+id/referral_date_label" />
-
-            <View
-                android:id="@+id/referrals_line0"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray3"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                app:layout_constraintTop_toBottomOf="@id/referral_date"/>
-
-            <TextView
-                android:id="@+id/referring_to_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/referred_to_facility"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                android:textColor="@color/gray6"
-                app:layout_constraintTop_toTopOf="@+id/referrals_line0" />
-
-            <TextView
-                android:id="@+id/referring_to"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/fontSize16"
-                app:layout_constraintTop_toBottomOf="@+id/referring_to_label" />
-
-            <View
-                android:id="@+id/referrals_line1"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray3"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                app:layout_constraintTop_toBottomOf="@id/referring_to"/>
-
-            <TextView
-                android:id="@+id/referral_reason_label"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Reason for referral"
-                android:textColor="@color/gray6"
-                app:layout_constraintTop_toBottomOf="@+id/referrals_line1" />
-
-            <TextView
-                android:id="@+id/referral_reason"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:textSize="@dimen/fontSize16"
-                app:layout_constraintTop_toBottomOf="@id/referral_reason_label" />
-
-            <View
-                android:id="@+id/referrals_line2"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray3"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                app:layout_constraintTop_toBottomOf="@id/referral_reason"/>
-
-            <TextView
-                android:id="@+id/referral_serial_number_label"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Referral Number"
-                android:textColor="@color/gray6"
-                app:layout_constraintTop_toBottomOf="@+id/referrals_line2" />
-
-            <TextView
-                android:id="@+id/referral_serial_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_view_vertical_margin"
-                android:textSize="@dimen/fontSize16"
-                app:layout_constraintTop_toBottomOf="@id/referral_serial_number_label" />
-
-            <View
-                android:id="@+id/referrals_line3"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray3"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                app:layout_constraintTop_toBottomOf="@id/referral_serial_number"/>
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
             android:id="@+id/encounter_items_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_vertical_margin"
             android:background="@drawable/panel_background"
             android:padding="@dimen/fragment_padding"
-            app:layout_constraintTop_toBottomOf="@+id/referrals_container"
+            app:layout_constraintTop_toBottomOf="@+id/diagnoses_container"
             app:layout_constraintLeft_toLeftOf="parent">
 
             <TextView
@@ -442,7 +438,16 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/gray6"
                 android:text="@string/service"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/encounter_items_container" />
+
+            <TextView
+                android:id="@+id/service_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toBottomOf="@id/encounter_items_container"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/service_layout"
@@ -486,6 +491,16 @@
                 android:text="@string/lab"
                 app:layout_constraintTop_toBottomOf="@id/service_layout" />
 
+            <TextView
+                android:id="@+id/lab_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toBottomOf="@id/service_layout"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/lab_layout"
                 android:layout_width="match_parent"
@@ -527,6 +542,16 @@
                 android:textColor="@color/gray6"
                 android:text="@string/drug_and_supply"
                 app:layout_constraintTop_toBottomOf="@id/lab_layout" />
+
+            <TextView
+                android:id="@+id/drug_and_supply_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/label_vertical_margin"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toBottomOf="@id/lab_layout"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/drug_and_supply_layout"
@@ -601,6 +626,15 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/comment_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/edit_clickable"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
                 android:id="@+id/comment_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -609,17 +643,6 @@
                 android:text="@string/none"
                 app:layout_constraintTop_toBottomOf="@id/comment_label"
                 app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/comment_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="@dimen/label_vertical_margin"
-                android:text="@string/add_clickable"
-                app:layout_constraintTop_toBottomOf="@id/comment_label"
-                app:layout_constraintEnd_toEndOf="parent" />
-
         </android.support.constraint.ConstraintLayout>
 
         <org.watsi.uhp.views.ImageTextButton

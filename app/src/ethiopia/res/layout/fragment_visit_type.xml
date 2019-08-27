@@ -106,8 +106,8 @@
         </android.support.constraint.ConstraintLayout>
 
         <Button
-            android:id="@+id/next_button"
-            android:text="@string/continue_encounter_button"
+            android:id="@+id/done_button"
+            android:text="@string/done_encounter_button"
             android:layout_marginTop="@dimen/space16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

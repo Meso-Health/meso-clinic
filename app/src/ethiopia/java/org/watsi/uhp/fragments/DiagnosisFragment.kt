@@ -16,9 +16,8 @@ import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnoses_count
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_search
-import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
+import kotlinx.android.synthetic.main.fragment_diagnosis.done_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
-import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -116,10 +115,9 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             swipeHandler = swipeHandler
         )
 
-        save_button.setOnClickListener {
+        done_button.setOnClickListener {
             viewModel.updateEncounterWithDiagnoses(encounterFlowState)
-            navigationManager.goTo(SpinnerLineItemFragment.forEncounter(
-                    Billable.Type.SERVICE, encounterFlowState))
+            navigationManager.popTo(ReceiptFragment.forEncounter(encounterFlowState))
         }
     }
 

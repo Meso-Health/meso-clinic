@@ -155,6 +155,7 @@
         <item quantity="one">%d day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
+    <string name="diagnoses" translatable="false">Diagnoses</string>
     <string name="date_of_service_label">Date of Service</string>
     <string name="comment_label">Comment</string>
     <string name="add_clickable"><u>Add</u></string>
@@ -165,6 +166,7 @@
     <string name="claim_id_submitted">Claim ID %1$s was submitted</string>
     <string name="empty_line_items_warning">Claim must contain line items</string>
     <string name="empty_comment_warning" translatable="false">Claim resubmission must have a comment</string>
+    <string name="empty_visit_type" translatable="false">Claim must have a visit type</string>
 
     <!-- EncounterFragment -->
     <string name="drug_and_supply">Drug and Supplies</string>

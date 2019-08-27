@@ -276,7 +276,7 @@ class EditMemberFragment : DaggerFragment() {
                         occurredAt = Instant.now(clock),
                         patientOutcome = null
                     )
-                    navigationManager.goTo(VisitTypeFragment.forEncounter(
+                    navigationManager.goTo(ReceiptFragment.forEncounter(
                         EncounterFlowState(
                             encounter = encounter,
                             encounterItemRelations = emptyList(),

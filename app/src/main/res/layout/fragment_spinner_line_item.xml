@@ -59,13 +59,13 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/done_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space16"
             style="@style/PrimaryButton"
             app:layout_behavior="org.watsi.uhp.behaviors.MovableButtonBehavior"
-            android:text="@string/continue_encounter_button"
+            android:text="@string/done_encounter_button"
             android:layout_gravity="bottom" />
     </android.support.design.widget.CoordinatorLayout>
 </android.support.constraint.ConstraintLayout>

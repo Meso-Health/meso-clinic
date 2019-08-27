@@ -17,10 +17,10 @@ import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_drug_and_supply.container
+import kotlinx.android.synthetic.main.fragment_drug_and_supply.done_button
 import kotlinx.android.synthetic.main.fragment_drug_and_supply.drug_search
 import kotlinx.android.synthetic.main.fragment_drug_and_supply.line_item_count
 import kotlinx.android.synthetic.main.fragment_drug_and_supply.line_items_list
-import kotlinx.android.synthetic.main.fragment_drug_and_supply.save_button
 import kotlinx.android.synthetic.main.fragment_drug_and_supply.select_billable_box
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
@@ -117,7 +117,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         showSaveButtonRunnable = Runnable({
-            save_button?.let { it.visibility = View.VISIBLE }
+            done_button?.let { it.visibility = View.VISIBLE }
         })
 
         container.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
@@ -134,7 +134,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int? ->
                     if (newQuantity == null || newQuantity == 0) {
-                        SnackbarHelper.show(save_button, context, R.string.error_blank_or_zero_quantity)
+                        SnackbarHelper.show(done_button, context, R.string.error_blank_or_zero_quantity)
                     } else {
                         viewModel.setItemQuantity(encounterItemId, newQuantity)
                     }
@@ -187,7 +187,7 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         })
 
 
-        save_button.setOnClickListener {
+        done_button.setOnClickListener {
             viewModel.getEncounterFlowState()?.let { encounterFlowState ->
                 navigationManager.popTo(ReceiptFragment.forEncounter(encounterFlowState))
             } ?: run {
@@ -220,8 +220,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         // so it doesn't run and show the button. This handles race conditions like the case
         // where a user deselects an EditText (triggering the "show button" delayed task)
         // and quickly reselects another EditText (before the delayed task has run).
-        save_button.removeCallbacks(showSaveButtonRunnable)
-        save_button.visibility = View.GONE
+        done_button.removeCallbacks(showSaveButtonRunnable)
+        done_button.visibility = View.GONE
     }
 
     /**
@@ -235,9 +235,9 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         select_billable_box.visibility = View.VISIBLE
 
-        if (save_button.visibility != View.VISIBLE) {
+        if (done_button.visibility != View.VISIBLE) {
             // Delay showing the button to prevent jumpy visual behavior.
-            save_button.postDelayed(showSaveButtonRunnable, SHOW_BUTTON_DELAY_TIME_IN_MS)
+            done_button.postDelayed(showSaveButtonRunnable, SHOW_BUTTON_DELAY_TIME_IN_MS)
         }
     }
 

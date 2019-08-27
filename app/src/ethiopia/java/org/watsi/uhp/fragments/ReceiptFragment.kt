@@ -12,25 +12,24 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_comments_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.claim_id
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.claim_id_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_container
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.comment_text
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_container
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.date_spacer_container
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_label
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_list
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.diagnoses_none
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.drug_and_supply_none
-import kotlinx.android.synthetic.ethiopia.fragment_receipt.edit_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.finish_button
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.gender_and_age
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
@@ -44,11 +43,13 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_reason
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referral_serial_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referrals_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.referring_to
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_edit
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_items_list
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.service_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.total_price
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.visit_type_edit
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
@@ -64,9 +65,6 @@ import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
 import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.comment_age
-import org.watsi.uhp.R.plurals.diagnosis_count
-import org.watsi.uhp.R.string.add_clickable
-import org.watsi.uhp.R.string.edit_clickable
 import org.watsi.uhp.R.string.none
 import org.watsi.uhp.R.string.today
 import org.watsi.uhp.activities.ClinicActivity
@@ -83,7 +81,7 @@ import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
 import javax.inject.Inject
 
-class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
+class ReceiptFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -99,7 +97,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     lateinit var drugAndSupplyReceiptItemAdapter: ReceiptListItemAdapter
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var encounterAction: EncounterAction
-
 
     private var snackbarMessageToShow: String? = null
 
@@ -154,10 +151,8 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         ).observe(this, Observer { it?.let { viewState ->
             if (viewState.comment == null) {
                 comment_text.setText(none)
-                comment_edit.setText(add_clickable)
             } else {
                 comment_text.text = viewState.comment
-                comment_edit.setText(edit_clickable)
             }
         } })
     }
@@ -182,26 +177,23 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         membership_number.text = encounterFlowState.member.membershipNumber
         gender_and_age.text = genderAndAgeText
         medical_record_number.text = encounterFlowState.member.medicalRecordNumber
-        visit_type.text = encounterFlowState.encounter.visitType
-        diagnoses_label.text = resources.getQuantityString(
-            diagnosis_count, encounterFlowState.diagnoses.size, encounterFlowState.diagnoses.size)
+        visit_type.text = encounterFlowState.encounter.visitType ?: getString(R.string.none)
         total_price.text = getString(R.string.price, CurrencyUtil.formatMoneyWithCurrency(context, encounterFlowState.price()))
-
-        if (encounterFlowState.diagnoses.isNotEmpty()) {
-            diagnoses_list.visibility = View.VISIBLE
-            diagnoses_list.text = encounterFlowState.diagnoses.joinToString(", ") { it.description }
-        }
 
         encounterFlowState.referral?.let { referral ->
             referrals_container.visibility = View.VISIBLE
             referral_date.text = EthiopianDateHelper.formatAsEthiopianDate(LocalDate.now(clock))
             referring_to.text = referral.receivingFacility
-            referral_serial_number.text = referral.number
+            referral_serial_number.text = referral.number ?: getString(R.string.none)
             referral_reason.text = EnumHelper.referralReasonToDisplayedString(referral.reason, context, logger)
         }
 
-        encounterFlowState.encounter.patientOutcome?.let { patientOutcome ->
-            patient_outcome_value.text = EnumHelper.patientOutcomeToDisplayedString(patientOutcome, context, logger)
+        encounterFlowState.encounter.patientOutcome.let { patientOutcome ->
+            if (patientOutcome != null) {
+                patient_outcome_value.text = EnumHelper.patientOutcomeToDisplayedString(patientOutcome, context, logger)
+            } else {
+                patient_outcome_value.text = getString(R.string.none)
+            }
         }
 
         if (serviceReceiptItemAdapter.itemCount == 0) {
@@ -228,8 +220,47 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             drug_and_supply_items_list.visibility = View.VISIBLE
         }
 
+        if (encounterFlowState.diagnoses.isEmpty()) {
+            diagnoses_none.visibility = View.VISIBLE
+            diagnoses_list.visibility = View.GONE
+        } else {
+            diagnoses_none.visibility = View.GONE
+            diagnoses_list.visibility = View.VISIBLE
+            diagnoses_list.text = encounterFlowState.diagnoses.joinToString(", ") { it.description }
+        }
+
         comment_container.setOnClickListener {
             launchAddCommentDialog()
+        }
+
+        visit_type_edit.setOnClickListener {
+            navigationManager.goTo(
+                VisitTypeFragment.forEncounter(encounterFlowState)
+            )
+        }
+
+        diagnoses_edit.setOnClickListener {
+            navigationManager.goTo(
+                DiagnosisFragment.forEncounter(encounterFlowState)
+            )
+        }
+
+        service_edit.setOnClickListener {
+            navigationManager.goTo(
+                SpinnerLineItemFragment.forEncounter(Billable.Type.SERVICE, encounterFlowState)
+            )
+        }
+
+        lab_edit.setOnClickListener {
+            navigationManager.goTo(
+                SpinnerLineItemFragment.forEncounter(Billable.Type.LAB, encounterFlowState)
+            )
+        }
+
+        drug_and_supply_edit.setOnClickListener {
+            navigationManager.goTo(
+                DrugAndSupplyFragment.forEncounter(encounterFlowState)
+            )
         }
 
         val occurredAtGregorianDate = LocalDateTime.ofInstant(
@@ -241,7 +272,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             initialGregorianValue = occurredAtGregorianDate,
             clock = clock,
             onDateSelected = { dateOfService ->
-                viewModel.updateBackdatedOccurredAt(dateOfService.atStartOfDay(clock.zone).toInstant())
+                viewModel.updateBackdatedOccurredAt(dateOfService.atStartOfDay(clock.zone).toInstant(), encounterFlowState)
             }
         )
 
@@ -274,12 +305,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     private fun displayPreparedClaimInfo() {
         claim_id_container.visibility = View.VISIBLE
         claim_id.text = encounterFlowState.encounter.shortenedClaimId()
-
-        edit_button.visibility = View.VISIBLE
-        edit_button.setOnClickListener {
-            launchEditFlow()
-        }
-        date_spacer_container.visibility = View.VISIBLE
     }
 
     private fun displayReturnedClaimInfo() {
@@ -318,34 +343,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         } else {
             getString(none)
         }
-
-        edit_button.visibility = View.VISIBLE
-        edit_button.setOnClickListener {
-            launchEditFlow()
-        }
-        date_spacer_container.visibility = View.VISIBLE
-    }
-
-    private fun launchEditFlow() {
-        val occurredAt = viewModel.occurredAt() ?: encounterFlowState.encounter.occurredAt
-        val backdatedOccurredAt = viewModel.backdatedOccurredAt() ?: encounterFlowState.encounter.backdatedOccurredAt
-        val comment = viewModel.comment()
-
-        if (encounterAction == EncounterAction.SUBMIT) {
-            encounterFlowState.encounter = encounterFlowState.encounter.copy(
-                occurredAt = occurredAt,
-                backdatedOccurredAt = backdatedOccurredAt,
-                providerComment = comment
-            )
-        } else if (encounterAction == EncounterAction.RESUBMIT) {
-            encounterFlowState.encounter = encounterFlowState.encounter.copy(
-                occurredAt = occurredAt,
-                backdatedOccurredAt = backdatedOccurredAt
-            )
-            encounterFlowState.newProviderComment = comment
-        }
-
-        navigationManager.goTo(VisitTypeFragment.forEncounter(encounterFlowState))
     }
 
     private fun launchAddCommentDialog() {
@@ -359,7 +356,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             .setView(commentDialogView)
             .setNegativeButton(R.string.dialog_cancel, null)
             .setPositiveButton(R.string.dialog_save) { _, _ ->
-                viewModel.updateComment(editText.text.toString())
+                viewModel.updateComment(editText.text.toString(), encounterFlowState)
             }.create().show()
     }
 
@@ -372,6 +369,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         if (encounterAction == EncounterAction.RESUBMIT && encounterFlowState.newProviderComment.isNullOrBlank()) {
             SnackbarHelper.showError(finish_button, context, getString(R.string.empty_comment_warning))
+            return
+        }
+
+        if (encounterFlowState.encounter.visitType == null) {
+            SnackbarHelper.showError(finish_button, context, getString(R.string.empty_visit_type))
             return
         }
 
@@ -448,25 +450,12 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
     }
 
-    override fun onBack(): Single<Boolean> {
-        return Single.fromCallable {
-            viewModel.updateEncounterWithDateAndComment(encounterFlowState)
-            true
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         setAndObserveViewModel()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        if (encounterAction == EncounterAction.SUBMIT || encounterAction == EncounterAction.RESUBMIT) {
-            menu?.let {
-                it.findItem(R.id.menu_edit_claim).isVisible = true
-            }
-        }
-
         if (encounterAction == EncounterAction.SUBMIT) {
             menu?.let {
                 it.findItem(R.id.menu_delete_claim).isVisible = true
@@ -476,10 +465,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.menu_edit_claim -> {
-                launchEditFlow()
-                true
-            }
             R.id.menu_delete_claim -> {
                 AlertDialog.Builder(activity)
                     .setTitle(getString(R.string.delete_claim_confirmation))

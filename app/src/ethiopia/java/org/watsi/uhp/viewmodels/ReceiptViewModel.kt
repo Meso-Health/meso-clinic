@@ -32,22 +32,19 @@ class ReceiptViewModel @Inject constructor(
         return observable
     }
 
-    fun updateBackdatedOccurredAt(instant: Instant) {
+    fun updateBackdatedOccurredAt(instant: Instant, encounterFlowState: EncounterFlowState) {
         observable.value = observable.value?.copy(occurredAt = instant, backdatedOccurredAt = true)
-    }
-
-    fun updateEncounterWithDateAndComment(encounterFlowState: EncounterFlowState) {
         observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt
             )
-            encounterFlowState.newProviderComment = viewState.comment
         }
     }
 
-    fun updateComment(comment: String) {
+    fun updateComment(comment: String, encounterFlowState: EncounterFlowState) {
         observable.value = observable.value?.copy(comment = comment)
+        encounterFlowState.newProviderComment = comment
     }
 
     fun finishEncounter(
@@ -101,6 +98,10 @@ class ReceiptViewModel @Inject constructor(
         return observable.value?.comment
     }
 
+    // This view state needs to keep track of occurredAt and comment because those fields are
+    // currently in use to show the comments section in the top of the claim. If we modify that directly
+    // on the encounterFlowState, we end up modifying when / which comments are shown at the top
+    // of the receipt view.
     data class ViewState(val occurredAt: Instant,
                          val backdatedOccurredAt: Boolean,
                          val comment: String? = null)

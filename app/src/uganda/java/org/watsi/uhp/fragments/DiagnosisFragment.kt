@@ -16,7 +16,7 @@ import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnoses_count
 import kotlinx.android.synthetic.main.fragment_diagnosis.diagnosis_search
-import kotlinx.android.synthetic.main.fragment_diagnosis.save_button
+import kotlinx.android.synthetic.main.fragment_diagnosis.done_button
 import kotlinx.android.synthetic.main.fragment_diagnosis.selected_diagnosis_list
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.uhp.R
@@ -106,7 +106,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         RecyclerViewHelper.setRecyclerView(selected_diagnosis_list, diagnosisAdapter, context)
 
-        save_button.setOnClickListener {
+        done_button.setOnClickListener {
             viewModel.updateEncounterWithDiagnoses(encounterFlowState)
             navigationManager.goTo(EncounterFormFragment.forEncounter(encounterFlowState))
         }
