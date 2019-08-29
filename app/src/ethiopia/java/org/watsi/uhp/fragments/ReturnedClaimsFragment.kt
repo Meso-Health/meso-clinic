@@ -144,6 +144,6 @@ class ReturnedClaimsFragment : DaggerFragment() {
 
         // this is required for when the user back navigates into this screen
         // the observable does not trigger, so we need to set the adapter from the viewModel
-        viewModel.getClaims()?.let { updateClaims(it) }
+        viewModel.getClaims()?.let { updateClaims(it.first) }
     }
 }

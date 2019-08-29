@@ -3,6 +3,9 @@ package org.watsi.uhp.views
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import kotlinx.android.synthetic.ethiopia.item_claim_list.view.checkbox
 import kotlinx.android.synthetic.ethiopia.item_claim_list.view.claim_cbhi
 import kotlinx.android.synthetic.ethiopia.item_claim_list.view.claim_id
 import kotlinx.android.synthetic.ethiopia.item_claim_list.view.claim_price
@@ -17,7 +20,9 @@ class ClaimListItem @JvmOverloads constructor(
 
     fun setClaim(
         encounterRelation: EncounterWithExtras,
-        onClaimSelected: (encounterRelation: EncounterWithExtras) -> Unit
+        onClaimSelected: (encounterRelation: EncounterWithExtras) -> Unit,
+        isSelected: Boolean,
+        onCheck: ((encounterRelation: EncounterWithExtras) -> Unit)?
     ) {
         medical_record_number.text = encounterRelation.member.medicalRecordNumber
         member_name.text = encounterRelation.member.name
@@ -27,6 +32,21 @@ class ClaimListItem @JvmOverloads constructor(
 
         setOnClickListener {
             onClaimSelected(encounterRelation)
+        }
+
+        onCheck?.let {
+            checkbox.visibility = View.VISIBLE
+            checkbox.isChecked = isSelected
+            checkbox.setOnTouchListener { _, event ->
+                // intercept touch event so it does not trigger the normal check action
+                // because we want to manage the checked state via the ViewState
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    onCheck(encounterRelation)
+                    true
+                } else {
+                    false
+                }
+            }
         }
     }
 }

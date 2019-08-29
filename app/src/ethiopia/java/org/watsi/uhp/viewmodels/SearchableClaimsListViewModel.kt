@@ -26,7 +26,8 @@ class SearchableClaimsListViewModel @Inject constructor(
         loadClaimsUseCase.execute().subscribe({ claims ->
             observable.postValue(ViewState(
                 claims = claims,
-                visibleClaims = claims
+                visibleClaims = claims,
+                selectedClaims = emptyList()
             ))
         }, {
             logger.error(it)
@@ -51,12 +52,37 @@ class SearchableClaimsListViewModel @Inject constructor(
         }
     }
 
-    fun getClaims(): List<EncounterWithExtras>? = observable.value?.claims
+    fun getClaims(): Pair<List<EncounterWithExtras>, List<EncounterWithExtras>>? {
+        return observable.value?.let {
+            Pair(it.claims, it.selectedClaims)
+        }
+    }
 
-    fun submitAll(): Completable {
+    fun updateSelectedClaims(encounter: EncounterWithExtras) {
+        observable.value?.let { viewState ->
+            val currentSelectedClaims = viewState.selectedClaims
+            if (currentSelectedClaims.contains(encounter)) {
+                observable.value = viewState.copy(selectedClaims = currentSelectedClaims.minus(encounter))
+            } else {
+                observable.value = viewState.copy(selectedClaims = currentSelectedClaims.plus(encounter))
+            }
+        }
+    }
+
+    fun toggleSelectAll(selected: Boolean) {
+        observable.value?.let { viewState ->
+            if (selected) {
+                observable.value = viewState.copy(selectedClaims = viewState.claims)
+            } else {
+                observable.value = viewState.copy(selectedClaims = emptyList())
+            }
+        }
+    }
+
+    fun submitSelected(): Completable {
         return observable.value?.let { viewState ->
             Completable.fromCallable {
-                viewState.claims.map { encounterWithExtras ->
+                viewState.selectedClaims.map { encounterWithExtras ->
                     submitClaimUseCase.execute(
                         encounterWithExtras,
                         clock
@@ -69,6 +95,7 @@ class SearchableClaimsListViewModel @Inject constructor(
 
     data class ViewState(
         val claims: List<EncounterWithExtras> = emptyList(),
-        val visibleClaims: List<EncounterWithExtras> = emptyList()
+        val visibleClaims: List<EncounterWithExtras> = emptyList(),
+        val selectedClaims: List<EncounterWithExtras> = emptyList()
     )
 }

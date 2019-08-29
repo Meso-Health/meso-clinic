@@ -10,11 +10,13 @@ import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.claims_list
-import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_all_button
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.select_all_checkbox
+import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_button
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
 import org.watsi.device.managers.Logger
@@ -67,6 +69,9 @@ class PendingClaimsFragment : DaggerFragment() {
                 navigationManager.goTo(ReceiptFragment.forEncounter(
                     EncounterFlowState.fromEncounterWithExtras(encounterRelation)
                 ))
+            },
+            onCheck = { encounterRelation ->
+                viewModel.updateSelectedClaims(encounterRelation)
             }
         )
     }
@@ -75,34 +80,42 @@ class PendingClaimsFragment : DaggerFragment() {
         observable = viewModel.getObservable(loadPendingClaimsUseCase)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                updateClaims(viewState.visibleClaims)
+                updateClaims(viewState.visibleClaims, viewState.selectedClaims)
 
                 if (viewState.visibleClaims.count() > 0 && viewState.visibleClaims.count() == viewState.claims.count()) {
-                    submit_all_button.visibility = View.VISIBLE
+                    submit_button.visibility = View.VISIBLE
                 } else {
-                    submit_all_button.visibility = View.GONE
+                    submit_button.visibility = View.GONE
                 }
+
+                submit_button.isEnabled = viewState.selectedClaims.count() > 0
+                // require there to be claims to avoid flashing on initial load
+                select_all_checkbox.isChecked = viewState.claims.count() > 0 &&
+                        viewState.claims == viewState.selectedClaims
             }
         })
     }
 
-    private fun updateClaims(pendingClaims: List<EncounterWithExtras>) {
-        total_claims_label.text = if (pendingClaims.isEmpty()) {
+    private fun updateClaims(
+        visibleClaims: List<EncounterWithExtras>,
+        selectedClaims: List<EncounterWithExtras>
+    ) {
+        total_claims_label.text = if (visibleClaims.isEmpty()) {
             getString(R.string.pending_claims_count_empty)
         } else {
             resources.getQuantityString(
-                R.plurals.pending_claims_count, pendingClaims.size, pendingClaims.size
+                R.plurals.pending_claims_count, visibleClaims.size, visibleClaims.size
             )
         }
 
-        total_price_label.text = CurrencyUtil.formatMoneyWithCurrency(context, pendingClaims.sumBy { it.price() })
+        total_price_label.text = CurrencyUtil.formatMoneyWithCurrency(context, visibleClaims.sumBy { it.price() })
 
-        claimsAdapter.setClaims(pendingClaims)
+        claimsAdapter.setClaims(visibleClaims, selectedClaims)
     }
 
     private fun submitAll() {
-        viewModel.submitAll().subscribe({
-            SnackbarHelper.show(claims_list, context, getString(R.string.all_encounter_submitted))
+        viewModel.submitSelected().subscribe({
+            SnackbarHelper.show(claims_list, context, getString(R.string.claims_submitted))
         }, {
             logger.error(it)
         })
@@ -122,14 +135,20 @@ class PendingClaimsFragment : DaggerFragment() {
 
         RecyclerViewHelper.setRecyclerView(claims_list, claimsAdapter, context, false)
 
-        submit_all_button.setOnClickListener {
+        select_all_checkbox.visibility = View.VISIBLE
+        // intercept touch event so we can manage checked state via ViewState
+        select_all_checkbox.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                viewModel.toggleSelectAll(!select_all_checkbox.isChecked)
+                true
+            } else {
+                false
+            }
+        }
+
+        submit_button.setOnClickListener {
             AlertDialog.Builder(activity)
-                    /* TODO: We did not have the necessary translations to support this. When they come in, put this code back.
-                    .setTitle(resources.getQuantityString(
-                        R.plurals.submit_all_form_alert, claimsAdapter.itemCount, claimsAdapter.itemCount)
-                    )
-                    */
-                    .setTitle(R.string.temp_submit_all_claims)
+                    .setTitle(R.string.temp_submit_selected_claims)
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.submit_encounter_button) { _, _ ->
                         submitAll()
@@ -175,6 +194,6 @@ class PendingClaimsFragment : DaggerFragment() {
 
         // this is required for when the user back navigates into this screen
         // the observable does not trigger, so we need to set the adapter from the viewModel
-        viewModel.getClaims()?.let { updateClaims(it) }
+        viewModel.getClaims()?.let { updateClaims(it.first, it.second) }
     }
 }

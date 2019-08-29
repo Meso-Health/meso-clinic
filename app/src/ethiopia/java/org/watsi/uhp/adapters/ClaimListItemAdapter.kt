@@ -10,8 +10,11 @@ import org.watsi.uhp.views.ClaimListItem
 
 class ClaimListItemAdapter(
     private val claims: MutableList<EncounterWithExtras> = mutableListOf(),
-    private val onClaimSelected: (encounterRelation: EncounterWithExtras) -> Unit
+    private val onClaimSelected: (encounterRelation: EncounterWithExtras) -> Unit,
+    private val onCheck: ((encounterRelation: EncounterWithExtras) -> Unit)? = null
 ) : RecyclerView.Adapter<ClaimListItemAdapter.ViewHolder>() {
+
+    private val selectedClaims: MutableList<EncounterWithExtras> = mutableListOf()
 
     override fun getItemCount(): Int = claims.size
 
@@ -25,13 +28,26 @@ class ClaimListItemAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val claim = claims[position]
         val view = holder.itemView as ClaimListItem
-        view.setClaim(claim, onClaimSelected)
+        val isSelected = selectedClaims.contains(claim)
+        view.setClaim(claim, onClaimSelected, isSelected, onCheck)
     }
 
-    fun setClaims(updatedClaims: List<EncounterWithExtras>) {
-        if (updatedClaims != claims) {
+    fun setClaims(
+        visibleClaims: List<EncounterWithExtras>,
+        updatedSelectedClaims: List<EncounterWithExtras> = selectedClaims
+    ) {
+        var shouldUpdate = false
+        if (selectedClaims != updatedSelectedClaims) {
+            selectedClaims.clear()
+            selectedClaims.addAll(updatedSelectedClaims)
+            shouldUpdate = true
+        }
+        if (visibleClaims != claims) {
             claims.clear()
-            claims.addAll(updatedClaims)
+            claims.addAll(visibleClaims)
+            shouldUpdate = true
+        }
+        if (shouldUpdate) {
             notifyDataSetChanged()
         }
     }

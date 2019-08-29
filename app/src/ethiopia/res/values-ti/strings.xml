@@ -316,9 +316,9 @@
         <item quantity="one">%d ገና ዘይተርኣየ ናይ ክፍሊት ሕቶ</item>
         <item quantity="other">%d ገና ዘይተርኣዩ ናይ ክፍሊት ሕቶታት</item>
     </plurals>
-    <string name="submit_all_button">ኩሎም ስደዶም</string>
-    <string name="temp_submit_all_claims">ኩሎም ናይ ክፍሊት ሕቶታት ይሰደዱ</string>
-    <string name="all_encounter_submitted">ኩሎም ተላኢኮም</string>
+    <string name="submit_selected_button">ኩሎም ስደዶም</string>
+    <string name="temp_submit_selected_claims">ኩሎም ናይ ክፍሊት ሕቶታት ይሰደዱ</string>
+    <string name="claims_submitted">ኩሎም ተላኢኮም</string>
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>

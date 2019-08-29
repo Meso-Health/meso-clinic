@@ -313,9 +313,9 @@
         <item quantity="one">%d ገና ያልታዩ የክፍያ ጥያቄዎች</item>
         <item quantity="other">%d ገና ያልታዩ የክፍያ ጥያቄዎች</item>
     </plurals>
-    <string name="submit_all_button">ሁሉንም ላካቸው</string>
-    <string name="temp_submit_all_claims">ሁሉንም የክፍያ ጥያቄዎች ይላኩ</string>
-    <string name="all_encounter_submitted">ሁሉም ተልከዋል</string>
+    <string name="submit_selected_button">ሁሉንም ላካቸው</string>
+    <string name="temp_submit_selected_claims">ሁሉንም የክፍያ ጥያቄዎች ይላኩ</string>
+    <string name="claims_submitted">ሁሉም ተልከዋል</string>
 
     <!-- ReturnedClaimsFragment -->
     <string name="returned_claims_fragment_label">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
