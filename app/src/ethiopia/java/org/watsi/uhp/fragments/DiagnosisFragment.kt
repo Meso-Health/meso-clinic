@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
@@ -25,6 +26,7 @@ import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.SwipeHandler
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
@@ -74,6 +76,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         diagnosisAdapter = DiagnosisAdapter(
             onRemoveDiagnosis = { diagnosis: Diagnosis ->
                 viewModel.removeDiagnosis(diagnosis)
+
             }
         )
     }
@@ -106,7 +109,19 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
         })
 
-        swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> diagnosisAdapter.removeAt(position) })
+        swipeHandler = SwipeHandler(context, onSwipe = { position: Int ->
+            AlertDialog.Builder(activity)
+                .setTitle(getString(R.string.delete_items_confirmation))
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    diagnosisAdapter.removeAt(position)
+                }
+                .setNegativeButton(R.string.cancel) { _, _ ->
+                    // This call is necessary to force a redraw of the adapter. If its not included
+                    // the line item will stay red with the trash icon as it was at the end of the swipe
+                    diagnosisAdapter.notifyDataSetChanged()
+                }
+                .create().show()
+        })
 
         RecyclerViewHelper.setRecyclerView(
             recyclerView = selected_diagnosis_list,

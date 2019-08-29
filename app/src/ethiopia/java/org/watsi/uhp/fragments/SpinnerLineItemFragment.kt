@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.app.AlertDialog
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -163,11 +164,24 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                 },
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
+
                 },
                 onPriceTap = if (billableType.equals(Billable.Type.SERVICE)) null else onPriceTap
         )
 
-        swipeHandler = SwipeHandler(context, onSwipe = { position: Int -> encounterItemAdapter.removeAt(position) })
+        swipeHandler = SwipeHandler(context, onSwipe = { position: Int ->
+            AlertDialog.Builder(activity)
+                .setTitle(getString(R.string.delete_items_confirmation))
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    encounterItemAdapter.removeAt(position)
+                }
+                .setNegativeButton(R.string.cancel) { _, _ ->
+                    // This call is necessary to force a redraw of the adapter. If its not included
+                    // the line item will stay red with the trash icon as it was at the end of the swipe
+                    encounterItemAdapter.notifyDataSetChanged()
+                }
+                .create().show()
+        })
 
         RecyclerViewHelper.setRecyclerView(
             recyclerView = line_items_list,

@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.adjudication_comments_container
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.branch_comment_text
@@ -81,7 +82,7 @@ import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.views.CustomFocusEditText
 import javax.inject.Inject
 
-class ReceiptFragment : DaggerFragment() {
+class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -479,6 +480,25 @@ class ReceiptFragment : DaggerFragment() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onBack(): Single<Boolean> {
+        return Single.create<Boolean> { single ->
+            val confirmationMessage = when(encounterAction) {
+                EncounterAction.PREPARE -> getString(R.string.delete_claim_confirmation)
+                EncounterAction.SUBMIT -> getString(R.string.delete_changes_confirmation)
+                EncounterAction.RESUBMIT -> getString(R.string.delete_changes_confirmation)
+            }
+
+            AlertDialog.Builder(activity)
+                .setTitle(confirmationMessage)
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    single.onSuccess(true)
+                }
+                .setNegativeButton(R.string.cancel) { _, _ -> single.onSuccess(false) }
+                .setOnDismissListener { single.onSuccess(false) }
+                .show()
         }
     }
 }

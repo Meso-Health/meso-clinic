@@ -140,6 +140,8 @@
     <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
     <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
     <!--<string name="menu_export_db" translatable="false">Export database</string>-->
+    <!--<string name="delete_changes_confirmation" translatable="false">Delete these changes?</string>-->
+    <!--<string name="delete_items_confirmation" translatable="false">Delete this item?</string>-->
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
