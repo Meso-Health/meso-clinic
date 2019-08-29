@@ -137,6 +137,7 @@
     <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
     <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
     <!--<string name="menu_export_db" translatable="false">Export database</string>-->
+    <!--<string name="menu_export_unsynced_claims" translatable="false">Export unsynced claims</string>-->
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">የገቡ ታካሚዎች</string>

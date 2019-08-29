@@ -61,6 +61,16 @@ class EncounterRepositoryImpl(
         }
     }
 
+    override fun findAllWithExtras(ids: List<UUID>): Single<List<EncounterWithExtras>> {
+        return Single.fromCallable {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                encounterDao.findAllWithExtras(it).blockingGet()
+            }.flatten().map {
+                loadClaim(it)
+            }
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun fetchReturnedClaims(): Single<List<EncounterWithExtras>> {
         return sessionManager.currentAuthenticationToken()?.let { token ->
             Single.fromCallable {

@@ -32,6 +32,10 @@ interface EncounterDao {
     @Query("SELECT * FROM encounters WHERE id IN (:ids)")
     fun findAll(ids: List<UUID>): Single<List<EncounterModel>>
 
+    @Transaction
+    @Query("SELECT * FROM encounters WHERE id IN (:ids)")
+    fun findAllWithExtras(ids: List<UUID>): Single<List<EncounterWithExtrasModel>>
+
     @Update
     fun update(encounters: List<EncounterModel>): Int
 

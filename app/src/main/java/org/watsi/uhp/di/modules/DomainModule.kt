@@ -19,6 +19,7 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
+import org.watsi.domain.usecases.ExportUnsyncedClaimsUseCase
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchMembersPhotosUseCase
@@ -363,5 +364,13 @@ class DomainModule {
         mainRepository: MainRepository
     ): DeleteUserDataUseCase {
         return DeleteUserDataUseCase(mainRepository)
+    }
+
+    @Provides
+    fun provideExportUnsyncedClaimsUseCase(
+        deltaRepository: DeltaRepository,
+        encounterRepository: EncounterRepository
+    ): ExportUnsyncedClaimsUseCase {
+        return ExportUnsyncedClaimsUseCase(deltaRepository, encounterRepository)
     }
 }

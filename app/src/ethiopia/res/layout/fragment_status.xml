@@ -266,6 +266,18 @@
             app:layout_constraintTop_toBottomOf="@id/unsynced_price_schedules" />
 
         <TextView
+            android:id="@+id/export_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:padding="@dimen/space16"
+            android:textColor="@color/alertRed"
+            android:text="@string/export_unsynced_claims_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/unsynced_encounters"
+            />
+
+        <TextView
             android:id="@+id/sync_photos_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -276,7 +288,7 @@
             android:text="@string/sync_photos_title"
             style="@style/PanelHeader"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/unsynced_encounters" />
+            app:layout_constraintTop_toBottomOf="@id/export_button" />
 
         <ProgressBar
             android:id="@+id/sync_photos_progress_bar"

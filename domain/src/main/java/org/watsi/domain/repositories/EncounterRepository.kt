@@ -12,6 +12,7 @@ import java.util.UUID
 interface EncounterRepository {
     fun find(id: UUID): Single<EncounterWithExtras>
     fun findAll(ids: List<UUID>): Single<List<Encounter>>
+    fun findAllWithExtras(ids: List<UUID>): Single<List<EncounterWithExtras>>
     fun update(encounters: List<Encounter>): Completable
     fun insert(encounterWithExtras: EncounterWithExtras, deltas: List<Delta>): Completable
     fun upsert(encounterWithExtras: EncounterWithExtras): Completable
