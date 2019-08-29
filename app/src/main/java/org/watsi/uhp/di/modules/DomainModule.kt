@@ -22,6 +22,8 @@ import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.ExportUnsyncedClaimsUseCase
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
+import org.watsi.domain.usecases.FetchHouseholdIdByCardIdUseCase
+import org.watsi.domain.usecases.FetchHouseholdIdByMembershipNumberUseCase
 import org.watsi.domain.usecases.FetchMembersPhotosUseCase
 import org.watsi.domain.usecases.FetchMembersUseCase
 import org.watsi.domain.usecases.FetchOpenIdentificationEventsUseCase
@@ -182,6 +184,16 @@ class DomainModule {
     @Provides
     fun provideFetchDiagnosesUseCase(diagnosisRepository: DiagnosisRepository): FetchDiagnosesUseCase {
         return FetchDiagnosesUseCase(diagnosisRepository)
+    }
+
+    @Provides
+    fun provideFetchHouseholdIdByCardIdUseCase(memberRepository: MemberRepository): FetchHouseholdIdByCardIdUseCase {
+        return FetchHouseholdIdByCardIdUseCase(memberRepository)
+    }
+
+    @Provides
+    fun provideFetchHouseholdIdByMembershipNumberUseCase(memberRepository: MemberRepository): FetchHouseholdIdByMembershipNumberUseCase {
+        return FetchHouseholdIdByMembershipNumberUseCase(memberRepository)
     }
 
     @Provides

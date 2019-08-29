@@ -31,6 +31,8 @@ data class Member(
     val archivedReason: ArchivedReason?
 ) : Serializable {
 
+    class MemberNotFoundException(message: String) : Exception(message)
+
     enum class Gender { M, F }
     enum class DateAccuracy { Y, M, D }
     enum class ArchivedReason {

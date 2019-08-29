@@ -27,6 +27,8 @@ interface MemberRepository {
     fun findHouseholdMembers(householdId: UUID, excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable
+    fun fetchHouseholdIdByCardId(cardId: String): Single<UUID>
+    fun fetchHouseholdIdByMembershipNumber(membershipNumber: String): Single<UUID>
     fun downloadPhotos(): Completable
     fun withPhotosToFetchCount(): Flowable<Int>
     fun sync(deltas: List<Delta>): Completable

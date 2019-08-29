@@ -124,7 +124,7 @@ class SearchFragment : DaggerFragment() {
                         logger.error(err)
                         SnackbarHelper.showError(view, context, err.localizedMessage)
                     }, {
-                        navigationManager.goTo(MemberNotFoundFragment.forMembershipNumber(membershipNumber))
+                        navigationManager.goTo(DownloadHouseholdFragment.forMembershipNumber(membershipNumber))
                     })
                 } else {
                     viewModel.setMembershipNumberError(getString(R.string.invalid_membership_error))
@@ -162,6 +162,10 @@ class SearchFragment : DaggerFragment() {
                 navigationManager.goTo(HouseholdFragment.forParams(
                     householdId, IdentificationEvent.SearchMethod.SCAN_BARCODE)
                 )
+            }
+            SearchByMemberCardActivity.RESULT_NOT_FOUND -> {
+                val cardId = data?.getStringExtra(SearchByMemberCardActivity.CARD_ID_KEY) as String
+                navigationManager.goTo(DownloadHouseholdFragment.forCardId(cardId))
             }
             Activity.RESULT_CANCELED -> { }
             else -> {

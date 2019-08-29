@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import org.watsi.uhp.di.ViewModelKey
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
+import org.watsi.uhp.viewmodels.DownloadHouseholdViewModel
 import org.watsi.uhp.viewmodels.DrugAndSupplyViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
 import org.watsi.uhp.viewmodels.EditPriceViewModel
@@ -45,6 +46,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(DiagnosisViewModel::class)
     abstract fun bindDiagnosisViewModel(viewModel: DiagnosisViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DownloadHouseholdViewModel::class)
+    abstract fun bindDownloadHouseholdViewModel(viewModel: DownloadHouseholdViewModel): ViewModel
 
     @Binds
     @IntoMap

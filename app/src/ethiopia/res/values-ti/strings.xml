@@ -184,6 +184,10 @@
     <string name="member_search_fragment_label">@string/search</string>
     <string name="search_by_name">ብሽም ኣልሽ</string>
 
+    <!-- DownloadHouseholdFragment -->
+    <!-- <string name="loading_household">Loading household</string> -->
+    <!-- <string name="download_error_message">Error downloading household</string> -->
+
     <!-- MemberNotFoundFragment -->
     <string name="member_not_found_fragment_label">@string/search</string>
     <string name="member_not_found_message">ኣባል እንትእልሽ ስሕተት ገጢሙ</string>

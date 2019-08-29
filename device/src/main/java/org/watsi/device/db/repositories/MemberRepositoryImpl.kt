@@ -162,6 +162,48 @@ class MemberRepositoryImpl(
         } ?: Completable.error(Exception("Current token is null while calling MemberRepositoryImpl.fetch"))
     }
 
+    override fun fetchHouseholdIdByCardId(cardId: String): Single<UUID> {
+        return sessionManager.currentAuthenticationToken()?.let { token ->
+            Single.fromCallable {
+                val households = api.getHouseholdByCardId(
+                    token.getHeaderString(),
+                    cardId
+                ).blockingGet()
+
+                households.forEach { household ->
+                    upsertMembers(household.members)
+                }
+
+                // This search should only return one household, so consider the first the canonical
+                // value and return its household id. If we somehow get more than one household returned
+                // this is essentially picking at random and we would need to update the logic to show
+                // all returned households. If none are returned we pass up an exception that can be handled.
+                households.firstOrNull()?.householdId ?: throw Member.MemberNotFoundException("Server returned no results")
+            }.subscribeOn(Schedulers.io())
+        } ?: Single.never<UUID>()
+    }
+
+    override fun fetchHouseholdIdByMembershipNumber(membershipNumber: String): Single<UUID> {
+        return sessionManager.currentAuthenticationToken()?.let { token ->
+            Single.fromCallable {
+                val households = api.getHouseholdByMembershipNumber(
+                    token.getHeaderString(),
+                    membershipNumber
+                ).blockingGet()
+
+                households.forEach { household ->
+                    upsertMembers(household.members)
+                }
+
+                // This search should only return one household, so consider the first the canonical
+                // value and return its household id. If we somehow get more than one household returned
+                // this is essentially picking at random and we would need to update the logic to show
+                // all returned households. If none are returned we pass up an exception that can be handled.
+                households.firstOrNull()?.householdId ?: throw Member.MemberNotFoundException("Server returned no results")
+            }.subscribeOn(Schedulers.io())
+        } ?: Single.never<UUID>()
+    }
+
     private fun paginatedFetch(token: AuthenticationToken): Single<Boolean> {
         val paginatedResponse = api.getMembers(
             token.getHeaderString(),
@@ -173,21 +215,24 @@ class MemberRepositoryImpl(
         val updatedPageKey = paginatedResponse.pageKey
 
         if (serverMembers.isNotEmpty()) {
-            // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
-            val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
-            val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
-            val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
-
-            memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
-                val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
-                // Pass local member to upsert logic to preserve photo
-                MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
-            })
-
+            upsertMembers(serverMembers)
             preferencesManager.updateMembersPageKey(updatedPageKey)
         }
 
         return Single.just(hasMore)
+    }
+
+    private fun upsertMembers(serverMembers: List<MemberApi>) {
+        // Do not update local members with unsynced changes; after changes sync they're guaranteed to be returned in a future fetch.
+        val unsyncedClientMemberIds = memberDao.unsynced().blockingGet().map { it.id }
+        val serverMembersWithoutUnsynced = serverMembers.filter { !unsyncedClientMemberIds.contains(it.id) }
+        val persistedLocalMembers = findAll(serverMembersWithoutUnsynced.map { it.id }).blockingGet()
+
+        memberDao.upsert(serverMembersWithoutUnsynced.map { memberApi ->
+            val persistedMember = persistedLocalMembers.find { it.id == memberApi.id }
+            // Pass local member to upsert logic to preserve photo
+            MemberModel.fromMember(memberApi.toMember(persistedMember), clock)
+        })
     }
 
     override fun downloadPhotos(): Completable {

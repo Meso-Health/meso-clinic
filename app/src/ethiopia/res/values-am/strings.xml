@@ -178,6 +178,10 @@
     <string name="cbhi_id_search_label">በማአጤም መለያ ቁጥር ፈልግ</string>
     <string name="cbhi_id_label">የማአጤም መለያ ቁጥር</string>
 
+    <!-- DownloadHouseholdFragment -->
+    <!-- <string name="loading_household">Loading household</string> -->
+    <!-- <string name="download_error_message">Error downloading household</string> -->
+
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
     <string name="search_by_name">በስም ይፈልጉ</string>

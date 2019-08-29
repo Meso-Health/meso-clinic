@@ -10,6 +10,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterApi
+import org.watsi.device.api.models.HouseholdApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.api.models.MemberPaginationApi
@@ -42,6 +43,18 @@ interface CoverageApi {
             @Path("providerId") providerId: Int,
             @Query("page_key") pageKey: String?
     ): Single<MemberPaginationApi>
+
+    @GET("households/search")
+    fun getHouseholdByCardId(
+        @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+        @Query("card_id") cardId: String
+    ): Single<List<HouseholdApi>>
+
+    @GET("households/search")
+    fun getHouseholdByMembershipNumber(
+        @Header(AUTHORIZATION_HEADER) tokenAuthorization: String,
+        @Query("membership_number") membershipNumber: String
+    ): Single<List<HouseholdApi>>
 
     @GET("providers/{providerId}/billables")
     fun getBillables(

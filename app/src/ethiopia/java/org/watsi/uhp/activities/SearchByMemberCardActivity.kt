@@ -14,7 +14,9 @@ class SearchByMemberCardActivity : QrCodeActivity() {
 
     companion object {
         const val RESULT_LOOKUP_FAILED = 3
+        const val RESULT_NOT_FOUND = 4
         const val MEMBER_RESULT_KEY = "member"
+        const val CARD_ID_KEY = "card_id"
     }
 
     override fun onDetectedQrCode(qrCode: String) {
@@ -33,7 +35,11 @@ class SearchByMemberCardActivity : QrCodeActivity() {
                 logger.error(it)
                 finishAsFailure(RESULT_LOOKUP_FAILED)
             }, {
-                setErrorMessage(getString(R.string.scan_member_card_not_found))
+                val resultIntent = Intent().apply {
+                    putExtra(CARD_ID_KEY, qrCode)
+                }
+                setResult(RESULT_NOT_FOUND, resultIntent)
+                finish()
             })
         }
     }
