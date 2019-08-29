@@ -11,6 +11,7 @@ import io.reactivex.Single
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
+import org.watsi.device.db.models.MemberWithThumbnailPhotoModel
 import org.watsi.device.db.relations.MemberWithThumbnailModel
 import java.util.UUID
 
@@ -37,7 +38,7 @@ interface MemberDao {
     fun find(id: UUID): Maybe<MemberModel>
 
     @Query("SELECT * FROM members WHERE id IN (:ids)")
-    fun findAll(ids: List<UUID>): Single<List<MemberModel>>
+    fun findAll(ids: List<UUID>): Single<List<MemberWithThumbnailPhotoModel>>
 
     @Query("SELECT householdId FROM members WHERE membershipNumber = :membershipNumber AND householdId IS NOT NULL ORDER BY enrolledAt DESC LIMIT 1")
     fun findHouseholdIdByMembershipNumber(membershipNumber: String): Maybe<UUID>
@@ -76,21 +77,6 @@ interface MemberDao {
     @Transaction
     @Query("SELECT * FROM members WHERE members.name IN (:names)")
     fun findMemberRelationsByNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
-
-    //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
-    @Transaction
-    @Query("SELECT members.*\n" +
-            "FROM members\n" +
-            "INNER JOIN (\n" +
-            "   SELECT id, memberId, max(occurredAt) AS occurredAt\n" +
-            "   FROM identification_events\n" +
-            "   WHERE dismissed = 0\n" +
-            "   GROUP BY memberId\n" +
-            ") last_identifications on last_identifications.memberId = members.id\n" +
-            "LEFT OUTER JOIN encounters ON encounters.identificationEventId = last_identifications.id\n" +
-            "WHERE (encounters.identificationEventId IS NULL OR encounters.preparedAt IS NULL)\n" +
-            "ORDER BY last_identifications.occurredAt")
-    fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Query("SELECT (\n" +

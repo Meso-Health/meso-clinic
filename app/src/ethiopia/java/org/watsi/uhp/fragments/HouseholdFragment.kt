@@ -65,7 +65,7 @@ class HouseholdFragment : DaggerFragment() {
 
         memberAdapter = MemberAdapter(
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                navigationManager.goTo(EditMemberFragment.forParams(
+                navigationManager.goTo(EditMemberFragment.forCheckIn(
                     member = memberRelation.member,
                     searchMethod = searchMethod
                 ))

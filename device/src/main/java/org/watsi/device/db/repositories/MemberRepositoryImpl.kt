@@ -11,6 +11,7 @@ import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.db.DbHelper
+import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
@@ -29,6 +30,7 @@ import java.util.UUID
 
 class MemberRepositoryImpl(
     private val memberDao: MemberDao,
+    private val identificationEventDao: IdentificationEventDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
     private val preferencesManager: PreferencesManager,
@@ -57,7 +59,7 @@ class MemberRepositoryImpl(
             ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
                 memberDao.findAll(it).blockingGet()
             }.flatten().map {
-                it.toMember()
+                it.toMemberWithThumbnailPhoto().member
             }
         }
     }
@@ -107,8 +109,23 @@ class MemberRepositoryImpl(
     }
 
     override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
-        return memberDao.checkedInMembers().map {
-            it.map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        return identificationEventDao.activeCheckIns().map { identificationEventModels ->
+            val identificationEvents = identificationEventModels.map { it.toIdentificationEvent() }
+            val memberIds = identificationEvents.map { it.memberId }.distinct()
+            val memberWithPhotosById = mutableMapOf<UUID, MemberWithThumbnail>()
+            memberDao.findAll(memberIds).blockingGet().map { it.toMemberWithThumbnailPhoto() }
+                    .forEach { memberWithPhoto ->
+                memberWithPhotosById[memberWithPhoto.member.id] = memberWithPhoto
+            }
+            identificationEvents.sortedBy { it.occurredAt }.map { identificationEvent ->
+                val memberWithThumbnail = memberWithPhotosById[identificationEvent.memberId]
+                MemberWithIdEventAndThumbnailPhoto(
+                    memberWithThumbnail!!.member,
+                    identificationEvent,
+                    memberWithThumbnail.photo
+
+                )
+            }
         }
     }
 

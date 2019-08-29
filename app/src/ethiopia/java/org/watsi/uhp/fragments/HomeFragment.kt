@@ -59,15 +59,17 @@ class HomeFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let {
-                if (it.pendingClaimsCount > 0) {
-                    pending_indicator.visibility = View.VISIBLE
-                } else {
-                    pending_indicator.visibility = View.GONE
-                }
-                if (it.returnedClaimsCount > 0) {
-                    returned_indicator.visibility = View.VISIBLE
-                } else {
-                    returned_indicator.visibility = View.GONE
+                if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+                    if (it.pendingClaimsCount > 0) {
+                        pending_indicator.visibility = View.VISIBLE
+                    } else {
+                        pending_indicator.visibility = View.GONE
+                    }
+                    if (it.returnedClaimsCount > 0) {
+                        returned_indicator.visibility = View.VISIBLE
+                    } else {
+                        returned_indicator.visibility = View.GONE
+                    }
                 }
             }
         })

@@ -16,12 +16,11 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.CompletableObserver
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.action_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.birthdate_field
-import kotlinx.android.synthetic.ethiopia.fragment_edit_member.check_in_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.follow_up_date_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.hospital_check_in_details_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.inbound_referral_date_container
@@ -30,7 +29,6 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.needs_renewal_notification
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.photo_container
-import kotlinx.android.synthetic.ethiopia.fragment_edit_member.start_claim_button
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_photo
@@ -43,9 +41,10 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 import org.watsi.uhp.R
+import org.watsi.uhp.R.string.check_in
+import org.watsi.uhp.R.string.start_claim_button
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -66,13 +65,13 @@ class EditMemberFragment : DaggerFragment() {
     @Inject lateinit var clock: Clock
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
-    @Inject lateinit var identificationEventRepository: IdentificationEventRepository
     @Inject lateinit var validateDiagnosesAndBillablesExistenceUseCase: ValidateDiagnosesAndBillablesExistenceUseCase
 
     private lateinit var viewModel: EditMemberViewModel
     private lateinit var paramMember: Member
-    private lateinit var searchMethod: IdentificationEvent.SearchMethod
     private lateinit var observable: LiveData<EditMemberViewModel.ViewState>
+    private var searchMethod: IdentificationEvent.SearchMethod? = null
+    private var identificationEventId: UUID? = null
 
     private var placeholderPhotoIconPadding = 0
     private var memberPhotoCornerRadius = 0
@@ -81,8 +80,9 @@ class EditMemberFragment : DaggerFragment() {
         const val CAPTURE_PHOTO_INTENT = 1
         const val PARAM_MEMBER = "member"
         const val PARAM_SEARCH_METHOD = "search_method"
+        const val PARAM_IDENTIFICATION_EVENT_ID = "identification_event_id"
 
-        fun forParams(
+        fun forCheckIn(
             member: Member,
             searchMethod: IdentificationEvent.SearchMethod
         ): EditMemberFragment {
@@ -90,6 +90,18 @@ class EditMemberFragment : DaggerFragment() {
             editMemberFragment.arguments = Bundle().apply {
                 putSerializable(PARAM_MEMBER, member)
                 putSerializable(PARAM_SEARCH_METHOD, searchMethod)
+            }
+            return editMemberFragment
+        }
+
+        fun forClaimsPreparation(
+            member: Member,
+            identificationEventId: UUID
+        ): EditMemberFragment {
+            val editMemberFragment = EditMemberFragment()
+            editMemberFragment.arguments = Bundle().apply {
+                putSerializable(PARAM_MEMBER, member)
+                putSerializable(PARAM_IDENTIFICATION_EVENT_ID, identificationEventId)
             }
             return editMemberFragment
         }
@@ -101,8 +113,14 @@ class EditMemberFragment : DaggerFragment() {
         placeholderPhotoIconPadding = resources.getDimensionPixelSize(R.dimen.editMemberPhotoPlaceholderPadding)
         memberPhotoCornerRadius = resources.getDimensionPixelSize(R.dimen.cornerRadius)
 
-        searchMethod = arguments.getSerializable(PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod
+        searchMethod = arguments.getSerializable(PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod?
         paramMember = arguments.getSerializable(PARAM_MEMBER) as Member
+        identificationEventId = arguments.getSerializable(PARAM_IDENTIFICATION_EVENT_ID) as UUID?
+
+        if (searchMethod == null && identificationEventId == null) {
+            throw IllegalStateException("searchMethod and identificationEventId cannot both be null")
+        }
+
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditMemberViewModel::class.java)
         observable = viewModel.getObservable(paramMember)
         observable.observe(this, Observer {
@@ -141,18 +159,6 @@ class EditMemberFragment : DaggerFragment() {
                     }
 
                     activity.invalidateOptionsMenu()
-                }
-
-                viewState.isCheckedIn?.let { isCheckedIn ->
-                    if (isCheckedIn && sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
-                        start_claim_button.visibility = View.VISIBLE
-                    } else if (!isCheckedIn && (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLINIC_IDENTIFICATION)
-                                    || sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION))) {
-                        if (sessionManager.currentUser()?.isHospital() == true) {
-                            hospital_check_in_details_container.visibility = View.VISIBLE
-                        }
-                        check_in_button.visibility = View.VISIBLE
-                    }
                 }
 
                 viewState.visitReason?.let { visitReason ->
@@ -217,97 +223,119 @@ class EditMemberFragment : DaggerFragment() {
             startActivityForResult(Intent(activity, SavePhotoActivity::class.java), CAPTURE_PHOTO_INTENT)
         }
 
-        if (sessionManager.currentUser()?.isHospital() == true) {
-            val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
-            val visitReasonEnums = visitReasonMappings.map { it.first }
-            val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
-
-            visit_reason_spinner.setUpWithPrompt(
-                choices = visitReasonStrings,
-                initialChoice = null,
-                onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
-                promptString = getString(R.string.visit_reason_prompt),
-                onPromptSelected = { viewModel.onVisitReasonChange(null) }
-            )
-
-            inbound_referral_date_container.setUp(
-                initialGregorianValue = LocalDate.now(clock),
-                clock = clock,
-                onDateSelected = { date -> viewModel.onInboundReferralDateChange(date) }
-            )
-
-            follow_up_date_container.setUp(
-                initialGregorianValue = LocalDate.now(clock),
-                clock = clock,
-                onDateSelected = { date -> viewModel.onFollowUpDateChange(date) }
-            )
+        if (isCheckedIn()) {
+            setupClaimPreparationAction()
+        } else {
+            setupCheckInAction()
         }
+    }
 
-        check_in_button.setOnClickListener {
-            viewModel.getMember()?.let { member ->
-                sessionManager.currentUser()?.let { user ->
-                    viewModel.validateAndCheckInMember(searchMethod, user).subscribe({
-                        navigationManager.popTo(HomeFragment.withSnackbarMessage(
-                            getString(R.string.checked_in_snackbar_message, member.name)
-                        ))
-                    }, { throwable ->
-                        if (throwable is EditMemberViewModel.ValidationException) {
-                            // do nothing for now. No need to say "some fields are invalid"
-                        } else {
-                            logger.error(throwable)
-                        }
-                    })
-                }
-            }
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        menu?.let {
+            it.findItem(R.id.menu_check_out_member).isVisible = isCheckedIn()
         }
+    }
 
-        // This button is gated on needing claims preparation permission. It is never set to visible
-        // if the permission is not available
-        start_claim_button.setOnClickListener {
+    private fun isCheckedIn() = identificationEventId != null
+
+    private fun setupCheckInAction() {
+        val searchMethodVal = searchMethod ?: run {
+            throw IllegalStateException("Null searchMethod when preparing check-in action")
+        }
+        if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+            setupHospitalCheckIn()
+        }
+        action_button.text = getString(check_in)
+        action_button.setOnClickListener {
             viewModel.getMember()?.let { member ->
-                Single.fromCallable {
-                    validateDiagnosesAndBillablesExistenceUseCase.execute().blockingAwait()
-                    identificationEventRepository.openCheckIn(member.id).blockingGet()
-                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe( { idEvent ->
-                    val encounter = Encounter(
-                        id = UUID.randomUUID(),
-                        memberId = member.id,
-                        identificationEventId = idEvent.id,
-                        occurredAt = Instant.now(clock),
-                        patientOutcome = null
-                    )
-                    navigationManager.goTo(ReceiptFragment.forEncounter(
-                        EncounterFlowState(
-                            encounter = encounter,
-                            encounterItemRelations = emptyList(),
-                            encounterForms = emptyList(),
-                            referral = null,
-                            diagnoses = emptyList(),
-                            member = member
-                        )
+                viewModel.validateAndCheckInMember(searchMethodVal).subscribe({
+                    navigationManager.popTo(HomeFragment.withSnackbarMessage(
+                        getString(R.string.checked_in_snackbar_message, member.name)
                     ))
-                }, {
-                    if (it.cause is ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException) {
-                        showDiagnosisAndBillableMissingDialog()
+                }, { throwable ->
+                    if (throwable is EditMemberViewModel.ValidationException) {
+                        // do nothing for now. No need to say "some fields are invalid"
                     } else {
-                        logger.error(it)
+                        logger.error(throwable)
                     }
                 })
             }
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        observable.value?.let { viewState ->
-            if (viewState.isCheckedIn != null && viewState.isCheckedIn) {
-                menu?.let { it.findItem(R.id.menu_check_out_member).isVisible = true }
-            } else {
-                menu?.let { it.findItem(R.id.menu_check_out_member).isVisible = false }
+    private fun setupHospitalCheckIn() {
+        val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
+        val visitReasonEnums = visitReasonMappings.map { it.first }
+        val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
+
+        visit_reason_spinner.setUpWithPrompt(
+            choices = visitReasonStrings,
+            initialChoice = null,
+            onItemSelected = { index: Int -> viewModel.onVisitReasonChange(visitReasonEnums[index]) },
+            promptString = getString(R.string.visit_reason_prompt),
+            onPromptSelected = { viewModel.onVisitReasonChange(null) }
+        )
+
+        inbound_referral_date_container.setUp(
+            initialGregorianValue = LocalDate.now(clock),
+            clock = clock,
+            onDateSelected = { date -> viewModel.onInboundReferralDateChange(date) }
+        )
+
+        follow_up_date_container.setUp(
+            initialGregorianValue = LocalDate.now(clock),
+            clock = clock,
+            onDateSelected = { date -> viewModel.onFollowUpDateChange(date) }
+        )
+        hospital_check_in_details_container.visibility = View.VISIBLE
+    }
+
+    private fun setupClaimPreparationAction() {
+        if (!sessionManager.userHasPermission(SessionManager.Permissions
+                        .WORKFLOW_CLAIMS_PREPARATION)) {
+            action_button.visibility = View.GONE
+            return
+        }
+        val identificationEventIdVal = identificationEventId ?: run {
+            throw IllegalStateException("Null identificationEventId during claim preparation action")
+        }
+        action_button.text = getString(start_claim_button)
+        action_button.setOnClickListener {
+            viewModel.getMember()?.let { member ->
+                validateDiagnosesAndBillablesExistenceUseCase.execute()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            val encounter = Encounter(
+                                id = UUID.randomUUID(),
+                                memberId = member.id,
+                                identificationEventId = identificationEventIdVal,
+                                occurredAt = Instant.now(clock),
+                                patientOutcome = null
+                            )
+                            navigationManager.goTo(ReceiptFragment.forEncounter(
+                                EncounterFlowState(
+                                    encounter = encounter,
+                                    encounterItemRelations = emptyList(),
+                                    encounterForms = emptyList(),
+                                    referral = null,
+                                    diagnoses = emptyList(),
+                                    member = member
+                                )
+                            ))
+
+                        }, {
+                            if (it.cause is ValidateDiagnosesAndBillablesExistenceUseCase.BillableAndDiagnosesMissingException) {
+                                showDiagnosisAndBillableMissingDialog()
+                            } else {
+                                logger.error(it)
+                            }
+                        })
             }
         }
     }
 
-    fun showDiagnosisAndBillableMissingDialog() {
+    private fun showDiagnosisAndBillableMissingDialog() {
         android.app.AlertDialog.Builder(activity)
                 .setMessage(getString(R.string.diagnoses_and_billable_missing_dialog))
                 .create().show()
@@ -316,19 +344,23 @@ class EditMemberFragment : DaggerFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_check_out_member -> {
-                android.app.AlertDialog.Builder(activity)
-                        .setTitle(R.string.check_out_alert_dialog_title)
-                        .setMessage(getString(R.string.check_out_alert_dialog_message, paramMember.name))
-                        .setNegativeButton(R.string.cancel, null)
-                        .setPositiveButton(R.string.delete) { _, _ ->
-                            viewModel.dismissIdentificationEvent().subscribe {
-                                navigationManager.popTo(
-                                    HomeFragment.withSnackbarMessage(
-                                        getString(R.string.checked_out_snackbar_message, paramMember.name)
+                identificationEventId?.let {
+                    android.app.AlertDialog.Builder(activity)
+                            .setTitle(R.string.check_out_alert_dialog_title)
+                            .setMessage(getString(R.string.check_out_alert_dialog_message, paramMember.name))
+                            .setNegativeButton(R.string.cancel, null)
+                            .setPositiveButton(R.string.delete) { _, _ ->
+                                viewModel.dismissIdentificationEvent(it).subscribe {
+                                    navigationManager.popTo(
+                                        HomeFragment.withSnackbarMessage(
+                                            getString(R.string.checked_out_snackbar_message, paramMember.name)
+                                        )
                                     )
-                                )
-                            }
-                        }.create().show()
+                                }
+                            }.create().show()
+                } ?: run {
+                    throw IllegalStateException("Null identificationEventId during check-out")
+                }
             }
             else -> super.onOptionsItemSelected(item)
         }

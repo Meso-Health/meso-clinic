@@ -22,8 +22,8 @@ interface MemberRepository {
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun byNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
-    fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
     fun allDistinctNames(): Single<List<String>>
+    fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean>
     fun findHouseholdMembers(householdId: UUID, excludeArchived: Boolean = true): Flowable<List<MemberWithIdEventAndThumbnailPhoto>>
     fun upsert(member: Member, deltas: List<Delta>): Completable
     fun fetch(): Completable

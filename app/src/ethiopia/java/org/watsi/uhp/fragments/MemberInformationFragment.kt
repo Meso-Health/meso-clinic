@@ -82,7 +82,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             it?.let { viewState ->
                 setErrors(viewState.errors)
 
-                if (sessionManager.currentUser()?.isHospital() == true) {
+                if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
                     hospital_check_in_details_container.visibility = View.VISIBLE
 
                     viewState.visitReason?.let { visitReason ->
@@ -180,7 +180,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 text -> viewModel.onMedicalRecordNumberChange(text)
         })
 
-        if (sessionManager.currentUser()?.isHospital() == true) {
+        if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
             val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
             val visitReasonEnums = visitReasonMappings.map { it.first }
             val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
@@ -207,15 +207,13 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
         }
 
         check_in_button.setOnClickListener {
-            sessionManager.currentUser()?.let { user ->
-                viewModel.createAndCheckInMember(membershipNumber, user).subscribe({
-                    navigationManager.popTo(HomeFragment.withSnackbarMessage(
-                        getString(R.string.checked_in_snackbar_message, viewModel.getName())
-                    ))
-                }, { throwable ->
-                    handleOnSaveError(throwable)
-                })
-            }
+            viewModel.createAndCheckInMember(membershipNumber).subscribe({
+                navigationManager.popTo(HomeFragment.withSnackbarMessage(
+                    getString(R.string.checked_in_snackbar_message, viewModel.getName())
+                ))
+            }, { throwable ->
+                handleOnSaveError(throwable)
+            })
         }
 
         /* Hide keyboard if no text inputs have focus */

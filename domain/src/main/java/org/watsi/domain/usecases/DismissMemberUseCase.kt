@@ -8,9 +8,9 @@ import java.util.UUID
 class DismissMemberUseCase(
     private val identificationEventRepository: IdentificationEventRepository
 ) {
-    fun execute(memberId: UUID): Completable {
+    fun execute(identificationEventId: UUID): Completable {
         return Completable.fromAction {
-            val idEvent = identificationEventRepository.openCheckIn(memberId).blockingGet()
+            val idEvent = identificationEventRepository.find(identificationEventId).blockingGet()
             identificationEventRepository.dismiss(idEvent).blockingAwait()
         }.subscribeOn(Schedulers.io())
     }

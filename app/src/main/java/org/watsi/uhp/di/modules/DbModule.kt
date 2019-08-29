@@ -168,13 +168,23 @@ class DbModule {
     }
 
     @Provides
-    fun provideMemberRepository(memberDao: MemberDao,
-                                api: CoverageApi,
-                                sessionManager: SessionManager,
-                                preferencesManager: PreferencesManager,
-                                photoDao: PhotoDao,
-                                clock: Clock): MemberRepository =
-            MemberRepositoryImpl(memberDao, api, sessionManager, preferencesManager, photoDao, clock)
+    fun provideMemberRepository(
+        memberDao: MemberDao,
+        identificationEventDao: IdentificationEventDao,
+        api: CoverageApi,
+        sessionManager: SessionManager,
+        preferencesManager: PreferencesManager,
+        photoDao: PhotoDao,
+        clock: Clock
+    ): MemberRepository = MemberRepositoryImpl(
+        memberDao,
+        identificationEventDao,
+        api,
+        sessionManager,
+        preferencesManager,
+        photoDao,
+        clock
+    )
 
     @Provides
     fun providePhotoRepository(photoDao: PhotoDao, clock: Clock): PhotoRepository {

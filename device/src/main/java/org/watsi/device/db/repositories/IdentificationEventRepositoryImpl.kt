@@ -8,7 +8,6 @@ import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.IdentificationEventDao
-import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.managers.PreferencesManager
@@ -50,8 +49,8 @@ class IdentificationEventRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun openCheckIn(memberId: UUID): Single<IdentificationEvent> {
-        return identificationEventDao.openCheckIn(memberId)
+    override fun find(identificationEventId: UUID): Single<IdentificationEvent> {
+        return identificationEventDao.find(identificationEventId)
                 .map { it.toIdentificationEvent() }
                 .subscribeOn(Schedulers.io())
     }
@@ -73,7 +72,6 @@ class IdentificationEventRepositoryImpl(
                 // Get all locally stored identification events
                 val clientIdentificationEvents = identificationEventDao.all().blockingFirst()
                 val clientIdentificationEventIds = clientIdentificationEvents.map { it.id }
-                val clientIdentificationEventsById = clientIdentificationEvents.groupBy { it.id }
 
                 // Find all locally stored identification events that are unsynced or in use, so that we know not to delete them
                 val identificationEventIdsToRetain: MutableList<UUID> = mutableListOf()

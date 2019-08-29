@@ -96,6 +96,7 @@ interface EncounterDao {
     @Query("SELECT DISTINCT(revisedEncounterId) from encounters WHERE revisedEncounterId IS NOT NULL ORDER BY occurredAt")
     fun revisedIds(): Single<List<UUID>>
 
+    @Transaction
     @Query("SELECT encounters.* FROM encounters\n" +
             "INNER JOIN deltas ON\n" +
             "(encounters.id = deltas.modelId AND\n" +

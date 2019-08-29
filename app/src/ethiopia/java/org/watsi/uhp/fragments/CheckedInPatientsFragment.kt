@@ -55,18 +55,13 @@ class CheckedInPatientsFragment : DaggerFragment() {
 
         memberAdapter = MemberAdapter(
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                if (memberRelation.identificationEvent != null) {
-                    memberRelation.identificationEvent?.let {
-                        navigationManager.goTo(EditMemberFragment.forParams(
-                            member = memberRelation.member,
-                            searchMethod = it.searchMethod
-                        ))
-                    }
-                } else {
-                    logger.error(
-                        "Member shown on HomeFragment has no corresponding IdentificationEvent",
-                        mapOf("memberId" to memberRelation.member.id.toString())
-                    )
+                memberRelation.identificationEvent?.id?.let { identificationEventId ->
+                    navigationManager.goTo(EditMemberFragment.forClaimsPreparation(
+                        member = memberRelation.member,
+                        identificationEventId = identificationEventId
+                    ))
+                } ?: run {
+                    throw IllegalStateException("identificationEventId is null for checked-in member")
                 }
             }
         )

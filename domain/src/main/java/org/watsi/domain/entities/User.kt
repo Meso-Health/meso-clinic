@@ -19,10 +19,4 @@ data class User(
         TERTIARY_HOSPITAL,
         UNCLASSIFIED
     }
-
-    fun isHospital(): Boolean {
-        return providerType == ProviderType.PRIMARY_HOSPITAL ||
-                providerType == ProviderType.GENERAL_HOSPITAL ||
-                providerType == ProviderType.TERTIARY_HOSPITAL
-    }
 }

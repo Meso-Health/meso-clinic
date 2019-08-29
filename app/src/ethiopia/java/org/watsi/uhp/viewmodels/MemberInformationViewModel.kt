@@ -8,10 +8,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-import org.watsi.domain.entities.User
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
@@ -23,6 +23,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class MemberInformationViewModel @Inject constructor(
+    private val sessionManager: SessionManager,
     private val createMemberUseCase: CreateMemberUseCase,
     private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
     private val createEncounterUseCase: CreateEncounterUseCase,
@@ -143,21 +144,21 @@ class MemberInformationViewModel @Inject constructor(
         return createEncounterUseCase.execute(encounterWithExtras, true, true, clock)
     }
 
-    fun createAndCheckInMember(membershipNumber: String, user: User): Completable {
+    fun createAndCheckInMember(membershipNumber: String): Completable {
         val viewState = observable.value ?: return Completable.never()
 
-        val validationErrors = FormValidator.formValidationErrors(viewState, user)
+        val validationErrors = FormValidator.formValidationErrors(viewState, sessionManager)
         if (validationErrors.isNotEmpty()) {
             observable.value = viewState.copy(errors = validationErrors)
             return Completable.error(ValidationException("Some fields are missing", validationErrors))
         }
 
-        val member = toMember(viewState, membershipNumber, clock, user)
+        val member = toMember(viewState, membershipNumber, clock, sessionManager)
         val idEventId = UUID.randomUUID()
         return Completable.fromAction {
             createMember(member).blockingAwait()
             createIdentificationEvent(idEventId, member).blockingAwait()
-            if (user.isHospital()) {
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
                 val inboundReferralDate = when (viewState.visitReason) {
                     Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
                     Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
@@ -177,8 +178,9 @@ class MemberInformationViewModel @Inject constructor(
         const val MEMBER_MEDICAL_RECORD_NUMBER_ERROR = "member_medical_record_number_error"
         const val VISIT_REASON_ERROR = "visit_reason_error"
 
-        fun toMember(viewState: ViewState, membershipNumber: String, clock: Clock, user: User): Member {
-            if (FormValidator.formValidationErrors(viewState, user).isEmpty() && viewState.gender != null
+        fun toMember(viewState: ViewState, membershipNumber: String, clock: Clock, sessionManager: SessionManager):
+                Member {
+            if (FormValidator.formValidationErrors(viewState, sessionManager).isEmpty() && viewState.gender != null
                     && viewState.name != null && viewState.age != null &&
                     viewState.medicalRecordNumber != null) {
                 val birthdateWithAccuracy = Age(viewState.age, viewState.ageUnit).toBirthdateWithAccuracy()
@@ -211,7 +213,7 @@ class MemberInformationViewModel @Inject constructor(
     }
 
     object FormValidator {
-        fun formValidationErrors(viewState: ViewState, user: User): Map<String, Int> {
+        fun formValidationErrors(viewState: ViewState, sessionManager: SessionManager): Map<String, Int> {
             val errors = HashMap<String, Int>()
 
             if (viewState.gender == null) {
@@ -236,8 +238,10 @@ class MemberInformationViewModel @Inject constructor(
                 errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_length_validation_error
             }
 
-            if (user.isHospital() && viewState.visitReason == null) {
-                errors[VISIT_REASON_ERROR] = R.string.missing_visit_reason
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+                if (viewState.visitReason == null) {
+                    errors[VISIT_REASON_ERROR] = R.string.missing_visit_reason
+                }
             }
 
             return errors

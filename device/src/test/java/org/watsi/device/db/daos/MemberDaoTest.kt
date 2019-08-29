@@ -17,61 +17,6 @@ import java.util.UUID
 class MemberDaoTest : DaoBaseTest() {
 
     @Test
-    fun checkedInMembers() {
-        val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
-        val memberWithIdEvent = MemberModelFactory.create(
-            memberDao, thumbnailPhotoId = memberThumbnailPhoto.id)
-        val memberWithDismissedIdEvent = MemberModelFactory.create(memberDao)
-        val memberWithPartialEncounter = MemberModelFactory.create(memberDao)
-        val memberWithEncounter = MemberModelFactory.create(memberDao)
-        val first = Instant.parse("2018-05-21T10:15:30.000Z")
-        val second = Instant.parse("2018-05-30T12:30:00.000Z")
-
-        // id event with no encounter
-        val idEventWithNoEncounter = IdentificationEventModelFactory.create(
-            identificationEventDao,
-            memberId = memberWithIdEvent.id,
-            dismissed = false,
-            occurredAt = first
-        )
-
-        // dismissed id event with no encounter
-        IdentificationEventModelFactory.create(identificationEventDao,
-            memberId = memberWithDismissedIdEvent.id,
-            dismissed = true
-        )
-
-        // id event with partial encounter
-        val idEventWithPartialEncounter = IdentificationEventModelFactory.create(
-            identificationEventDao,
-            memberId = memberWithPartialEncounter.id,
-            dismissed = false,
-            occurredAt = second
-        )
-        EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithPartialEncounter.id, preparedAt = null)
-
-        // id event with encounter
-        val idEventWithEncounter = IdentificationEventModelFactory.create(
-            identificationEventDao,
-            memberId = memberWithEncounter.id,
-            dismissed = false
-        )
-        EncounterModelFactory.create(encounterDao, memberDao, identificationEventId = idEventWithEncounter.id)
-
-        val memberWithIdEventRelation = MemberWithIdEventAndThumbnailPhotoModel(
-            memberWithIdEvent,
-            listOf(idEventWithNoEncounter),
-            listOf(memberThumbnailPhoto)
-        )
-        val memberWithPartialEncounterRelation = MemberWithIdEventAndThumbnailPhotoModel(
-            memberWithPartialEncounter,
-            listOf(idEventWithPartialEncounter),
-            null
-        )
-        memberDao.checkedInMembers().test().assertValue(listOf(memberWithIdEventRelation, memberWithPartialEncounterRelation))
-    }
-
-    @Test
     fun isMemberCheckedIn() {
         val memberThumbnailPhoto = PhotoModelFactory.create(photoDao)
         val memberWithIdEvent = MemberModelFactory.create(
@@ -82,7 +27,7 @@ class MemberDaoTest : DaoBaseTest() {
         MemberModelFactory.create(memberDao)
 
         // id event with no encounter
-        val openCheckIn = IdentificationEventModelFactory.create(
+        IdentificationEventModelFactory.create(
             identificationEventDao,
             memberId = memberWithIdEvent.id,
             dismissed = false
@@ -349,7 +294,7 @@ class MemberDaoTest : DaoBaseTest() {
     @Test
     fun findMemberRelationsByNames() {
         val memberModel1 = MemberModelFactory.create(memberDao, name = "Buster H Posey")
-        val memberModel2 = MemberModelFactory.create(memberDao, name = "Stephen Tikka Masala")
+        MemberModelFactory.create(memberDao, name = "Stephen Tikka Masala")
         val memberModel3 = MemberModelFactory.create(memberDao, name = "Klay Thompson Jackson")
         val memberModel4 = MemberModelFactory.create(memberDao, name = "Klay Thompson Jackson")
 
@@ -384,7 +329,7 @@ class MemberDaoTest : DaoBaseTest() {
     fun findMembersByIds() {
         val memberModel1 = MemberModelFactory.create(memberDao)
         val memberModel2 = MemberModelFactory.create(memberDao)
-        val memberModel3 = MemberModelFactory.create(memberDao)
+        MemberModelFactory.create(memberDao)
         val idNotInDB = UUID.randomUUID()
 
         memberDao.findMembersByIds(listOf(memberModel1.id, idNotInDB, memberModel2.id)).test()

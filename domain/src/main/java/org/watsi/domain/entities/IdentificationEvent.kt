@@ -18,7 +18,15 @@ data class IdentificationEvent(val id: UUID,
 
     enum class ClinicNumberType { OPD, DELIVERY }
 
-    enum class SearchMethod { SCAN_BARCODE, SEARCH_CARD_ID, SEARCH_NAME, SEARCH_MEMBERSHIP_NUMBER, MANUAL_ENTRY, THROUGH_HOUSEHOLD, UNKNOWN }
+    enum class SearchMethod {
+        SCAN_BARCODE,
+        SEARCH_CARD_ID,
+        SEARCH_NAME,
+        SEARCH_MEMBERSHIP_NUMBER,
+        MANUAL_ENTRY,
+        THROUGH_HOUSEHOLD,
+        UNKNOWN
+    }
 
     fun formatClinicNumber(): String {
         return when (clinicNumberType) {

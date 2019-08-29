@@ -31,12 +31,14 @@ import org.threeten.bp.ZoneId
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
 import org.watsi.device.api.models.MemberPaginationApi
+import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.MemberWithIdEventAndThumbnailPhotoModel
 import org.watsi.device.db.models.MemberWithRawPhotoModel
+import org.watsi.device.db.models.MemberWithThumbnailPhotoModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.factories.IdentificationEventModelFactory
 import org.watsi.device.factories.MemberModelFactory
@@ -56,7 +58,8 @@ import java.util.UUID
 @RunWith(MockitoJUnitRunner::class)
 class MemberRepositoryImplTest {
 
-    @Mock lateinit var mockDao: MemberDao
+    @Mock lateinit var mockMemberDao: MemberDao
+    @Mock lateinit var mockIdentificationEventDao: IdentificationEventDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
     @Mock lateinit var mockPreferencesManager: PreferencesManager
@@ -72,7 +75,14 @@ class MemberRepositoryImplTest {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
         repository = MemberRepositoryImpl(
-                mockDao, mockApi, mockSessionManager, mockPreferencesManager, mockPhotoDao, clock)
+            mockMemberDao,
+            mockIdentificationEventDao,
+            mockApi,
+            mockSessionManager,
+            mockPreferencesManager,
+            mockPhotoDao,
+            clock
+        )
     }
 
     @Test
@@ -82,8 +92,8 @@ class MemberRepositoryImplTest {
         val archivedMember = MemberModelFactory.build(archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
         val memberList = listOf(member1, member2, archivedMember)
         val filteredMemberList = listOf(member1, member2)
-        whenever(mockDao.all()).thenReturn(Flowable.just(memberList))
-        whenever(mockDao.allUnarchived()).thenReturn(Flowable.just(filteredMemberList))
+        whenever(mockMemberDao.all()).thenReturn(Flowable.just(memberList))
+        whenever(mockMemberDao.allUnarchived()).thenReturn(Flowable.just(filteredMemberList))
 
         repository.all(excludeArchived = true).test().assertValue(filteredMemberList.map { it.toMember() })
         repository.all(excludeArchived = false).test().assertValue(memberList.map { it.toMember() })
@@ -92,7 +102,7 @@ class MemberRepositoryImplTest {
     @Test
     fun find() {
         val model = MemberModelFactory.build()
-        whenever(mockDao.find(model.id)).thenReturn(Maybe.just(model))
+        whenever(mockMemberDao.find(model.id)).thenReturn(Maybe.just(model))
 
         repository.find(model.id).test().assertValue(model.toMember())
     }
@@ -103,9 +113,9 @@ class MemberRepositoryImplTest {
         val archivedCardId = "RWI123457"
         val member = MemberFactory.build(cardId = cardId)
         val archivedMember = MemberFactory.build(cardId = archivedCardId, archivedReason = ArchivedReason.DEATH, archivedAt = Instant.now())
-        whenever(mockDao.findByCardId(archivedCardId)).thenReturn(
+        whenever(mockMemberDao.findByCardId(archivedCardId)).thenReturn(
             Maybe.just(MemberModel.fromMember(archivedMember, clock)))
-        whenever(mockDao.findByCardIdUnarchived(cardId)).thenReturn(
+        whenever(mockMemberDao.findByCardIdUnarchived(cardId)).thenReturn(
             Maybe.just(MemberModel.fromMember(member, clock))
         )
 
@@ -118,11 +128,11 @@ class MemberRepositoryImplTest {
     fun checkedInMembers() {
         val memberModel = MemberModelFactory.build()
         val idEventModel = IdentificationEventModelFactory.build(memberId = memberModel.id)
-        val memberRelation = MemberWithIdEventAndThumbnailPhotoModel(memberModel, listOf(idEventModel))
-        whenever(mockDao.checkedInMembers()).thenReturn(Flowable.just(listOf(memberRelation)))
+        whenever(mockIdentificationEventDao.activeCheckIns()).thenReturn(Flowable.just(listOf(idEventModel)))
+        whenever(mockMemberDao.findAll(listOf(memberModel.id))).thenReturn(Single.just(listOf(MemberWithThumbnailPhotoModel(memberModel))))
 
         repository.checkedInMembers().test().assertValue(
-                listOf(memberRelation.toMemberWithIdEventAndThumbnailPhoto()))
+                listOf(MemberWithIdEventAndThumbnailPhoto(memberModel.toMember(), idEventModel.toIdentificationEvent(), null)))
     }
 
     @Test
@@ -156,13 +166,13 @@ class MemberRepositoryImplTest {
             listOf(memberRelation1, memberRelation2)
 
 
-        whenever(mockDao.findHouseholdMembers(householdId)).thenReturn(
+        whenever(mockMemberDao.findHouseholdMembers(householdId)).thenReturn(
             Flowable.just(householdMemberRelations.map {
                 MemberWithIdEventAndThumbnailPhotoModel(memberModel = MemberModel.fromMember(it.member, clock))
             })
         )
 
-        whenever(mockDao.findHouseholdMembersUnarchived(householdId)).thenReturn(
+        whenever(mockMemberDao.findHouseholdMembersUnarchived(householdId)).thenReturn(
             Flowable.just(filteredHouseholdMemberRelations.map {
                 MemberWithIdEventAndThumbnailPhotoModel(memberModel = MemberModel.fromMember(it.member, clock))
             })
@@ -181,7 +191,7 @@ class MemberRepositoryImplTest {
 
         repository.upsert(member, listOf(delta)).test().assertComplete()
 
-        verify(mockDao).upsert(
+        verify(mockMemberDao).upsert(
                 MemberModel.fromMember(member, clock), listOf(DeltaModel.fromDelta(delta, clock)))
     }
 
@@ -202,7 +212,6 @@ class MemberRepositoryImplTest {
         val member6 = MemberModelFactory.build(clock = clock)
         val member7 = MemberModelFactory.build(clock = clock)
         val member8 = MemberModelFactory.build(clock = clock)
-        val storedMemberLastFetched = Instant.ofEpochMilli(0)
         val storedPageKey = null
         val memberPaginationApi1 = MemberPaginationApi(
             pageKey = "page key 1",
@@ -236,17 +245,28 @@ class MemberRepositoryImplTest {
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi2.pageKey))).thenReturn(Single.just(memberPaginationApi3))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(emptyList()))
-        whenever(mockDao.findAll(listOf(member1.id, member2.id, member3.id))).thenReturn(Single.just(listOf(member1, member2, member3)))
-        whenever(mockDao.findAll(listOf(member4.id, member5.id, member6.id))).thenReturn(Single.just(listOf(member4, member5, member6)))
-        whenever(mockDao.findAll(listOf(member7.id, member8.id))).thenReturn(Single.just(listOf(member7, member8)))
+        whenever(mockMemberDao.unsynced()).thenReturn(Single.just(emptyList()))
+        whenever(mockMemberDao.findAll(listOf(member1.id, member2.id, member3.id))).thenReturn(Single.just(listOf(
+            MemberWithThumbnailPhotoModel(member1),
+            MemberWithThumbnailPhotoModel(member2),
+            MemberWithThumbnailPhotoModel(member3)
+        )))
+        whenever(mockMemberDao.findAll(listOf(member4.id, member5.id, member6.id))).thenReturn(Single.just(listOf(
+            MemberWithThumbnailPhotoModel(member4),
+            MemberWithThumbnailPhotoModel(member5),
+            MemberWithThumbnailPhotoModel(member6)
+        )))
+        whenever(mockMemberDao.findAll(listOf(member7.id, member8.id))).thenReturn(Single.just(listOf(
+            MemberWithThumbnailPhotoModel(member7),
+            MemberWithThumbnailPhotoModel(member8)
+        )))
 
         repository.fetch().test().assertComplete()
-        verify(mockDao).upsert(listOf(member1, member2, member3))
+        verify(mockMemberDao).upsert(listOf(member1, member2, member3))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi1.pageKey)
-        verify(mockDao).upsert(listOf(member4, member5, member6))
+        verify(mockMemberDao).upsert(listOf(member4, member5, member6))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi2.pageKey)
-        verify(mockDao).upsert(listOf(member7, member8))
+        verify(mockMemberDao).upsert(listOf(member7, member8))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi3.pageKey)
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
@@ -279,15 +299,15 @@ class MemberRepositoryImplTest {
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey, memberPaginationApi1.pageKey)
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(memberPaginationApi1))
         whenever(mockApi.getMembers(any(), any(), eq(memberPaginationApi1.pageKey))).thenReturn(Single.just(memberPaginationApi2))
-        whenever(mockDao.unsynced()).thenReturn(Single.just(listOf(member1, member3)), Single.just(emptyList()))
-        whenever(mockDao.findAll(listOf(member2.id))).thenReturn(Single.just(listOf(member2)))
-        whenever(mockDao.findAll(listOf(member4.id))).thenReturn(Single.just(listOf(member4)))
+        whenever(mockMemberDao.unsynced()).thenReturn(Single.just(listOf(member1, member3)), Single.just(emptyList()))
+        whenever(mockMemberDao.findAll(listOf(member2.id))).thenReturn(Single.just(listOf(MemberWithThumbnailPhotoModel(member2))))
+        whenever(mockMemberDao.findAll(listOf(member4.id))).thenReturn(Single.just(listOf(MemberWithThumbnailPhotoModel(member4))))
 
         repository.fetch().test().assertComplete()
 
-        verify(mockDao).upsert(listOf(member2))
+        verify(mockMemberDao).upsert(listOf(member2))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi1.pageKey)
-        verify(mockDao).upsert(listOf(member4))
+        verify(mockMemberDao).upsert(listOf(member4))
         verify(mockPreferencesManager).updateMembersPageKey(memberPaginationApi2.pageKey)
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
@@ -307,7 +327,7 @@ class MemberRepositoryImplTest {
 
         repository.fetch().test().assertComplete()
 
-        verify(mockDao, never()).upsert(anyList())
+        verify(mockMemberDao, never()).upsert(anyList())
         verify(mockPreferencesManager, never()).updateMembersPageKey(any())
         verify(mockPreferencesManager).updateMemberLastFetched(clock.instant())
     }
@@ -323,7 +343,7 @@ class MemberRepositoryImplTest {
 
         repository.fetch().test().assertError(exception)
 
-        verify(mockDao, never()).upsert(anyList())
+        verify(mockMemberDao, never()).upsert(anyList())
         verify(mockPreferencesManager, never()).updateMemberLastFetched(any())
         verify(mockPreferencesManager, never()).updateMembersPageKey(any())
     }
@@ -334,7 +354,7 @@ class MemberRepositoryImplTest {
         val photoBytes = ByteArray(1, { 0xa })
         val member = MemberFactory.build(photoUrl = photoUrl)
         val responseBody = ResponseBody.create(MediaType.parse("image/jpeg"), photoBytes)
-        whenever(mockDao.needPhotoDownload()).thenReturn(
+        whenever(mockMemberDao.needPhotoDownload()).thenReturn(
                 Single.just(listOf(MemberModel.fromMember(member, clock))))
         whenever(mockApi.fetchPhoto(photoUrl)).thenReturn(Single.just(responseBody))
 
@@ -344,7 +364,7 @@ class MemberRepositoryImplTest {
         verify(mockPhotoDao).insert(captor.capture())
         val photo = captor.firstValue
         assert(Arrays.equals(photoBytes, photo.bytes))
-        verify(mockDao).upsert(MemberModel.fromMember(member.copy(thumbnailPhotoId = photo.id), clock))
+        verify(mockMemberDao).upsert(MemberModel.fromMember(member.copy(thumbnailPhotoId = photo.id), clock))
     }
 
     @Test
@@ -359,7 +379,7 @@ class MemberRepositoryImplTest {
         )
 
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
-        whenever(mockDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
+        whenever(mockMemberDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
         whenever(mockApi.postMember(token.getHeaderString(), MemberApi(member)))
                 .thenReturn(Completable.complete())
 
@@ -379,7 +399,7 @@ class MemberRepositoryImplTest {
         ) }
 
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
-        whenever(mockDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
+        whenever(mockMemberDao.find(memberModel.id)).thenReturn(Maybe.just(memberModel))
         whenever(mockApi.patchMember(token.getHeaderString(), member.id, MemberApi.patch(member, deltas)))
                 .thenReturn(Completable.complete())
 
@@ -411,7 +431,7 @@ class MemberRepositoryImplTest {
         val buffer = Buffer()
         requestBody.writeTo(buffer)
         assertTrue(java.util.Arrays.equals(photoModel.bytes, buffer.readByteArray()))
-        verify(mockDao).upsert(memberModel.copy(photoId = null), emptyList())
+        verify(mockMemberDao).upsert(memberModel.copy(photoId = null), emptyList())
     }
 
     @Test
@@ -435,7 +455,7 @@ class MemberRepositoryImplTest {
 
         repository.syncPhotos(listOf(delta)).test().assertError(exception)
 
-        verify(mockDao, never()).upsert(memberModel.copy(photoId = null), emptyList())
+        verify(mockMemberDao, never()).upsert(memberModel.copy(photoId = null), emptyList())
     }
     @Test
     fun byIds() {
@@ -444,7 +464,7 @@ class MemberRepositoryImplTest {
             MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build())
         )
         val modelIds = models.mapNotNull { it.memberModel?.id }
-        whenever(mockDao.findMemberRelationsByIds(modelIds)).thenReturn(Single.just(models))
+        whenever(mockMemberDao.findMemberRelationsByIds(modelIds)).thenReturn(Single.just(models))
 
         repository.byIds(modelIds).test().assertValue(models.map { memberWithIdEventAndThumbnailPhotoModel ->
             memberWithIdEventAndThumbnailPhotoModel.toMemberWithIdEventAndThumbnailPhoto()
@@ -457,11 +477,11 @@ class MemberRepositoryImplTest {
             MemberWithIdEventAndThumbnailPhotoModelFactory.build(MemberModelFactory.build())
         }
         val modelIds = models.mapNotNull { it.memberModel?.id }
-        whenever(mockDao.findMemberRelationsByIds(any())).thenReturn(Single.just(models))
+        whenever(mockMemberDao.findMemberRelationsByIds(any())).thenReturn(Single.just(models))
 
         repository.byIds(modelIds).test().assertComplete()
 
-        verify(mockDao, times(1)).findMemberRelationsByIds(modelIds.slice(0..998))
-        verify(mockDao, times(1)).findMemberRelationsByIds(modelIds.slice(999..1000))
+        verify(mockMemberDao, times(1)).findMemberRelationsByIds(modelIds.slice(0..998))
+        verify(mockMemberDao, times(1)).findMemberRelationsByIds(modelIds.slice(999..1000))
     }
 }

@@ -8,16 +8,15 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
+import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
-import org.watsi.domain.entities.User
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.MemberWithThumbnail
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
-import org.watsi.domain.usecases.IsMemberCheckedInUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 import org.watsi.uhp.R
@@ -25,9 +24,9 @@ import java.util.UUID
 import javax.inject.Inject
 
 class EditMemberViewModel @Inject constructor(
+    private val sessionManager: SessionManager,
     private val loadMemberUseCase: LoadMemberUseCase,
     private val updateMemberUseCase: UpdateMemberUseCase,
-    private val isMemberCheckedInUseCase: IsMemberCheckedInUseCase,
     private val dismissMemberUseCase: DismissMemberUseCase,
     private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
     private val createEncounterUseCase: CreateEncounterUseCase,
@@ -40,9 +39,6 @@ class EditMemberViewModel @Inject constructor(
         observable.value = ViewState()
         observable.addSource(LiveDataReactiveStreams.fromPublisher(loadMemberUseCase.execute(member.id))) {
             observable.value = observable.value?.copy(memberWithThumbnail = it)
-        }
-        observable.addSource(LiveDataReactiveStreams.fromPublisher(isMemberCheckedInUseCase.execute(member.id))) {
-            observable.value = observable.value?.copy(isCheckedIn = it)
         }
         return observable
     }
@@ -97,20 +93,19 @@ class EditMemberViewModel @Inject constructor(
         } ?: Completable.complete()
     }
 
-    fun dismissIdentificationEvent(): Completable {
-        return observable.value?.memberWithThumbnail?.member?.let { member ->
-            dismissMemberUseCase.execute(member.id)
-        } ?: Completable.error(IllegalStateException("Tried to dismiss an identificationEvent but member has not loaded yet"))
-    }
+    fun dismissIdentificationEvent(identificationEventId: UUID): Completable =
+            dismissMemberUseCase.execute(identificationEventId)
 
     object FormValidator {
-        fun validateViewState(viewState: ViewState, user: User): Map<String, Int> {
+        fun validateViewState(viewState: ViewState, sessionManager: SessionManager): Map<String, Int> {
             val errors = HashMap<String, Int>()
             if (viewState.memberWithThumbnail?.member?.medicalRecordNumber == null) {
                 errors[EditMemberViewModel.MEDICAL_RECORD_NUMBER_ERROR] = R.string.missing_medical_record_number
             }
-            if (user.isHospital() && viewState.visitReason == null) {
-                errors[EditMemberViewModel.VISIT_REASON_ERROR] = R.string.missing_visit_reason
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+                if (viewState.visitReason == null) {
+                    errors[EditMemberViewModel.VISIT_REASON_ERROR] = R.string.missing_visit_reason
+                }
             }
             return errors
         }
@@ -157,10 +152,10 @@ class EditMemberViewModel @Inject constructor(
         return createEncounterUseCase.execute(encounterWithExtras, true, true, clock)
     }
 
-    fun validateAndCheckInMember(searchMethod: IdentificationEvent.SearchMethod, user: User): Completable {
+    fun validateAndCheckInMember(searchMethod: IdentificationEvent.SearchMethod): Completable {
         val viewState = observable.value ?: return Completable.never()
 
-        val validationErrors = FormValidator.validateViewState(viewState, user)
+        val validationErrors = FormValidator.validateViewState(viewState, sessionManager)
         if (validationErrors.isNotEmpty()) {
             observable.value = viewState.copy(validationErrors = validationErrors)
             return Completable.error(ValidationException("Some required check-in fields are missing", validationErrors))
@@ -169,7 +164,7 @@ class EditMemberViewModel @Inject constructor(
         val idEventId = UUID.randomUUID()
         return Completable.fromAction {
             createIdentificationEvent(idEventId, searchMethod).blockingAwait()
-            if (user.isHospital()) {
+            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
                 val inboundReferralDate = when (viewState.visitReason) {
                     Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
                     Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
@@ -192,7 +187,6 @@ class EditMemberViewModel @Inject constructor(
         val visitReason: Encounter.VisitReason? = null,
         val inboundReferralDate: LocalDate? = null,
         val followUpDate: LocalDate? = null,
-        val isCheckedIn: Boolean? = null,
         val validationErrors: Map<String, Int> = emptyMap()
     )
 }

@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.Transaction
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.watsi.device.db.models.DeltaModel
@@ -42,11 +43,12 @@ interface IdentificationEventDao {
     fun unsynced(): Single<List<IdentificationEventModel>>
 
     //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
+    @Transaction
     @Query("SELECT identification_events.*\n" +
             "FROM identification_events\n" +
             "LEFT OUTER JOIN encounters ON encounters.identificationEventId = identification_events.id\n" +
             "WHERE (encounters.identificationEventId IS NULL OR encounters.preparedAt IS NULL)\n" +
-            "AND identification_events.memberId = :memberId\n" +
-            "AND identification_events.dismissed = 0")
-    fun openCheckIn(memberId: UUID): Single<IdentificationEventModel>
+            "   AND identification_events.dismissed = 0\n" +
+            "ORDER BY identification_events.occurredAt")
+    fun activeCheckIns(): Flowable<List<IdentificationEventModel>>
 }
