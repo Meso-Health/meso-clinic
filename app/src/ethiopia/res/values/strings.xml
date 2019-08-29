@@ -11,10 +11,6 @@
 
     <!-- Menu -->
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
-    <string name="menu_pending_claims_with_number">Pending Approval (%1$s)</string>
-    <string name="menu_pending_claims_without_number">Pending Approval</string>
-    <string name="menu_returned_claims_with_number">Returned (%1$s)</string>
-    <string name="menu_returned_claims_without_number">Returned</string>
     <string name="menu_export_db" translatable="false">Export database</string>
     <string name="menu_export_unsynced_claims" translatable="false">Export unsynced claims</string>
     <string name="delete">Delete</string>
@@ -24,10 +20,19 @@
     <string name="delete_items_confirmation" translatable="false">Delete this item?</string>
 
     <!-- HomeFragment -->
-    <string name="home_fragment_label">Checked-in patients</string>
-    <string name="no_members" translatable="false">No members available</string>
+    <string name="home_fragment_label">Claim Submission</string>
+    <string name="check_in_label">Check-In Member</string>
+    <string name="prepare_label">Prepare Claims</string>
+    <string name="returned_label">Returned Claims</string>
+    <string name="pending_label">Pending Approval</string>
+    <string name="language_label">Switch Language</string>
+    <string name="status_label">Status</string>
     <string name="pending_claims_dialog_label">Enter security PIN</string>
     <string name="pending_claims_dialog_error_message">Invalid PIN</string>
+
+    <!-- CheckedInPatientsFragment -->
+    <string name="checked_in_patients_fragment_label">Checked-in patients</string>
+    <string name="no_members">No members available</string>
 
     <!-- StatusFragment -->
     <string name="last_fetched_returned_encounters_label" translatable="false">Returned Claims</string>

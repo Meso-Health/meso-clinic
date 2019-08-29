@@ -6,85 +6,205 @@
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/empty_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:id="@+id/check_in_button"
+        android:layout_marginTop="@dimen/space36"
+        android:layout_width="@dimen/viewHeight120"
+        android:layout_height="@dimen/viewHeight120"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:background="@drawable/button_primary_background"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/empty_image"
-            android:layout_width="276dp"
-            android:layout_height="200dp"
-            android:contentDescription="@string/photo_description"
-            android:src="@drawable/empty_state" />
+        app:layout_constraintEnd_toStartOf="@id/prepare_button">
 
         <TextView
-            android:id="@+id/empty_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space16"
-            android:text="@string/no_members"
-            style="@style/Label"
-            app:layout_constraintTop_toBottomOf="@id/empty_image"
+            android:drawableTop="@drawable/ic_check_in_48dp"
+            android:text="@string/check_in_label"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize18"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/patients_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/prepare_button"
+        android:layout_marginTop="@dimen/space36"
+        android:layout_width="@dimen/viewHeight120"
+        android:layout_height="@dimen/viewHeight120"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:padding="@dimen/space8"
+        android:background="@drawable/button_primary_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/check_in_button"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <View
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/space24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/current_patients"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/panel_background"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/header" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/scrollingFragmentBottomPadding"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/current_patients"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-        </android.support.constraint.ConstraintLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/search_button"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/space16"
-            android:src="@drawable/ic_search_text_white" />
+            android:drawableTop="@drawable/ic_prepare_claims_48dp"
+            android:text="@string/prepare_label"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-    </android.support.design.widget.CoordinatorLayout>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/pending_button"
+        android:layout_marginTop="@dimen/space36"
+        android:layout_width="@dimen/viewHeight120"
+        android:layout_height="@dimen/viewHeight120"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:padding="@dimen/space4"
+        android:background="@drawable/button_primary_background"
+        android:visibility="gone"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintTop_toBottomOf="@id/check_in_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/returned_button">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_pending_approval_48dp"
+            android:text="@string/pending_label"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <Space
+        android:id="@+id/pending_space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space8"
+        android:layout_marginBottom="@dimen/space8"
+        app:layout_constraintBottom_toTopOf="@id/pending_button"
+        app:layout_constraintStart_toEndOf="@id/pending_button"/>
+
+    <ImageView
+        android:id="@+id/pending_indicator"
+        android:layout_width="@dimen/space24"
+        android:layout_height="@dimen/space24"
+        android:src="@drawable/home_fragment_indicator"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/pending_space"
+        app:layout_constraintEnd_toStartOf="@id/pending_space"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/returned_button"
+        android:layout_marginTop="@dimen/space36"
+        android:layout_width="@dimen/viewHeight120"
+        android:layout_height="@dimen/viewHeight120"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:padding="@dimen/space8"
+        android:background="@drawable/button_primary_background"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/prepare_button"
+        app:layout_constraintStart_toEndOf="@id/pending_button"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_returned_claims_48dp"
+            android:text="@string/returned_label"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <Space
+        android:id="@+id/returned_space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space8"
+        android:layout_marginBottom="@dimen/space8"
+        app:layout_constraintBottom_toTopOf="@id/returned_button"
+        app:layout_constraintStart_toEndOf="@id/returned_button"/>
+
+    <ImageView
+        android:id="@+id/returned_indicator"
+        android:layout_width="@dimen/space24"
+        android:layout_height="@dimen/space24"
+        android:src="@drawable/home_fragment_indicator"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/returned_space"
+        app:layout_constraintEnd_toStartOf="@id/returned_space"/>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/language_button"
+        android:layout_marginTop="@dimen/space36"
+        android:layout_width="@dimen/viewHeight120"
+        android:layout_height="@dimen/viewHeight120"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:padding="@dimen/space8"
+        android:background="@drawable/button_primary_background"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintTop_toBottomOf="@id/pending_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/status_button">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_language_48dp"
+            android:text="@string/language_label"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/status_button"
+        android:layout_marginTop="@dimen/space36"
+        android:layout_width="@dimen/viewHeight120"
+        android:layout_height="@dimen/viewHeight120"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:padding="@dimen/space8"
+        android:background="@drawable/button_primary_background"
+        app:layout_constraintTop_toBottomOf="@id/returned_button"
+        app:layout_constraintStart_toEndOf="@id/language_button"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_status_48dp"
+            android:text="@string/status_label"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

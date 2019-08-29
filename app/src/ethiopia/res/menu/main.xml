@@ -2,18 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_pending_claims"
-        android:orderInCategory="101"
-        android:title="@string/menu_returned_claims_without_number"
-        app:showAsAction="never"
-        android:visible="false" />
-    <item
-        android:id="@+id/menu_returned_claims"
-        android:orderInCategory="102"
-        android:title="@string/menu_returned_claims_without_number"
-        app:showAsAction="never"
-        android:visible="false" />
-    <item
         android:id="@+id/menu_status"
         android:orderInCategory="103"
         android:title="@string/menu_status_label"

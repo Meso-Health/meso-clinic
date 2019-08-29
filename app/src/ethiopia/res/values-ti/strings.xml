@@ -45,6 +45,22 @@
     <string name="login_server_offline_error">እቲ ናይ መረዳእታ ቦኽራ ካብ መስመር ወፃኢ ስለዘሎ ክኣትው አይክኣሉን</string>
     <string name="login_permission_error">እዚ ተግባሪ ሕቶ ክፍሊት ክሰድድ ኣይተፈቐደሉን</string>-
 
+    <!-- HomeFragment -->
+    <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
+    <string name="check_in_label">Check-In Member</string>
+    <string name="prepare_label">Prepare Claims</string>
+    <string name="returned_label">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
+    <string name="pending_label">ምርግጋፅ ዝፅበ</string>
+    <string name="language_label">ቋንቋ ቀይር</string>
+    <string name="status_label">ኩነታት</string>
+    <string name="pending_claims_dialog_label">Enter security PIN</string>
+    <string name="pending_claims_dialog_error_message">Invalid PIN</string>
+
+    <!-- CheckedInPatientsFragment -->
+    <string name="checked_in_patients_fragment_label">Checked-in patients</string>
+    <string name="no_members">No members available</string>
+
+
     <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">ኣእትው</string>
     <string name="checked_in">ኣትዩ ኣሎ</string>
@@ -132,22 +148,12 @@
     <string name="price_with_currency">ብር %1$s</string>
 
     <!-- Menu -->
-    <string name="menu_returned_claims_with_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት (%1$s)</string>
-    <string name="menu_returned_claims_without_number">ዝተመለሱ ናይ ክፍሊት ሕቶታት</string>
     <string name="delete">ሰርዝ</string>
     <string name="remove">ኣወግድ</string>
     <string name="delete_claim_confirmation">እዚ ሕቶ ክፍሊት ይሰረዝ?</string>
-    <string name="menu_pending_claims_with_number">ምርግጋፅ ዝፅበ (%1$s)</string>
-    <string name="menu_pending_claims_without_number">ምርግጋፅ ዝፅበ</string>
     <!--<string name="menu_export_db" translatable="false">Export database</string>-->
     <!--<string name="delete_changes_confirmation" translatable="false">Delete these changes?</string>-->
     <!--<string name="delete_items_confirmation" translatable="false">Delete this item?</string>-->
-
-    <!-- HomeFragment -->
-    <string name="home_fragment_label">ዝኣተው ተሓከምቲ</string>
-    <!--<string name="no_members">No members available</string>-->
-    <string name="pending_claims_dialog_label">ናይ ይሕለፍ ቁፅሪ ኣእትው</string>
-    <string name="pending_claims_dialog_error_message">ዝተሳሓሓተ ናይ ይሕለፍ ቁፅሪ</string>
 
     <!-- StatusFragment -->
     <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->

@@ -2,6 +2,7 @@ package org.watsi.uhp.di.modules
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import org.watsi.uhp.fragments.CheckedInPatientsFragment
 import org.watsi.uhp.fragments.DiagnosisFragment
 import org.watsi.uhp.fragments.DownloadHouseholdFragment
 import org.watsi.uhp.fragments.DrugAndSupplyFragment
@@ -23,6 +24,7 @@ import org.watsi.uhp.fragments.VisitTypeFragment
 @Module
 abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindHomeFragment(): HomeFragment
+    @ContributesAndroidInjector abstract fun bindCheckedInPatientsFragment(): CheckedInPatientsFragment
     @ContributesAndroidInjector abstract fun bindSearchFragment(): SearchFragment
     @ContributesAndroidInjector abstract fun bindHouseholdFragment(): HouseholdFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment

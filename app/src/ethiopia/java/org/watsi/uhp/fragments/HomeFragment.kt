@@ -2,7 +2,6 @@ package org.watsi.uhp.fragments
 
 import android.app.AlertDialog
 import android.app.job.JobScheduler
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -16,20 +15,18 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_home.current_patients
-import kotlinx.android.synthetic.ethiopia.fragment_home.empty_container
-import kotlinx.android.synthetic.ethiopia.fragment_home.patients_container
-import kotlinx.android.synthetic.ethiopia.fragment_home.search_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.check_in_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.language_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.pending_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.pending_indicator
+import kotlinx.android.synthetic.ethiopia.fragment_home.prepare_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.returned_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.returned_indicator
+import kotlinx.android.synthetic.ethiopia.fragment_home.status_button
 import me.philio.pinentry.PinEntryView
-import org.threeten.bp.Clock
-import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
-import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
-import org.watsi.uhp.adapters.MemberAdapter
-import org.watsi.uhp.helpers.RecyclerViewHelper
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.HomeViewModel
 import javax.inject.Inject
@@ -39,12 +36,8 @@ class HomeFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var logger: Logger
-    @Inject lateinit var clock: Clock
 
     lateinit var viewModel: HomeViewModel
-    lateinit var menuStateObservable: LiveData<HomeViewModel.MenuState>
-    lateinit var memberAdapter: MemberAdapter
 
     private var snackbarMessageToShow: String? = null
 
@@ -64,46 +57,21 @@ class HomeFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
-        menuStateObservable = viewModel.getMenuStateObservable()
-        menuStateObservable.observe(this, Observer {
+        viewModel.getObservable().observe(this, Observer {
             it?.let {
-                activity.invalidateOptionsMenu()
-            }
-        })
-
-        viewModel.getMemberStateObservable().observe(this, Observer {
-            it?.let { memberState ->
-                val checkedInMembers = memberState.checkedInMembers
-                if (checkedInMembers.isEmpty()) {
-                    empty_container.visibility = View.VISIBLE
-                    patients_container.visibility = View.GONE
+                if (it.pendingClaimsCount > 0) {
+                    pending_indicator.visibility = View.VISIBLE
                 } else {
-                    empty_container.visibility = View.GONE
-                    patients_container.visibility = View.VISIBLE
-                    memberAdapter.setMembers(checkedInMembers)
+                    pending_indicator.visibility = View.GONE
+                }
+                if (it.returnedClaimsCount > 0) {
+                    returned_indicator.visibility = View.VISIBLE
+                } else {
+                    returned_indicator.visibility = View.GONE
                 }
             }
         })
-
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
-
-        memberAdapter = MemberAdapter(
-            onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                if (memberRelation.identificationEvent != null) {
-                    memberRelation.identificationEvent?.let {
-                        navigationManager.goTo(EditMemberFragment.forParams(
-                            member = memberRelation.member,
-                            searchMethod = it.searchMethod
-                        ))
-                    }
-                } else {
-                    logger.error(
-                        "Member shown on HomeFragment has no corresponding IdentificationEvent",
-                        mapOf("memberId" to memberRelation.member.id.toString())
-                    )
-                }
-            }
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -113,57 +81,45 @@ class HomeFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        RecyclerViewHelper.setRecyclerView(current_patients, memberAdapter, context, false)
-
-        search_button.setOnClickListener {
+        check_in_button.setOnClickListener {
             navigationManager.goTo(SearchFragment())
         }
 
-        snackbarMessageToShow?.let { snackbarMessage ->
-            SnackbarHelper.show(search_button, context, snackbarMessage)
-            snackbarMessageToShow = null
+        prepare_button.setOnClickListener {
+            navigationManager.goTo(CheckedInPatientsFragment())
+        }
+
+
+        language_button.setOnClickListener {
+            (activity as ClinicActivity).localeManager.toggleLocale(activity)
+        }
+
+        status_button.setOnClickListener {
+            navigationManager.goTo(StatusFragment())
+        }
+
+        if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
+            pending_button.visibility = View.VISIBLE
+            pending_button.setOnClickListener {
+                confirmSecurityPinAndNavigate(PendingClaimsFragment())
+            }
+
+            returned_button.visibility = View.VISIBLE
+            returned_button.setOnClickListener {
+                confirmSecurityPinAndNavigate(ReturnedClaimsFragment())
+            }
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        var returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_without_number)
-        var pendingClaimsMenuTitle = context.getString(R.string.menu_pending_claims_without_number)
-
-        menuStateObservable.value?.let {
-            if (it.returnedClaimsCount > 0) {
-                returnedClaimsMenuTitle = context.getString(R.string.menu_returned_claims_with_number, it.returnedClaimsCount)
-            }
-            if (it.pendingClaimsCount > 0) {
-                pendingClaimsMenuTitle = context.getString(R.string.menu_pending_claims_with_number, it.pendingClaimsCount)
-            }
-        }
-
         menu?.let {
-            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION)) {
-                it.findItem(R.id.menu_returned_claims).isVisible = true
-                it.findItem(R.id.menu_returned_claims).title = returnedClaimsMenuTitle
-                it.findItem(R.id.menu_pending_claims).isVisible = true
-                it.findItem(R.id.menu_pending_claims).title = pendingClaimsMenuTitle
-            }
-
             it.findItem(R.id.menu_logout).isVisible = true
-            it.findItem(R.id.menu_status).isVisible = true
-            it.findItem(R.id.menu_switch_language).isVisible = true
             it.findItem(R.id.menu_delete_claim).isVisible = false
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_pending_claims -> {
-                confirmSecurityPinAndNavigate(PendingClaimsFragment())
-            }
-            R.id.menu_returned_claims -> {
-                confirmSecurityPinAndNavigate(ReturnedClaimsFragment())
-            }
-            R.id.menu_status -> {
-                navigationManager.goTo(StatusFragment())
-            }
             R.id.menu_logout -> {
                 AlertDialog.Builder(activity)
                         .setTitle(R.string.log_out_alert)

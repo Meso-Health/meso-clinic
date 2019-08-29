@@ -4,19 +4,16 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Flowable
-import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
-import org.watsi.domain.usecases.LoadCheckedInMembersUseCase
 import org.watsi.domain.usecases.LoadPendingClaimsCountUseCase
 import org.watsi.domain.usecases.LoadReturnedClaimsCountUseCase
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     private val loadPendingClaimsCountUseCase: LoadPendingClaimsCountUseCase,
-    private val loadReturnedClaimsCountUseCase: LoadReturnedClaimsCountUseCase,
-    private val loadCheckedInMembersUseCase: LoadCheckedInMembersUseCase
+    private val loadReturnedClaimsCountUseCase: LoadReturnedClaimsCountUseCase
 ) : ViewModel() {
 
-    fun getMenuStateObservable(): LiveData<MenuState> {
+    fun getObservable(): LiveData<ViewState> {
         val flowables = listOf(
             loadPendingClaimsCountUseCase.execute(),
             loadReturnedClaimsCountUseCase.execute()
@@ -24,7 +21,7 @@ class HomeViewModel @Inject constructor(
 
         return LiveDataReactiveStreams.fromPublisher(
             Flowable.combineLatest(flowables, { results ->
-                MenuState(
+                ViewState(
                     pendingClaimsCount = results[0] as Int,
                     returnedClaimsCount = results[1] as Int
                 )
@@ -32,13 +29,8 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun getMemberStateObservable(): LiveData<MemberState> {
-        return LiveDataReactiveStreams.fromPublisher(
-            loadCheckedInMembersUseCase.execute().map { MemberState(it) }
-        )
-    }
-
-    data class MenuState(val pendingClaimsCount: Int = 0, val returnedClaimsCount: Int = 0)
-
-    data class MemberState(val checkedInMembers: List<MemberWithIdEventAndThumbnailPhoto>)
+    data class ViewState(
+        val pendingClaimsCount: Int = 0,
+        val returnedClaimsCount: Int = 0
+    )
 }

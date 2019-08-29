@@ -45,6 +45,21 @@
     <string name="login_server_offline_error">የመረጃ ቋቱ ከመስመር ውጪ ስለሆነ መግባት አልቻሉም</string>
     <string name="login_permission_error">ይህ ተጠቃሚ የክፍያ ጥያቄ መላክ አልተፈቐደለትም</string>
 
+    <!-- HomeFragment -->
+    <string name="home_fragment_label">የገቡ ታካሚዎች</string>
+    <string name="check_in_label">አስገባ</string>
+    <string name="prepare_label">Prepare Claims</string>
+    <string name="returned_label">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
+    <string name="pending_label">መረጋገጥ የሚጠብቅ</string>
+    <string name="language_label">ቋንቋ ቀይር</string>
+    <string name="status_label">ሁኔታ</string>
+    <string name="pending_claims_dialog_label">Enter security PIN</string>
+    <string name="pending_claims_dialog_error_message">Invalid PIN</string>
+
+    <!-- CheckedInPatientsFragment -->
+    <string name="checked_in_patients_fragment_label">Checked-in patients</string>
+    <string name="no_members">No members available</string>
+
     <!-- EditMemberFragment (Ethiopia) and CheckInMemberDetailFragment (Uganda) -->
     <string name="check_in">አስገባ</string>
     <string name="checked_in">ገብቷል</string>
@@ -129,23 +144,13 @@
     <string name="price_with_currency">ብር %1$s</string>
 
     <!-- Menu -->
-    <string name="menu_returned_claims_with_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች (%1$s)</string>
-    <string name="menu_returned_claims_without_number">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
     <string name="delete">ሰርዝ</string>
     <string name="remove">አስወግድ</string>
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
-    <string name="menu_pending_claims_with_number">መረጋገጥ የሚጠብቅ (%1$s)</string>
-    <string name="menu_pending_claims_without_number">መረጋገጥ የሚጠብቅ</string>
     <!--<string name="menu_export_db" translatable="false">Export database</string>-->
     <!--<string name="delete_changes_confirmation" translatable="false">Delete these changes?</string>-->
     <!--<string name="delete_items_confirmation" translatable="false">Delete this item?</string>-->
     <!--<string name="menu_export_unsynced_claims" translatable="false">Export unsynced claims</string>-->
-
-    <!-- HomeFragment -->
-    <string name="home_fragment_label">የገቡ ታካሚዎች</string>
-    <!--<string name="no_members">No members available</string>-->
-    <string name="pending_claims_dialog_label">የይለፍ ቁጥር አስገባ</string>
-    <string name="pending_claims_dialog_error_message">የተሳሳተ የይለፍ ቁጥር</string>
 
     <!-- StatusFragment -->
     <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
