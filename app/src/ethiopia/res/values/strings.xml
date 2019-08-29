@@ -22,6 +22,7 @@
     <!-- HomeFragment -->
     <string name="home_fragment_label">Claim Submission</string>
     <string name="check_in_label">Check-In Member</string>
+    <string name="recent_label">Recent</string>
     <string name="prepare_label">Prepare Claims</string>
     <string name="returned_label">Returned Claims</string>
     <string name="pending_label">Pending Approval</string>

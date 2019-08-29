@@ -9,6 +9,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -20,12 +21,15 @@ import kotlinx.android.synthetic.ethiopia.fragment_home.language_button
 import kotlinx.android.synthetic.ethiopia.fragment_home.pending_button
 import kotlinx.android.synthetic.ethiopia.fragment_home.pending_indicator
 import kotlinx.android.synthetic.ethiopia.fragment_home.prepare_button
+import kotlinx.android.synthetic.ethiopia.fragment_home.prepare_button_icon
 import kotlinx.android.synthetic.ethiopia.fragment_home.returned_button
 import kotlinx.android.synthetic.ethiopia.fragment_home.returned_indicator
 import kotlinx.android.synthetic.ethiopia.fragment_home.status_button
 import me.philio.pinentry.PinEntryView
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
+import org.watsi.uhp.R.drawable.ic_recent_48dp
+import org.watsi.uhp.R.string.recent_label
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.HomeViewModel
@@ -110,6 +114,14 @@ class HomeFragment : DaggerFragment() {
             returned_button.setOnClickListener {
                 confirmSecurityPinAndNavigate(ReturnedClaimsFragment())
             }
+        } else {
+            prepare_button_icon.text = getString(recent_label)
+            prepare_button_icon.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                ContextCompat.getDrawable(activity, ic_recent_48dp),
+                null,
+                null
+            )
         }
     }
 
