@@ -48,6 +48,7 @@
     <!-- HomeFragment -->
     <string name="home_fragment_label">የገቡ ታካሚዎች</string>
     <string name="check_in_label">አስገባ</string>
+    <string name="recent_label">Recent</string>
     <string name="prepare_label">Prepare Claims</string>
     <string name="returned_label">ተመላሽ የተድርጉ የክፍያ ጥያቄዎች</string>
     <string name="pending_label">መረጋገጥ የሚጠብቅ</string>
