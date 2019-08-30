@@ -9,6 +9,7 @@ import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
 import org.watsi.device.db.daos.EncounterItemDao
+import org.watsi.device.db.daos.EnrollmentPeriodDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
@@ -20,19 +21,21 @@ import org.watsi.device.db.models.DiagnosisModel
 import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
+import org.watsi.device.db.models.EnrollmentPeriodModel
 import org.watsi.device.db.models.IdentificationEventModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
 
-@Database(exportSchema = true, version = 19, entities = [
+@Database(exportSchema = true, version = 20, entities = [
     BillableModel::class,
     DeltaModel::class,
     DiagnosisModel::class,
     EncounterModel::class,
     EncounterItemModel::class,
     EncounterFormModel::class,
+    EnrollmentPeriodModel::class,
     IdentificationEventModel::class,
     MemberModel::class,
     PhotoModel::class,
@@ -47,6 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun encounterDao(): EncounterDao
     abstract fun encounterFormDao(): EncounterFormDao
     abstract fun encounterItemDao(): EncounterItemDao
+    abstract fun enrollmentPeriodDao(): EnrollmentPeriodDao
     abstract fun identificationEventDao(): IdentificationEventDao
     abstract fun memberDao(): MemberDao
     abstract fun photoDao(): PhotoDao

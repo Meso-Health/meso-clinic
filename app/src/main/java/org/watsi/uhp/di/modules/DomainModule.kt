@@ -7,12 +7,14 @@ import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
+import org.watsi.domain.repositories.EnrollmentPeriodRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MainRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 import org.watsi.domain.repositories.ReferralRepository
+import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.CheckForSameDayEncountersUseCase
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
@@ -23,6 +25,7 @@ import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.ExportUnsyncedClaimsUseCase
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
+import org.watsi.domain.usecases.FetchEnrollmentPeriodUseCase
 import org.watsi.domain.usecases.FetchHouseholdIdByCardIdUseCase
 import org.watsi.domain.usecases.FetchHouseholdIdByMembershipNumberUseCase
 import org.watsi.domain.usecases.FetchMembersPhotosUseCase
@@ -392,5 +395,19 @@ class DomainModule {
         encounterRepository: EncounterRepository
     ): CheckForSameDayEncountersUseCase {
         return CheckForSameDayEncountersUseCase(encounterRepository)
+    }
+
+    @Provides
+    fun provideFetchEnrollmentPeriodUseCase(
+        enrollmentPeriodRepository: EnrollmentPeriodRepository
+    ): FetchEnrollmentPeriodUseCase {
+        return FetchEnrollmentPeriodUseCase(enrollmentPeriodRepository)
+    }
+
+    @Provides
+    fun provideShouldEnrollUseCase(
+        enrollmentPeriodRepository: EnrollmentPeriodRepository
+    ): ShouldEnrollUseCase {
+        return ShouldEnrollUseCase(enrollmentPeriodRepository)
     }
 }

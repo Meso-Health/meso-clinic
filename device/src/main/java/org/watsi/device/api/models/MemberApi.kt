@@ -29,7 +29,9 @@ data class MemberApi(
     @Expose(serialize = false) val needsRenewal: Boolean?,
     val relationshipToHead: RelationshipToHead?,
     val archivedAt: Instant?,
-    val archivedReason: ArchivedReason?
+    val archivedReason: ArchivedReason?,
+    val renewedAt: Instant?,
+    val coverageEndDate: LocalDate?
 ) {
 
     constructor (member: Member) :
@@ -51,7 +53,9 @@ data class MemberApi(
                  needsRenewal = member.needsRenewal,
                  relationshipToHead = member.relationshipToHead,
                  archivedAt = member.archivedAt,
-                 archivedReason = member.archivedReason
+                 archivedReason = member.archivedReason,
+                 renewedAt = member.renewedAt,
+                 coverageEndDate = member.coverageEndDate
             )
 
     fun toMember(persistedMember: Member?): Member {
@@ -79,7 +83,9 @@ data class MemberApi(
             needsRenewal = needsRenewal,
             relationshipToHead = relationshipToHead,
             archivedAt = archivedAt,
-            archivedReason = archivedReason
+            archivedReason = archivedReason,
+            renewedAt = renewedAt,
+            coverageEndDate = coverageEndDate
         )
     }
 

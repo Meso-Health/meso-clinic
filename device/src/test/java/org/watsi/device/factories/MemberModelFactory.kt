@@ -35,6 +35,8 @@ object MemberModelFactory {
         relationshipToHead: RelationshipToHead? = null,
         archivedAt: Instant? = null,
         archivedReason: ArchivedReason? = null,
+        renewedAt: Instant? = null,
+        coverageEndDate: LocalDate? = null,
         clock: Clock = Clock.systemUTC()
     ) : MemberModel {
         val now = Instant.now(clock)
@@ -60,7 +62,9 @@ object MemberModelFactory {
             needsRenewal = needsRenewal,
             relationshipToHead = relationshipToHead,
             archivedAt = archivedAt,
-            archivedReason = archivedReason
+            archivedReason = archivedReason,
+            renewedAt = renewedAt,
+            coverageEndDate = coverageEndDate
         )
     }
 
@@ -88,6 +92,8 @@ object MemberModelFactory {
         relationshipToHead: RelationshipToHead? = null,
         archivedAt: Instant? = null,
         archivedReason: ArchivedReason? = null,
+        renewedAt: Instant? = null,
+        coverageEndDate: LocalDate? = null,
         clock: Clock = Clock.systemUTC()
     ) : MemberModel {
         val model = build(
@@ -113,6 +119,8 @@ object MemberModelFactory {
             relationshipToHead = relationshipToHead,
             archivedAt = archivedAt,
             archivedReason = archivedReason,
+            renewedAt = renewedAt,
+            coverageEndDate = coverageEndDate,
             clock = clock
         )
         memberDao.insert(model)

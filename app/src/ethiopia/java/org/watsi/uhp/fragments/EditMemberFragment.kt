@@ -20,11 +20,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.action_button
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.beneficiary_status_field
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.beneficiary_status_field_layout
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.birthdate_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.follow_up_date_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.hospital_check_in_details_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.inbound_referral_date_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_number_field
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.member_status_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.needs_renewal_notification
@@ -42,6 +45,7 @@ import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
+import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.check_in
 import org.watsi.uhp.R.string.start_claim_button
@@ -49,6 +53,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EnumHelper
+import org.watsi.uhp.helpers.EthiopianDateHelper
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager
@@ -131,7 +136,7 @@ class EditMemberFragment : DaggerFragment() {
                     val member = memberWithThumbnail.member
                     val photo = memberWithThumbnail.photo
 
-                    if (member.needsRenewal == true) {
+                    if (viewState.canRenew) {
                         needs_renewal_notification.visibility = View.VISIBLE
                     }
 
@@ -146,6 +151,12 @@ class EditMemberFragment : DaggerFragment() {
 
                     top_name.text = member.name
                     top_gender_age.text = StringHelper.formatAgeAndGender(member, activity, clock)
+
+                    member_status_field.setText(formatMembershipStatus(member.memberStatus(clock), member))
+                    if (member.relationshipToHead != Member.RelationshipToHead.SELF) {
+                        beneficiary_status_field_layout.visibility = View.VISIBLE
+                        beneficiary_status_field.setText(formatMembershipStatus(member.beneficiaryStatus(clock), member))
+                    }
 
                     membership_number_field.setText(member.membershipNumber)
                     name_field.setText(member.name)
@@ -363,6 +374,33 @@ class EditMemberFragment : DaggerFragment() {
             else -> super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    private fun formatMembershipStatus(
+        membershipStatus: Member.MembershipStatus,
+        member: Member
+    ): String {
+        return when (membershipStatus) {
+            Member.MembershipStatus.ACTIVE -> {
+                member.renewedAt?.let {
+                    val renewedDate = DateUtils.instantToLocalDate(it, clock)
+                    "Active (last renewed ${EthiopianDateHelper.formatAsEthiopianDate(renewedDate)})"
+                } ?: "Active"
+            }
+            Member.MembershipStatus.EXPIRED -> {
+                member.renewedAt?.let {
+                    val renewedDate = DateUtils.instantToLocalDate(it, clock)
+                    "Expired (last renewed ${EthiopianDateHelper.formatAsEthiopianDate(renewedDate)})"
+                } ?: "Expired"
+            }
+            Member.MembershipStatus.DELETED -> {
+                member.archivedAt?.let {
+                    val deletedDate = DateUtils.instantToLocalDate(it, clock)
+                    "Deleted (deleted on ${EthiopianDateHelper.formatAsEthiopianDate(deletedDate)})"
+                } ?: "Deleted"
+            }
+            else -> "Unknown"
+        }
     }
 
     /**

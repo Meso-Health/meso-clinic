@@ -28,7 +28,9 @@ data class Member(
     val needsRenewal: Boolean?,
     val relationshipToHead: RelationshipToHead?,
     val archivedAt: Instant?,
-    val archivedReason: ArchivedReason?
+    val archivedReason: ArchivedReason?,
+    val renewedAt: Instant?,
+    val coverageEndDate: LocalDate?
 ) : Serializable {
 
     class MemberNotFoundException(message: String) : Exception(message)
@@ -55,6 +57,13 @@ data class Member(
         PARENT,
         SON_IN_LAW,
         OTHER
+    }
+
+    enum class MembershipStatus {
+        ACTIVE,
+        EXPIRED,
+        DELETED,
+        UNKNOWN
     }
 
     fun isAbsentee(clock: Clock): Boolean {
@@ -93,6 +102,44 @@ data class Member(
 
     fun photoExists(): Boolean {
         return photoUrl != null
+    }
+
+    fun memberStatus(clock: Clock): MembershipStatus {
+        if (householdId == null || coverageEndDate == null) {
+            return MembershipStatus.UNKNOWN
+        }
+
+        if (relationshipToHead == RelationshipToHead.SELF && archivedReason != null) {
+            return MembershipStatus.DELETED
+        }
+
+        val currentDate = DateUtils.instantToLocalDate(clock.instant(), clock)
+        return if (coverageEndDate < currentDate) {
+            MembershipStatus.EXPIRED
+        } else {
+            MembershipStatus.ACTIVE
+        }
+    }
+
+    fun beneficiaryStatus(clock: Clock): MembershipStatus {
+        if (householdId == null || coverageEndDate == null) {
+            return MembershipStatus.UNKNOWN
+        }
+
+        if (archivedReason == ArchivedReason.UNPAID) {
+            return MembershipStatus.EXPIRED
+        }
+
+        if (archivedReason != null) {
+            return MembershipStatus.DELETED
+        }
+
+        val currentDate = DateUtils.instantToLocalDate(clock.instant(), clock)
+        return if (coverageEndDate < currentDate) {
+            MembershipStatus.EXPIRED
+        } else {
+            MembershipStatus.ACTIVE
+        }
     }
 
     companion object {

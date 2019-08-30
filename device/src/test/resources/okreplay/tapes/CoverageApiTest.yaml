@@ -1633,7 +1633,7 @@ interactions:
     uri: http://localhost:5000/members
     headers:
       Authorization: Token CYJDrtpZ.FqoqsnkzRZ2tjVVU9M7XWYTe1qJ1eZeS
-    body: '{"id":"324a2322-48c1-4a4a-b123-4c2233f21b11","enrolled_at":"2018-03-23T08:10:36.306Z","household_id":"31f572a0-2d69-42d3-9118-0f26ba6a52f7","card_id":null,"full_name":"Akiiki Monday","gender":"F","birthdate":"1993-05-11","birthdate_accuracy":"Y","fingerprints_guid":null,"phone_number":null,"preferred_language":null,"preferred_language_other":null,"photo_url":null,"membership_number":null,"medical_record_number":null,"needs_renewal":false,"relationship_to_head":null,"archived_at":null,"archived_reason":null}'
+    body: '{"id":"324a2322-48c1-4a4a-b123-4c2233f21b11","enrolled_at":"2018-03-23T08:10:36.306Z","household_id":"31f572a0-2d69-42d3-9118-0f26ba6a52f7","card_id":null,"full_name":"Akiiki Monday","gender":"F","birthdate":"1993-05-11","birthdate_accuracy":"Y","fingerprints_guid":null,"phone_number":null,"preferred_language":null,"preferred_language_other":null,"photo_url":null,"membership_number":null,"medical_record_number":null,"needs_renewal":false,"relationship_to_head":null,"archived_at":null,"archived_reason":null,"renewed_at":null,"coverage_end_date":null}'
   response:
     status: 201
     headers:
@@ -1644,7 +1644,7 @@ interactions:
       Vary: Accept-Encoding, Origin
       X-Request-Id: 90228792-a02a-4153-b041-bb347b9637aa
       X-Runtime: '0.027363'
-    body: '{"id":"324a2322-48c1-4a4a-b123-4c2233f21b11","created_at":"2019-06-11T19:48:55.201+03:00","updated_at":"2019-06-11T19:48:55.201+03:00","enrolled_at":"2018-03-23T11:10:36.306+03:00","absentee":true,"card_id":null,"full_name":"Akiiki Monday","gender":"F","age":26,"birthdate":"1993-05-11","birthdate_accuracy":"Y","phone_number":null,"fingerprints_guid":null,"membership_number":null,"medical_record_number":null,"profession":null,"relationship_to_head":null,"archived_at":null,"archived_reason":null,"household_id":"31f572a0-2d69-42d3-9118-0f26ba6a52f7","administrative_division_id":27,"needs_renewal":null}'
+    body: '{"id":"324a2322-48c1-4a4a-b123-4c2233f21b11","created_at":"2019-06-11T19:48:55.201+03:00","updated_at":"2019-06-11T19:48:55.201+03:00","enrolled_at":"2018-03-23T11:10:36.306+03:00","absentee":true,"card_id":null,"full_name":"Akiiki Monday","gender":"F","age":26,"birthdate":"1993-05-11","birthdate_accuracy":"Y","phone_number":null,"fingerprints_guid":null,"membership_number":null,"medical_record_number":null,"profession":null,"relationship_to_head":null,"archived_at":null,"archived_reason":null,"household_id":"31f572a0-2d69-42d3-9118-0f26ba6a52f7","administrative_division_id":27,"needs_renewal":null,"renewed_at":null,"coverage_end_date":null}'
 - recorded: 2019-06-11T16:48:55.374Z
   request:
     method: PATCH

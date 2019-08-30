@@ -57,7 +57,9 @@ data class MemberModel(
     val needsRenewal: Boolean?,
     val relationshipToHead: RelationshipToHead?,
     val archivedAt: Instant?,
-    val archivedReason: ArchivedReason?
+    val archivedReason: ArchivedReason?,
+    val renewedAt: Instant?,
+    val coverageEndDate: LocalDate?
 ) {
 
     init {
@@ -87,7 +89,9 @@ data class MemberModel(
             needsRenewal = needsRenewal,
             relationshipToHead = relationshipToHead,
             archivedAt = archivedAt,
-            archivedReason = archivedReason
+            archivedReason = archivedReason,
+            renewedAt = renewedAt,
+            coverageEndDate = coverageEndDate
         )
     }
 
@@ -116,7 +120,9 @@ data class MemberModel(
                 needsRenewal = member.needsRenewal,
                 relationshipToHead = member.relationshipToHead,
                 archivedAt = member.archivedAt,
-                archivedReason = member.archivedReason
+                archivedReason = member.archivedReason,
+                renewedAt = member.renewedAt,
+                coverageEndDate = member.coverageEndDate
             )
         }
     }

@@ -89,6 +89,10 @@ object DateUtils {
 
         return Pair(beginningOfDay, endOfDay)
     }
+
+    fun instantToLocalDate(instant: Instant, clock: Clock): LocalDate {
+        return ZonedDateTime.ofInstant(instant, clock.zone).toLocalDate()
+    }
 }
 
 data class Age (val quantity: Int, val unit: AgeUnit) {

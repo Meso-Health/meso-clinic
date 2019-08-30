@@ -10,6 +10,7 @@ import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
+import org.watsi.domain.usecases.FetchEnrollmentPeriodUseCase
 import org.watsi.domain.usecases.FetchMembersUseCase
 import org.watsi.domain.usecases.FetchOpenIdentificationEventsUseCase
 import org.watsi.domain.usecases.FetchReturnedClaimsUseCase
@@ -24,6 +25,7 @@ class FetchDataService : BaseService() {
     @Inject lateinit var fetchReturnedClaimsUseCase: FetchReturnedClaimsUseCase
     @Inject lateinit var fetchIdentificationEventsUseCase: FetchOpenIdentificationEventsUseCase
     @Inject lateinit var fetchMembersUseCase: FetchMembersUseCase
+    @Inject lateinit var fetchEnrollmentPeriodUseCase: FetchEnrollmentPeriodUseCase
     @Inject lateinit var billableRepository: BillableRepository
     @Inject lateinit var diagnosisRepository: DiagnosisRepository
     @Inject lateinit var memberRepository: MemberRepository
@@ -79,7 +81,14 @@ class FetchDataService : BaseService() {
                 Completable.complete()
             }
 
+            val enrollmentPeriodsCompletable = if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_ENROLLMENT_PERIODS)) {
+                fetchEnrollmentPeriodUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_enrollment_periods_error_label)) }
+            } else {
+                Completable.complete()
+            }
+
             Completable.concatArray(
+                enrollmentPeriodsCompletable,
                 billablesCompletable,
                 diagnosesCompletable,
                 returnedClaimsCompletable,

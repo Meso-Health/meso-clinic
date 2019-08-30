@@ -118,4 +118,103 @@ class MemberTest {
                                      modelId = member.id,
                                      field = "cardId")))
     }
+
+    @Test
+    fun memberStatus_nullHousehold_isUnknown() {
+        val member = MemberFactory.build(householdId = null)
+
+        assertEquals(Member.MembershipStatus.UNKNOWN, member.memberStatus(fixedClock))
+    }
+
+    @Test
+    fun memberStatus_nullCoverageEndDate_isUnknown() {
+        val member = MemberFactory.build(coverageEndDate = null)
+
+        assertEquals(Member.MembershipStatus.UNKNOWN, member.memberStatus(fixedClock))
+    }
+
+    @Test
+    fun memberStatus_archivedAndHeadOfHousehold_isDeleted() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now(),
+            archivedReason = Member.ArchivedReason.OTHER,
+            relationshipToHead = Member.RelationshipToHead.SELF
+        )
+
+        assertEquals(Member.MembershipStatus.DELETED, member.memberStatus(fixedClock))
+    }
+
+    @Test
+    fun memberStatus_coverageEndedBeforeCurrentDate_isExpired() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now().minusDays(10),
+            archivedReason = Member.ArchivedReason.OTHER,
+            relationshipToHead = Member.RelationshipToHead.DAUGHTER
+        )
+
+        assertEquals(Member.MembershipStatus.EXPIRED, member.memberStatus(fixedClock))
+    }
+
+    @Test
+    fun memberStatus_coverageEndedIsAfterCurrentDate_isActive() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now().plusDays(10),
+            archivedReason = Member.ArchivedReason.OTHER,
+            relationshipToHead = Member.RelationshipToHead.DAUGHTER
+        )
+
+        assertEquals(Member.MembershipStatus.ACTIVE, member.memberStatus(fixedClock))
+    }
+
+    @Test
+    fun beneficiaryStatus_nullHousehold_isUnknown() {
+        val member = MemberFactory.build(householdId = null)
+
+        assertEquals(Member.MembershipStatus.UNKNOWN, member.beneficiaryStatus(fixedClock))
+    }
+
+    @Test
+    fun beneficiaryStatus_nullCoverageEndDate_isUnknown() {
+        val member = MemberFactory.build(coverageEndDate = null)
+
+        assertEquals(Member.MembershipStatus.UNKNOWN, member.beneficiaryStatus(fixedClock))
+    }
+
+    @Test
+    fun beneficiaryStatus_unpaid_isExpired() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now(),
+            archivedReason = Member.ArchivedReason.UNPAID
+        )
+
+        assertEquals(Member.MembershipStatus.EXPIRED, member.beneficiaryStatus(fixedClock))
+    }
+
+    @Test
+    fun beneficiaryStatus_archivedNotUnpaid_isExpired() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now(),
+            archivedReason = Member.ArchivedReason.OTHER
+        )
+
+        assertEquals(Member.MembershipStatus.DELETED, member.beneficiaryStatus(fixedClock))
+    }
+
+    @Test
+    fun beneficiaryStatus_coverageEndedBeforeCurrentDate_isExpired() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now().minusDays(10)
+        )
+
+        assertEquals(Member.MembershipStatus.EXPIRED, member.beneficiaryStatus(fixedClock))
+    }
+
+    @Test
+    fun beneficiaryStatus_coverageEndedIsAfterCurrentDate_isActive() {
+        val member = MemberFactory.build(
+            coverageEndDate = LocalDate.now().plusDays(10)
+        )
+
+        assertEquals(Member.MembershipStatus.ACTIVE, member.beneficiaryStatus(fixedClock))
+    }
 }

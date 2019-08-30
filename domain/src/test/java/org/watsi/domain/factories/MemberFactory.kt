@@ -28,7 +28,9 @@ object MemberFactory {
         needsRenewal: Boolean? = false,
         relationshipToHead: Member.RelationshipToHead? = null,
         archivedAt: Instant? = null,
-        archivedReason: ArchivedReason? = null
+        archivedReason: ArchivedReason? = null,
+        renewedAt: Instant? = null,
+        coverageEndDate: LocalDate? = null
     ) : Member {
         return Member(
             id = id,
@@ -50,7 +52,9 @@ object MemberFactory {
             needsRenewal = needsRenewal,
             relationshipToHead = relationshipToHead,
             archivedAt = archivedAt,
-            archivedReason = archivedReason
+            archivedReason = archivedReason,
+            renewedAt = renewedAt,
+            coverageEndDate = coverageEndDate
         )
     }
 }

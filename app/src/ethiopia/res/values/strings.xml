@@ -92,6 +92,12 @@
     <string name="check_out_alert_dialog_title">Remove from checked in list?</string>
     <string name="check_out_alert_dialog_message">%1$s will be removed from the checked in list. You will no longer be able to submit a claim for their service.</string>
     <string name="diagnoses_and_billable_missing_dialog">Diagnoses and billables have not been downloaded yet, please sync before trying again.</string>
+    <string name="membership_status_panel_header">Membership Status</string>
+    <string name="member_status_field_label">Head of Household</string>
+    <string name="beneficiary_status_field_label">Beneficiary</string>
+    <string name="member_information_panel_header">Member Information</string>
+    <string name="membership_expired_notification">Membership is expired</string>
+    <string name="membership_unknown_notification">Membership status is unknown</string>
 
     <string name="visit_reason_label" translatable="false">Reason for visit</string>
     <string name="inbound_referral_date_label" translatable="false">Inbound referral date</string>

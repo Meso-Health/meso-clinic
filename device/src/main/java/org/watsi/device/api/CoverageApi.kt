@@ -10,6 +10,7 @@ import org.watsi.device.api.models.BillableApi
 import org.watsi.device.api.models.BillableWithPriceScheduleApi
 import org.watsi.device.api.models.DiagnosisApi
 import org.watsi.device.api.models.EncounterApi
+import org.watsi.device.api.models.EnrollmentPeriodApi
 import org.watsi.device.api.models.HouseholdApi
 import org.watsi.device.api.models.IdentificationEventApi
 import org.watsi.device.api.models.MemberApi
@@ -145,4 +146,9 @@ interface CoverageApi {
 
     @GET
     fun fetchPhoto(@Url photoUrl: String): Single<ResponseBody>
+
+    @GET("enrollment_periods")
+    fun getEnrollmentPeriods(
+        @Header(AUTHORIZATION_HEADER) tokenAuthorization: String
+    ): Single<List<EnrollmentPeriodApi>>
 }

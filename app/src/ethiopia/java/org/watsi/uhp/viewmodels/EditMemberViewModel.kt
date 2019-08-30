@@ -14,6 +14,7 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.MemberWithThumbnail
+import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
@@ -30,6 +31,7 @@ class EditMemberViewModel @Inject constructor(
     private val dismissMemberUseCase: DismissMemberUseCase,
     private val createIdentificationEventUseCase: CreateIdentificationEventUseCase,
     private val createEncounterUseCase: CreateEncounterUseCase,
+    private val shouldEnrollUseCase: ShouldEnrollUseCase,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -39,6 +41,9 @@ class EditMemberViewModel @Inject constructor(
         observable.value = ViewState()
         observable.addSource(LiveDataReactiveStreams.fromPublisher(loadMemberUseCase.execute(member.id))) {
             observable.value = observable.value?.copy(memberWithThumbnail = it)
+        }
+        shouldEnrollUseCase.execute(member).subscribe { canRenew ->
+            observable.postValue(observable.value?.copy(canRenew = canRenew))
         }
         return observable
     }
@@ -187,6 +192,7 @@ class EditMemberViewModel @Inject constructor(
         val visitReason: Encounter.VisitReason? = null,
         val inboundReferralDate: LocalDate? = null,
         val followUpDate: LocalDate? = null,
-        val validationErrors: Map<String, Int> = emptyMap()
+        val validationErrors: Map<String, Int> = emptyMap(),
+        val canRenew: Boolean = false
     )
 }

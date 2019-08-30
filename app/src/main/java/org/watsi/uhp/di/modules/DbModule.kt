@@ -19,6 +19,7 @@ import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterFormDao
 import org.watsi.device.db.daos.EncounterItemDao
+import org.watsi.device.db.daos.EnrollmentPeriodDao
 import org.watsi.device.db.daos.IdentificationEventDao
 import org.watsi.device.db.daos.MemberDao
 import org.watsi.device.db.daos.PhotoDao
@@ -29,6 +30,7 @@ import org.watsi.device.db.repositories.DeltaRepositoryImpl
 import org.watsi.device.db.repositories.DiagnosisRepositoryImpl
 import org.watsi.device.db.repositories.EncounterFormRepositoryImpl
 import org.watsi.device.db.repositories.EncounterRepositoryImpl
+import org.watsi.device.db.repositories.EnrollmentPeriodRepositoryImpl
 import org.watsi.device.db.repositories.IdentificationEventRepositoryImpl
 import org.watsi.device.db.repositories.MainRepositoryImpl
 import org.watsi.device.db.repositories.MemberRepositoryImpl
@@ -42,6 +44,7 @@ import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterFormRepository
 import org.watsi.domain.repositories.EncounterRepository
+import org.watsi.domain.repositories.EnrollmentPeriodRepository
 import org.watsi.domain.repositories.IdentificationEventRepository
 import org.watsi.domain.repositories.MainRepository
 import org.watsi.domain.repositories.MemberRepository
@@ -109,6 +112,10 @@ class DbModule {
     @Singleton
     @Provides
     fun provideReferralDao(db: AppDatabase): ReferralDao = db.referralDao()
+
+    @Singleton
+    @Provides
+    fun provideEnrollmentPeriodDao(db: AppDatabase): EnrollmentPeriodDao = db.enrollmentPeriodDao()
 
     @Provides
     fun provideBillableRepository(billableDao: BillableDao,
@@ -199,5 +206,15 @@ class DbModule {
     @Provides
     fun provideMainRepository(appDatabase: AppDatabase, okHttpClient: OkHttpClient): MainRepository {
         return MainRepositoryImpl(appDatabase, okHttpClient)
+    }
+
+    @Provides
+    fun provideEnrollmentPeriodRepository(
+        enrollmentPeriodDao: EnrollmentPeriodDao,
+        api: CoverageApi,
+        sessionManager: SessionManager,
+        clock: Clock
+    ): EnrollmentPeriodRepository {
+        return EnrollmentPeriodRepositoryImpl(enrollmentPeriodDao, api, sessionManager, clock)
     }
 }

@@ -65,6 +65,73 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <TextView
+                android:id="@+id/membership_status_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space16"
+                android:paddingTop="@dimen/space24"
+                android:text="@string/membership_status_panel_header"
+                style="@style/PanelHeader"
+                app:layout_constraintTop_toBottomOf="@id/top_gender_age" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/membership_status_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space8"
+                android:background="@drawable/panel_background"
+                android:padding="@dimen/space16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/membership_status_panel_header">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/member_status_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/member_status_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/member_status_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/beneficiary_status_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/member_status_field_layout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/beneficiary_status_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/beneficiary_status_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/demographic_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space16"
+                android:paddingTop="@dimen/space24"
+                android:text="@string/member_information_panel_header"
+                style="@style/PanelHeader"
+                app:layout_constraintTop_toBottomOf="@id/membership_status_container" />
+
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/demographic_container"
                 android:layout_width="match_parent"
@@ -74,7 +141,7 @@
                 android:padding="@dimen/space16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/top_gender_age">
+                app:layout_constraintTop_toBottomOf="@id/demographic_panel_header">
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/membership_number_field_layout"
