@@ -50,4 +50,13 @@ class DateUtilsTest {
 
         Assert.assertFalse(DateUtils.isToday(notToday, clock))
     }
+
+    @Test
+    fun getStartAndEndOfDayInstants() {
+        val referenceInstant = Instant.ofEpochSecond(1567117107)
+        val startAndEndOfDay = DateUtils.getStartAndEndOfDayInstants(referenceInstant, clock)
+
+        assertEquals(Instant.ofEpochSecond(1567036800), startAndEndOfDay.first)
+        assertEquals(Instant.ofEpochSecond(1567123200), startAndEndOfDay.second)
+    }
 }

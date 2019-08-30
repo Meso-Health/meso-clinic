@@ -6,6 +6,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Clock
+import org.threeten.bp.Instant
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.DbHelper
@@ -29,6 +30,7 @@ import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.repositories.EncounterRepository
+import org.watsi.domain.utils.DateUtils
 import java.util.UUID
 
 class EncounterRepositoryImpl(
@@ -275,5 +277,16 @@ class EncounterRepositoryImpl(
                 )
             }.subscribeOn(Schedulers.io())
         } ?: Completable.error(Exception("Current token is null while calling EncounterRepositoryImpl.sync"))
+    }
+
+    override fun encountersOccurredSameDay(
+        occurredAt: Instant,
+        memberId: UUID
+    ): Single<Boolean> {
+        val startAndEndOfDay = DateUtils.getStartAndEndOfDayInstants(occurredAt, clock)
+
+        return encounterDao.encountersForMemberBetween(
+            memberId, startAndEndOfDay.first, startAndEndOfDay.second
+        ).map { !it.isEmpty() }.subscribeOn(Schedulers.io())
     }
 }

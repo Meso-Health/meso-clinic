@@ -13,6 +13,7 @@ import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 import org.watsi.domain.repositories.ReferralRepository
+import org.watsi.domain.usecases.CheckForSameDayEncountersUseCase
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
@@ -384,5 +385,12 @@ class DomainModule {
         encounterRepository: EncounterRepository
     ): ExportUnsyncedClaimsUseCase {
         return ExportUnsyncedClaimsUseCase(deltaRepository, encounterRepository)
+    }
+
+    @Provides
+    fun provideCheckForSameDayEncountersUseCase(
+        encounterRepository: EncounterRepository
+    ): CheckForSameDayEncountersUseCase {
+        return CheckForSameDayEncountersUseCase(encounterRepository)
     }
 }

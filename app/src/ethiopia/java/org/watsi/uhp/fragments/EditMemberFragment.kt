@@ -253,9 +253,7 @@ class EditMemberFragment : DaggerFragment() {
                         getString(R.string.checked_in_snackbar_message, member.name)
                     ))
                 }, { throwable ->
-                    if (throwable is EditMemberViewModel.ValidationException) {
-                        // do nothing for now. No need to say "some fields are invalid"
-                    } else {
+                    if (throwable !is EditMemberViewModel.ValidationException) {
                         logger.error(throwable)
                     }
                 })

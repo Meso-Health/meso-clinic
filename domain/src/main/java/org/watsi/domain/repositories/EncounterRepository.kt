@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import org.threeten.bp.Instant
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
@@ -29,4 +30,5 @@ interface EncounterRepository {
     fun loadReturnedClaims(): Flowable<List<EncounterWithExtras>>
     fun returnedIds(): Single<List<UUID>>
     fun revisedIds(): Single<List<UUID>>
+    fun encountersOccurredSameDay(occurredAt: Instant, memberId: UUID): Single<Boolean>
 }

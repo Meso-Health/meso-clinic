@@ -10,6 +10,7 @@ import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import org.threeten.bp.Instant
 import org.watsi.device.db.models.BillableModel
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.device.db.models.DiagnosisModel
@@ -103,4 +104,11 @@ interface EncounterDao {
             "deltas.synced = 0 AND\n" +
             "deltas.modelName = 'ENCOUNTER')")
     fun unsynced(): Single<List<EncounterWithExtrasModel>>
+
+    @Query("SELECT id FROM encounters WHERE memberId = :memberId AND occurredAt BETWEEN :startTime AND :endTime")
+    fun encountersForMemberBetween(
+        memberId: UUID,
+        startTime: Instant,
+        endTime: Instant
+    ): Single<List<UUID>>
 }

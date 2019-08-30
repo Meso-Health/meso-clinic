@@ -304,6 +304,7 @@
     <string name="empty_line_items_warning">የክፍያ ጥያቄ ዝርዝር ሊኖረው ይገባል</string>
     <!--<string name="empty_comment_warning" translatable="false">Claim resubmission must have a comment</string>-->
     <!--<string name="empty_visit_type" translatable="false">Claim must have a visit type</string>-->
+    <string name="duplicate_claim_error">Already a claim submitted for this date of service</string>
 
     <!-- EditPriceFragment -->
     <string name="edit_price_fragment_label">ዋጋ አስተካክል</string>

@@ -61,6 +61,7 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
 import org.watsi.domain.entities.Referral
+import org.watsi.domain.usecases.CheckForSameDayEncountersUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.LoadOnePendingClaimUseCase
 import org.watsi.domain.usecases.LoadOneReturnedClaimUseCase
@@ -399,7 +400,11 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         viewModel.finishEncounter(encounterFlowState, encounterAction).subscribe({
             navigateToNext(message)
         }, {
-            logger.error(it)
+            if (it is CheckForSameDayEncountersUseCase.SameDayEncounterException) {
+                SnackbarHelper.showError(finish_button, context, getString(R.string.duplicate_claim_error))
+            } else {
+                logger.error(it)
+            }
         })
     }
 

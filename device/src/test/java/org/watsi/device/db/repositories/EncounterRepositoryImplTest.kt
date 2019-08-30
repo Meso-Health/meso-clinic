@@ -59,6 +59,8 @@ import org.watsi.domain.factories.ReferralFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
+import org.watsi.domain.utils.DateUtils
+import java.util.UUID
 
 @RunWith(MockitoJUnitRunner::class)
 class EncounterRepositoryImplTest {
@@ -304,5 +306,31 @@ class EncounterRepositoryImplTest {
             },
             encounterModel = encounterWithExtrasModel.encounterModel!!
         )
+    }
+
+    @Test
+    fun encountersOccurredToday_hasEncounters_returnsTrue() {
+        val encounter = EncounterFactory.build()
+        val referenceTime = clock.instant()
+        val startAndEndOfDay = DateUtils.getStartAndEndOfDayInstants(referenceTime, clock)
+
+        whenever(mockDao.encountersForMemberBetween(
+            encounter.memberId, startAndEndOfDay.first, startAndEndOfDay.second))
+                .thenReturn(Single.just(listOf(encounter.id)))
+
+        repository.encountersOccurredSameDay(referenceTime, encounter.memberId).test().assertValue(true)
+    }
+
+    @Test
+    fun encountersOccurredToday_noEncounters_returnsFalse() {
+        val memberId = UUID.randomUUID()
+        val referenceTime = clock.instant()
+        val startAndEndOfDay = DateUtils.getStartAndEndOfDayInstants(referenceTime, clock)
+
+        whenever(mockDao.encountersForMemberBetween(
+            memberId, startAndEndOfDay.first, startAndEndOfDay.second))
+                .thenReturn(Single.just(emptyList()))
+
+        repository.encountersOccurredSameDay(referenceTime, memberId).test().assertValue(false)
     }
 }

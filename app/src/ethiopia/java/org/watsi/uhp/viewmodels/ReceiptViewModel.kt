@@ -9,6 +9,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Encounter.EncounterAction
+import org.watsi.domain.usecases.CheckForSameDayEncountersUseCase
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.ReviseClaimUseCase
 import org.watsi.domain.usecases.SubmitClaimUseCase
@@ -21,6 +22,7 @@ class ReceiptViewModel @Inject constructor(
     private val updateEncounterUseCase: UpdateEncounterUseCase,
     private val submitClaimUseCase: SubmitClaimUseCase,
     private val reviseClaimUseCase: ReviseClaimUseCase,
+    private val sameDayEncountersUseCase: CheckForSameDayEncountersUseCase,
     private val logger: Logger,
     private val clock: Clock
 ) : ViewModel() {
@@ -62,9 +64,14 @@ class ReceiptViewModel @Inject constructor(
 
                 when (encounterAction) {
                     EncounterAction.PREPARE -> {
-                        createEncounterUseCase.execute(
-                            encounterFlowState.toEncounterWithExtras(), false, false, clock
-                        ).blockingAwait()
+                        val isDuplicate = sameDayEncountersUseCase.execute(encounterFlowState.encounter).blockingGet()
+                        if (isDuplicate) {
+                            throw CheckForSameDayEncountersUseCase.SameDayEncounterException()
+                        } else {
+                            createEncounterUseCase.execute(
+                                encounterFlowState.toEncounterWithExtras(), false, false, clock
+                            ).blockingAwait()
+                        }
                     }
                     EncounterAction.SUBMIT -> {
                         Completable.concatArray(

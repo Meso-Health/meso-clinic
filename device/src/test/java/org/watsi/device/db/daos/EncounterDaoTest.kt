@@ -90,8 +90,8 @@ class EncounterDaoTest : DaoBaseTest() {
     @Test
     fun returnedIds() {
         val encounterModel1 = EncounterModelFactory.create(encounterDao, memberDao, adjudicationState = Encounter.AdjudicationState.RETURNED)
-        val encounterModel2 = EncounterModelFactory.create(encounterDao, memberDao, adjudicationState = Encounter.AdjudicationState.REVISED)
-        val encounterModel3 = EncounterModelFactory.create(encounterDao, memberDao, adjudicationState = Encounter.AdjudicationState.PENDING)
+        EncounterModelFactory.create(encounterDao, memberDao, adjudicationState = Encounter.AdjudicationState.REVISED)
+        EncounterModelFactory.create(encounterDao, memberDao, adjudicationState = Encounter.AdjudicationState.PENDING)
         val encounterModel4 = EncounterModelFactory.create(encounterDao, memberDao, adjudicationState = Encounter.AdjudicationState.RETURNED)
         assertEquals(encounterDao.returnedIds().test().values().first(), listOf(encounterModel1.id, encounterModel4.id))
     }
@@ -99,10 +99,10 @@ class EncounterDaoTest : DaoBaseTest() {
     @Test
     fun revisedIds() {
         val encounterModel1 = EncounterModelFactory.create(encounterDao, memberDao)
-        val encounterModel2 = EncounterModelFactory.create(encounterDao, memberDao, revisedEncounterId = encounterModel1.id)
+        EncounterModelFactory.create(encounterDao, memberDao, revisedEncounterId = encounterModel1.id)
         val encounterModel3 = EncounterModelFactory.create(encounterDao, memberDao)
-        val encounterModel4 = EncounterModelFactory.create(encounterDao, memberDao, revisedEncounterId = encounterModel3.id)
-        val encounterModel5 = EncounterModelFactory.create(encounterDao, memberDao, revisedEncounterId = encounterModel3.id)
+        EncounterModelFactory.create(encounterDao, memberDao, revisedEncounterId = encounterModel3.id)
+        EncounterModelFactory.create(encounterDao, memberDao, revisedEncounterId = encounterModel3.id)
         assertEquals(encounterDao.revisedIds().test().values().first(), listOf(encounterModel1.id, encounterModel3.id))
     }
 
@@ -129,5 +129,26 @@ class EncounterDaoTest : DaoBaseTest() {
         )
 
         encounterDao.unsynced().test().assertValue(listOf(unsyncedEncounterRelation))
+    }
+
+    @Test
+    fun encountersForMemberBetween() {
+        val member = MemberModelFactory.create(memberDao)
+        val t1 = Instant.now()
+        val t2 = t1.plusSeconds(86400)
+        val before = t1.minusSeconds(500)
+        val during = t1.plusSeconds(1000)
+        val after = t2.plusSeconds(2000)
+
+        // memberEncounterBefore
+        EncounterModelFactory.create(encounterDao, memberDao, occurredAt = before, memberId = member.id)
+        // memberEncounterAfter
+        EncounterModelFactory.create(encounterDao, memberDao, occurredAt = after, memberId = member.id)
+        val memberEncounterDuring = EncounterModelFactory.create(encounterDao, memberDao,
+            occurredAt = during, memberId = member.id)
+        // otherMemberEncounterDuring
+        EncounterModelFactory.create(encounterDao, memberDao, occurredAt = during)
+
+        encounterDao.encountersForMemberBetween(member.id, t1, t2).test().assertValue(listOf(memberEncounterDuring.id))
     }
 }

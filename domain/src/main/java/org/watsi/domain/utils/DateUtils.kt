@@ -5,6 +5,7 @@ import org.threeten.bp.DateTimeException
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import org.watsi.domain.entities.Member
@@ -70,6 +71,23 @@ object DateUtils {
 
     fun getDaysAgo(date: LocalDate, clock: Clock = Clock.systemUTC()): Int {
         return ChronoUnit.DAYS.between(date, LocalDate.now(clock)).toInt()
+    }
+
+    /**
+     * This uses the zone from the supplied clock which will most likely be relative to the current
+     * user's timezone. The backend duplication logic is based on the Rails application timezone,
+     * so there could be cases where the returns from this function do not correspond to the
+     * backend validation logic.
+     *
+     * TODO: Calculate the day based on the backend's timezone settings
+     */
+    fun getStartAndEndOfDayInstants(referenceInstant: Instant, clock: Clock): Pair<Instant, Instant> {
+        val zdt = ZonedDateTime.ofInstant(referenceInstant, clock.zone)
+        val beginningOfDayDateTime = zdt.toLocalDate().atStartOfDay(clock.zone)
+        val beginningOfDay = beginningOfDayDateTime.toInstant()
+        val endOfDay = beginningOfDayDateTime.plusDays(1).toInstant()
+
+        return Pair(beginningOfDay, endOfDay)
     }
 }
 
