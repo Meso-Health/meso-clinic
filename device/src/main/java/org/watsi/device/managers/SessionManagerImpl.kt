@@ -4,7 +4,7 @@ import io.reactivex.Completable
 import okhttp3.Credentials
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.managers.SessionManager.Companion.ALLOWED_ROLES
-import org.watsi.device.managers.SessionManager.Companion.PROVIDER_PERMISSIONS_MAP
+import org.watsi.device.managers.SessionManager.Companion.ROLE_PERMISSIONS_MAP
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.User
 
@@ -48,7 +48,7 @@ class SessionManagerImpl(
     override fun currentUser(): User? = currentAuthenticationToken()?.user
 
     override fun userHasPermission(neededPermission: SessionManager.Permissions): Boolean {
-        val userPermissions = PROVIDER_PERMISSIONS_MAP[currentUser()?.providerType]
+        val userPermissions = ROLE_PERMISSIONS_MAP[currentUser()?.role]
 
         return if (userPermissions != null) {
             userPermissions.contains(neededPermission)

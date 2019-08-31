@@ -49,12 +49,9 @@ interface SessionManager {
             Permissions.FETCH_ENROLLMENT_PERIODS
         )
 
-        val PROVIDER_PERMISSIONS_MAP = mapOf(
-            User.ProviderType.HEALTH_CENTER to HEALTH_CENTER_PERMISSIONS,
-            User.ProviderType.PRIMARY_HOSPITAL to HOSPITAL_PERMISSIONS,
-            User.ProviderType.GENERAL_HOSPITAL to HOSPITAL_PERMISSIONS,
-            User.ProviderType.TERTIARY_HOSPITAL to HOSPITAL_PERMISSIONS,
-            User.ProviderType.UNCLASSIFIED to HEALTH_CENTER_PERMISSIONS
+        val ROLE_PERMISSIONS_MAP = mapOf(
+            "card_room_worker" to HOSPITAL_PERMISSIONS,
+            "provider" to HEALTH_CENTER_PERMISSIONS
         )
     }
 }
