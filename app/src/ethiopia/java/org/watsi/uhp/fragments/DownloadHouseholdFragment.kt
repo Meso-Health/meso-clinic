@@ -1,5 +1,7 @@
 package org.watsi.uhp.fragments
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -7,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.ethiopia.fragment_download_household.cancel
 import kotlinx.android.synthetic.ethiopia.fragment_download_household.error_view
 import kotlinx.android.synthetic.ethiopia.fragment_download_household.loading_view
@@ -61,6 +61,34 @@ class DownloadHouseholdFragment : DaggerFragment() {
         searchMethod = arguments.getSerializable(HouseholdFragment.PARAM_SEARCH_METHOD) as IdentificationEvent.SearchMethod
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(
             DownloadHouseholdViewModel::class.java)
+
+        val observable: LiveData<DownloadHouseholdViewModel.ViewState>
+        val onFailure: () -> Unit
+        when {
+            cardId != null -> {
+                observable = viewModel.getObservableByCardId(cardId!!)
+                // TODO: Ideally this would also be able to launch into manually creating a member like below
+                onFailure = this::showError
+
+            }
+            membershipNumber != null -> {
+                observable = viewModel.getObservableByMembershipNumber(membershipNumber!!)
+                onFailure = this::goToMemberNotFound
+            }
+            else -> {
+                logger.error("Cannot download household without card id or membership number")
+                return
+            }
+        }
+        observable.observe(this, Observer {
+            it?.let { viewState ->
+                if (viewState.householdId != null) {
+                    completeDownload(viewState.householdId, searchMethod)
+                } else {
+                    onFailure()
+                }
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -71,30 +99,6 @@ class DownloadHouseholdFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         showLoading()
-
-        val downloadSingle: Single<UUID>
-        val onFailure: () -> Unit
-        when {
-            cardId != null -> {
-                downloadSingle = viewModel.downloadHouseholdByCardId(cardId!!)
-                // TODO: Ideally this would also be able to launch into manually creating a member like below
-                onFailure = this::showError
-
-            }
-            membershipNumber != null -> {
-                downloadSingle = viewModel.downloadHouseholdByMembershipNumber(membershipNumber!!)
-                onFailure = this::goToMemberNotFound
-            }
-            else -> {
-                logger.error("Cannot download household without card id or membership number")
-                return
-            }
-        }
-
-        downloadSingle.subscribe(
-            { householdId: UUID -> completeDownload(householdId, searchMethod) },
-            { onFailure() } // This could fail because of network problems or the member doesn't exist. We don't distinguish
-        )
 
         cancel.setOnClickListener {
             // TODO: Ideally both of these would go to member not found and manually create a member

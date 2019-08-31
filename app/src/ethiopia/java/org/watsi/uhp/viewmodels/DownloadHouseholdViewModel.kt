@@ -1,8 +1,8 @@
 package org.watsi.uhp.viewmodels
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.ViewModel
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import org.watsi.domain.usecases.FetchHouseholdIdByCardIdUseCase
 import org.watsi.domain.usecases.FetchHouseholdIdByMembershipNumberUseCase
 import java.util.UUID
@@ -13,11 +13,19 @@ class DownloadHouseholdViewModel @Inject constructor(
     private val fetchHouseholdIdByMembershipNumberUseCase: FetchHouseholdIdByMembershipNumberUseCase
 ) : ViewModel() {
 
-    fun downloadHouseholdByCardId(cardId: String): Single<UUID> {
-        return fetchHouseholdIdByCardIdUseCase.execute(cardId)
+    fun getObservableByCardId(cardId: String): LiveData<ViewState> {
+        return LiveDataReactiveStreams.fromPublisher(
+            fetchHouseholdIdByCardIdUseCase.execute(cardId).map { ViewState(it) }
+                .onErrorReturn { ViewState(null) }
+        )
     }
 
-    fun downloadHouseholdByMembershipNumber(membershipNumber: String): Single<UUID> {
-        return fetchHouseholdIdByMembershipNumberUseCase.execute(membershipNumber)
+    fun getObservableByMembershipNumber(membershipNumber: String): LiveData<ViewState> {
+        return LiveDataReactiveStreams.fromPublisher(
+            fetchHouseholdIdByMembershipNumberUseCase.execute(membershipNumber).map { ViewState(it) }
+                .onErrorReturn { ViewState(null) }
+        )
     }
+
+    data class ViewState(val householdId: UUID?)
 }

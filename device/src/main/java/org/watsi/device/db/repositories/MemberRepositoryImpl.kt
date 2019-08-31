@@ -7,6 +7,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import org.intellij.lang.annotations.Flow
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
@@ -179,9 +180,9 @@ class MemberRepositoryImpl(
         } ?: Completable.error(Exception("Current token is null while calling MemberRepositoryImpl.fetch"))
     }
 
-    override fun fetchHouseholdIdByCardId(cardId: String): Single<UUID> {
+    override fun fetchHouseholdIdByCardId(cardId: String): Flowable<UUID> {
         return sessionManager.currentAuthenticationToken()?.let { token ->
-            Single.fromCallable {
+            Flowable.fromCallable {
                 val households = api.getHouseholdByCardId(
                     token.getHeaderString(),
                     cardId
@@ -197,12 +198,12 @@ class MemberRepositoryImpl(
                 // all returned households. If none are returned we pass up an exception that can be handled.
                 households.firstOrNull()?.householdId ?: throw Member.MemberNotFoundException("Server returned no results")
             }.subscribeOn(Schedulers.io())
-        } ?: Single.never<UUID>()
+        } ?: Flowable.error(Exception("Current token is null while calling MemberRepositoryImpl.fetchHouseholdByCardId"))
     }
 
-    override fun fetchHouseholdIdByMembershipNumber(membershipNumber: String): Single<UUID> {
+    override fun fetchHouseholdIdByMembershipNumber(membershipNumber: String): Flowable<UUID> {
         return sessionManager.currentAuthenticationToken()?.let { token ->
-            Single.fromCallable {
+            Flowable.fromCallable {
                 val households = api.getHouseholdByMembershipNumber(
                     token.getHeaderString(),
                     membershipNumber
@@ -218,7 +219,7 @@ class MemberRepositoryImpl(
                 // all returned households. If none are returned we pass up an exception that can be handled.
                 households.firstOrNull()?.householdId ?: throw Member.MemberNotFoundException("Server returned no results")
             }.subscribeOn(Schedulers.io())
-        } ?: Single.never<UUID>()
+        } ?: Flowable.error(Exception("Current token is null while calling MemberRepositoryImpl.fetchHouseholdByMembershipNumber"))
     }
 
     private fun paginatedFetch(token: AuthenticationToken): Single<Boolean> {
