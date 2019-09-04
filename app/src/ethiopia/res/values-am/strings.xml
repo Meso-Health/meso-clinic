@@ -88,7 +88,7 @@
     <string name="search_diagnosis_hint">በሽታ ፈልግ</string>
 
     <!-- ReceiptFragment -->
-    <!--<string name="diagnoses" translatable="false">Diagnoses</string>-->
+    <string name="diagnoses">በሽታዎች ዝርዝር</string>
     <string name="receipt_fragment_label">የክፍያ ጥያቄ ከልስ</string>
     <string name="submit_encounter_button">@string/submit</string>
     <string name="today_wrapper">ዛሬ (%1$s)</string>
@@ -154,14 +154,14 @@
     <!--<string name="menu_export_unsynced_claims" translatable="false">Export unsynced claims</string>-->
 
     <!-- StatusFragment -->
-    <!--<string name="last_fetched_returned_encounters_label">Returned Claims</string>-->
+    <string name="last_fetched_returned_encounters_label">ተመላሽ የተደረጉ የክፍያ ጥያቄዎች</string>
     <!--<string name="unsynced_price_schedules_label">Price Schedules</string>-->
-    <!--<string name="provider_type_label" translatable="false">Provider Type</string>-->
-    <!--<string name="provider_type_unclassified" translatable="false">Unclassified</string>-->
-    <!--<string name="provider_type_clinic" translatable="false">Health Center</string>-->
-    <!--<string name="provider_type_primary_hospital" translatable="false">Primary Hospital</string>-->
-    <!--<string name="provider_type_general_hospital" translatable="false">General Hospital</string>-->
-    <!--<string name="provider_type_tertiary_hospital" translatable="false">Tertiary Hospital</string>-->
+    <string name="provider_type_label">የአገልግሎት ሰጪ አይነት</string>
+    <string name="provider_type_unclassified">ደረጃዉ ያልተለየ ጤና ተቋም</string>
+    <string name="provider_type_clinic">ጤና ጣብያ</string>
+    <string name="provider_type_primary_hospital">የመጀመሪያ ደረጃ ሆስፒታል</string>
+    <string name="provider_type_general_hospital">አጠቃላይ ሆስፒታል </string>
+    <string name="provider_type_tertiary_hospital">ሪፈራል ሆስፒታል</string>
     <!--<string name="fetch_identification_events_error_label">Download Identification Events</string>-->
 
     <!-- Encounter Flow -->
@@ -225,16 +225,16 @@
     <string name="membership_expired_notification">Membership is expired</string>
     <string name="membership_unknown_notification">Membership status is unknown</string>
 
-    <!--<string name="visit_reason_label">Reason for visit</string>-->
-    <!--<string name="inbound_referral_date_label">Inbound referral date</string>-->
-    <!--<string name="follow_up_date_label">Follow-up issue date</string>-->
+    <string name="visit_reason_label">የጎበኝበት/ችበት  ምክንያት</string>
+    <string name="inbound_referral_date_label">ሪፈር የተባለበት/ችበት  ቀን</string>
+    <string name="follow_up_date_label">ክትትል የተጀመረበት  ቀን</string>
     <!--<string name="missing_visit_reason">Reason for visit is required</string>-->
     <!--<string name="visit_reason_prompt">Select a reason for visit…</string>-->
-    <!--<string name="visit_reason_referral">Referral</string>-->
-    <!--<string name="visit_reason_no_referral">No referral</string>-->
-    <!--<string name="visit_reason_self_referral">Self-referral (bypass fee)</string>-->
-    <!--<string name="visit_reason_follow_up">Follow-up</string>-->
-    <!--<string name="visit_reason_emergency">Emergency</string>-->
+    <string name="visit_reason_referral">ሪፈር</string>
+    <string name="visit_reason_no_referral">የጤና ተቋሙ/ጣብያ ተጠቃሚ</string>
+    <string name="visit_reason_self_referral">የሪፈር ስርዓት ያልተከተለ</string>
+    <string name="visit_reason_follow_up">ክትትል</string>
+    <string name="visit_reason_emergency">ድንገተኛ</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">የኣባል መረጃ</string>
