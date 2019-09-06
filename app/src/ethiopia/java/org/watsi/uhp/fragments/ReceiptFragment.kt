@@ -490,20 +490,24 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onBack(): Single<Boolean> {
         return Single.create<Boolean> { single ->
-            val confirmationMessage = when(encounterAction) {
-                EncounterAction.PREPARE -> getString(R.string.delete_claim_confirmation)
-                EncounterAction.SUBMIT -> getString(R.string.delete_changes_confirmation)
-                EncounterAction.RESUBMIT -> getString(R.string.delete_changes_confirmation)
-            }
-
-            AlertDialog.Builder(activity)
-                .setTitle(confirmationMessage)
-                .setPositiveButton(R.string.yes) { _, _ ->
-                    single.onSuccess(true)
+            if (!encounterFlowState.hasChanges()) {
+                single.onSuccess(true)
+            } else {
+                val confirmationMessage = when(encounterAction) {
+                    EncounterAction.PREPARE -> getString(R.string.delete_claim_confirmation)
+                    EncounterAction.SUBMIT -> getString(R.string.delete_changes_confirmation)
+                    EncounterAction.RESUBMIT -> getString(R.string.delete_changes_confirmation)
                 }
-                .setNegativeButton(R.string.cancel) { _, _ -> single.onSuccess(false) }
-                .setOnDismissListener { single.onSuccess(false) }
-                .show()
+
+                AlertDialog.Builder(activity)
+                    .setTitle(confirmationMessage)
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        single.onSuccess(true)
+                    }
+                    .setNegativeButton(R.string.cancel) { _, _ -> single.onSuccess(false) }
+                    .setOnDismissListener { single.onSuccess(false) }
+                    .show()
+            }
         }
     }
 }
