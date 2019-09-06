@@ -39,6 +39,7 @@
     <string name="last_fetched_returned_encounters_label">Returned Claims</string>
     <string name="last_fetched_identification_events_label" translatable="false">Identification Events</string>
     <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
+    <string name="provider_type_label">Provider Type</string>
     <string name="provider_type_unclassified">Unclassified</string>
     <string name="provider_type_clinic">Health Center</string>
     <string name="provider_type_primary_hospital">Primary Hospital</string>
