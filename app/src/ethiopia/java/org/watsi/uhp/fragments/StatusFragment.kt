@@ -201,6 +201,10 @@ class StatusFragment : DaggerFragment() {
                 }
                 true
             }
+            R.id.menu_export_db -> {
+                startExportActivity(EXPORT_DB_INTENT)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
