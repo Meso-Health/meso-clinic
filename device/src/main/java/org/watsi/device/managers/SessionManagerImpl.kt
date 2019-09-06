@@ -4,7 +4,6 @@ import io.reactivex.Completable
 import okhttp3.Credentials
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.managers.SessionManager.Companion.ALLOWED_ROLES
-import org.watsi.device.managers.SessionManager.Companion.ROLE_PERMISSIONS_MAP
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.User
 
@@ -47,14 +46,17 @@ class SessionManagerImpl(
 
     override fun currentUser(): User? = currentAuthenticationToken()?.user
 
-    override fun userHasPermission(neededPermission: SessionManager.Permissions): Boolean {
-        val userPermissions = ROLE_PERMISSIONS_MAP[currentUser()?.role]
-
-        return if (userPermissions != null) {
-            userPermissions.contains(neededPermission)
-        } else {
-            logger.error("Failed to read provider type on user when checking for permissions")
-            false
-        }
+    override fun userHasPermission(permission: SessionManager.Permissions): Boolean {
+        return currentUser()?.let { user ->
+            if (SessionManager.ID_ONLY_ROLES.contains(user.role)) {
+                if (user.isHospitalUser()) {
+                    SessionManager.HOSPITAL_CENTER_CHECK_IN_PERMISSIONS.contains(permission)
+                } else {
+                    SessionManager.HEALTH_CENTER_CHECK_IN_PERMISSIONS.contains(permission)
+                }
+            } else {
+                SessionManager.SUBMISSION_PERMISSIONS.contains(permission)
+            }
+        } ?: false
     }
 }

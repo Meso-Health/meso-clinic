@@ -253,7 +253,7 @@ class EditMemberFragment : DaggerFragment() {
         val searchMethodVal = searchMethod ?: run {
             throw IllegalStateException("Null searchMethod when preparing check-in action")
         }
-        if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+        if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
             setupHospitalCheckIn()
         }
         action_button.text = getString(check_in)

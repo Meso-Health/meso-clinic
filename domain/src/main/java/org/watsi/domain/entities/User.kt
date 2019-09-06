@@ -19,4 +19,6 @@ data class User(
         TERTIARY_HOSPITAL,
         UNCLASSIFIED
     }
+
+    fun isHospitalUser() = providerType != ProviderType.HEALTH_CENTER
 }

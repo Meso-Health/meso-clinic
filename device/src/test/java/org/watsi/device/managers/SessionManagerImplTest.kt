@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.AuthenticationTokenApi
 import org.watsi.device.api.models.UserApi
+import org.watsi.domain.entities.User
 import org.watsi.domain.factories.AuthenticationTokenFactory
 import org.watsi.domain.factories.UserFactory
 
@@ -47,7 +48,7 @@ class SessionManagerImplTest {
         val parsedToken = authenticationTokenApi.toAuthenticationToken()
         verify(mockPreferencesManager).setAuthenticationToken(parsedToken)
         verify(mockLogger).setUser(parsedToken.user)
-        assertEquals(sessionManager.currentAuthenticationToken(), parsedToken)
+        assertEquals(parsedToken, sessionManager.currentAuthenticationToken())
     }
 
     @Test
@@ -74,5 +75,50 @@ class SessionManagerImplTest {
         verify(mockPreferencesManager).setAuthenticationToken(null)
         verify(mockLogger).clearUser()
         assertNull(sessionManager.currentAuthenticationToken())
+    }
+
+    @Test
+    fun userHasPermission_noUser_returnsFalse() {
+        whenever(mockPreferencesManager.getAuthenticationToken()).thenReturn(null)
+        sessionManager = SessionManagerImpl(mockPreferencesManager, mockCoverageApi, mockLogger)
+
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.FETCH_ENROLLMENT_PERIODS))
+    }
+
+    private fun setUser(isCardRoomWorker: Boolean, isHospitalUser: Boolean) {
+        val role = if (isCardRoomWorker) "card_room_worker" else "claims_preparer"
+        val providerType = if (isHospitalUser) User.ProviderType.GENERAL_HOSPITAL else User.ProviderType.HEALTH_CENTER
+        val user = UserFactory.build(role = role, providerType = providerType)
+        val authToken = AuthenticationTokenFactory.build(user = user)
+        whenever(mockPreferencesManager.getAuthenticationToken()).thenReturn(authToken)
+        sessionManager = SessionManagerImpl(mockPreferencesManager, mockCoverageApi, mockLogger)
+    }
+
+    @Test
+    fun userHasPermission_nonCardRoomUser_claimPreparationPermission_returnsTrue() {
+        setUser(false, false)
+
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
+    }
+
+    @Test
+    fun userHasPermission_isCardRoomUser_claimPreparationPermission_returnsFalse() {
+        setUser(true, false)
+
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
+    }
+
+    @Test
+    fun userHasPermission_isHealthCenterCardRoomUser_inboundEncounterPermission_returnsFalse() {
+        setUser(true, false)
+
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
+    }
+
+    @Test
+    fun userHasPermission_isHospitalCardRoomUser_inboundEncounterPermission_returnsTrue() {
+        setUser(true, true)
+
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
     }
 }

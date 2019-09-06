@@ -122,7 +122,7 @@ class MemberInformationViewModel @Inject constructor(
         return createIdentificationEventUseCase.execute(idEvent)
     }
 
-    private fun createPartialEncounter(idEventId: UUID, member: Member, visitReason: Encounter.VisitReason, inboundReferralDate: LocalDate?): Completable {
+    private fun createPartialEncounter(idEventId: UUID, member: Member, visitReason: Encounter.VisitReason?, inboundReferralDate: LocalDate?): Completable {
         val encounter = Encounter(
             id = UUID.randomUUID(),
             memberId = member.id,
@@ -158,13 +158,16 @@ class MemberInformationViewModel @Inject constructor(
         return Completable.fromAction {
             createMember(member).blockingAwait()
             createIdentificationEvent(idEventId, member).blockingAwait()
-            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
-                val inboundReferralDate = when (viewState.visitReason) {
-                    Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
-                    Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
-                    else -> null
+            if (sessionManager.userHasPermission(SessionManager.Permissions.SYNC_PARTIAL_CLAIMS)) {
+                var inboundReferralDate: LocalDate? = null
+                if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
+                    inboundReferralDate = when (viewState.visitReason) {
+                        Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
+                        Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
+                        else -> null
+                    }
                 }
-                createPartialEncounter(idEventId, member, viewState.visitReason!!, inboundReferralDate).blockingAwait()
+                createPartialEncounter(idEventId, member, viewState.visitReason, inboundReferralDate).blockingAwait()
             }
         }.observeOn(AndroidSchedulers.mainThread())
     }
@@ -240,7 +243,7 @@ class MemberInformationViewModel @Inject constructor(
                 errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_length_validation_error
             }
 
-            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+            if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
                 if (viewState.visitReason == null) {
                     errors[VISIT_REASON_ERROR] = R.string.missing_visit_reason
                 }

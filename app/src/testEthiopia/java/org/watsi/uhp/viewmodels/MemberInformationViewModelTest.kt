@@ -228,7 +228,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
     @Test
     fun createAndCheckInMember_isHospitalUser_missingVisitReason_returnsError() {
         whenever(mockSessionManager.userHasPermission(
-            SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)).thenReturn(true)
+            SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)).thenReturn(true)
         setValidViewStateOnViewModel(hospitalUser = true)
         viewModel.onVisitReasonChange(null)
 
@@ -247,7 +247,9 @@ class MemberInformationViewModelTest : AACBaseTest() {
         whenever(mockCreateIdentificationEventUseCase.execute(any())).thenReturn(Completable.complete())
         whenever(mockCreateEncounterUseCase.execute(any(), eq(true), eq(true), eq(clock))).thenReturn(Completable.complete())
         whenever(mockSessionManager.userHasPermission(
-            SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)).thenReturn(true)
+            SessionManager.Permissions.SYNC_PARTIAL_CLAIMS)).thenReturn(true)
+        whenever(mockSessionManager.userHasPermission(
+            SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)).thenReturn(true)
 
         viewModel.createAndCheckInMember(membershipNumber).test().assertComplete()
     }

@@ -82,7 +82,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
             it?.let { viewState ->
                 setErrors(viewState.errors)
 
-                if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+                if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
                     hospital_check_in_details_container.visibility = View.VISIBLE
 
                     viewState.visitReason?.let { visitReason ->
@@ -180,7 +180,7 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 text -> viewModel.onMedicalRecordNumberChange(text)
         })
 
-        if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+        if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
             val visitReasonMappings = EnumHelper.getVisitReasonMappings(sessionManager.currentUser()?.providerType, logger)
             val visitReasonEnums = visitReasonMappings.map { it.first }
             val visitReasonStrings = visitReasonMappings.map { getString(it.second) }
