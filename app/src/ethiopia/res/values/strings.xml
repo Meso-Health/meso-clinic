@@ -36,14 +36,14 @@
     <string name="no_members">No members available</string>
 
     <!-- StatusFragment -->
-    <string name="last_fetched_returned_encounters_label" translatable="false">Returned Claims</string>
+    <string name="last_fetched_returned_encounters_label">Returned Claims</string>
     <string name="last_fetched_identification_events_label" translatable="false">Identification Events</string>
     <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
-    <string name="provider_type_unclassified" translatable="false">Unclassified</string>
-    <string name="provider_type_clinic" translatable="false">Health Center</string>
-    <string name="provider_type_primary_hospital" translatable="false">Primary Hospital</string>
-    <string name="provider_type_general_hospital" translatable="false">General Hospital</string>
-    <string name="provider_type_tertiary_hospital" translatable="false">Tertiary Hospital</string>
+    <string name="provider_type_unclassified">Unclassified</string>
+    <string name="provider_type_clinic">Health Center</string>
+    <string name="provider_type_primary_hospital">Primary Hospital</string>
+    <string name="provider_type_general_hospital">General Hospital</string>
+    <string name="provider_type_tertiary_hospital">Tertiary Hospital</string>
     <string name="export_unsynced_claims_label" translatable="false"><u>Export Unsynced Claims</u></string>
 
     <!-- SearchFragment -->
@@ -99,16 +99,16 @@
     <string name="membership_expired_notification">Membership is expired</string>
     <string name="membership_unknown_notification">Membership status is unknown</string>
 
-    <string name="visit_reason_label" translatable="false">Reason for visit</string>
-    <string name="inbound_referral_date_label" translatable="false">Inbound referral date</string>
-    <string name="follow_up_date_label" translatable="false">Follow-up issue date</string>
+    <string name="visit_reason_label">Reason for visit</string>
+    <string name="inbound_referral_date_label">Inbound referral date</string>
+    <string name="follow_up_date_label">Follow-up issue date</string>
     <string name="missing_visit_reason" translatable="false">Reason for visit is required</string>
     <string name="visit_reason_prompt" translatable="false">Select a reason for visit…</string>
-    <string name="visit_reason_referral" translatable="false">Referral</string>
-    <string name="visit_reason_no_referral" translatable="false">No referral (catchment)</string>
-    <string name="visit_reason_self_referral" translatable="false">Self-referral (bypass fee)</string>
-    <string name="visit_reason_follow_up" translatable="false">Follow-up</string>
-    <string name="visit_reason_emergency" translatable="false">Emergency</string>
+    <string name="visit_reason_referral">Referral</string>
+    <string name="visit_reason_no_referral">No referral (catchment)</string>
+    <string name="visit_reason_self_referral">Self-referral (bypass fee)</string>
+    <string name="visit_reason_follow_up">Follow-up</string>
+    <string name="visit_reason_emergency">Emergency</string>
 
     <!-- MemberInformationFragment -->
     <string name="member_information_fragment_label">Member Information</string>
@@ -175,7 +175,7 @@
         <item quantity="one">%d day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
-    <string name="diagnoses" translatable="false">Diagnoses</string>
+    <string name="diagnoses">Diagnoses</string>
     <string name="date_of_service_label">Date of Service</string>
     <string name="comment_label">Comment</string>
     <string name="add_clickable"><u>Add</u></string>
