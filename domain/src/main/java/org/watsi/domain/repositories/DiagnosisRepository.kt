@@ -9,4 +9,5 @@ interface DiagnosisRepository {
     fun delete(ids: List<Int>): Completable
     fun countActive(): Single<Int>
     fun fetch(): Completable
+    fun find(ids: List<Int>): Single<List<Diagnosis>>
 }

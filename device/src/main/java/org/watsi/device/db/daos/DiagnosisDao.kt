@@ -20,7 +20,7 @@ interface DiagnosisDao {
     fun allActive(): Single<List<DiagnosisModel>>
 
     @Query("SELECT * FROM diagnoses WHERE id IN (:ids)")
-    fun findAll(ids: List<Int>): Single<List<DiagnosisModel>>
+    fun find(ids: List<Int>): Single<List<DiagnosisModel>>
 
     @Query("DELETE FROM diagnoses WHERE id IN (:ids)")
     fun delete(ids: List<Int>)

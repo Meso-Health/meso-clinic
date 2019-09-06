@@ -36,7 +36,7 @@ class DiagnosisDaoTest : DaoBaseTest() {
         val diagnosisIdList = listOf(1, 3)
         val expectedDiagnosisList = listOf(diagnosisModel1, diagnosisModel3)
 
-        val resultDiagnosisList = diagnosisDao.findAll(diagnosisIdList).test().values().first()
+        val resultDiagnosisList = diagnosisDao.find(diagnosisIdList).test().values().first()
 
         assertEquals(expectedDiagnosisList, resultDiagnosisList)
     }

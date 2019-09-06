@@ -87,7 +87,7 @@ class DiagnosisRepositoryImplTest {
                 serverEdited,
                 serverRemoved
         )))
-        whenever(mockDao.findAll(listOf(serverRemoved.id))).thenReturn(Single.just(listOf(
+        whenever(mockDao.find(listOf(serverRemoved.id))).thenReturn(Single.just(listOf(
             serverRemoved
         )))
 
