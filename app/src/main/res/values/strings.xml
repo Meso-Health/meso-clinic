@@ -101,7 +101,7 @@
     <!-- StatusFragment -->
     <string name="status_fragment_label">Status</string>
     <string name="current_user_label">Current User</string>
-    <string name="provider_type_label" translatable="false">Provider Type</string>
+    <string name="provider_type_label">Provider Type</string>
 
     <string name="fetch_data_title">Downloads (Data)</string>
     <string name="last_fetched_billables_label" translatable="false">Billables</string>
