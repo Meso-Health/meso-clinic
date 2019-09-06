@@ -180,6 +180,7 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                     // the line item will stay red with the trash icon as it was at the end of the swipe
                     encounterItemAdapter.notifyDataSetChanged()
                 }
+                .setCancelable(false)
                 .create().show()
         })
 

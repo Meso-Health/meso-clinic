@@ -17,7 +17,8 @@ data class EncounterFlowState(
     var referral: Referral?,
     var member: Member,
     var diagnoses: List<Diagnosis>,
-    var newProviderComment: String? = null
+    var newProviderComment: String? = null,
+    var originalEncounterWithExtras: EncounterWithExtras? = null
 ) : Serializable {
 
     companion object {
@@ -28,7 +29,8 @@ data class EncounterFlowState(
                 encounterForms = encounterWithExtras.encounterForms,
                 diagnoses = encounterWithExtras.diagnoses,
                 member = encounterWithExtras.member,
-                referral = encounterWithExtras.referral
+                referral = encounterWithExtras.referral,
+                originalEncounterWithExtras = encounterWithExtras
             )
         }
     }
@@ -54,5 +56,9 @@ data class EncounterFlowState(
 
     fun getEncounterItemsOfType(billableType: Billable.Type): List<EncounterItemWithBillableAndPrice> {
         return encounterItemRelations.filter { it.billableWithPriceSchedule.billable.type == billableType }
+    }
+
+    fun hasChanges(): Boolean {
+        return originalEncounterWithExtras != this.toEncounterWithExtras() || newProviderComment != null
     }
 }

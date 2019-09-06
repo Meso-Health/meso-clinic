@@ -59,6 +59,7 @@ import org.watsi.domain.factories.ReferralFactory
 import org.watsi.domain.factories.UserFactory
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
+import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.utils.DateUtils
 import java.util.UUID
 
@@ -71,6 +72,7 @@ class EncounterRepositoryImplTest {
     @Mock lateinit var mockMemberDao: MemberDao
     @Mock lateinit var mockApi: CoverageApi
     @Mock lateinit var mockSessionManager: SessionManager
+    @Mock lateinit var mockDiagnosisRepository: DiagnosisRepository
     @Mock lateinit var mockPreferencesManager: PreferencesManager
     val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     lateinit var repository: EncounterRepositoryImpl
@@ -79,7 +81,7 @@ class EncounterRepositoryImplTest {
     fun setup() {
         RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
 
-        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisDao,mockMemberDao, mockApi, mockSessionManager, mockPreferencesManager, clock)
+        repository = EncounterRepositoryImpl(mockDao, mockEncounterItemDao, mockDiagnosisRepository, mockMemberDao, mockApi, mockSessionManager, mockPreferencesManager, clock)
     }
 
     @Test
@@ -88,10 +90,9 @@ class EncounterRepositoryImplTest {
         val encounterWithExtras = EncounterWithExtrasFactory.build(
             diagnoses = diagnoses
         )
-        val diagnosisModels = diagnoses.map { DiagnosisModel.fromDiagnosis(it, clock) }
         val encounterWithExtrasModel = EncounterWithExtrasModel.fromEncounterWithExtras(encounterWithExtras, clock)
 
-        whenever(mockDiagnosisDao.findAll(any())).thenReturn(Single.just(diagnosisModels))
+        whenever(mockDiagnosisRepository.find(any())).thenReturn(Single.just(diagnoses))
         whenever(mockDao.find(encounterWithExtras.encounter.id)).thenReturn(Single.just(encounterWithExtrasModel))
 
         repository.find(encounterWithExtras.encounter.id).test().assertValue(encounterWithExtras)
@@ -142,8 +143,8 @@ class EncounterRepositoryImplTest {
             referralModels = listOf(referralModel)
         )
 
-        whenever(mockDiagnosisDao.findAll(diagnosesIdList))
-                .thenReturn(Single.just(listOf(diagnosisModel1, diagnosisModel2)))
+        whenever(mockDiagnosisRepository.find(diagnosesIdList))
+                .thenReturn(Single.just(listOf(diagnosisModel1.toDiagnosis(), diagnosisModel2.toDiagnosis())))
 
         assertEquals(repository.loadClaim(encounterWithExtrasModel),
             EncounterWithExtras(
@@ -207,7 +208,7 @@ class EncounterRepositoryImplTest {
 
         val encounterWithExtrasModel = EncounterWithExtrasModel.fromEncounterWithExtras(encounterWithExtras, clock)
 
-        whenever(mockDiagnosisDao.findAll(any())).thenReturn(Single.just(emptyList()))
+        whenever(mockDiagnosisRepository.find(any())).thenReturn(Single.just(emptyList()))
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockDao.find(encounterWithExtras.encounter.id)).thenReturn(Single.just(encounterWithExtrasModel))
         whenever(mockApi.postEncounter(

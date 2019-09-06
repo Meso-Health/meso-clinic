@@ -120,6 +120,7 @@ class DiagnosisFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     // the line item will stay red with the trash icon as it was at the end of the swipe
                     diagnosisAdapter.notifyDataSetChanged()
                 }
+                .setCancelable(false)
                 .create().show()
         })
 

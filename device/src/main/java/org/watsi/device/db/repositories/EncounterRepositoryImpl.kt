@@ -10,7 +10,6 @@ import org.threeten.bp.Instant
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.EncounterApi
 import org.watsi.device.db.DbHelper
-import org.watsi.device.db.daos.DiagnosisDao
 import org.watsi.device.db.daos.EncounterDao
 import org.watsi.device.db.daos.EncounterItemDao
 import org.watsi.device.db.daos.MemberDao
@@ -29,6 +28,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.relations.EncounterWithExtras
+import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.domain.repositories.EncounterRepository
 import org.watsi.domain.utils.DateUtils
 import java.util.UUID
@@ -36,7 +36,7 @@ import java.util.UUID
 class EncounterRepositoryImpl(
     private val encounterDao: EncounterDao,
     private val encounterItemDao: EncounterItemDao,
-    private val diagnosisDao: DiagnosisDao,
+    private val diagnosisRepository: DiagnosisRepository,
     private val memberDao: MemberDao,
     private val api: CoverageApi,
     private val sessionManager: SessionManager,
@@ -91,8 +91,7 @@ class EncounterRepositoryImpl(
     }
 
     fun loadClaim(encounterModel: EncounterWithExtrasModel): EncounterWithExtras {
-        val diagnoses = diagnosisDao.findAll(encounterModel.encounterModel?.diagnoses.orEmpty()).blockingGet()
-                .map { it.toDiagnosis() }
+        val diagnoses = diagnosisRepository.find(encounterModel.encounterModel?.diagnoses.orEmpty()).blockingGet()
         val encounterRelation = encounterModel.toEncounterWithExtras(diagnoses)
         return EncounterWithExtras(
             encounter = encounterRelation.encounter,

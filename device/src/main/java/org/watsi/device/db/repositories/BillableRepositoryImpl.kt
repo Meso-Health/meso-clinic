@@ -47,6 +47,14 @@ class BillableRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun find(ids: List<UUID>): Single<List<Billable>> {
+        return Single.fromCallable {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                billableDao.find(it).blockingGet()
+            }.flatten().map { it.toBillable() }
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun find(id: UUID): Maybe<Billable> {
         return billableDao.find(id).map { it.toBillable() }.subscribeOn(Schedulers.io())
     }
@@ -87,10 +95,10 @@ class BillableRepositoryImpl(
                 )
 
                 // Mark server removed billables as inactive on the client side.
-                val billablesToMarkAsInactive = billableDao.find(serverRemovedBillableIds).blockingGet()
+                val billablesToMarkAsInactive = find(serverRemovedBillableIds).blockingGet()
                 billableDao.upsert(
-                    billableModels = billablesToMarkAsInactive.map { billableModel ->
-                        billableModel.copy(active = false)
+                    billableModels = billablesToMarkAsInactive.map { billable ->
+                        BillableModel.fromBillable(billable.copy(active = false), clock)
                     },
                     priceScheduleModels = emptyList()
                 )

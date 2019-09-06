@@ -13,6 +13,7 @@ interface BillableRepository {
     fun countActive(): Single<Int>
     fun ofType(type: Billable.Type): Single<List<BillableWithPriceSchedule>>
     fun find(id: UUID): Maybe<Billable>
+    fun find(ids: List<UUID>): Single<List<Billable>>
     fun create(billable: Billable, delta: Delta?): Completable
     fun fetch(): Completable
     fun opdDefaults(): Single<List<BillableWithPriceSchedule>>

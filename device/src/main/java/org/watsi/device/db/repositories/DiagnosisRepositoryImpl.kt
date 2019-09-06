@@ -35,6 +35,14 @@ class DiagnosisRepositoryImpl(
         return diagnosisDao.countActive()
     }
 
+    override fun find(ids: List<Int>): Single<List<Diagnosis>> {
+        return Single.fromCallable {
+            ids.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                diagnosisDao.find(it).blockingGet()
+            }.flatten().map { it.toDiagnosis() }
+        }.subscribeOn(Schedulers.io())
+    }
+
     /**
      * Removes any persisted diagnoses that are not returned in the API results and overwrites
      * any persisted data if the API response contains updated data.
@@ -52,10 +60,10 @@ class DiagnosisRepositoryImpl(
                 })
 
                 // Mark server removed diagnoses as inactive on the client side.
-                val diagnosesToMarkAsInactive = diagnosisDao.findAll(serverRemovedDiagnosesIds).blockingGet()
+                val diagnosesToMarkAsInactive = find(serverRemovedDiagnosesIds).blockingGet()
                 diagnosisDao.upsert(
-                    diagnosisModels = diagnosesToMarkAsInactive.map { diagnosisModel ->
-                        diagnosisModel.copy(active = false)
+                    diagnosisModels = diagnosesToMarkAsInactive.map { diagnosis ->
+                        DiagnosisModel.fromDiagnosis(diagnosis.copy(active = false), clock)
                     }
                 )
 

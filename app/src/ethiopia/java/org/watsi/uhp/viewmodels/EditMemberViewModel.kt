@@ -107,7 +107,7 @@ class EditMemberViewModel @Inject constructor(
             if (viewState.memberWithThumbnail?.member?.medicalRecordNumber == null) {
                 errors[EditMemberViewModel.MEDICAL_RECORD_NUMBER_ERROR] = R.string.missing_medical_record_number
             }
-            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
+            if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
                 if (viewState.visitReason == null) {
                     errors[EditMemberViewModel.VISIT_REASON_ERROR] = R.string.missing_visit_reason
                 }
@@ -134,7 +134,7 @@ class EditMemberViewModel @Inject constructor(
         return createIdentificationEventUseCase.execute(idEvent)
     }
 
-    private fun createPartialEncounter(idEventId: UUID, visitReason: Encounter.VisitReason, inboundReferralDate: LocalDate?): Completable {
+    private fun createPartialEncounter(idEventId: UUID, visitReason: Encounter.VisitReason?, inboundReferralDate: LocalDate?): Completable {
         val member = getMember() ?: return Completable.never()
         val encounter = Encounter(
             id = UUID.randomUUID(),
@@ -169,13 +169,16 @@ class EditMemberViewModel @Inject constructor(
         val idEventId = UUID.randomUUID()
         return Completable.fromAction {
             createIdentificationEvent(idEventId, searchMethod).blockingAwait()
-            if (sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_HOSPITAL_IDENTIFICATION)) {
-                val inboundReferralDate = when (viewState.visitReason) {
-                    Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
-                    Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
-                    else -> null
+            if (sessionManager.userHasPermission(SessionManager.Permissions.SYNC_PARTIAL_CLAIMS)) {
+                var inboundReferralDate: LocalDate? = null
+                if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {
+                    inboundReferralDate = when (viewState.visitReason) {
+                        Encounter.VisitReason.REFERRAL -> viewState.inboundReferralDate
+                        Encounter.VisitReason.FOLLOW_UP -> viewState.followUpDate
+                        else -> null
+                    }
                 }
-                createPartialEncounter(idEventId, viewState.visitReason!!, inboundReferralDate).blockingAwait()
+                createPartialEncounter(idEventId, viewState.visitReason, inboundReferralDate).blockingAwait()
             }
         }.observeOn(AndroidSchedulers.mainThread())
     }
