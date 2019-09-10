@@ -99,7 +99,7 @@ class EditPriceFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        if (billableType == Billable.Type.DRUG) {
+        if (Billable.canEditPrice(billableType)) {
             // This logic uses a TextWatcher to update the ViewModel when valid numbers are entered into
             // the inputs and we require a separate OnFocusChangeListener to handle resetting the
             // the value of the field to a previously set value if an invalid number is entered.

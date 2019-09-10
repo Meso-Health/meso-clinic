@@ -27,8 +27,18 @@ data class Billable(val id: UUID,
             return type == Type.DRUG || type == Type.SUPPLY || type == Type.VACCINE
         }
 
+        private val BILLABLE_TYPES_THAT_ALLOW_PRICE_EDITS = listOf(
+            Type.DRUG,
+            Type.SUPPLY,
+            Type.LAB
+        )
+
         const val VACCINE_COMPOSITION = "vial"
         const val SUPPLY_COMPOSITION = "unit"
+
+        fun canEditPrice(type: Billable.Type): Boolean {
+            return BILLABLE_TYPES_THAT_ALLOW_PRICE_EDITS.contains(type)
+        }
     }
 
     enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE, IMAGING, PROCEDURE, BED_DAY, UNSPECIFIED }
