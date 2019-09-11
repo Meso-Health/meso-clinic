@@ -3,7 +3,8 @@ package org.watsi.device.managers
 import io.reactivex.Completable
 import okhttp3.Credentials
 import org.watsi.device.api.CoverageApi
-import org.watsi.device.managers.SessionManager.Companion.ALLOWED_ROLES
+import org.watsi.device.managers.SessionManager.Companion.ALLOWED_HEALTH_CENTER_ROLES
+import org.watsi.device.managers.SessionManager.Companion.ALLOWED_HOSPITAL_ROLES
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.User
 
@@ -19,7 +20,7 @@ class SessionManagerImpl(
         return Completable.fromAction {
             val apiAuthorizationHeader = Credentials.basic(username, password)
             val newTokenApi = api.login(apiAuthorizationHeader).blockingGet()
-            if (!ALLOWED_ROLES.contains(newTokenApi.user.role)) {
+            if (!isUserAllowed(newTokenApi.user.toUser())) {
                 throw SessionManager.PermissionException()
             }
             val newToken = newTokenApi.toAuthenticationToken()
@@ -36,6 +37,14 @@ class SessionManagerImpl(
         token = null
     }
 
+    override fun isUserAllowed(user: User): Boolean {
+        return if (user.isHospitalUser()) {
+            ALLOWED_HOSPITAL_ROLES.contains(user.role)
+        } else {
+            ALLOWED_HEALTH_CENTER_ROLES.contains(user.role)
+        }
+    }
+
     override fun shouldClearUserData(): Boolean {
         val previousUser = preferencesManager.getPreviousUser()
         val currentUser = token?.user
@@ -48,14 +57,14 @@ class SessionManagerImpl(
 
     override fun userHasPermission(permission: SessionManager.Permissions): Boolean {
         return currentUser()?.let { user ->
-            if (SessionManager.ID_ONLY_ROLES.contains(user.role)) {
+            if (isUserAllowed(user)) {
                 if (user.isHospitalUser()) {
-                    SessionManager.HOSPITAL_CENTER_CHECK_IN_PERMISSIONS.contains(permission)
+                    SessionManager.HOSPITAL_ROLE_PERMISSIONS.contains(permission)
                 } else {
-                    SessionManager.HEALTH_CENTER_CHECK_IN_PERMISSIONS.contains(permission)
+                    SessionManager.HEALTH_CENTER_ROLE_PERMISSIONS.contains(permission)
                 }
             } else {
-                SessionManager.SUBMISSION_PERMISSIONS.contains(permission)
+                false
             }
         } ?: false
     }

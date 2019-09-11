@@ -85,8 +85,8 @@ class SessionManagerImplTest {
         assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.FETCH_ENROLLMENT_PERIODS))
     }
 
-    private fun setUser(isCardRoomWorker: Boolean, isHospitalUser: Boolean) {
-        val role = if (isCardRoomWorker) "card_room_worker" else "claims_preparer"
+    private fun setUser(isHospitalUser: Boolean, isReceptionist: Boolean) {
+        val role = if (isReceptionist) "receptionist" else "claims_preparer"
         val providerType = if (isHospitalUser) User.ProviderType.GENERAL_HOSPITAL else User.ProviderType.HEALTH_CENTER
         val user = UserFactory.build(role = role, providerType = providerType)
         val authToken = AuthenticationTokenFactory.build(user = user)
@@ -95,30 +95,38 @@ class SessionManagerImplTest {
     }
 
     @Test
-    fun userHasPermission_nonCardRoomUser_claimPreparationPermission_returnsTrue() {
-        setUser(false, false)
+    fun userHasPermission_hospitalReceptionist() {
+        setUser(true, true)
 
-        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_IDENTIFICATION))
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
     }
 
     @Test
-    fun userHasPermission_isCardRoomUser_claimPreparationPermission_returnsFalse() {
+    fun userHasPermission_hospitalNonReceptionist() {
         setUser(true, false)
 
         assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
-    }
-
-    @Test
-    fun userHasPermission_isHealthCenterCardRoomUser_inboundEncounterPermission_returnsFalse() {
-        setUser(true, false)
-
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_IDENTIFICATION))
         assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
     }
 
     @Test
-    fun userHasPermission_isHospitalCardRoomUser_inboundEncounterPermission_returnsTrue() {
-        setUser(true, true)
+    fun userHasPermission_healthCenterReceptionist() {
+        setUser(false, true)
 
-        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_IDENTIFICATION))
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
+    }
+
+    @Test
+    fun userHasPermission_healthCenterNonReceptionist() {
+        setUser(false, false)
+
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_CLAIMS_PREPARATION))
+        assertEquals(true, sessionManager.userHasPermission(SessionManager.Permissions.WORKFLOW_IDENTIFICATION))
+        assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION))
     }
 }

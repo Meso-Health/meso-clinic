@@ -9,6 +9,7 @@ interface SessionManager {
     fun logout()
     fun currentAuthenticationToken(): AuthenticationToken?
     fun currentUser(): User?
+    fun isUserAllowed(user: User): Boolean
     fun shouldClearUserData(): Boolean
     fun userHasPermission(permission: Permissions): Boolean
 
@@ -30,7 +31,7 @@ interface SessionManager {
     }
 
     companion object {
-        val ALLOWED_ROLES = listOf(
+        val ALLOWED_HEALTH_CENTER_ROLES = listOf(
             "provider", // legacy role
             "facility_head", // legacy role
             "claims_preparer", // legacy role
@@ -40,35 +41,28 @@ interface SessionManager {
             "facility_director"
         )
 
-        // these roles can only access identification functionality and not prepare claims
-        val ID_ONLY_ROLES = listOf(
-            "card_room_worker",
+        val ALLOWED_HOSPITAL_ROLES = listOf(
+            "card_room_worker", // legacy role
             "receptionist"
         )
 
         /*
          * This application supports two different workflows:
          *
-         * 1. The check-in workflow is used by card room workers and the only action they take is
-         *    to identify and check-in patients. The actual claim entry will occur separately
-         *    via the web application. This is supported for both health center and hospital card
-         *    room workers with the only difference being that hospital users are required to
-         *    collect additional inbound encounter information (e.g. visit reason) during the check-in.
-         *    Because of this entry
+         * 1. The hospital check-in workflow is used by hospital card room workers.
+         *    The only action they take is to identify and check-in patients; the actual
+         *    claim entry will occur separately via the web application.
+         *    The only difference between this check-in workflow and the one used by health center
+         *    users is that they are required to collect additional inbound encounter information
+         *    (e.g. visit reason) during the check-in.
          *
          * 2. The submission workflow is only supported for health center users and involves all the
          *    steps of claims submission - identification, check-in, claims entry, approval and
          *    handling returned claims.
          *
          */
-        val HEALTH_CENTER_CHECK_IN_PERMISSIONS = setOf(
-            Permissions.WORKFLOW_IDENTIFICATION,
-            Permissions.SYNC_PARTIAL_CLAIMS,
-            Permissions.FETCH_IDENTIFICATION_EVENTS,
-            Permissions.FETCH_ENROLLMENT_PERIODS
-        )
 
-        val HOSPITAL_CENTER_CHECK_IN_PERMISSIONS = setOf(
+        val HOSPITAL_CHECK_IN_PERMISSIONS = setOf(
             Permissions.WORKFLOW_IDENTIFICATION,
             Permissions.SYNC_PARTIAL_CLAIMS,
             Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION,
@@ -76,15 +70,21 @@ interface SessionManager {
             Permissions.FETCH_ENROLLMENT_PERIODS
         )
 
-        val SUBMISSION_PERMISSIONS = setOf(
+        val HEALTH_CENTER_CHECK_IN_PERMISSIONS = setOf(
             Permissions.WORKFLOW_IDENTIFICATION,
+            Permissions.FETCH_ENROLLMENT_PERIODS
+        )
+
+        val HEALTH_CENTER_CLAIMS_PREPARATION_PERMISSIONS = setOf(
             Permissions.WORKFLOW_CLAIMS_PREPARATION,
             Permissions.FETCH_PHOTOS,
             Permissions.FETCH_BILLABLES,
             Permissions.FETCH_DIAGNOSES,
             Permissions.FETCH_RETURNED_CLAIMS,
-            Permissions.FETCH_ENROLLMENT_PERIODS,
             Permissions.SYNC_PRICE_SCHEDULES
         )
+
+        val HOSPITAL_ROLE_PERMISSIONS = HOSPITAL_CHECK_IN_PERMISSIONS
+        val HEALTH_CENTER_ROLE_PERMISSIONS = HEALTH_CENTER_CHECK_IN_PERMISSIONS.union(HEALTH_CENTER_CLAIMS_PREPARATION_PERMISSIONS)
     }
 }
