@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="@dimen/space16"
     android:paddingEnd="@dimen/space16"
-    android:background="@drawable/panel_bottom_background">
+    android:background="@drawable/panel_bottom_background"
+    android:id="@+id/notification_banner">
 
     <View
         android:id="@+id/notification_icon"

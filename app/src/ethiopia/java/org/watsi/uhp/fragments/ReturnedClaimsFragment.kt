@@ -14,6 +14,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.claims_list
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
@@ -34,6 +35,7 @@ class ReturnedClaimsFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
+    @Inject lateinit var clock: Clock
     @Inject lateinit var loadReturnedClaimsUseCase: LoadReturnedClaimsUseCase
 
     lateinit var viewModel: SearchableClaimsListViewModel
@@ -61,6 +63,7 @@ class ReturnedClaimsFragment : DaggerFragment() {
 
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
         claimsAdapter = ClaimListItemAdapter(
+            clock = clock,
             onClaimSelected = { encounterRelation ->
                 navigationManager.goTo(ReceiptFragment.forEncounter(
                     EncounterFlowState.fromEncounterWithExtras(encounterRelation)

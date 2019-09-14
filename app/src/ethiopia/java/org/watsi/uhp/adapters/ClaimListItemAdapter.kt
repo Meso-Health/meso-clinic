@@ -4,11 +4,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.threeten.bp.Clock
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.uhp.R.layout.item_claim_list
 import org.watsi.uhp.views.ClaimListItem
 
 class ClaimListItemAdapter(
+    private val clock: Clock,
     private val claims: MutableList<EncounterWithExtras> = mutableListOf(),
     private val onClaimSelected: (encounterRelation: EncounterWithExtras) -> Unit,
     private val onCheck: ((encounterRelation: EncounterWithExtras) -> Unit)? = null
@@ -29,7 +31,7 @@ class ClaimListItemAdapter(
         val claim = claims[position]
         val view = holder.itemView as ClaimListItem
         val isSelected = selectedClaims.contains(claim)
-        view.setClaim(claim, onClaimSelected, isSelected, onCheck)
+        view.setClaim(claim, onClaimSelected, isSelected, onCheck, clock)
     }
 
     fun setClaims(

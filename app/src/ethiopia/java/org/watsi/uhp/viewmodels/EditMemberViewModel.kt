@@ -14,11 +14,11 @@ import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.relations.MemberWithThumbnail
-import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
+import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
 import org.watsi.uhp.R
 import java.util.UUID

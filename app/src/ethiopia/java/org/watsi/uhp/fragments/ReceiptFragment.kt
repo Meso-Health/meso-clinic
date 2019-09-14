@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_line_divider
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.lab_none
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.medical_record_number
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_number
+import kotlinx.android.synthetic.ethiopia.fragment_receipt.membership_status_notification
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.patient_outcome_value
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_date
 import kotlinx.android.synthetic.ethiopia.fragment_receipt.provider_comment_text
@@ -60,6 +61,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.Encounter.EncounterAction
+import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Referral
 import org.watsi.domain.usecases.CheckForSameDayEncountersUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
@@ -181,6 +183,35 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         medical_record_number.text = encounterFlowState.member.medicalRecordNumber
         visit_type.text = encounterFlowState.encounter.visitType ?: getString(R.string.none)
         total_price.text = getString(R.string.price, CurrencyUtil.formatMoneyWithCurrency(context, encounterFlowState.price()))
+
+        when (encounterFlowState.member.memberStatus(clock)) {
+            Member.MembershipStatus.ACTIVE -> { /* Do nothing, don't show the banner */ }
+            Member.MembershipStatus.EXPIRED -> {
+                membership_status_notification.visibility = View.VISIBLE
+                membership_status_notification.setMessage(
+                    message = getString(R.string.membership_expired_notification),
+                    messageColor = resources.getColor(R.color.inactiveTextRed),
+                    backgroundColor = resources.getColor(R.color.inactiveBackgroundRed)
+                )
+            }
+            Member.MembershipStatus.UNKNOWN -> {
+                membership_status_notification.visibility = View.VISIBLE
+                membership_status_notification.setMessage(
+                    message = getString(R.string.membership_unknown_notification),
+                    messageColor = resources.getColor(R.color.unknownTextGray),
+                    backgroundColor = resources.getColor(R.color.unknownBackgroundGray)
+                )
+            }
+            Member.MembershipStatus.DELETED -> {
+                // TODO: For now this is just the same as expired. Should it be different?
+                membership_status_notification.visibility = View.VISIBLE
+                membership_status_notification.setMessage(
+                    message = getString(R.string.membership_expired_notification),
+                    messageColor = resources.getColor(R.color.inactiveTextRed),
+                    backgroundColor = resources.getColor(R.color.inactiveBackgroundRed)
+                )
+            }
+        }
 
         encounterFlowState.referral?.let { referral ->
             referrals_container.visibility = View.VISIBLE

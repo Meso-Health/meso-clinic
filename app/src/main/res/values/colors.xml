@@ -13,6 +13,10 @@
     <color name="disabledButtonText">#A5A5A5</color>
     <color name="translucentOverlay">#55000000</color>
     <color name="translucentWhite">#7FFFFFFF</color>
+    <color name="inactiveBackgroundRed">#FFF1F2</color>
+    <color name="inactiveTextRed">#62000A</color>
+    <color name="unknownBackgroundGray">#F3F3F3</color>
+    <color name="unknownTextGray">#202529</color>
 
     <color name="gray0">#f8f9fa</color>
     <color name="gray1">#f1f3f5</color>

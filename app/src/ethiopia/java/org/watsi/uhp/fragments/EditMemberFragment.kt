@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_nu
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.member_status_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
-import kotlinx.android.synthetic.ethiopia.fragment_edit_member.needs_renewal_notification
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_status_notification
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.photo_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
@@ -44,6 +44,7 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.Member
+import org.watsi.domain.entities.Member.MembershipStatus
 import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
@@ -136,8 +137,38 @@ class EditMemberFragment : DaggerFragment() {
                     val member = memberWithThumbnail.member
                     val photo = memberWithThumbnail.photo
 
-                    if (viewState.canRenew) {
-                        needs_renewal_notification.visibility = View.VISIBLE
+                    when (member.memberStatus(clock)) {
+                        MembershipStatus.ACTIVE -> {
+                            if (viewState.canRenew) {
+                                membership_status_notification.visibility = View.VISIBLE
+                                membership_status_notification.setMessage(getString(R.string.replace_card_notification))
+                            }
+                        }
+                        MembershipStatus.EXPIRED -> {
+                            membership_status_notification.visibility = View.VISIBLE
+                            membership_status_notification.setMessage(
+                                message = getString(R.string.membership_expired_notification),
+                                messageColor = resources.getColor(R.color.inactiveTextRed),
+                                backgroundColor = resources.getColor(R.color.inactiveBackgroundRed)
+                            )
+                        }
+                        MembershipStatus.UNKNOWN -> {
+                            membership_status_notification.visibility = View.VISIBLE
+                            membership_status_notification.setMessage(
+                                message = getString(R.string.membership_unknown_notification),
+                                messageColor = resources.getColor(R.color.unknownTextGray),
+                                backgroundColor = resources.getColor(R.color.unknownBackgroundGray)
+                            )
+                        }
+                        MembershipStatus.DELETED -> {
+                            // TODO: For now this is just the same as expired. Should it be different?
+                            membership_status_notification.visibility = View.VISIBLE
+                            membership_status_notification.setMessage(
+                                message = getString(R.string.membership_expired_notification),
+                                messageColor = resources.getColor(R.color.inactiveTextRed),
+                                backgroundColor = resources.getColor(R.color.inactiveBackgroundRed)
+                            )
+                        }
                     }
 
                     PhotoLoader.loadMemberPhoto(

@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.ethiopia.fragment_claims_list.select_all_checkb
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.submit_button
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_claims_label
 import kotlinx.android.synthetic.ethiopia.fragment_claims_list.total_price_label
+import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.relations.EncounterWithExtras
 import org.watsi.domain.usecases.LoadPendingClaimsUseCase
@@ -38,6 +39,7 @@ class PendingClaimsFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
     @Inject lateinit var loadPendingClaimsUseCase: LoadPendingClaimsUseCase
+    @Inject lateinit var clock: Clock
 
     lateinit var viewModel: SearchableClaimsListViewModel
     lateinit var claimsAdapter: ClaimListItemAdapter
@@ -65,6 +67,7 @@ class PendingClaimsFragment : DaggerFragment() {
         snackbarMessageToShow = arguments?.getString(PARAM_SNACKBAR_MESSAGE)
 
         claimsAdapter = ClaimListItemAdapter(
+            clock = clock,
             onClaimSelected = { encounterRelation ->
                 navigationManager.goTo(ReceiptFragment.forEncounter(
                     EncounterFlowState.fromEncounterWithExtras(encounterRelation)

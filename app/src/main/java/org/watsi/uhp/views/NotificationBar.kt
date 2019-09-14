@@ -1,6 +1,7 @@
 package org.watsi.uhp.views
 
 import android.content.Context
+import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Button
@@ -33,5 +34,13 @@ class NotificationBar(context: Context, attrs: AttributeSet) : LinearLayout(cont
 
     override fun setOnClickListener(listener: OnClickListener?) {
         notification_btn.setOnClickListener(listener)
+    }
+
+    fun setMessage(message: String, messageColor: Int? = null, backgroundColor: Int? = null) {
+        val notificationMessage = findViewById<TextView>(R.id.notification_message)
+        val component = findViewById<ConstraintLayout>(R.id.notification_banner)
+        notificationMessage.text = message
+        messageColor?.let { notificationMessage.setTextColor(it) }
+        backgroundColor?.let { component.setBackgroundColor(backgroundColor)}
     }
 }
