@@ -57,8 +57,10 @@ import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_price_schedul
 import org.watsi.device.db.DbHelper
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.NetworkManager
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
-import org.watsi.domain.usecases.ExportUnsyncedClaimsUseCase
+import org.watsi.domain.usecases.ExportUnsyncedClaimsAsJsonUseCase
+import org.watsi.domain.usecases.ExportUnsyncedClaimsAsTextUseCase
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -77,7 +79,9 @@ class StatusFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var networkManager: NetworkManager
-    @Inject lateinit var exportUnsyncedClaimsUseCase: ExportUnsyncedClaimsUseCase
+    @Inject lateinit var exportUnsyncedClaimsAsJsonUseCase: ExportUnsyncedClaimsAsJsonUseCase
+    @Inject lateinit var exportUnsyncedClaimsAsTextUseCase: ExportUnsyncedClaimsAsTextUseCase
+    @Inject lateinit var preferencesManager: PreferencesManager
     @Inject lateinit var logger: Logger
     @Inject lateinit var gson: Gson
     lateinit var viewModel: StatusViewModel
@@ -85,7 +89,8 @@ class StatusFragment : DaggerFragment() {
 
     companion object {
         const val EXPORT_DB_INTENT = 1
-        const val EXPORT_UNSYNCED_CLAIMS_INTENT = 2
+        const val EXPORT_UNSYNCED_CLAIMS_AS_JSON_INTENT = 2
+        const val EXPORT_UNSYNCED_CLAIMS_AS_TEXT_INTENT = 3
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -158,14 +163,15 @@ class StatusFragment : DaggerFragment() {
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
 
         export_button.setOnClickListener {
-            startExportActivity(EXPORT_UNSYNCED_CLAIMS_INTENT)
+            startExportActivity(EXPORT_UNSYNCED_CLAIMS_AS_TEXT_INTENT, "unsynced_claims_${DbHelper.DB_NAME + "_" + BuildConfig.VERSION_NAME}.txt")
+            startExportActivity(EXPORT_UNSYNCED_CLAIMS_AS_JSON_INTENT, "unsynced_claims_${DbHelper.DB_NAME + "_" + BuildConfig.VERSION_NAME}.json")
         }
     }
 
-    fun startExportActivity(intentId: Int) {
+    private fun startExportActivity(intentId: Int, filename: String) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
         intent.type = "*/*" // this line is a must when using ACTION_CREATE_DOCUMENT
-        intent.putExtra(EXTRA_TITLE, DbHelper.DB_NAME + "_" + BuildConfig.VERSION_NAME)
+        intent.putExtra(EXTRA_TITLE, filename)
         intent.putExtra(EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
         startActivityForResult(intent, intentId)
     }
@@ -202,7 +208,7 @@ class StatusFragment : DaggerFragment() {
                 true
             }
             R.id.menu_export_db -> {
-                startExportActivity(EXPORT_DB_INTENT)
+                startExportActivity(EXPORT_DB_INTENT, DbHelper.DB_NAME + "_" + BuildConfig.VERSION_NAME)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -290,15 +296,13 @@ class StatusFragment : DaggerFragment() {
                     }
                 }
             }
-            EXPORT_UNSYNCED_CLAIMS_INTENT -> {
+            EXPORT_UNSYNCED_CLAIMS_AS_JSON_INTENT -> {
                 when (resultCode) {
                     Activity.RESULT_OK -> {
                         val userChosenUri = data?.data
-                        // Ok let's figure out a way to write to the input stream.
-                        // Execute a use case then subscribe to it.
                         val outStream = context.contentResolver.openOutputStream(userChosenUri)
 
-                        exportUnsyncedClaimsUseCase.execute(outStream, gson).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                        exportUnsyncedClaimsAsJsonUseCase.execute(outStream, gson).observeOn(AndroidSchedulers.mainThread()).subscribe(
                             {
                                 view?.let {
                                     SnackbarHelper.show(it, context, "Claims export successful.")
@@ -312,6 +316,34 @@ class StatusFragment : DaggerFragment() {
 
                             }
                         )
+                    }
+                    Activity.RESULT_CANCELED -> {}
+                    else -> {
+                        logger.error("Unknown resultCode returned to StatusFragment: $resultCode")
+                    }
+                }
+            }
+            EXPORT_UNSYNCED_CLAIMS_AS_TEXT_INTENT -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        val userChosenUri = data?.data
+                        val outStream = context.contentResolver.openOutputStream(userChosenUri)
+                        preferencesManager.getAuthenticationToken()?.user?.let { user ->
+                            exportUnsyncedClaimsAsTextUseCase.execute(outStream, user).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                                {
+                                    view?.let {
+                                        SnackbarHelper.show(it, context, "Readable claims export successful.")
+                                    }
+                                },
+                                { error ->
+                                    view?.let {
+                                        SnackbarHelper.showError(it, context, "Readable claims export failed. ${error.localizedMessage}")
+                                    }
+                                    logger.error(error)
+
+                                }
+                            )
+                        }
                     }
                     Activity.RESULT_CANCELED -> {}
                     else -> {

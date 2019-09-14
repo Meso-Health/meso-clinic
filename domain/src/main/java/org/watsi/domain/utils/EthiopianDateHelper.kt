@@ -1,4 +1,4 @@
-package org.watsi.uhp.helpers
+package org.watsi.domain.utils
 
 import org.joda.time.DateTime
 import org.joda.time.chrono.EthiopicChronology

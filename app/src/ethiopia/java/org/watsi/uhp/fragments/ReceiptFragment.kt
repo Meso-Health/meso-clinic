@@ -73,7 +73,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EnumHelper
-import org.watsi.uhp.helpers.EthiopianDateHelper
+import org.watsi.domain.utils.EthiopianDateHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.StringHelper

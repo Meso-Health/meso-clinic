@@ -8,7 +8,7 @@ import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.EncounterRepository
 import java.io.OutputStream
 
-class ExportUnsyncedClaimsUseCase(
+class ExportUnsyncedClaimsAsJsonUseCase(
     private val deltaRepository: DeltaRepository,
     private val encounterRepository: EncounterRepository
 ) {

@@ -180,7 +180,6 @@ dependencies {
 
     // Time
     implementation dependencies.threeTenAndroidBackport
-    ethiopiaImplementation dependencies.joda
 
     // RX Java
     implementation dependencies.rxJava

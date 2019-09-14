@@ -2,6 +2,7 @@ package org.watsi.uhp.di.modules
 
 import dagger.Module
 import dagger.Provides
+import org.threeten.bp.Clock
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.domain.repositories.DiagnosisRepository
@@ -14,7 +15,6 @@ import org.watsi.domain.repositories.MemberRepository
 import org.watsi.domain.repositories.PhotoRepository
 import org.watsi.domain.repositories.PriceScheduleRepository
 import org.watsi.domain.repositories.ReferralRepository
-import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.CheckForSameDayEncountersUseCase
 import org.watsi.domain.usecases.CreateEncounterUseCase
 import org.watsi.domain.usecases.CreateIdentificationEventUseCase
@@ -22,7 +22,8 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
-import org.watsi.domain.usecases.ExportUnsyncedClaimsUseCase
+import org.watsi.domain.usecases.ExportUnsyncedClaimsAsTextUseCase
+import org.watsi.domain.usecases.ExportUnsyncedClaimsAsJsonUseCase
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchEnrollmentPeriodUseCase
@@ -53,6 +54,7 @@ import org.watsi.domain.usecases.LoadReturnedClaimsUseCase
 import org.watsi.domain.usecases.MarkReturnedEncountersAsRevisedUseCase
 import org.watsi.domain.usecases.PersistReturnedEncountersUseCase
 import org.watsi.domain.usecases.ReviseClaimUseCase
+import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.SubmitClaimUseCase
 import org.watsi.domain.usecases.SyncBillableUseCase
 import org.watsi.domain.usecases.SyncEncounterFormUseCase
@@ -386,8 +388,17 @@ class DomainModule {
     fun provideExportUnsyncedClaimsUseCase(
         deltaRepository: DeltaRepository,
         encounterRepository: EncounterRepository
-    ): ExportUnsyncedClaimsUseCase {
-        return ExportUnsyncedClaimsUseCase(deltaRepository, encounterRepository)
+    ): ExportUnsyncedClaimsAsJsonUseCase {
+        return ExportUnsyncedClaimsAsJsonUseCase(deltaRepository, encounterRepository)
+    }
+
+    @Provides
+    fun provideExportUnsyncedClaimsAsTextUseCase(
+        deltaRepository: DeltaRepository,
+        encounterRepository: EncounterRepository,
+        clock: Clock
+        ): ExportUnsyncedClaimsAsTextUseCase {
+        return ExportUnsyncedClaimsAsTextUseCase(deltaRepository, encounterRepository, clock)
     }
 
     @Provides

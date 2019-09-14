@@ -12,7 +12,7 @@ import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.ReceiptFragment
-import org.watsi.uhp.helpers.EthiopianDateHelper
+import org.watsi.domain.utils.EthiopianDateHelper
 
 class DialogDateEditField @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0

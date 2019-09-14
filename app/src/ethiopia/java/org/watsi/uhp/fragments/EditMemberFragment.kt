@@ -53,7 +53,7 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EnumHelper
-import org.watsi.uhp.helpers.EthiopianDateHelper
+import org.watsi.domain.utils.EthiopianDateHelper
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager

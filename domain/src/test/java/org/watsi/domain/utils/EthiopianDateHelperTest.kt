@@ -1,9 +1,8 @@
-package org.watsi.uhp.helpers
+package org.watsi.domain.utils
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.LocalDate
-import org.watsi.uhp.helpers.EthiopianDateHelper.EthiopianDate
 
 class EthiopianDateHelperTest {
 
@@ -27,7 +26,7 @@ class EthiopianDateHelperTest {
         val expectedIntercalaryMonth = 5
         val expectedIntercalaryLeapYear = 6
         val expectedThisMonth = 13
-        val todayDate = EthiopianDate(thisYear, thisMonth, expectedThisMonth)
+        val todayDate = EthiopianDateHelper.EthiopianDate(thisYear, thisMonth, expectedThisMonth)
 
         assertEquals(expectedFullMonth,
             EthiopianDateHelper.daysInMonthNotInFuture(nonLeapYear, fullMonth, todayDate))
@@ -45,7 +44,7 @@ class EthiopianDateHelperTest {
         val thisYear = 2010
         val expectedPastYear = 13
         val expectedThisYear = 9
-        val todayDate = EthiopianDate(thisYear, expectedThisYear, 1)
+        val todayDate = EthiopianDateHelper.EthiopianDate(thisYear, expectedThisYear, 1)
 
         assertEquals(expectedPastYear,
             EthiopianDateHelper.monthsInYearNotInFuture(pastYear, todayDate))
@@ -56,7 +55,7 @@ class EthiopianDateHelperTest {
     @Test
     fun toEthiopianDate() {
         val gregorianDate = LocalDate.of(2018, 9, 6)
-        val ethiopianDate = EthiopianDate(2010, 13, 1)
+        val ethiopianDate = EthiopianDateHelper.EthiopianDate(2010, 13, 1)
 
         assertEquals(ethiopianDate, EthiopianDateHelper.toEthiopianDate(gregorianDate))
     }
@@ -64,7 +63,7 @@ class EthiopianDateHelperTest {
     @Test
     fun fromEthiopianDate() {
         val gregorianDate = LocalDate.of(2018, 9, 6)
-        val ethiopianDate = EthiopianDate(2010, 13, 1)
+        val ethiopianDate = EthiopianDateHelper.EthiopianDate(2010, 13, 1)
 
         assertEquals(gregorianDate, EthiopianDateHelper.fromEthiopianDate(ethiopianDate))
     }

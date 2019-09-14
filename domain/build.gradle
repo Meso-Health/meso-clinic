@@ -30,6 +30,7 @@ dependencies {
 
     // Time
     implementation dependencies.threeTenBackport
+    implementation dependencies.joda
 
     // RX Javax
     implementation dependencies.rxJava
