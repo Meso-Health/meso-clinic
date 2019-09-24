@@ -1,6 +1,7 @@
 package org.watsi.domain.usecases
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -50,12 +51,16 @@ class SyncIdentificationEventUseCaseTest {
     fun execute_success() {
         whenever(identificationEventRepo.sync(deltaList)).thenReturn(Completable.complete())
         useCase.execute(onErrorCallback).test().assertComplete()
+        verify(identificationEventRepo, times(1)).sync(any())
+        verify(deltaRepo, times(1)).markAsSynced(any())
     }
 
     @Test
-    fun execute_failure() {
+    fun execute_syncFails_doesNotMarkAsSynced() {
         whenever(identificationEventRepo.sync(deltaList)).thenReturn(Completable.error(exception))
         useCase.execute(onErrorCallback).test().assertComplete()
         verify(onErrorCallback, times(1)).invoke(exception)
+        verify(identificationEventRepo, times(1)).sync(any())
+        verify(deltaRepo, never()).markAsSynced(any())
     }
 }

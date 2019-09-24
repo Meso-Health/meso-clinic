@@ -15,11 +15,13 @@ class SyncMemberUseCase(
             val unsyncedMemberDeltas = deltaRepository.unsynced(Delta.ModelName.MEMBER).blockingGet()
 
             unsyncedMemberDeltas.groupBy { it.modelId }.values.map { groupedDeltas ->
-                Completable.concatArray(
-                    memberRepository.sync(groupedDeltas),
-                    deltaRepository.markAsSynced(groupedDeltas)
-                ).onErrorComplete {
-                    onError(it)
+                Completable.fromAction {
+                    memberRepository.sync(groupedDeltas).blockingAwait()
+                    deltaRepository.markAsSynced(groupedDeltas).blockingAwait()
+                }.onErrorComplete {
+                    // throw inner exception if it exists because blockingAwait typically
+                    // wraps the exception in a RuntimeException
+                    onError(it.cause ?: it)
                 }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())

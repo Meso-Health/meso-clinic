@@ -1,6 +1,7 @@
 package org.watsi.domain.usecases
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -61,8 +62,10 @@ class SyncMemberPhotoUseCaseTest {
     fun execute_success() {
         whenever(memberRepo.syncPhotos(any())).thenReturn(Completable.complete())
         useCase.execute(onErrorCallback).test().assertComplete()
-        verify(memberRepo).syncPhotos(listOf(delta1, delta2))
-        verify(memberRepo).syncPhotos(listOf(delta3))
+        verify(memberRepo, times(1)).syncPhotos(listOf(delta1, delta2))
+        verify(memberRepo, times(1)).syncPhotos(listOf(delta3))
+        verify(deltaRepo, times(1)).markAsSynced(listOf(delta1, delta2))
+        verify(deltaRepo, times(1)).markAsSynced(listOf(delta3))
     }
 
     @Test
@@ -70,5 +73,6 @@ class SyncMemberPhotoUseCaseTest {
         whenever(memberRepo.syncPhotos(any())).thenReturn(Completable.error(exception))
         useCase.execute(onErrorCallback).test().assertComplete()
         verify(onErrorCallback, times(2)).invoke(exception)
+        verify(deltaRepo, never()).markAsSynced(any())
     }
 }

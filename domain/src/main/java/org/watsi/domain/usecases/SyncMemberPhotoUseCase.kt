@@ -21,11 +21,11 @@ class SyncMemberPhotoUseCase(
                     .values
 
             syncableMemberPhotoDeltas.map { groupedDeltas ->
-                Completable.concatArray(
-                    memberRepository.syncPhotos(groupedDeltas),
-                    deltaRepository.markAsSynced(groupedDeltas)
-                ).onErrorComplete {
-                    onError(it)
+                Completable.fromAction {
+                    memberRepository.syncPhotos(groupedDeltas).blockingAwait()
+                    deltaRepository.markAsSynced(groupedDeltas).blockingAwait()
+                }.onErrorComplete {
+                    onError(it.cause ?: it)
                 }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())

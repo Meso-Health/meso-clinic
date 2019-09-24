@@ -1,6 +1,8 @@
 package org.watsi.domain.usecases
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Completable
@@ -47,6 +49,8 @@ class SyncEncounterUseCaseTest {
         whenever(encounterRepo.sync(delta)).thenReturn(Completable.complete())
         whenever(deltaRepo.markAsSynced(listOf(delta))).thenReturn(Completable.complete())
         useCase.execute(onErrorCallback).test().assertComplete()
+        verify(encounterRepo, times(1)).sync(any())
+        verify(deltaRepo, times(1)).markAsSynced(any())
     }
 
     @Test
@@ -54,5 +58,7 @@ class SyncEncounterUseCaseTest {
         whenever(encounterRepo.sync(delta)).thenReturn(Completable.error(exception))
         useCase.execute(onErrorCallback).test().assertComplete()
         verify(onErrorCallback).invoke(exception)
+        verify(encounterRepo, times(1)).sync(any())
+        verify(deltaRepo, never()).markAsSynced(any())
     }
 }

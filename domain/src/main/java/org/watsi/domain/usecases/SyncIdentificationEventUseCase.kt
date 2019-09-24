@@ -14,11 +14,13 @@ class SyncIdentificationEventUseCase(
         return Completable.fromAction {
             val unsyncedIdEventDeltas = deltaRepository.unsynced(Delta.ModelName.IDENTIFICATION_EVENT).blockingGet()
             unsyncedIdEventDeltas.groupBy { it.modelId }.values.map { idEventDeltas ->
-                Completable.concatArray(
-                    identificationEventRepository.sync(idEventDeltas),
-                    deltaRepository.markAsSynced(idEventDeltas)
-                ).onErrorComplete {
-                    onError(it)
+                Completable.fromAction {
+                    identificationEventRepository.sync(idEventDeltas).blockingAwait()
+                    deltaRepository.markAsSynced(idEventDeltas).blockingAwait()
+                }.onErrorComplete {
+                    // throw inner exception if it exists because blockingAwait typically
+                    // wraps the exception in a RuntimeException
+                    onError(it.cause ?: it)
                 }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())

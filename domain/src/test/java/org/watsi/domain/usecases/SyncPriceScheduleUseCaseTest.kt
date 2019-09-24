@@ -1,6 +1,7 @@
 package org.watsi.domain.usecases
 
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -50,6 +51,8 @@ class SyncPriceScheduleUseCaseTest {
     fun execute_success() {
         whenever(priceScheduleRepository.sync(delta)).thenReturn(Completable.complete())
         useCase.execute(onErrorCallback).test().assertComplete()
+        verify(priceScheduleRepository, times(1)).sync(any())
+        verify(deltaRepository, times(1)).markAsSynced(any())
     }
 
     @Test
@@ -57,5 +60,7 @@ class SyncPriceScheduleUseCaseTest {
         whenever(priceScheduleRepository.sync(delta)).thenReturn(Completable.error(exception))
         useCase.execute(onErrorCallback).test().assertComplete()
         verify(onErrorCallback, times(1)).invoke(exception)
+        verify(priceScheduleRepository, times(1)).sync(any())
+        verify(deltaRepository, never()).markAsSynced(any())
     }
 }

@@ -16,11 +16,13 @@ class SyncEncounterUseCase(
                 Delta.ModelName.ENCOUNTER).blockingGet()
 
             unsyncedEncounterDeltas.map { encounterDelta ->
-                Completable.concatArray(
-                    encounterRepository.sync(encounterDelta),
-                    deltaRepository.markAsSynced(listOf(encounterDelta))
-                ).onErrorComplete {
-                    onError(it)
+                Completable.fromAction {
+                    encounterRepository.sync(encounterDelta).blockingAwait()
+                    deltaRepository.markAsSynced(listOf(encounterDelta)).blockingAwait()
+                }.onErrorComplete {
+                    // throw inner exception if it exists because blockingAwait typically
+                    // wraps the exception in a RuntimeException
+                    onError(it.cause ?: it)
                 }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())

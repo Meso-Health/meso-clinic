@@ -15,11 +15,13 @@ class SyncPriceScheduleUseCase(
             val unsyncedPriceScheduleDeltas = deltaRepository.unsynced(Delta.ModelName.PRICE_SCHEDULE).blockingGet()
 
             unsyncedPriceScheduleDeltas.forEach { priceScheduleDelta ->
-                Completable.concatArray(
-                    priceScheduleRepository.sync(priceScheduleDelta),
-                    deltaRepository.markAsSynced(listOf(priceScheduleDelta))
-                ).onErrorComplete {
-                    onError(it)
+                Completable.fromAction {
+                    priceScheduleRepository.sync(priceScheduleDelta).blockingAwait()
+                    deltaRepository.markAsSynced(listOf(priceScheduleDelta)).blockingAwait()
+                }.onErrorComplete {
+                    // throw inner exception if it exists because blockingAwait typically
+                    // wraps the exception in a RuntimeException
+                    onError(it.cause ?: it)
                 }.blockingAwait()
             }
         }.subscribeOn(Schedulers.io())
