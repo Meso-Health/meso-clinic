@@ -43,8 +43,8 @@ allprojects {
 // modules in the project.
 ext {
     minSdkVersion = 24
-    targetSdkVersion = 26
-    compileSdkVersion = 26
+    targetSdkVersion = 28
+    compileSdkVersion = 28
     applicationId = "org.watsi.claims_submission"
     versionCode = computedVersionCode
     versionName = "${versionMajor}.${versionMinor}.${versionPatch} (${computedVersionCode})"
