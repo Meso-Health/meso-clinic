@@ -33,7 +33,7 @@ class FetchDataService : BaseService() {
             val billableCount = billableRepository.countActive().blockingGet()
             val diagnosisCount = diagnosisRepository.countActive().blockingGet()
             if (billableCount == 0 || diagnosisCount == 0) {
-                okHttpClient.cache().evictAll()
+                okHttpClient.cache()?.evictAll()
             }
 
             Completable.concatArray(

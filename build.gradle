@@ -20,6 +20,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.25.0"
     }
 }
 
@@ -53,6 +54,7 @@ ext {
 // This adds more custom properties from the dependencies.gradle file and makes them available to
 // all modules in the project.
 apply from: 'dependencies.gradle'
+apply plugin: "com.github.ben-manes.versions"
 
 task clean(type: Delete) {
     delete rootProject.buildDir

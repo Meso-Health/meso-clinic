@@ -196,8 +196,8 @@ dependencies {
     kapt dependencies.glideCompiler
 
     // Application dependencies
-    implementation 'me.xdrop:fuzzywuzzy:1.1.9'
-    implementation 'me.philio:pinentryview:1.0.6'
+    implementation dependencies.fuzzyWuzzy
+    implementation dependencies.pinEntryView
 
     // Testing
     testImplementation project(path: ':domain', configuration: 'testOutput')
