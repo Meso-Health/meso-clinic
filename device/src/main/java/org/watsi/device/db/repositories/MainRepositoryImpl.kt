@@ -13,7 +13,7 @@ class MainRepositoryImpl(
     override fun deleteAllUserData(): Completable {
         return Completable.fromAction {
             appDatabase.clearAllTables()
-            okHttpClient.cache()?.evictAll()
+            okHttpClient.cache().evictAll()
         }.subscribeOn(Schedulers.io())
     }
 }

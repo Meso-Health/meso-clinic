@@ -35,6 +35,9 @@ class FetchDataService : BaseService() {
 
     override fun executeTasks(): Completable {
         return Completable.fromCallable {
+
+
+
             if (sessionManager.userHasPermission(SessionManager.Permissions.FETCH_BILLABLES) ||
                 sessionManager.userHasPermission(SessionManager.Permissions.FETCH_DIAGNOSES)) {
                 // We want to clear the cache when there are no billables or diagnoses on the device.
@@ -43,7 +46,7 @@ class FetchDataService : BaseService() {
                 val billableCount = billableRepository.countActive().blockingGet()
                 val diagnosisCount = diagnosisRepository.countActive().blockingGet()
                 if (billableCount == 0 || diagnosisCount == 0) {
-                    okHttpClient.cache()?.evictAll()
+                    okHttpClient.cache().evictAll()
                 }
             }
 
