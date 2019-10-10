@@ -158,7 +158,7 @@
     <string name="clinic_number_button">Submit</string>
     <string name="clinic_number_prompt">Enter the member\'s clinic number</string>
 
-    <string name="newborn_error_message">Newborns must be less than 3 months old</string>
+    <string name="newborn_error_message">Newborns must be less than 12 months old</string>
 
     <!-- EnrollNewbornInfoFragment -->
     <string name="enroll_newborn_activity_title">Newborn</string>

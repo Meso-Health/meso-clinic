@@ -153,6 +153,8 @@ data class Member(
         const val MAX_AGE = 200
         const val MIN_MRN_LENGTH = 5
         const val MAX_MRN_LENGTH = 7
+        // This sets the limit on the oldest a newborn can be to enroll.
+        const val MAX_NEWBORN_AGE_IN_MONTHS = 12L
 
         fun isValidName(name: String): Boolean {
             return name.split(' ').filter{ it.isNotBlank() }.count() >= 3

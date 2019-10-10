@@ -149,7 +149,7 @@ class EnrollNewbornFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 { birthdate: LocalDate,
                   birthdateAccuracy: Member.DateAccuracy,
                   dialog: AlertDialog ->
-                    if (birthdate.isBefore(LocalDate.now().minusMonths(3))) {
+                    if (birthdate.isBefore(LocalDate.now().minusMonths(Member.MAX_NEWBORN_AGE_IN_MONTHS))) {
                         enroll_newborn_birthdate_dialog_field.setDateErrorMessage(getString(R.string.newborn_error_message))
                     } else {
                         viewModel.onBirthdateChange(birthdate)
