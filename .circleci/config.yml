@@ -125,10 +125,10 @@ workflows:
           requires:
             - build_and_test
           filters:
-            - branches:
-                only: master
-                # ^ It is OK to deploy directly to Uganda sandbox when we push to master because
-                # we do not need two separate test environments for Uganda.
+            branches:
+              only: master
+              # ^ It is OK to deploy directly to Uganda sandbox when we push to master because
+              # we do not need two separate test environments for Uganda.
       - deploy_ethiopia_sandbox:
           requires:
             - build_and_test
