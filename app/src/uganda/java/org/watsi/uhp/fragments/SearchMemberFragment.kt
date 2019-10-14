@@ -6,12 +6,14 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.uganda.fragment_member_search.loading_indicator
 import kotlinx.android.synthetic.uganda.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
@@ -26,7 +28,7 @@ import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
-import org.watsi.uhp.views.ToolbarSearch
+//import org.watsi.uhp.views.ToolbarSearch
 import javax.inject.Inject
 
 class SearchMemberFragment : DaggerFragment() {
@@ -39,7 +41,7 @@ class SearchMemberFragment : DaggerFragment() {
 
     lateinit var viewModel: SearchMemberViewModel
     lateinit var memberAdapter: MemberAdapter
-    lateinit var toolbarSearchView: ToolbarSearch
+    private val searchResults = mutableListOf<MemberWithIdEventAndThumbnailPhoto>()
 
     companion object {
         const val SCAN_CARD_INTENT = 1
@@ -48,30 +50,41 @@ class SearchMemberFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        memberAdapter = MemberAdapter(
+            members = searchResults,
+            onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
+                val searchMethod = viewModel.searchMethod() ?: run {
+                    logger.error("Search method not set")
+                    IdentificationEvent.SearchMethod.SEARCH_CARD_ID
+                }
+
+                navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                    memberRelation.member,
+                    searchMethod))
+            }
+        )
+
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchMemberViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
-            it?.let { matchingMembers ->
-                memberAdapter.setMembers(matchingMembers)
+            it?.let { viewState ->
+                searchResults.clear()
+                searchResults.addAll(viewState.matchingMembers)
+                member_search_results.adapter.notifyDataSetChanged()
+
+                if (viewState.loading) {
+                    member_search_results.visibility = View.GONE
+                    loading_indicator.visibility = View.VISIBLE
+                } else {
+                    member_search_results.visibility = View.VISIBLE
+                    loading_indicator.visibility = View.GONE
+                }
             }
         })
 
-        memberAdapter = MemberAdapter(
-                onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                    val searchMethod = viewModel.searchMethod() ?: run {
-                        logger.error("Search method not set")
-                        IdentificationEvent.SearchMethod.SEARCH_CARD_ID
-                    }
-
-                    toolbarSearchView.clear()
-                    navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
-                            memberRelation.member,
-                            searchMethod))
-                }
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbarMinimal(null)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.search_fragment_label), null)
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_member_search, container, false)
     }
@@ -81,31 +94,29 @@ class SearchMemberFragment : DaggerFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
-        val searchMenuItem = menu.findItem(R.id.menu_member_search)
-        searchMenuItem.isVisible = true
+        menu.clear()
+        menuInflater.inflate(R.menu.member_search, menu)
 
-        toolbarSearchView = searchMenuItem.actionView as ToolbarSearch
-        toolbarSearchView.keyboardManager = keyboardManager
-        toolbarSearchView.onSearch { query ->
-            viewModel.updateQuery(query)
-        }
+        // auto-expand the SearchView in the Toolbar
+        val searchItem = menu.findItem(R.id.search_member_name)
+        val searchView = searchItem.actionView as SearchView
 
-        toolbarSearchView.onBack {
-            toolbarSearchView.clear()
-            navigationManager.goBack()
-        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(query: String): Boolean {
+                return false
+            }
 
-        toolbarSearchView.onScan {
-            startActivityForResult(Intent(activity, SearchByMemberCardActivity::class.java), SCAN_CARD_INTENT)
-        }
-    }
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // need to include clearFocus() or else back button will only unfocus SearchView
+                searchView.clearFocus()
+                viewModel.updateQuery(query.toLowerCase())
+                return false
+            }
+        })
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        // without including the 100 ms delay, some additional rendering occurs that prevents the
-        // keyboard from displaying properly
-        toolbarSearchView.postDelayed({
-            toolbarSearchView.focus()
-        }, 100)
+        // auto-focus the SearchView
+        searchView.isIconified = false
+        searchView.requestFocus()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

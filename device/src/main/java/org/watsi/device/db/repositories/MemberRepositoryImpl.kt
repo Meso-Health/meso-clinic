@@ -109,6 +109,14 @@ class MemberRepositoryImpl(
         }.subscribeOn(Schedulers.io())
     }
 
+    override fun byCardIds(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhoto>> {
+        return Single.fromCallable {
+            names.chunked(DbHelper.SQLITE_MAX_VARIABLE_NUMBER).map {
+                memberDao.findMemberRelationsByCardIds(it).blockingGet()
+            }.flatten().map { it.toMemberWithIdEventAndThumbnailPhoto() }
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun checkedInMembers(): Flowable<List<MemberWithIdEventAndThumbnailPhoto>> {
         return identificationEventDao.activeCheckIns().map { identificationEventModels ->
             val identificationEvents = identificationEventModels.map { it.toIdentificationEvent() }
@@ -132,6 +140,10 @@ class MemberRepositoryImpl(
 
     override fun isMemberCheckedIn(memberId: UUID): Flowable<Boolean> {
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
+    }
+
+    override fun allDistinctIds(): Single<List<String>> {
+        return memberDao.allDistinctIds().subscribeOn(Schedulers.io())
     }
 
     override fun allDistinctNames(): Single<List<String>> {
