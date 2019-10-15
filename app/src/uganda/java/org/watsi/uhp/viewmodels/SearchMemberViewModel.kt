@@ -63,10 +63,10 @@ class SearchMemberViewModel @Inject constructor (
                     matchingMembers = matchingMembers,
                     loading = false
                 ))
-            }/*.doOnError {
-                logger.error(it)
-            }.subscribeOn(Schedulers.computation()).subscribe {}*/
-        }
+            }
+        }.doOnError {
+            logger.error(it)
+        }.subscribeOn(Schedulers.computation()).subscribe {}
     }
 
     fun searchMethod() = observable.value?.searchMethod
