@@ -3,13 +3,13 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
-import org.watsi.uhp.helpers.QueryHelper
 import javax.inject.Inject
 
 class SearchMemberViewModel @Inject constructor (
@@ -17,46 +17,72 @@ class SearchMemberViewModel @Inject constructor (
         private val logger: Logger
 ) : ViewModel() {
 
-    private val observable = MutableLiveData<List<MemberWithIdEventAndThumbnailPhoto>>()
-    private var members: List<Member> = emptyList()
-    private var memberNames: List<String> = emptyList()
-    private var searchMethod: IdentificationEvent.SearchMethod? = null
+    private val observable = MutableLiveData<ViewState>()
 
-    init {
-        observable.value = emptyList()
-        // TODO: check performance consequence of storing all members
-        memberRepository.all().subscribe({
-            members = it
-            memberNames = it.map { it.name }.distinct()
+    fun getObservable(): LiveData<ViewState> {
+        observable.value = SearchMemberViewModel.ViewState()
+        preloadUniqueMemberNames()
+        preloadUniqueMemberIds()
+        return observable
+    }
+
+    private fun preloadUniqueMemberNames() {
+        memberRepository.allDistinctNames().subscribe({ memberNames ->
+            observable.postValue(observable.value?.copy(
+                uniqueMemberNames = memberNames,
+                loading = false
+            ))
         }, {
             logger.error(it)
         })
     }
 
-    fun getObservable(): LiveData<List<MemberWithIdEventAndThumbnailPhoto>> = observable
-
-    fun updateQuery(query: String) {
-        searchMethod = QueryHelper.searchMethod(query)
-        if (QueryHelper.searchMethod(query) == IdentificationEvent.SearchMethod.SEARCH_CARD_ID) {
-            members.filter { it.cardId?.contains(query) == true }.sortedBy { it.cardId }.let {
-                memberRepository.byIds(it.map { it.id }).subscribe({
-                    observable.postValue(it)
-                }, {
-                    logger.error(it)
-                })
-            }
-        } else {
-            val topMatchingNames = FuzzySearch.extractTop(query, memberNames, 20, 60)
-                    .map { it.string }
-            members.filter { topMatchingNames.contains(it.name) }.sortedBy { it.name }.let {
-                memberRepository.byIds(it.map { it.id }).subscribe({
-                    observable.postValue(it)
-                }, {
-                    logger.error(it)
-                })
-            }
-        }
+    private fun preloadUniqueMemberIds() {
+        memberRepository.allDistinctIds().subscribe({ memberCardIds ->
+            observable.postValue(observable.value?.copy(
+                uniqueMemberCardIds = memberCardIds,
+                loading = false
+            ))
+        }, {
+            logger.error(it)
+        })
     }
 
-    fun searchMethod() = searchMethod
+    fun updateQuery(query: String) {
+        Completable.fromAction {
+            observable.postValue(observable.value?.copy(loading = true))
+
+            if (query.contains(Regex("[0-9]"))) {
+                val members = observable.value?.uniqueMemberCardIds
+                val topMatchingCardsIds = FuzzySearch.extractTop(query, members, 20, 60).map { it.string }
+                val matchingMembers = memberRepository.byCardIds(topMatchingCardsIds).blockingGet()
+                observable.postValue(observable.value?.copy(
+                    matchingMembers = matchingMembers,
+                    loading = false,
+                    searchMethod = IdentificationEvent.SearchMethod.SEARCH_CARD_ID
+                ))
+            } else {
+                val namesStartingWithSameCharacter = observable.value?.uniqueMemberNames
+                val topMatchingNames = FuzzySearch.extractTop(query, namesStartingWithSameCharacter, 20, 60).map { it.string }
+                val matchingMembers = memberRepository.byNames(topMatchingNames).blockingGet()
+                observable.postValue(observable.value?.copy(
+                    matchingMembers = matchingMembers,
+                    loading = false,
+                    searchMethod = IdentificationEvent.SearchMethod.SEARCH_NAME
+                ))
+            }
+        }.doOnError {
+            logger.error(it)
+        }.subscribeOn(Schedulers.computation()).subscribe {}
+    }
+
+    fun searchMethod() = observable.value!!.searchMethod
+
+    data class ViewState(
+        val matchingMembers: List<MemberWithIdEventAndThumbnailPhoto> = emptyList(),
+        var uniqueMemberNames: List<String> = emptyList(),
+        var uniqueMemberCardIds: List<String> = emptyList(),
+        var searchMethod: IdentificationEvent.SearchMethod = IdentificationEvent.SearchMethod.SEARCH_CARD_ID,
+        val loading: Boolean = true
+    )
 }

@@ -115,6 +115,9 @@
 
     <!-- SearchMemberFragment -->
     <string name="member_no_search_results_text">No search results. Please try again.</string>
+    <string name="search_fragment_label">Search</string>
+    <string name="member_search_fragment_label">Search</string>
+
 
     <!-- PresentingConditionsFragment -->
     <string name="fragment_presenting_conditions">Enter presenting conditions</string>

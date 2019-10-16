@@ -55,6 +55,9 @@ interface MemberDao {
     @Query("SELECT * FROM members WHERE householdId IS NOT NULL")
     fun all(): Flowable<List<MemberModel>>
 
+    @Query("SELECT DISTINCT(cardId) FROM members WHERE cardId IS NOT NULL")
+    fun allDistinctIds(): Single<List<String>>
+
     @Query("SELECT DISTINCT(name) FROM members")
     fun allDistinctNames(): Single<List<String>>
 
@@ -77,6 +80,10 @@ interface MemberDao {
     @Transaction
     @Query("SELECT * FROM members WHERE members.name IN (:names)")
     fun findMemberRelationsByNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
+
+    @Transaction
+    @Query("SELECT * FROM members WHERE members.cardId IN (:cardIds)")
+    fun findMemberRelationsByCardIds(cardIds: List<String>): Single<List<MemberWithIdEventAndThumbnailPhotoModel>>
 
     //TODO: change query to use submissionState = "started" instead of preparedAt = null once submissionState is added
     @Query("SELECT (\n" +

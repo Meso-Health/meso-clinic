@@ -41,11 +41,12 @@ import javax.inject.Inject
 class SearchFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var logger: Logger
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var sessionManager: SessionManager
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var findHouseholdIdByMembershipNumberUseCase: FindHouseholdIdByMembershipNumberUseCase
-    @Inject lateinit var logger: Logger
+
     lateinit var viewModel: SearchViewModel
     lateinit var formStateObservable: LiveData<SearchViewModel.FormState>
 
