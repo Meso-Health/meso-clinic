@@ -28,7 +28,6 @@ import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
-//import org.watsi.uhp.views.ToolbarSearch
 import javax.inject.Inject
 
 class SearchMemberFragment : DaggerFragment() {
