@@ -43,20 +43,13 @@ class SearchMemberFragment : DaggerFragment() {
     lateinit var memberAdapter: MemberAdapter
     private val searchResults = mutableListOf<MemberWithIdEventAndThumbnailPhoto>()
 
-    companion object {
-        const val SCAN_CARD_INTENT = 1
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         memberAdapter = MemberAdapter(
             members = searchResults,
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
-                val searchMethod = viewModel.searchMethod() ?: run {
-                    logger.error("Search method not set")
-                    IdentificationEvent.SearchMethod.SEARCH_CARD_ID
-                }
+                val searchMethod = viewModel.searchMethod()
 
                 navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
                     memberRelation.member,

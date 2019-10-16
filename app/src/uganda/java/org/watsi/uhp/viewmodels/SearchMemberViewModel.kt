@@ -51,17 +51,24 @@ class SearchMemberViewModel @Inject constructor (
     fun updateQuery(query: String) {
         Completable.fromAction {
             observable.postValue(observable.value?.copy(loading = true))
-            if (observable.value?.searchMethod == IdentificationEvent.SearchMethod.SEARCH_CARD_ID) {
+
+            if (query.contains(Regex("[0-9]"))) {
                 val members = observable.value?.uniqueMemberCardIds
                 val topMatchingCardsIds = FuzzySearch.extractTop(query, members, 20, 60).map { it.string }
-                memberRepository.byCardIds(topMatchingCardsIds).blockingGet()
+                val matchingMembers = memberRepository.byCardIds(topMatchingCardsIds).blockingGet()
+                observable.postValue(observable.value?.copy(
+                    matchingMembers = matchingMembers,
+                    loading = false,
+                    searchMethod = IdentificationEvent.SearchMethod.SEARCH_CARD_ID
+                ))
             } else {
                 val namesStartingWithSameCharacter = observable.value?.uniqueMemberNames
                 val topMatchingNames = FuzzySearch.extractTop(query, namesStartingWithSameCharacter, 20, 60).map { it.string }
                 val matchingMembers = memberRepository.byNames(topMatchingNames).blockingGet()
                 observable.postValue(observable.value?.copy(
                     matchingMembers = matchingMembers,
-                    loading = false
+                    loading = false,
+                    searchMethod = IdentificationEvent.SearchMethod.SEARCH_NAME
                 ))
             }
         }.doOnError {
@@ -69,13 +76,13 @@ class SearchMemberViewModel @Inject constructor (
         }.subscribeOn(Schedulers.computation()).subscribe {}
     }
 
-    fun searchMethod() = observable.value?.searchMethod
+    fun searchMethod() = observable.value!!.searchMethod
 
     data class ViewState(
         val matchingMembers: List<MemberWithIdEventAndThumbnailPhoto> = emptyList(),
         var uniqueMemberNames: List<String> = emptyList(),
         var uniqueMemberCardIds: List<String> = emptyList(),
-        var searchMethod: IdentificationEvent.SearchMethod? = null,
+        var searchMethod: IdentificationEvent.SearchMethod = IdentificationEvent.SearchMethod.SEARCH_CARD_ID,
         val loading: Boolean = true
     )
 }
