@@ -5,6 +5,8 @@ import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.activity_authentication.android_version
+import kotlinx.android.synthetic.main.activity_authentication.app_version
 import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
@@ -13,6 +15,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.usecases.DeleteUserDataUseCase
+import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.helpers.NetworkErrorHelper
@@ -60,6 +63,9 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
                 navigateToClinicActivity()
             }, this::handleLoginFailure)
         }
+
+        app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
+        android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
     }
 
     private fun handleLoginFailure(throwable: Throwable) {

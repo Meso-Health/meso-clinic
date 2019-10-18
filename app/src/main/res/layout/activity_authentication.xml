@@ -81,4 +81,23 @@
             app:layout_constraintTop_toBottomOf="@+id/error_text" />
     </android.support.constraint.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space16"
+        android:paddingStart="@dimen/space16"
+        style="@style/StatusVersion"
+        app:layout_constraintTop_toBottomOf="@+id/container"
+        />
+
+    <TextView
+        android:id="@+id/android_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space16"
+        style="@style/StatusVersion"
+        app:layout_constraintTop_toBottomOf="@+id/app_version"
+        />
+
 </android.support.constraint.ConstraintLayout>
