@@ -248,13 +248,22 @@
             app:layout_constraintTop_toBottomOf="@id/unsynced_members" />
 
         <org.watsi.uhp.views.StatusField
+            android:id="@+id/unsynced_billables"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/unsynced_billables_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/unsynced_identification_events" />
+
+        <org.watsi.uhp.views.StatusField
             android:id="@+id/unsynced_price_schedules"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="@string/unsynced_price_schedules_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/unsynced_identification_events" />
+            app:layout_constraintTop_toBottomOf="@id/unsynced_billables" />
 
         <org.watsi.uhp.views.StatusField
             android:id="@+id/unsynced_encounters"
@@ -329,6 +338,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/photos_last_synced_at" />
 
+        <org.watsi.uhp.views.StatusField
+            android:id="@+id/unsynced_treatment_forms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/unsynced_encounter_forms_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/unsynced_member_photos" />
+
         <TextView
             android:id="@+id/app_version"
             android:layout_width="match_parent"
@@ -338,7 +355,7 @@
             android:paddingEnd="@dimen/space16"
             style="@style/StatusVersion"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/unsynced_member_photos" />
+            app:layout_constraintTop_toBottomOf="@id/unsynced_treatment_forms" />
 
         <TextView
             android:id="@+id/android_version"

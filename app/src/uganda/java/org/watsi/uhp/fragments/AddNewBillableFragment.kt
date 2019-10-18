@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.composition_container
-import kotlinx.android.synthetic.uganda.fragment_add_new_billable.composition_spinner
+import kotlinx.android.synthetic.uganda.fragment_add_new_billable.composition_field
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.name_field
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.price_field
 import kotlinx.android.synthetic.uganda.fragment_add_new_billable.save_button
@@ -36,7 +36,6 @@ class AddNewBillableFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: AddNewBillableViewModel
-    lateinit var compositionChoices: List<String>
     lateinit var encounterFlowState: EncounterFlowState
 
 
@@ -56,14 +55,10 @@ class AddNewBillableFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
-        compositionChoices = mutableListOf()
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddNewBillableViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
-                compositionChoices = mutableListOf()
-                compositionChoices = viewState.compositions.map { it.capitalize() }.sorted()
-
                 when (viewState.type) {
                     Billable.Type.DRUG -> {
                         unit_container.visibility = View.VISIBLE
@@ -73,7 +68,7 @@ class AddNewBillableFragment : DaggerFragment() {
                         unit_container.visibility = View.VISIBLE
                         composition_container.visibility = View.GONE
                     }
-                    in listOf(Billable.Type.SERVICE, Billable.Type.LAB, Billable.Type.SUPPLY) -> {
+                    else -> {
                         unit_container.visibility = View.GONE
                         composition_container.visibility = View.GONE
                     }
@@ -105,16 +100,7 @@ class AddNewBillableFragment : DaggerFragment() {
         name_field.addTextChangedListener(TextChangedListener { viewModel.updateName(it) })
         unit_field.addTextChangedListener(TextChangedListener { viewModel.updateUnit(it) })
         price_field.addTextChangedListener(TextChangedListener { viewModel.updatePrice(it.toIntOrNull()) })
-
-        composition_spinner.setUpWithPrompt(
-            choices = compositionChoices,
-            initialChoice = null,
-            onItemSelected = { index -> viewModel.updateComposition(compositionChoices[index]) },
-            promptString = getString(R.string.add_new_billable_composition_prompt),
-            onPromptSelected = {
-                viewModel.updateComposition(null)
-            }
-        )
+        composition_field.addTextChangedListener(TextChangedListener { viewModel.updateComposition(it) })
 
         save_button.setOnClickListener {
             viewModel.getBillable()?.let { billableWithPrice ->

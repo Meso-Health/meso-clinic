@@ -71,11 +71,7 @@
     <string name="preferred_language_field_label">Preferred Language</string>
     <string name="edit_input_add">Add</string>
     <string name="edit_input_edit">Edit</string>
-
-    <!-- StatusFragment -->
-    <string name="unsynced_billables_label">Billables</string>
-    <string name="unsynced_encounter_forms_label">Treatment Forms</string>
-
+    
     <!-- EncounterFormFragment -->
     <string name="encounter_form_fragment_label">Treatment form photos</string>
     <string name="encounter_form_add_photo_btn">Add photo</string>

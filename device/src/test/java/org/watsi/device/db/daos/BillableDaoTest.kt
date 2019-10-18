@@ -74,18 +74,6 @@ class BillableDaoTest : DaoBaseTest() {
         )
     }
 
-
-    @Test
-    fun distinctCompositions() {
-        BillableModelFactory.create(billableDao, composition = "foo")
-        BillableModelFactory.create(billableDao, composition = "foo")
-        BillableModelFactory.create(billableDao, composition = "bar")
-        BillableModelFactory.create(billableDao, composition = null)
-
-        billableDao.distinctCompositions().test().assertValue(listOf("foo", "bar"))
-    }
-
-
     @Test
     fun unsynced() {
         val unsyncedBillable = BillableModelFactory.create(billableDao)

@@ -54,9 +54,6 @@ interface BillableDao {
     @Query("SELECT * FROM billables WHERE id IN (:ids)")
     fun findWithPrice(ids: List<UUID>): Single<List<BillableWithPriceSchedulesModel>>
 
-    @Query("SELECT DISTINCT(composition) FROM billables WHERE composition IS NOT NULL")
-    fun distinctCompositions(): Single<List<String>>
-
     @Query("SELECT billables.* FROM billables\n" +
             "INNER JOIN deltas ON\n" +
                 "(billables.id = deltas.modelId AND\n" +

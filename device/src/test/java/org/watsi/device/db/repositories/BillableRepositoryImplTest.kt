@@ -108,14 +108,6 @@ class BillableRepositoryImplTest {
     }
 
     @Test
-    fun uniqueCompositions() {
-        val compositions = listOf("tablet", "vial")
-        whenever(mockDao.distinctCompositions()).thenReturn(Single.just(compositions))
-
-        repository.uniqueCompositions().test().assertValue(compositions)
-    }
-
-    @Test
     fun fetch_noCurrentAuthenticationToken_errors() {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(null)
 

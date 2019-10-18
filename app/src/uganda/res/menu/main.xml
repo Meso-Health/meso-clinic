@@ -52,8 +52,15 @@
         android:visible="false" />
     <item
         android:id="@+id/menu_member_search"
+        android:orderInCategory="110"
         app:showAsAction="always"
         app:actionLayout="@layout/view_toolbar_search"
         android:title="@string/search_member_hint"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_export_db"
+        android:orderInCategory="111"
+        android:title="@string/menu_export_db"
+        app:showAsAction="never"
         android:visible="false" />
 </menu>

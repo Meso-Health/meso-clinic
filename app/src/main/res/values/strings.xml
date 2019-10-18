@@ -8,6 +8,7 @@
     <string name="log_out_alert_message">Any unsynced data will be deleted.</string>
     <string name="menu_status_label">Status</string>
     <string name="menu_sync_now">Sync now</string>
+    <string name="menu_export_db" translatable="false">Export database</string>
 
     <!-- General Labels -->
     <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>
@@ -102,7 +103,11 @@
     <string name="status_fragment_label">Status</string>
     <string name="current_user_label">Current User</string>
     <string name="provider_type_label">Provider Type</string>
-
+    <string name="provider_type_unclassified">Unclassified</string>
+    <string name="provider_type_clinic">Health Center</string>
+    <string name="provider_type_primary_hospital">Primary Hospital</string>
+    <string name="provider_type_general_hospital">General Hospital</string>
+    <string name="provider_type_tertiary_hospital">Tertiary Hospital</string>
     <string name="fetch_data_title">Downloads (Data)</string>
     <string name="last_fetched_billables_label" translatable="false">Billables</string>
     <string name="last_fetched_diagnoses_label">Diagnoses</string>
@@ -110,13 +115,17 @@
     <string name="beneficiary_count_label" translatable="false">Beneficiary count</string>
     <string name="fetch_photos_title">Downloads (Photos)</string>
     <string name="last_fetched_member_photos_label">Member photos</string>
-
+    <string name="last_fetched_returned_encounters_label">Returned Claims</string>
+    <string name="last_fetched_identification_events_label" translatable="false">Identification Events</string>
+    <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
+    <string name="export_unsynced_claims_label" translatable="false"><u>Export Unsynced Claims</u></string>
     <string name="sync_data_title">Uploads (Data)</string>
     <string name="unsynced_members_label">Members</string>
     <string name="unsynced_id_events_label">Identifications</string>
     <string name="unsynced_encounters_label">Claims</string>
-
+    <string name="unsynced_billables_label" translatable="false">Billables</string>
     <string name="sync_photos_title">Uploads (Photos)</string>
+    <string name="unsynced_encounter_forms_label" translatable="false">Treatment Forms</string>
     <string name="unsynced_member_photos_label">Member photos</string>
 
     <string name="app_version">Claims Submission %1$s</string>

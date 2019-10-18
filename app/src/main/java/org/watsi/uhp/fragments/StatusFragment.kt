@@ -24,36 +24,38 @@ import android.view.ViewGroup
 import com.google.gson.Gson
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.ethiopia.fragment_status.android_version
-import kotlinx.android.synthetic.ethiopia.fragment_status.app_version
-import kotlinx.android.synthetic.ethiopia.fragment_status.beneficiary_count
-import kotlinx.android.synthetic.ethiopia.fragment_status.current_user
-import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_fetched_at
-import kotlinx.android.synthetic.ethiopia.fragment_status.data_last_synced_at
-import kotlinx.android.synthetic.ethiopia.fragment_status.export_button
-import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_data_error
-import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_data_progress_bar
-import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_container
-import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_error
-import kotlinx.android.synthetic.ethiopia.fragment_status.fetch_photos_progress_bar
-import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_billables
-import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_diagnoses
-import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_identification_events
-import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_member_photos
-import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_members
-import kotlinx.android.synthetic.ethiopia.fragment_status.last_fetched_returned_claims
-import kotlinx.android.synthetic.ethiopia.fragment_status.photos_last_fetched_at
-import kotlinx.android.synthetic.ethiopia.fragment_status.photos_last_synced_at
-import kotlinx.android.synthetic.ethiopia.fragment_status.provider_type
-import kotlinx.android.synthetic.ethiopia.fragment_status.sync_data_error
-import kotlinx.android.synthetic.ethiopia.fragment_status.sync_data_progress_bar
-import kotlinx.android.synthetic.ethiopia.fragment_status.sync_photos_error
-import kotlinx.android.synthetic.ethiopia.fragment_status.sync_photos_progress_bar
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_encounters
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_identification_events
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_member_photos
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_members
-import kotlinx.android.synthetic.ethiopia.fragment_status.unsynced_price_schedules
+import kotlinx.android.synthetic.main.fragment_status.android_version
+import kotlinx.android.synthetic.main.fragment_status.app_version
+import kotlinx.android.synthetic.main.fragment_status.beneficiary_count
+import kotlinx.android.synthetic.main.fragment_status.current_user
+import kotlinx.android.synthetic.main.fragment_status.data_last_fetched_at
+import kotlinx.android.synthetic.main.fragment_status.data_last_synced_at
+import kotlinx.android.synthetic.main.fragment_status.export_button
+import kotlinx.android.synthetic.main.fragment_status.fetch_data_error
+import kotlinx.android.synthetic.main.fragment_status.fetch_data_progress_bar
+import kotlinx.android.synthetic.main.fragment_status.fetch_photos_container
+import kotlinx.android.synthetic.main.fragment_status.fetch_photos_error
+import kotlinx.android.synthetic.main.fragment_status.fetch_photos_progress_bar
+import kotlinx.android.synthetic.main.fragment_status.last_fetched_billables
+import kotlinx.android.synthetic.main.fragment_status.last_fetched_diagnoses
+import kotlinx.android.synthetic.main.fragment_status.last_fetched_identification_events
+import kotlinx.android.synthetic.main.fragment_status.last_fetched_member_photos
+import kotlinx.android.synthetic.main.fragment_status.last_fetched_members
+import kotlinx.android.synthetic.main.fragment_status.last_fetched_returned_claims
+import kotlinx.android.synthetic.main.fragment_status.photos_last_fetched_at
+import kotlinx.android.synthetic.main.fragment_status.photos_last_synced_at
+import kotlinx.android.synthetic.main.fragment_status.provider_type
+import kotlinx.android.synthetic.main.fragment_status.sync_data_error
+import kotlinx.android.synthetic.main.fragment_status.sync_data_progress_bar
+import kotlinx.android.synthetic.main.fragment_status.sync_photos_error
+import kotlinx.android.synthetic.main.fragment_status.sync_photos_progress_bar
+import kotlinx.android.synthetic.main.fragment_status.unsynced_billables
+import kotlinx.android.synthetic.main.fragment_status.unsynced_encounters
+import kotlinx.android.synthetic.main.fragment_status.unsynced_identification_events
+import kotlinx.android.synthetic.main.fragment_status.unsynced_member_photos
+import kotlinx.android.synthetic.main.fragment_status.unsynced_members
+import kotlinx.android.synthetic.main.fragment_status.unsynced_price_schedules
+import kotlinx.android.synthetic.main.fragment_status.unsynced_treatment_forms
 import org.watsi.device.db.DbHelper
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.NetworkManager
@@ -64,9 +66,9 @@ import org.watsi.domain.usecases.ExportUnsyncedClaimsAsTextUseCase
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
-import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.PermissionsHelper
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.FetchDataService
 import org.watsi.uhp.services.FetchPhotosService
@@ -128,9 +130,11 @@ class StatusFragment : DaggerFragment() {
 
                 unsynced_members.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedMembersCount))
                 unsynced_identification_events.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedIdEventsCount))
+                unsynced_billables.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedBillablesCount))
                 unsynced_price_schedules.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedPriceSchedulesCount))
                 unsynced_encounters.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedEncountersCount))
                 unsynced_member_photos.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedPhotosCount))
+                unsynced_treatment_forms.setValue(formattedSyncQuantity(viewState.syncStatus.unsyncedEncounterFormsCount))
 
                 if (viewState.syncStatus.unsyncedEncountersCount > 0) {
                     export_button.visibility = View.VISIBLE
@@ -158,7 +162,7 @@ class StatusFragment : DaggerFragment() {
         val username = sessionManager.currentUser()?.username
         val providerType = sessionManager.currentUser()?.providerType
         current_user.setValue(username)
-        provider_type.setValue(providerType?.let { EnumHelper.providerTypeToDisplayedString(it, context, logger) })
+        provider_type.setValue(providerType?.let { StringHelper.providerTypeToDisplayedString(it, context, logger) })
         app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
 

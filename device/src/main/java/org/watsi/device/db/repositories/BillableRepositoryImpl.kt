@@ -108,10 +108,6 @@ class BillableRepositoryImpl(
         } ?: Completable.error(Exception("Current token is null while calling BillableRepositoryImpl.fetch"))
     }
 
-    override fun uniqueCompositions(): Single<List<String>> {
-        return billableDao.distinctCompositions().subscribeOn(Schedulers.io())
-    }
-
     override fun opdDefaults(): Single<List<BillableWithPriceSchedule>> {
         return matchBillablesToCurrentPrice(billableDao.opdDefaults()).subscribeOn(Schedulers.io())
     }

@@ -24,14 +24,6 @@
             app:label="@string/add_new_billable_type_label"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <View
-            android:id="@+id/type_divider"
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="@color/gray3"
-            app:layout_constraintTop_toBottomOf="@id/type_spinner"
-            app:layout_constraintStart_toStartOf="parent"/>
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -118,21 +110,14 @@
         app:layout_constraintTop_toBottomOf="@id/spread_container"
         app:layout_constraintStart_toStartOf="parent">
 
-        <org.watsi.uhp.views.SpinnerField
-            android:id="@+id/composition_spinner"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/composition_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:label="@string/add_new_billable_composition_label"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <View
-            android:id="@+id/composition_divider"
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="@color/gray3"
-            app:layout_constraintTop_toBottomOf="@id/composition_spinner"
-            app:layout_constraintStart_toStartOf="parent"/>
+            android:maxLines="1"
+            android:hint="@string/add_new_billable_composition_label"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords|textNoSuggestions" />
     </android.support.constraint.ConstraintLayout>
 
     <Button

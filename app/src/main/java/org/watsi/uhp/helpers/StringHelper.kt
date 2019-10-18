@@ -3,8 +3,10 @@ package org.watsi.uhp.helpers
 import android.content.Context
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDate
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Member.DateAccuracy
+import org.watsi.domain.entities.User
 import org.watsi.domain.utils.AgeUnit
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
@@ -94,6 +96,27 @@ object StringHelper {
             9 -> "${context.getString(R.string.phone_number_prefix)} ${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} " +
                     "${phoneNumber.substring(6)}"
             else -> null
+        }
+    }
+
+    private fun getProviderTypeMappings(): List<Pair<User.ProviderType, Int>> {
+        return listOf(
+            Pair(User.ProviderType.UNCLASSIFIED, R.string.provider_type_unclassified),
+            Pair(User.ProviderType.HEALTH_CENTER, R.string.provider_type_clinic),
+            Pair(User.ProviderType.PRIMARY_HOSPITAL, R.string.provider_type_primary_hospital),
+            Pair(User.ProviderType.GENERAL_HOSPITAL, R.string.provider_type_general_hospital),
+            Pair(User.ProviderType.TERTIARY_HOSPITAL, R.string.provider_type_tertiary_hospital)
+        )
+    }
+
+    fun providerTypeToDisplayedString(type: User.ProviderType, context: Context, logger: Logger): String {
+        val providerTypeMappings = getProviderTypeMappings()
+        val providerTypePair = providerTypeMappings.find { pair -> pair.first == type }
+        return if (providerTypePair != null) {
+            context.getString(providerTypePair.second)
+        } else {
+            logger.error("Unable to find string that corresponds to $type in $providerTypeMappings")
+            context.getString(R.string.other) // Just to be safe and not crash the app.
         }
     }
 }

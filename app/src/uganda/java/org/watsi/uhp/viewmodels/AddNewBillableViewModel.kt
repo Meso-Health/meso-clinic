@@ -12,20 +12,12 @@ import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
 
-class AddNewBillableViewModel @Inject constructor(
-        billableRepository: BillableRepository,
-        private val logger: Logger
-) : ViewModel() {
+class AddNewBillableViewModel @Inject constructor() : ViewModel() {
 
     private val observable = MutableLiveData<ViewState>()
 
     init {
         observable.value = ViewState()
-        billableRepository.uniqueCompositions().subscribe({
-            observable.postValue(observable.value?.copy(compositions = it))
-        }, {
-            logger.error(it)
-        })
     }
 
     fun getObservable(): LiveData<ViewState> {
@@ -98,8 +90,7 @@ class AddNewBillableViewModel @Inject constructor(
         observable.value = state?.copy(isValid = isValid)
     }
 
-    data class ViewState(val compositions: List<String> = emptyList(),
-                         val composition: String? = null,
+    data class ViewState(val composition: String? = null,
                          val unit: String? = null,
                          val price: Int? = null,
                          val name: String? = null,

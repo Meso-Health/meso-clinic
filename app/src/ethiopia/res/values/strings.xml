@@ -11,8 +11,6 @@
 
     <!-- Menu -->
     <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
-    <string name="menu_export_db" translatable="false">Export database</string>
-    <string name="menu_export_unsynced_claims" translatable="false">Export unsynced claims</string>
     <string name="delete">Delete</string>
     <string name="remove">Remove</string>
     <string name="delete_claim_confirmation">Delete this claim?</string>
@@ -34,17 +32,6 @@
     <!-- CheckedInPatientsFragment -->
     <string name="checked_in_patients_fragment_label">Checked-in patients</string>
     <string name="no_members">No members available</string>
-
-    <!-- StatusFragment -->
-    <string name="last_fetched_returned_encounters_label">Returned Claims</string>
-    <string name="last_fetched_identification_events_label" translatable="false">Identification Events</string>
-    <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
-    <string name="provider_type_unclassified">Unclassified</string>
-    <string name="provider_type_clinic">Health Center</string>
-    <string name="provider_type_primary_hospital">Primary Hospital</string>
-    <string name="provider_type_general_hospital">General Hospital</string>
-    <string name="provider_type_tertiary_hospital">Tertiary Hospital</string>
-    <string name="export_unsynced_claims_label" translatable="false"><u>Export Unsynced Claims</u></string>
 
     <!-- SearchFragment -->
     <string name="search_fragment_label">@string/search</string>
