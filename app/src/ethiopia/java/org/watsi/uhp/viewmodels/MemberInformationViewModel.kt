@@ -113,10 +113,7 @@ class MemberInformationViewModel @Inject constructor(
             searchMethod = IdentificationEvent.SearchMethod.MANUAL_ENTRY,
             throughMemberId = null,
             clinicNumber = null,
-            clinicNumberType = null,
-            fingerprintsVerificationTier = null,
-            fingerprintsVerificationConfidence = null,
-            fingerprintsVerificationResultCode = null
+            clinicNumberType = null
         )
 
         return createIdentificationEventUseCase.execute(idEvent)
@@ -196,7 +193,6 @@ class MemberInformationViewModel @Inject constructor(
                     gender = viewState.gender,
                     photoId = null,
                     thumbnailPhotoId = null,
-                    fingerprintsGuid = null,
                     cardId = null,
                     householdId = null,
                     language = null,

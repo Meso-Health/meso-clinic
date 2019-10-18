@@ -60,10 +60,10 @@ class CurrentMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee(clock) || member.cardId == null) {
+                if (member.isAbsentee() || member.cardId == null) {
                     notification_container.visibility = View.VISIBLE
 
-                    if (member.isAbsentee(clock)) {
+                    if (member.isAbsentee()) {
                         absentee_notification.visibility = View.VISIBLE
                         absentee_notification.setOnClickListener {
                             navigationManager.goTo(EditMemberFragment.forMember(member.id))

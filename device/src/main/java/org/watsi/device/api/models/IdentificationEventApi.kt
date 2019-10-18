@@ -4,8 +4,8 @@ import com.google.gson.JsonObject
 import org.threeten.bp.Instant
 import org.watsi.domain.entities.Delta
 import org.watsi.domain.entities.IdentificationEvent
-import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import org.watsi.domain.entities.IdentificationEvent.ClinicNumberType
+import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import java.lang.IllegalArgumentException
 import java.util.UUID
 
@@ -17,10 +17,7 @@ data class IdentificationEventApi(
     val occurredAt: Instant,
     val searchMethod: String,
     val clinicNumber: Int?,
-    val clinicNumberType: String?,
-    val fingerprintsVerificationResultCode: Int?,
-    val fingerprintsVerificationConfidence: Float?,
-    val fingerprintsVerificationTier: String?
+    val clinicNumberType: String?
 ) {
 
     constructor (idEvent: IdentificationEvent) :
@@ -31,10 +28,7 @@ data class IdentificationEventApi(
              occurredAt = idEvent.occurredAt,
              searchMethod = idEvent.searchMethod.toString().toLowerCase(),
              clinicNumber = idEvent.clinicNumber,
-             clinicNumberType = idEvent.clinicNumberType?.toString()?.toLowerCase(),
-             fingerprintsVerificationResultCode = idEvent.fingerprintsVerificationResultCode,
-             fingerprintsVerificationConfidence = idEvent.fingerprintsVerificationConfidence,
-             fingerprintsVerificationTier = idEvent.fingerprintsVerificationTier
+             clinicNumberType = idEvent.clinicNumberType?.toString()?.toLowerCase()
         )
 
     fun toIdentificationEvent(): IdentificationEvent {
@@ -60,10 +54,7 @@ data class IdentificationEventApi(
             occurredAt = occurredAt,
             searchMethod = convertedSearchMethod,
             clinicNumber = clinicNumber,
-            clinicNumberType = convertedClinicNumberType,
-            fingerprintsVerificationResultCode = fingerprintsVerificationResultCode,
-            fingerprintsVerificationConfidence = fingerprintsVerificationConfidence,
-            fingerprintsVerificationTier = fingerprintsVerificationTier
+            clinicNumberType = convertedClinicNumberType
         )
     }
 

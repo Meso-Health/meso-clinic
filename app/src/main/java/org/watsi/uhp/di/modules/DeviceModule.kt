@@ -9,7 +9,6 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.rollbar.android.Rollbar
-import com.simprints.libsimprints.SimHelper
 import dagger.Module
 import dagger.Provides
 import org.threeten.bp.Clock
@@ -17,7 +16,6 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 import org.watsi.device.api.CoverageApi
-import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.NetworkManager
 import org.watsi.device.managers.NetworkManagerImpl
@@ -25,7 +23,6 @@ import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.PreferencesManagerImpl
 import org.watsi.device.managers.SessionManager
 import org.watsi.device.managers.SessionManagerImpl
-import org.watsi.device.managers.SimprintsManager
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.managers.AndroidKeyboardManager
 import org.watsi.uhp.managers.DebugLogger
@@ -93,17 +90,6 @@ class DeviceModule {
         } else {
             DebugLogger()
         }
-    }
-
-    @Provides
-    fun provideSimHelper(sessionManager: SessionManager): SimHelper {
-        val userId = sessionManager.currentAuthenticationToken()!!.user.id
-        return SimHelper(BuildConfig.SIMPRINTS_API_KEY, userId.toString())
-    }
-
-    @Provides
-    fun provideFingerprintManager(simHelper: SimHelper, sessionManager: SessionManager): FingerprintManager {
-        return SimprintsManager(simHelper, sessionManager)
     }
 
     @Provides

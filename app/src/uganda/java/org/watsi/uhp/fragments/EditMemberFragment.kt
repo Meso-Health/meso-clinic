@@ -16,10 +16,8 @@ import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.uganda.fragment_edit_member.card_id_field
 import kotlinx.android.synthetic.uganda.fragment_edit_member.edit_birthdate_dialog_field
-import kotlinx.android.synthetic.uganda.fragment_edit_member.fingerprints_field
 import kotlinx.android.synthetic.uganda.fragment_edit_member.gender_field
 import kotlinx.android.synthetic.uganda.fragment_edit_member.member_panel_header
-import kotlinx.android.synthetic.uganda.fragment_edit_member.missing_fingerprints_field
 import kotlinx.android.synthetic.uganda.fragment_edit_member.missing_information_panel_header
 import kotlinx.android.synthetic.uganda.fragment_edit_member.missing_photo_container
 import kotlinx.android.synthetic.uganda.fragment_edit_member.name_field
@@ -30,7 +28,6 @@ import kotlinx.android.synthetic.uganda.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.uganda.fragment_edit_member.top_name
 import kotlinx.android.synthetic.uganda.fragment_edit_member.top_photo
 import org.threeten.bp.Clock
-import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Member
 import org.watsi.uhp.R
@@ -49,7 +46,6 @@ class EditMemberFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
-    @Inject lateinit var fingerprintManager: FingerprintManager
     @Inject lateinit var clock: Clock
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
@@ -62,8 +58,7 @@ class EditMemberFragment : DaggerFragment() {
     companion object {
         const val PARAM_MEMBER_ID = "member_id"
         const val CAPTURE_PHOTO_INTENT = 1
-        const val CAPTURE_FINGERPRINT_INTENT = 2
-        const val SCAN_QRCODE_INTENT = 3
+        const val SCAN_QRCODE_INTENT = 2
 
         fun forMember(memberId: UUID): EditMemberFragment {
             val editMemberFragment = EditMemberFragment()
@@ -117,13 +112,6 @@ class EditMemberFragment : DaggerFragment() {
                 phone_number_field.setValue(member.phoneNumber)
                 preferred_language_field.setValue(member.language)
 
-                listOf(fingerprints_field, missing_fingerprints_field).forEach { field ->
-                    member.fingerprintsGuid?.let {
-                        field.setFingerprints(it)
-                    }
-                    field.toggleEnabled(member.requiresFingerprint(clock))
-                }
-
                 member.cardId?.let {
                     card_id_field.setCardId(Member.formatCardId(it))
                 }
@@ -131,15 +119,12 @@ class EditMemberFragment : DaggerFragment() {
                 // determine if missing information section should be shown based on initial
                 // member information
                 if (this.member == null) {
-                    if (member.isAbsentee(clock)) {
+                    if (member.isAbsentee()) {
                         missing_information_panel_header.visibility = View.VISIBLE
                         member_panel_header.visibility = View.VISIBLE
                     }
                     if (memberWithThumbnail.photo == null) {
                         missing_photo_container.visibility = View.VISIBLE
-                    }
-                    if (member.requiresFingerprint(clock) && member.fingerprintsGuid == null) {
-                        missing_fingerprints_field.visibility = View.VISIBLE
                     }
                     this.member = member
                 }
@@ -195,18 +180,6 @@ class EditMemberFragment : DaggerFragment() {
             }
         }
 
-        listOf(fingerprints_field, missing_fingerprints_field).forEach {
-            it.setOnClickListener {
-                member?.let {
-                    if (!fingerprintManager.captureFingerprint(it.id.toString(), this, CAPTURE_FINGERPRINT_INTENT)) {
-                        listOf(fingerprints_field, missing_fingerprints_field).forEach { fingerprintsField ->
-                            fingerprintsField.setError(context.getString(R.string.fingerprints_not_installed_error_message))
-                        }
-                    }
-                }
-            }
-        }
-
         card_id_field.setOnClickListener {
             startActivityForResult(Intent(activity, ScanNewCardActivity::class.java), SCAN_QRCODE_INTENT)
         }
@@ -233,24 +206,6 @@ class EditMemberFragment : DaggerFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            CAPTURE_FINGERPRINT_INTENT -> {
-                val fingerprintResponse = fingerprintManager.parseResponseForRegistration(resultCode, data)
-                when (fingerprintResponse.status) {
-                    FingerprintManager.FingerprintStatus.SUCCESS -> {
-                        fingerprintResponse.fingerprintId?.let {
-                            viewModel.updateFingerprints(it).subscribe()
-                        } ?: run {
-                            logger.error("FingerprintManager returned success but null fingerprintId")
-                        }
-                    }
-                    FingerprintManager.FingerprintStatus.FAILURE -> {
-                        listOf(fingerprints_field, missing_fingerprints_field).forEach {
-                            it.setError(context.getString(R.string.fingerprints_error_message))
-                        }
-                    }
-                    FingerprintManager.FingerprintStatus.CANCELLED -> { /* no-op */ }
-                }
-            }
             CAPTURE_PHOTO_INTENT -> {
                 val (photoIds, error) = SavePhotoActivity.parseResult(resultCode, data, logger)
                 if (photoIds != null) {

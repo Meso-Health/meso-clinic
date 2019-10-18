@@ -31,7 +31,6 @@ android {
         buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
 
         buildConfigField "String", "ROLLBAR_API_KEY", gradle.ext.rollbarApiKey
-        buildConfigField "String", "SIMPRINTS_API_KEY", gradle.ext.simprintsApiKey
         buildConfigField "String", "API_HOST", gradle.ext.apiHostDebug
     }
     signingConfigs {
@@ -174,9 +173,6 @@ dependencies {
     implementation dependencies.retrofit
     implementation dependencies.retrofitRxJava
     implementation dependencies.gsonConverter
-
-    // Simprints
-    implementation dependencies.simprints
 
     // Time
     implementation dependencies.threeTenAndroidBackport

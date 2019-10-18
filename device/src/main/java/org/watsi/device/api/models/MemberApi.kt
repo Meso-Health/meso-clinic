@@ -19,7 +19,6 @@ data class MemberApi(
     val gender: Member.Gender,
     val birthdate: LocalDate,
     val birthdateAccuracy: Member.DateAccuracy = Member.DateAccuracy.Y,
-    val fingerprintsGuid: UUID?,
     val phoneNumber: String?,
     val preferredLanguage: String?,
     val preferredLanguageOther: String?,
@@ -43,7 +42,6 @@ data class MemberApi(
                  gender = member.gender,
                  birthdate = member.birthdate,
                  birthdateAccuracy = member.birthdateAccuracy,
-                 fingerprintsGuid = member.fingerprintsGuid,
                  phoneNumber = member.phoneNumber,
                  preferredLanguage = preferredLanguage(member),
                  preferredLanguageOther = preferredLanguageOther(member),
@@ -72,7 +70,6 @@ data class MemberApi(
             gender = gender,
             birthdate = birthdate,
             birthdateAccuracy = birthdateAccuracy,
-            fingerprintsGuid = fingerprintsGuid,
             phoneNumber = phoneNumber,
             language = preferredLanguage,
             photoId = persistedMember?.photoId,
@@ -93,7 +90,6 @@ data class MemberApi(
         const val ID_FIELD = "id"
         const val CARD_ID_FIELD = "card_id"
         const val NAME_FIELD = "full_name"
-        const val FINGERPRINTS_GUID_FIELD = "fingerprints_guid"
         const val PHONE_NUMBER_FIELD = "phone_number"
         const val MEDICAL_RECORD_NUMBER_FIELD = "medical_record_number"
 
@@ -104,9 +100,6 @@ data class MemberApi(
                 when (delta.field) {
                     "name" -> patchParams.addProperty(NAME_FIELD, member.name)
                     "phoneNumber" -> patchParams.addProperty(PHONE_NUMBER_FIELD, member.phoneNumber)
-                    "fingerprintsGuid" -> {
-                        patchParams.addProperty(FINGERPRINTS_GUID_FIELD, member.fingerprintsGuid.toString())
-                    }
                     "cardId" -> patchParams.addProperty(CARD_ID_FIELD, member.cardId)
                     "medicalRecordNumber" -> patchParams.addProperty(MEDICAL_RECORD_NUMBER_FIELD, member.medicalRecordNumber)
                     null -> Unit

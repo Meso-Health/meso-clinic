@@ -38,10 +38,7 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                     val searchMethod: IdentificationEvent.SearchMethod,
                                     val clinicNumber: Int?,
                                     val clinicNumberType: IdentificationEvent.ClinicNumberType?,
-                                    val dismissed: Boolean,
-                                    val fingerprintsVerificationResultCode: Int?,
-                                    val fingerprintsVerificationConfidence: Float?,
-                                    val fingerprintsVerificationTier: String?) {
+                                    val dismissed: Boolean) {
 
     fun toIdentificationEvent(): IdentificationEvent {
         return IdentificationEvent(id = id,
@@ -51,10 +48,7 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                    searchMethod = searchMethod,
                                    clinicNumber = clinicNumber,
                                    clinicNumberType = clinicNumberType,
-                                   dismissed = dismissed,
-                                   fingerprintsVerificationResultCode = fingerprintsVerificationResultCode,
-                                   fingerprintsVerificationConfidence = fingerprintsVerificationConfidence,
-                                   fingerprintsVerificationTier = fingerprintsVerificationTier)
+                                   dismissed = dismissed)
     }
 
     companion object {
@@ -70,13 +64,8 @@ data class IdentificationEventModel(@PrimaryKey val id: UUID,
                                             searchMethod = idEvent.searchMethod,
                                             clinicNumber = idEvent.clinicNumber,
                                             clinicNumberType = idEvent.clinicNumberType,
-                                            dismissed = idEvent.dismissed,
-                                            fingerprintsVerificationResultCode =
-                                                idEvent.fingerprintsVerificationResultCode,
-                                            fingerprintsVerificationConfidence =
-                                                idEvent.fingerprintsVerificationConfidence,
-                                            fingerprintsVerificationTier =
-                                                idEvent.fingerprintsVerificationTier)
+                                            dismissed = idEvent.dismissed
+            )
         }
     }
 }

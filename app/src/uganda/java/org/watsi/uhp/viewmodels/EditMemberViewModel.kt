@@ -103,13 +103,6 @@ class EditMemberViewModel(
         }
     }
 
-    fun updateFingerprints(fingerprintsId: UUID): Completable {
-        return callIfMemberExists { member ->
-            updateMemberUseCase.execute(member.copy(fingerprintsGuid = fingerprintsId))
-                    .observeOn(AndroidSchedulers.mainThread())
-        }
-    }
-
     fun updatePhoto(rawPhotoId: UUID, thumbnailPhotoId: UUID): Completable {
         return callIfMemberExists { member ->
             updateMemberUseCase.execute(member.copy(

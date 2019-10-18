@@ -68,13 +68,6 @@
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/missing_information_panel_header"/>
 
-        <org.watsi.uhp.views.FingerprintsField
-            android:id="@+id/missing_fingerprints_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/missing_photo_container" />
-
         <TextView
             android:id="@+id/member_panel_header"
             android:layout_width="match_parent"
@@ -84,7 +77,7 @@
             android:text="@string/member_panel_header_text"
             android:visibility="gone"
             style="@style/PanelHeader"
-            app:layout_constraintTop_toBottomOf="@id/missing_fingerprints_field" />
+            app:layout_constraintTop_toBottomOf="@id/missing_photo_container" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/demographic_container"
@@ -158,12 +151,6 @@
             android:layout_marginTop="@dimen/space8"
             app:layout_constraintTop_toBottomOf="@id/biometrics_panel_header"/>
 
-        <org.watsi.uhp.views.FingerprintsField
-            android:id="@+id/fingerprints_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/photo_container" />
-
         <TextView
             android:id="@+id/member_card_panel_header"
             android:layout_width="match_parent"
@@ -172,7 +159,7 @@
             android:paddingTop="@dimen/space48"
             android:text="@string/member_card_panel_header_text"
             style="@style/PanelHeader"
-            app:layout_constraintTop_toBottomOf="@id/fingerprints_field" />
+            app:layout_constraintTop_toBottomOf="@id/photo_container" />
 
         <org.watsi.uhp.views.MemberCardIdField
             android:id="@+id/card_id_field"

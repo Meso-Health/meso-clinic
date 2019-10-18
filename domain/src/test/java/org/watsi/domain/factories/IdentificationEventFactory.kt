@@ -15,22 +15,14 @@ object IdentificationEventFactory {
               clinicNumber: Int? = 1,
               clinicNumberType: IdentificationEvent.ClinicNumberType? =
                       IdentificationEvent.ClinicNumberType.OPD,
-              dismissed: Boolean = false,
-              fingerprintsVerificationResultCode: Int? = null,
-              fingerprintsVerificationConfidence: Float? = null,
-              fingerprintsVerificationTier: String? = null) : IdentificationEvent {
+              dismissed: Boolean = false): IdentificationEvent {
         return IdentificationEvent(id = id,
-                                   memberId = memberId,
-                                   throughMemberId = throughMemberId,
-                                   occurredAt = occurredAt,
-                                   searchMethod = searchMethod,
-                                   clinicNumber = clinicNumber,
-                                   clinicNumberType = clinicNumberType,
-                                   dismissed = dismissed,
-                                   fingerprintsVerificationResultCode =
-                                        fingerprintsVerificationResultCode,
-                                   fingerprintsVerificationConfidence =
-                                        fingerprintsVerificationConfidence,
-                                   fingerprintsVerificationTier = fingerprintsVerificationTier)
+            memberId = memberId,
+            throughMemberId = throughMemberId,
+            occurredAt = occurredAt,
+            searchMethod = searchMethod,
+            clinicNumber = clinicNumber,
+            clinicNumberType = clinicNumberType,
+            dismissed = dismissed)
     }
 }

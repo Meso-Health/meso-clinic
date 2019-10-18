@@ -125,10 +125,7 @@ class EditMemberViewModel @Inject constructor(
             searchMethod = searchMethod,
             throughMemberId = null,
             clinicNumber = null,
-            clinicNumberType = null,
-            fingerprintsVerificationTier = null,
-            fingerprintsVerificationConfidence = null,
-            fingerprintsVerificationResultCode = null
+            clinicNumberType = null
         )
 
         return createIdentificationEventUseCase.execute(idEvent)

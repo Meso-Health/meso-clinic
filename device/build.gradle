@@ -64,9 +64,6 @@ dependencies {
     // GPS
     implementation dependencies.gmsLocation
 
-    // Simprints
-    implementation dependencies.simprints
-
     // AAC
     implementation dependencies.aacLifecycleExtensions
     implementation dependencies.roomRuntime

@@ -1,8 +1,8 @@
 package org.watsi.domain.entities
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
@@ -16,54 +16,20 @@ class MemberTest {
     val today = LocalDate.now()
     val now = Instant.now()
     val fixedClock = Clock.fixed(now, ZoneId.of("UTC"))
-    val fiveYearsAgo = today.minusYears(5)
     val tenYearsAgo = today.minusYears(10)
-
-    @Test
-    fun isAbsentee_requiresFingerprints_hasFingerprintAndPhoto_isFalse() {
-        val member = MemberFactory.build(birthdate = tenYearsAgo,
-                fingerprintsGuid = UUID.randomUUID(),
-                thumbnailPhotoId = UUID.randomUUID())
-
-        assertFalse(member.isAbsentee(fixedClock))
-    }
-
-    @Test
-    fun isAbsentee_doesNotRequireFingerprints_noFingerprintsHasThumbnailPhoto_isFalse() {
-        val member = MemberFactory.build(birthdate = fiveYearsAgo,
-                                         fingerprintsGuid = null,
-                                         thumbnailPhotoId = UUID.randomUUID())
-
-        assertFalse(member.isAbsentee(fixedClock))
-    }
-
-    @Test
-    fun isAbsentee_doesNotRequireFingerprints_noFingerprintsHasPhotoUrl_isFalse() {
-        val member = MemberFactory.build(birthdate = fiveYearsAgo,
-                                         fingerprintsGuid = null,
-                                         photoUrl = "")
-
-        assertFalse(member.isAbsentee(fixedClock))
-    }
-
-    @Test
-    fun isAbsentee_requiresFingerprints_noFingerprint_isTrue() {
-        val member = MemberFactory.build(birthdate = tenYearsAgo, fingerprintsGuid = null)
-
-        assertTrue(member.isAbsentee(fixedClock))
-    }
 
     @Test
     fun isAbsentee_noPhoto_isTrue() {
         val member = MemberFactory.build(thumbnailPhotoId = null, photoUrl = null)
 
-        assertTrue(member.isAbsentee(fixedClock))
+        assertTrue(member.isAbsentee())
     }
 
     @Test
-    fun requiresFingerprint() {
-        assertTrue(MemberFactory.build(birthdate = tenYearsAgo).requiresFingerprint(fixedClock))
-        assertFalse(MemberFactory.build(birthdate = fiveYearsAgo).requiresFingerprint(fixedClock))
+    fun isAbsentee_hasPhoto_isFalse() {
+        val member = MemberFactory.build(thumbnailPhotoId = null, photoUrl = UUID.randomUUID().toString())
+
+        assertFalse(member.isAbsentee())
     }
 
     @Test

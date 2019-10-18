@@ -21,7 +21,6 @@ data class Member(
     val language: String?,
     val birthdate: LocalDate,
     val birthdateAccuracy: DateAccuracy = DateAccuracy.Y,
-    val fingerprintsGuid: UUID?,
     val phoneNumber: String?,
     val membershipNumber: String?,
     val medicalRecordNumber: String?,
@@ -66,13 +65,8 @@ data class Member(
         UNKNOWN
     }
 
-    fun isAbsentee(clock: Clock): Boolean {
-        return (photoUrl == null && thumbnailPhotoId == null) ||
-                (requiresFingerprint(clock) && fingerprintsGuid == null)
-    }
-
-    fun requiresFingerprint(clock: Clock): Boolean {
-        return getAgeYears(clock) >= 6
+    fun isAbsentee(): Boolean {
+        return photoUrl == null && thumbnailPhotoId == null
     }
 
     fun getAgeYears(clock: Clock): Int {

@@ -11,10 +11,7 @@ data class IdentificationEvent(val id: UUID,
                                val searchMethod: SearchMethod,
                                val clinicNumber: Int?,
                                val clinicNumberType: ClinicNumberType?,
-                               val dismissed: Boolean = false,
-                               val fingerprintsVerificationResultCode: Int?,
-                               val fingerprintsVerificationConfidence: Float?,
-                               val fingerprintsVerificationTier: String?) : Serializable {
+                               val dismissed: Boolean = false) : Serializable {
 
     enum class ClinicNumberType { OPD, DELIVERY }
 

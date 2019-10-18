@@ -19,9 +19,6 @@ object IdentificationEventModelFactory {
               clinicNumberType: IdentificationEvent.ClinicNumberType =
                       IdentificationEvent.ClinicNumberType.OPD,
               dismissed: Boolean = false,
-              fingerprintsVerificationResultCode: Int? = null,
-              fingerprintsVerificationConfidence: Float? = null,
-              fingerprintsVerificationTier: String? = null,
               createdAt: Instant? = null,
               updatedAt: Instant? = null,
               clock: Clock = Clock.systemUTC()) : IdentificationEventModel {
@@ -34,11 +31,6 @@ object IdentificationEventModelFactory {
                                         clinicNumber = clinicNumber,
                                         clinicNumberType = clinicNumberType,
                                         dismissed = dismissed,
-                                        fingerprintsVerificationResultCode =
-                                                fingerprintsVerificationResultCode,
-                                        fingerprintsVerificationConfidence =
-                                                fingerprintsVerificationConfidence,
-                                        fingerprintsVerificationTier = fingerprintsVerificationTier,
                                         createdAt = createdAt ?: now,
                                         updatedAt = updatedAt ?: now)
     }
@@ -54,9 +46,6 @@ object IdentificationEventModelFactory {
                clinicNumberType: IdentificationEvent.ClinicNumberType =
                        IdentificationEvent.ClinicNumberType.OPD,
                dismissed: Boolean = false,
-               fingerprintsVerificationResultCode: Int? = null,
-               fingerprintsVerificationConfidence: Float? = null,
-               fingerprintsVerificationTier: String? = null,
                createdAt: Instant? = null,
                updatedAt: Instant? = null,
                clock: Clock = Clock.systemUTC()) : IdentificationEventModel {
@@ -68,11 +57,6 @@ object IdentificationEventModelFactory {
                           clinicNumber = clinicNumber,
                           clinicNumberType = clinicNumberType,
                           dismissed = dismissed,
-                          fingerprintsVerificationResultCode =
-                                fingerprintsVerificationResultCode,
-                          fingerprintsVerificationConfidence =
-                                fingerprintsVerificationConfidence,
-                          fingerprintsVerificationTier = fingerprintsVerificationTier,
                           createdAt = createdAt,
                           updatedAt = updatedAt,
                           clock = clock)

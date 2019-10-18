@@ -61,23 +61,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <org.watsi.uhp.views.ButtonWithResult
-                android:id="@+id/scan_fingerprints_btn"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/space16"
-                app:layout_constraintTop_toBottomOf="@id/member_detail"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:icon="@drawable/ic_fingerprint_black_24dp"
-                app:buttonText="@string/fingerprint_scan_btn" />
-
             <Button
                 android:id="@+id/member_action_button"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/space8"
-                app:layout_constraintTop_toBottomOf="@id/scan_fingerprints_btn"
+                app:layout_constraintTop_toBottomOf="@id/member_detail"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

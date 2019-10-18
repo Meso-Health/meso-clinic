@@ -3,7 +3,6 @@ package org.watsi.uhp.fragments
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AlertDialog
@@ -24,9 +23,7 @@ import kotlinx.android.synthetic.uganda.fragment_checkin_member_detail.member_ac
 import kotlinx.android.synthetic.uganda.fragment_checkin_member_detail.member_detail
 import kotlinx.android.synthetic.uganda.fragment_checkin_member_detail.notification_container
 import kotlinx.android.synthetic.uganda.fragment_checkin_member_detail.replace_card_notification
-import kotlinx.android.synthetic.uganda.fragment_checkin_member_detail.scan_fingerprints_btn
 import org.threeten.bp.Clock
-import org.watsi.device.managers.FingerprintManager
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
@@ -39,7 +36,6 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CheckInMemberDetailViewModel
@@ -53,7 +49,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var createIdentificationEventUseCase: CreateIdentificationEventUseCase
-    @Inject lateinit var fingerprintManager: FingerprintManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
     @Inject lateinit var keyboardManager: KeyboardManager
@@ -62,14 +57,12 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     lateinit var member: Member
     lateinit var memberAdapter: MemberAdapter
     lateinit var searchFields: SearchFields
-    private var verificationDetails: FingerprintVerificationDetails? = null
 
     data class SearchFields(val searchMethod: SearchMethod, var throughMemberId: UUID? = null) : Serializable
 
     companion object {
         const val PARAM_MEMBER = "member"
         const val PARAM_SEARCH_FIELDS = "search_fields"
-        const val VERIFY_FINGERPRINT_INTENT = 1
 
         fun forMemberWithSearchMethod(member: Member, searchMethod: SearchMethod): CheckInMemberDetailFragment {
             return forMemberWithSearchFields(member, SearchFields(searchMethod))
@@ -95,10 +88,10 @@ class CheckInMemberDetailFragment : DaggerFragment() {
             it?.member?.let { member ->
                 this.member = member
 
-                if (member.isAbsentee(clock) || member.cardId == null) {
+                if (member.isAbsentee() || member.cardId == null) {
                     notification_container.visibility = View.VISIBLE
 
-                    if (member.isAbsentee(clock)) {
+                    if (member.isAbsentee()) {
                         absentee_notification.visibility = View.VISIBLE
                     } else {
                         absentee_notification.visibility = View.GONE
@@ -164,19 +157,6 @@ class CheckInMemberDetailFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        if (member.fingerprintsGuid != null) {
-            scan_fingerprints_btn.setOnClickListener {view ->
-                if (!fingerprintManager.verifyFingerprint(member.fingerprintsGuid.toString(),
-                                                          this, VERIFY_FINGERPRINT_INTENT)) {
-                    SnackbarHelper.show(view, context, R.string.fingerprints_not_installed_error_message)
-                }
-            }
-        } else {
-            scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
-                SnackbarHelper.show(view, context, R.string.fingerprints_missing_no_verify)
-            })
-        }
-
         absentee_notification.setOnClickListener {
             navigationManager.goTo(EditMemberFragment.forMember(member.id))
         }
@@ -233,65 +213,9 @@ class CheckInMemberDetailFragment : DaggerFragment() {
                                           searchMethod = searchFields.searchMethod,
                                           throughMemberId = searchFields.throughMemberId,
                                           clinicNumber = clinicNumber,
-                                          clinicNumberType = clinicNumberType,
-                                          fingerprintsVerificationTier =
-                                             verificationDetails?.tier.toString(),
-                                          fingerprintsVerificationConfidence =
-                                            verificationDetails?.confidence,
-                                          fingerprintsVerificationResultCode =
-                                            verificationDetails?.resultCode)
+                                          clinicNumberType = clinicNumberType)
         return createIdentificationEventUseCase.execute(idEvent)
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            VERIFY_FINGERPRINT_INTENT -> {
-                val fingerprintResponse = fingerprintManager.parseResponseForVerification(resultCode, data)
-                when (fingerprintResponse.status) {
-                    FingerprintManager.FingerprintStatus.SUCCESS -> {
-                        verificationDetails = FingerprintVerificationDetails(
-                                fingerprintResponse.tier,
-                                fingerprintResponse.confidence,
-                                resultCode
-                        )
-
-                        val badScan = fingerprintResponse.badScan
-
-                        when (badScan) {
-                            true -> {
-                                scan_fingerprints_btn.showFailure(getString(R.string.bad_scan_indicator))
-                            } false -> {
-                                scan_fingerprints_btn.showSuccess(getString(R.string.good_scan_indicator))
-                            } null -> {
-                                scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
-                                    SnackbarHelper.show(view, context, R.string.fingerprint_scan_failed)
-                                })
-                                view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
-                                logger.error("FingerprintManager returned null badScan on Success $fingerprintResponse")
-                            }
-                        }
-
-                    }
-                    FingerprintManager.FingerprintStatus.FAILURE -> {
-                        scan_fingerprints_btn.disableButtonWithClickListener(View.OnClickListener { view ->
-                            SnackbarHelper.show(view, context, R.string.fingerprint_scan_failed)
-                        })
-                        view?.let { SnackbarHelper.show(it, context, R.string.fingerprint_scan_failed) }
-                    }
-                    FingerprintManager.FingerprintStatus.CANCELLED -> {
-                        scan_fingerprints_btn.enableButton()
-                    }
-                }
-            }
-            else -> {
-                logger.error("Unknown requestCode called from CheckInMemberDetailFragment: $requestCode")
-            }
-        }
-    }
-
-    private data class FingerprintVerificationDetails(val tier: String?,
-                                                      val confidence: Float?,
-                                                      val resultCode: Int)
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         menu?.let {

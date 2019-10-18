@@ -171,7 +171,6 @@ class EnrollNewbornViewModel(
                     gender = viewState.gender,
                     photoId = viewState.photoId,
                     thumbnailPhotoId = viewState.thumbnailPhoto?.id,
-                    fingerprintsGuid = null,
                     cardId = viewState.cardId,
                     householdId = householdId,
                     language = language,
