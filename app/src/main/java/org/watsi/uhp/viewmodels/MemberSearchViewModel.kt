@@ -12,7 +12,7 @@ import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
 import javax.inject.Inject
 
-class SearchMemberViewModel @Inject constructor (
+class MemberSearchViewModel @Inject constructor (
         private val memberRepository: MemberRepository,
         private val logger: Logger
 ) : ViewModel() {
@@ -20,30 +20,21 @@ class SearchMemberViewModel @Inject constructor (
     private val observable = MutableLiveData<ViewState>()
 
     fun getObservable(): LiveData<ViewState> {
-        observable.value = SearchMemberViewModel.ViewState()
-        preloadUniqueMemberNames()
-        preloadUniqueMemberIds()
+        observable.value = MemberSearchViewModel.ViewState()
+        preloadUniqueNamesAndCardIds()
         return observable
     }
 
-    private fun preloadUniqueMemberNames() {
-        memberRepository.allDistinctNames().subscribe({ memberNames ->
+    private fun preloadUniqueNamesAndCardIds() {
+        Completable.fromAction {
+            val distinctNames = memberRepository.allDistinctNames().blockingGet()
+            val distinctCardIds = memberRepository.allDistinctIds().blockingGet()
             observable.postValue(observable.value?.copy(
-                uniqueMemberNames = memberNames,
+                uniqueMemberNames = distinctNames,
+                uniqueMemberCardIds = distinctCardIds,
                 loading = false
             ))
-        }, {
-            logger.error(it)
-        })
-    }
-
-    private fun preloadUniqueMemberIds() {
-        memberRepository.allDistinctIds().subscribe({ memberCardIds ->
-            observable.postValue(observable.value?.copy(
-                uniqueMemberCardIds = memberCardIds,
-                loading = false
-            ))
-        }, {
+        }.subscribeOn(Schedulers.io()).subscribe({}, {
             logger.error(it)
         })
     }
@@ -53,8 +44,8 @@ class SearchMemberViewModel @Inject constructor (
             observable.postValue(observable.value?.copy(loading = true))
 
             if (query.contains(Regex("[0-9]"))) {
-                val members = observable.value?.uniqueMemberCardIds
-                val topMatchingCardsIds = FuzzySearch.extractTop(query, members, 20, 60).map { it.string }
+                val uniqueMemberCardIds = observable.value?.uniqueMemberCardIds
+                val topMatchingCardsIds = FuzzySearch.extractTop(query, uniqueMemberCardIds, 20, 60).map { it.string }
                 val matchingMembers = memberRepository.byCardIds(topMatchingCardsIds).blockingGet()
                 observable.postValue(observable.value?.copy(
                     matchingMembers = matchingMembers,
@@ -62,8 +53,8 @@ class SearchMemberViewModel @Inject constructor (
                     searchMethod = IdentificationEvent.SearchMethod.SEARCH_CARD_ID
                 ))
             } else {
-                val namesStartingWithSameCharacter = observable.value?.uniqueMemberNames
-                val topMatchingNames = FuzzySearch.extractTop(query, namesStartingWithSameCharacter, 20, 60).map { it.string }
+                val uniqueMemberNames = observable.value?.uniqueMemberNames
+                val topMatchingNames = FuzzySearch.extractTop(query, uniqueMemberNames, 20, 60).map { it.string }
                 val matchingMembers = memberRepository.byNames(topMatchingNames).blockingGet()
                 observable.postValue(observable.value?.copy(
                     matchingMembers = matchingMembers,
@@ -82,7 +73,7 @@ class SearchMemberViewModel @Inject constructor (
         val matchingMembers: List<MemberWithIdEventAndThumbnailPhoto> = emptyList(),
         var uniqueMemberNames: List<String> = emptyList(),
         var uniqueMemberCardIds: List<String> = emptyList(),
-        var searchMethod: IdentificationEvent.SearchMethod = IdentificationEvent.SearchMethod.SEARCH_CARD_ID,
+        var searchMethod: IdentificationEvent.SearchMethod? = null,
         val loading: Boolean = true
     )
 }

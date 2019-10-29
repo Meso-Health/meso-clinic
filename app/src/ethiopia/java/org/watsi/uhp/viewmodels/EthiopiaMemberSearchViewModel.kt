@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel
 import org.watsi.domain.entities.CbhiId
 import javax.inject.Inject
 
-class SearchViewModel @Inject constructor() : ViewModel() {
+class EthiopiaMemberSearchViewModel @Inject constructor() : ViewModel() {
 
     private val formStateObservable = MutableLiveData<FormState>()
 

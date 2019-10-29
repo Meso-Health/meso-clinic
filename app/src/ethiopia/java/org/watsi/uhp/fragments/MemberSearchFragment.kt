@@ -11,11 +11,11 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_member_search.loading_indicator
-import kotlinx.android.synthetic.ethiopia.fragment_member_search.member_search_results
+import kotlinx.android.synthetic.main.fragment_member_search.empty_member_search_results
+import kotlinx.android.synthetic.main.fragment_member_search.loading_indicator
+import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
-import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
@@ -23,7 +23,6 @@ import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
-
 import javax.inject.Inject
 
 class MemberSearchFragment : DaggerFragment() {
@@ -43,9 +42,14 @@ class MemberSearchFragment : DaggerFragment() {
         memberAdapter = MemberAdapter(
             members = searchResults,
             onItemSelect = {
-                navigationManager.goTo(HouseholdFragment.forParams(
-                    it.member.householdId!!, IdentificationEvent.SearchMethod.SEARCH_NAME)
-                )
+                val searchMethod = viewModel.searchMethod()
+                if (searchMethod != null) {
+                    navigationManager.goTo(HouseholdFragment.forParams(
+                        it.member.householdId!!, searchMethod)
+                    )
+                } else {
+                    logger.error("View model does not have a searchMethod when MemberAdapter.onItemSelect was called. ViewModel: ${viewModel.getObservable().value.toString()}")
+                }
             }
         )
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberSearchViewModel::class.java)
@@ -62,8 +66,19 @@ class MemberSearchFragment : DaggerFragment() {
                 if (viewState.loading) {
                     member_search_results.visibility = View.GONE
                     loading_indicator.visibility = View.VISIBLE
+                    empty_member_search_results.visibility = View.GONE
                 } else {
-                    member_search_results.visibility = View.VISIBLE
+                    // If search has finished and there are no matching members...
+                    if (viewState.matchingMembers.isEmpty() && viewState.searchMethod != null) {
+                        member_search_results.visibility = View.GONE
+                        empty_member_search_results.visibility = View.VISIBLE
+                    } else {
+                        // If search is finished and there are matching members...
+                        member_search_results.visibility = View.VISIBLE
+                        empty_member_search_results.visibility = View.GONE
+                    }
+
+                    // Regardless of results, we should hide the loading indicator.
                     loading_indicator.visibility = View.GONE
                 }
             }

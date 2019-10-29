@@ -88,7 +88,7 @@ class HomeFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         check_in_button.setOnClickListener {
-            navigationManager.goTo(SearchFragment())
+            navigationManager.goTo(EthiopiaMemberSearchFragment())
         }
 
         prepare_button.setOnClickListener {

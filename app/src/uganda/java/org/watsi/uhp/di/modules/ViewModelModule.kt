@@ -17,7 +17,7 @@ import org.watsi.uhp.viewmodels.EncounterFormViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
-import org.watsi.uhp.viewmodels.SearchMemberViewModel
+import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
 import org.watsi.uhp.viewmodels.SettingsViewModel
 
@@ -71,8 +71,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SearchMemberViewModel::class)
-    abstract fun bindSearchMemberViewModel(viewModel: SearchMemberViewModel): ViewModel
+    @ViewModelKey(MemberSearchViewModel::class)
+    abstract fun bindMemberSearchViewModel(viewModel: MemberSearchViewModel): ViewModel
 
     @Binds
     @IntoMap

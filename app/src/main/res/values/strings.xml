@@ -64,6 +64,9 @@
     <string name="checked_in_snackbar_message">%1$s was checked in.</string>
     <string name="checked_out_snackbar_message">%1$s was checked out.</string>
 
+    <!-- MemberSearchFragment -->
+    <string name="member_no_search_results_text" translatable="false">No search results found. Please try again.</string>
+
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Line items</string>
     <string name="prompt_category">Select a category&#8230;</string>

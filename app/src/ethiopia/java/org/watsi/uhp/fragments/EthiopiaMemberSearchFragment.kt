@@ -11,17 +11,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_search.household_member_number
-import kotlinx.android.synthetic.ethiopia.fragment_search.household_number
-import kotlinx.android.synthetic.ethiopia.fragment_search.kebele_number
-import kotlinx.android.synthetic.ethiopia.fragment_search.member_status
-import kotlinx.android.synthetic.ethiopia.fragment_search.membership_number_layout
-import kotlinx.android.synthetic.ethiopia.fragment_search.region_number
-import kotlinx.android.synthetic.ethiopia.fragment_search.search_button
-import kotlinx.android.synthetic.ethiopia.fragment_search.woreda_number
-import kotlinx.android.synthetic.ethiopia.fragment_search.cbhi_button
-import kotlinx.android.synthetic.ethiopia.fragment_search.scan_card_button
-import kotlinx.android.synthetic.ethiopia.fragment_search.search_by_name_button
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.cbhi_button
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.household_member_number
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.household_number
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.kebele_number
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.member_status
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.membership_number_layout
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.region_number
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.scan_card_button
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.search_button
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.search_by_name_button
+import kotlinx.android.synthetic.ethiopia.fragment_ethiopia_member_search.woreda_number
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent
@@ -33,12 +33,12 @@ import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.viewmodels.SearchViewModel
+import org.watsi.uhp.viewmodels.EthiopiaMemberSearchViewModel
 import org.watsi.uhp.views.SpinnerField
 import java.util.UUID
 import javax.inject.Inject
 
-class SearchFragment : DaggerFragment() {
+class EthiopiaMemberSearchFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -47,8 +47,8 @@ class SearchFragment : DaggerFragment() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var findHouseholdIdByMembershipNumberUseCase: FindHouseholdIdByMembershipNumberUseCase
 
-    lateinit var viewModel: SearchViewModel
-    lateinit var formStateObservable: LiveData<SearchViewModel.FormState>
+    lateinit var viewModel: EthiopiaMemberSearchViewModel
+    lateinit var formStateObservable: LiveData<EthiopiaMemberSearchViewModel.FormState>
 
     companion object {
         const val SEARCH_MEMBER_BY_CARD_INTENT = 1
@@ -57,7 +57,7 @@ class SearchFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EthiopiaMemberSearchViewModel::class.java)
         formStateObservable = viewModel.getFormStateObservable()
         formStateObservable.observe(this, Observer {
             it?.let {
@@ -69,7 +69,7 @@ class SearchFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.search_fragment_label), null)
         (activity as ClinicActivity).setSoftInputModeToResize()
-        return inflater?.inflate(R.layout.fragment_search, container, false)
+        return inflater?.inflate(R.layout.fragment_ethiopia_member_search, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -95,7 +95,7 @@ class SearchFragment : DaggerFragment() {
         })
 
         member_status.setUpWithoutPrompt(
-            adapter = SpinnerField.createAdapter(context, SearchViewModel.memberStatusList),
+            adapter = SpinnerField.createAdapter(context, EthiopiaMemberSearchViewModel.memberStatusList),
             initialChoiceIndex = 0,
             onItemSelected = { selectedString ->
                 viewModel.onMemberStatusChange(selectedString)

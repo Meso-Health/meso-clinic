@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import org.watsi.uhp.di.ViewModelKey
+import org.watsi.uhp.viewmodels.CheckedInPatientsViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.DownloadHouseholdViewModel
@@ -13,13 +14,12 @@ import org.watsi.uhp.viewmodels.DrugAndSupplyViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
 import org.watsi.uhp.viewmodels.EditPriceViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
-import org.watsi.uhp.viewmodels.CheckedInPatientsViewModel
 import org.watsi.uhp.viewmodels.HomeViewModel
 import org.watsi.uhp.viewmodels.HouseholdViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
-import org.watsi.uhp.viewmodels.SearchViewModel
+import org.watsi.uhp.viewmodels.EthiopiaMemberSearchViewModel
 import org.watsi.uhp.viewmodels.SearchableClaimsListViewModel
 import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
@@ -40,8 +40,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SearchViewModel::class)
-    abstract fun bindSearchViewModel(viewModel: SearchViewModel): ViewModel
+    @ViewModelKey(EthiopiaMemberSearchViewModel::class)
+    abstract fun bindSearchViewModel(viewModelEthiopiaMember: EthiopiaMemberSearchViewModel): ViewModel
 
     @Binds
     @IntoMap

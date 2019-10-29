@@ -16,7 +16,7 @@ import org.watsi.uhp.fragments.MemberSearchFragment
 import org.watsi.uhp.fragments.PendingClaimsFragment
 import org.watsi.uhp.fragments.ReceiptFragment
 import org.watsi.uhp.fragments.ReturnedClaimsFragment
-import org.watsi.uhp.fragments.SearchFragment
+import org.watsi.uhp.fragments.EthiopiaMemberSearchFragment
 import org.watsi.uhp.fragments.SpinnerLineItemFragment
 import org.watsi.uhp.fragments.StatusFragment
 import org.watsi.uhp.fragments.VisitTypeFragment
@@ -25,7 +25,6 @@ import org.watsi.uhp.fragments.VisitTypeFragment
 abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindHomeFragment(): HomeFragment
     @ContributesAndroidInjector abstract fun bindCheckedInPatientsFragment(): CheckedInPatientsFragment
-    @ContributesAndroidInjector abstract fun bindSearchFragment(): SearchFragment
     @ContributesAndroidInjector abstract fun bindHouseholdFragment(): HouseholdFragment
     @ContributesAndroidInjector abstract fun bindDiagnosisFragment(): DiagnosisFragment
     @ContributesAndroidInjector abstract fun bindDownloadHouseholdFragment(): DownloadHouseholdFragment
@@ -34,6 +33,7 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindEditPriceFragment(): EditPriceFragment
     @ContributesAndroidInjector abstract fun bindMemberInformationFragment(): MemberInformationFragment
     @ContributesAndroidInjector abstract fun bindMemberNotFoundFragment(): MemberNotFoundFragment
+    @ContributesAndroidInjector abstract fun bindEthiopiaMemberSearchFragment(): EthiopiaMemberSearchFragment
     @ContributesAndroidInjector abstract fun bindMemberSearchFragment(): MemberSearchFragment
     @ContributesAndroidInjector abstract fun bindReceiptFragment(): ReceiptFragment
     @ContributesAndroidInjector abstract fun bindPendingClaimsFragment(): PendingClaimsFragment

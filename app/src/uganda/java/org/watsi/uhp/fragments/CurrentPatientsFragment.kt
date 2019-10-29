@@ -149,7 +149,7 @@ class CurrentPatientsFragment : DaggerFragment() {
                 }
             }
             SearchByMemberCardActivity.RESULT_REDIRECT_TO_SEARCH_FRAGMENT -> {
-                navigationManager.goTo(SearchMemberFragment())
+                navigationManager.goTo(MemberSearchFragment())
             }
             Activity.RESULT_CANCELED -> { }
             else -> {

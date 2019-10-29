@@ -33,7 +33,7 @@
     <string name="checked_in_patients_fragment_label">Checked-in patients</string>
     <string name="no_members">No members available</string>
 
-    <!-- SearchFragment -->
+    <!-- EthiopiaMemberSearchFragment -->
     <string name="search_fragment_label">@string/search</string>
     <string name="slash" translatable="false">/</string>
     <string name="two_zeroes_placeholder" translatable="false">00</string>

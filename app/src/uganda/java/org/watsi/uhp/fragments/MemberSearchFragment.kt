@@ -13,8 +13,9 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.uganda.fragment_member_search.loading_indicator
-import kotlinx.android.synthetic.uganda.fragment_member_search.member_search_results
+import kotlinx.android.synthetic.main.fragment_member_search.empty_member_search_results
+import kotlinx.android.synthetic.main.fragment_member_search.loading_indicator
+import kotlinx.android.synthetic.main.fragment_member_search.member_search_results
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
@@ -27,10 +28,10 @@ import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.managers.KeyboardManager
 import org.watsi.uhp.managers.NavigationManager
-import org.watsi.uhp.viewmodels.SearchMemberViewModel
+import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import javax.inject.Inject
 
-class SearchMemberFragment : DaggerFragment() {
+class MemberSearchFragment : DaggerFragment() {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -38,7 +39,7 @@ class SearchMemberFragment : DaggerFragment() {
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var clock: Clock
 
-    lateinit var viewModel: SearchMemberViewModel
+    lateinit var viewModel: MemberSearchViewModel
     lateinit var memberAdapter: MemberAdapter
     private val searchResults = mutableListOf<MemberWithIdEventAndThumbnailPhoto>()
 
@@ -49,14 +50,17 @@ class SearchMemberFragment : DaggerFragment() {
             members = searchResults,
             onItemSelect = { memberRelation: MemberWithIdEventAndThumbnailPhoto ->
                 val searchMethod = viewModel.searchMethod()
-
-                navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
-                    memberRelation.member,
-                    searchMethod))
+                if (searchMethod != null) {
+                    navigationManager.goTo(CheckInMemberDetailFragment.forMemberWithSearchMethod(
+                        memberRelation.member,
+                        searchMethod))
+                } else {
+                    logger.error("View model does not have a searchMethod when MemberAdapter.onItemSelect was called. ViewModel: ${viewModel.getObservable().value.toString()}")
+                }
             }
         )
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchMemberViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MemberSearchViewModel::class.java)
         viewModel.getObservable().observe(this, Observer {
             it?.let { viewState ->
                 searchResults.clear()
@@ -66,8 +70,19 @@ class SearchMemberFragment : DaggerFragment() {
                 if (viewState.loading) {
                     member_search_results.visibility = View.GONE
                     loading_indicator.visibility = View.VISIBLE
+                    empty_member_search_results.visibility = View.GONE
                 } else {
-                    member_search_results.visibility = View.VISIBLE
+                    // If search has finished and there are no matching members...
+                    if (viewState.matchingMembers.isEmpty() && viewState.searchMethod != null) {
+                        member_search_results.visibility = View.GONE
+                        empty_member_search_results.visibility = View.VISIBLE
+                    } else {
+                        // If search is finished and there are matching members...
+                        member_search_results.visibility = View.VISIBLE
+                        empty_member_search_results.visibility = View.GONE
+                    }
+
+                    // Regardless of results, we should hide the loading indicator.
                     loading_indicator.visibility = View.GONE
                 }
             }
