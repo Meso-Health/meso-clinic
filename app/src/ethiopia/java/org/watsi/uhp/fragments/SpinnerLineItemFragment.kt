@@ -165,7 +165,7 @@ class SpinnerLineItemFragment : DaggerFragment(), NavigationManager.HandleOnBack
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
                 },
-                onPriceTap = if (billableType.equals(Billable.Type.SERVICE)) null else onPriceTap
+                onPriceTap = onPriceTap
         )
 
         swipeHandler = SwipeHandler(context, onSwipe = { position: Int ->

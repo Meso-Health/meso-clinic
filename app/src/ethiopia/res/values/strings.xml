@@ -117,7 +117,6 @@
     <string name="referral_date_label">Referral Date</string>
     <string name="receiving_facility_validation_error">Receiving facility is required</string>
     <string name="referral_reason_validation_error">Referral reason is required</string>
-    <string name="mark_as_stockout">Mark %s as stockout</string>
     <string name="referral_serial_number">Referral Number (optional)</string>
     <string name="referral_reason">Referral reason</string>
     <string name="referred_to_facility">Referred to facility</string>
@@ -179,12 +178,6 @@
     <string name="service">Services and Procedures</string>
     <string name="lab">Laboratory Tests</string>
     <string name="select_prompt">Select…</string>
-
-    <!-- EditPriceFragment -->
-    <string name="edit_price_fragment_label">Edit Price</string>
-    <string name="unit_price_label">Unit Price</string>
-    <string name="quantity_label">Quantity</string>
-    <string name="total_price_label">Total Price</string>
 
     <!-- PendingClaimsFragment -->
     <string name="pending_claims_fragment_label">Pending Approval</string>

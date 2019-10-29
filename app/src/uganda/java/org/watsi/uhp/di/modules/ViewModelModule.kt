@@ -13,13 +13,14 @@ import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import org.watsi.uhp.viewmodels.DaggerViewModelFactory
 import org.watsi.uhp.viewmodels.DiagnosisViewModel
 import org.watsi.uhp.viewmodels.EditMemberViewModel
+import org.watsi.uhp.viewmodels.EditPriceViewModel
 import org.watsi.uhp.viewmodels.EncounterFormViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
-import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
-import org.watsi.uhp.viewmodels.StatusViewModel
+import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.viewmodels.SettingsViewModel
+import org.watsi.uhp.viewmodels.StatusViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -68,6 +69,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ReceiptViewModel::class)
     abstract fun bindReceiptViewModel(viewModel: ReceiptViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditPriceViewModel::class)
+    abstract fun bindEditPriceViewModel(viewModel: EditPriceViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -84,6 +84,13 @@
     </plurals>
     <string name="stockout" translatable="false">Stockout</string>
 
+    <!-- EditPriceFragment -->
+    <string name="edit_price_fragment_label">Edit Price</string>
+    <string name="unit_price_label">Unit Price</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="total_price_label">Total Price</string>
+    <string name="mark_as_stockout">Mark %s as stockout</string>
+
     <!-- DiagnosisFragment -->
     <string name="diagnosis_fragment_label">Diagnoses</string>
     <plurals name="diagnosis_count">

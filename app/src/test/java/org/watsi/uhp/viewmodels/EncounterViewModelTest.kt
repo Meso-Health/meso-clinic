@@ -18,6 +18,7 @@ import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
+import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.repositories.BillableRepository
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
@@ -35,7 +36,17 @@ class EncounterViewModelTest : AACBaseTest() {
     private val encounterId = UUID.randomUUID()
     private val memberId = UUID.randomUUID()
     private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
-    private val initialViewState = EncounterViewModel.ViewState(encounterId = encounterId, encounterItemRelations = emptyList())
+    private val encounterFlowState = EncounterFlowState(
+        encounter = EncounterFactory.build(id = encounterId),
+        encounterItemRelations = emptyList(),
+        encounterForms = emptyList(),
+        referral = null,
+        member = MemberFactory.build(id = memberId),
+        diagnoses = emptyList(),
+        newProviderComment = null,
+        originalEncounterWithExtras = null
+    )
+    private val initialViewState = EncounterViewModel.ViewState(encounterFlowState = encounterFlowState)
     private val serviceBillable1 = BillableWithPriceScheduleFactory.build(BillableFactory.build(name = "Service A", type = Billable.Type.SERVICE))
     private val serviceBillable2 = BillableWithPriceScheduleFactory.build(BillableFactory.build(name = "Service B", type = Billable.Type.SERVICE))
     private val drugBillable1 = BillableWithPriceScheduleFactory.build(BillableFactory.build(name = "Vitamin A", composition = "capsule", unit = "25 mg", type = Billable.Type.DRUG))
@@ -66,7 +77,7 @@ class EncounterViewModelTest : AACBaseTest() {
         )))
         mockLoadAllBillablesUseCase = LoadAllBillablesUseCase(mockBillableRepository)
         viewModel = EncounterViewModel(mockLoadAllBillablesUseCase, mockLogger)
-        observable = viewModel.getObservable(encounterId, emptyList())
+        observable = viewModel.getObservable(encounterFlowState)
         observable.observeForever{}
     }
 
@@ -97,18 +108,6 @@ class EncounterViewModelTest : AACBaseTest() {
                 selectableBillables = listOf(serviceBillable1, serviceBillable2)
             )
         )
-    }
-
-    @Test
-    fun selectType_service_alreadyAdded() {
-        viewModel.addItem(serviceBillable2)
-        viewModel.selectType(Billable.Type.SERVICE)
-        assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
-            listOf(serviceBillable2)
-        )
-        assertEquals(observable.value?.type, Billable.Type.SERVICE)
-        assertEquals(observable.value?.selectableBillables, listOf(serviceBillable1))
     }
 
     @Test
@@ -159,7 +158,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.selectType(Billable.Type.DRUG)
         viewModel.updateQuery("vitamin")
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
+            observable.value?.encounterFlowState?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(drugBillable1)
         )
         assertEquals(observable.value?.type, Billable.Type.DRUG)
@@ -171,7 +170,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.selectType(Billable.Type.SERVICE)
         viewModel.addItem(serviceBillable1)
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
+            observable.value?.encounterFlowState?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(serviceBillable1)
         )
         assertEquals(observable.value?.type, Billable.Type.SERVICE)
@@ -180,7 +179,7 @@ class EncounterViewModelTest : AACBaseTest() {
     @Test
     fun removeItem() {
         viewModel.addItem(serviceBillable1)
-        val encounterItemId = observable.value?.encounterItemRelations?.map { it.encounterItem.id }?.first()
+        val encounterItemId = observable.value?.encounterFlowState?.encounterItemRelations?.map { it.encounterItem.id }?.first()
         assertNotNull(encounterItemId)
         viewModel.removeItem(encounterItemId!!)
         assertEquals(observable.value, initialViewState)
@@ -189,14 +188,14 @@ class EncounterViewModelTest : AACBaseTest() {
     @Test
     fun setItemQuantity() {
         viewModel.addItem(drugBillable1)
-        val encounterItemId = observable.value?.encounterItemRelations?.map { it.encounterItem.id }?.first()
+        val encounterItemId = observable.value?.encounterFlowState?.encounterItemRelations?.map { it.encounterItem.id }?.first()
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
         assertEquals(
-            observable.value?.encounterItemRelations?.map { it.billableWithPriceSchedule },
+            observable.value?.encounterFlowState?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(drugBillable1)
         )
-        assertEquals(observable.value?.encounterItemRelations?.map { it.encounterItem.quantity }, listOf(5))
+        assertEquals(observable.value?.encounterFlowState?.encounterItemRelations?.map { it.encounterItem.quantity }, listOf(5))
     }
 
     @Test
@@ -204,7 +203,7 @@ class EncounterViewModelTest : AACBaseTest() {
         viewModel.addItem(serviceBillable1)
         viewModel.addItem(serviceBillable2)
         viewModel.addItem(drugBillable1)
-        val encounterItemId = observable.value?.encounterItemRelations?.map { it.encounterItem.id }?.first()
+        val encounterItemId = observable.value?.encounterFlowState?.encounterItemRelations?.map { it.encounterItem.id }?.first()
         assertNotNull(encounterItemId)
         viewModel.setItemQuantity(encounterItemId!!, 5)
 

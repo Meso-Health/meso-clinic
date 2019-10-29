@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_billable_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
+import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.utils.titleize
@@ -54,6 +55,7 @@ class EncounterFragment : DaggerFragment() {
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var logger: Logger
 
     lateinit var viewModel: EncounterViewModel
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
@@ -90,8 +92,7 @@ class EncounterFragment : DaggerFragment() {
         billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
-        observable = viewModel.getObservable(encounterFlowState.encounter.id,
-                                             encounterFlowState.encounterItemRelations)
+        observable = viewModel.getObservable(encounterFlowState)
         observable.observe(this, Observer {
             it?.let { viewState ->
                 if (viewState.type == null) {
@@ -120,13 +121,16 @@ class EncounterFragment : DaggerFragment() {
                         drug_search.visibility = View.GONE
                     }
                 }
-                viewState.let {
-                    encounter_item_count.text = resources.getQuantityString(
-                            R.plurals.encounter_item_count, it.encounterItemRelations.size, it.encounterItemRelations.size)
-                    encounterItemAdapter.setEncounterItems(it.encounterItemRelations)
-                }
+                updateLineItems(viewState.encounterFlowState)
             }
         })
+    }
+
+    private fun updateLineItems(encounterFlowState: EncounterFlowState) {
+        val lineItems = encounterFlowState.encounterItemRelations
+        encounter_item_count.text = resources.getQuantityString(
+            R.plurals.encounter_item_count, lineItems.size, lineItems.size)
+        encounterItemAdapter.setEncounterItems(lineItems)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -149,8 +153,20 @@ class EncounterFragment : DaggerFragment() {
             }
         }
 
+        val onPriceTap = { encounterItemId: UUID ->
+            viewModel.currentEncounterItems()?.let { encounterItemRelationsFromViewModel ->
+                encounterFlowState.encounterItemRelations = encounterItemRelationsFromViewModel
+                navigationManager.goTo(
+                    EditPriceFragment.forEncounterItem(encounterItemId, encounterFlowState)
+                )
+            } ?: run {
+                logger.error("EncounterFlowState not set")
+            }
+        }
+
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
+                    swipeHandler.disableSwipe()
                     onShowKeyboard()
                 },
                 onQuantityChanged = { encounterItemId: UUID, newQuantity: Int? ->
@@ -163,7 +179,7 @@ class EncounterFragment : DaggerFragment() {
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
                 },
-                onPriceTap = null
+                onPriceTap = onPriceTap
         )
 
 

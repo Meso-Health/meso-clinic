@@ -17,7 +17,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class EncounterViewModel @Inject constructor(
-    loadAllBillablesUseCase: LoadAllBillablesUseCase,
+    val loadAllBillablesUseCase: LoadAllBillablesUseCase,
     private val logger: Logger
 ) : ViewModel() {
 
@@ -25,7 +25,7 @@ class EncounterViewModel @Inject constructor(
     private var billablesByType: Map<Billable.Type, List<BillableWithPriceSchedule>> = emptyMap()
     private var uniqueDrugNames: List<String> = emptyList()
 
-    init {
+    fun getObservable(encounterFlowState: EncounterFlowState): LiveData<ViewState> {
         loadAllBillablesUseCase.execute().subscribe({
             billablesByType = it.groupBy { it.billable.type }
             val drugBillables = billablesByType[Billable.Type.DRUG].orEmpty()
@@ -34,23 +34,15 @@ class EncounterViewModel @Inject constructor(
             } else {
                 uniqueDrugNames = drugBillables.map { it.billable.name }.distinct()
             }
+            observable.postValue(ViewState(encounterFlowState = encounterFlowState))
         }, {
             logger.error(it)
         })
-    }
-
-    fun getObservable(
-        encounterId: UUID,
-        encounterItemRelations: List<EncounterItemWithBillableAndPrice>
-    ): LiveData<ViewState> {
-        observable.value = ViewState(encounterItemRelations = encounterItemRelations, encounterId = encounterId)
         return observable
     }
 
-
     fun getSelectableBillables(
-        type: Billable.Type?,
-        encounterItemRelations: List<EncounterItemWithBillableAndPrice>? = currentEncounterItems()
+        type: Billable.Type?
     ): List<BillableWithPriceSchedule>  {
         val billableList = billablesByType[type].orEmpty()
         return when {
@@ -60,57 +52,62 @@ class EncounterViewModel @Inject constructor(
             }
             type == Billable.Type.DRUG -> emptyList()
             else -> {
-                val currentBillables = encounterItemRelations.orEmpty().map { it.billableWithPriceSchedule }
-                billableList.minus(currentBillables).sortedBy { it.billable.name }
+                billableList.sortedBy { it.billable.name }
             }
         }
     }
 
     fun selectType(type: Billable.Type?) {
         observable.value = observable.value?.copy(
-                type = type, selectableBillables = getSelectableBillables(type))
+            type = type,
+            selectableBillables = getSelectableBillables(type)
+        )
     }
 
     fun addItem(billableWithPrice: BillableWithPriceSchedule) {
         observable.value?.let { viewState ->
-            val updatedEncounterItems = viewState.encounterItemRelations.toMutableList()
+            val encounterState = viewState.encounterFlowState
+            val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
             val encounterItem = EncounterItem(
                 id = UUID.randomUUID(),
-                encounterId = viewState.encounterId,
+                encounterId = encounterState.encounter.id,
                 quantity = 1,
                 priceScheduleId = billableWithPrice.priceSchedule.id,
                 priceScheduleIssued = false
             )
             updatedEncounterItems.add(EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice))
-            observable.value = viewState.copy(
-                    encounterItemRelations = updatedEncounterItems,
-                    selectableBillables = getSelectableBillables(viewState.type, updatedEncounterItems)
-            )
+            updateEncounterItems(viewState, updatedEncounterItems)
         }
     }
 
     fun removeItem(encounterItemId: UUID) {
         observable.value?.let { viewState ->
-            val updatedEncounterItems = viewState.encounterItemRelations.toMutableList()
+            val encounterState = viewState.encounterFlowState
+            val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
                     .filterNot { it.encounterItem.id == encounterItemId }
-            observable.value = viewState.copy(encounterItemRelations = updatedEncounterItems,
-                    selectableBillables = getSelectableBillables(viewState.type, updatedEncounterItems))
+            updateEncounterItems(viewState, updatedEncounterItems)
         }
     }
 
     fun setItemQuantity(encounterItemId: UUID, quantity: Int) {
         observable.value?.let { viewState ->
-            val updatedEncounterItems = viewState.encounterItemRelations.map { encounterItemRelation ->
-                if (encounterItemRelation.encounterItem.id == encounterItemId) {
-                    val oldEncounterItem = encounterItemRelation.encounterItem
-                    val newEncounterItem = oldEncounterItem.copy(quantity = quantity)
-                    encounterItemRelation.copy(encounterItem = newEncounterItem)
-                } else {
-                    encounterItemRelation
-                }
-            }
-            observable.value = viewState.copy(encounterItemRelations = updatedEncounterItems)
+            val updatedEncounterItems = viewState.encounterFlowState.encounterItemRelations
+                    .map { encounterItemRelation ->
+                        if (encounterItemRelation.encounterItem.id == encounterItemId) {
+                            val oldEncounterItem = encounterItemRelation.encounterItem
+                            val newEncounterItem = oldEncounterItem.copy(quantity = quantity)
+                            encounterItemRelation.copy(encounterItem = newEncounterItem)
+                        } else {
+                            encounterItemRelation
+                        }
+                    }
+            updateEncounterItems(viewState, updatedEncounterItems)
         }
+    }
+
+    private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
+        viewState.encounterFlowState.encounterItemRelations = encounterItemRelations
+        observable.value = viewState.copy(encounterFlowState = viewState.encounterFlowState)
     }
 
     fun updateQuery(query: String) {
@@ -140,15 +137,18 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun currentEncounterItems(): List<EncounterItemWithBillableAndPrice>? {
-        return observable.value?.encounterItemRelations
+        return observable.value?.encounterFlowState?.encounterItemRelations
     }
 
     fun updateEncounterWithLineItems(encounterFlowState: EncounterFlowState) {
-        encounterFlowState.encounterItemRelations = observable.value?.encounterItemRelations.orEmpty()
+        encounterFlowState.encounterItemRelations = observable.value?.encounterFlowState?.encounterItemRelations.orEmpty()
     }
 
-    data class ViewState(val type: Billable.Type? = null,
-                         val selectableBillables: List<BillableWithPriceSchedule> = emptyList(),
-                         val encounterItemRelations: List<EncounterItemWithBillableAndPrice>,
-                         val encounterId: UUID)
+    fun getEncounterFlowState(): EncounterFlowState? = observable.value?.encounterFlowState
+
+    data class ViewState(
+        val type: Billable.Type? = null,
+        val encounterFlowState: EncounterFlowState,
+        val selectableBillables: List<BillableWithPriceSchedule> = emptyList()
+    )
 }
