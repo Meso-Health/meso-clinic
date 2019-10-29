@@ -13,7 +13,7 @@ data class Encounter(
     val patientOutcome: PatientOutcome?,
     val preparedAt: Instant? = null,
     val backdatedOccurredAt: Boolean = false,
-    val copaymentPaid: Boolean? = true,
+    val copaymentAmount: Int = 0,
     val diagnoses: List<Int> = emptyList(),
     val visitType: String? = null,
     val claimId: String = id.toString(),

@@ -34,4 +34,6 @@ interface PreferencesManager {
     fun updateReturnedClaimsLastFetched(instant: Instant)
     fun getIdentificationEventsLastFetched(): Instant
     fun updateIdentificationEventsLastFetched(instant: Instant)
+    fun getDefaultCopaymentAmount(): Int
+    fun setDefaultCopaymentAmount(instant: Int)
 }

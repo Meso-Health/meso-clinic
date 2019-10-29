@@ -45,12 +45,6 @@
         app:showAsAction="never"
         android:visible="false" />
     <item
-        android:id="@+id/menu_submit_without_copayment"
-        android:orderInCategory="109"
-        android:title="@string/menu_submit_without_copayment"
-        app:showAsAction="never"
-        android:visible="false" />
-    <item
         android:id="@+id/menu_member_search"
         android:orderInCategory="110"
         app:showAsAction="always"
@@ -61,6 +55,12 @@
         android:id="@+id/menu_export_db"
         android:orderInCategory="111"
         android:title="@string/menu_export_db"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="112"
+        android:title="@string/menu_settings_label"
         app:showAsAction="never"
         android:visible="false" />
 </menu>

@@ -19,6 +19,7 @@ import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.viewmodels.SearchMemberViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
+import org.watsi.uhp.viewmodels.SettingsViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -77,6 +78,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(StatusViewModel::class)
     abstract fun bindStatusViewModel(viewModel: StatusViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettingsViewModel::class)
+    abstract fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

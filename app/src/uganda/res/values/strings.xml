@@ -23,7 +23,6 @@
     <string name="menu_dismiss_member">Dismiss member</string>
     <string name="menu_member_edit_label">Edit member</string>
     <string name="menu_enroll_number_label">Enroll newborn</string>
-    <string name="menu_submit_without_copayment">Submit (no copayment)</string>
 
     <!-- General Labels -->
     <string name="name_label">Name</string>
@@ -165,8 +164,17 @@
         <item quantity="other">%d forms attached</item>
     </plurals>
     <string name="currency">UGX</string>
+    <string name="copayment_label">Copayment collected</string>
+    <string name="copayment_hint">Amount paid</string>
+    <string name="copayment_setting_hint">Default copayment amount</string>
+    <string name="copayment_error">Copayment amount cannot be empty.</string>
+    <string name="copayment_update_message">Copayment default successfully updated.</string>
 
     <!-- EncounterFragment -->
     <string name="add_billable_prompt"><u>Add new item</u></string>
+
+    <!-- SettingsFragment -->
+    <string name="setting_fragment_label">Settings</string>
+    <string name="menu_settings_label">Settings</string>
 
 </resources>

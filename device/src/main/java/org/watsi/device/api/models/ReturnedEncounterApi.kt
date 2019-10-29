@@ -43,7 +43,6 @@ data class ReturnedEncounterApi(
                 id = id,
                 memberId = memberId,
                 identificationEventId = identificationEventId,
-                copaymentPaid = null,
                 occurredAt = occurredAt,
                 backdatedOccurredAt = backdatedOccurredAt,
                 diagnoses = diagnosisIds,

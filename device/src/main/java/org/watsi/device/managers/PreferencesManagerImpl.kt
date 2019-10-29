@@ -24,6 +24,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         private const val DIAGNOSES_LAST_FETCHED_KEY = "diagnoses_last_fetched"
         private const val RETURNED_CLAIMS_LAST_FETCHED_KEY = "returned_claims_last_fetched"
         private const val IDENTIFICATION_EVENTS_LAST_FETCHED_KEY = "identification_events_last_fetched"
+        private const val COPAYMENT_DEFAULT = "copayment_default"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -149,5 +150,15 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
 
     override fun updateIdentificationEventsLastFetched(instant: Instant) {
         sharedPreferences.edit().putLong(IDENTIFICATION_EVENTS_LAST_FETCHED_KEY, instant.toEpochMilli()).apply()
+    }
+
+    override fun getDefaultCopaymentAmount(): Int {
+        val copaymentDefaultJson = sharedPreferences.getString(COPAYMENT_DEFAULT, null)
+        return if (copaymentDefaultJson == null) 0 else copaymentDefaultJson.toInt()
+    }
+
+    override fun setDefaultCopaymentAmount(amount: Int) {
+        val copaymentDefaultJson = gson.toJson(amount)
+        sharedPreferences.edit().putString(COPAYMENT_DEFAULT, copaymentDefaultJson).apply()
     }
 }

@@ -19,13 +19,17 @@ class ReceiptViewModel @Inject constructor(
 
     private val observable = MutableLiveData<ViewState>()
 
-    fun getObservable(occurredAt: Instant, backdatedOccurredAt: Boolean): LiveData<ViewState> {
-        observable.value = ViewState(occurredAt, backdatedOccurredAt)
+    fun getObservable(occurredAt: Instant, backdatedOccurredAt: Boolean, copaymentAmount: Int): LiveData<ViewState> {
+        observable.value = ViewState(occurredAt, backdatedOccurredAt, copaymentAmount)
         return observable
     }
 
     fun updateBackdatedOccurredAt(instant: Instant) {
         observable.value = observable.value?.copy(occurredAt = instant, backdatedOccurredAt = true)
+    }
+
+    fun updateCopaymentAmount(amount: Int?) {
+        validateAndUpdate(observable.value?.copy(copaymentAmount = amount))
     }
 
     fun updateEncounterWithDate(encounterFlowState: EncounterFlowState) {
@@ -38,14 +42,13 @@ class ReceiptViewModel @Inject constructor(
     }
 
     fun submitEncounter(
-        encounterFlowState: EncounterFlowState,
-        copaymentPaid: Boolean? = null
+        encounterFlowState: EncounterFlowState
     ): Completable {
         return observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
-                copaymentPaid = copaymentPaid
+                copaymentAmount = if (viewState.copaymentAmount != null) viewState.copaymentAmount else 0
             )
             Completable.fromCallable {
                 createEncounterUseCase.execute(encounterFlowState.toEncounterWithExtras(), true, false, clock).blockingAwait()
@@ -61,6 +64,17 @@ class ReceiptViewModel @Inject constructor(
         return observable.value?.backdatedOccurredAt
     }
 
+    fun copaymentAmount(): Int? {
+        return observable.value?.copaymentAmount
+    }
+
+    private fun validateAndUpdate(state: ViewState? = observable.value) {
+        val isValid = state?.copaymentAmount != null
+        observable.value = state?.copy(isValid = isValid)
+    }
+
     data class ViewState(val occurredAt: Instant,
-                         val backdatedOccurredAt: Boolean)
+                         val backdatedOccurredAt: Boolean,
+                         val copaymentAmount: Int?,
+                         val isValid: Boolean = true)
 }

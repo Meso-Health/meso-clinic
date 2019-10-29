@@ -6,8 +6,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
@@ -22,10 +20,12 @@ import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_label
 import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_list
 import kotlinx.android.synthetic.uganda.fragment_receipt.forms_label
 import kotlinx.android.synthetic.uganda.fragment_receipt.save_button
+import kotlinx.android.synthetic.uganda.fragment_receipt.partial_copayment_field
 import kotlinx.android.synthetic.uganda.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.watsi.device.managers.Logger
+import org.watsi.device.managers.PreferencesManager
 import org.watsi.domain.utils.DateUtils
 import org.watsi.uhp.R
 import org.watsi.uhp.R.plurals.diagnosis_count
@@ -36,7 +36,9 @@ import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
+import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.utils.CurrencyUtil
 import org.watsi.uhp.viewmodels.ReceiptViewModel
@@ -46,6 +48,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var navigationManager: NavigationManager
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var preferencesManager: PreferencesManager
     @Inject lateinit var logger: Logger
     @Inject lateinit var clock: Clock
 
@@ -70,7 +73,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
-        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt)
+        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt, encounterFlowState.encounter.copaymentAmount)
             .observe(this, Observer { it?.let { viewState ->
                 val date_string = DateUtils.formatLocalDate(viewState.occurredAt.atZone(clock.zone).toLocalDate())
                 val time_string = DateUtils.formatLocalTime(viewState.occurredAt.atZone(clock.zone).toLocalDateTime())
@@ -79,6 +82,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 } else {
                     resources.getString(date_and_time, date_string, time_string)
                 }
+                save_button.isEnabled = viewState.isValid
             }
         })
 
@@ -87,7 +91,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.receipt_fragment_label), R.drawable.ic_arrow_back_white_24dp)
-        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_receipt, container, false)
     }
 
@@ -112,8 +115,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         RecyclerViewHelper.setRecyclerView(encounter_items_list, receiptItemAdapter, context, false)
 
         save_button.setOnClickListener {
-            submitEncounter(true)
+            submitEncounter()
         }
+        partial_copayment_field.addTextChangedListener(LayoutHelper.OnChangedListener { text ->
+            viewModel.updateCopaymentAmount( text.toIntOrNull())
+        })
+        val currentDefaultCopayment = preferencesManager.getDefaultCopaymentAmount()
+        partial_copayment_field.setText(currentDefaultCopayment.toString())
     }
 
     private fun launchBackdateDialog() {
@@ -158,8 +166,13 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         dialog.show()
     }
 
-    private fun submitEncounter(copaymentPaid: Boolean) {
-        viewModel.submitEncounter(encounterFlowState, copaymentPaid).subscribe({
+    private fun submitEncounter() {
+        if ((viewModel.copaymentAmount() == null)) {
+            SnackbarHelper.showError(save_button, context, getString(R.string.copayment_error))
+            return
+        }
+
+        viewModel.submitEncounter(encounterFlowState).subscribe({
             navigationManager.popTo(CurrentPatientsFragment.withSnackbarMessage(
                 getString(R.string.encounter_submitted)
             ))
@@ -172,26 +185,6 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         return Single.fromCallable {
             viewModel.updateEncounterWithDate(encounterFlowState)
             true
-        }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        menu?.let {
-            it.findItem(R.id.menu_submit_without_copayment).isVisible = true
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            android.R.id.home -> {
-                navigationManager.goBack()
-                true
-            }
-            R.id.menu_submit_without_copayment -> {
-                submitEncounter(false)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 }

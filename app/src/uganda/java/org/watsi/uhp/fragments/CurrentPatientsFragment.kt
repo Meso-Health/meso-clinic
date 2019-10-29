@@ -109,6 +109,7 @@ class CurrentPatientsFragment : DaggerFragment() {
         menu?.let {
             it.findItem(R.id.menu_logout).isVisible = true
             it.findItem(R.id.menu_status).isVisible = true
+            it.findItem(R.id.menu_settings).isVisible = true
         }
     }
 
@@ -116,6 +117,9 @@ class CurrentPatientsFragment : DaggerFragment() {
         when (item?.itemId) {
             R.id.menu_status -> {
                 navigationManager.goTo(StatusFragment())
+            }
+            R.id.menu_settings -> {
+                navigationManager.goTo(SettingsFragment())
             }
             R.id.menu_logout -> {
                 AlertDialog.Builder(activity)
