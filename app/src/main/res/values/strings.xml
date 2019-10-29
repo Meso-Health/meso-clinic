@@ -9,6 +9,8 @@
     <string name="menu_status_label">Status</string>
     <string name="menu_sync_now">Sync now</string>
     <string name="menu_export_db" translatable="false">Export database</string>
+    <string name="yes">OK</string>
+    <string name="delete_items_confirmation" translatable="false">Delete this item?</string>
 
     <!-- General Labels -->
     <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>

@@ -15,7 +15,6 @@
     <string name="remove">Remove</string>
     <string name="delete_claim_confirmation">Delete this claim?</string>
     <string name="delete_changes_confirmation" translatable="false">Delete these changes?</string>
-    <string name="delete_items_confirmation" translatable="false">Delete this item?</string>
 
     <!-- HomeFragment -->
     <string name="home_fragment_label">Claim Submission</string>
@@ -109,7 +108,6 @@
     <string name="age_limit_validation_error">Age must be 200 or less</string>
     <string name="medical_record_number_validation_error">Medical record number is required</string>
     <string name="medical_record_number_length_validation_error">Medical record number must be 5 to 7 digits</string>
-    <string name="yes">OK</string>
     <string name="missing_fields_validation_error">Some fields are missing</string>
 
     <!-- VisitTypeFragment -->

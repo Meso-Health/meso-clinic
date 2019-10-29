@@ -19,8 +19,8 @@ import kotlinx.android.synthetic.uganda.fragment_receipt.diagnoses_list
 import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_label
 import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_list
 import kotlinx.android.synthetic.uganda.fragment_receipt.forms_label
-import kotlinx.android.synthetic.uganda.fragment_receipt.save_button
 import kotlinx.android.synthetic.uganda.fragment_receipt.partial_copayment_field
+import kotlinx.android.synthetic.uganda.fragment_receipt.save_button
 import kotlinx.android.synthetic.uganda.fragment_receipt.total_price
 import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime

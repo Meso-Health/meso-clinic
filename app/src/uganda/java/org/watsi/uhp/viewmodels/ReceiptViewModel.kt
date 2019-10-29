@@ -41,14 +41,12 @@ class ReceiptViewModel @Inject constructor(
         }
     }
 
-    fun submitEncounter(
-        encounterFlowState: EncounterFlowState
-    ): Completable {
+    fun submitEncounter(encounterFlowState: EncounterFlowState): Completable {
         return observable.value?.let { viewState ->
             encounterFlowState.encounter = encounterFlowState.encounter.copy(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
-                copaymentAmount = if (viewState.copaymentAmount != null) viewState.copaymentAmount else 0
+                copaymentAmount = viewState.copaymentAmount ?: 0
             )
             Completable.fromCallable {
                 createEncounterUseCase.execute(encounterFlowState.toEncounterWithExtras(), true, false, clock).blockingAwait()

@@ -1,5 +1,6 @@
 package org.watsi.uhp.fragments
 
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
@@ -38,6 +39,7 @@ import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.helpers.SwipeHandler
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.helpers.setBottomPadding
 import org.watsi.uhp.managers.KeyboardManager
@@ -58,6 +60,7 @@ class EncounterFragment : DaggerFragment() {
     lateinit var billableTypeAdapter: ArrayAdapter<String>
     lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
+    lateinit var swipeHandler: SwipeHandler
     lateinit var encounterFlowState: EncounterFlowState
     lateinit var showSaveButtonRunnable: Runnable
 
@@ -163,7 +166,28 @@ class EncounterFragment : DaggerFragment() {
                 onPriceTap = null
         )
 
-        RecyclerViewHelper.setRecyclerView(line_items_list, encounterItemAdapter, context)
+
+        swipeHandler = SwipeHandler(context, onSwipe = { position: Int ->
+            AlertDialog.Builder(activity)
+                    .setTitle(getString(R.string.delete_items_confirmation))
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        encounterItemAdapter.removeAt(position)
+                    }
+                    .setNegativeButton(R.string.cancel) { _, _ ->
+                        // This call is necessary to force a redraw of the adapter. If its not included
+                        // the line item will stay red with the trash icon as it was at the end of the swipe
+                        encounterItemAdapter.notifyDataSetChanged()
+                    }
+                    .setCancelable(false)
+                    .create().show()
+        })
+
+        RecyclerViewHelper.setRecyclerView(
+            recyclerView = line_items_list,
+            adapter = encounterItemAdapter,
+            context = context,
+            swipeHandler = swipeHandler
+        )
 
         type_spinner.adapter = billableTypeAdapter
         val typeSpinnerListener =  object : AdapterView.OnItemSelectedListener, View.OnTouchListener {
