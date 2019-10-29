@@ -17,6 +17,9 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
       - run:
           name: Download secrets
+          # We need to download the variables.gradle file in order to get the app compiling and run tests.
+          # Because this variables.gradle is just used to get the app compiling, not to to actually assemble an APK,
+          # we can just use the Uganda variables.gradle file to run tests for both the Ethiopia and Uganda flavors.
           command: ./deploy_scripts/downloadUgandaSecrets.sh
       - run:
           name: Download Dependencies
@@ -61,7 +64,6 @@ jobs:
             ./gradlew assembleEthiopiaStaging
             ./gradlew publishEthiopiaStaging -Dorg.gradle.project.track=internal
 
-
   deploy_uganda_sandbox:
     <<: *android_config
     steps:
@@ -98,7 +100,7 @@ jobs:
             ./gradlew assembleEthiopiaDemo
             ./gradlew publishEthiopiaDemo -Dorg.gradle.project.track=production
 
-  deploy_production_ethiopia:
+  deploy_ethiopia_production:
     <<: *android_config
     steps:
       - checkout
@@ -106,7 +108,7 @@ jobs:
           name: Deploy App to Play Store (Production)
           command: |
             export VERSION_CODE=${CIRCLE_BUILD_NUM}
-            ./deploy_scripts/downloadSecrets.sh
+            ./deploy_scripts/downloadEthiopiaSecrets.sh
             ./gradlew assembleEthiopiaRelease
             ./gradlew publishEthiopiaRelease -Dorg.gradle.project.track=production
 
@@ -141,7 +143,7 @@ workflows:
           filters:
             branches:
               only: demo
-      - deploy_production_ethiopia:
+      - deploy_ethiopia_production:
           requires:
             - build_and_test
           filters:
