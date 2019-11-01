@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_label
 import kotlinx.android.synthetic.uganda.fragment_receipt.encounter_items_list
 import kotlinx.android.synthetic.uganda.fragment_receipt.forms_label
 import kotlinx.android.synthetic.uganda.fragment_receipt.partial_copayment_field
+import kotlinx.android.synthetic.uganda.fragment_receipt.patient_outcome_value
 import kotlinx.android.synthetic.uganda.fragment_receipt.save_button
 import kotlinx.android.synthetic.uganda.fragment_receipt.total_price
 import org.threeten.bp.Clock
@@ -36,6 +37,7 @@ import org.watsi.uhp.R.string.today_wrapper
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.ReceiptListItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.EnumHelper
 import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -106,6 +108,14 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         if (encounterFlowState.diagnoses.isNotEmpty()) {
             diagnoses_list.visibility = View.VISIBLE
             diagnoses_list.text = encounterFlowState.diagnoses.map { it.description }.joinToString(", ")
+        }
+
+        encounterFlowState.encounter.patientOutcome.let { patientOutcome ->
+            if (patientOutcome != null) {
+                patient_outcome_value.text = EnumHelper.patientOutcomeToDisplayedString(patientOutcome, context, logger)
+            } else {
+                patient_outcome_value.text = getString(R.string.none)
+            }
         }
 
         date_edit.setOnClickListener {

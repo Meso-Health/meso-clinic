@@ -177,4 +177,23 @@
     <!-- PhotoActivity -->
     <string name="member_photo_overlay_text">Take photo of member</string>
 
+    <!-- EnumHelper -->
+    <string name="further_consultation">Further consultation</string>
+    <string name="drug_stockout">Drug stockout</string>
+    <string name="investigative_tests">Investigative Tests</string>
+    <string name="inpatient_care">Inpatient care</string>
+    <string name="bed_shortage">Bed shortage</string>
+    <string name="follow_up">Follow-up</string>
+    <string name="outcome_cured_or_discharged">Cured/Discharged</string>
+    <string name="outcome_referred">Referred</string>
+    <string name="outcome_follow_up">Follow-up</string>
+    <string name="outcome_refused_service">Refused service</string>
+    <string name="outcome_expired">Deceased</string>
+    <string name="outcome_other">Other</string>
+    <string name="visit_reason_referral">Referral</string>
+    <string name="visit_reason_no_referral">No referral (catchment)</string>
+    <string name="visit_reason_self_referral">Self-referral (bypass fee)</string>
+    <string name="visit_reason_follow_up">Follow-up</string>
+    <string name="visit_reason_emergency">Emergency</string>
+
 </resources>

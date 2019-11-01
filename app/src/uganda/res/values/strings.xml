@@ -167,6 +167,7 @@
     <string name="copayment_setting_hint">Default copayment amount</string>
     <string name="copayment_error">Copayment amount cannot be empty.</string>
     <string name="copayment_update_message">Copayment default successfully updated.</string>
+    <string name="none">None</string>
 
     <!-- HealthIndicatorsFragment -->
     <string name="health_indicators_title">Health Indicators</string>
@@ -179,5 +180,10 @@
     <!-- SettingsFragment -->
     <string name="setting_fragment_label">Settings</string>
     <string name="menu_settings_label">Settings</string>
+
+    <!-- VisitResultFragment -->
+    <string name="visit_result_fragment_label">Visit Result</string>
+    <string name="patient_outcome">Patient outcome</string>
+    <string name="patient_outcome_prompt">Select patient outcome…</string>
 
 </resources>

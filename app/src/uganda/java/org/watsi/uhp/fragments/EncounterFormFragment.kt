@@ -98,7 +98,7 @@ class EncounterFormFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         save_button.setOnClickListener {
             viewModel.updateEncounterWithForms(encounterFlowState)
-            navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+            navigationManager.goTo(VisitResultFragment.forEncounter(encounterFlowState))
         }
     }
 

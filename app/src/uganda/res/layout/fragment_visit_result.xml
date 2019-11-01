@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space16"
+        android:paddingStart="@dimen/space16"
+        android:paddingEnd="@dimen/space16"
+        android:paddingBottom="@dimen/space48">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/patient_outcome_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <org.watsi.uhp.views.SpinnerField
+                android:id="@+id/patient_outcome_spinner"
+                app:label="@string/patient_outcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.constraint.ConstraintLayout>
+
+        <Button
+            android:id="@+id/done_button"
+            android:text="@string/done_encounter_button"
+            android:layout_marginTop="@dimen/space16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/patient_outcome_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/PrimaryButton" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

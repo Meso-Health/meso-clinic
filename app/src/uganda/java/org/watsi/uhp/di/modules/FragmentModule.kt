@@ -17,6 +17,7 @@ import org.watsi.uhp.fragments.MemberSearchFragment
 import org.watsi.uhp.fragments.ReceiptFragment
 import org.watsi.uhp.fragments.SettingsFragment
 import org.watsi.uhp.fragments.StatusFragment
+import org.watsi.uhp.fragments.VisitResultFragment
 
 @Module
 abstract class FragmentModule {
@@ -32,6 +33,7 @@ abstract class FragmentModule {
     @ContributesAndroidInjector abstract fun bindEncounterFragment(): EncounterFragment
     @ContributesAndroidInjector abstract fun bindEnrollNewbornFragment(): EnrollNewbornFragment
     @ContributesAndroidInjector abstract fun bindReceiptFragment(): ReceiptFragment
+    @ContributesAndroidInjector abstract fun bindVisitTypeFragment(): VisitResultFragment
     @ContributesAndroidInjector abstract fun bindMemberSearchFragment(): MemberSearchFragment
     @ContributesAndroidInjector abstract fun bindStatusFragment(): StatusFragment
     @ContributesAndroidInjector abstract fun bindSettingsFragment(): SettingsFragment
