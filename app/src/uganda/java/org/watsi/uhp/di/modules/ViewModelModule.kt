@@ -17,6 +17,7 @@ import org.watsi.uhp.viewmodels.EditPriceViewModel
 import org.watsi.uhp.viewmodels.EncounterFormViewModel
 import org.watsi.uhp.viewmodels.EncounterViewModel
 import org.watsi.uhp.viewmodels.EnrollNewbornViewModel
+import org.watsi.uhp.viewmodels.HealthIndicatorsViewModel
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
 import org.watsi.uhp.viewmodels.SettingsViewModel
@@ -54,6 +55,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(DiagnosisViewModel::class)
     abstract fun bindDiagnosisViewModel(viewModel: DiagnosisViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HealthIndicatorsViewModel::class)
+    abstract fun bindHealthIndicatorsiewModel(viewModel: HealthIndicatorsViewModel): ViewModel
 
     @Binds
     @IntoMap

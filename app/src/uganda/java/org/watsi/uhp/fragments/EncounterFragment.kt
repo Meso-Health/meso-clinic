@@ -17,6 +17,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
+import io.reactivex.Single
 import kotlinx.android.synthetic.uganda.fragment_encounter.add_billable_prompt
 import kotlinx.android.synthetic.uganda.fragment_encounter.billable_spinner
 import kotlinx.android.synthetic.uganda.fragment_encounter.drug_search
@@ -49,7 +50,7 @@ import org.watsi.uhp.viewmodels.EncounterViewModel
 import java.util.UUID
 import javax.inject.Inject
 
-class EncounterFragment : DaggerFragment() {
+class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     @Inject lateinit var clock: Clock
     @Inject lateinit var navigationManager: NavigationManager
@@ -134,7 +135,7 @@ class EncounterFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_clear_white_24dp)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.encounter_fragment_label), R.drawable.ic_arrow_back_white_24dp)
         (activity as ClinicActivity).setSoftInputModeToResize()
         setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_encounter, container, false)
@@ -347,6 +348,13 @@ class EncounterFragment : DaggerFragment() {
      */
     data class BillablePresenter(val billableWithPrice: BillableWithPriceSchedule?) {
         override fun toString(): String = billableWithPrice?.billable?.name ?: "Select..."
+    }
+
+    override fun onBack(): Single<Boolean> {
+        return Single.fromCallable {
+            viewModel.updateEncounterWithLineItems(encounterFlowState)
+            true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

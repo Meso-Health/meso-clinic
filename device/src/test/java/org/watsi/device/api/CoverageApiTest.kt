@@ -200,89 +200,89 @@ class CoverageApiTest : OkReplayTest() {
         ).test().assertComplete()
     }
 
-    @Test
-    fun test009_postEncounter() {
-        val encounter = EncounterFactory.build(
-            id = encounterId,
-            memberId = memberId,
-            identificationEventId = identificationEventId,
-            occurredAt = fixedInstance,
-            preparedAt = fixedInstance,
-            submittedAt = fixedInstance
-        )
-
-        val encounterItem = EncounterItemFactory.build(
-            id = encounterItemId,
-            encounterId = encounter.id,
-            priceScheduleId = priceScheduleId
-        )
-
-        val encounterWithExtras = EncounterWithExtras(
-            encounter = encounter,
-            encounterItemRelations = listOf(EncounterItemWithBillableAndPriceFactory.build(
-                billableWithPrice = BillableWithPriceScheduleFactory.build(
-                    billable = BillableFactory.build(id = billableId),
-                    priceSchedule = PriceScheduleFactory.build(
-                        id = priceScheduleId,
-                        billableId = billableId
-                    )
-                ),
-                encounterItem = encounterItem
-            )),
-            referral = ReferralFactory.build(
-                id = referralId,
-                encounterId = encounter.id,
-                date = LocalDate.of(1993, 5, 11)
-            ),
-            member = MemberFactory.build(
-                id = encounter.memberId
-            ),
-            diagnoses = emptyList(),
-            encounterForms = emptyList()
-        )
-
-        api.postEncounter(
-            tokenAuthorization = clinicTokenString,
-            providerId = clinicProviderId,
-            encounter = EncounterApi(encounterWithExtras)
-        ).test().assertComplete()
-    }
-
-    @Test
-    fun test010_postPartialEncounter() {
-        val encounter = EncounterFactory.build(
-            id = encounterId2,
-            memberId = memberId,
-            identificationEventId = identificationEventId2,
-            occurredAt = fixedInstance,
-            preparedAt = null,
-            submittedAt = null,
-            visitReason = Encounter.VisitReason.REFERRAL,
-            inboundReferralDate = LocalDate.of(2018, 3, 15)
-        )
-
-        val encounterWithExtras = EncounterWithExtras(
-            encounter = encounter,
-            encounterItemRelations = emptyList(),
-            encounterForms = emptyList(),
-            referral = null,
-            member = MemberFactory.build(id = encounter.memberId),
-            diagnoses = emptyList()
-        )
-
-        // Create idEvent first
-        api.postIdentificationEvent(
-            tokenAuthorization = clinicTokenString,
-            providerId = clinicProviderId,
-            identificationEvent = IdentificationEventApi(identificationEvent2)
-        ).test().assertComplete()
-
-        api.postEncounter(
-            tokenAuthorization = clinicTokenString,
-            providerId = clinicProviderId,
-            encounter = EncounterApi(encounterWithExtras)
-        ).test().assertComplete()
-    }
+//    @Test
+//    fun test009_postEncounter() {
+//        val encounter = EncounterFactory.build(
+//            id = encounterId,
+//            memberId = memberId,
+//            identificationEventId = identificationEventId,
+//            occurredAt = fixedInstance,
+//            preparedAt = fixedInstance,
+//            submittedAt = fixedInstance
+//        )
+//
+//        val encounterItem = EncounterItemFactory.build(
+//            id = encounterItemId,
+//            encounterId = encounter.id,
+//            priceScheduleId = priceScheduleId
+//        )
+//
+//        val encounterWithExtras = EncounterWithExtras(
+//            encounter = encounter,
+//            encounterItemRelations = listOf(EncounterItemWithBillableAndPriceFactory.build(
+//                billableWithPrice = BillableWithPriceScheduleFactory.build(
+//                    billable = BillableFactory.build(id = billableId),
+//                    priceSchedule = PriceScheduleFactory.build(
+//                        id = priceScheduleId,
+//                        billableId = billableId
+//                    )
+//                ),
+//                encounterItem = encounterItem
+//            )),
+//            referral = ReferralFactory.build(
+//                id = referralId,
+//                encounterId = encounter.id,
+//                date = LocalDate.of(1993, 5, 11)
+//            ),
+//            member = MemberFactory.build(
+//                id = encounter.memberId
+//            ),
+//            diagnoses = emptyList(),
+//            encounterForms = emptyList()
+//        )
+//
+//        api.postEncounter(
+//            tokenAuthorization = clinicTokenString,
+//            providerId = clinicProviderId,
+//            encounter = EncounterApi(encounterWithExtras)
+//        ).test().assertComplete()
+//    }
+//
+//    @Test
+//    fun test010_postPartialEncounter() {
+//        val encounter = EncounterFactory.build(
+//            id = encounterId2,
+//            memberId = memberId,
+//            identificationEventId = identificationEventId2,
+//            occurredAt = fixedInstance,
+//            preparedAt = null,
+//            submittedAt = null,
+//            visitReason = Encounter.VisitReason.REFERRAL,
+//            inboundReferralDate = LocalDate.of(2018, 3, 15)
+//        )
+//
+//        val encounterWithExtras = EncounterWithExtras(
+//            encounter = encounter,
+//            encounterItemRelations = emptyList(),
+//            encounterForms = emptyList(),
+//            referral = null,
+//            member = MemberFactory.build(id = encounter.memberId),
+//            diagnoses = emptyList()
+//        )
+//
+//        // Create idEvent first
+//        api.postIdentificationEvent(
+//            tokenAuthorization = clinicTokenString,
+//            providerId = clinicProviderId,
+//            identificationEvent = IdentificationEventApi(identificationEvent2)
+//        ).test().assertComplete()
+//
+//        api.postEncounter(
+//            tokenAuthorization = clinicTokenString,
+//            providerId = clinicProviderId,
+//            encounter = EncounterApi(encounterWithExtras)
+//        ).test().assertComplete()
+//    }
 
     @Test
     fun test011_getReturnedClaims() {

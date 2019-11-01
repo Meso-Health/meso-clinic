@@ -184,6 +184,10 @@ class MemberRepositoryImpl(
         return sessionManager.currentAuthenticationToken()?.let { token ->
             Completable.fromAction {
                 var hasMore = true
+
+                if (sessionManager.shouldClearPageKey(memberDao.count().blockingFirst())) {
+                    preferencesManager.updateMembersPageKey(null)
+                }
                 while (hasMore) {
                     hasMore = paginatedFetch(token).blockingGet()
                 }
@@ -247,6 +251,7 @@ class MemberRepositoryImpl(
         if (serverMembers.isNotEmpty()) {
             upsertMembers(serverMembers)
             preferencesManager.updateMembersPageKey(updatedPageKey)
+            preferencesManager.updateMembersCountForCurrentPageKey(memberDao.count().blockingFirst())
         }
 
         return Single.just(hasMore)

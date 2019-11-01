@@ -25,6 +25,7 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
         private const val RETURNED_CLAIMS_LAST_FETCHED_KEY = "returned_claims_last_fetched"
         private const val IDENTIFICATION_EVENTS_LAST_FETCHED_KEY = "identification_events_last_fetched"
         private const val COPAYMENT_DEFAULT = "copayment_default"
+        private const val MEMBERS_COUNT = "members_count_current_page_key"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -70,6 +71,14 @@ class PreferencesManagerImpl(context: Context, private val gson: Gson = Gson()) 
 
     override fun updateMembersPageKey(pageKey: String?) {
         sharedPreferences.edit().putString(MEMBERS_PAGE_KEY, pageKey).apply()
+    }
+
+    override fun getMembersCountForCurrentPageKey(): Int {
+        return sharedPreferences.getInt(MEMBERS_COUNT, 0)
+    }
+
+    override fun updateMembersCountForCurrentPageKey(count: Int) {
+        sharedPreferences.edit().putInt(MEMBERS_COUNT, count).apply()
     }
 
     override fun getDataLastFetched(): Instant {

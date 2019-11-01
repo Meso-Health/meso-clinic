@@ -11,6 +11,7 @@ interface SessionManager {
     fun currentUser(): User?
     fun isUserAllowed(user: User): Boolean
     fun shouldClearUserData(): Boolean
+    fun shouldClearPageKey(currentMemberCount: Int): Boolean
     fun userHasPermission(permission: Permissions): Boolean
 
     class PermissionException : Exception()

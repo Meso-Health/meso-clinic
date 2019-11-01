@@ -168,6 +168,11 @@
     <string name="copayment_error">Copayment amount cannot be empty.</string>
     <string name="copayment_update_message">Copayment default successfully updated.</string>
 
+    <!-- HealthIndicatorsFragment -->
+    <string name="health_indicators_title">Health Indicators</string>
+    <string name="health_indicators_fever_label">Fever</string>
+    <string name="health_indicators_fever_text">Does the treatment form say the patient has a fever?</string>
+
     <!-- EncounterFragment -->
     <string name="add_billable_prompt"><u>Add new item</u></string>
 

@@ -7,12 +7,13 @@ import org.watsi.device.managers.SessionManager.Companion.ALLOWED_HEALTH_CENTER_
 import org.watsi.device.managers.SessionManager.Companion.ALLOWED_HOSPITAL_ROLES
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.User
+import org.watsi.domain.repositories.MemberRepository
 
 class SessionManagerImpl(
-        private val preferencesManager: PreferencesManager,
-        private val api: CoverageApi,
-        private val logger: Logger
-) : SessionManager {
+    private val preferencesManager: PreferencesManager,
+    private val api: CoverageApi,
+    private val logger: Logger
+    ) : SessionManager {
 
     private var token: AuthenticationToken? = preferencesManager.getAuthenticationToken()
 
@@ -49,6 +50,11 @@ class SessionManagerImpl(
         val previousUser = preferencesManager.getPreviousUser()
         val currentUser = token?.user
         return previousUser != null && currentUser != null && previousUser != currentUser && previousUser.providerId != currentUser.providerId
+    }
+
+    override fun shouldClearPageKey(currentMemberCount: Int): Boolean {
+        val previousMemberCount = preferencesManager.getMembersCountForCurrentPageKey()
+        return previousMemberCount != 0 && previousMemberCount > currentMemberCount
     }
 
     override fun currentAuthenticationToken(): AuthenticationToken? = token

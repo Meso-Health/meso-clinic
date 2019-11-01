@@ -48,7 +48,8 @@ data class EncounterModel(
     val providerComment: String? = null,
     val submittedAt: Instant? = null,
     val visitReason: Encounter.VisitReason? = null,
-    val inboundReferralDate: LocalDate? = null
+    val inboundReferralDate: LocalDate? = null,
+    val hasFever: Boolean? = null
 ) {
 
     fun toEncounter(): Encounter {
@@ -71,7 +72,8 @@ data class EncounterModel(
             preparedAt = preparedAt,
             submittedAt = submittedAt,
             visitReason = visitReason,
-            inboundReferralDate = inboundReferralDate
+            inboundReferralDate = inboundReferralDate,
+            hasFever = hasFever
         )
     }
 
@@ -99,7 +101,8 @@ data class EncounterModel(
                 preparedAt = encounter.preparedAt,
                 submittedAt = encounter.submittedAt,
                 visitReason = encounter.visitReason,
-                inboundReferralDate = encounter.inboundReferralDate
+                inboundReferralDate = encounter.inboundReferralDate,
+                hasFever = encounter.hasFever
             )
         }
     }

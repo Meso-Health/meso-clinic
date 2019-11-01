@@ -260,6 +260,7 @@ class MemberRepositoryImplTest {
             MemberWithThumbnailPhotoModel(member7),
             MemberWithThumbnailPhotoModel(member8)
         )))
+        whenever(mockMemberDao.count()).thenReturn(Flowable.just(1))
 
         repository.fetch().test().assertComplete()
         verify(mockMemberDao).upsert(listOf(member1, member2, member3))
@@ -302,6 +303,7 @@ class MemberRepositoryImplTest {
         whenever(mockMemberDao.unsynced()).thenReturn(Single.just(listOf(member1, member3)), Single.just(emptyList()))
         whenever(mockMemberDao.findAll(listOf(member2.id))).thenReturn(Single.just(listOf(MemberWithThumbnailPhotoModel(member2))))
         whenever(mockMemberDao.findAll(listOf(member4.id))).thenReturn(Single.just(listOf(MemberWithThumbnailPhotoModel(member4))))
+        whenever(mockMemberDao.count()).thenReturn(Flowable.just(1))
 
         repository.fetch().test().assertComplete()
 
@@ -324,6 +326,7 @@ class MemberRepositoryImplTest {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
         whenever(mockApi.getMembers(any(), any(), eq(storedPageKey))).thenReturn(Single.just(emptyPage))
+        whenever(mockMemberDao.count()).thenReturn(Flowable.just(1))
 
         repository.fetch().test().assertComplete()
 
@@ -340,6 +343,7 @@ class MemberRepositoryImplTest {
         whenever(mockSessionManager.currentAuthenticationToken()).thenReturn(token)
         whenever(mockPreferencesManager.getMembersPageKey()).thenReturn(storedPageKey)
         whenever(mockApi.getMembers(token.getHeaderString(), token.user.providerId, storedPageKey)).then { throw exception }
+        whenever(mockMemberDao.count()).thenReturn(Flowable.just(1))
 
         repository.fetch().test().assertError(exception)
 

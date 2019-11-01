@@ -33,6 +33,7 @@ object EncounterModelFactory {
         submittedAt: Instant? = null,
         visitReason: Encounter.VisitReason? = null,
         inboundReferralDate: LocalDate? = null,
+        hasFever: Boolean? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val now = Instant.now(clock)
@@ -57,7 +58,8 @@ object EncounterModelFactory {
             providerComment = providerComment,
             submittedAt = submittedAt,
             visitReason = visitReason,
-            inboundReferralDate = inboundReferralDate
+            inboundReferralDate = inboundReferralDate,
+            hasFever = hasFever
         )
     }
 
@@ -85,6 +87,7 @@ object EncounterModelFactory {
         submittedAt: Instant? = null,
         visitReason: Encounter.VisitReason? = null,
         inboundReferralDate: LocalDate? = null,
+        hasFever: Boolean? = null,
         clock: Clock = Clock.systemUTC()
     ) : EncounterModel {
         val model = build(
@@ -109,6 +112,7 @@ object EncounterModelFactory {
             submittedAt = submittedAt,
             visitReason = visitReason,
             inboundReferralDate = inboundReferralDate,
+            hasFever = hasFever,
             clock = clock
         )
         encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList())

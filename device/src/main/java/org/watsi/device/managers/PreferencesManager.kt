@@ -14,6 +14,8 @@ interface PreferencesManager {
     fun updateLocale(locale: Locale)
     fun getMembersPageKey(): String?
     fun updateMembersPageKey(pageKey: String?)
+    fun getMembersCountForCurrentPageKey(): Int
+    fun updateMembersCountForCurrentPageKey(count: Int)
     fun getDataLastFetched(): Instant
     fun updateDataLastFetched(instant: Instant)
     fun getPhotoLastFetched(): Instant

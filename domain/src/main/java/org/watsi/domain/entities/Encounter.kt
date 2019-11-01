@@ -24,7 +24,8 @@ data class Encounter(
     val providerComment: String? = null,
     val submittedAt: Instant? = null,
     val visitReason: VisitReason? = null,
-    val inboundReferralDate: LocalDate? = null
+    val inboundReferralDate: LocalDate? = null,
+    val hasFever: Boolean? = null
 ) : Serializable {
 
     fun shortenedClaimId(): String {
