@@ -9,15 +9,6 @@ import org.watsi.domain.factories.BillableFactory
 class BillableTest {
 
     @Test
-    fun requiresQuantity() {
-        assert(Billable.requiresQuantity(Billable.Type.DRUG))
-        assert(Billable.requiresQuantity(Billable.Type.SUPPLY))
-        assert(Billable.requiresQuantity(Billable.Type.VACCINE))
-        assertFalse(Billable.requiresQuantity(Billable.Type.SERVICE))
-        assertFalse(Billable.requiresQuantity(Billable.Type.LAB))
-    }
-
-    @Test
     fun details_noCompositionOrUnit() {
         val billable = BillableFactory.build(composition = null, unit = null)
 

@@ -24,10 +24,6 @@ data class Billable(val id: UUID,
     }
 
     companion object {
-        fun requiresQuantity(type: Billable.Type): Boolean {
-            return type == Type.DRUG || type == Type.SUPPLY || type == Type.VACCINE
-        }
-
         private val BILLABLE_TYPES_THAT_ALLOW_PRICE_EDITS = listOf(
             Type.DRUG,
             Type.SUPPLY,
@@ -40,6 +36,20 @@ data class Billable(val id: UUID,
         fun canEditPrice(type: Billable.Type): Boolean {
             return BILLABLE_TYPES_THAT_ALLOW_PRICE_EDITS.contains(type)
         }
+
+        // These are billable types that count apply to Rwibaale.
+        // Leaving out unspecified because that's not a real type.
+        // Leaving out bed day because that's from Ethiopia.
+        // Leaving out procedure because there are procedures that are under services.
+        // Imaging might be a thing because of the new surgical center that opened up.
+        val UGANDA_BILLABLE_TYPES = listOf(
+            Billable.Type.DRUG,
+            Billable.Type.SERVICE,
+            Billable.Type.LAB,
+            Billable.Type.SUPPLY,
+            Billable.Type.VACCINE,
+            Billable.Type.IMAGING
+        )
     }
 
     enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE, IMAGING, PROCEDURE, BED_DAY, UNSPECIFIED }

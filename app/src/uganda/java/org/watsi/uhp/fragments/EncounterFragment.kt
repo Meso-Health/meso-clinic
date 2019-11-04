@@ -212,7 +212,7 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             swipeHandler = swipeHandler
         )
 
-        val billableTypeOptions = Billable.Type.values()
+        val billableTypeOptions = Billable.UGANDA_BILLABLE_TYPES
         select_type_box.setUpWithPrompt(
             choices = billableTypeOptions.map { it.toString().titleize() },
             initialChoice = null,
