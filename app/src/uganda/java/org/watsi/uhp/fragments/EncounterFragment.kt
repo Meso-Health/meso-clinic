@@ -10,11 +10,8 @@ import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
@@ -26,15 +23,14 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.fragment_encounter_co
 import kotlinx.android.synthetic.uganda.fragment_encounter.line_items_list
 import kotlinx.android.synthetic.uganda.fragment_encounter.save_button
 import kotlinx.android.synthetic.uganda.fragment_encounter.select_billable_box
+import kotlinx.android.synthetic.uganda.fragment_encounter.select_lab_result_box
 import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
-import kotlinx.android.synthetic.uganda.fragment_encounter.type_spinner
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.relations.BillableWithPriceSchedule
+import org.watsi.domain.entities.LabResult
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
-import org.watsi.uhp.R.string.prompt_category
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
@@ -60,8 +56,6 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     lateinit var viewModel: EncounterViewModel
     lateinit var observable: LiveData<EncounterViewModel.ViewState>
-    lateinit var billableTypeAdapter: ArrayAdapter<String>
-    lateinit var billableAdapter: ArrayAdapter<BillablePresenter>
     lateinit var encounterItemAdapter: EncounterItemAdapter
     lateinit var swipeHandler: SwipeHandler
     lateinit var encounterFlowState: EncounterFlowState
@@ -84,25 +78,15 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         super.onCreate(savedInstanceState)
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
 
-        val billableTypeOptions = Billable.Type.values()
-                .map { it.toString().titleize() }
-                .toMutableList()
-        billableTypeOptions.add(0, getString(prompt_category))
-        billableTypeAdapter = ArrayAdapter(
-                activity, android.R.layout.simple_list_item_1, billableTypeOptions)
-        billableAdapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
         observable = viewModel.getObservable(encounterFlowState)
         observable.observe(this, Observer {
             it?.let { viewState ->
-                if (viewState.type == null) {
-                    type_spinner.setSelection(0)
-                }
                 when (viewState.type) {
                     null -> {
                         billable_spinner.visibility = View.GONE
                         drug_search.visibility = View.GONE
+                        select_lab_result_box.visibility = View.GONE
                     }
                     Billable.Type.DRUG -> {
                         billable_spinner.visibility = View.GONE
@@ -111,16 +95,39 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                         drug_search.visibility = View.VISIBLE
                     }
                     else -> {
-                        val billableOptions = viewState.selectableBillables.map {
-                            BillablePresenter(it)
-                        }.toMutableList()
-                        billableOptions.add(0, BillablePresenter(null))
-                        billableAdapter.clear()
-                        billableAdapter.addAll(billableOptions)
-                        billable_spinner.setSelection(0)
-                        billable_spinner.visibility = View.VISIBLE
+                        val billableOptions = viewState.selectableBillables
                         drug_search.visibility = View.GONE
+
+                        billable_spinner.visibility = View.VISIBLE
+                        if (viewState.billableWithPriceSchedule == null) {
+                            billable_spinner.setUpWithPrompt(
+                                choices = billableOptions.map { it.billable.name },
+                                initialChoice = null,
+                                onItemSelected = { index ->
+                                    val selectedBillable = billableOptions[index]
+                                    viewModel.onSelectedBillable(selectedBillable)
+                                },
+                                promptString = "Select...",
+                                onPromptSelected = { viewModel.onSelectedBillable(null) }
+                            )
+                        }
                     }
+                }
+
+                if (viewModel.requiresLabResult()) {
+                    select_lab_result_box.visibility = View.VISIBLE
+                    val labResultChoices = LabResult.malariaTestResults()
+                    select_lab_result_box.setUpWithPrompt(
+                        choices = labResultChoices,
+                        initialChoice = null,
+                        onItemSelected = { index: Int ->
+                            viewModel.onLabResultChange(labResultChoices[index])
+                        },
+                        promptString = "Select a lab result...",
+                        onPromptSelected = { /* no-op */ }
+                    )
+                } else {
+                    select_lab_result_box.visibility = View.GONE
                 }
                 updateLineItems(viewState.encounterFlowState)
             }
@@ -142,7 +149,6 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        var searchRunnable: Runnable? = null
         showSaveButtonRunnable = Runnable({
             save_button?.let { it.visibility = View.VISIBLE }
         })
@@ -206,49 +212,16 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             swipeHandler = swipeHandler
         )
 
-        type_spinner.adapter = billableTypeAdapter
-        val typeSpinnerListener =  object : AdapterView.OnItemSelectedListener, View.OnTouchListener {
-            var userSelected = false
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                /* no-op */
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedType = if (position > 0) {
-                    Billable.Type.valueOf(billableTypeAdapter.getItem(position).toUpperCase())
-                } else {
-                    null
-                }
-                viewModel.selectType(selectedType)
-
-                // Distinguish between user-initiated select events and automatically triggered
-                // ones (e.g. resuming fragment on back press)
-                if (userSelected) {
-                    billable_spinner.performClick()
-                    userSelected = false
-                }
-            }
-
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                userSelected = true
-                return false
-            }
-        }
-        type_spinner.onItemSelectedListener = typeSpinnerListener
-        type_spinner.setOnTouchListener(typeSpinnerListener)
-
-        billable_spinner.adapter = billableAdapter
-        billable_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                /* no-op */
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                billableAdapter.getItem(position).billableWithPrice?.let { viewModel.addItem(it) }
-                line_items_list.scrollToBottom()
-            }
-        }
+        val billableTypeOptions = Billable.Type.values()
+        select_type_box.setUpWithPrompt(
+            choices = billableTypeOptions.map { it.toString().titleize() },
+            initialChoice = null,
+            onItemSelected = { index ->
+                viewModel.selectType(billableTypeOptions[index])
+            },
+            promptString = getString(R.string.prompt_category),
+            onPromptSelected = { viewModel.selectType(null) }
+        )
 
         drug_search.suggestionsAdapter = SimpleCursorAdapter(
                 activity, R.layout.item_billable_search_suggestion, null,
@@ -341,13 +314,6 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             cursor.addRow(arrayOf(it.id.mostSignificantBits, it.name, it.details(), it.id.toString()))
         }
         return cursor
-    }
-
-    /**
-     * Used to customize toString behavior for use in an ArrayAdapter
-     */
-    data class BillablePresenter(val billableWithPrice: BillableWithPriceSchedule?) {
-        override fun toString(): String = billableWithPrice?.billable?.name ?: "Select..."
     }
 
     override fun onBack(): Single<Boolean> {

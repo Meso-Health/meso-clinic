@@ -5,8 +5,8 @@ import com.google.gson.JsonArray
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.watsi.domain.entities.Encounter
-import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.entities.Referral
+import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.relations.EncounterWithExtras
 import java.util.UUID
 
@@ -31,7 +31,7 @@ data class EncounterApi(
     val inboundReferralDate: LocalDate?,
     val hasFever: Boolean? = null
 ) {
-    constructor(encounter: Encounter, referrals: List<Referral>, encounterItems: List<EncounterItem>): this(
+    private constructor(encounter: Encounter, referrals: List<Referral>, encounterItems: List<EncounterItemWithBillableAndPrice>): this(
         id = encounter.id,
         memberId = encounter.memberId,
         identificationEventId = encounter.identificationEventId,
@@ -40,7 +40,12 @@ data class EncounterApi(
         backdatedOccurredAt = encounter.backdatedOccurredAt,
         copaymentAmount = encounter.copaymentAmount,
         diagnosisIds = Gson().fromJson(encounter.diagnoses.toString(), JsonArray::class.java),
-        encounterItems = encounterItems.map { EncounterItemApi(it) },
+        encounterItems = encounterItems.map {
+            EncounterItemApi(
+                encounterItem = it.encounterItem,
+                labResult = it.labResult
+            )
+        },
         referrals = referrals.map { ReferralApi(it) },
         visitType = encounter.visitType,
         revisedEncounterId = encounter.revisedEncounterId,
@@ -56,6 +61,6 @@ data class EncounterApi(
     constructor(encounterWithExtras: EncounterWithExtras): this(
         encounter = encounterWithExtras.encounter,
         referrals = listOfNotNull(encounterWithExtras.referral),
-        encounterItems = encounterWithExtras.encounterItemRelations.map { it.encounterItem }
+        encounterItems = encounterWithExtras.encounterItemRelations
     )
 }

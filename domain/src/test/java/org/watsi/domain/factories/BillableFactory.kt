@@ -11,7 +11,8 @@ object BillableFactory {
             composition: String? = null,
             unit: String? = null,
             name: String = "Delivery",
-            active: Boolean = true
+            active: Boolean = true,
+            requiresLabResult: Boolean = false
     ) : Billable {
         return Billable(
             id = id,
@@ -19,7 +20,8 @@ object BillableFactory {
             composition = composition,
             unit = unit,
             name = name,
-            active = active
+            active = active,
+            requiresLabResult = requiresLabResult
         )
     }
 }

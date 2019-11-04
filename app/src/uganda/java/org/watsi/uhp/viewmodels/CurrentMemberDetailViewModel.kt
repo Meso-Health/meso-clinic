@@ -62,7 +62,11 @@ class CurrentMemberDetailViewModel @Inject constructor(
                 priceScheduleId = it.priceSchedule.id,
                 priceScheduleIssued = false
             )
-            EncounterItemWithBillableAndPrice(encounterItem, it)
+            EncounterItemWithBillableAndPrice(
+                encounterItem = encounterItem,
+                billableWithPriceSchedule = it,
+                labResult = null
+            )
         }
         val encounter = Encounter(
             id = encounterId,

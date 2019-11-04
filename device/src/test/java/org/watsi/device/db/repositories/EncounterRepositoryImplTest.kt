@@ -170,7 +170,7 @@ class EncounterRepositoryImplTest {
         val encounter = EncounterFactory.build()
         val encounterItem = EncounterItemFactory.build(encounterId = encounter.id)
         val billableWithPrice = BillableWithPriceScheduleFactory.build()
-        val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice)
+        val encounterItemRelation = EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice, null)
         val encounterForm = EncounterFormFactory.build(encounterId = encounter.id)
         val referral = ReferralFactory.build(encounterId = encounter.id)
         val member = MemberFactory.build(id = encounter.memberId)
@@ -190,7 +190,8 @@ class EncounterRepositoryImplTest {
             encounterItemModels = listOf(EncounterItemModel.fromEncounterItem(encounterItem, clock)),
             encounterFormModels = listOf(EncounterFormModel.fromEncounterForm(encounterForm, clock)),
             referralModels = listOf(ReferralModel.fromReferral(referral)),
-            deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+            deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) },
+            labResultModels = emptyList()
         )
     }
 

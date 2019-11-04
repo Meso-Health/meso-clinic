@@ -18,7 +18,11 @@ class EncounterItemWithBillableAndPriceTest {
         val billableWithPriceSchedule =
             BillableWithPriceScheduleFactory.build(billable, priceSchedule)
         val encounterItemRelation =
-            EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
+            EncounterItemWithBillableAndPrice(
+                encounterItem = encounterItem,
+                billableWithPriceSchedule = billableWithPriceSchedule,
+                labResult = null
+            )
 
         assertEquals(300, encounterItemRelation.price())
     }
@@ -31,7 +35,11 @@ class EncounterItemWithBillableAndPriceTest {
         val billableWithPriceSchedule =
                 BillableWithPriceScheduleFactory.build(billable, priceSchedule, null)
         val encounterItemRelation =
-                EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
+                EncounterItemWithBillableAndPrice(
+                    encounterItem = encounterItem,
+                    billableWithPriceSchedule = billableWithPriceSchedule,
+                    labResult = null
+                )
 
         assertNull(encounterItemRelation.prevPrice())
     }
@@ -45,7 +53,11 @@ class EncounterItemWithBillableAndPriceTest {
         val billableWithPriceSchedule =
                 BillableWithPriceScheduleFactory.build(billable, priceSchedule, prevPriceSchedule)
         val encounterItemRelation =
-                EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
+                EncounterItemWithBillableAndPrice(
+                    encounterItem = encounterItem,
+                    billableWithPriceSchedule = billableWithPriceSchedule,
+                    labResult = null
+                )
 
         assertEquals(200, encounterItemRelation.prevPrice())
     }

@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_details
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_name
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.billable_quantity
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.lab_result
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.stockout_indicator
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.stockout_negative_price
@@ -28,6 +29,7 @@ class EncounterItemListItem @JvmOverloads constructor(
     ) {
         val billable = encounterItemRelation.billableWithPriceSchedule.billable
         val encounterItem = encounterItemRelation.encounterItem
+        val labResult = encounterItemRelation.labResult
         val currentQuantity = encounterItem.quantity
 
         billable_name.text = billable.name
@@ -36,6 +38,13 @@ class EncounterItemListItem @JvmOverloads constructor(
             billable_details.visibility = View.VISIBLE
         } else {
             billable_details.visibility = View.GONE
+        }
+
+        if (labResult != null) {
+            lab_result.text = labResult.result
+            lab_result.visibility = View.VISIBLE
+        } else {
+            lab_result.visibility = View.GONE
         }
 
         billable_quantity.setText(currentQuantity.toString())

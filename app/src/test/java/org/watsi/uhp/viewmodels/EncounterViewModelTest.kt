@@ -5,8 +5,8 @@ import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

@@ -4,6 +4,7 @@ import org.threeten.bp.Instant
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.entities.LabResult
 import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.PriceSchedule
 import org.watsi.domain.relations.BillableWithPriceSchedule
@@ -60,7 +61,8 @@ data class ReturnedEncounterApi(
             encounterItemRelations = combineEncounterItemsWithBillablesAndPrices(
                 encounterItems.map { it.toEncounterItem() },
                 billables.map { it.toBillable() },
-                priceSchedules.map { it.toPriceSchedule() }
+                priceSchedules.map { it.toPriceSchedule() },
+                encounterItems.mapNotNull { it?.labResult?.toLabResult() }
             ),
             member = member.toMember(persistedMember),
             encounterForms = emptyList(),
@@ -73,17 +75,23 @@ data class ReturnedEncounterApi(
     private fun combineEncounterItemsWithBillablesAndPrices(
         encounterItems: List<EncounterItem>,
         billables: List<Billable>,
-        priceSchedules: List<PriceSchedule>
+        priceSchedules: List<PriceSchedule>,
+        labResults: List<LabResult>
     ): List<EncounterItemWithBillableAndPrice> {
         return encounterItems.map { encounterItem ->
             val correspondingPriceSchedule = priceSchedules.find { it.id == encounterItem.priceScheduleId }
+            val correspondingLabResult = labResults.find { it.encounterItemId == encounterItem.id}
             if (correspondingPriceSchedule != null) {
                 val previousPriceSchedule = priceSchedules.find { it.id == correspondingPriceSchedule.previousPriceScheduleModelId }
                 val correspondingBillable = billables.find { it.id == correspondingPriceSchedule.billableId }
 
                 if (correspondingBillable != null) {
                     val billableWithPriceSchedule = BillableWithPriceSchedule(correspondingBillable, correspondingPriceSchedule, previousPriceSchedule)
-                    EncounterItemWithBillableAndPrice(encounterItem, billableWithPriceSchedule)
+                    EncounterItemWithBillableAndPrice(
+                        encounterItem,
+                        billableWithPriceSchedule,
+                        correspondingLabResult
+                    )
                 } else {
                     throw IllegalStateException("Backend returned a PriceSchedule with a Billable that's not inflated in the Encounter. " +
                             "EncounterItem: $encounterItem \n PriceSchedule: $correspondingPriceSchedule \n Billables: $billables \n")

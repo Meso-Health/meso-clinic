@@ -23,12 +23,13 @@ import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EnrollmentPeriodModel
 import org.watsi.device.db.models.IdentificationEventModel
+import org.watsi.device.db.models.LabResultModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PhotoModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
 
-@Database(exportSchema = true, version = 23, entities = [
+@Database(exportSchema = true, version = 24, entities = [
     BillableModel::class,
     DeltaModel::class,
     DiagnosisModel::class,
@@ -40,7 +41,8 @@ import org.watsi.device.db.models.ReferralModel
     MemberModel::class,
     PhotoModel::class,
     PriceScheduleModel::class,
-    ReferralModel::class
+    ReferralModel::class,
+    LabResultModel::class
 ])
 @TypeConverters(TypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {

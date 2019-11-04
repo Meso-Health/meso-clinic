@@ -18,6 +18,7 @@ import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithExtrasModel
+import org.watsi.device.db.models.LabResultModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
@@ -41,11 +42,14 @@ interface EncounterDao {
     fun update(encounters: List<EncounterModel>): Int
 
     @Insert
-    fun insert(encounterModel: EncounterModel,
-               encounterItemModels: List<EncounterItemModel>,
-               encounterFormModels: List<EncounterFormModel>,
-               referralModels: List<ReferralModel>,
-               deltaModels: List<DeltaModel>)
+    fun insert(
+        encounterModel: EncounterModel,
+        encounterItemModels: List<EncounterItemModel>,
+        encounterFormModels: List<EncounterFormModel>,
+        referralModels: List<ReferralModel>,
+        deltaModels: List<DeltaModel>,
+        labResultModels: List<LabResultModel>
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(

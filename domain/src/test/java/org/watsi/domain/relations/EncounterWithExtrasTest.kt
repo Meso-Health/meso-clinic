@@ -1,7 +1,6 @@
 package org.watsi.domain.relations
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.watsi.domain.factories.BillableFactory
 import org.watsi.domain.factories.BillableWithPriceScheduleFactory
@@ -30,9 +29,9 @@ class EncounterWithExtrasTest {
 
 
         val encounterRelationList = listOf(
-            EncounterItemWithBillableAndPrice(encounterItem1, billableWithPriceSchedule1),
-            EncounterItemWithBillableAndPrice(encounterItem2, billableWithPriceSchedule2),
-            EncounterItemWithBillableAndPrice(encounterItem3, billableWithPriceSchedule3)
+            EncounterItemWithBillableAndPrice(encounterItem1, billableWithPriceSchedule1, null),
+            EncounterItemWithBillableAndPrice(encounterItem2, billableWithPriceSchedule2, null),
+            EncounterItemWithBillableAndPrice(encounterItem3, billableWithPriceSchedule3, null)
         )
 
         assertEquals(360, EncounterWithExtras.price(encounterRelationList))
@@ -54,9 +53,9 @@ class EncounterWithExtrasTest {
 
 
         val encounterRelationList = listOf(
-            EncounterItemWithBillableAndPrice(encounterItem1, billableWithPriceSchedule1),
-            EncounterItemWithBillableAndPrice(encounterItem2, billableWithPriceSchedule2),
-            EncounterItemWithBillableAndPrice(encounterItem3, billableWithPriceSchedule2)
+            EncounterItemWithBillableAndPrice(encounterItem1, billableWithPriceSchedule1, null),
+            EncounterItemWithBillableAndPrice(encounterItem2, billableWithPriceSchedule2, null),
+            EncounterItemWithBillableAndPrice(encounterItem3, billableWithPriceSchedule2, null)
         )
 
         assertEquals(60, EncounterWithExtras.price(encounterRelationList))

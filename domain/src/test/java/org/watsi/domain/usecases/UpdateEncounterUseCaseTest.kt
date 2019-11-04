@@ -102,19 +102,23 @@ class UpdateEncounterUseCaseTest {
         encounterItemRelations = listOf(
             EncounterItemWithBillableAndPrice(
                 service1EncounterItem,
-                serviceBillable1
+                serviceBillable1,
+                null
             ),
             EncounterItemWithBillableAndPrice(
                 lab1EncounterItem,
-                labBillable1
+                labBillable1,
+                null
             ),
             EncounterItemWithBillableAndPrice(
                 drug1EncounterItem,
-                drugBillable1
+                drugBillable1,
+                null
             ),
             EncounterItemWithBillableAndPrice(
                 drug2EncounterItem,
-                drugBillable2
+                drugBillable2,
+                null
             )
         ),
         encounterForms = emptyList(),

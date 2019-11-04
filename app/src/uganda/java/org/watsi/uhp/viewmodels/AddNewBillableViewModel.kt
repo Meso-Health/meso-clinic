@@ -4,11 +4,9 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import org.threeten.bp.Instant
-import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.PriceSchedule
 import org.watsi.domain.relations.BillableWithPriceSchedule
-import org.watsi.domain.repositories.BillableRepository
 import java.util.UUID
 import javax.inject.Inject
 
@@ -61,7 +59,8 @@ class AddNewBillableViewModel @Inject constructor() : ViewModel() {
                     else -> null
                 },
                 name = state.name,
-                active = true
+                active = true,
+                requiresLabResult = false
             )
             val priceSchedule = PriceSchedule(
                 id = UUID.randomUUID(),

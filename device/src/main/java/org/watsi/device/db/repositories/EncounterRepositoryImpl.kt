@@ -20,6 +20,7 @@ import org.watsi.device.db.models.EncounterFormModel
 import org.watsi.device.db.models.EncounterItemModel
 import org.watsi.device.db.models.EncounterModel
 import org.watsi.device.db.models.EncounterWithExtrasModel
+import org.watsi.device.db.models.LabResultModel
 import org.watsi.device.db.models.MemberModel
 import org.watsi.device.db.models.PriceScheduleModel
 import org.watsi.device.db.models.ReferralModel
@@ -158,12 +159,19 @@ class EncounterRepositoryImpl(
                 referralModels.add(ReferralModel.fromReferral(it))
             }
 
+            val labResultModels = encounterWithExtras.encounterItemRelations.mapNotNull {
+                it.labResult
+            }.map { labResult ->
+                LabResultModel.fromLabResult(labResult)
+            }
+
             encounterDao.insert(
                 encounterModel = encounterModel,
                 encounterItemModels = encounterItemModels,
                 encounterFormModels = encounterFormModels,
                 referralModels = referralModels,
-                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) }
+                deltaModels = deltas.map { DeltaModel.fromDelta(it, clock) },
+                labResultModels = labResultModels
             )
         }.subscribeOn(Schedulers.io())
     }

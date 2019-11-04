@@ -17,7 +17,7 @@ interface MemberRepository {
     fun findAll(ids: List<UUID>): Single<List<Member>>
     fun findMemberWithThumbnailFlowable(id: UUID): Flowable<MemberWithThumbnail>
     fun findByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<Member>
-    fun findHouseholdIdByMembershipNumber(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
+    fun findHouseholdIdByMembershipNumber(membershipNumber: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun findHouseholdIdByCardId(cardId: String, excludeArchived: Boolean = true): Maybe<UUID>
     fun byIds(ids: List<UUID>): Single<List<MemberWithIdEventAndThumbnailPhoto>>
     fun byNames(names: List<String>): Single<List<MemberWithIdEventAndThumbnailPhoto>>

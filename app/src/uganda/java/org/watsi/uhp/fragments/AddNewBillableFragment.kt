@@ -114,8 +114,9 @@ class AddNewBillableFragment : DaggerFragment() {
                 encounterFlowState.encounterItemRelations =
                         encounterFlowState.encounterItemRelations.plus(
                             EncounterItemWithBillableAndPrice(
-                                newBillableEncounterItem,
-                                billableWithPrice
+                                encounterItem = newBillableEncounterItem,
+                                billableWithPriceSchedule = billableWithPrice,
+                                labResult = null
                             )
                         )
                 navigationManager.popTo(EncounterFragment.forEncounter(encounterFlowState))

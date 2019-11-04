@@ -84,7 +84,8 @@ class DrugAndSupplyViewModel @Inject constructor(
             updatedEncounterItems.add(
                 EncounterItemWithBillableAndPrice(
                     encounterItem,
-                    billableWithPrice
+                    billableWithPrice,
+                    null
                 )
             )
             updateEncounterItems(viewState, updatedEncounterItems)

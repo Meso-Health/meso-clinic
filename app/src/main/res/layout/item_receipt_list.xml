@@ -69,4 +69,12 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/receipt_billable_dosage"
         app:layout_constraintStart_toEndOf="@id/receipt_billable_guideline" />
+
+    <TextView
+        android:id="@+id/lab_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dialog_padding"
+        app:layout_constraintTop_toBottomOf="@id/receipt_billable_dosage"
+        app:layout_constraintStart_toEndOf="@id/stockout_indicator" />
 </org.watsi.uhp.views.ReceiptListItem>

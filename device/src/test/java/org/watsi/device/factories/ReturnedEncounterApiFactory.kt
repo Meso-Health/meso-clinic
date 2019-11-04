@@ -44,7 +44,7 @@ object ReturnedEncounterApiFactory {
                 PriceScheduleApi(it.billableWithPriceSchedule.priceSchedule)
             },
             encounterItems = encounterWithExtras.encounterItemRelations.map {
-                EncounterItemApi(it.encounterItem)
+                EncounterItemApi(it.encounterItem, it.labResult)
             },
             referrals = encounterWithExtras.referral?.let { listOf(ReferralApi(it)) }.orEmpty(),
             diagnoses = encounterWithExtras.diagnoses.map {

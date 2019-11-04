@@ -7,7 +7,9 @@ import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 data class EncounterItemWithBillableAndPriceModel(
     @Embedded var encounterItemModel: EncounterItemModel? = null,
     @Relation(parentColumn = "priceScheduleId", entityColumn = "id", entity = PriceScheduleModel::class)
-    var priceScheduleWithBillableModel: List<PriceScheduleWithBillableModel>? = null
+    var priceScheduleWithBillableModel: List<PriceScheduleWithBillableModel>? = null,
+    @Relation(parentColumn = "id", entityColumn = "encounterItemId", entity = LabResultModel::class)
+    var labResultModel: List<LabResultModel>? = null
 ) {
     fun toEncounterItemWithBillableAndPrice(): EncounterItemWithBillableAndPrice {
         encounterItemModel?.toEncounterItem()?.let { encounterItem ->
@@ -15,7 +17,8 @@ data class EncounterItemWithBillableAndPriceModel(
                 ?.let { billableWithPriceSchedule ->
                     return EncounterItemWithBillableAndPrice(
                         encounterItem,
-                        billableWithPriceSchedule
+                        billableWithPriceSchedule,
+                        labResult = labResultModel?.firstOrNull()?.toLabResult()
                     )
                 }
             throw IllegalStateException("BillableModel cannot be null")

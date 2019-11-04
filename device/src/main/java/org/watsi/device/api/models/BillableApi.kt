@@ -9,7 +9,8 @@ data class BillableApi(
     val composition: String?,
     val unit: String?,
     val name: String,
-    val active: Boolean
+    val active: Boolean,
+    val requiresLabResult: Boolean
 ) {
 
     constructor (billable: Billable) : this(
@@ -18,7 +19,8 @@ data class BillableApi(
         composition = billable.composition?.toLowerCase(),
         unit = billable.unit,
         name = billable.name,
-        active = billable.active
+        active = billable.active,
+        requiresLabResult = billable.requiresLabResult
     )
 
     fun toBillable(): Billable {
@@ -28,11 +30,12 @@ data class BillableApi(
             composition = composition,
             unit = unit,
             name = name,
-            active = active
+            active = active,
             // Billables inside returned claims may or may not be active.
             // If we keep this true, de-activated billables would be upserted to have active = true.
             // If we keep this false, any billable that are part of returned claims would set billables to active = false.
             // Both these scenarios don't work, so we will need to look at what backend returns.
+            requiresLabResult = requiresLabResult
         )
     }
 }

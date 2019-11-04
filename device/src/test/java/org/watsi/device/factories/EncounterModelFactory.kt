@@ -115,7 +115,13 @@ object EncounterModelFactory {
             hasFever = hasFever,
             clock = clock
         )
-        encounterDao.insert(model, emptyList(), emptyList(), emptyList(), emptyList())
+        encounterDao.insert(
+            encounterModel = model,
+            encounterItemModels = emptyList(),
+            encounterFormModels = emptyList(),
+            referralModels = emptyList(),
+            deltaModels = emptyList(),
+            labResultModels = emptyList())
         return model
     }
 }

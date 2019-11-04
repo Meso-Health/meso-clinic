@@ -15,7 +15,8 @@ data class BillableModel(@PrimaryKey val id: UUID,
                          val composition: String?,
                          val unit: String?,
                          val name: String,
-                         val active: Boolean) {
+                         val active: Boolean,
+                         val requiresLabResult: Boolean) {
 
     fun toBillable(): Billable {
         return Billable(id = id,
@@ -23,7 +24,8 @@ data class BillableModel(@PrimaryKey val id: UUID,
                         composition = composition,
                         unit = unit,
                         name = name,
-                        active = active)
+                        active = active,
+                        requiresLabResult = requiresLabResult)
     }
 
     companion object {
@@ -36,7 +38,8 @@ data class BillableModel(@PrimaryKey val id: UUID,
                                  composition = billable.composition,
                                  unit = billable.unit,
                                  name = billable.name,
-                                 active = billable.active)
+                                 active = billable.active,
+                                 requiresLabResult = billable.requiresLabResult)
         }
     }
 }

@@ -56,7 +56,7 @@ class SpinnerLineItemViewModel @Inject constructor(
                 priceScheduleId = billableWithPrice.priceSchedule.id,
                 priceScheduleIssued = false
             )
-            updatedEncounterItems.add(EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice))
+            updatedEncounterItems.add(EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice, null))
             updateEncounterItems(viewState, updatedEncounterItems)
         }
     }

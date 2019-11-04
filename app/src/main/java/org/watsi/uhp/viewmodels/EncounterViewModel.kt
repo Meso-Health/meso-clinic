@@ -9,6 +9,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
+import org.watsi.domain.entities.LabResult
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
@@ -64,7 +65,38 @@ class EncounterViewModel @Inject constructor(
         )
     }
 
-    fun addItem(billableWithPrice: BillableWithPriceSchedule) {
+
+    fun onSelectedBillable(billableWithPriceSchedule: BillableWithPriceSchedule?) {
+        billableWithPriceSchedule?.let {
+            // Set the billableWithPriceSchedule if the billable requires lab result.
+            if (it.billable.requiresLabResult) {
+                observable.value = observable.value?.copy(
+                    billableWithPriceSchedule = it
+                )
+            } else {
+                // Add item if it does not require lab result.
+                addItem(
+                    billableWithPrice = it,
+                    labResultValue = null
+                )
+            }
+        }
+    }
+
+    fun onLabResultChange(labResultValue: String) {
+        observable.value?.billableWithPriceSchedule?.let { billableWithPrice ->
+            addItem(
+                billableWithPrice = billableWithPrice,
+                labResultValue = labResultValue
+            )
+        }
+    }
+
+    fun requiresLabResult(): Boolean {
+        return observable.value?.billableWithPriceSchedule?.billable?.requiresLabResult ?: false
+    }
+
+    fun addItem(billableWithPrice: BillableWithPriceSchedule, labResultValue: String? = null) {
         observable.value?.let { viewState ->
             val encounterState = viewState.encounterFlowState
             val updatedEncounterItems = encounterState.encounterItemRelations.toMutableList()
@@ -75,7 +107,21 @@ class EncounterViewModel @Inject constructor(
                 priceScheduleId = billableWithPrice.priceSchedule.id,
                 priceScheduleIssued = false
             )
-            updatedEncounterItems.add(EncounterItemWithBillableAndPrice(encounterItem, billableWithPrice))
+
+            val labResult = labResultValue?.let {
+                LabResult(
+                    id = UUID.randomUUID(),
+                    encounterItemId = encounterItem.id,
+                    result = labResultValue
+                )
+            }
+            updatedEncounterItems.add(
+                EncounterItemWithBillableAndPrice(
+                    encounterItem,
+                    billableWithPrice,
+                    labResult
+                )
+            )
             updateEncounterItems(viewState, updatedEncounterItems)
         }
     }
@@ -107,7 +153,10 @@ class EncounterViewModel @Inject constructor(
 
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
         viewState.encounterFlowState.encounterItemRelations = encounterItemRelations
-        observable.value = viewState.copy(encounterFlowState = viewState.encounterFlowState)
+        observable.value = viewState.copy(
+            encounterFlowState = viewState.encounterFlowState,
+            billableWithPriceSchedule = null
+        )
     }
 
     fun updateQuery(query: String) {
@@ -145,9 +194,10 @@ class EncounterViewModel @Inject constructor(
     }
 
     fun getEncounterFlowState(): EncounterFlowState? = observable.value?.encounterFlowState
-
+    
     data class ViewState(
         val type: Billable.Type? = null,
+        val billableWithPriceSchedule: BillableWithPriceSchedule? = null,
         val encounterFlowState: EncounterFlowState,
         val selectableBillables: List<BillableWithPriceSchedule> = emptyList()
     )

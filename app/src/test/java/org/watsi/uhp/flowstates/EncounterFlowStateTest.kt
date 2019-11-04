@@ -23,7 +23,7 @@ class EncounterFlowStateTest {
             PriceScheduleFactory.build(billableId = billable1.id, price = 150)
         )
         val encounterItemRelation1 =
-            EncounterItemWithBillableAndPrice(encounterItem1, billableWithPrice1)
+            EncounterItemWithBillableAndPrice(encounterItem1, billableWithPrice1, null)
 
         val encounterItem2 = EncounterItemFactory.build(quantity = 4)
         val billable2 = BillableFactory.build()
@@ -32,7 +32,7 @@ class EncounterFlowStateTest {
             PriceScheduleFactory.build(billableId = billable1.id, price = 50)
         )
         val encounterItemRelation2 =
-            EncounterItemWithBillableAndPrice(encounterItem2, billableWithPrice2)
+            EncounterItemWithBillableAndPrice(encounterItem2, billableWithPrice2, null)
 
         val encounter = EncounterFactory.build()
         val member = MemberFactory.build(id = encounter.memberId)
