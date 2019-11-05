@@ -185,5 +185,4 @@
     <string name="visit_result_fragment_label">Visit Result</string>
     <string name="patient_outcome">Patient outcome</string>
     <string name="patient_outcome_prompt">Select patient outcome…</string>
-
 </resources>

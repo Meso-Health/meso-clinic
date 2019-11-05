@@ -26,7 +26,6 @@ import org.watsi.uhp.adapters.DiagnosisAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
-import org.watsi.uhp.helpers.SnackbarHelper
 import org.watsi.uhp.helpers.SwipeHandler
 import org.watsi.uhp.helpers.scrollToBottom
 import org.watsi.uhp.managers.NavigationManager
