@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -95,6 +96,7 @@ class EditPriceFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.edit_price_fragment_label), R.drawable.ic_arrow_back_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_edit_price, container, false)
     }
 
@@ -207,6 +209,16 @@ class EditPriceFragment : DaggerFragment() {
                 encounterFlowState.encounterItemRelations = updatedEncounterItems
                 navigationManager.goBack()
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

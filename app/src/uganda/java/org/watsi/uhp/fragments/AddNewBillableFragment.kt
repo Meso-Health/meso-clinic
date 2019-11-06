@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
@@ -23,6 +24,7 @@ import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
+import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.AddNewBillableViewModel
@@ -80,7 +82,8 @@ class AddNewBillableFragment : DaggerFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity.setTitle(R.string.add_new_billable_fragment_label)
+        (activity as ClinicActivity).setToolbar(context.getString(R.string.add_new_billable_fragment_label), R.drawable.ic_arrow_back_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_add_new_billable, container, false)
     }
 
@@ -121,6 +124,16 @@ class AddNewBillableFragment : DaggerFragment() {
                         )
                 navigationManager.popTo(EncounterFragment.forEncounter(encounterFlowState))
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
