@@ -21,6 +21,7 @@ import org.watsi.domain.factories.BillableWithPriceScheduleFactory
 import org.watsi.domain.factories.EncounterFactory
 import org.watsi.domain.factories.MemberFactory
 import org.watsi.domain.repositories.BillableRepository
+import org.watsi.domain.usecases.LoadAllBillablesTypesUseCase
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.testutils.AACBaseTest
@@ -31,6 +32,7 @@ class EncounterViewModelTest : AACBaseTest() {
     private lateinit var observable: LiveData<EncounterViewModel.ViewState>
     @Mock lateinit var mockBillableRepository: BillableRepository
     @Mock lateinit var mockLoadAllBillablesUseCase: LoadAllBillablesUseCase
+    @Mock lateinit var mockLoadAllBillablesTypesUseCase: LoadAllBillablesTypesUseCase
     @Mock lateinit var mockLogger: Logger
 
     private val encounterId = UUID.randomUUID()
@@ -76,7 +78,7 @@ class EncounterViewModelTest : AACBaseTest() {
             labBillable3
         )))
         mockLoadAllBillablesUseCase = LoadAllBillablesUseCase(mockBillableRepository)
-        viewModel = EncounterViewModel(mockLoadAllBillablesUseCase, mockLogger)
+        viewModel = EncounterViewModel(mockLoadAllBillablesUseCase, mockLoadAllBillablesTypesUseCase, mockLogger)
         observable = viewModel.getObservable(encounterFlowState)
         observable.observeForever{}
     }

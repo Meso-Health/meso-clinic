@@ -1,12 +1,9 @@
 package org.watsi.device.db.daos
 
 import org.junit.Test
-import org.threeten.bp.Instant
-import org.watsi.device.db.models.BillableWithPriceSchedulesModel
 import org.watsi.device.factories.BillableModelFactory
 import org.watsi.device.factories.BillableWithPriceSchedulesModelFactory
 import org.watsi.device.factories.DeltaModelFactory
-import org.watsi.device.factories.PriceScheduleModelFactory
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.Delta
 
@@ -103,5 +100,22 @@ class BillableDaoTest : DaoBaseTest() {
         BillableWithPriceSchedulesModelFactory.create(billableDao, priceScheduleDao)
 
         billableDao.opdDefaults().test().assertValue(listOf(consultation, medicalForm))
+    }
+
+    @Test
+    fun uniqueTypes() {
+        BillableModelFactory.create(billableDao, type = Billable.Type.SERVICE)
+        BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
+        BillableModelFactory.create(billableDao, type = Billable.Type.DRUG)
+        BillableModelFactory.create(billableDao, type = Billable.Type.IMAGING)
+        BillableModelFactory.create(billableDao, type = Billable.Type.LAB)
+        BillableModelFactory.create(billableDao, type = Billable.Type.SUPPLY, active = false)
+
+        billableDao.uniqueTypes().test().assertValue(listOf(
+            Billable.Type.DRUG,
+            Billable.Type.IMAGING,
+            Billable.Type.LAB,
+            Billable.Type.SERVICE
+        ))
     }
 }

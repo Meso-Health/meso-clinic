@@ -1,6 +1,7 @@
 package org.watsi.domain.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.domain.entities.Billable
@@ -18,4 +19,5 @@ interface BillableRepository {
     fun fetch(): Completable
     fun opdDefaults(): Single<List<BillableWithPriceSchedule>>
     fun sync(delta: Delta): Completable
+    fun uniqueTypes(): Flowable<List<Billable.Type>>
 }

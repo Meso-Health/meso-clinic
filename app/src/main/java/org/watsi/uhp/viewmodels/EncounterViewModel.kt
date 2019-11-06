@@ -1,6 +1,7 @@
 package org.watsi.uhp.viewmodels
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
@@ -12,6 +13,7 @@ import org.watsi.domain.entities.EncounterItem
 import org.watsi.domain.entities.LabResult
 import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
+import org.watsi.domain.usecases.LoadAllBillablesTypesUseCase
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
 import java.util.UUID
@@ -19,6 +21,7 @@ import javax.inject.Inject
 
 class EncounterViewModel @Inject constructor(
     val loadAllBillablesUseCase: LoadAllBillablesUseCase,
+    val loadAllBillableTypesUseCase: LoadAllBillablesTypesUseCase,
     private val logger: Logger
 ) : ViewModel() {
 
@@ -35,11 +38,19 @@ class EncounterViewModel @Inject constructor(
             } else {
                 uniqueDrugNames = drugBillables.map { it.billable.name }.distinct()
             }
-            observable.postValue(ViewState(encounterFlowState = encounterFlowState))
+            observable.postValue(
+                ViewState(
+                    encounterFlowState = encounterFlowState
+                )
+            )
         }, {
             logger.error(it)
         })
         return observable
+    }
+
+    fun getBillableTypeObservable(): LiveData<List<Billable.Type>> {
+        return LiveDataReactiveStreams.fromPublisher(loadAllBillableTypesUseCase.execute())
     }
 
     fun getSelectableBillables(
@@ -199,6 +210,7 @@ class EncounterViewModel @Inject constructor(
         val type: Billable.Type? = null,
         val billableWithPriceSchedule: BillableWithPriceSchedule? = null,
         val encounterFlowState: EncounterFlowState,
-        val selectableBillables: List<BillableWithPriceSchedule> = emptyList()
+        val selectableBillables: List<BillableWithPriceSchedule> = emptyList(),
+        val billableTypes: List<Billable.Type> = emptyList()
     )
 }

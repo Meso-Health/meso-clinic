@@ -80,6 +80,19 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EncounterViewModel::class.java)
         observable = viewModel.getObservable(encounterFlowState)
+        viewModel.getBillableTypeObservable().observe( this, Observer {
+            it?.let { billableTypes ->
+                select_type_box.setUpWithPrompt(
+                    choices = billableTypes.map { it.toString().titleize() },
+                    initialChoice = null,
+                    onItemSelected = { index ->
+                        viewModel.selectType(billableTypes[index])
+                    },
+                    promptString = getString(R.string.prompt_category),
+                    onPromptSelected = { viewModel.selectType(null) }
+                )
+            }
+        })
         observable.observe(this, Observer {
             it?.let { viewState ->
                 when (viewState.type) {
@@ -210,17 +223,6 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             adapter = encounterItemAdapter,
             context = context,
             swipeHandler = swipeHandler
-        )
-
-        val billableTypeOptions = Billable.UGANDA_BILLABLE_TYPES
-        select_type_box.setUpWithPrompt(
-            choices = billableTypeOptions.map { it.toString().titleize() },
-            initialChoice = null,
-            onItemSelected = { index ->
-                viewModel.selectType(billableTypeOptions[index])
-            },
-            promptString = getString(R.string.prompt_category),
-            onPromptSelected = { viewModel.selectType(null) }
         )
 
         drug_search.suggestionsAdapter = SimpleCursorAdapter(

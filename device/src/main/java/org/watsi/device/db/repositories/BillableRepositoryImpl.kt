@@ -1,6 +1,7 @@
 package org.watsi.device.db.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -45,6 +46,10 @@ class BillableRepositoryImpl(
                 billableDao.findWithPrice(it).blockingGet()
             }.flatten().map { it.toBillableWithCurrentPriceSchedule() }
         }.subscribeOn(Schedulers.io())
+    }
+
+    override fun uniqueTypes(): Flowable<List<Billable.Type>> {
+        return billableDao.uniqueTypes()
     }
 
     override fun find(ids: List<UUID>): Single<List<Billable>> {

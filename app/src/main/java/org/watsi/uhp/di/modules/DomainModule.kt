@@ -22,8 +22,8 @@ import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.usecases.DeletePendingClaimAndMemberUseCase
 import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.domain.usecases.DismissMemberUseCase
-import org.watsi.domain.usecases.ExportUnsyncedClaimsAsTextUseCase
 import org.watsi.domain.usecases.ExportUnsyncedClaimsAsJsonUseCase
+import org.watsi.domain.usecases.ExportUnsyncedClaimsAsTextUseCase
 import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchEnrollmentPeriodUseCase
@@ -37,6 +37,7 @@ import org.watsi.domain.usecases.FetchStatusUseCase
 import org.watsi.domain.usecases.FindHouseholdIdByCardIdUseCase
 import org.watsi.domain.usecases.FindHouseholdIdByMembershipNumberUseCase
 import org.watsi.domain.usecases.IsMemberCheckedInUseCase
+import org.watsi.domain.usecases.LoadAllBillablesTypesUseCase
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.domain.usecases.LoadCheckedInMembersUseCase
@@ -420,5 +421,12 @@ class DomainModule {
         enrollmentPeriodRepository: EnrollmentPeriodRepository
     ): ShouldEnrollUseCase {
         return ShouldEnrollUseCase(enrollmentPeriodRepository)
+    }
+
+    @Provides
+    fun provideLoadAllBillablesTypesUseCase(
+        billableRepository: BillableRepository
+    ): LoadAllBillablesTypesUseCase {
+        return LoadAllBillablesTypesUseCase(billableRepository)
     }
 }

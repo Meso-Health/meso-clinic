@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.watsi.device.db.models.BillableModel
@@ -43,6 +44,9 @@ interface BillableDao {
     @Transaction
     @Query("SELECT id FROM billables WHERE type = :type AND active = 1")
     fun allActiveIdsOfType(type: Billable.Type): Single<List<UUID>>
+
+    @Query("SELECT DISTINCT(type) FROM billables WHERE active = 1 ORDER BY type")
+    fun uniqueTypes(): Flowable<List<Billable.Type>>
 
     @Query("SELECT * FROM billables WHERE id = :id LIMIT 1")
     fun find(id: UUID): Maybe<BillableModel>
