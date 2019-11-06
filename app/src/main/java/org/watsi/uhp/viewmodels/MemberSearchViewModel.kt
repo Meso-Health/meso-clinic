@@ -28,7 +28,7 @@ class MemberSearchViewModel @Inject constructor (
     private fun preloadUniqueNamesAndCardIds() {
         Completable.fromAction {
             val distinctNames = memberRepository.allDistinctNames().blockingGet()
-            val distinctCardIds = memberRepository.allDistinctIds().blockingGet()
+            val distinctCardIds = memberRepository.allDistinctCardIds().blockingGet()
             observable.postValue(observable.value?.copy(
                 uniqueMemberNames = distinctNames,
                 uniqueMemberCardIds = distinctCardIds,

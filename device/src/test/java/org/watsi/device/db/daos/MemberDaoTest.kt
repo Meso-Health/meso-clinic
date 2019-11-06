@@ -292,6 +292,25 @@ class MemberDaoTest : DaoBaseTest() {
     }
 
     @Test
+    fun allDistinctCardIds() {
+        MemberModelFactory.create(memberDao, cardId = "ETH000000")
+        MemberModelFactory.create(memberDao, cardId = "ETH111111")
+        MemberModelFactory.create(memberDao, cardId = "ETH222222")
+        MemberModelFactory.create(memberDao, cardId = "ETH333333")
+
+        val distinctNames = memberDao.allDistinctCardIds().test().values().first()
+        assertEquals(
+            distinctNames.sorted(),
+            listOf(
+                "ETH000000",
+                "ETH111111",
+                "ETH222222",
+                "ETH333333"
+            ).sorted()
+        )
+    }
+
+    @Test
     fun findMemberRelationsByNames() {
         val memberModel1 = MemberModelFactory.create(memberDao, name = "Buster H Posey")
         MemberModelFactory.create(memberDao, name = "Stephen Tikka Masala")

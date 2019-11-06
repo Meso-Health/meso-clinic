@@ -56,7 +56,7 @@ interface MemberDao {
     fun all(): Flowable<List<MemberModel>>
 
     @Query("SELECT DISTINCT(cardId) FROM members WHERE cardId IS NOT NULL")
-    fun allDistinctIds(): Single<List<String>>
+    fun allDistinctCardIds(): Single<List<String>>
 
     @Query("SELECT DISTINCT(name) FROM members")
     fun allDistinctNames(): Single<List<String>>

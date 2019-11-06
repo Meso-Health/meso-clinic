@@ -7,7 +7,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.intellij.lang.annotations.Flow
 import org.threeten.bp.Clock
 import org.watsi.device.api.CoverageApi
 import org.watsi.device.api.models.MemberApi
@@ -142,8 +141,8 @@ class MemberRepositoryImpl(
         return memberDao.isMemberCheckedIn(memberId).subscribeOn(Schedulers.io())
     }
 
-    override fun allDistinctIds(): Single<List<String>> {
-        return memberDao.allDistinctIds().subscribeOn(Schedulers.io())
+    override fun allDistinctCardIds(): Single<List<String>> {
+        return memberDao.allDistinctCardIds().subscribeOn(Schedulers.io())
     }
 
     override fun allDistinctNames(): Single<List<String>> {
