@@ -111,6 +111,15 @@
     </plurals>
     <string name="today_wrapper">Today (%1$s)</string>
 
+    <!-- UpdateNotificationBar -->
+    <string name="update_available" tools:ignore="MissingTranslation">A new software update is available.</string>
+    <string name="update_alert_dialog_title" tools:ignore="MissingTranslation">Are you sure you want to install the update?</string>
+    <string name="update_alert_dialog_message" tools:ignore="MissingTranslation">
+        You have unsynced records on your device. We recommend syncing all records before installing the update to ensure no data is lost.
+    </string>
+    <string name="update_action_button" tools:ignore="MissingTranslation">Update</string>
+    <string name="yes_update_anyway" tools:ignore="MissingTranslation">Yes, update anyways</string>
+
     <!-- StatusFragment -->
     <string name="status_fragment_label">Status</string>
     <string name="current_user_label">Current User</string>

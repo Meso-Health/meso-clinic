@@ -2,6 +2,7 @@ package org.watsi.uhp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
 import kotlinx.android.synthetic.main.activity_authentication.login_username
+import kotlinx.android.synthetic.main.activity_authentication.update_notification
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.PreferencesManager
 import org.watsi.device.managers.SessionManager
@@ -19,16 +21,17 @@ import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.helpers.NetworkErrorHelper
+import org.watsi.uhp.managers.AppUpdateManager
 import org.watsi.uhp.managers.KeyboardManager
 import javax.inject.Inject
 
 class AuthenticationActivity : DaggerAppCompatActivity() {
-
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var keyboardManager: KeyboardManager
     @Inject lateinit var logger: Logger
     @Inject lateinit var deleteUserDataUseCase: DeleteUserDataUseCase
     @Inject lateinit var preferencesManager: PreferencesManager
+    private lateinit var appUpdateManager: AppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +69,26 @@ class AuthenticationActivity : DaggerAppCompatActivity() {
 
         app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
         android_version.text = getString(R.string.android_version, android.os.Build.VERSION.RELEASE)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appUpdateManager = AppUpdateManager(
+            activity = this,
+            logger = logger
+        )
+        appUpdateManager.setOnUpdateAvailable { appUpdateInfo ->
+            // If there is an update, show the update notification bar and set what happens when it is clicked.
+            update_notification.visibility = View.VISIBLE
+            update_notification.setOnClickListener {
+                appUpdateManager.requestUpdate(appUpdateInfo)
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        appUpdateManager.tearDown()
     }
 
     private fun handleLoginFailure(throwable: Throwable) {

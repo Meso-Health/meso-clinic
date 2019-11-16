@@ -15,6 +15,8 @@ ext {
     threeTenAndroidBackportVersion = "1.0.5"
     jodaVersion = "2.10"
     glideVersion = "4.7.1"
+    playCoreVersion = "1.6.4"
+
 
     // Testing
     junitVersion = '4.12'
@@ -55,7 +57,8 @@ ext {
             threeTenAndroidBackport:"com.jakewharton.threetenabp:threetenabp:$threeTenAndroidBackportVersion",
             joda:                   "joda-time:joda-time:$jodaVersion",
             glide:                  "com.github.bumptech.glide:glide:$glideVersion",
-            glideCompiler:          "com.github.bumptech.glide:compiler:$glideVersion"
+            glideCompiler:          "com.github.bumptech.glide:compiler:$glideVersion",
+            playCore:               "com.google.android.play:core:$playCoreVersion"
     ]
 
     testDependencies = [

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UHP</string>
+    <string name="app_name">UHP Clinic App</string>
 
     <!-- Error Messages -->
     <string name="image_capture_failed">Image capture failed</string>

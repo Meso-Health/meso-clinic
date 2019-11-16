@@ -12,6 +12,7 @@ interface DeltaRepository {
     fun unsyncedModelIds(modelName: Delta.ModelName, action: Delta.Action): Single<List<UUID>>
     fun markAsSynced(deltas: List<Delta>): Completable
     fun syncStatus(): Flowable<SyncStatus>
+    fun unsyncedCount(): Single<Int>
 
     data class SyncStatus(
         val unsyncedMembersCount: Int,

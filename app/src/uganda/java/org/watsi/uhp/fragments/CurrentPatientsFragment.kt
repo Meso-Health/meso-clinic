@@ -15,20 +15,24 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.uganda.fragment_current_patients.current_patients
 import kotlinx.android.synthetic.uganda.fragment_current_patients.identification_button
+import kotlinx.android.synthetic.uganda.fragment_current_patients.update_notification
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.IdentificationEvent.SearchMethod
 import org.watsi.domain.entities.Member
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
+import org.watsi.domain.repositories.DeltaRepository
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SearchByMemberCardActivity
 import org.watsi.uhp.adapters.MemberAdapter
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
+import org.watsi.uhp.managers.AppUpdateManager
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.viewmodels.CurrentPatientsViewModel
 import javax.inject.Inject
@@ -39,6 +43,8 @@ class CurrentPatientsFragment : DaggerFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var logger: Logger
     @Inject lateinit var clock: Clock
+    @Inject lateinit var deltaRepository: DeltaRepository
+    private lateinit var appUpdateManager: AppUpdateManager
 
     lateinit var viewModel: CurrentPatientsViewModel
     lateinit var memberAdapter: MemberAdapter
@@ -103,6 +109,45 @@ class CurrentPatientsFragment : DaggerFragment() {
             SnackbarHelper.show(identification_button, context, snackbarMessage)
             snackbarMessageToShow = null
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appUpdateManager = AppUpdateManager(
+            activity = activity,
+            logger = logger
+        )
+        appUpdateManager.setOnUpdateAvailable { appUpdateInfo ->
+            // If there is an update, show the update notification bar and set what happens when it is clicked.
+            update_notification.visibility = View.VISIBLE
+            update_notification.setOnClickListener {
+                deltaRepository.unsyncedCount().observeOn(AndroidSchedulers.mainThread()).subscribe(
+                    { unsyncedCount ->
+                        if (unsyncedCount == 0) {
+                            // Go ahead and move forward with the update without a warning message.
+                            appUpdateManager.requestUpdate(appUpdateInfo)
+                        } else {
+                            // Show an error message before moving forward with the update.
+                            AlertDialog.Builder(activity)
+                                    .setTitle(R.string.update_alert_dialog_title)
+                                    .setMessage(R.string.update_alert_dialog_message)
+                                    .setNegativeButton(android.R.string.no, null)
+                                    .setPositiveButton(R.string.yes_update_anyway) { _, _ ->
+                                        appUpdateManager.requestUpdate(appUpdateInfo)
+                                    }.create().show()
+                        }
+                    },
+                    { error ->
+                        logger.error(error)
+                    }
+                )
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdateManager.tearDown()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

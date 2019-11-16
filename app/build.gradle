@@ -153,6 +153,7 @@ dependencies {
     implementation dependencies.gson
     implementation dependencies.gmsVision
     implementation dependencies.constraintLayout
+    implementation dependencies.playCore
 
     // Dependency injection
     implementation dependencies.dagger

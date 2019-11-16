@@ -3,7 +3,7 @@
 def versionMajor = 0
 def versionMinor = 9
 def versionPatch = 5
-def versionCodeForLocalDevelopment = 1
+def versionCodeForLocalDevelopment = 26
 def computedVersionCode = (System.getenv("VERSION_CODE") ?: versionCodeForLocalDevelopment) as Integer
 
 buildscript {

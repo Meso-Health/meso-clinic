@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat
 import android.view.Menu
 import android.view.WindowManager
 import dagger.android.support.DaggerAppCompatActivity
+import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.CurrentPatientsFragment
@@ -23,9 +24,9 @@ import org.watsi.uhp.services.SyncPhotosService
 import javax.inject.Inject
 
 class ClinicActivity : DaggerAppCompatActivity() {
-
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var navigationManager: NavigationManager
+    @Inject lateinit var logger: Logger
 
     companion object {
         private val FETCH_DATA_SERVICE_JOB_ID = 0

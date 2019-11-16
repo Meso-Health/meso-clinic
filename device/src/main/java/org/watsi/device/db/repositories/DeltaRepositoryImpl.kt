@@ -15,6 +15,9 @@ class DeltaRepositoryImpl(
     private val deltaDao: DeltaDao,
     private val clock: Clock
 ) : DeltaRepository {
+    override fun unsyncedCount(): Single<Int> {
+        return deltaDao.unsyncedCount().subscribeOn(Schedulers.io())
+    }
 
     override fun insert(deltas: List<Delta>): Completable {
         val deltaModels = deltas.map { DeltaModel.fromDelta(it) }

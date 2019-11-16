@@ -6,7 +6,6 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Single
-import org.threeten.bp.Instant
 import org.watsi.device.db.models.DeltaModel
 import org.watsi.domain.entities.Delta
 import java.util.UUID
@@ -33,4 +32,7 @@ interface DeltaDao {
 
     @Query("SELECT COUNT(DISTINCT(modelId)) from deltas WHERE synced = 0 AND modelName = :modelName")
     fun unsyncedCount(modelName: Delta.ModelName): Flowable<Int>
+
+    @Query("SELECT COUNT(DISTINCT(modelId)) from deltas WHERE synced = 0")
+    fun unsyncedCount(): Single<Int>
 }
