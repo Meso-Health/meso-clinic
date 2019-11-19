@@ -100,6 +100,18 @@ jobs:
             ./gradlew assembleEthiopiaDemo
             ./gradlew publishEthiopiaDemo -Dorg.gradle.project.track=production
 
+  deploy_uganda_production:
+    <<: *android_config
+    steps:
+      - checkout
+      - run:
+          name: Deploy App to Play Store (Production)
+          command: |
+            export VERSION_CODE=${CIRCLE_BUILD_NUM}
+            ./deploy_scripts/downloadUgandaSecrets.sh
+            ./gradlew assembleUgandaRelease
+            ./gradlew publishUgandaRelease -Dorg.gradle.project.track=production
+
   deploy_ethiopia_production:
     <<: *android_config
     steps:
@@ -143,6 +155,12 @@ workflows:
           filters:
             branches:
               only: demo
+      - deploy_uganda_production:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: production-uganda
       - deploy_ethiopia_production:
           requires:
             - build_and_test
