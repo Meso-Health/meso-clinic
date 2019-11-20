@@ -19,8 +19,8 @@ class ReceiptViewModel @Inject constructor(
 
     private val observable = MutableLiveData<ViewState>()
 
-    fun getObservable(occurredAt: Instant, backdatedOccurredAt: Boolean, copaymentAmount: Int): LiveData<ViewState> {
-        observable.value = ViewState(occurredAt, backdatedOccurredAt, copaymentAmount)
+    fun getObservable(occurredAt: Instant, backdatedOccurredAt: Boolean, copaymentAmount: Int, providerComment: String?): LiveData<ViewState> {
+        observable.value = ViewState(occurredAt, backdatedOccurredAt, copaymentAmount, providerComment)
         return observable
     }
 
@@ -74,5 +74,6 @@ class ReceiptViewModel @Inject constructor(
     data class ViewState(val occurredAt: Instant,
                          val backdatedOccurredAt: Boolean,
                          val copaymentAmount: Int?,
+                         val providerComment: String? = null,
                          val isValid: Boolean = true)
 }

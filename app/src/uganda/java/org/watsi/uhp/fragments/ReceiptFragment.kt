@@ -12,6 +12,7 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
+import kotlinx.android.synthetic.uganda.fragment_receipt.comment_container
 import kotlinx.android.synthetic.uganda.fragment_receipt.date_edit
 import kotlinx.android.synthetic.uganda.fragment_receipt.date_label
 import kotlinx.android.synthetic.uganda.fragment_receipt.diagnoses_label
@@ -75,8 +76,12 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
         encounterFlowState = arguments.getSerializable(PARAM_ENCOUNTER) as EncounterFlowState
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ReceiptViewModel::class.java)
-        viewModel.getObservable(encounterFlowState.encounter.occurredAt, encounterFlowState.encounter.backdatedOccurredAt, encounterFlowState.encounter.copaymentAmount)
-            .observe(this, Observer { it?.let { viewState ->
+        viewModel.getObservable(
+            encounterFlowState.encounter.occurredAt,
+            encounterFlowState.encounter.backdatedOccurredAt,
+            encounterFlowState.encounter.copaymentAmount,
+            encounterFlowState.encounter.providerComment
+        ).observe(this, Observer { it?.let { viewState ->
                 val date_string = DateUtils.formatLocalDate(viewState.occurredAt.atZone(clock.zone).toLocalDate())
                 val time_string = DateUtils.formatLocalTime(viewState.occurredAt.atZone(clock.zone).toLocalDateTime())
                 date_label.text = if (DateUtils.isToday(viewState.occurredAt, clock)) {
@@ -84,6 +89,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 } else {
                     resources.getString(date_and_time, date_string, time_string)
                 }
+
                 save_button.isEnabled = viewState.isValid
             }
         })

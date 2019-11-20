@@ -167,6 +167,8 @@
     <string name="copayment_setting_hint">Default copayment amount</string>
     <string name="copayment_error">Copayment amount cannot be empty.</string>
     <string name="copayment_update_message">Copayment default successfully updated.</string>
+    <string name="comment_label">Comment</string>
+    <string name="comment_hint">Additional comments (optional)</string>
     <string name="none">None</string>
 
     <!-- HealthIndicatorsFragment -->
