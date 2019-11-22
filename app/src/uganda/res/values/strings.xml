@@ -147,10 +147,6 @@
     <string name="enroll_newborn_activity_title">Newborn</string>
     <string name="enrollment_completed_snackbar_message">Newborn successfully enrolled.</string>
 
-    <!-- PhotoActivity -->
-    <string name="member_photo_overlay_text">Take photo of member</string>
-    <string name="form_photo_overlay_text">Take photo of form</string>
-
     <!-- MemberListItem -->
     <string name="member_list_item_description">%1$s &#183; %2$s</string>
     <string name="member_list_item_description_checked_in">%1$s &#183; %2$s &#183; %3$s</string>

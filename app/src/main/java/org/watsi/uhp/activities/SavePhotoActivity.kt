@@ -3,13 +3,17 @@ package org.watsi.uhp.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_photo.cancel_container
+import kotlinx.android.synthetic.main.activity_photo.guide
+import kotlinx.android.synthetic.main.activity_photo.photo_hint
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Photo
 import org.watsi.domain.repositories.PhotoRepository
+import org.watsi.uhp.R
 import org.watsi.uhp.helpers.BitmapHelper
 import java.util.UUID
 import javax.inject.Inject
@@ -54,6 +58,16 @@ class SavePhotoActivity : PhotoActivity() {
 
         cancel_container.setOnClickListener {
             finishAsFailure(RESULT_CANCELED)
+        }
+
+        // TODO: Once we have a third reason to take a photo, we can start to abstract start defining two
+        // variables SHOW_PERSON_OUTLINE and ACTION_TEXT instead.
+        if (intent.getBooleanExtra(FOR_FORM_KEY, false)) {
+            photo_hint.text = getString(R.string.form_photo_overlay_text)
+            guide.visibility = View.GONE
+        } else {
+            photo_hint.text = getString(R.string.member_photo_overlay_text)
+            guide.visibility = View.VISIBLE
         }
     }
 

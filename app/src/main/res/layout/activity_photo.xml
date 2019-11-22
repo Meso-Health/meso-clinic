@@ -32,7 +32,6 @@
 
     <TextView
         android:id="@+id/photo_hint"
-        android:text="@string/member_photo_overlay_text"
         android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +48,7 @@
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
         android:layout_marginBottom="50dp"
+        android:visibility="gone"
         android:background="@drawable/dotted_circle"/>
 
     <android.support.constraint.ConstraintLayout

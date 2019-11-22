@@ -185,6 +185,7 @@
 
     <!-- PhotoActivity -->
     <string name="member_photo_overlay_text">Take photo of member</string>
+    <string name="form_photo_overlay_text" tools:ignore="MissingTranslation">Take photo of form</string>
 
     <!-- EnumHelper -->
     <string name="further_consultation">Further consultation</string>
