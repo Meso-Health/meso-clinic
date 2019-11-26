@@ -1,6 +1,6 @@
 # Watsi UHP Native Android App
 
-[![CircleCI](https://circleci.com/gh/Watsi/uhp-android-app/tree/master.svg?style=svg&circle-token=69c6f960da7cb0bc04d5c94cbbba21c24cfafba7)](https://circleci.com/gh/Watsi/uhp-android-app/tree/master)
+[![CircleCI](https://circleci.com/gh/Watsi/meso-clinic/tree/master.svg?style=svg&circle-token=69c6f960da7cb0bc04d5c94cbbba21c24cfafba7)](https://circleci.com/gh/Watsi/meso-clinic/tree/master)
 
 ## Setting up your development environment
 
