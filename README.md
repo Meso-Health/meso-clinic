@@ -1,4 +1,4 @@
-# Watsi UHP Native Android App
+# Meso Clinic Android App
 
 [![CircleCI](https://circleci.com/gh/Watsi/meso-clinic/tree/master.svg?style=svg&circle-token=69c6f960da7cb0bc04d5c94cbbba21c24cfafba7)](https://circleci.com/gh/Watsi/meso-clinic/tree/master)
 
