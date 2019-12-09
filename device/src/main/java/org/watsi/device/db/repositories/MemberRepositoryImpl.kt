@@ -123,8 +123,8 @@ class MemberRepositoryImpl(
             val memberWithPhotosById = mutableMapOf<UUID, MemberWithThumbnail>()
             memberDao.findAll(memberIds).blockingGet().map { it.toMemberWithThumbnailPhoto() }
                     .forEach { memberWithPhoto ->
-                memberWithPhotosById[memberWithPhoto.member.id] = memberWithPhoto
-            }
+                        memberWithPhotosById[memberWithPhoto.member.id] = memberWithPhoto
+                    }
             identificationEvents.sortedBy { it.occurredAt }.map { identificationEvent ->
                 val memberWithThumbnail = memberWithPhotosById[identificationEvent.memberId]
                 MemberWithIdEventAndThumbnailPhoto(
@@ -270,21 +270,21 @@ class MemberRepositoryImpl(
     }
 
     override fun downloadPhotos(): Completable {
-        return Completable.fromCallable {
-            memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
-                Completable.concat(memberModels.map { memberModel ->
-                    val member = memberModel.toMember()
-                    api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
-                        Completable.fromAction {
-                            val photo = Photo(UUID.randomUUID(), it.bytes())
-                            photoDao.insert(PhotoModel.fromPhoto(photo, clock))
-                            memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
+            return Completable.fromCallable {
+                memberDao.needPhotoDownload().flatMapCompletable { memberModels ->
+                    Completable.concat(memberModels.map { memberModel ->
+                        val member = memberModel.toMember()
+                        api.fetchPhoto(member.photoUrl!!).flatMapCompletable {
+                            Completable.fromAction {
+                                val photo = Photo(UUID.randomUUID(), it.bytes())
+                                photoDao.insert(PhotoModel.fromPhoto(photo, clock))
+                                memberDao.upsert(memberModel.copy(thumbnailPhotoId = photo.id))
+                            }
                         }
-                    }
-                })
-            }.blockingAwait()
-            preferencesManager.updateMemberPhotosLastFetched(clock.instant())
-        }.subscribeOn(Schedulers.io())
+                    })
+                }.blockingAwait()
+                preferencesManager.updateMemberPhotosLastFetched(clock.instant())
+            }.subscribeOn(Schedulers.io())
     }
 
     override fun withPhotosToFetchCount(): Flowable<Int> {

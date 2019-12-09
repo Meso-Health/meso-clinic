@@ -111,7 +111,6 @@
     <string name="referral_label">Referred</string>
     <string name="referral_date_label">Referral Date</string>
     <string name="receiving_facility_validation_error">Receiving facility is required</string>
-    <string name="referral_reason_validation_error">Referral reason is required</string>
     <string name="referral_serial_number">Referral Number (optional)</string>
     <string name="referral_reason">Referral reason</string>
     <string name="referred_to_facility">Referred to facility</string>

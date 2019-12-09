@@ -5,11 +5,11 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Diagnosis
 import org.watsi.domain.repositories.DiagnosisRepository
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.utils.FuzzySearchUtil
 import javax.inject.Inject
 
 class DiagnosisViewModel @Inject constructor(
@@ -58,18 +58,10 @@ class DiagnosisViewModel @Inject constructor(
     fun updateQuery(query: String) {
         Completable.fromCallable {
             if (query.length > 2) {
-                val topMatchingDescriptions = FuzzySearch.extractTop(query, uniqueDescriptions, 6, 60)
-
-                // This sorts the fuzzy search results by decreasing score, increasing alphabetical order.
-                topMatchingDescriptions.sortWith(Comparator { o1, o2 ->
-                    if (o2.score == o1.score)
-                        o1.string.compareTo(o2.string)
-                    else
-                        Integer.compare(o2.score, o1.score)
-                })
+                val topMatchingDescriptions = FuzzySearchUtil.topMatches(query, uniqueDescriptions, 6)
 
                 val matchingDescriptionDiagnoses = topMatchingDescriptions.map { result ->
-                    diagnoses.find { it.description == result.string }
+                    diagnoses.find { it.description == result }
                 }.filterNotNull()
                 val matchingSearchAliasesDiagnoses = diagnoses.filter { it.searchAliases.contains(query) }
 

@@ -1,6 +1,8 @@
 package org.watsi.uhp.services
 
 import io.reactivex.Completable
+import io.reactivex.exceptions.UndeliverableException
+import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
 import org.threeten.bp.Clock
 import org.watsi.device.managers.PreferencesManager
@@ -10,7 +12,9 @@ import org.watsi.domain.usecases.FetchBillablesUseCase
 import org.watsi.domain.usecases.FetchDiagnosesUseCase
 import org.watsi.domain.usecases.FetchMembersUseCase
 import org.watsi.uhp.R
+import java.io.IOException
 import javax.inject.Inject
+
 
 class FetchDataService : BaseService() {
 
@@ -24,6 +28,7 @@ class FetchDataService : BaseService() {
     @Inject lateinit var okHttpClient: OkHttpClient
 
     override fun executeTasks(): Completable {
+
         return Completable.fromCallable {
 
             // We want to clear the cache when there are no billables or diagnoses on the device in order
@@ -33,19 +38,19 @@ class FetchDataService : BaseService() {
             val billableCount = billableRepository.countActive().blockingGet()
             val diagnosisCount = diagnosisRepository.countActive().blockingGet()
             if (billableCount == 0 || diagnosisCount == 0) {
-                okHttpClient.cache().evictAll()
+                okHttpClient.cache()?.evictAll()
             }
 
-            Completable.concatArray(
-                fetchBillablesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_billables_error_label)) },
-                fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_diagnoses_error_label)) },
-                fetchMembersUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_members_error_label)) },
-                Completable.fromAction {
-                    if (getErrorMessages().isEmpty()) {
-                        preferencesManager.updateDataLastFetched(clock.instant())
+                Completable.concatArray(
+                    fetchBillablesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_billables_error_label)) },
+                    fetchDiagnosesUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_diagnoses_error_label)) },
+                    fetchMembersUseCase.execute().onErrorComplete { setError(it, getString(R.string.fetch_members_error_label)) },
+                    Completable.fromAction {
+                        if (getErrorMessages().isEmpty()) {
+                            preferencesManager.updateDataLastFetched(clock.instant())
+                        }
                     }
-                }
-            ).blockingAwait()
-        }
+                ).blockingAwait()
+            }
     }
 }

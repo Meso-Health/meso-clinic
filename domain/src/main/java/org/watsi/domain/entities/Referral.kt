@@ -16,14 +16,19 @@ data class Referral(
     enum class Reason {
         FURTHER_CONSULTATION,
         DRUG_STOCKOUT,
+        STOCKOUT,
         INVESTIGATIVE_TESTS,
         INPATIENT_CARE,
         BED_SHORTAGE,
         FOLLOW_UP,
+        ADDITIONAL_SERVICES,
+        INSUFFICIENT_EQUIPMENT,
+        SURGERY,
         OTHER
     }
 
     companion object {
+        val UNSPECIFIED_FACILTY = "UNSPECIFIED"
         val RECEIVING_FACILITY_CHOICES = listOf(
             "Mehoni Hospital",
             "Adi Shihu Hospital",

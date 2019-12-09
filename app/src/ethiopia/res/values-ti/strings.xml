@@ -270,8 +270,8 @@
     <string name="referral_other_option">ካልኦት ሪፈር ክለኣኹሉ ዝኽእሉ ትካላት ጥዕና</string>
     <string name="referral_reason_prompt">ምኽንያት ሪፈር…</string>
     <string name="further_consultation">ንዝለዓለ ምርመራ</string>
-    <string name="drug_stockout">ዝተኣዘዘ መድሓኒት ኣብ ትካልና ዘይምህላው</string>
     <string name="investigative_tests">ዝተኣዘዘ ላቦራቶሪ ወይከዓ ራጂ ኣብ ትካልና ዘይምህላው</string>
+    <string name="drug_stockout">ዝተኣዘዘ መድሓኒት ኣብ ትካልና ዘይምህላው</string>
     <string name="inpatient_care">ኣብ ዝለዓለ ትካል ኣደቂስካ ክሕከም ስለዘለዎ</string>
     <string name="bed_shortage">ሕፅረት ዓራት</string>
     <string name="follow_up">ብቀረባ ክትትል ንክረኽቡ</string>

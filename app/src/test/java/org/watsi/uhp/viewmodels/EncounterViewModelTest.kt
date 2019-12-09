@@ -130,7 +130,7 @@ class EncounterViewModelTest : AACBaseTest() {
     @Test
     fun updateQuery_atleastThreeCharacters_orderByDetails() {
         viewModel.selectType(Billable.Type.DRUG)
-        viewModel.updateQuery("vitamin")
+        viewModel.updateQuery("vitamin a")
         assertEquals(
             observable.value,
             initialViewState.copy(
@@ -158,7 +158,7 @@ class EncounterViewModelTest : AACBaseTest() {
     fun updateQuery_atleastThreeCharacters_alreadyAddedDoesNotShowUpInResults() {
         viewModel.addItem(drugBillable1)
         viewModel.selectType(Billable.Type.DRUG)
-        viewModel.updateQuery("vitamin")
+        viewModel.updateQuery("vitamin a")
         assertEquals(
             observable.value?.encounterFlowState?.encounterItemRelations?.map { it.billableWithPriceSchedule },
             listOf(drugBillable1)

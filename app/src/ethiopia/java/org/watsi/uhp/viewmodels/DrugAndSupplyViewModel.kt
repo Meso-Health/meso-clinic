@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
@@ -13,6 +12,7 @@ import org.watsi.domain.relations.BillableWithPriceSchedule
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.usecases.LoadBillablesOfTypeUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.utils.FuzzySearchUtil
 import java.util.UUID
 import javax.inject.Inject
 
@@ -53,15 +53,11 @@ class DrugAndSupplyViewModel @Inject constructor(
         Completable.fromCallable {
             if (query.length > 2) {
                 val selectableDrugNames = uniqueDrugNames
-                val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
+                val topMatchingNames = FuzzySearchUtil.topMatches(query, selectableDrugNames, 5)
 
-                val matchingBillables = topMatchingNames.sortedWith(Comparator { o1, o2 ->
-                    if (o2.score == o1.score)
-                        o1.string.compareTo(o2.string)
-                    else
-                        Integer.compare(o2.score, o1.score)
-                }).map { result ->
-                    billableRelations.filter { it.billable.name == result.string }.sortedBy { it.billable.details() }
+                val matchingBillables = topMatchingNames
+                .map { result ->
+                    billableRelations.filter { it.billable.name == result }.sortedBy { it.billable.details() }
                 }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillableRelations = matchingBillables))
             } else {

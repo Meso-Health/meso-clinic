@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.uganda.fragment_visit_result.done_button
 import kotlinx.android.synthetic.uganda.fragment_visit_result.patient_outcome_spinner
+import kotlinx.android.synthetic.uganda.fragment_visit_result.referral_reason_container
+import kotlinx.android.synthetic.uganda.fragment_visit_result.referral_reason_spinner
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.uhp.R
@@ -47,7 +49,14 @@ class VisitResultFragment : DaggerFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(VisitResultViewModel::class.java)
         viewModel.getObservable(encounterFlowState).observe(this, Observer {
             it?.let { viewState ->
-                // Do nothing until we potentially add referrals in. See Ethiopia flavor
+                viewState.validationErrors[VisitResultViewModel.REASON_ERROR].let { errorResourceId ->
+                    referral_reason_spinner.setError(errorResourceId?.let { getString(it) })
+                }
+                if (viewState.isReferral) {
+                    referral_reason_container.visibility = View.VISIBLE
+                } else {
+                    referral_reason_container.visibility = View.GONE
+                }
             }
         })
     }
@@ -63,8 +72,15 @@ class VisitResultFragment : DaggerFragment() {
         setUpSpinners()
 
         done_button.setOnClickListener {
-            viewModel.updateEncounterFlowState(encounterFlowState)
-            navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+            viewModel.validateAndUpdateEncounterFlowState(encounterFlowState).subscribe({
+                navigationManager.goTo(ReceiptFragment.forEncounter(encounterFlowState))
+            }, { throwable ->
+                if (throwable is VisitResultViewModel.ValidationException) {
+                    // do nothing for now. No need to say "some fields are invalid"
+                } else {
+                    logger.error(throwable)
+                }
+            })
         }
     }
 
@@ -82,6 +98,21 @@ class VisitResultFragment : DaggerFragment() {
             onItemSelected = { index: Int -> viewModel.onUpdatePatientOutcome(patientOutcomeEnums[index]) },
             promptString = getString(R.string.patient_outcome_prompt),
             onPromptSelected = { viewModel.onUpdatePatientOutcome(null) }
+        )
+
+        val referralReasonMappings = EnumHelper.getReferralReasonMappings()
+        val referralReasonEnums = referralReasonMappings.map { it.first }
+        val referralReasonStrings = referralReasonMappings.map { getString(it.second) }
+        val initialReferralReason = referralReasonMappings.find {
+            it.first == encounterFlowState.referral?.reason
+        }?.let { context.getString(it.second) }
+
+        referral_reason_spinner.setUpWithPrompt(
+            choices = referralReasonStrings,
+            initialChoice = initialReferralReason,
+            onItemSelected = { index -> viewModel.onReasonChange(referralReasonEnums[index]) },
+            promptString = getString(R.string.referral_reason_prompt),
+            onPromptSelected = { viewModel.onReasonChange(null) }
         )
     }
 

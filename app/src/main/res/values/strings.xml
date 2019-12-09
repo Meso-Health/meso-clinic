@@ -187,13 +187,20 @@
     <string name="member_photo_overlay_text">Take photo of member</string>
     <string name="form_photo_overlay_text" tools:ignore="MissingTranslation">Take photo of form</string>
 
+    <!-- VisitType / VisitResultFragment -->
+    <string name="referral_reason_validation_error">Referral reason is required</string>
+
     <!-- EnumHelper -->
     <string name="further_consultation">Further consultation</string>
+    <string name="general_stockout" translatable="false">Stockout (e.g. drug, supply, lab)</string>
     <string name="drug_stockout">Drug stockout</string>
-    <string name="investigative_tests">Investigative Tests</string>
+    <string name="investigative_tests">Investigative tests</string>
     <string name="inpatient_care">Inpatient care</string>
     <string name="bed_shortage">Bed shortage</string>
     <string name="follow_up">Follow-up</string>
+    <string name="additional_services"  translatable="false">Additional services</string>
+    <string name="insufficient_equipment"  translatable="false">Insufficient equipment</string>
+    <string name="surgery"  translatable="false">Surgery</string>
     <string name="outcome_cured_or_discharged">Cured/Discharged</string>
     <string name="outcome_referred">Referred</string>
     <string name="outcome_follow_up">Follow-up</string>

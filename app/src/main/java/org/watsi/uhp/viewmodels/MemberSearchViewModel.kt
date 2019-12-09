@@ -5,11 +5,11 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.relations.MemberWithIdEventAndThumbnailPhoto
 import org.watsi.domain.repositories.MemberRepository
+import org.watsi.uhp.utils.FuzzySearchUtil
 import javax.inject.Inject
 
 class MemberSearchViewModel @Inject constructor (
@@ -45,7 +45,7 @@ class MemberSearchViewModel @Inject constructor (
 
             if (query.contains(Regex("[0-9]"))) {
                 val uniqueMemberCardIds = observable.value?.uniqueMemberCardIds
-                val topMatchingCardsIds = FuzzySearch.extractTop(query, uniqueMemberCardIds, 20, 60).map { it.string }
+                val topMatchingCardsIds = FuzzySearchUtil.topMatches(query, uniqueMemberCardIds, 20)
                 val matchingMembers = memberRepository.byCardIds(topMatchingCardsIds).blockingGet()
                 observable.postValue(observable.value?.copy(
                     matchingMembers = matchingMembers,
@@ -54,7 +54,7 @@ class MemberSearchViewModel @Inject constructor (
                 ))
             } else {
                 val uniqueMemberNames = observable.value?.uniqueMemberNames
-                val topMatchingNames = FuzzySearch.extractTop(query, uniqueMemberNames, 20, 60).map { it.string }
+                val topMatchingNames = FuzzySearchUtil.topMatches(query, uniqueMemberNames, 20)
                 val matchingMembers = memberRepository.byNames(topMatchingNames).blockingGet()
                 observable.postValue(observable.value?.copy(
                     matchingMembers = matchingMembers,

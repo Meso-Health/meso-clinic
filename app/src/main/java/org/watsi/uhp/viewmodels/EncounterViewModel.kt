@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
 import org.watsi.domain.entities.EncounterItem
@@ -16,6 +15,7 @@ import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
 import org.watsi.domain.usecases.LoadAllBillablesTypesUseCase
 import org.watsi.domain.usecases.LoadAllBillablesUseCase
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.utils.FuzzySearchUtil
 import java.util.UUID
 import javax.inject.Inject
 
@@ -177,17 +177,13 @@ class EncounterViewModel @Inject constructor(
                         .map { it.billableWithPriceSchedule }
                         .filter { it.billable.type == Billable.Type.DRUG }
                 val selectableDrugNames = uniqueDrugNames
-                val topMatchingNames = FuzzySearch.extractTop(query, selectableDrugNames, 5, 50)
+                val topMatchingNames = FuzzySearchUtil.topMatches(query, selectableDrugNames, 5)
 
                 val drugBillables =  billablesByType[Billable.Type.DRUG].orEmpty()
 
-                val matchingBillables = topMatchingNames.sortedWith(Comparator { o1, o2 ->
-                    if (o2.score == o1.score)
-                        o1.string.compareTo(o2.string)
-                    else
-                        Integer.compare(o2.score, o1.score)
-                }).map { result ->
-                    drugBillables.filter { it.billable.name == result.string }.minus(currentDrugs).sortedBy { it.billable.details() }
+                val matchingBillables = topMatchingNames
+                .map { result ->
+                    drugBillables.filter { it.billable.name == result }.minus(currentDrugs).sortedBy { it.billable.details() }
                 }.flatten()
                 observable.postValue(observable.value?.copy(selectableBillables = matchingBillables))
             } else {

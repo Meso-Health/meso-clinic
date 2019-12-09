@@ -267,8 +267,8 @@
     <string name="referral_other_option">ሌሎች ሪፈር የሚላክላቸው ጤና ተቋሞች</string>
     <string name="referral_reason_prompt">ሪፈር የተባለበት ምክንያት…</string>
     <string name="further_consultation">ለተጨማሪ ከፍተኛ ምርመራ</string>
-    <string name="drug_stockout">የታዘዘው መድሃኒት በተቋማችን አለመኖር</string>
     <string name="investigative_tests">የታዘዘ ላቦራቶሪ ወይም ራጂ  በተቋማችን አለመኖር</string>
+    <string name="drug_stockout">የታዘዘው መድሃኒት በተቋማችን አለመኖር</string>
     <string name="inpatient_care">በከፍተኛ ተቋም ተኝቶ መታከም ስላለበት</string>
     <string name="bed_shortage">የአልጋ እጥረት</string>
     <string name="follow_up">በአቅራብያው ክትትል እንዲያገኙ</string>
