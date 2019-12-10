@@ -146,7 +146,7 @@
 
     <!-- Menu -->
     <string name="delete">ሰርዝ</string>
-    <string name="remove">አስወግድ</string>
+    <string name="menu_dismiss_member">አስወግድ</string>
     <string name="delete_claim_confirmation">ይህ የክፍያ ጥያቄ ይሰረዝ?</string>
     <!--<string name="menu_export_db" translatable="false">Export database</string>-->
     <!--<string name="delete_changes_confirmation" translatable="false">Delete these changes?</string>-->

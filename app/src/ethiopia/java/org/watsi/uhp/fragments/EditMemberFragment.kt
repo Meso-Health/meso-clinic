@@ -274,7 +274,7 @@ class EditMemberFragment : DaggerFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
         menu?.let {
-            it.findItem(R.id.menu_check_out_member).isVisible = isCheckedIn()
+            it.findItem(R.id.menu_dismiss_member).isVisible = isCheckedIn()
         }
     }
 
@@ -383,7 +383,7 @@ class EditMemberFragment : DaggerFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_check_out_member -> {
+            R.id.menu_dismiss_member -> {
                 identificationEventId?.let {
                     android.app.AlertDialog.Builder(activity)
                             .setTitle(R.string.check_out_alert_dialog_title)

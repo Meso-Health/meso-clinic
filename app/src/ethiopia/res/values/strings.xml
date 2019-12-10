@@ -10,9 +10,6 @@
     <string name="exit_form_alert">Are you sure you want to exit?</string>
 
     <!-- Menu -->
-    <string name="menu_switch_language" translatable="false">Switch Language (ቋንቋ ቀይር)</string>
-    <string name="delete">Delete</string>
-    <string name="remove">Remove</string>
     <string name="delete_claim_confirmation">Delete this claim?</string>
     <string name="delete_changes_confirmation" translatable="false">Delete these changes?</string>
 

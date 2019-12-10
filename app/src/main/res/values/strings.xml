@@ -4,6 +4,11 @@
 
     <!-- Menu -->
     <string name="menu_logout_label">Logout</string>
+    <string name="menu_switch_language" translatable="false">Switch Language</string>
+    <string name="menu_dismiss_member" tools:ignore="MissingTranslation">Dismiss member</string>
+    <string name="menu_member_edit_label" tools:ignore="MissingTranslation">Edit member</string>
+    <string name="menu_enroll_number_label" tools:ignore="MissingTranslation">Enroll newborn</string>
+    <string name="menu_settings_label" tools:ignore="MissingTranslation">Settings</string>
     <string name="log_out_alert">Are you sure you want to log out?</string>
     <string name="log_out_alert_message">Any unsynced data will be deleted.</string>
     <string name="menu_status_label">Status</string>
@@ -11,6 +16,7 @@
     <string name="menu_export_db" translatable="false">Export database</string>
     <string name="yes">OK</string>
     <string name="delete_items_confirmation" translatable="false">Delete this item?</string>
+    <string name="delete">Delete</string>
 
     <!-- General Labels -->
     <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>

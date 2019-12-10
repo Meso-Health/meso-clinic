@@ -47,11 +47,13 @@ android {
             dimension "version"
             applicationIdSuffix ".uga"
             versionNameSuffix "-uga"
+            buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "false"
         }
         ethiopia {
             dimension "version"
             applicationIdSuffix ".eth"
             versionNameSuffix "-eth"
+            buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "true"
         }
     }
     buildTypes {
