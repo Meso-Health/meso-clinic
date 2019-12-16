@@ -43,5 +43,14 @@ class Migrations {
                 database.execSQL("ALTER TABLE diagnoses " + " ADD COLUMN active INTEGER NOT NULL DEFAULT 1 ")
             }
         }
+
+        @JvmField
+        val MIGRATION_24_25: Migration = object : Migration(24, 25) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Android room uses integers to store booleans. 1 means true.
+                database.execSQL("ALTER TABLE encounter_items " + " ADD COLUMN surgicalScore INTEGER DEFAULT NULL ")
+            }
+        }
+
     }
 }

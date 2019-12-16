@@ -151,7 +151,8 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                     } ?: run {
                         logger.error("EncounterFlowState not set")
                     }
-                }
+                },
+                onSurgicalScoreTap = null
         )
 
         swipeHandler = SwipeHandler(context, onSwipe = { position: Int ->

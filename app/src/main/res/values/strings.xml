@@ -30,6 +30,7 @@
     <string name="submit">Submit</string>
     <string name="modal_save">@string/save</string>
     <string name="modal_cancel">@string/cancel</string>
+    <string name="modal_delete" translatable="false">Delete</string>
     <string name="prev_price" tools:ignore="MissingTranslation">%1$s&#8194;&#9656;</string>
     <string name="days">Days</string>
     <string name="months">Months</string>
@@ -192,6 +193,11 @@
     <!-- PhotoActivity -->
     <string name="member_photo_overlay_text">Take photo of member</string>
     <string name="form_photo_overlay_text" tools:ignore="MissingTranslation">Take photo of form</string>
+
+    <!-- SurgicalScoreDialog -->
+    <string name="surgical_score_prompt" translatable="false">How would you rate the outcome of the surgery?</string>
+    <string name="surgical_score" translatable="false">Add surgical score (optional)</string>
+    <string name="surgical_score_set" translatable="false">Surgical Score: %1$s</string>
 
     <!-- VisitType / VisitResultFragment -->
     <string name="referral_reason_validation_error">Referral reason is required</string>

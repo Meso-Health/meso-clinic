@@ -6,12 +6,16 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.support.design.widget.TextInputEditText
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
@@ -28,12 +32,14 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
+import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.LabResult
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
+import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -184,6 +190,15 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
         }
 
+        val onSurgicalScoreTap = { encounterItemId: UUID ->
+            viewModel.currentEncounterItems()?.let { encounterItemRelationsFromViewModel ->
+                encounterFlowState.encounterItemRelations = encounterItemRelationsFromViewModel
+                launchSurgicalScoreModal(encounterItemId)
+            } ?: run {
+                logger.error("EncounterFlowState not set")
+            }
+        }
+
         encounterItemAdapter = EncounterItemAdapter(
                 onQuantitySelected = {
                     swipeHandler.disableSwipe()
@@ -199,7 +214,8 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
                 onRemoveEncounterItem = { encounterItemId: UUID ->
                     viewModel.removeItem(encounterItemId)
                 },
-                onPriceTap = onPriceTap
+                onPriceTap = onPriceTap,
+                onSurgicalScoreTap = onSurgicalScoreTap
         )
 
 
@@ -333,5 +349,32 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    private fun launchSurgicalScoreModal(encounterItemId: UUID) {
+        val builder = android.support.v7.app.AlertDialog.Builder(context)
+
+        val items= arrayOf(
+            "1: Failure",
+            "2",
+            "3",
+            "4",
+            "5: Success"
+        )
+
+        val checkedScore = viewModel.getSurgicalScore(encounterItemId) ?: 0
+        builder.setTitle(R.string.surgical_score_prompt)
+            .setSingleChoiceItems(items, checkedScore - 1, { _, which ->
+                viewModel.setSurgicalScore(encounterItemId, which + 1)
+            }).setPositiveButton(R.string.modal_save, { dialog, _ ->
+                (dialog as android.support.v7.app.AlertDialog).dismiss()
+            })
+            .setNegativeButton(R.string.modal_delete, { dialogInterface, _ ->
+                viewModel.setSurgicalScore(encounterItemId, null)
+                (dialogInterface as android.support.v7.app.AlertDialog).dismiss()
+            })
+
+        val dialog = builder.create()
+
+        dialog.show()
     }
 }

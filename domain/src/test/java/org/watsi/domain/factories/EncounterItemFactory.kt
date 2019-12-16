@@ -11,7 +11,8 @@ object EncounterItemFactory {
         quantity: Int = 1,
         priceScheduleId: UUID = UUID.randomUUID(),
         priceScheduleIssued: Boolean = false,
-        stockout: Boolean = false
+        stockout: Boolean = false,
+        surgicalScore: Int? = null
     ): EncounterItem {
         return EncounterItem(
             id = id,
@@ -19,7 +20,8 @@ object EncounterItemFactory {
             quantity = quantity,
             priceScheduleId = priceScheduleId,
             priceScheduleIssued = priceScheduleIssued,
-            stockout = stockout
+            stockout = stockout,
+            surgicalScore = surgicalScore
         )
     }
 }

@@ -1,6 +1,7 @@
 package org.watsi.uhp.views
 
 import android.content.Context
+import android.graphics.Paint
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.View
@@ -13,7 +14,10 @@ import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.lab_res
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.line_item_price
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.stockout_indicator
 import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.stockout_negative_price
+import kotlinx.android.synthetic.main.view_encounter_item_list_item.view.surgical_score
+import org.watsi.domain.entities.Billable
 import org.watsi.domain.relations.EncounterItemWithBillableAndPrice
+import org.watsi.uhp.R
 import org.watsi.uhp.utils.CurrencyUtil
 import java.util.UUID
 
@@ -25,7 +29,8 @@ class EncounterItemListItem @JvmOverloads constructor(
         encounterItemRelation: EncounterItemWithBillableAndPrice,
         onQuantitySelected: () -> Unit,
         onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
-        onPriceTap: ((encounterItemId: UUID) -> Unit)?
+        onPriceTap: ((encounterItemId: UUID) -> Unit)?,
+        onSurgicalScoreTap: ((encounterItemId: UUID) -> Unit)?
     ) {
         val billable = encounterItemRelation.billableWithPriceSchedule.billable
         val encounterItem = encounterItemRelation.encounterItem
@@ -84,12 +89,35 @@ class EncounterItemListItem @JvmOverloads constructor(
             line_item_price.setOnClickListener { onPriceTap(encounterItem.id) }
         }
 
+        onSurgicalScoreTap?.let {
+            surgical_score.setOnClickListener { onSurgicalScoreTap(encounterItem.id) }
+        }
+
         if (encounterItem.stockout) {
             stockout_indicator.visibility = View.VISIBLE
             stockout_negative_price.text = "-${CurrencyUtil.formatMoneyWithCurrency(context, encounterItemRelation.price())}"
         } else {
             stockout_indicator.visibility = View.GONE
             stockout_negative_price.text = null
+        }
+
+        if (onSurgicalScoreTap != null && billable.type == Billable.Type.SURGERY) {
+            val text = encounterItem.surgicalScore?.let {
+                context.getString(
+                    R.string.surgical_score_set,
+                    encounterItem.surgicalScore.toString()
+                )
+            }?: run {
+                context.getString(
+                    R.string.surgical_score
+                )
+            }
+            surgical_score.text = text
+            surgical_score.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            surgical_score.visibility = View.VISIBLE
+
+        } else {
+            surgical_score.visibility = View.GONE
         }
     }
 }

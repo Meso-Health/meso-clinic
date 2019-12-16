@@ -11,6 +11,7 @@ data class EncounterItemApi(
     val priceScheduleId: UUID,
     val priceScheduleIssued: Boolean,
     val stockout: Boolean,
+    val surgicalScore: Int?,
     val labResult: LabResultApi?
 ) {
 
@@ -21,7 +22,8 @@ data class EncounterItemApi(
             quantity = quantity,
             priceScheduleId = priceScheduleId,
             priceScheduleIssued = priceScheduleIssued,
-            stockout = stockout
+            stockout = stockout,
+            surgicalScore = surgicalScore
         )
     }
 
@@ -32,6 +34,7 @@ data class EncounterItemApi(
         priceScheduleId = encounterItem.priceScheduleId,
         priceScheduleIssued = encounterItem.priceScheduleIssued,
         stockout = encounterItem.stockout,
+        surgicalScore = encounterItem.surgicalScore,
         labResult = labResult?.let { LabResultApi(labResult) }
     )
 }

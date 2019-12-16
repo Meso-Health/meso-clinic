@@ -162,6 +162,29 @@ class EncounterViewModel @Inject constructor(
         }
     }
 
+    fun setSurgicalScore(encounterItemId: UUID, score: Int?) {
+        observable.value?.let { viewState ->
+            val updatedEncounterItems = viewState.encounterFlowState.encounterItemRelations
+                    .map { encounterItemRelation ->
+                        if (encounterItemRelation.encounterItem.id == encounterItemId) {
+                            val oldEncounterItem = encounterItemRelation.encounterItem
+                            val newEncounterItem = oldEncounterItem.copy(surgicalScore = score)
+                            encounterItemRelation.copy(encounterItem = newEncounterItem)
+                        } else {
+                            encounterItemRelation
+                        }
+                    }
+            updateEncounterItems(viewState, updatedEncounterItems)
+        }
+    }
+
+    fun getSurgicalScore(encounterItemId: UUID): Int? {
+        return observable.value?.let { viewState ->
+            viewState.encounterFlowState.encounterItemRelations
+                    .find { it.encounterItem.id == encounterItemId }?.encounterItem?.surgicalScore
+        } ?: null
+    }
+
     private fun updateEncounterItems(viewState: ViewState, encounterItemRelations: List<EncounterItemWithBillableAndPrice>) {
         viewState.encounterFlowState.encounterItemRelations = encounterItemRelations
         observable.value = viewState.copy(

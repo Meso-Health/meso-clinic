@@ -13,6 +13,7 @@ import org.watsi.device.db.Migrations.Companion.MIGRATION_15_16
 import org.watsi.device.db.Migrations.Companion.MIGRATION_16_17
 import org.watsi.device.db.Migrations.Companion.MIGRATION_17_18
 import org.watsi.device.db.Migrations.Companion.MIGRATION_18_19
+import org.watsi.device.db.Migrations.Companion.MIGRATION_24_25
 import org.watsi.device.db.daos.BillableDao
 import org.watsi.device.db.daos.DeltaDao
 import org.watsi.device.db.daos.DiagnosisDao
@@ -69,6 +70,7 @@ class DbModule {
                 // on the members and identificationEvents tables.
                 // This is OK for Uganda because they'll be starting off at the latest DB version, but
                 // for Ethiopia, we will need to write the proper migration to avoid unsynced data being deleted.
+                .addMigrations(MIGRATION_24_25)
                 .build()
     }
 

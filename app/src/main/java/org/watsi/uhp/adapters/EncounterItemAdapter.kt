@@ -14,7 +14,8 @@ class EncounterItemAdapter(
     private val onQuantitySelected: () -> Unit,
     private val onQuantityChanged: (encounterItemId: UUID, newQuantity: Int?) -> Unit,
     private val onRemoveEncounterItem: (encounterItemId: UUID) -> Unit,
-    private val onPriceTap: ((encounterItemId: UUID) -> Unit)?
+    private val onPriceTap: ((encounterItemId: UUID) -> Unit)?,
+    private val onSurgicalScoreTap: ((encounterItemId: UUID) -> Unit)?
 ) : RecyclerView.Adapter<EncounterItemAdapter.ViewHolder>() {
 
     lateinit var encounterItemView: EncounterItemListItem
@@ -31,7 +32,7 @@ class EncounterItemAdapter(
         val encounterItemRelation = encounterItemRelations[position]
         encounterItemView = holder.itemView as EncounterItemListItem
         encounterItemView.setEncounterItem(encounterItemRelation, onQuantitySelected,
-                onQuantityChanged, onPriceTap)
+                onQuantityChanged, onPriceTap, onSurgicalScoreTap)
     }
 
     fun setEncounterItems(updatedEncounterItemRelations: List<EncounterItemWithBillableAndPrice>) {

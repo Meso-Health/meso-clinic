@@ -16,6 +16,7 @@ object EncounterItemModelFactory {
         updatedAt: Instant? = null,
         priceScheduleId: UUID = UUID.randomUUID(),
         priceScheduleIssued: Boolean = false,
+        surgicalScore: Int? = null,
         clock: Clock = Clock.systemUTC()
     ): EncounterItemModel {
         val now = Instant.now(clock)
@@ -26,7 +27,8 @@ object EncounterItemModelFactory {
             createdAt = createdAt ?: now,
             updatedAt = updatedAt ?: now,
             priceScheduleId = priceScheduleId,
-            priceScheduleIssued = priceScheduleIssued
+            priceScheduleIssued = priceScheduleIssued,
+            surgicalScore = surgicalScore
         )
     }
 
@@ -39,6 +41,7 @@ object EncounterItemModelFactory {
         updatedAt: Instant? = null,
         priceScheduleId: UUID = UUID.randomUUID(),
         priceScheduleIssued: Boolean = false,
+        surgicalScore: Int? = null,
         clock: Clock = Clock.systemUTC()
     ): EncounterItemModel {
         val model = build(
@@ -49,6 +52,7 @@ object EncounterItemModelFactory {
             updatedAt = updatedAt,
             priceScheduleId = priceScheduleId,
             priceScheduleIssued = priceScheduleIssued,
+            surgicalScore = surgicalScore,
             clock = clock
         )
         encounterItemDao.insert(model)

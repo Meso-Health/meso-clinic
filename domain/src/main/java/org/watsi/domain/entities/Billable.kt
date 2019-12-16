@@ -38,5 +38,5 @@ data class Billable(val id: UUID,
         }
     }
 
-    enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE, IMAGING, PROCEDURE, BED_DAY, UNSPECIFIED }
+    enum class Type { DRUG, SERVICE, LAB, SUPPLY, VACCINE, IMAGING, SURGERY, PROCEDURE, BED_DAY, UNSPECIFIED }
 }
