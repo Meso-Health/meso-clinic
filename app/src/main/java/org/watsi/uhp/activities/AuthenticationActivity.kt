@@ -20,7 +20,6 @@ import org.watsi.device.managers.SessionManager
 import org.watsi.domain.usecases.DeleteUserDataUseCase
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
-import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.helpers.NetworkErrorHelper
 import org.watsi.uhp.managers.AppUpdateManager
 import org.watsi.uhp.managers.KeyboardManager
@@ -43,7 +42,6 @@ class AuthenticationActivity : LocaleAwareActivity() {
         setTitle(R.string.authentication_activity_label)
 
         keyboardManager.showKeyboard(login_username)
-        ActivityHelper.setupBannerIfInTrainingMode(this)
 
         login_button.setOnClickListener {
             login_username.clearFocus()

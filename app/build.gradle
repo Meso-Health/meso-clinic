@@ -90,26 +90,6 @@ android {
 
             buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
         }
-        demo {
-            signingConfig signingConfigs.releaseConfig
-            applicationIdSuffix ".demo"
-            versionNameSuffix "-demo"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher"
-            ]
-
-            buildConfigField "String", "API_HOST", gradle.ext.apiHostDemo
-        }
-        training {
-            signingConfig signingConfigs.releaseConfig
-            applicationIdSuffix ".training"
-            versionNameSuffix "-training"
-            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
-            manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher"
-            ]
-        }
         release {
             signingConfig signingConfigs.releaseConfig
             applicationIdSuffix ".production"

@@ -12,7 +12,6 @@ import android.view.WindowManager
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.HomeFragment
-import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.DeleteSyncedPhotosService
@@ -40,7 +39,6 @@ class ClinicActivity : LocaleAwareActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clinic)
 
-        ActivityHelper.setupBannerIfInTrainingMode(this)
         startServices()
 
         navigationManager.goTo(HomeFragment())

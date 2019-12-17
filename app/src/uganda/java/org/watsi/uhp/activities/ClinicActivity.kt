@@ -13,7 +13,6 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.uhp.R
 import org.watsi.uhp.fragments.CurrentPatientsFragment
-import org.watsi.uhp.helpers.ActivityHelper
 import org.watsi.uhp.managers.NavigationManager
 import org.watsi.uhp.services.BaseService
 import org.watsi.uhp.services.DeleteSyncedPhotosService
@@ -41,7 +40,6 @@ class ClinicActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clinic)
 
-        ActivityHelper.setupBannerIfInTrainingMode(this)
         startServices()
 
         navigationManager.goTo(CurrentPatientsFragment())

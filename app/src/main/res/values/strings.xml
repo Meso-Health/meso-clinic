@@ -19,7 +19,6 @@
     <string name="delete">Delete</string>
 
     <!-- General Labels -->
-    <string name="training_mode_label" tools:ignore="MissingTranslation">FOR TRAINING ONLY</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="ok">OK</string>
