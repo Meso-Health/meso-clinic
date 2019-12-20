@@ -9,10 +9,10 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_authentication.android_version
 import kotlinx.android.synthetic.main.activity_authentication.app_version
-import kotlinx.android.synthetic.main.activity_authentication.error_text
 import kotlinx.android.synthetic.main.activity_authentication.login_button
 import kotlinx.android.synthetic.main.activity_authentication.login_password
 import kotlinx.android.synthetic.main.activity_authentication.login_username
+import kotlinx.android.synthetic.main.activity_authentication.password_container
 import kotlinx.android.synthetic.main.activity_authentication.update_notification
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.PreferencesManager
@@ -95,26 +95,26 @@ class AuthenticationActivity : LocaleAwareActivity() {
 
         when {
             throwable is SessionManager.PermissionException -> {
-                error_text.error = getString(R.string.login_permission_error)
+                password_container.error = getString(R.string.login_permission_error)
             }
             NetworkErrorHelper.isHttpUnauthorized(throwable) -> {
-                error_text.error = getString(R.string.login_wrong_username_or_password_message)
+                password_container.error = getString(R.string.login_wrong_username_or_password_message)
             }
             NetworkErrorHelper.isPhoneOfflineError(throwable) -> {
-                error_text.error = getString(R.string.login_phone_offline_error)
+                password_container.error = getString(R.string.login_phone_offline_error)
             }
             NetworkErrorHelper.isServerOfflineError(throwable) -> {
-                error_text.error = getString(R.string.login_server_offline_error)
+                password_container.error = getString(R.string.login_server_offline_error)
             }
             NetworkErrorHelper.isPoorConnectivityError(throwable) -> {
-                error_text.error = getString(R.string.login_connectivity_error)
+                password_container.error = getString(R.string.login_connectivity_error)
             }
             else -> {
                 // login failed due to server error
                 //  this path should only be used for server 500s, if we are seeing
                 //  exceptions for other reasons being caught here, we should add
                 //  them to the appropriate cases above
-                error_text.error = getString(R.string.login_generic_failure_message)
+                password_container.error = getString(R.string.login_generic_failure_message)
                 logger.error(throwable)
             }
         }

@@ -30,7 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/update_notification">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/login_username_container"
+            android:id="@+id/username_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/textInputLayoutMarginFix"
@@ -47,40 +47,24 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:id="@+id/password_label"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="@dimen/fontSize12"
-            android:textColor="@color/gray6"
-            android:text="@string/login_password_label"
-            android:labelFor="@+id/login_password"
-            app:layout_constraintTop_toBottomOf="@+id/login_username_container" />
-
-        <me.philio.pinentry.PinEntryView
-            android:id="@+id/login_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space16"
-            app:accentType="all"
-            app:digitBackground="@android:color/white"
-            app:digitElevation="2dp"
-            app:digitTextSize="5sp"
-            app:numDigits="6"
-            app:accentWidth="1dp"
-            app:digitWidth="35dp"
-            app:digitHeight="35dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password_label" />
-
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/error_text"
-            android:layout_width="wrap_content"
+            android:id="@+id/password_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space12"
-            app:layout_constraintTop_toBottomOf="@+id/login_password" />
+            android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+            android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+            app:passwordToggleEnabled="true"
+            app:layout_constraintTop_toBottomOf="@id/username_container">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone"
+                android:hint="@string/login_password_label" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/login_button"
@@ -89,7 +73,7 @@
             android:text="@string/login_button_text"
             android:layout_marginTop="@dimen/space16"
             style="@style/PrimaryButton"
-            app:layout_constraintTop_toBottomOf="@+id/error_text" />
+            app:layout_constraintTop_toBottomOf="@+id/password_container" />
     </android.support.constraint.ConstraintLayout>
 
     <TextView
