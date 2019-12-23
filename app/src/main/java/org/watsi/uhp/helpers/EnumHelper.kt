@@ -17,7 +17,8 @@ object EnumHelper {
                     Pair(Referral.Reason.INVESTIGATIVE_TESTS, R.string.investigative_tests),
                     Pair(Referral.Reason.ADDITIONAL_SERVICES, R.string.additional_services),
                     Pair(Referral.Reason.INSUFFICIENT_EQUIPMENT, R.string.insufficient_equipment),
-                    Pair(Referral.Reason.SURGERY, R.string.surgery)
+                    Pair(Referral.Reason.SURGERY, R.string.surgery),
+                    Pair(Referral.Reason.OTHER, R.string.other)
                 )
             }
             "ethiopia" -> {
