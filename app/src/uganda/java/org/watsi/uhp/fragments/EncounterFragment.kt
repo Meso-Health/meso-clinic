@@ -6,16 +6,12 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.DialogInterface
 import android.database.MatrixCursor
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.SimpleCursorAdapter
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
@@ -32,14 +28,12 @@ import kotlinx.android.synthetic.uganda.fragment_encounter.select_type_box
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.Billable
-import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.domain.entities.LabResult
 import org.watsi.domain.utils.titleize
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.adapters.EncounterItemAdapter
 import org.watsi.uhp.flowstates.EncounterFlowState
-import org.watsi.uhp.helpers.LayoutHelper
 import org.watsi.uhp.helpers.QueryHelper
 import org.watsi.uhp.helpers.RecyclerViewHelper
 import org.watsi.uhp.helpers.SnackbarHelper
@@ -354,11 +348,11 @@ class EncounterFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         val builder = android.support.v7.app.AlertDialog.Builder(context)
 
         val items= arrayOf(
-            "1: Failure",
-            "2",
-            "3",
-            "4",
-            "5: Success"
+            "1. Successful surgery: The surgery proceeded as planned. \n",
+            "2. Additional medication needed that was not part of the treatment plan \n",
+            "3. Minor Adjustment: Minor surgical adjustment needed using local anesthesia \n",
+            "4. Major adjustment: Major surgical adjustment was required using general anesthetic \n",
+            "5. Death: Patient during or after surgery before discharge.\n"
         )
 
         val checkedScore = viewModel.getSurgicalScore(encounterItemId) ?: 0
