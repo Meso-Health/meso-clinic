@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
@@ -99,6 +100,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity as ClinicActivity).setToolbar(context.getString(R.string.receipt_fragment_label), R.drawable.ic_arrow_back_white_24dp)
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_receipt, container, false)
     }
 
@@ -195,6 +197,16 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }, {
             logger.error(it)
         })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigationManager.goBack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onBack(): Single<Boolean> {
