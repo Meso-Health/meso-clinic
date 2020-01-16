@@ -39,8 +39,8 @@
     <string name="invalid_membership_error">Invalid membership number</string>
     <string name="scan_card">Scan card</string>
     <string name="search_name">Search name</string>
-    <string name="cbhi_id_label">Search CBHI ID</string>
-    <string name="cbhi_id_search_label">CBHI ID</string>
+    <string name="cbhi_id_label">Search Beneficiary ID</string>
+    <string name="cbhi_id_search_label">Beneficiary ID</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
@@ -62,7 +62,7 @@
     <!-- EditMemberFragment -->
     <string name="member_list_item_gender_age" translatable="false">%1$s, %2$s</string>
     <string name="replace_card_notification">Needs renewal</string>
-    <string name="membership_number_field_label">Member CBHI ID</string>
+    <string name="membership_number_field_label">Beneficiary ID</string>
     <string name="name_field_label">Full name</string>
     <string name="birthdate_field_label">Birthdate</string>
     <string name="medical_record_number_field_label">Medical record number</string>
