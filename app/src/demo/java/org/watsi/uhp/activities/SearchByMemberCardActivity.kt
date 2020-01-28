@@ -24,9 +24,9 @@ class SearchByMemberCardActivity : QrCodeActivity() {
             logger.warning("Invalid card ID scanned", mapOf(Pair("cardId", qrCode)))
             setErrorMessage(getString(R.string.scan_member_card_invalid_id))
         } else {
-            findHouseholdIdByCardIdUseCase.execute(qrCode).subscribe({
+            findHouseholdIdByCardIdUseCase.execute(qrCode).subscribe({ householdId ->
                 val resultIntent = Intent().apply {
-                    putExtra(MEMBER_RESULT_KEY, it)
+                    putExtra(MEMBER_RESULT_KEY, householdId)
                 }
                 setResult(RESULT_OK, resultIntent)
                 vibrate()

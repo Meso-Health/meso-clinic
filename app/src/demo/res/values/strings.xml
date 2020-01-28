@@ -29,7 +29,7 @@
     <string name="checked_in_patients_fragment_label">Checked-in patients</string>
     <string name="no_members">No members available</string>
 
-    <!-- EthiopiaMemberSearchFragment -->
+    <!-- MemberSearchWithMembershipNumberFragment -->
     <string name="search_fragment_label">@string/search</string>
     <string name="slash" translatable="false">/</string>
     <string name="two_zeroes_placeholder" translatable="false">00</string>
@@ -39,8 +39,6 @@
     <string name="invalid_membership_error">Invalid membership number</string>
     <string name="scan_card">Scan card</string>
     <string name="search_name">Search name</string>
-    <string name="cbhi_id_label">Search Beneficiary ID</string>
-    <string name="cbhi_id_search_label">Beneficiary ID</string>
 
     <!-- MemberSearchFragment -->
     <string name="member_search_fragment_label">@string/search</string>
@@ -185,6 +183,4 @@
 
     <!-- Search Terms -->
     <string name="search_by_member_card">Search member card</string>
-    <string name="search">Search</string>
-
 </resources>

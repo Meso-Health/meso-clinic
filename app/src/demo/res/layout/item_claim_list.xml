@@ -46,7 +46,7 @@
         app:layout_constraintStart_toEndOf="@id/checkbox"/>
 
     <TextView
-        android:id="@+id/claim_cbhi"
+        android:id="@+id/claim_membership_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space16"
@@ -65,7 +65,7 @@
         android:textSize="@dimen/fontSize14"
         android:text="@string/bullet"
         app:layout_constraintTop_toBottomOf="@id/member_name"
-        app:layout_constraintLeft_toRightOf="@id/claim_cbhi"/>
+        app:layout_constraintLeft_toRightOf="@id/claim_membership_number"/>
 
     <TextView
         android:id="@+id/claim_id"

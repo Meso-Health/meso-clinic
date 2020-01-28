@@ -111,7 +111,7 @@ class DownloadHouseholdFragment : DaggerFragment() {
     }
 
     private fun completeDownload(householdId: UUID, searchMethod: IdentificationEvent.SearchMethod) {
-        navigationManager.popTo(EthiopiaMemberSearchFragment())
+        navigationManager.popTo(MemberSearchWithMembershipNumberFragment())
         navigationManager.goTo(HouseholdFragment.forParams(householdId, searchMethod))
     }
 
@@ -131,7 +131,7 @@ class DownloadHouseholdFragment : DaggerFragment() {
 
     private fun goToMemberNotFound() {
         membershipNumber?.let { it
-            navigationManager.popTo(EthiopiaMemberSearchFragment())
+            navigationManager.popTo(MemberSearchWithMembershipNumberFragment())
             navigationManager.goTo(MemberNotFoundFragment.forMembershipNumber(it))
         }
     }

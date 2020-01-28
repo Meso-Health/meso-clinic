@@ -3,7 +3,7 @@ package org.watsi.uhp.viewmodels
 import android.arch.lifecycle.LiveData
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Flowable
-import junit.framework.Assert
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -87,7 +87,7 @@ class SearchableClaimsListViewModelTest : AACBaseTest() {
 
 
     @Test
-    fun filterClaimsBySearchText_atLeast3Characters_matchCBHID() {
+    fun filterClaimsBySearchText_atLeast3Characters_matchMembershipNumber() {
         viewModel.filterClaimsBySearchText("1111")
         Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(claim1)
@@ -95,7 +95,7 @@ class SearchableClaimsListViewModelTest : AACBaseTest() {
     }
 
     @Test
-    fun filterClaimsBySearchText_atLeast3Characters_matchMRNandCBHID() {
+    fun filterClaimsBySearchText_atLeast3Characters_matchMRNandMembershipNumber() {
         viewModel.filterClaimsBySearchText("234")
         Assert.assertEquals(observable.value, initialViewState.copy(
             visibleClaims = listOf(claim2, claim3)

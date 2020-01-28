@@ -19,7 +19,6 @@ import org.watsi.uhp.viewmodels.HouseholdViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberSearchViewModel
 import org.watsi.uhp.viewmodels.ReceiptViewModel
-import org.watsi.uhp.viewmodels.EthiopiaMemberSearchViewModel
 import org.watsi.uhp.viewmodels.SearchableClaimsListViewModel
 import org.watsi.uhp.viewmodels.SpinnerLineItemViewModel
 import org.watsi.uhp.viewmodels.StatusViewModel
@@ -37,12 +36,7 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CheckedInPatientsViewModel::class)
     abstract fun bindCheckedInPatientsViewModel(viewModel: CheckedInPatientsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(EthiopiaMemberSearchViewModel::class)
-    abstract fun bindSearchViewModel(viewModelEthiopiaMember: EthiopiaMemberSearchViewModel): ViewModel
-
+    
     @Binds
     @IntoMap
     @ViewModelKey(HouseholdViewModel::class)

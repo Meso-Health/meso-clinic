@@ -74,6 +74,8 @@
 
     <!-- MemberSearchFragment -->
     <string name="member_no_search_results_text" translatable="false">No search results found. Please try again.</string>
+    <string name="search">Search</string>
+    <string name="membership_number_search_label" tools:ignore="MissingTranslation">Search Membership Number</string>
 
     <!-- EncounterFragment -->
     <string name="encounter_fragment_label">Line items</string>

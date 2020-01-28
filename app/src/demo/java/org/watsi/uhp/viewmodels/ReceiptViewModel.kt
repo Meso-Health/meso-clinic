@@ -58,7 +58,7 @@ class ReceiptViewModel @Inject constructor(
                 occurredAt = viewState.occurredAt,
                 backdatedOccurredAt =  viewState.backdatedOccurredAt,
                 providerComment = viewState.comment,
-                copaymentAmount = 0   // no copayment in ethiopia system
+                copaymentAmount = 0
             )
             Completable.fromCallable {
 

@@ -33,7 +33,7 @@ object EnumHelper {
                 )
             }
             else -> {
-                throw IllegalStateException("getReferralReasonMapping called when BuildConfig.FLAVOR is not ethiopia or uganda.")
+                throw IllegalStateException("getReferralReasonMapping called when BuildConfig.FLAVOR is not demo or uganda.")
             }
         }
     }
