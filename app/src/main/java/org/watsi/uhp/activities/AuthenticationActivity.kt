@@ -142,7 +142,7 @@ class AuthenticationActivity : LocaleAwareActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.menu_switch_language -> {
-                localeManager.toggleLocale(this)
+                localeManager.setLocaleConfirmationDialog(this)
                 true
             }
             else -> super.onOptionsItemSelected(item)

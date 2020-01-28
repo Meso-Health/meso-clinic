@@ -102,24 +102,6 @@ class ClinicActivity : LocaleAwareActivity() {
         setToolbarHomeIcon(homeIconId)
     }
 
-    /**
-     * Sets the toolbar to be flat and title-less.
-     */
-    fun setToolbarMinimal(@DrawableRes homeIconId: Int?) {
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.elevation = 0.toFloat()
-        setToolbarHomeIcon(homeIconId)
-    }
-
-    /**
-     * Resets the changes made by setToolbarMinimal
-     */
-    fun resetToolbarMinimal() {
-        supportActionBar?.setDisplayShowTitleEnabled(true)
-        //TODO: 4 is the default material design elevation for action bars, but ours is set to 12 for some reason.
-        supportActionBar?.elevation = 12.toFloat()
-    }
-
     private fun setToolbarHomeIcon(@DrawableRes homeIconId: Int?) {
         supportActionBar?.setDisplayHomeAsUpEnabled(homeIconId != null)
         homeIconId?.let{ supportActionBar?.setHomeAsUpIndicator(it) }
@@ -133,7 +115,7 @@ class ClinicActivity : LocaleAwareActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.menu_switch_language -> {
-                localeManager.toggleLocale(this)
+                localeManager.setLocaleConfirmationDialog(this)
                 true
             }
             android.R.id.home -> {

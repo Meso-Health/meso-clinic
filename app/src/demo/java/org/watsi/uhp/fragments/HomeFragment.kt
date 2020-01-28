@@ -97,7 +97,7 @@ class HomeFragment : DaggerFragment() {
 
 
         language_button.setOnClickListener {
-            (activity as ClinicActivity).localeManager.toggleLocale(activity)
+            (activity as ClinicActivity).localeManager.setLocaleConfirmationDialog(activity)
         }
 
         status_button.setOnClickListener {
