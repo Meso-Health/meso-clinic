@@ -21,7 +21,7 @@ object EnumHelper {
                     Pair(Referral.Reason.OTHER, R.string.other)
                 )
             }
-            "ethiopia" -> {
+            "demo" -> {
                 listOf(
                     Pair(Referral.Reason.FURTHER_CONSULTATION, R.string.further_consultation),
                     Pair(Referral.Reason.DRUG_STOCKOUT, R.string.drug_stockout),
