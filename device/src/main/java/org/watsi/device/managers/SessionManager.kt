@@ -33,24 +33,20 @@ interface SessionManager {
 
     companion object {
         val ALLOWED_HEALTH_CENTER_ROLES = listOf(
-            "provider", // legacy role
-            "facility_head", // legacy role
-            "claims_preparer", // legacy role
-            "card_room_worker", // legacy role
-            "receptionist",
-            "claims_officer",
-            "facility_director"
+            "identification",
+            "submission",
+            "provider_admin",
+            "provider" // TODO: legacy role - will remove once users have migrated to new version
         )
 
         val ALLOWED_HOSPITAL_ROLES = listOf(
-            "card_room_worker", // legacy role
-            "receptionist"
+            "identification"
         )
 
         /*
          * This application supports two different workflows:
          *
-         * 1. The hospital check-in workflow is used by hospital card room workers.
+         * 1. The hospital check-in workflow is used by hospital front-desk workers.
          *    The only action they take is to identify and check-in patients; the actual
          *    claim entry will occur separately via the web application.
          *    The only difference between this check-in workflow and the one used by health center
