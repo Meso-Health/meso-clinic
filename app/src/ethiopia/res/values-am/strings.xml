@@ -247,7 +247,7 @@
     <string name="age_validation_error">እድሜ መግባት ኣለበት</string>
     <string name="age_limit_validation_error">እድሜ ከ 200 በታች መሆን አለበት</string>
     <string name="medical_record_number_validation_error">የህክምና ካርድ ቁጥር መግባት ኣለበት</string>
-    <string name="medical_record_number_length_validation_error">የህክምና ካርድ ቁጥር 5 ወይም 7 አሃዝ መሆን አለበት</string>
+    <string name="medical_record_number_length_validation_error">የህክምና ካርድ ቁጥር %d ወይም %d አሃዝ መሆን አለበት</string>
     <string name="exit_form_alert">እርግጠኛ ነዎት መውጣት ይፈልጋሉን</string>
     <string name="yes">አዎ</string>
     <string name="missing_fields_validation_error">ያልተሟላ መረጃ</string>

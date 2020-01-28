@@ -99,7 +99,7 @@
     <string name="age_validation_error">Age is required</string>
     <string name="age_limit_validation_error">Age must be 200 or less</string>
     <string name="medical_record_number_validation_error">Medical record number is required</string>
-    <string name="medical_record_number_length_validation_error">Medical record number must be 5 to 7 digits</string>
+    <string name="medical_record_number_length_validation_error">Medical record number must be %d to %d digits</string>
     <string name="missing_fields_validation_error">Some fields are missing</string>
 
     <!-- VisitTypeFragment -->

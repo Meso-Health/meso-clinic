@@ -29,8 +29,8 @@ import kotlinx.android.synthetic.ethiopia.fragment_edit_member.inbound_referral_
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.medical_record_number_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.member_status_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_number_field
-import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.membership_status_notification
+import kotlinx.android.synthetic.ethiopia.fragment_edit_member.name_field
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.photo_container
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_gender_age
 import kotlinx.android.synthetic.ethiopia.fragment_edit_member.top_name
@@ -47,6 +47,8 @@ import org.watsi.domain.entities.Member
 import org.watsi.domain.entities.Member.MembershipStatus
 import org.watsi.domain.usecases.ValidateDiagnosesAndBillablesExistenceUseCase
 import org.watsi.domain.utils.DateUtils
+import org.watsi.domain.utils.EthiopianDateHelper
+import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.R.string.check_in
 import org.watsi.uhp.R.string.start_claim_button
@@ -54,7 +56,6 @@ import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.activities.SavePhotoActivity
 import org.watsi.uhp.flowstates.EncounterFlowState
 import org.watsi.uhp.helpers.EnumHelper
-import org.watsi.domain.utils.EthiopianDateHelper
 import org.watsi.uhp.helpers.PhotoLoader
 import org.watsi.uhp.helpers.StringHelper
 import org.watsi.uhp.managers.KeyboardManager
@@ -256,9 +257,13 @@ class EditMemberFragment : DaggerFragment() {
             },
             validateFieldAndReturnError = { medicalRecordNumberString ->
                 viewModel.validateMedicalRecordNumber(medicalRecordNumberString,
-                    getString(R.string.medical_record_number_length_validation_error))
-            },
-            maxTextLength = Member.MAX_MRN_LENGTH
+                    String.format(
+                        getString(R.string.medical_record_number_length_validation_error),
+                        BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH,
+                        BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH
+                    )
+                )
+            }
         )
 
         photo_container.setOnClickListener {

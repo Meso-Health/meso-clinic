@@ -145,8 +145,6 @@ data class Member(
         val LANGUAGE_CHOICES = listOf(LANGUAGE_RUKIGA, LANGUAGE_RUTOORO, LANGUAGE_KINYARWANDA,
                 LANGUAGE_CHOICE_OTHER)
         const val MAX_AGE = 200
-        const val MIN_MRN_LENGTH = 5
-        const val MAX_MRN_LENGTH = 7
         // This sets the limit on the oldest a newborn can be to enroll.
         const val MAX_NEWBORN_AGE_IN_MONTHS = 12L
 
@@ -154,8 +152,8 @@ data class Member(
             return name.split(' ').filter{ it.isNotBlank() }.count() >= 3
         }
 
-        fun isValidMedicalRecordNumber(medicalRecordNumber: String): Boolean {
-            return medicalRecordNumber.length in MIN_MRN_LENGTH..MAX_MRN_LENGTH
+        fun isValidMedicalRecordNumber(medicalRecordNumber: String, minLength: Int, maxLength: Int): Boolean {
+            return medicalRecordNumber.length in minLength..maxLength
         }
 
         fun isValidCardId(cardId: String): Boolean {

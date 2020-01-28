@@ -48,12 +48,16 @@ android {
             applicationIdSuffix ".uga"
             versionNameSuffix "-uga"
             buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "false"
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH', '0'
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH', '32'
         }
         ethiopia {
             dimension "version"
             applicationIdSuffix ".eth"
             versionNameSuffix "-eth"
             buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "true"
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH', '5'
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH', '7'
         }
     }
     buildTypes {

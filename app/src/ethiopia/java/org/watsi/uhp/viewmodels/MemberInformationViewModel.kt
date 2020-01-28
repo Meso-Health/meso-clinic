@@ -18,6 +18,7 @@ import org.watsi.domain.usecases.CreateIdentificationEventUseCase
 import org.watsi.domain.usecases.CreateMemberUseCase
 import org.watsi.domain.utils.Age
 import org.watsi.domain.utils.AgeUnit
+import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import java.util.UUID
 import javax.inject.Inject
@@ -176,6 +177,7 @@ class MemberInformationViewModel @Inject constructor(
         const val MEMBER_NAME_ERROR = "member_age_name"
         const val MEMBER_AGE_ERROR = "member_age_error"
         const val MEMBER_MEDICAL_RECORD_NUMBER_ERROR = "member_medical_record_number_error"
+        const val MEMBER_MEDICAL_RECORD_VALIDATION_ERROR = "member_medical_record_number_validation_error"
         const val VISIT_REASON_ERROR = "visit_reason_error"
 
         fun toMember(viewState: ViewState, membershipNumber: String, clock: Clock, sessionManager: SessionManager):
@@ -235,8 +237,14 @@ class MemberInformationViewModel @Inject constructor(
 
             if (viewState.medicalRecordNumber == null) {
                 errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_validation_error
-            } else if (!Member.isValidMedicalRecordNumber(viewState.medicalRecordNumber)) {
-                errors[MEMBER_MEDICAL_RECORD_NUMBER_ERROR] = R.string.medical_record_number_length_validation_error
+            } else if (
+                    !Member.isValidMedicalRecordNumber(
+                        medicalRecordNumber = viewState.medicalRecordNumber,
+                        minLength = BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH,
+                        maxLength = BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH
+                    )
+            ) {
+                errors[MEMBER_MEDICAL_RECORD_VALIDATION_ERROR] = R.string.medical_record_number_length_validation_error
             }
 
             if (sessionManager.userHasPermission(SessionManager.Permissions.CAPTURE_INBOUND_ENCOUNTER_INFORMATION)) {

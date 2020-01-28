@@ -212,7 +212,7 @@ class MemberInformationViewModelTest : AACBaseTest() {
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
-            MemberInformationViewModel.MEMBER_MEDICAL_RECORD_NUMBER_ERROR to R.string.medical_record_number_length_validation_error
+            MemberInformationViewModel.MEMBER_MEDICAL_RECORD_VALIDATION_ERROR to R.string.medical_record_number_length_validation_error
         ))
     }
 

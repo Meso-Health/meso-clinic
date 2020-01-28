@@ -32,6 +32,7 @@ import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager
 import org.watsi.domain.entities.Encounter
 import org.watsi.domain.utils.AgeUnit
+import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import org.watsi.uhp.activities.ClinicActivity
 import org.watsi.uhp.helpers.EnumHelper
@@ -43,6 +44,7 @@ import org.watsi.uhp.viewmodels.MemberInformationViewModel
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_AGE_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GENDER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_VALIDATION_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.VISIT_REASON_ERROR
 import org.watsi.uhp.views.SpinnerField
@@ -136,6 +138,19 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 medical_record_number_layout.error = null
             } else {
                 medical_record_number_layout.error = getString(errorResourceId)
+            }
+        }
+
+        errorMap[MEMBER_MEDICAL_RECORD_VALIDATION_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                medical_record_number_layout.error = null
+            } else {
+                medical_record_number_layout.error =
+                        String.format(
+                            getString(R.string.medical_record_number_length_validation_error),
+                            BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH,
+                            BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH
+                        )
             }
         }
 

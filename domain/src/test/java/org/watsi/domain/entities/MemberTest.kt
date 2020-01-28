@@ -52,11 +52,12 @@ class MemberTest {
 
     @Test
     fun isValidMedicalRecordNumber() {
-        assertFalse(Member.isValidMedicalRecordNumber("1234"))
-        assertTrue(Member.isValidMedicalRecordNumber("12345"))
-        assertTrue(Member.isValidMedicalRecordNumber("123456"))
-        assertTrue(Member.isValidMedicalRecordNumber("1234567"))
-        assertFalse(Member.isValidMedicalRecordNumber("12345678"))
+        assertFalse(Member.isValidMedicalRecordNumber("123", 4, 7))
+        assertTrue(Member.isValidMedicalRecordNumber("1234", 4, 7))
+        assertTrue(Member.isValidMedicalRecordNumber("12345", 4, 7))
+        assertTrue(Member.isValidMedicalRecordNumber("123456", 4, 7))
+        assertTrue(Member.isValidMedicalRecordNumber("1234567", 4, 7))
+        assertFalse(Member.isValidMedicalRecordNumber("12345678", 4, 7))
     }
 
     @Test

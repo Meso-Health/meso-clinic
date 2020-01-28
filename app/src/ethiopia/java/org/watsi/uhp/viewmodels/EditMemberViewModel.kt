@@ -20,6 +20,7 @@ import org.watsi.domain.usecases.DismissMemberUseCase
 import org.watsi.domain.usecases.LoadMemberUseCase
 import org.watsi.domain.usecases.ShouldEnrollUseCase
 import org.watsi.domain.usecases.UpdateMemberUseCase
+import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import java.util.UUID
 import javax.inject.Inject
@@ -67,7 +68,11 @@ class EditMemberViewModel @Inject constructor(
 
     fun validateMedicalRecordNumber(medicalRecordNumberString: String?, errorString: String): String? {
         return if (medicalRecordNumberString == null ||
-            Member.isValidMedicalRecordNumber(medicalRecordNumberString)) { null } else { errorString }
+            Member.isValidMedicalRecordNumber(
+                medicalRecordNumber = medicalRecordNumberString,
+                minLength = BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH,
+                maxLength = BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH
+            )) { null } else { errorString }
     }
 
     fun onVisitReasonChange(visitReason: Encounter.VisitReason?) {

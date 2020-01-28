@@ -250,7 +250,7 @@
     <string name="age_validation_error">ዕድመ ክኣቱ ኣለዎ</string>
     <string name="age_limit_validation_error">ዕድመ ትሕቲ 200 ክኸውን ኣለዎ</string>
     <string name="medical_record_number_validation_error">ናይ ሕክምና ካርዲ ቁፅሪ ክኣቱ ኣለዎ</string>
-    <string name="medical_record_number_length_validation_error">ሕክምና ካርዲ ቁፅሪ 5 ወይከዓ 7 ኣሃዝ ክኸውን ኣለዎ</string>
+    <string name="medical_record_number_length_validation_error">ሕክምና ካርዲ ቁፅሪ %d ወይከዓ %d ኣሃዝ ክኸውን ኣለዎ</string>
     <string name="exit_form_alert">ርግፀኛ ክወፁ ይደልዩ ዲዩም</string>
     <string name="yes">እወ</string>
     <string name="missing_fields_validation_error">ሓደሓደ መረዳእታ ጎዲሉ ኣሎ</string>
