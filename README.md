@@ -30,17 +30,6 @@ variants locally by selecting the "Build Variants" tab located at the bottom-lef
 
 ### Summary
 
-| Variant          | Purpose             | Color  | Api Endpoint                                                                                                | Error Reporting | Deployment and Updates  | Deployed after green run on… |
-|------------------|---------------------|--------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------|------------------------------|
-| EthiopiaDebug    | development         | gray   | http://localhost:5000                                                                                       | console         | manual                  | -                            |
-| EthiopiaStaging  | Internal QA         | black  | https://api-staging.uhp.org                                                                                 | Rollbar         | automatic (Google Play) | master                       |
-| EthiopiaSandbox  | External QA         | yellow | https://coverage-ethiopia.herokuapp.com                                                                     | Rollbar         | automatic (Google Play) | sandbox                      |
-| EthiopiaRelease  | production          | blue   | https://api.etnhis.org/                                                                                     | Rollbar         | automatic (Google Play) | production-ethiopia          |
-| UgandaDebug      | development         | gray   | http://localhost:5000                                                                                       | console         | manual                  | -                            |
-| UgandaStaging    | QA                  | black  | currently set to: https://api-staging.uhp.org want: https://uhp-staging.watsi.org (deactivated)             | Rollbar         | manual                  | -                            |
-| UgandaSandbox    | QA                  | yellow | currently set to: https://coverage-ethiopia.herokuapp.com want: https://uhp-sandbox.watsi.org (deactivated) | Rollbar         | manual                  | -                            |                                                                           | Rollbar         | manual                  | -                            |
-| UgandaRelease    | production          | blue   | currently set to: https://api.etnhis.org want: https://uhp.watsi.org/                                       | Rollbar         | manual                  | -                            |
-
 See `build.gradle` for full details on configuration differences between the different variants.
 
 ### Running vs Building
