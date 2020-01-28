@@ -4,34 +4,24 @@ import android.content.Context
 import org.watsi.uhp.BuildConfig
 import org.watsi.uhp.R
 import java.math.BigDecimal
+import kotlin.math.log10
+import kotlin.math.roundToInt
 
 object CurrencyUtil {
-    const val BIRR_MULT = 100
-
-    fun formatMoneyWithCurrency(context: Context, amount: Int, flavor: String = BuildConfig.FLAVOR): String {
-        return context.getString(R.string.price_with_currency, formatMoney(amount, flavor))
+    fun formatMoneyWithCurrency(context: Context, amount: Int): String {
+        return context.getString(R.string.price_with_currency, formatMoney(amount))
     }
 
-    fun formatMoney(amount: Int, flavor: String = BuildConfig.FLAVOR): String {
-        return when (flavor) {
-            "uganda" -> { amount.toString() }
-            "ethiopia" -> { BigDecimal(amount).setScale(2).divide(BigDecimal(BIRR_MULT)).toString() }
-            else -> {
-                throw IllegalStateException("CurrentUtil.formatMoney called when BuildConfig.FLAVOR is not ethiopia or uganda.")
-            }
-        }
+    fun formatMoney(amount: Int, moneyMultiple: Int = BuildConfig.MONEY_MULTIPLE): String {
+        // The scale is the number of digits to the right of the decimal point.
+        val scale  = log10(moneyMultiple.toDouble()).toInt()
+        return BigDecimal(amount).setScale(scale).divide(BigDecimal(moneyMultiple)).toString()
     }
 
     /**
      * Parses money String as integer value of the lowest denomination of the currency
      */
-    fun parseMoney(amount: String, flavor: String = BuildConfig.FLAVOR): Int {
-        return when (flavor) {
-            "uganda" -> { amount.toInt() }
-            "ethiopia" -> { BigDecimal(amount).multiply(BigDecimal(BIRR_MULT)).toInt() }
-            else -> {
-                throw IllegalStateException("CurrentUtil.parseMoney called when BuildConfig.FLAVOR is not ethiopia or uganda.")
-            }
-        }
+    fun parseMoney(amount: String, moneyMultiple: Int = BuildConfig.MONEY_MULTIPLE): Int {
+        return BigDecimal(amount).multiply(BigDecimal(moneyMultiple)).toInt()
     }
 }

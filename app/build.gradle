@@ -50,6 +50,7 @@ android {
             buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "false"
             buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH', '0'
             buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH', '32'
+            buildConfigField 'int', 'MONEY_MULTIPLE', "1"
         }
         demo {
             dimension "version"
@@ -58,6 +59,17 @@ android {
             buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "true"
             buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH', '5'
             buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH', '7'
+            /**
+             * moneyMultiple is defined as follows:
+             *   lowest money value * moneyMultiple = 1
+             *
+             * For example:
+             * - in Uganda, the lowest money value is 1 UGX. So the moneyMultiple is 1.
+             * - in the United States, the lowest money value is 0.01 USD (one cent), so the moneyMultiple is 100.
+             * For reasons of accounting consistentcy and best engineering practices, we store currency in our database as an integer.
+             * As a result, in order to store one cent, we would store 1 in the database instead of 0.01.
+             */
+            buildConfigField 'int', 'MONEY_MULTIPLE', "100"
         }
     }
     buildTypes {
