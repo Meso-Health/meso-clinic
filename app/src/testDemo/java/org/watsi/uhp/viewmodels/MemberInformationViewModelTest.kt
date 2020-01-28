@@ -129,13 +129,13 @@ class MemberInformationViewModelTest : AACBaseTest() {
     @Test
     fun createAndCheckInMember_invalidName_returnsError() {
         setValidViewStateOnViewModel()
-        viewModel.onNameChange("Two Names")
+        viewModel.onNameChange("onenames")
 
         viewModel.createAndCheckInMember(membershipNumber).test().assertError(
             MemberInformationViewModel.ValidationException::class.java
         )
         assertEquals(observable.value?.errors, hashMapOf(
-            MemberInformationViewModel.MEMBER_NAME_ERROR to R.string.three_names_validation_error
+            MemberInformationViewModel.MEMBER_NAME_LENGTH_ERROR to R.string.name_length_validation_error
         ))
     }
 

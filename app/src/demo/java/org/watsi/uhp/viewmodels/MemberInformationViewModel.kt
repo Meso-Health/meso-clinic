@@ -64,7 +64,7 @@ class MemberInformationViewModel @Inject constructor(
     fun onNameChange(name: String?) {
         observable.value?.let {
             if (name != it.name) {
-                val errors = it.errors.filterNot { it.key == MEMBER_NAME_ERROR}
+                val errors = it.errors.filterNot { listOf(MEMBER_NAME_ERROR, MEMBER_NAME_LENGTH_ERROR).contains(it.key) }
                 observable.value = it.copy(name = name, errors = errors)
             }
         }
@@ -77,7 +77,7 @@ class MemberInformationViewModel @Inject constructor(
     fun onMedicalRecordNumberChange(medicalRecordNumber: String?) {
         observable.value?.let {
             if (medicalRecordNumber != it.medicalRecordNumber) {
-                val errors = it.errors.filterNot { it.key == MEMBER_MEDICAL_RECORD_NUMBER_ERROR}
+                val errors = it.errors.filterNot { listOf(MEMBER_MEDICAL_RECORD_NUMBER_ERROR, MEMBER_MEDICAL_RECORD_VALIDATION_ERROR).contains(it.key) }
                 observable.value = it.copy(medicalRecordNumber = medicalRecordNumber, errors = errors)
             }
         }
@@ -175,6 +175,7 @@ class MemberInformationViewModel @Inject constructor(
     companion object {
         const val MEMBER_GENDER_ERROR = "member_gender_error"
         const val MEMBER_NAME_ERROR = "member_age_name"
+        const val MEMBER_NAME_LENGTH_ERROR = "member_name_length_error"
         const val MEMBER_AGE_ERROR = "member_age_error"
         const val MEMBER_MEDICAL_RECORD_NUMBER_ERROR = "member_medical_record_number_error"
         const val MEMBER_MEDICAL_RECORD_VALIDATION_ERROR = "member_medical_record_number_validation_error"
@@ -225,8 +226,8 @@ class MemberInformationViewModel @Inject constructor(
 
             if (viewState.name == null || viewState.name.isBlank()) {
                 errors[MEMBER_NAME_ERROR] = R.string.name_validation_error
-            } else if (!Member.isValidName(viewState.name)) {
-                errors[MEMBER_NAME_ERROR] = R.string.three_names_validation_error
+            } else if (!Member.isValidFullName(viewState.name, BuildConfig.MEMBER_FULL_NAME_MIN_LENGTH)) {
+                errors[MEMBER_NAME_LENGTH_ERROR] = R.string.name_length_validation_error
             }
 
             if (viewState.age == null) {

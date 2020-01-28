@@ -46,6 +46,7 @@ import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_GEND
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_NUMBER_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_MEDICAL_RECORD_VALIDATION_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_ERROR
+import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.MEMBER_NAME_LENGTH_ERROR
 import org.watsi.uhp.viewmodels.MemberInformationViewModel.Companion.VISIT_REASON_ERROR
 import org.watsi.uhp.views.SpinnerField
 import javax.inject.Inject
@@ -122,6 +123,18 @@ class MemberInformationFragment : DaggerFragment(), NavigationManager.HandleOnBa
                 name_layout.error = null
             } else {
                 name_layout.error = getString(errorResourceId)
+            }
+        }
+
+        errorMap[MEMBER_NAME_LENGTH_ERROR].let { errorResourceId ->
+            if (errorResourceId == null) {
+                name_layout.error = null
+            } else {
+                name_layout.error =
+                        String.format(
+                            getString(R.string.name_length_validation_error),
+                            BuildConfig.MEMBER_FULL_NAME_MIN_LENGTH
+                        )
             }
         }
 

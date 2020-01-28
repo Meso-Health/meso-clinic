@@ -148,8 +148,8 @@ data class Member(
         // This sets the limit on the oldest a newborn can be to enroll.
         const val MAX_NEWBORN_AGE_IN_MONTHS = 12L
 
-        fun isValidName(name: String): Boolean {
-            return name.split(' ').filter{ it.isNotBlank() }.count() >= 3
+        fun isValidFullName(name: String, minLength: Int): Boolean {
+            return name.split(' ').filter{ it.isNotBlank() }.count() >= minLength
         }
 
         fun isValidMedicalRecordNumber(medicalRecordNumber: String, minLength: Int, maxLength: Int): Boolean {

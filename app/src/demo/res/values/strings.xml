@@ -93,7 +93,7 @@
     <string name="membership_number_label">Member ID</string>
     <string name="gender_validation_error">Gender is required</string>
     <string name="name_validation_error">Name is required</string>
-    <string name="three_names_validation_error">Three names are required</string>
+    <string name="name_length_validation_error">%s are required</string>
     <string name="age_validation_error">Age is required</string>
     <string name="age_limit_validation_error">Age must be 200 or less</string>
     <string name="medical_record_number_validation_error">Medical record number is required</string>

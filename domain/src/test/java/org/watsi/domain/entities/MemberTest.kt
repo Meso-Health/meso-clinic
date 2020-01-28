@@ -38,16 +38,50 @@ class MemberTest {
     }
 
     @Test
-    fun isValidName() {
-        assertFalse(Member.isValidName(""))
-        assertFalse(Member.isValidName("   "))
-        assertFalse(Member.isValidName("Michael"))
-        assertFalse(Member.isValidName(" Michael "))
-        assertFalse(Member.isValidName("Michael Jordan"))
-        assertFalse(Member.isValidName("  Michael B. "))
-        assertTrue(Member.isValidName("Michael Bakari Jordan"))
-        assertTrue(Member.isValidName(" Michael B. J "))
-        assertTrue(Member.isValidName("Michael B. Jordan Jr"))
+    fun isValidFullName() {
+        assertFalse(Member.isValidFullName("", 1))
+        assertFalse(Member.isValidFullName("", 2))
+        assertFalse(Member.isValidFullName("", 3))
+
+        assertFalse(Member.isValidFullName("   ", 1))
+        assertFalse(Member.isValidFullName("   ", 2))
+        assertFalse(Member.isValidFullName("   ", 3))
+
+        assertTrue(Member.isValidFullName("Michael", 1))
+        assertFalse(Member.isValidFullName("Michael", 2))
+        assertFalse(Member.isValidFullName("Michael", 3))
+
+        assertTrue(Member.isValidFullName(" Michael ", 1))
+        assertFalse(Member.isValidFullName(" Michael ", 2))
+        assertFalse(Member.isValidFullName(" Michael ", 3))
+
+        assertTrue(Member.isValidFullName("   Michael", 1))
+        assertFalse(Member.isValidFullName("   Michael", 2))
+        assertFalse(Member.isValidFullName("   Michael", 3))
+
+        assertTrue(Member.isValidFullName("Michael   ", 1))
+        assertFalse(Member.isValidFullName("Michael   ", 2))
+        assertFalse(Member.isValidFullName("Michael   ", 3))
+
+        assertTrue(Member.isValidFullName("Michael Jordan", 1))
+        assertTrue(Member.isValidFullName("Michael Jordan", 2))
+        assertFalse(Member.isValidFullName("Michael Jordan", 3))
+
+        assertTrue(Member.isValidFullName("  Michael B. ", 1))
+        assertTrue(Member.isValidFullName("  Michael B. ", 2))
+        assertFalse(Member.isValidFullName("  Michael B. ", 3))
+
+        assertTrue(Member.isValidFullName("Michael Bakari Jordan", 1))
+        assertTrue(Member.isValidFullName("Michael Bakari Jordan", 2))
+        assertTrue(Member.isValidFullName("Michael Bakari Jordan", 3))
+
+        assertTrue(Member.isValidFullName(" Michael B. J ", 1))
+        assertTrue(Member.isValidFullName(" Michael B. J ", 2))
+        assertTrue(Member.isValidFullName(" Michael B. J ", 3))
+
+        assertTrue(Member.isValidFullName("Michael B. Jordan Jr", 1))
+        assertTrue(Member.isValidFullName("Michael B. Jordan Jr", 2))
+        assertTrue(Member.isValidFullName("Michael B. Jordan Jr", 3))
     }
 
     @Test
