@@ -7,7 +7,6 @@ import org.watsi.device.managers.SessionManager.Companion.ALLOWED_HEALTH_CENTER_
 import org.watsi.device.managers.SessionManager.Companion.ALLOWED_HOSPITAL_ROLES
 import org.watsi.domain.entities.AuthenticationToken
 import org.watsi.domain.entities.User
-import org.watsi.domain.repositories.MemberRepository
 
 class SessionManagerImpl(
     private val preferencesManager: PreferencesManager,

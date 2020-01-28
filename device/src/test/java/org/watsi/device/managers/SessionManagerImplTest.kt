@@ -35,7 +35,7 @@ class SessionManagerImplTest {
     fun login_allowedRole() {
         val username = "foo"
         val password = "bar"
-        val token = AuthenticationTokenFactory.build(user = UserFactory.build(role = "provider"))
+        val token = AuthenticationTokenFactory.build(user = UserFactory.build(role = "provider_admin"))
         val authenticationTokenApi = AuthenticationTokenApi(
             token = token.token,
             expiresAt = token.expiresAt.toString(),
@@ -55,17 +55,14 @@ class SessionManagerImplTest {
     fun login_admin() {
         val username = "foo"
         val password = "bar"
-        val disallowedRoles = listOf("admin", "enrollment_worker")
-        disallowedRoles.forEach { disallowedRole ->
-            val token = AuthenticationTokenFactory.build(user = UserFactory.build(role = disallowedRole))
-            val authenticationTokenApi = AuthenticationTokenApi(
-                token.token, token.expiresAt.toString(), UserApi(token.user))
-            whenever(mockCoverageApi.login(any())).thenReturn(Single.just(authenticationTokenApi))
+        val token = AuthenticationTokenFactory.build(user = UserFactory.build(role = "enrollment"))
+        val authenticationTokenApi = AuthenticationTokenApi(
+            token.token, token.expiresAt.toString(), UserApi(token.user))
+        whenever(mockCoverageApi.login(any())).thenReturn(Single.just(authenticationTokenApi))
 
-            val result = sessionManager.login(username, password).test()
+        val result = sessionManager.login(username, password).test()
 
-            result.assertError(SessionManager.PermissionException::class.java)
-        }
+        result.assertError(SessionManager.PermissionException::class.java)
     }
 
     @Test
@@ -85,8 +82,8 @@ class SessionManagerImplTest {
         assertEquals(false, sessionManager.userHasPermission(SessionManager.Permissions.FETCH_ENROLLMENT_PERIODS))
     }
 
-    private fun setUser(isHospitalUser: Boolean, isReceptionist: Boolean) {
-        val role = if (isReceptionist) "receptionist" else "claims_preparer"
+    private fun setUser(isHospitalUser: Boolean, isIdentification: Boolean) {
+        val role = if (isIdentification) "identification" else "submission"
         val providerType = if (isHospitalUser) User.ProviderType.GENERAL_HOSPITAL else User.ProviderType.HEALTH_CENTER
         val user = UserFactory.build(role = role, providerType = providerType)
         val authToken = AuthenticationTokenFactory.build(user = user)

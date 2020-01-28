@@ -10,7 +10,7 @@ object UserFactory {
             name: String = "Foo",
             providerId: Int = 1,
             providerType: User.ProviderType = User.ProviderType.HEALTH_CENTER,
-            role: String = "provider",
+            role: String = "provider_admin",
             securityPin: String = "0000") : User {
         return User(
             id = id,
