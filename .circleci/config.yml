@@ -19,7 +19,7 @@ jobs:
           name: Download secrets
           # We need to download the variables.gradle file in order to get the app compiling and run tests.
           # Because this variables.gradle is just used to get the app compiling, not to to actually assemble an APK,
-          # we can just use the Uganda variables.gradle file to run tests for both the Ethiopia and Uganda flavors.
+          # we can just use the Uganda variables.gradle file to run tests for both the Demo and Uganda flavors.
           command: ./deploy_scripts/downloadUgandaSecrets.sh
       - run:
           name: Download Dependencies
@@ -29,8 +29,8 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
       - run:
-          name: Run Ethiopia linting
-          command: ./gradlew lintEthiopiaRelease
+          name: Run Demo linting
+          command: ./gradlew lintDemoRelease
       - run:
           name: Run Uganda linting
           command: ./gradlew lintUgandaRelease
@@ -52,18 +52,6 @@ jobs:
             - device/build/test-results
             - domain/build/test-results
 
-  deploy_ethiopia_staging:
-    <<: *android_config
-    steps:
-      - checkout
-      - run:
-          name: Deploy App to Play Store (Staging)
-          command: |
-            export VERSION_CODE=${CIRCLE_BUILD_NUM}
-            ./deploy_scripts/downloadEthiopiaSecrets.sh
-            ./gradlew assembleEthiopiaStaging
-            ./gradlew publishEthiopiaStaging -Dorg.gradle.project.track=internal
-
   deploy_uganda_sandbox:
     <<: *android_config
     steps:
@@ -76,53 +64,23 @@ jobs:
             ./gradlew assembleUgandaSandbox
             ./gradlew publishUgandaSandbox -Dorg.gradle.project.track=internal
 
-  deploy_ethiopia_sandbox:
+  deploy_demo_sandbox:
     <<: *android_config
     steps:
       - checkout
       - run:
           name: Deploy App to Play Store (Sandbox)
           command: |
-            export VERSION_CODE=$((${CIRCLE_BUILD_NUM} + 240000000))
-            ./deploy_scripts/downloadEthiopiaSecrets.sh
-            ./gradlew assembleEthiopiaSandbox
-            ./gradlew publishEthiopiaSandbox -Dorg.gradle.project.track=production
-
-  deploy_uganda_production:
-    <<: *android_config
-    steps:
-      - checkout
-      - run:
-          name: Deploy App to Play Store (Production)
-          command: |
             export VERSION_CODE=${CIRCLE_BUILD_NUM}
-            ./deploy_scripts/downloadUgandaSecrets.sh
-            ./gradlew assembleUgandaRelease
-            ./gradlew publishUgandaRelease -Dorg.gradle.project.track=production
-
-  deploy_ethiopia_production:
-    <<: *android_config
-    steps:
-      - checkout
-      - run:
-          name: Deploy App to Play Store (Production)
-          command: |
-            export VERSION_CODE=${CIRCLE_BUILD_NUM}
-            ./deploy_scripts/downloadEthiopiaSecrets.sh
-            ./gradlew assembleEthiopiaRelease
-            ./gradlew publishEthiopiaRelease -Dorg.gradle.project.track=production
+            ./deploy_scripts/downloadDemoSecrets.sh
+            ./gradlew assembleDemoSandbox
+            ./gradlew publishDemoSandbox -Dorg.gradle.project.track=internal
 
 workflows:
   version: 2
   build_test_and_deploy:
     jobs:
       - build_and_test
-      - deploy_ethiopia_staging:
-          requires:
-            - build_and_test
-          filters:
-            branches:
-              only: master
       - deploy_uganda_sandbox:
           requires:
             - build_and_test
@@ -131,21 +89,9 @@ workflows:
               only: master
               # ^ It is OK to deploy directly to Uganda sandbox when we push to master because
               # we do not need two separate test environments for Uganda.
-      - deploy_ethiopia_sandbox:
+      - deploy_demo_sandbox:
           requires:
             - build_and_test
           filters:
             branches:
-              only: sandbox
-      - deploy_uganda_production:
-          requires:
-            - build_and_test
-          filters:
-            branches:
-              only: production-uganda
-      - deploy_ethiopia_production:
-          requires:
-            - build_and_test
-          filters:
-            branches:
-              only: production-ethiopia
+              only: master

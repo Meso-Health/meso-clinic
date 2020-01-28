@@ -8,9 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_checked_in_patients.current_patients
-import kotlinx.android.synthetic.ethiopia.fragment_checked_in_patients.empty_container
-import kotlinx.android.synthetic.ethiopia.fragment_checked_in_patients.patients_container
+import kotlinx.android.synthetic.demo.fragment_checked_in_patients.current_patients
+import kotlinx.android.synthetic.demo.fragment_checked_in_patients.empty_container
+import kotlinx.android.synthetic.demo.fragment_checked_in_patients.patients_container
 import org.threeten.bp.Clock
 import org.watsi.device.managers.Logger
 import org.watsi.device.managers.SessionManager

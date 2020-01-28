@@ -72,7 +72,12 @@ class EditMemberViewModel @Inject constructor(
                 medicalRecordNumber = medicalRecordNumberString,
                 minLength = BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH,
                 maxLength = BuildConfig.MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH
-            )) { null } else { errorString }
+            )
+        ) {
+            null
+        } else {
+            errorString
+        }
     }
 
     fun onVisitReasonChange(visitReason: Encounter.VisitReason?) {

@@ -9,9 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.ethiopia.fragment_download_household.cancel
-import kotlinx.android.synthetic.ethiopia.fragment_download_household.error_view
-import kotlinx.android.synthetic.ethiopia.fragment_download_household.loading_view
+import kotlinx.android.synthetic.demo.fragment_download_household.cancel
+import kotlinx.android.synthetic.demo.fragment_download_household.error_view
+import kotlinx.android.synthetic.demo.fragment_download_household.loading_view
 import org.watsi.device.managers.Logger
 import org.watsi.domain.entities.IdentificationEvent
 import org.watsi.uhp.R
