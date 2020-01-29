@@ -36,38 +36,24 @@ data class Encounter(
 
     enum class EncounterAction { PREPARE, SUBMIT, RESUBMIT }
 
-    enum class PatientOutcome { CURED_OR_DISCHARGED, REFERRED, FOLLOW_UP, REFUSED_SERVICE, DECEASED, OTHER }
+    enum class PatientOutcome { CURED_OR_DISCHARGED, REFERRED, FOLLOW_UP, DECEASED, OTHER }
 
-    enum class VisitReason { REFERRAL, NO_REFERRAL, SELF_REFERRAL, FOLLOW_UP, EMERGENCY }
+    enum class VisitReason { REFERRAL, NO_REFERRAL, FOLLOW_UP, EMERGENCY }
 
     companion object {
         val VISIT_TYPE_CHOICES = listOf(
-            "OPD - New Visit",
-            "OPD - Repeat Visit",
-            "Youth Friendly Services (YFS) - New Visit",
-            "Youth Friendly Services (YFS) - Repeat Visit",
-            "<5 OPD - New Visit",
-            "<5 OPD - Repeat Visit",
+            "Outpatient (OPD)",
+            "<5 Outpatient (OPD)",
             "Emergency OPD",
             "Inpatient (IPD)",
-            "ART - New Patient",
-            "ART - Repeat Visit",
-            "TB - New Patient",
-            "TB - Repeat Visit",
-            "Family Planning (FP) - New Visit",
-            "Family Planning (FP) - Repeat Visit",
+            "ART",
+            "TB",
+            "Family Planning (FP)",
             "Antenatal Care (ANC)  - 1st Visit",
             "Antenatal Care (ANC)  - 2nd Visit",
             "Antenatal Care (ANC)  - 3rd Visit",
             "Antenatal Care (ANC)  - 4th Visit",
-            "Postnatal Care (PNC) - 1st Visit",
-            "Postnatal Care (PNC) - 2nd Visit",
-            "EPI",
-            "Delivery (DR)",
-            "Abortion",
-            "Growth Monitoring & Promotion (GMP) - New Visit",
-            "Growth Monitoring & Promotion (GMP) - Repeat Visit",
-            "Dental"
+            "Delivery (DR)"
         )
 
         val CLAIM_ID_RANGE = (0..7)
