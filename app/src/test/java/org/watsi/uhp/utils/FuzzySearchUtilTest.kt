@@ -5,6 +5,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
+// TODO: Add more than just a length check for these tests.
 @RunWith(MockitoJUnitRunner::class)
 class FuzzySearchUtilTest {
     private val englishChoiceList = listOf<String>(
@@ -75,15 +76,15 @@ class FuzzySearchUtilTest {
     )
 
     private val nonEnglishChoiceList = listOf<String>(
-        "አበባ",
-        "አበራሽ",
-        "አለማየሁ",
-        "ብርሃኔ",
-        "እስክንድር",
-        "ሓረገ ወይን",
-        "ሉሊት",
-        "ቴዎድሮስ",
-        "ዮሐንስ"
+        "我是一个大苹果",
+        "个个孩子都爱我",
+        "又方又平好好吃",
+        "一十二万三千四",
+        "一十二万苹果",
+        "一十苹果",
+        "三千四苹果",
+        "千四苹果",
+        ""
     )
 
     @Test
@@ -126,14 +127,14 @@ class FuzzySearchUtilTest {
 
     @Test
     fun searchNonEnglishList_nonEnglishQuery() {
-        val topMatches = FuzzySearchUtil.topMatches("አበባ", nonEnglishChoiceList, 5);
+        val topMatches = FuzzySearchUtil.topMatches("大苹果", nonEnglishChoiceList, 5);
         assertEquals(topMatches.size, 5)
     }
 
     @Test
     fun searchEnglishList_nonEnglishQuery() {
-        val topMatches = FuzzySearchUtil.topMatches("አበባ", nonEnglishChoiceList, 5);
-        assertEquals(topMatches.size, 5)
+        val topMatches = FuzzySearchUtil.topMatches("一十二万", nonEnglishChoiceList, 3);
+        assertEquals(topMatches.size, 3)
     }
 
     @Test

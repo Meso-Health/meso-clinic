@@ -8,8 +8,8 @@ object ReferralFactory {
     fun build(
         id: UUID = UUID.randomUUID(),
         encounterId: UUID = UUID.randomUUID(),
-        receivingFacility: String = "Wukro General",
-        reason: Referral.Reason = Referral.Reason.DRUG_STOCKOUT,
+        receivingFacility: String = "Fort Portal Hospital",
+        reason: Referral.Reason = Referral.Reason.INSUFFICIENT_EQUIPMENT,
         number: String? = "Number",
         date: LocalDate = LocalDate.of(1993, 5, 11)
     ) : Referral {

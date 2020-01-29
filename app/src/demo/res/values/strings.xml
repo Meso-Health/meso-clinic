@@ -3,8 +3,8 @@
     <string name="app_name" tools:ignore="MissingTranslation">Claims Submission</string>
 
     <!-- General -->
-    <string name="currency">Birr</string>
-    <string name="price_with_currency">Birr %1$s</string>
+    <string name="currency">UGX</string>
+    <string name="price_with_currency">%1$s UGX</string>
 
     <!-- Confirmation Messages -->
     <string name="exit_form_alert">Are you sure you want to exit?</string>
@@ -31,13 +31,7 @@
 
     <!-- MemberSearchWithMembershipNumberFragment -->
     <string name="search_fragment_label">@string/search</string>
-    <string name="slash" translatable="false">/</string>
-    <string name="two_zeroes_placeholder" translatable="false">00</string>
-    <string name="three_zeroes_placeholder" translatable="false">000</string>
-    <string name="six_zeroes_placeholder" translatable="false">000000</string>
     <string name="start_claim_button">Start Claim</string>
-    <string name="invalid_membership_error">Invalid membership number</string>
-    <string name="scan_card">Scan card</string>
     <string name="search_name">Search name</string>
 
     <!-- MemberSearchFragment -->

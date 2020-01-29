@@ -69,7 +69,7 @@ class DbModule {
                 // TODO: Not including migration 20 -> 21 because it is hard and requires dropping columns
                 // on the members and identificationEvents tables.
                 // This is OK for Uganda because they'll be starting off at the latest DB version, but
-                // for Ethiopia, we will need to write the proper migration to avoid unsynced data being deleted.
+                // for other implementations, we may need to add the proper migration to avoid unsynced data being deleted.
                 .addMigrations(MIGRATION_24_25)
                 .build()
     }

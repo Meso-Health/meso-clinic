@@ -115,7 +115,7 @@
                 app:layout_constraintTop_toBottomOf="@id/provider_comment_text" />
 
             <TextView
-                android:id="@+id/branch_comment_author"
+                android:id="@+id/adjudicator_comment_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
@@ -126,24 +126,24 @@
                 app:layout_constraintTop_toBottomOf="@id/adjudication_comments_line_divider" />
 
             <TextView
-                android:id="@+id/branch_comment_date"
+                android:id="@+id/adjudicator_comment_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/space8"
                 android:paddingBottom="@dimen/bottom_text_align_padding"
                 android:textColor="@color/gray6"
                 android:textSize="@dimen/fontSize12"
-                app:layout_constraintLeft_toRightOf="@id/branch_comment_author"
-                app:layout_constraintBottom_toBottomOf="@id/branch_comment_author" />
+                app:layout_constraintLeft_toRightOf="@id/adjudicator_comment_author"
+                app:layout_constraintBottom_toBottomOf="@id/adjudicator_comment_author" />
 
             <TextView
-                android:id="@+id/branch_comment_text"
+                android:id="@+id/adjudicator_comment_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_view_vertical_margin"
                 android:paddingStart="@dimen/fragment_padding"
                 android:paddingEnd="@dimen/space48"
-                app:layout_constraintTop_toBottomOf="@id/branch_comment_author" />
+                app:layout_constraintTop_toBottomOf="@id/adjudicator_comment_author" />
             
         </android.support.constraint.ConstraintLayout>
 

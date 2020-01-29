@@ -14,8 +14,8 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import io.reactivex.Single
 import kotlinx.android.synthetic.demo.fragment_receipt.adjudication_comments_container
-import kotlinx.android.synthetic.demo.fragment_receipt.branch_comment_date
-import kotlinx.android.synthetic.demo.fragment_receipt.branch_comment_text
+import kotlinx.android.synthetic.demo.fragment_receipt.adjudicator_comment_date
+import kotlinx.android.synthetic.demo.fragment_receipt.adjudicator_comment_text
 import kotlinx.android.synthetic.demo.fragment_receipt.claim_id
 import kotlinx.android.synthetic.demo.fragment_receipt.claim_id_container
 import kotlinx.android.synthetic.demo.fragment_receipt.comment_container
@@ -358,7 +358,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         }
         encounterFlowState.encounter.adjudicatedAt?.let {
             val branchCommentDaysAgo = ChronoUnit.DAYS.between(it, Instant.now()).toInt()
-            branch_comment_date.text = if (branchCommentDaysAgo > 0) {
+            adjudicator_comment_date.text = if (branchCommentDaysAgo > 0) {
                 resources.getQuantityString(
                     comment_age, branchCommentDaysAgo, branchCommentDaysAgo
                 )
@@ -371,7 +371,7 @@ class ReceiptFragment : DaggerFragment(), NavigationManager.HandleOnBack {
         } else {
             getString(none)
         }
-        branch_comment_text.text = if (encounterFlowState.encounter.adjudicationReason != null) {
+        adjudicator_comment_text.text = if (encounterFlowState.encounter.adjudicationReason != null) {
             encounterFlowState.encounter.adjudicationReason
         } else {
             getString(none)
