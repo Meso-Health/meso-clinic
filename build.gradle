@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-def versionMajor = 0
-def versionMinor = 9
-def versionPatch = 8
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
 def versionCodeForLocalDevelopment = 26
 def computedVersionCode = (System.getenv("VERSION_CODE") ?: versionCodeForLocalDevelopment) as Integer
 
