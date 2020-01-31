@@ -90,8 +90,6 @@ class DrugAndSupplyFragment : DaggerFragment(), NavigationManager.HandleOnBack {
     }
 
     private fun updateLineItems(encounterFlowState: EncounterFlowState) {
-        // NOTE: we are only calling for encounter items of type DRUG and _not_ SUPPLY because
-        // on the Ethiopia side we have both drugs and supplies under type DRUG
         val lineItems = encounterFlowState.getEncounterItemsOfType(Billable.Type.DRUG)
         line_item_count.text = resources.getQuantityString(
                 R.plurals.encounter_item_count, lineItems.size, lineItems.size)
