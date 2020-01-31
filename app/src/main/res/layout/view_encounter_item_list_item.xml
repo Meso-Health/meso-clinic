@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.watsi.uhp.views.EncounterItemListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/viewHeight64"
+    android:padding="@dimen/space16">
+
+    <org.watsi.uhp.views.CustomFocusEditText
+        android:id="@+id/billable_quantity"
+        android:layout_width="@dimen/viewHeight40"
+        android:layout_height="@dimen/viewHeight40"
+        android:text="@string/default_billable_quantity"
+        android:gravity="center"
+        android:inputType="number"
+        android:selectAllOnFocus="true"
+        android:imeOptions="actionDone"
+        android:maxLength="3"
+        android:backgroundTint="@null"
+        android:background="@drawable/view_outline_rectangle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/billable_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dialog_padding"
+        android:layout_marginRight="@dimen/dialog_padding"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        app:layout_constraintEnd_toStartOf="@id/line_item_price"
+        app:layout_constraintHorizontal_chainStyle="spread"/>
+
+    <org.watsi.uhp.views.PriceChange
+        android:id="@+id/line_item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/billable_name"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/stockout_negative_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red6"
+        app:layout_constraintTop_toBottomOf="@+id/line_item_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/billable_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray6"
+        android:layout_marginStart="@dimen/dialog_padding"
+        app:layout_constraintTop_toBottomOf="@id/billable_name"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/stockout_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red6"
+        android:layout_marginStart="@dimen/dialog_padding"
+        android:text="@string/stockout"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/billable_details"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity" />
+
+    <TextView
+        android:id="@+id/lab_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dialog_padding"
+        app:layout_constraintTop_toBottomOf="@id/billable_details"
+        app:layout_constraintStart_toEndOf="@id/stockout_indicator" />
+
+    <TextView
+        android:id="@+id/surgical_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dialog_padding"
+        android:clickable="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/billable_details"
+        app:layout_constraintStart_toEndOf="@id/billable_quantity" />
+
+</org.watsi.uhp.views.EncounterItemListItem>

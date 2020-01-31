@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/diagnosis_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/fragment_padding"
+        android:elevation="@dimen/panelElevation">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/diagnosis_search_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/view_outline_rectangle"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <SearchView
+                android:id="@+id/diagnosis_search"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/viewHeight40"
+                android:iconifiedByDefault="false"
+                android:queryHint="@string/search_diagnosis_hint"
+                android:queryBackground="@android:color/transparent"
+                android:inputType="textFilter" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/diagnoses_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space12"
+            android:textColor="@color/gray7"
+            app:layout_constraintTop_toBottomOf="@id/diagnosis_search_box" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/selected_diagnosis_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="@dimen/scrollingFragmentBottomPadding"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/diagnosis_panel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/done_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space16"
+        style="@style/PrimaryButton"
+        android:text="@string/continue_encounter_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

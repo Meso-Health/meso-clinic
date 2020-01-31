@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/more"
+        android:title=""
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_dismiss_member"
+                android:orderInCategory="102"
+                android:title="@string/menu_dismiss_member"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_member_edit"
+                android:orderInCategory="103"
+                android:title="@string/menu_member_edit_label"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_enroll_newborn"
+                android:orderInCategory="104"
+                android:title="@string/menu_enroll_number_label"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_status"
+                android:orderInCategory="105"
+                android:title="@string/menu_status_label"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_switch_language"
+                android:orderInCategory="106"
+                android:title="@string/menu_switch_language"
+                android:icon="@drawable/ic_language_black_24dp"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_logout"
+                android:orderInCategory="107"
+                android:title="@string/menu_logout_label"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_sync_now"
+                android:orderInCategory="108"
+                android:title="@string/menu_sync_now"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_delete_claim"
+                android:orderInCategory="109"
+                android:title="@string/delete"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_export_db"
+                android:orderInCategory="110"
+                android:title="@string/menu_export_db"
+                app:showAsAction="never"
+                android:visible="false" />
+            <item
+                android:id="@+id/menu_settings"
+                android:orderInCategory="111"
+                android:title="@string/menu_settings_label"
+                app:showAsAction="never"
+                android:visible="false" />
+        </menu>
+    </item>
+</menu>

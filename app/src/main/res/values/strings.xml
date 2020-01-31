@@ -1,0 +1,228 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Error Messages -->
+    <string name="generic_save_error" tools:ignore="MissingTranslation">An unknown error occurred. Try again later.</string>
+
+    <!-- Menu -->
+    <string name="menu_logout_label">Logout</string>
+    <string name="menu_switch_language" translatable="false">Switch Language</string>
+    <string name="menu_dismiss_member" tools:ignore="MissingTranslation">Dismiss member</string>
+    <string name="menu_member_edit_label" tools:ignore="MissingTranslation">Edit member</string>
+    <string name="menu_enroll_number_label" tools:ignore="MissingTranslation">Enroll newborn</string>
+    <string name="menu_settings_label" tools:ignore="MissingTranslation">Settings</string>
+    <string name="log_out_alert">Are you sure you want to log out?</string>
+    <string name="log_out_alert_message">Any unsynced data will be deleted.</string>
+    <string name="menu_status_label">Status</string>
+    <string name="menu_sync_now">Sync now</string>
+    <string name="menu_export_db" translatable="false">Export database</string>
+    <string name="yes">OK</string>
+    <string name="delete_items_confirmation" translatable="false">Delete this item?</string>
+    <string name="delete">Delete</string>
+
+    <!-- General Labels -->
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="total">Total</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="submit">Submit</string>
+    <string name="modal_save">@string/save</string>
+    <string name="modal_cancel">@string/cancel</string>
+    <string name="modal_delete" translatable="false">Delete</string>
+    <string name="prev_price" tools:ignore="MissingTranslation">%1$s&#8194;&#9656;</string>
+    <string name="days">Days</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
+    <string name="phone_number_prefix" translatable="false">(0)</string>
+    <string name="bullet" translatable="false">\u2022</string>
+    <string name="middle_dot" translatable="false">\u00B7</string>
+    <string name="photo_description">Photo</string>
+    <string name="blank" translatable="false"></string>
+    <string name="other">Other</string>
+
+    <!-- Form -->
+    <string name="age_field_label">Age</string>
+    <string name="edit_clickable"><u>Edit</u></string>
+    <string name="gender_field_label">Gender</string>
+
+    <!-- AuthenticationActivity -->
+    <string name="authentication_activity_label">User Login</string>
+    <string name="login_username_label">Username</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_button_text">Login</string>
+    <string name="logging_in">Logging in…</string>
+    <string name="login_generic_failure_message">Failed to login</string>
+    <string name="login_wrong_username_or_password_message">The provided username/password combination is incorrect</string>
+    <string name="login_progress_message">Logging in…</string>
+    <string name="login_connectivity_error">Cannot login due to poor connectivity</string>
+    <string name="login_phone_offline_error">Cannot login because phone is offline</string>
+    <string name="login_server_offline_error">Cannot login because server is offline</string>
+    <string name="login_permission_error">This user is not allowed to submit claims</string>
+
+    <!-- BaseService -->
+    <string name="credentials_expired_error_message" translatable="false">Credentials expired</string>
+    <string name="phone_offline_error_message" translatable="false">Phone is offline</string>
+    <string name="server_offline_error_message" translatable="false">Server is offline</string>
+    <string name="poor_connectivity_error_message" translatable="false">Poor connectivity</string>
+
+    <!-- EditMemberFragment (Demo) and CheckInMemberDetailFragment (Uganda) -->
+    <string name="check_in">Check In</string>
+    <string name="checked_in">Already checked in</string>
+    <string name="checked_in_snackbar_message">%1$s was checked in.</string>
+    <string name="checked_out_snackbar_message">%1$s was checked out.</string>
+
+    <!-- MemberSearchFragment -->
+    <string name="member_no_search_results_text" translatable="false">No search results found. Please try again.</string>
+    <string name="search">Search</string>
+    <string name="membership_number_search_label" tools:ignore="MissingTranslation">Search Membership Number</string>
+
+    <!-- EncounterFragment -->
+    <string name="encounter_fragment_label">Line items</string>
+    <string name="prompt_category">Select a category&#8230;</string>
+    <string name="search_drug_hint">Search&#8230;</string>
+    <string name="error_blank_or_zero_quantity">Please enter a nonzero quantity</string>
+    <string name="default_billable_quantity" translatable="false">1</string>
+    <string name="continue_encounter_button">Next</string>
+    <string name="done_encounter_button">Done</string>
+    <string name="no_line_items_snackbar_message">Must include at least one line item</string>
+    <plurals name="encounter_item_count">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+    <string name="stockout" translatable="false">Stockout</string>
+
+    <!-- EditPriceFragment -->
+    <string name="edit_price_fragment_label">Edit Price</string>
+    <string name="unit_price_label">Unit Price</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="total_price_label">Total Price</string>
+    <string name="mark_as_stockout">Mark %s as stockout</string>
+
+    <!-- DiagnosisFragment -->
+    <string name="diagnosis_fragment_label">Diagnoses</string>
+    <plurals name="diagnosis_count">
+        <item quantity="one">%d diagnosis</item>
+        <item quantity="other">%d diagnoses</item>
+    </plurals>
+    <string name="search_diagnosis_hint">Search diagnoses&#8230;</string>
+
+    <!-- ReceiptFragment -->
+    <string name="receipt_fragment_label">Review Claim</string>
+    <string name="submit_encounter_button">@string/submit</string>
+    <string name="receipt_total">Total</string>
+    <string name="encounter_submitted">Claim submitted</string>
+    <string name="encounter_saved">Claim saved</string>
+    <plurals name="receipt_line_item_count" >
+        <item quantity="one">%d line item</item>
+        <item quantity="other">%d line items</item>
+    </plurals>
+    <string name="today_wrapper">Today (%1$s)</string>
+
+    <!-- UpdateNotificationBar -->
+    <string name="update_available" tools:ignore="MissingTranslation">A new software update is available.</string>
+    <string name="update_alert_dialog_title" tools:ignore="MissingTranslation">Are you sure you want to install the update?</string>
+    <string name="update_alert_dialog_message" tools:ignore="MissingTranslation">
+        You have unsynced records on your device. We recommend syncing all records before installing the update to ensure no data is lost.
+    </string>
+    <string name="update_action_button" tools:ignore="MissingTranslation">Update</string>
+    <string name="yes_update_anyway" tools:ignore="MissingTranslation">Yes, update anyways</string>
+
+    <!-- StatusFragment -->
+    <string name="status_fragment_label">Status</string>
+    <string name="current_user_label">Current User</string>
+    <string name="provider_type_label">Provider Type</string>
+    <string name="provider_type_unclassified">Unclassified</string>
+    <string name="provider_type_clinic">Health Center</string>
+    <string name="provider_type_primary_hospital">Primary Hospital</string>
+    <string name="provider_type_general_hospital">General Hospital</string>
+    <string name="provider_type_tertiary_hospital">Tertiary Hospital</string>
+    <string name="fetch_data_title">Downloads (Data)</string>
+    <string name="last_fetched_billables_label" translatable="false">Billables</string>
+    <string name="last_fetched_diagnoses_label">Diagnoses</string>
+    <string name="last_fetched_members_label">Members</string>
+    <string name="beneficiary_count_label" translatable="false">Beneficiary count</string>
+    <string name="fetch_photos_title">Downloads (Photos)</string>
+    <string name="last_fetched_member_photos_label">Member photos</string>
+    <string name="last_fetched_returned_encounters_label">Returned Claims</string>
+    <string name="last_fetched_identification_events_label" translatable="false">Identification Events</string>
+    <string name="unsynced_price_schedules_label" translatable="false">Price Schedules</string>
+    <string name="export_unsynced_claims_label" translatable="false"><u>Export Unsynced Claims</u></string>
+    <string name="sync_data_title">Uploads (Data)</string>
+    <string name="unsynced_members_label">Members</string>
+    <string name="unsynced_id_events_label">Identifications</string>
+    <string name="unsynced_encounters_label">Claims</string>
+    <string name="unsynced_billables_label" translatable="false">Billables</string>
+    <string name="sync_photos_title">Uploads (Photos)</string>
+    <string name="unsynced_encounter_forms_label" translatable="false">Treatment Forms</string>
+    <string name="unsynced_member_photos_label">Member photos</string>
+
+    <string name="app_version">Claims Submission %1$s</string>
+    <string name="android_version">Android %1$s</string>
+
+    <string name="last_successful_run_label">Last successful run</string>
+    <string name="all_synced">All uploaded</string>
+    <string name="all_fetched">All downloaded</string>
+    <string name="waiting_to_sync">to upload</string>
+    <string name="waiting_to_fetch">to download</string>
+    <string name="never">never</string>
+
+    <string name="fetch_billables_error_label" translatable="false">Download Billables</string>
+    <string name="fetch_diagnoses_error_label" translatable="false">Download Diagnoses</string>
+    <string name="fetch_returned_claims_error_label" translatable="false">Download Returned Claims</string>
+    <string name="fetch_identification_events_error_label" translatable="false">Download Identification Events</string>
+    <string name="fetch_enrollment_periods_error_label" translatable="false">Download EnrollmentPeriods</string>
+    <string name="fetch_members_error_label" translatable="false">Download Members</string>
+    <string name="fetch_member_photos_error_label" translatable="false">Download Member Photos</string>
+    <string name="sync_members_error_label" translatable="false">Upload Members</string>
+    <string name="sync_id_events_error_label" translatable="false">Upload Identifications</string>
+    <string name="sync_price_schedules_error_label" translatable="false">Upload Price Schedules</string>
+    <string name="sync_billables_error_label" translatable="false">Upload Billables</string>
+    <string name="sync_encounters_error_label" translatable="false">Upload Encounters</string>
+    <string name="sync_member_photos_error_label" translatable="false">Upload Member Photos</string>
+    <string name="sync_encounter_forms_error_label" translatable="false">Upload Encounter Forms</string>
+
+    <string name="no_internet_title" translatable="false">No internet connection</string>
+    <string name="no_internet_prompt" translatable="false">Please connect the device to the internet and try again.</string>
+
+    <!-- ScanMemberCard -->
+    <string name="scan_member_card_button_text">@string/scan_member_card</string>
+    <string name="scan_member_card">Scan member card</string>
+    <string name="scan_member_card_invalid_id">Not a valid member card</string>
+    <string name="scan_member_card_not_found">This card is not associated with a member</string>
+
+    <!-- PhotoActivity -->
+    <string name="member_photo_overlay_text">Take photo of member</string>
+    <string name="form_photo_overlay_text" tools:ignore="MissingTranslation">Take photo of form</string>
+
+    <!-- SurgicalScoreDialog -->
+    <string name="surgical_score_prompt" translatable="false">How would you rate the outcome of the surgery?</string>
+    <string name="surgical_score" translatable="false">Add surgical score (optional)</string>
+    <string name="surgical_score_set" translatable="false">Surgical Score: %1$s</string>
+
+    <!-- VisitType / VisitResultFragment -->
+    <string name="referral_reason_validation_error">Referral reason is required</string>
+
+    <!-- EnumHelper -->
+    <string name="further_consultation">Further consultation</string>
+    <string name="general_stockout" translatable="false">Stockout (e.g. drug, supply, lab)</string>
+    <string name="drug_stockout">Drug stockout</string>
+    <string name="investigative_tests">Investigative tests</string>
+    <string name="inpatient_care">Inpatient care</string>
+    <string name="bed_shortage">Bed shortage</string>
+    <string name="follow_up">Follow-up</string>
+    <string name="additional_services"  translatable="false">Additional services</string>
+    <string name="insufficient_equipment"  translatable="false">Insufficient equipment</string>
+    <string name="surgery"  translatable="false">Surgery</string>
+    <string name="outcome_cured_or_discharged">Cured/Discharged</string>
+    <string name="outcome_referred">Referred</string>
+    <string name="outcome_follow_up">Follow-up</string>
+    <string name="outcome_refused_service">Refused service</string>
+    <string name="outcome_expired">Deceased</string>
+    <string name="outcome_other">Other</string>
+    <string name="visit_reason_referral">Referral</string>
+    <string name="visit_reason_no_referral">No referral</string>
+    <string name="visit_reason_follow_up">Follow-up</string>
+    <string name="visit_reason_emergency">Emergency</string>
+
+</resources>

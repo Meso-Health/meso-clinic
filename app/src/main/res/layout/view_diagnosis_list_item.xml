@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.watsi.uhp.views.DiagnosisListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/viewHeight64"
+    android:paddingStart="@dimen/space16">
+
+    <TextView
+        android:id="@+id/diagnosis_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/space36"
+        android:theme="@style/Title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</org.watsi.uhp.views.DiagnosisListItem>

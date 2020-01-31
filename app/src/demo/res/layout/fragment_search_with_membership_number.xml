@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/space24"
+    android:background="@color/white">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/membership_number_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space16"
+        android:paddingEnd="@dimen/space8"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/membership_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:selectAllOnFocus="true"
+            android:hint="@string/membership_number_search_label"
+            android:imeOptions="actionDone" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/search_button"
+        android:text="@string/search"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/space16"
+        android:layout_marginEnd="@dimen/space16"
+        android:layout_marginBottom="@dimen/space16"
+        style="@style/PrimaryButton"
+        app:layout_constraintBottom_toTopOf="@+id/border"/>
+
+    <View
+        android:id="@+id/border"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/space4"
+        android:background="@color/gray4"
+        app:layout_constraintBottom_toTopOf="@+id/search_methods_container"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search_methods_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space8"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/membership_number_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:drawableTop="@drawable/ic_perm_contact_calendar_grey_24dp"
+            android:text="@string/membership_number_label"
+            android:textColor="@color/gray6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintEnd_toStartOf="@id/scan_card_button"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/scan_card_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_qr_code_grey_24dp"
+            android:textAlignment="center"
+            android:text="@string/scan_member_card"
+            android:textColor="@color/gray6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/search_by_name_button"
+            app:layout_constraintStart_toEndOf="@+id/membership_number_button" />
+
+        <TextView
+            android:id="@+id/search_by_name_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_search_grey_24dp"
+            android:textAlignment="center"
+            android:text="@string/search_name"
+            android:textColor="@color/gray6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/scan_card_button"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

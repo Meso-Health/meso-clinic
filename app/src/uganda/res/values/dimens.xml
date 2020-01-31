@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Photo dimensions scale -->
+    <dimen name="thumbnailSmall">52dp</dimen>
+
+    <!-- dimensions for photo on detail view -->
+    <dimen name="detail_fragment_photo_height">208dp</dimen>
+    <dimen name="detail_fragment_photo_width">156dp</dimen>
+
+</resources>
