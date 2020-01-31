@@ -1,0 +1,78 @@
+<resources>
+
+    <!-- Space scale -->
+    <dimen name="space4">4dp</dimen>
+    <dimen name="space8">8dp</dimen>
+    <dimen name="space12">12dp</dimen>
+    <dimen name="space16">16dp</dimen>
+    <dimen name="space24">24dp</dimen>
+    <dimen name="space36">36dp</dimen>
+    <dimen name="space48">48dp</dimen>
+
+    <!-- Font size scale -->
+    <dimen name="fontSize12">12sp</dimen>
+    <dimen name="fontSize13">13sp</dimen>
+    <dimen name="fontSize14">14sp</dimen>
+    <dimen name="fontSize16">16sp</dimen>
+    <dimen name="fontSize18">18sp</dimen>
+
+    <dimen name="cornerRadius">4dp</dimen>
+
+    <dimen name="editMemberPhotoPlaceholderPadding">30dp</dimen>
+    <dimen name="thumbnailSmallPlaceholderPadding">12dp</dimen>
+
+    <!-- Photo dimensions scale -->
+    <dimen name="thumbnailHeight28">28dp</dimen>
+    <dimen name="thumbnailWidth28">28dp</dimen>
+    <dimen name="thumbnailHeight52">52dp</dimen>
+    <dimen name="thumbnailWidth52">52dp</dimen>
+    <dimen name="thumbnailHeight66">66dp</dimen>
+    <dimen name="thumbnailWidth66">66dp</dimen>
+    <dimen name="thumbnailHeight80">80dp</dimen>
+    <dimen name="thumbnailWidth80">80dp</dimen>
+    <dimen name="thumbnailHeight120">120dp</dimen>
+    <dimen name="thumbnailWidth120">120dp</dimen>
+
+    <!-- Fragment -->
+    <dimen name="scrollingFragmentBottomPadding">80dp</dimen>
+
+    <!-- Numeric Keyboard -->
+    <dimen name="numericKeyboardHeight">205dp</dimen>
+
+    <!-- View dimensions scale -->
+    <dimen name="viewHeight40">40dp</dimen>
+    <dimen name="viewHeight64">64dp</dimen>
+    <dimen name="viewHeight120">120dp</dimen>
+
+    <!-- elevation for top panels in encounter flow fragments -->
+    <dimen name="panelElevation">2dp</dimen>
+
+    <!-- top, bottom, left, and right padding on all fragments -->
+    <dimen name="fragment_padding">16dp</dimen>
+
+    <!-- top, bottom, left, and right padding for all dialogs -->
+    <dimen name="dialog_padding">16dp</dimen>
+
+    <!-- margin for floating action buttons -->
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- margin above and below large text labels -->
+    <dimen name="label_vertical_margin">16dp</dimen>
+
+    <!-- margin between each input item on a form -->
+    <dimen name="form_item_vertical_margin">5dp</dimen>
+
+    <!-- margin under small text labels -->
+    <dimen name="text_view_vertical_margin">5dp</dimen>
+
+    <!-- padding for each item in a list view -->
+    <dimen name="list_item_vertical_padding">16dp</dimen>
+
+    <dimen name="textInputLayoutMarginFix">-4dp</dimen>
+
+    <!-- padding to fix bottom text alignment -->
+    <dimen name="bottom_text_align_padding">1dp</dimen>
+
+    <!-- margin between status fields on status screen -->
+    <dimen name="status_field_margin">2dp</dimen>
+</resources>

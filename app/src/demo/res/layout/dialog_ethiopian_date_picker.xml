@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/space16"
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16">
+
+    <TextView
+        android:id="@+id/eth_datepicker_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/space24"
+        android:textSize="@dimen/fontSize16"
+        android:text="@string/eth_datepicker_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <org.watsi.uhp.views.SpinnerField
+        android:id="@+id/day_spinner"
+        android:layout_width="@dimen/spinner_field_width"
+        android:layout_height="@dimen/spinner_field_height"
+        android:paddingRight="@dimen/space8"
+        app:label="@string/eth_datepicker_day"
+        app:dropDownWidth="@dimen/spinner_width"
+        app:layout_constraintTop_toBottomOf="@id/eth_datepicker_title"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <org.watsi.uhp.views.SpinnerField
+        android:id="@+id/month_spinner"
+        android:layout_width="@dimen/spinner_field_width"
+        android:layout_height="@dimen/spinner_field_height"
+        android:paddingRight="@dimen/space8"
+        app:label="@string/eth_datepicker_month"
+        app:dropDownWidth="@dimen/spinner_width"
+        app:layout_constraintTop_toBottomOf="@id/eth_datepicker_title"
+        app:layout_constraintStart_toEndOf="@id/day_spinner"/>
+
+    <org.watsi.uhp.views.SpinnerField
+        android:id="@+id/year_spinner"
+        android:layout_width="@dimen/spinner_field_width"
+        android:layout_height="@dimen/spinner_field_height"
+        app:label="@string/eth_datepicker_year"
+        app:dropDownWidth="@dimen/spinner_width"
+        app:layout_constraintTop_toBottomOf="@id/eth_datepicker_title"
+        app:layout_constraintStart_toEndOf="@id/month_spinner"/>
+
+</android.support.constraint.ConstraintLayout>

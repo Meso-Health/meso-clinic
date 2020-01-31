@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/space16"
+    android:paddingStart="@dimen/space16"
+    android:paddingEnd="@dimen/space16">
+
+    <TextView
+        android:id="@+id/birthdate_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/space24"
+        android:textSize="@dimen/fontSize16"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/birthdate_dialog_toggle_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary"
+        android:visibility="gone"
+        android:paddingStart="@dimen/space8"
+        android:paddingBottom="@dimen/space8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/age_fields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/birthdate_dialog_title" >
+
+        <android.support.constraint.Guideline
+            android:id="@+id/age_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/age_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/age_guideline">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/age_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:selectAllOnFocus="true"
+                android:imeOptions="actionDone"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+            android:id="@+id/age_unit_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/age_guideline"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/date_fields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/birthdate_dialog_title" >
+
+        <android.support.constraint.Guideline
+            android:id="@+id/date_guideline_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/date_guideline_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/day_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/date_guideline_1">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/day_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/day_label"
+                android:selectAllOnFocus="true"
+                android:imeOptions="actionNext"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/month_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/date_guideline_1"
+            app:layout_constraintEnd_toStartOf="@id/date_guideline_2">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/month_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/month_label"
+                android:selectAllOnFocus="true"
+                android:imeOptions="actionNext"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/year_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/date_guideline_2"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/year_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/year_label"
+                android:selectAllOnFocus="true"
+                android:imeOptions="actionDone"
+                android:inputType="number" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/calculated_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray6"
+            app:layout_constraintTop_toBottomOf="@id/day_input_layout" />
+
+        <TextView
+            android:id="@+id/date_error_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red7"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@id/calculated_age" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

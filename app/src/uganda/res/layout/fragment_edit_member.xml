@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space36"
+        android:paddingBottom="@dimen/space48"
+        android:clipToPadding="false"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/top_photo"
+            android:layout_width="@dimen/thumbnailWidth120"
+            android:layout_height="@dimen/thumbnailHeight120"
+            android:background="@drawable/thumbnail_photo_background"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/top_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space16"
+            android:textSize="@dimen/fontSize18"
+            android:textColor="@color/gray9"
+            app:layout_constraintTop_toBottomOf="@id/top_photo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/top_gender_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/space4"
+            android:paddingBottom="@dimen/space48"
+            android:textSize="@dimen/fontSize16"
+            android:textColor="@color/gray6"
+            app:layout_constraintTop_toBottomOf="@id/top_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/missing_information_panel_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/space16"
+            android:paddingBottom="@dimen/space8"
+            android:text="@string/missing_information_panel_header_text"
+            android:visibility="gone"
+            style="@style/PanelHeader"
+            app:layout_constraintTop_toBottomOf="@id/top_gender_age" />
+
+        <org.watsi.uhp.views.PhotoField
+            android:id="@+id/missing_photo_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/missing_information_panel_header"/>
+
+        <TextView
+            android:id="@+id/member_panel_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/space16"
+            android:paddingTop="@dimen/space48"
+            android:text="@string/member_panel_header_text"
+            android:visibility="gone"
+            style="@style/PanelHeader"
+            app:layout_constraintTop_toBottomOf="@id/missing_photo_container" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/demographic_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
+            android:background="@drawable/panel_background"
+            android:padding="@dimen/space16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/member_panel_header">
+
+            <org.watsi.uhp.views.DialogEditField
+                android:id="@+id/name_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords|textNoSuggestions"
+                app:label="@string/name_field_label"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <org.watsi.uhp.views.DialogEditField
+                android:id="@+id/gender_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                app:label="@string/gender_field_label"
+                app:layout_constraintTop_toBottomOf="@id/name_field" />
+
+            <org.watsi.uhp.views.DialogBirthdateField
+                android:id="@+id/edit_birthdate_dialog_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                app:allowAgeSelector="true"
+                app:layout_constraintTop_toBottomOf="@id/gender_field" />
+
+            <org.watsi.uhp.views.DialogEditField
+                android:id="@+id/phone_number_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                android:inputType="phone"
+                app:label="@string/phone_number_field_label"
+                app:layout_constraintTop_toBottomOf="@id/edit_birthdate_dialog_field" />
+
+            <org.watsi.uhp.views.DialogEditField
+                android:id="@+id/preferred_language_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                android:inputType="textCapWords"
+                app:label="@string/preferred_language_field_label"
+                app:layout_constraintTop_toBottomOf="@id/phone_number_field" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/biometrics_panel_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/space16"
+            android:paddingTop="@dimen/space48"
+            android:text="@string/biometrics_panel_header_text"
+            style="@style/PanelHeader"
+            app:layout_constraintTop_toBottomOf="@id/demographic_container" />
+
+        <org.watsi.uhp.views.PhotoField
+            android:id="@+id/photo_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
+            app:layout_constraintTop_toBottomOf="@id/biometrics_panel_header"/>
+
+        <TextView
+            android:id="@+id/member_card_panel_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/space16"
+            android:paddingTop="@dimen/space48"
+            android:text="@string/member_card_panel_header_text"
+            style="@style/PanelHeader"
+            app:layout_constraintTop_toBottomOf="@id/photo_container" />
+
+        <org.watsi.uhp.views.MemberCardIdField
+            android:id="@+id/card_id_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
+            app:layout_constraintTop_toBottomOf="@id/member_card_panel_header" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

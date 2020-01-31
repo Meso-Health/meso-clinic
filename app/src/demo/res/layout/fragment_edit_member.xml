@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <org.watsi.uhp.views.NotificationBar
+            android:id="@+id/membership_status_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/space36"
+            android:paddingBottom="@dimen/space48"
+            app:layout_constraintTop_toBottomOf="@id/membership_status_notification">
+
+            <ImageView
+                android:id="@+id/top_photo"
+                android:layout_width="@dimen/thumbnailWidth120"
+                android:layout_height="@dimen/thumbnailHeight120"
+                android:background="@drawable/member_photo_placeholder"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/top_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                android:textSize="@dimen/fontSize18"
+                android:textColor="@color/gray9"
+                app:layout_constraintTop_toBottomOf="@id/top_photo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/top_gender_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space4"
+                android:paddingBottom="@dimen/space48"
+                android:textSize="@dimen/fontSize16"
+                android:textColor="@color/gray6"
+                app:layout_constraintTop_toBottomOf="@id/top_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/membership_status_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space16"
+                android:paddingTop="@dimen/space24"
+                android:text="@string/membership_status_panel_header"
+                style="@style/PanelHeader"
+                app:layout_constraintTop_toBottomOf="@id/top_gender_age" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/membership_status_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space8"
+                android:background="@drawable/panel_background"
+                android:padding="@dimen/space16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/membership_status_panel_header">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/member_status_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/member_status_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/member_status_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/beneficiary_status_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/member_status_field_layout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/beneficiary_status_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/beneficiary_status_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/demographic_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space16"
+                android:paddingTop="@dimen/space24"
+                android:text="@string/member_information_panel_header"
+                style="@style/PanelHeader"
+                app:layout_constraintTop_toBottomOf="@id/membership_status_container" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/demographic_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space8"
+                android:background="@drawable/panel_background"
+                android:padding="@dimen/space16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/demographic_panel_header">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/membership_number_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/membership_number_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/membership_number_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/name_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    app:layout_constraintTop_toBottomOf="@id/membership_number_field_layout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/name_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/name_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/birthdate_field_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginStart="@dimen/textInputLayoutMarginFix"
+                    android:layout_marginTop="@dimen/space16"
+                    app:layout_constraintTop_toBottomOf="@id/name_field_layout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/birthdate_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/birthdate_field_label"
+                        android:enabled="false"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <org.watsi.uhp.views.DialogEditField
+                    android:id="@+id/medical_record_number_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space16"
+                    android:inputType="number"
+                    app:label="@string/medical_record_number_field_label"
+                    app:layout_constraintTop_toBottomOf="@id/birthdate_field_layout" />
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/hospital_check_in_details_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space16"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/medical_record_number_field">
+
+                    <org.watsi.uhp.views.SpinnerField
+                        android:id="@+id/visit_reason_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:label="@string/visit_reason_label"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <org.watsi.uhp.views.DialogDateEditField
+                        android:id="@+id/inbound_referral_date_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginTop="@dimen/space16"
+                        android:visibility="gone"
+                        app:label="@string/inbound_referral_date_label"
+                        app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
+
+                    <org.watsi.uhp.views.DialogDateEditField
+                        android:id="@+id/follow_up_date_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginTop="@dimen/space16"
+                        android:visibility="gone"
+                        app:label="@string/follow_up_date_label"
+                        app:layout_constraintTop_toBottomOf="@id/visit_reason_spinner" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/photo_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/space16"
+                android:paddingTop="@dimen/space24"
+                android:text="@string/photo_panel_header_text"
+                style="@style/PanelHeader"
+                app:layout_constraintTop_toBottomOf="@id/demographic_container" />
+
+            <org.watsi.uhp.views.PhotoField
+                android:id="@+id/photo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space16"
+                app:layout_constraintTop_toBottomOf="@id/photo_panel_header" />
+
+            <Button
+                android:id="@+id/action_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space16"
+                android:layout_marginTop="@dimen/space36"
+                android:layout_marginEnd="@dimen/space16"
+                android:layout_marginBottom="@dimen/space24"
+                style="@style/PrimaryButton"
+                app:layout_constraintTop_toBottomOf="@id/photo_container" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

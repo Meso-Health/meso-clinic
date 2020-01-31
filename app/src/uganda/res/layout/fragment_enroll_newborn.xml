@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/space24"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/enroll_newborn_fields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/space16"
+            android:paddingRight="@dimen/space16"
+            android:paddingTop="@dimen/space24"
+            android:background="@color/white"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <org.watsi.uhp.views.GenderField
+                android:id="@+id/gender_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-4dp"
+                android:paddingTop="@dimen/space24"
+                app:layout_constraintTop_toBottomOf="@id/gender_field">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name_field_label"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords|textNoSuggestions" />
+            </android.support.design.widget.TextInputLayout>
+
+            <org.watsi.uhp.views.DialogBirthdateField
+                android:id="@+id/enroll_newborn_birthdate_dialog_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/space24"
+                app:allowAgeSelector="false"
+                app:showCalendarIcon="true"
+                app:showCalculatedAge="false"
+                app:layout_constraintTop_toBottomOf="@id/name_layout" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <org.watsi.uhp.views.PhotoField
+            android:id="@+id/photo_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/enroll_newborn_fields" />
+
+        <org.watsi.uhp.views.MemberCardIdField
+            android:id="@+id/card_id_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/photo_field" />
+
+        <Button
+            android:id="@+id/done_button"
+            android:text="@string/done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/space16"
+            android:layout_marginLeft="@dimen/space16"
+            android:layout_marginTop="@dimen/space24"
+            app:layout_constraintTop_toBottomOf="@id/card_id_field"
+            style="@style/PrimaryButton" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

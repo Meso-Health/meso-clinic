@@ -1,0 +1,198 @@
+plugins {
+    id("com.github.triplet.play") version "2.1.0"
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+play {
+    serviceAccountCredentials = file('google-play-key.json')
+    track = project.properties['track']
+}
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        applicationId rootProject.ext.applicationId
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "Integer", "PROVIDER_ID", "1"
+        buildConfigField "boolean", "USING_LOCAL_SERVER", "false"
+        buildConfigField "boolean", "REPORT_TO_ROLLBAR", "true"
+
+        buildConfigField "String", "ROLLBAR_API_KEY", gradle.ext.rollbarApiKey
+        buildConfigField "String", "API_HOST", gradle.ext.apiHostDebug
+    }
+    signingConfigs {
+        releaseConfig {
+            storeFile file("release-key.jks")
+            storePassword gradle.ext.releaseKeystorePassword
+            keyAlias gradle.ext.releaseKeyAlias
+            keyPassword gradle.ext.releaseKeyPassword
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        uganda {
+            dimension "version"
+            applicationIdSuffix ".uga"
+            versionNameSuffix "-uga"
+            buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "false"
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH', '0'
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH', '32'
+            buildConfigField 'int', 'MEMBER_FULL_NAME_MIN_LENGTH', '1'
+            buildConfigField 'int', 'MONEY_MULTIPLE', "1"
+        }
+        demo {
+            dimension "version"
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+            buildConfigField "boolean", "ENABLE_LANGUAGE_SWITCH", "true"
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MIN_LENGTH', '5'
+            buildConfigField 'int', 'MEMBER_MEDICAL_RECORD_NUMBER_MAX_LENGTH', '7'
+            buildConfigField 'int', 'MEMBER_FULL_NAME_MIN_LENGTH', '2'
+            /**
+             * moneyMultiple is defined as follows:
+             *   lowest money value * moneyMultiple = 1
+             *
+             * For example:
+             * - in Uganda, the lowest money value is 1 UGX. So the moneyMultiple is 1.
+             * - in the United States, the lowest money value is 0.01 USD (one cent), so the moneyMultiple is 100.
+             * For reasons of accounting consistentcy and best engineering practices, we store currency in our database as an integer.
+             * As a result, in order to store one cent, we would store 1 in the database instead of 0.01.
+             */
+            buildConfigField 'int', 'MONEY_MULTIPLE', "100"
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".development"
+            versionNameSuffix "-development"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_dev"
+            ]
+
+            buildConfigField "boolean", "USING_LOCAL_SERVER", "true"
+            buildConfigField "boolean", "REPORT_TO_ROLLBAR", "false"
+        }
+        sandbox {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".sandbox"
+            versionNameSuffix "-sandbox"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_sandbox"
+            ]
+
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostSandbox
+        }
+        release {
+            signingConfig signingConfigs.releaseConfig
+            applicationIdSuffix ".production"
+            versionNameSuffix "-production"
+            resValue "string", "application_id", defaultConfig.applicationId + applicationIdSuffix
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher"
+            ]
+
+            buildConfigField "String", "API_HOST", gradle.ext.apiHostProduction
+        }
+    }
+
+    sourceSets {
+        String sharedTestDir = 'src/sharedTest/java'
+        test {
+            java.srcDir sharedTestDir
+        }
+        androidTest {
+            java.srcDir sharedTestDir
+        }
+    }
+}
+
+dependencies {
+    def dependencies = rootProject.ext.dependencies
+    def testDependencies = rootProject.ext.testDependencies
+
+    implementation (project(":domain")) {
+        exclude group: 'org.threeten', module: 'threetenbp'
+    }
+    implementation (project(':device')) {
+        exclude group: 'org.threeten', module: 'threetenbp'
+    }
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Support libraries
+    implementation dependencies.kotlin
+    implementation dependencies.kotlinReflect
+    implementation dependencies.androidSupportLibrary
+    implementation dependencies.supportDesign
+    implementation dependencies.cardView
+    implementation dependencies.gson
+    implementation dependencies.gmsVision
+    implementation dependencies.constraintLayout
+    implementation dependencies.playCore
+
+    // Dependency injection
+    implementation dependencies.dagger
+    implementation dependencies.daggerAndroidSupport
+    kapt dependencies.daggerAndroidProcessor
+    kapt dependencies.daggerCompiler
+    kaptTest dependencies.daggerCompiler
+    kaptAndroidTest dependencies.daggerCompiler
+
+    // AAC
+    implementation dependencies.aacLifecycleExtensions
+    implementation dependencies.roomRuntime
+    implementation dependencies.roomRxJava
+    implementation dependencies.reactiveStreams
+    kapt dependencies.roomCompiler
+
+    // API
+    implementation dependencies.retrofit
+    implementation dependencies.retrofitRxJava
+    implementation dependencies.gsonConverter
+
+    // Time
+    implementation dependencies.threeTenAndroidBackport
+
+    // RX Java
+    implementation dependencies.rxJava
+    implementation dependencies.rxAndroid
+
+    // Exception reporting
+    implementation dependencies.rollbar
+
+    // Image loading
+    // https://bumptech.github.io/glide/doc/download-setup.html#gradle
+    implementation (dependencies.glide) {
+        exclude group: "com.android.support"
+    }
+    kapt dependencies.glideCompiler
+
+    // Application dependencies
+    implementation dependencies.apacheCommonsText
+    implementation dependencies.pinEntryView
+
+    // Testing
+    testImplementation project(path: ':domain', configuration: 'testOutput')
+    testImplementation testDependencies.junit
+    testImplementation testDependencies.mockito
+    testImplementation testDependencies.mockitoKotlin
+    testImplementation testDependencies.aacTesting
+    testImplementation testDependencies.robolectric
+    androidTestImplementation testDependencies.androidTestRunner
+    androidTestImplementation testDependencies.espresso
+    androidTestImplementation testDependencies.okReplayEspresso
+}

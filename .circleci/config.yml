@@ -1,0 +1,97 @@
+version: 2
+
+android_config: &android_config
+  working_directory: ~/code
+  docker:
+    - image: circleci/android:api-24
+  environment:
+    TERM: dumb
+    JAVA_TOOL_OPTIONS: "-Xmx1024m"
+
+jobs:
+  build_and_test:
+    <<: *android_config
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
+      - run:
+          name: Download secrets
+          # We need to download the variables.gradle file in order to get the app compiling and run tests.
+          # Because this variables.gradle is just used to get the app compiling, not to to actually assemble an APK,
+          # we can just use the Uganda variables.gradle file to run tests for both the Demo and Uganda flavors.
+          command: ./deploy_scripts/downloadUgandaSecrets.sh
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "device/build.gradle" }}-{{ checksum "domain/build.gradle" }}
+      - run:
+          name: Run Demo linting
+          command: ./gradlew lintDemoRelease
+      - run:
+          name: Run Uganda linting
+          command: ./gradlew lintUgandaRelease
+      - run:
+          name: Run unit tests for all flavours
+          command: ./gradlew runUnitTests
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports/app
+      - store_artifacts:
+          path: device/build/reports
+          destination: reports/device
+      - store_artifacts:
+          path: domain/build/reports
+          destination: reports/domain
+      - store_test_results:
+          paths:
+            - app/build/test-results
+            - device/build/test-results
+            - domain/build/test-results
+
+  deploy_uganda_sandbox:
+    <<: *android_config
+    steps:
+      - checkout
+      - run:
+          name: Deploy App to Play Store (Staging)
+          command: |
+            export VERSION_CODE=${CIRCLE_BUILD_NUM}
+            ./deploy_scripts/downloadUgandaSecrets.sh
+            ./gradlew assembleUgandaSandbox
+            ./gradlew publishUgandaSandbox -Dorg.gradle.project.track=internal
+
+  deploy_demo_sandbox:
+    <<: *android_config
+    steps:
+      - checkout
+      - run:
+          name: Deploy App to Play Store (Sandbox)
+          command: |
+            export VERSION_CODE=${CIRCLE_BUILD_NUM}
+            ./deploy_scripts/downloadDemoSecrets.sh
+            ./gradlew assembleDemoSandbox
+            ./gradlew publishDemoSandbox -Dorg.gradle.project.track=internal
+
+workflows:
+  version: 2
+  build_test_and_deploy:
+    jobs:
+      - build_and_test
+      - deploy_uganda_sandbox:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: master
+              # ^ It is OK to deploy directly to Uganda sandbox when we push to master because
+              # we do not need two separate test environments for Uganda.
+      - deploy_demo_sandbox:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: master

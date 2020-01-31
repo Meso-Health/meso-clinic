@@ -1,0 +1,43 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+// adds new "testOutput" configuration to bundle test code into a dependency other modules can use
+configurations {
+    testOutput.extendsFrom(testImplementation)
+}
+
+// creates test jar from test code
+task jarTest(type: Jar, dependsOn: testClasses) {
+    from sourceSets.test.output
+    classifier = 'test'
+}
+
+// adds test jar to the "testOutput" configuration
+artifacts {
+    testOutput jarTest
+}
+
+dependencies {
+    def dependencies = rootProject.ext.dependencies
+    def testDependencies = rootProject.ext.testDependencies
+
+    // support libraries
+    implementation dependencies.kotlin
+    implementation dependencies.gson
+
+    // Time
+    implementation dependencies.threeTenBackport
+    implementation dependencies.joda
+
+    // RX Javax
+    implementation dependencies.rxJava
+    implementation dependencies.rxAndroid
+
+    // testing
+    testImplementation testDependencies.junit
+    testImplementation testDependencies.mockito
+    testImplementation testDependencies.mockitoKotlin
+}

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_encounter_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/encounter_item_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingTop="@dimen/space8"
+        android:paddingBottom="@dimen/fragment_padding"
+        android:paddingLeft="@dimen/fragment_padding"
+        android:paddingRight="@dimen/fragment_padding"
+        android:elevation="@dimen/panelElevation">
+
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/select_type_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="parent"
+            />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/select_billable_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/select_type_box">
+
+            <org.watsi.uhp.views.SpinnerField
+                android:id="@+id/billable_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <SearchView
+                android:id="@+id/drug_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="-16dp"
+                android:paddingRight="-16dp"
+                android:iconifiedByDefault="false"
+                android:queryHint="@string/search_drug_hint"
+                android:queryBackground="@android:color/transparent"
+                android:inputType="textFilter"
+                android:visibility="gone" />
+                <!-- ^^ The paddings are needed offset the padding created in the constraint layout above -->
+
+        </android.support.constraint.ConstraintLayout>
+
+        <org.watsi.uhp.views.SpinnerField
+            android:id="@+id/select_lab_result_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/select_billable_box"
+            />
+
+        <TextView
+            android:id="@+id/encounter_item_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
+            app:layout_constraintTop_toBottomOf="@id/select_lab_result_box"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/add_billable_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space8"
+            android:text="@string/add_billable_prompt"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/select_lab_result_box"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/line_items_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="@dimen/scrollingFragmentBottomPadding"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/encounter_item_panel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/save_button_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space16"
+            style="@style/PrimaryButton"
+            app:layout_behavior="org.watsi.uhp.behaviors.MovableButtonBehavior"
+            android:text="@string/continue_encounter_button"
+            android:layout_gravity="bottom" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>
