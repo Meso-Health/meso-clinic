@@ -35,6 +35,7 @@ captures/
 
 # Environment variables
 .env
+variables.gradle
 
 # Google play key
 app/google-play-key.json
