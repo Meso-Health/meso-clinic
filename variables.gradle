@@ -1,0 +1,13 @@
+// These are only required for release
+gradle.ext.releaseKeystorePassword = "REPLACE_WITH_RELEASE_KEYSTORE_PASSWORD"
+gradle.ext.releaseKeyAlias = "REPLACE_WITH_RELEASE_KEY_ALIAS"
+gradle.ext.releaseKeyPassword = "REPLACE_WITH_RELEASE_KEY_PASSWORD"
+gradle.ext.rollbarApiKey = "\"REPLACE_WITH_ROLLBAR_API_KEY\""
+
+// This needs to be set to the port running the backend server.
+gradle.ext.apiHostDebug = "\"http://localhost:5000/\""
+
+// These are only required for sandbox / production flavor builds.
+gradle.ext.apiHostSandbox = "\"REPLACE_WITH_SANDBOX_URL\""
+gradle.ext.apiHostProduction = "\"REPLACE_WITH_PRODUCTION_URL\""
+
