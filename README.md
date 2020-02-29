@@ -10,7 +10,9 @@ After installing Android Studio it will walk you through downloading the most re
 
 [Gradle](https://gradle.org/) is the build tool used by Android Studio.
 
-In order to run the application, you also need a `variables.gradle` file in your root directory which stores environment variables. Create a file called `variables.gradle` and copy the file contents from 1Password.
+`variables.gradle` contains environment variables such as what the API HOST is. The defaults should work
+if you have a local rails server running. When preparing for sandbox or production, please set
+the relevant variables in order to get the app to build successfully.
 
 ## Build variants
 
@@ -68,18 +70,23 @@ You now have a signed release APK that you can email, manually install on indivi
 
 ## Running app against a local server
 
-Apps with the development/spec flavor are set up to hit a local server (`http://localhost:5000` for development) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
+Apps with the development/spec flavor are set up to hit a local server (`http://localhost:5000` for development and `http://localhost:8000` for spec) instead of a remote heroku endpoint (e.g. `https://uhp-sandbox.watsi.org`).
 However, by default, emulators and devices don't know about their PC's local servers. (Going to `localhost:5000` on your emulator or device browser will attempt to access its _own_ server, which doesn't exist.)
 
-In both cases, first start your local server (see [https://github.com/meso-health/meso-backend](https://github.com/meso-health/meso-backend) for more detailed instructions).
+In both cases, first start your local server (see [https://github.com/Watsi/uhp-backend](https://github.com/Watsi/uhp-backend) for more detailed instructions).
 
 ```
 $ cd /your/path/to/uhp_backend
 ```
 
-To run local server for development (on the backend repo):
+To run local server for development:
 ```
-$ rails s -p 5000
+$ heroku local
+```
+
+To run local server for running tests:
+```
+$ rails server -e android-test -p 8000
 ```
 
 ```
@@ -114,6 +121,11 @@ For Development:
 $ adb reverse tcp:5000 tcp:5000
 ```
 
+For Spec:
+```
+$ adb reverse tcp:8000 tcp:8000
+```
+
 And voila, that's it! As long as your phone is connected to your PC, it will be able to access your PC's localhost - even without internet. Note however that you'll need to rerun this command every time you disconnect and reconnect the USB.
 
 ### Accessing your local server from your emulator
@@ -124,6 +136,11 @@ designated IP address for emulators to refer their computer's server.
 For Development:
 ```
 buildConfigField "String", "API_HOST", "\"http://10.0.2.2:5000\""
+```
+
+For Spec:
+```
+buildConfigField "String", "API_HOST", "\"http://10.0.2.2:8000\""
 ```
 
 ## Continuous Deployment
@@ -155,8 +172,41 @@ Tests can also be run from the terminal.
  ```
  # Run all unit tests for a specific build variant.
  ./gradlew test<variant_name>
+
+ # Run all feature tests against development debug variant.
+ ./gradlew connectedDevelopmentDebugAndroidTest
+
+ # Run all feature tests for a specific build variant.
+ ./gradlew connected<variant_name>AndroidTest
+
+ # Run feature tests in a specific package for a specific build variant.
+ ./gradlew connected<variant_name>AndroidTest -Pandroid.testInstrumentationRunnerArguments.package=<package_name>
+
+ # Run specific feature test for a specific build variant.
+ ./gradlew connected<variant_name>AndroidTest -Pandroid.testInstrumentationRunnerArguments.class=<package_name>
  ```
+
  More options [here](https://developer.android.com/studio/test/command-line.htm).
+
+### To run offline feature tests locally:
+```
+ ./gradlew connectedSpecDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=org.watsi.uhp.offline
+```
+
+### To run end-to-end (online) feature tests locally:
+
+In your local UHP Backend folder:
+
+```
+# Setup android-test db with seed data:
+$ RAILS_ENV=android-test rails db:setup
+
+# Run the android-test server on port 8000:
+$ rails server -e android-test -p 8000
+
+```
+
+Then, back on the android side you can run your test locally either in Android Studio or in terminal, with either an emulator or a real connected device.
 
 ## Conventions
 
