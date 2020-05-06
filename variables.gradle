@@ -5,7 +5,7 @@ gradle.ext.releaseKeyPassword = "REPLACE_WITH_RELEASE_KEY_PASSWORD"
 gradle.ext.rollbarApiKey = "\"REPLACE_WITH_ROLLBAR_API_KEY\""
 
 // This needs to be set to the port running the backend server.
-gradle.ext.apiHostDebug = "\"http://localhost:5000/\""
+gradle.ext.apiHostDebug = "\"https://meso-backend.herokuapp.com/\""
 
 // These are only required for sandbox / production flavor builds.
 gradle.ext.apiHostSandbox = "\"REPLACE_WITH_SANDBOX_URL\""
